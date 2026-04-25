@@ -1,0 +1,112 @@
+{
+    "schema_version": "1.0.0",
+    "file": "progress.json",
+    "product": "Vouch",
+    "generated_at": "2026-04-24T00:00:00.000Z",
+    "purpose": "Append-only progress log of planning and implementation work.",
+    "policy": {
+        "append_only_preferred": true,
+        "business_logic_allowed": false,
+        "status_values": ["completed", "in_progress", "blocked", "not_started"]
+    },
+    "current_phase": "governance_artifact_generation",
+    "implementation_status": "not_started",
+    "entries": [
+        {
+            "id": "PRG-001",
+            "date": "2026-04-24",
+            "status": "completed",
+            "category": "docs",
+            "title": "Generated docs intent layer",
+            "summary": "Created PRD, technical requirements, user flows, design system, launch copy, and source normalization for Vouch.",
+            "files": [
+                ".agents/docs/prd.md",
+                ".agents/docs/tech-requirements.md",
+                ".agents/docs/user-flows.md",
+                ".agents/docs/design-system.md",
+                ".agents/docs/launch-copy.md",
+                ".agents/docs/source-normalization.md"
+            ],
+            "validation_status": "not_run",
+            "notes": "Docs define human intent only and should not be parsed directly by implementation agents."
+        },
+        {
+            "id": "PRG-002",
+            "date": "2026-04-24",
+            "status": "completed",
+            "category": "contracts",
+            "title": "Generated deterministic YAML contract layer",
+            "summary": "Created domain model, roles, authz, routes, features, analytics, and acceptance gates.",
+            "files": [
+                ".agents/contracts/domain-model.yaml",
+                ".agents/contracts/roles.yaml",
+                ".agents/contracts/authz.yaml",
+                ".agents/contracts/routes.yaml",
+                ".agents/contracts/features.yaml",
+                ".agents/contracts/analytics.yaml",
+                ".agents/contracts/acceptance-gates.yaml"
+            ],
+            "validation_status": "not_run",
+            "notes": "Contracts are intended to be the machine-readable implementation authority."
+        },
+        {
+            "id": "PRG-003",
+            "date": "2026-04-24",
+            "status": "completed",
+            "category": "agents",
+            "title": "Generated repo-level AGENTS.md guidance",
+            "summary": "Created Codex-oriented AGENTS.md instructions and 8000-character condensed variant.",
+            "files": ["AGENTS.md"],
+            "validation_status": "not_run",
+            "notes": "AGENTS.md summarizes implementation rules, stop conditions, and reporting format."
+        },
+        {
+            "id": "PRG-004",
+            "date": "2026-04-24",
+            "status": "completed",
+            "category": "instructions",
+            "title": "Generated instruction layer",
+            "summary": "Created domain-specific implementation instruction files using the requested legacy filenames and Vouch-safe normalized meanings.",
+            "files": [
+                ".agents/instructions/admin-moderation.instructions.md",
+                ".agents/instructions/auth.instructions.md",
+                ".agents/instructions/booking.instructions.md",
+                ".agents/instructions/database-prisma.instructions.md",
+                ".agents/instructions/discovery.instructions.md",
+                ".agents/instructions/guest-inbox.instructions.md",
+                ".agents/instructions/host-dashboard.instructions.md",
+                ".agents/instructions/host-onboarding.instructions.md",
+                ".agents/instructions/host-profile.instructions.md",
+                ".agents/instructions/shared-components.instructions.md"
+            ],
+            "validation_status": "not_run",
+            "notes": "Legacy terms were normalized: booking means Vouch lifecycle, guest means payer/client, host means payee/provider, discovery means public marketing and anti-discovery."
+        },
+        {
+            "id": "PRG-005",
+            "date": "2026-04-24",
+            "status": "completed",
+            "category": "execution",
+            "title": "Generated execution JSON seed files",
+            "summary": "Created initial backlog, decisions, progress, handoff, and validation state files.",
+            "files": [
+                ".agents/execution/backlog.json",
+                ".agents/execution/decisions.json",
+                ".agents/execution/handoff.json",
+                ".agents/execution/progress.json",
+                ".agents/execution/validation.json"
+            ],
+            "validation_status": "not_run",
+            "notes": "Execution files record state and do not define business logic."
+        }
+    ],
+    "next_expected_phase": "repo_implementation",
+    "next_expected_work": [
+        "Add generated .agents files to repo.",
+        "Validate JSON/YAML syntax.",
+        "Implement Prisma schema from domain model.",
+        "Implement auth/authz and setup gates.",
+        "Implement Vouch lifecycle actions and fetchers.",
+        "Implement payment provider adapter after Stripe flow decision."
+    ]
+}

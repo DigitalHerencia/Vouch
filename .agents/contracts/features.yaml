@@ -1,0 +1,657 @@
+# `.agents/contracts/features.yaml`
+
+```yaml
+schema_version: "1.0.0"
+contract_name: "features"
+product: "Vouch"
+
+summary:
+    description: "Feature contract mapping product capabilities to entities, actions, routes, and constraints."
+
+feature_rules:
+    - id: "features_must_support_core_mechanism"
+      rule: "Every MVP feature must directly support account readiness, Vouch creation, acceptance, confirmation, payment resolution, auditability, or operational diagnosis."
+
+    - id: "features_must_not_create_marketplace"
+      rule: "No feature may introduce discovery, profiles, reviews, messaging, ratings, recommendations, or service listings."
+
+    - id: "features_must_not_create_arbitration"
+      rule: "No feature may allow staff or users to decide who deserved funds outside deterministic confirmation rules."
+
+features:
+    marketing_landing:
+        description: "Public landing page explaining commitment-backed payments."
+        phase: "mvp"
+        routes:
+            - "home"
+        actors:
+            - "anonymous"
+            - "authenticated_user"
+        entities_read: []
+        actions:
+            - "view_public_marketing"
+            - "start_auth_flow"
+        required_sections:
+            - "hero"
+            - "how_it_works"
+            - "use_cases"
+            - "pricing"
+            - "faq"
+            - "legal_safe_positioning"
+            - "primary_cta"
+        prohibited_content:
+            - "escrow claims"
+            - "marketplace positioning"
+            - "service guarantees"
+            - "public profiles"
+            - "reviews"
+
+    marketing_how_it_works:
+        description: "Public explanation of the Vouch mechanism."
+        phase: "mvp"
+        routes:
+            - "how_it_works"
+        actors:
+            - "anonymous"
+            - "authenticated_user"
+        required_steps:
+            - "create_vouch"
+            - "accept_vouch"
+            - "confirm_presence"
+            - "release_or_refund"
+
+    marketing_pricing:
+        description: "Public pricing page."
+        phase: "mvp"
+        routes:
+            - "pricing"
+        actors:
+            - "anonymous"
+            - "authenticated_user"
+        required_content:
+            - "platform fee model"
+            - "minimum fee"
+            - "percentage fee"
+            - "fees shown before payment commitment"
+
+    legal_terms:
+        description: "Public terms page."
+        phase: "mvp"
+        routes:
+            - "terms"
+        actors:
+            - "anonymous"
+            - "authenticated_user"
+        required_content:
+            - "Vouch is payment coordination"
+            - "Vouch is not marketplace"
+            - "Vouch is not arbitration"
+            - "payment provider handles payment processing"
+            - "dual confirmation rule"
+            - "refund/non-capture rule"
+
+    legal_privacy:
+        description: "Public privacy page."
+        phase: "mvp"
+        routes:
+            - "privacy"
+        actors:
+            - "anonymous"
+            - "authenticated_user"
+        required_content:
+            - "data minimization"
+            - "payment references"
+            - "verification references"
+            - "audit records"
+            - "notification records"
+
+    auth_sign_in:
+        description: "User sign-in."
+        phase: "mvp"
+        routes:
+            - "sign_in"
+        actors:
+            - "anonymous"
+        external_services:
+            - "Clerk"
+        actions:
+            - "start_auth_flow"
+        success_redirects:
+            default: "/dashboard"
+            invite_context: "/vouches/invite/[token]"
+            return_to: "validated internal path"
+
+    auth_sign_up:
+        description: "User sign-up."
+        phase: "mvp"
+        routes:
+            - "sign_up"
+        actors:
+            - "anonymous"
+        external_services:
+            - "Clerk"
+        created_entities:
+            - "User"
+        actions:
+            - "start_auth_flow"
+            - "user.created"
+        success_redirects:
+            default: "/dashboard"
+            invite_context: "/vouches/invite/[token]"
+            return_to: "validated internal path"
+
+    setup_checklist:
+        description: "Account readiness checklist for verification, payment, payout, and terms."
+        phase: "mvp"
+        routes:
+            - "setup"
+        actors:
+            - "authenticated_user"
+        entities_read:
+            - "User"
+            - "VerificationProfile"
+            - "PaymentCustomer"
+            - "ConnectedAccount"
+            - "TermsAcceptance"
+        actions:
+            - "start_verification"
+            - "start_payment_setup"
+            - "start_payout_setup"
+            - "accept_terms"
+        gates_displayed:
+            - "identity_verified"
+            - "adult_verified"
+            - "payment_ready"
+            - "payout_ready"
+            - "terms_accepted"
+
+    dashboard:
+        description: "Authenticated overview of user Vouches and required actions."
+        phase: "mvp"
+        routes:
+            - "dashboard"
+        actors:
+            - "authenticated_user"
+        entities_read:
+            - "Vouch"
+            - "PresenceConfirmation"
+            - "PaymentRecord"
+            - "RefundRecord"
+        data_scope:
+            - "Vouches where current user is payer"
+            - "Vouches where current user is accepted payee"
+        sections:
+            - "action_required"
+            - "active"
+            - "pending"
+            - "completed"
+            - "expired_refunded"
+        actions:
+            - "view_dashboard"
+            - "create_vouch"
+            - "view_vouch"
+
+    vouch_list:
+        description: "Paginated user-scoped Vouch list."
+        phase: "mvp"
+        routes:
+            - "vouches_index"
+        actors:
+            - "authenticated_user"
+        entities_read:
+            - "Vouch"
+        query_state:
+            - "status"
+            - "page"
+            - "sort"
+        data_scope:
+            - "participant only"
+
+    create_vouch:
+        description: "Create a Pending Vouch with committed payment."
+        phase: "mvp"
+        routes:
+            - "vouch_create"
+        actors:
+            - "authenticated_user"
+        required_gates:
+            - "identity_verified"
+            - "adult_verified"
+            - "payment_ready"
+            - "terms_accepted"
+        entities_created:
+            - "Vouch"
+            - "Invitation"
+            - "PaymentRecord"
+            - "AuditEvent"
+            - "NotificationEvent"
+        inputs:
+            amount_cents:
+                type: "integer"
+                required: true
+            currency:
+                type: "string"
+                required: true
+                default: "usd"
+            meeting_starts_at:
+                type: "datetime"
+                required: true
+            confirmation_opens_at:
+                type: "datetime"
+                required: true
+            confirmation_expires_at:
+                type: "datetime"
+                required: true
+            recipient_email:
+                type: "string"
+                required: false
+            label:
+                type: "string"
+                required: false
+                max_length: 120
+        server_action:
+            name: "createVouch"
+            required_sequence:
+                - "authenticate"
+                - "authorize"
+                - "validate_input"
+                - "calculate_fee"
+                - "initialize_payment"
+                - "create_vouch_transaction"
+                - "create_invitation"
+                - "write_audit_event"
+                - "queue_notification_if_recipient"
+                - "revalidate_vouch_tags"
+        resulting_state: "pending"
+
+    accept_vouch:
+        description: "Review and accept a Pending Vouch as payee."
+        phase: "mvp"
+        routes:
+            - "vouch_invite"
+        actors:
+            - "anonymous"
+            - "authenticated_user"
+        required_gates_for_acceptance:
+            - "authenticated"
+            - "identity_verified"
+            - "adult_verified"
+            - "payout_ready"
+            - "terms_accepted"
+        entities_read:
+            - "Invitation"
+            - "Vouch"
+            - "PaymentRecord"
+        entities_updated:
+            - "Invitation"
+            - "Vouch"
+        entities_created:
+            - "AuditEvent"
+            - "NotificationEvent"
+        server_action:
+            name: "acceptVouch"
+            required_sequence:
+                - "authenticate"
+                - "authorize_invitation"
+                - "validate_payee_eligibility"
+                - "ensure_not_self_acceptance"
+                - "ensure_vouch_pending"
+                - "bind_payee"
+                - "transition_vouch_to_active"
+                - "write_audit_event"
+                - "queue_notification"
+                - "revalidate_vouch_tags"
+        resulting_state: "active"
+
+    decline_vouch:
+        description: "Decline a Pending Vouch invitation."
+        phase: "mvp"
+        routes:
+            - "vouch_invite"
+        actors:
+            - "authenticated_user"
+        entities_updated:
+            - "Invitation"
+        entities_created:
+            - "AuditEvent"
+            - "NotificationEvent"
+        server_action:
+            name: "declineVouch"
+            required_sequence:
+                - "authenticate"
+                - "authorize_invitation"
+                - "ensure_vouch_pending"
+                - "mark_invitation_declined"
+                - "write_audit_event"
+                - "notify_payer"
+
+    vouch_detail:
+        description: "Participant-scoped Vouch status and action page."
+        phase: "mvp"
+        routes:
+            - "vouch_detail"
+        actors:
+            - "authenticated_user"
+        entities_read:
+            - "Vouch"
+            - "Invitation"
+            - "PresenceConfirmation"
+            - "PaymentRecord"
+            - "RefundRecord"
+            - "AuditEvent"
+        data_scope:
+            - "payer"
+            - "accepted payee"
+        required_panels:
+            - "status_header"
+            - "amount_summary"
+            - "time_window"
+            - "confirmation_status"
+            - "payment_status"
+            - "timeline"
+            - "available_action"
+        prohibited_panels:
+            - "message_thread"
+            - "review_prompt"
+            - "dispute_form"
+            - "service_category"
+
+    confirm_presence:
+        description: "Record participant presence confirmation."
+        phase: "mvp"
+        routes:
+            - "vouch_confirm"
+            - "vouch_detail"
+        actors:
+            - "payer"
+            - "payee"
+        required_gates:
+            - "authenticated"
+            - "participant"
+            - "active_vouch"
+            - "within_confirmation_window"
+            - "not_already_confirmed"
+        entities_created:
+            - "PresenceConfirmation"
+            - "AuditEvent"
+        entities_updated:
+            - "Vouch"
+            - "PaymentRecord"
+            - "RefundRecord"
+        server_action:
+            name: "confirmPresence"
+            required_sequence:
+                - "authenticate"
+                - "authorize_participant"
+                - "validate_window"
+                - "prevent_duplicate_confirmation"
+                - "create_confirmation"
+                - "write_audit_event"
+                - "check_aggregate_confirmation"
+                - "complete_vouch_if_both_confirmed"
+                - "queue_notification"
+                - "revalidate_vouch_tags"
+
+    payment_setup:
+        description: "Payer payment method readiness setup."
+        phase: "mvp"
+        routes:
+            - "payment_setup"
+        actors:
+            - "authenticated_user"
+        external_services:
+            - "Stripe"
+        entities_read:
+            - "PaymentCustomer"
+            - "VerificationProfile"
+        entities_updated:
+            - "PaymentCustomer"
+            - "VerificationProfile"
+        actions:
+            - "start_payment_setup"
+            - "user.payment_method.added"
+
+    payout_setup:
+        description: "Payee connected-account readiness setup."
+        phase: "mvp"
+        routes:
+            - "payout_setup"
+        actors:
+            - "authenticated_user"
+        external_services:
+            - "Stripe Connect"
+        entities_read:
+            - "ConnectedAccount"
+            - "VerificationProfile"
+        entities_updated:
+            - "ConnectedAccount"
+            - "VerificationProfile"
+        actions:
+            - "start_payout_setup"
+            - "user.connected_account.created"
+            - "user.connected_account.ready"
+
+    verification:
+        description: "Identity and adult eligibility setup."
+        phase: "mvp"
+        routes:
+            - "verification"
+        actors:
+            - "authenticated_user"
+        external_services:
+            - "Stripe Identity or equivalent"
+        entities_read:
+            - "VerificationProfile"
+        entities_updated:
+            - "VerificationProfile"
+        actions:
+            - "start_verification"
+            - "user.verification.started"
+            - "user.verification.completed"
+            - "user.verification.rejected"
+
+    vouch_expiration:
+        description: "System expiration and refund/non-capture flow."
+        phase: "mvp"
+        routes: []
+        actors:
+            - "system"
+        trigger:
+            - "scheduled job"
+            - "lazy evaluation on read/action"
+            - "provider reconciliation"
+        entities_read:
+            - "Vouch"
+            - "PresenceConfirmation"
+            - "PaymentRecord"
+        entities_updated:
+            - "Vouch"
+            - "PaymentRecord"
+            - "RefundRecord"
+        server_process:
+            name: "expireUnresolvedVouches"
+            required_sequence:
+                - "find_expired_unresolved_vouches"
+                - "verify_not_both_confirmed"
+                - "initiate_refund_void_or_non_capture"
+                - "transition_vouch_to_expired_or_refunded"
+                - "write_audit_event"
+                - "queue_notifications"
+                - "revalidate_vouch_tags"
+
+    stripe_webhook:
+        description: "Payment provider webhook reconciliation."
+        phase: "mvp"
+        routes:
+            - "api_stripe_webhook"
+        actors:
+            - "payment_provider"
+            - "system"
+        entities_created:
+            - "PaymentWebhookEvent"
+            - "AuditEvent"
+        entities_updated:
+            - "PaymentRecord"
+            - "RefundRecord"
+            - "ConnectedAccount"
+            - "VerificationProfile"
+        requirements:
+            - "verify signature"
+            - "idempotent processing"
+            - "transactional state update"
+            - "safe audit metadata"
+
+    auth_webhook:
+        description: "Auth provider user synchronization."
+        phase: "mvp"
+        routes:
+            - "api_clerk_webhook"
+        actors:
+            - "auth_provider"
+            - "system"
+        entities_created:
+            - "User"
+            - "VerificationProfile"
+        entities_updated:
+            - "User"
+        requirements:
+            - "verify signature"
+            - "idempotent upsert"
+            - "safe audit metadata"
+
+    notifications:
+        description: "Lifecycle email notifications."
+        phase: "mvp"
+        routes: []
+        actors:
+            - "system"
+        entities_created:
+            - "NotificationEvent"
+        notification_types:
+            - "invite"
+            - "accepted"
+            - "confirmation_window"
+            - "confirmation_recorded"
+            - "completed"
+            - "expired"
+            - "failed"
+
+    admin_dashboard:
+        description: "Operational overview without arbitration."
+        phase: "mvp"
+        routes:
+            - "admin_dashboard"
+        actors:
+            - "admin"
+        entities_read:
+            - "User"
+            - "Vouch"
+            - "PaymentRecord"
+            - "RefundRecord"
+            - "PaymentWebhookEvent"
+            - "AuditEvent"
+        allowed_actions:
+            - "view_operational_state"
+        prohibited_actions:
+            - "decide_dispute"
+            - "manually_award_funds"
+            - "rewrite_confirmation_truth"
+
+    admin_vouches:
+        description: "Operational Vouch list and filters."
+        phase: "mvp"
+        routes:
+            - "admin_vouches"
+            - "admin_vouch_detail"
+        actors:
+            - "admin"
+        entities_read:
+            - "Vouch"
+            - "PresenceConfirmation"
+            - "PaymentRecord"
+            - "RefundRecord"
+            - "AuditEvent"
+        allowed_actions:
+            - "view_vouches_operational"
+            - "retry_safe_technical_operation"
+        prohibited_actions:
+            - "arbitrate"
+            - "manual_release_without_dual_confirmation"
+
+    admin_users:
+        description: "Operational user inspection."
+        phase: "mvp"
+        routes:
+            - "admin_users"
+        actors:
+            - "admin"
+        entities_read:
+            - "User"
+            - "VerificationProfile"
+            - "PaymentCustomer"
+            - "ConnectedAccount"
+        allowed_actions:
+            - "view_users_operational"
+            - "disable_user_account"
+
+    admin_payments:
+        description: "Operational payment inspection."
+        phase: "mvp"
+        routes:
+            - "admin_payments"
+        actors:
+            - "admin"
+        entities_read:
+            - "PaymentRecord"
+            - "RefundRecord"
+            - "PaymentWebhookEvent"
+        allowed_actions:
+            - "view_payment_records_operational"
+            - "retry_safe_technical_operation"
+
+    admin_audit:
+        description: "Operational audit log inspection."
+        phase: "mvp"
+        routes:
+            - "admin_audit"
+        actors:
+            - "admin"
+        entities_read:
+            - "AuditEvent"
+        allowed_actions:
+            - "view_audit_events_operational"
+
+deferred_features:
+    gps_confirmation:
+        reason: "Useful but not required for MVP. Manual dual confirmation proves core loop first."
+    recurring_vouches:
+        reason: "Requires stable single Vouch lifecycle first."
+    group_vouches:
+        reason: "Requires multi-party lifecycle complexity."
+    api_access:
+        reason: "Requires stable internal contracts and abuse controls."
+    calendar_integrations:
+        reason: "Must not turn Vouch into scheduling software."
+    sms_notifications:
+        reason: "Email is sufficient for MVP."
+    native_mobile_apps:
+        reason: "Web MVP is enough to validate mechanism."
+
+forbidden_features:
+    - id: "profiles"
+      reason: "Creates marketplace/social surface."
+    - id: "ratings_reviews"
+      reason: "Creates reputation and endorsement layer."
+    - id: "messaging"
+      reason: "Creates facilitation and moderation surface."
+    - id: "search_discovery"
+      reason: "Creates marketplace behavior."
+    - id: "service_categories"
+      reason: "Encourages platform knowledge of transaction purpose."
+    - id: "dispute_resolution"
+      reason: "Contradicts deterministic no-arbitration model."
+    - id: "manual_fund_awards"
+      reason: "Contradicts dual confirmation release rule."
+```
+
+---

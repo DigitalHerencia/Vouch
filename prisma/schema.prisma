@@ -1,0 +1,706 @@
+generator client {
+  provider   = "prisma-client"
+  output     = "../src/generated/prisma"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+/**
+ * Vouch intentionally does not model:
+ * - public profiles
+ * - service listings
+ * - marketplace categories
+ * - reviews / ratings
+ * - messages
+ * - dispute cases
+ * - evidence uploads
+ * - manual award/release controls
+ *
+ * Domain rule:
+ * both participants confirm presence inside the confirmation window -> release.
+ * otherwise -> refund, void, or non-capture through provider flow.
+ */
+
+/* ================================
+   Enums
+================================ */
+
+enum UserStatus {
+  active
+  disabled
+}
+
+enum VerificationStatus {
+  unstarted
+  pending
+  verified
+  rejected
+  requires_action
+  expired
+}
+
+enum PaymentReadinessStatus {
+  not_started
+  requires_action
+  ready
+  failed
+}
+
+enum PayoutReadinessStatus {
+  not_started
+  requires_action
+  ready
+  restricted
+  failed
+}
+
+enum VouchStatus {
+  pending
+  active
+  completed
+  expired
+  refunded
+  canceled
+  failed
+}
+
+enum InvitationStatus {
+  created
+  sent
+  opened
+  accepted
+  declined
+  expired
+  invalidated
+}
+
+enum ParticipantRole {
+  payer
+  payee
+}
+
+enum ConfirmationStatus {
+  not_confirmed
+  confirmed
+  ineligible
+  window_not_open
+  window_closed
+}
+
+enum ConfirmationMethod {
+  manual
+  gps
+  system
+}
+
+enum PaymentProvider {
+  stripe
+}
+
+enum VerificationProvider {
+  stripe_identity
+}
+
+enum WebhookProvider {
+  clerk
+  stripe
+  stripe_identity
+}
+
+enum ProviderWebhookStatus {
+  received
+  processed
+  ignored
+  failed
+}
+
+enum PaymentStatus {
+  not_started
+  requires_payment_method
+  authorized
+  captured
+  release_pending
+  released
+  refund_pending
+  refunded
+  voided
+  failed
+}
+
+enum RefundStatus {
+  not_required
+  pending
+  succeeded
+  failed
+}
+
+enum RefundReason {
+  not_accepted
+  confirmation_incomplete
+  canceled_before_acceptance
+  payment_failure
+  provider_required
+}
+
+enum AuditActorType {
+  user
+  system
+  admin
+  payment_provider
+  auth_provider
+  verification_provider
+}
+
+enum NotificationChannel {
+  email
+}
+
+enum NotificationStatus {
+  queued
+  sent
+  failed
+  skipped
+}
+
+enum NotificationType {
+  invite
+  vouch_accepted
+  confirmation_window_open
+  confirmation_recorded
+  vouch_completed
+  vouch_expired_refunded
+  payment_failed
+}
+
+enum AnalyticsEventGroup {
+  acquisition
+  setup
+  vouch
+  payment
+  notification
+  admin
+}
+
+enum Environment {
+  development
+  preview
+  production
+}
+
+enum AdminSafeRetryOperation {
+  retry_notification_send
+  retry_provider_reconciliation
+  retry_webhook_processing
+  retry_refund_status_sync
+}
+
+enum OperationalRetryStatus {
+  started
+  completed
+  failed
+  skipped
+}
+
+/* ================================
+   Users / Auth / Readiness
+================================ */
+
+model User {
+  id          String     @id @default(cuid())
+  clerkUserId String    @unique
+  email       String?   @db.VarChar(320)
+  phone       String?   @db.VarChar(32)
+  displayName String?   @db.VarChar(120)
+  status      UserStatus @default(active)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  verificationProfile VerificationProfile?
+  paymentCustomer     PaymentCustomer?
+  connectedAccount    ConnectedAccount?
+
+  termsAcceptances TermsAcceptance[]
+
+  payerVouches Vouch[] @relation("VouchPayer")
+  payeeVouches Vouch[] @relation("VouchPayee")
+
+  presenceConfirmations PresenceConfirmation[]
+
+  auditEvents AuditEvent[] @relation("AuditActorUser")
+
+  notificationEvents NotificationEvent[] @relation("NotificationRecipient")
+
+  analyticsEvents AnalyticsEvent[]
+
+  operationalRetries OperationalRetry[] @relation("OperationalRetryAdminUser")
+
+  @@index([status])
+  @@index([email])
+  @@map("users")
+}
+
+model VerificationProfile {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  identityStatus VerificationStatus @default(unstarted)
+  adultStatus    VerificationStatus @default(unstarted)
+
+  paymentReadiness PaymentReadinessStatus @default(not_started)
+  payoutReadiness  PayoutReadinessStatus  @default(not_started)
+
+  provider          VerificationProvider?
+  providerReference String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([identityStatus])
+  @@index([adultStatus])
+  @@index([paymentReadiness])
+  @@index([payoutReadiness])
+  @@map("verification_profiles")
+}
+
+model PaymentCustomer {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  provider           PaymentProvider @default(stripe)
+  providerCustomerId String          @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([provider])
+  @@map("payment_customers")
+}
+
+model ConnectedAccount {
+  id     String @id @default(cuid())
+  userId String @unique
+
+  provider          PaymentProvider @default(stripe)
+  providerAccountId String          @unique
+
+  readiness        PayoutReadinessStatus @default(not_started)
+  chargesEnabled   Boolean               @default(false)
+  payoutsEnabled   Boolean               @default(false)
+  detailsSubmitted Boolean               @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([readiness])
+  @@index([chargesEnabled])
+  @@index([payoutsEnabled])
+  @@map("connected_accounts")
+}
+
+model TermsAcceptance {
+  id     String @id @default(cuid())
+  userId String
+
+  termsVersion String   @db.VarChar(64)
+  acceptedAt   DateTime @default(now())
+
+  ipHash        String?
+  userAgentHash String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([userId, termsVersion])
+  @@index([userId, acceptedAt])
+  @@map("terms_acceptances")
+}
+
+/* ================================
+   Vouch Lifecycle
+================================ */
+
+model Vouch {
+  id       String @id @default(cuid())
+  publicId String @unique
+
+  payerId String
+  payeeId String?
+
+  amountCents      Int
+  currency         String @default("usd") @db.VarChar(3)
+  platformFeeCents Int    @default(0)
+
+  status VouchStatus @default(pending)
+
+  label String? @db.VarChar(120)
+
+  meetingStartsAt         DateTime
+  confirmationOpensAt     DateTime
+  confirmationExpiresAt   DateTime
+
+  acceptedAt  DateTime?
+  completedAt DateTime?
+  expiredAt   DateTime?
+  canceledAt  DateTime?
+  failedAt    DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payer User  @relation("VouchPayer", fields: [payerId], references: [id], onDelete: Restrict)
+  payee User? @relation("VouchPayee", fields: [payeeId], references: [id], onDelete: Restrict)
+
+  invitation            Invitation?
+  presenceConfirmations PresenceConfirmation[]
+  paymentRecord         PaymentRecord?
+  refundRecord          RefundRecord?
+  notificationEvents    NotificationEvent[]
+  paymentWebhookEvents  PaymentWebhookEvent[]
+
+  @@index([payerId])
+  @@index([payeeId])
+  @@index([status])
+  @@index([confirmationExpiresAt])
+  @@index([payerId, status, confirmationExpiresAt])
+  @@index([payeeId, status, confirmationExpiresAt])
+  @@index([payerId, createdAt])
+  @@index([payeeId, createdAt])
+  @@index([status, confirmationExpiresAt])
+  @@map("vouches")
+}
+
+model Invitation {
+  id      String @id @default(cuid())
+  vouchId String @unique
+
+  tokenHash      String  @unique
+  recipientEmail String? @db.VarChar(320)
+
+  status    InvitationStatus @default(created)
+  expiresAt DateTime
+
+  openedAt   DateTime?
+  acceptedAt DateTime?
+  declinedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vouch Vouch @relation(fields: [vouchId], references: [id], onDelete: Restrict)
+
+  @@index([tokenHash])
+  @@index([status])
+  @@index([expiresAt])
+  @@index([recipientEmail])
+  @@map("invitations")
+}
+
+model PresenceConfirmation {
+  id      String @id @default(cuid())
+  vouchId String
+  userId  String
+
+  participantRole ParticipantRole
+  status          ConfirmationStatus @default(confirmed)
+  method          ConfirmationMethod @default(manual)
+
+  confirmedAt DateTime
+  createdAt   DateTime @default(now())
+
+  vouch Vouch @relation(fields: [vouchId], references: [id], onDelete: Restrict)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@unique([vouchId, participantRole])
+  @@unique([vouchId, userId])
+  @@index([vouchId])
+  @@index([userId])
+  @@index([participantRole])
+  @@index([confirmedAt])
+  @@map("presence_confirmations")
+}
+
+/* ================================
+   Payments / Refunds / Webhooks
+================================ */
+
+model PaymentRecord {
+  id      String @id @default(cuid())
+  vouchId String @unique
+
+  provider PaymentProvider @default(stripe)
+
+  providerPaymentId  String? @unique
+  providerChargeId   String?
+  providerTransferId String?
+
+  status PaymentStatus @default(not_started)
+
+  amountCents      Int
+  currency         String @default("usd") @db.VarChar(3)
+  platformFeeCents Int    @default(0)
+
+  lastErrorCode        String?
+  safeLastErrorMessage String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vouch        Vouch         @relation(fields: [vouchId], references: [id], onDelete: Restrict)
+  refundRecord RefundRecord?
+
+  webhookEvents PaymentWebhookEvent[]
+
+  @@index([provider])
+  @@index([providerPaymentId])
+  @@index([providerChargeId])
+  @@index([providerTransferId])
+  @@index([status])
+  @@index([vouchId, status])
+  @@map("payment_records")
+}
+
+model RefundRecord {
+  id              String @id @default(cuid())
+  vouchId          String @unique
+  paymentRecordId  String @unique
+
+  providerRefundId String? @unique
+
+  status RefundStatus @default(not_required)
+  reason RefundReason?
+
+  amountCents Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vouch         Vouch         @relation(fields: [vouchId], references: [id], onDelete: Restrict)
+  paymentRecord PaymentRecord @relation(fields: [paymentRecordId], references: [id], onDelete: Restrict)
+
+  webhookEvents PaymentWebhookEvent[]
+
+  @@index([status])
+  @@index([reason])
+  @@index([providerRefundId])
+  @@map("refund_records")
+}
+
+/**
+ * Generic provider webhook ledger.
+ *
+ * Use this for Clerk and Stripe idempotency.
+ * Do not store full provider payloads here.
+ */
+model ProviderWebhookEvent {
+  id String @id @default(cuid())
+
+  provider        WebhookProvider
+  providerEventId String
+  eventType       String
+
+  status    ProviderWebhookStatus @default(received)
+  processed Boolean               @default(false)
+
+  receivedAt  DateTime  @default(now())
+  processedAt DateTime?
+
+  processingError String?
+  safeMetadata    Json?
+
+  paymentWebhookEvent PaymentWebhookEvent?
+
+  @@unique([provider, providerEventId])
+  @@index([provider])
+  @@index([eventType])
+  @@index([status])
+  @@index([processed])
+  @@index([receivedAt])
+  @@map("provider_webhook_events")
+}
+
+/**
+ * Stripe/payment-specific webhook projection.
+ *
+ * This satisfies the payment webhook operational/admin views while
+ * ProviderWebhookEvent handles generic idempotency across Clerk/Stripe.
+ */
+model PaymentWebhookEvent {
+  id String @id @default(cuid())
+
+  provider        PaymentProvider @default(stripe)
+  providerEventId String          @unique
+  eventType       String
+
+  providerWebhookEventId String? @unique
+
+  vouchId         String?
+  paymentRecordId String?
+  refundRecordId  String?
+
+  processed Boolean @default(false)
+
+  receivedAt  DateTime  @default(now())
+  processedAt DateTime?
+
+  processingError String?
+  safeMetadata    Json?
+
+  providerWebhookEvent ProviderWebhookEvent? @relation(fields: [providerWebhookEventId], references: [id], onDelete: SetNull)
+
+  vouch         Vouch?         @relation(fields: [vouchId], references: [id], onDelete: SetNull)
+  paymentRecord PaymentRecord? @relation(fields: [paymentRecordId], references: [id], onDelete: SetNull)
+  refundRecord  RefundRecord?  @relation(fields: [refundRecordId], references: [id], onDelete: SetNull)
+
+  @@index([provider])
+  @@index([eventType])
+  @@index([processed])
+  @@index([receivedAt])
+  @@index([vouchId])
+  @@index([paymentRecordId])
+  @@index([refundRecordId])
+  @@map("payment_webhook_events")
+}
+
+/* ================================
+   Audit / Notifications / Analytics
+================================ */
+
+model AuditEvent {
+  id String @id @default(cuid())
+
+  eventName String
+  actorType AuditActorType
+
+  actorUserId String?
+
+  entityType String
+  entityId   String
+
+  requestId String?
+
+  participantSafe Boolean @default(false)
+
+  metadata Json?
+
+  createdAt DateTime @default(now())
+
+  actorUser User? @relation("AuditActorUser", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([eventName])
+  @@index([actorType])
+  @@index([actorUserId])
+  @@index([entityType, entityId])
+  @@index([entityType, entityId, createdAt])
+  @@index([participantSafe])
+  @@index([createdAt])
+  @@map("audit_events")
+}
+
+model NotificationEvent {
+  id String @id @default(cuid())
+
+  type    NotificationType
+  channel NotificationChannel @default(email)
+  status  NotificationStatus  @default(queued)
+
+  recipientUserId String?
+  recipientEmail  String? @db.VarChar(320)
+
+  vouchId String?
+
+  providerMessageId String?
+  failureCode       String?
+
+  queuedAt DateTime @default(now())
+  sentAt   DateTime?
+  failedAt DateTime?
+  skippedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipient User?  @relation("NotificationRecipient", fields: [recipientUserId], references: [id], onDelete: SetNull)
+  vouch     Vouch? @relation(fields: [vouchId], references: [id], onDelete: SetNull)
+
+  @@index([recipientUserId])
+  @@index([recipientEmail])
+  @@index([vouchId])
+  @@index([vouchId, status])
+  @@index([type])
+  @@index([channel])
+  @@index([status])
+  @@index([queuedAt])
+  @@map("notification_events")
+}
+
+model AnalyticsEvent {
+  id String @id @default(cuid())
+
+  eventName  String
+  eventGroup AnalyticsEventGroup
+
+  environment Environment @default(development)
+
+  userId    String?
+  sessionId String?
+  requestId String?
+
+  occurredAt DateTime @default(now())
+  createdAt  DateTime @default(now())
+
+  properties Json?
+
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([eventName])
+  @@index([eventGroup])
+  @@index([environment])
+  @@index([userId])
+  @@index([sessionId])
+  @@index([requestId])
+  @@index([occurredAt])
+  @@map("analytics_events")
+}
+
+/* ================================
+   Admin / Operational Retry
+================================ */
+
+model OperationalRetry {
+  id String @id @default(cuid())
+
+  operation AdminSafeRetryOperation
+  status    OperationalRetryStatus @default(started)
+
+  entityType String
+  entityId   String
+
+  adminUserId String?
+
+  reason    String?
+  errorCode String?
+
+  startedAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  adminUser User? @relation("OperationalRetryAdminUser", fields: [adminUserId], references: [id], onDelete: SetNull)
+
+  @@index([operation])
+  @@index([status])
+  @@index([entityType, entityId])
+  @@index([adminUserId])
+  @@index([startedAt])
+  @@map("operational_retries")
+}

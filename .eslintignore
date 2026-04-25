@@ -1,0 +1,14 @@
+# Kept for tool/editor compatibility.
+# Actual ESLint flat-config ignores live in eslint.config.mjs.
+
+.next/
+out/
+build/
+dist/
+coverage/
+playwright-report/
+test-results/
+node_modules/
+generated/prisma/
+src/generated/prisma/
+next-env.d.ts

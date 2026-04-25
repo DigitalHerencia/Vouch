@@ -1,0 +1,226 @@
+
+# `.agents/contracts/roles.yaml`
+
+```yaml
+schema_version: "1.0.0"
+contract_name: "roles"
+product: "Vouch"
+
+summary:
+    description: "Canonical role and capability definitions for Vouch."
+
+role_model:
+    type: "contextual_rbac_with_server_side_authz"
+    description: "Base account roles combine with contextual Vouch participant roles. Participant permissions are derived from Vouch relationship, not global user role."
+
+base_roles:
+    anonymous:
+        description: "Unauthenticated visitor."
+        capabilities:
+            - "view_public_marketing"
+            - "view_public_legal"
+            - "start_auth_flow"
+            - "open_invite_landing"
+        prohibited:
+            - "create_vouch"
+            - "accept_vouch"
+            - "confirm_presence"
+            - "view_dashboard"
+            - "view_protected_vouch"
+            - "view_admin"
+
+    authenticated_user:
+        description: "Signed-in user with a local User record."
+        capabilities:
+            - "view_dashboard"
+            - "view_own_account"
+            - "view_setup_status"
+            - "start_verification"
+            - "start_payment_setup"
+            - "start_payout_setup"
+            - "accept_terms"
+            - "view_vouches_where_participant"
+        prohibited:
+            - "view_unrelated_vouch"
+            - "view_admin"
+            - "force_release_funds"
+            - "override_expiration"
+            - "arbitrate_vouch"
+
+    admin:
+        description: "Privileged operational user."
+        capabilities:
+            - "view_admin_dashboard"
+            - "view_users_operational"
+            - "view_vouches_operational"
+            - "view_payment_records_operational"
+            - "view_audit_events_operational"
+            - "view_webhook_events_operational"
+            - "retry_safe_technical_operation"
+            - "disable_user_account"
+        prohibited:
+            - "decide_dispute"
+            - "manually_award_funds"
+            - "rewrite_confirmation_truth"
+            - "create_marketplace_moderation"
+            - "bypass_payment_provider_requirements"
+
+    system:
+        description: "Automated server-side system actor."
+        capabilities:
+            - "expire_vouch"
+            - "complete_vouch"
+            - "refund_vouch"
+            - "void_payment"
+            - "reconcile_payment_webhook"
+            - "send_notification"
+            - "write_audit_event"
+            - "mark_payment_failed"
+            - "mark_vouch_failed"
+        prohibited:
+            - "infer_human_truth"
+            - "release_without_dual_confirmation"
+            - "mutate_final_state_without_audit_event"
+
+contextual_roles:
+    payer:
+        description: "User who created and committed funds for a Vouch."
+        derived_when:
+            resource: "Vouch"
+            condition: "Vouch.payer_id == current_user.id"
+        capabilities:
+            - "view_own_created_vouch"
+            - "share_vouch_invite"
+            - "cancel_pending_vouch_if_allowed"
+            - "confirm_presence_as_payer"
+            - "view_final_outcome"
+            - "receive_refund_when_applicable"
+        prohibited:
+            - "accept_own_vouch"
+            - "confirm_presence_as_payee"
+            - "force_release_funds"
+            - "view_unrelated_vouch"
+            - "override_confirmation_window"
+
+    payee:
+        description: "User who accepted a Vouch and may receive funds after completion."
+        derived_when:
+            resource: "Vouch"
+            condition: "Vouch.payee_id == current_user.id"
+        capabilities:
+            - "view_accepted_vouch"
+            - "confirm_presence_as_payee"
+            - "view_final_outcome"
+            - "receive_released_funds_when_completed"
+        prohibited:
+            - "confirm_presence_as_payer"
+            - "force_release_funds"
+            - "view_unrelated_vouch"
+            - "override_confirmation_window"
+
+    invited_payee_candidate:
+        description: "Authenticated user opening a valid invitation before acceptance."
+        derived_when:
+            resource: "Invitation"
+            condition: "Invitation is valid and Vouch.status == pending"
+        capabilities:
+            - "view_invited_vouch_summary"
+            - "accept_vouch_if_eligible"
+            - "decline_vouch"
+        prohibited:
+            - "view_full_payment_provider_details"
+            - "confirm_presence_before_acceptance"
+            - "accept_if_not_eligible"
+            - "accept_if_invitation_invalid"
+            - "accept_if_vouch_not_pending"
+
+eligibility_requirements:
+    create_vouch:
+        actor_role: "authenticated_user"
+        required:
+            - "User.status == active"
+            - "VerificationProfile.identity_status == verified"
+            - "VerificationProfile.adult_status == verified"
+            - "VerificationProfile.payment_readiness == ready"
+            - "current TermsAcceptance exists"
+        blocked_if:
+            - "User.status == disabled"
+            - "verification rejected"
+            - "payment setup incomplete"
+
+    accept_vouch:
+        actor_role: "invited_payee_candidate"
+        required:
+            - "User.status == active"
+            - "VerificationProfile.identity_status == verified"
+            - "VerificationProfile.adult_status == verified"
+            - "VerificationProfile.payout_readiness == ready"
+            - "current TermsAcceptance exists"
+            - "Vouch.status == pending"
+            - "Vouch.payee_id is null"
+            - "Vouch.payer_id != current_user.id"
+            - "Invitation.status in [created, sent, opened]"
+            - "Invitation.expires_at > now"
+        blocked_if:
+            - "User.status == disabled"
+            - "verification rejected"
+            - "payout setup incomplete"
+            - "invitation expired"
+            - "Vouch already accepted"
+
+    confirm_presence:
+        actor_role: "payer_or_payee"
+        required:
+            - "User.status == active"
+            - "Vouch.status == active"
+            - "current_user is payer or payee"
+            - "now >= Vouch.confirmation_opens_at"
+            - "now <= Vouch.confirmation_expires_at"
+            - "participant has not already confirmed"
+        blocked_if:
+            - "Vouch.status != active"
+            - "outside confirmation window"
+            - "current_user is not participant"
+            - "duplicate confirmation"
+
+    admin_access:
+        actor_role: "admin"
+        required:
+            - "User.status == active"
+            - "current_user has admin capability"
+        blocked_if:
+            - "User.status == disabled"
+            - "missing admin capability"
+
+capability_definitions:
+    view_public_marketing:
+        description: "Read public landing and informational pages."
+    view_public_legal:
+        description: "Read public legal/policy pages."
+    start_auth_flow:
+        description: "Start sign-in or sign-up."
+    open_invite_landing:
+        description: "Open invite route before authentication, without exposing protected details."
+    view_dashboard:
+        description: "View authenticated user dashboard."
+    create_vouch:
+        description: "Create a new Pending Vouch with committed payment."
+    accept_vouch:
+        description: "Accept a valid Pending Vouch as payee."
+    decline_vouch:
+        description: "Decline a valid invitation."
+    confirm_presence_as_payer:
+        description: "Record payer confirmation for an Active Vouch."
+    confirm_presence_as_payee:
+        description: "Record payee confirmation for an Active Vouch."
+    share_vouch_invite:
+        description: "Copy or send invitation for a Pending Vouch."
+    cancel_pending_vouch_if_allowed:
+        description: "Cancel a Pending Vouch before acceptance if cancellation policy allows."
+    retry_safe_technical_operation:
+        description: "Retry a failed idempotent technical operation without changing human outcome."
+    disable_user_account:
+        description: "Disable a user account for operational or policy reasons."
+```
+
+---

@@ -1,0 +1,185 @@
+blank_issues_enabled: false
+contact_links:
+
+* name: Security vulnerability
+  url: mailto:security@example.com
+  about: Do not open public issues for security vulnerabilities.
+* name: Support
+  url: mailto:support@example.com
+  about: Use this for access, setup, or operational support.
+  '@
+
+".github/ISSUE_TEMPLATE/bug_report.yml" = @'
+name: Bug report
+description: Report a reproducible defect.
+title: "[Bug]: "
+labels:
+
+* bug
+* triage
+  body:
+* type: markdown
+  attributes:
+  value: |
+  Use this for implementation defects only. Do not report security vulnerabilities here.
+* type: textarea
+  id: summary
+  attributes:
+  label: Summary
+  description: What is broken?
+  validations:
+  required: true
+* type: textarea
+  id: expected
+  attributes:
+  label: Expected behavior
+  validations:
+  required: true
+* type: textarea
+  id: actual
+  attributes:
+  label: Actual behavior
+  validations:
+  required: true
+* type: textarea
+  id: reproduce
+  attributes:
+  label: Reproduction steps
+  value: |
+  1.
+  2.
+  3.
+  validations:
+  required: true
+* type: dropdown
+  id: area
+  attributes:
+  label: Area
+  options:
+  - auth
+  - setup
+  - payments
+  - vouches
+  - confirmation
+  - dashboard
+  - admin
+  - database
+  - UI
+  - tests
+  - docs
+  - other
+  validations:
+  required: true
+* type: textarea
+  id: logs
+  attributes:
+  label: Logs / screenshots
+  description: Remove secrets, tokens, webhook signatures, and provider payloads.
+  validations:
+  required: false
+* type: checkboxes
+  id: scope
+  attributes:
+  label: Scope confirmation
+  options:
+  - label: This does not request marketplace, messaging, reviews, or dispute-resolution features.
+  required: true
+  - label: This does not disclose secrets or security vulnerabilities.
+  required: true
+  '@
+
+".github/ISSUE_TEMPLATE/feature_request.yml" = @'
+name: Feature request
+description: Propose a scoped product or implementation change.
+title: "[Feature]: "
+labels:
+
+* enhancement
+* triage
+  body:
+* type: markdown
+  attributes:
+  value: |
+  Feature requests must preserve Vouch's product boundaries.
+* type: textarea
+  id: problem
+  attributes:
+  label: Problem
+  description: What problem does this solve?
+  validations:
+  required: true
+* type: textarea
+  id: proposal
+  attributes:
+  label: Proposal
+  description: What should change?
+  validations:
+  required: true
+* type: dropdown
+  id: area
+  attributes:
+  label: Area
+  options:
+  - auth
+  - setup
+  - payments
+  - vouches
+  - confirmation
+  - dashboard
+  - admin operations
+  - UI
+  - docs
+  - testing
+  - other
+  validations:
+  required: true
+* type: checkboxes
+  id: boundaries
+  attributes:
+  label: Product boundaries
+  options:
+  - label: This is not a marketplace, profile, listing, discovery, rating, review, message, or dispute feature.
+  required: true
+  - label: This does not allow one-sided confirmation to release funds.
+  required: true
+  - label: This does not create manual admin fund-award or confirmation-rewrite powers.
+  required: true
+  '@
+
+".github/ISSUE_TEMPLATE/docs_change.yml" = @'
+name: Documentation change
+description: Request or propose documentation changes.
+title: "[Docs]: "
+labels:
+
+* documentation
+* triage
+  body:
+* type: textarea
+  id: docs_area
+  attributes:
+  label: Documentation area
+  description: Which doc, section, or concept needs attention?
+  validations:
+  required: true
+* type: textarea
+  id: change
+  attributes:
+  label: Requested change
+  description: What should be clarified, added, corrected, or removed?
+  validations:
+  required: true
+* type: textarea
+  id: source
+  attributes:
+  label: Source of truth
+  description: Link or reference the relevant `.agents` source, contract, or code.
+  validations:
+  required: false
+  '@
+
+".github/FUNDING.yml" = @'
+
+# Funding is intentionally unset for this proprietary product repository.
+
+# Add GitHub Sponsors, Open Collective, Ko-fi, or custom links only if this project is intentionally opened for public funding.

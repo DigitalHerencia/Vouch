@@ -1,0 +1,53 @@
+
+# CODEOWNERS
+
+# GitHub requires listed owners to have write access to the repository.
+
+* @DigitalHerencia
+
+# Governance and project intent
+
+/.agents/ @DigitalHerencia
+/AGENTS.md @DigitalHerencia
+/README.md @DigitalHerencia
+/GOVERNANCE.md @DigitalHerencia
+/SECURITY.md @DigitalHerencia
+
+# Application routes and orchestration
+
+/app/ @DigitalHerencia
+/features/ @DigitalHerencia
+
+# Shared UI
+
+/components/ @DigitalHerencia
+/hooks/ @DigitalHerencia
+
+# Server authority
+
+/lib/actions/ @DigitalHerencia
+/lib/fetcher/ @DigitalHerencia
+/lib/auth/ @DigitalHerencia
+/lib/authz/ @DigitalHerencia
+/lib/integrations/ @DigitalHerencia
+
+# Database layer
+
+/prisma/ @DigitalHerencia
+/lib/db/ @DigitalHerencia
+
+# Validation and types
+
+/schemas/ @DigitalHerencia
+/types/ @DigitalHerencia
+
+# Tooling and CI
+
+/.github/ @DigitalHerencia
+/scripts/ @DigitalHerencia
+/package.json @DigitalHerencia
+/pnpm-lock.yaml @DigitalHerencia
+/next.config.ts @DigitalHerencia
+/tsconfig.json @DigitalHerencia
+/eslint.config.mjs @DigitalHerencia
+/prettier.config.mjs @DigitalHerencia

@@ -1,0 +1,498 @@
+# `.agents/contracts/routes.yaml`
+
+```yaml
+schema_version: "1.0.0"
+contract_name: "routes"
+product: "Vouch"
+
+summary:
+    description: "Canonical route contract for Vouch App Router implementation."
+    routing_principle: "Routes are shells. Domain behavior lives in features, server fetchers, server actions, and contracts."
+
+route_groups:
+    public:
+        description: "Unauthenticated public pages."
+        auth_required: false
+
+    auth:
+        description: "Authentication pages and auth redirects."
+        auth_required: false
+
+    app:
+        description: "Authenticated user app."
+        auth_required: true
+
+    admin:
+        description: "Admin operational surface."
+        auth_required: true
+        admin_required: true
+
+    api:
+        description: "Provider webhooks and server API endpoints."
+        auth_required: "varies"
+
+routes:
+    - id: "home"
+      path: "/"
+      group: "public"
+      feature: "marketing_landing"
+      access:
+          subjects:
+              - "anonymous"
+              - "authenticated_user"
+      allowed_actions:
+          - "view_public_marketing"
+      data_policy:
+          cache: "static_or_revalidated"
+          sensitive: false
+
+    - id: "how_it_works"
+      path: "/how-it-works"
+      group: "public"
+      feature: "marketing_how_it_works"
+      access:
+          subjects:
+              - "anonymous"
+              - "authenticated_user"
+      allowed_actions:
+          - "view_public_marketing"
+      data_policy:
+          cache: "static_or_revalidated"
+          sensitive: false
+
+    - id: "pricing"
+      path: "/pricing"
+      group: "public"
+      feature: "marketing_pricing"
+      access:
+          subjects:
+              - "anonymous"
+              - "authenticated_user"
+      allowed_actions:
+          - "view_public_marketing"
+      data_policy:
+          cache: "static_or_revalidated"
+          sensitive: false
+
+    - id: "faq"
+      path: "/faq"
+      group: "public"
+      feature: "marketing_faq"
+      access:
+          subjects:
+              - "anonymous"
+              - "authenticated_user"
+      allowed_actions:
+          - "view_public_marketing"
+      data_policy:
+          cache: "static_or_revalidated"
+          sensitive: false
+
+    - id: "terms"
+      path: "/legal/terms"
+      group: "public"
+      feature: "legal_terms"
+      access:
+          subjects:
+              - "anonymous"
+              - "authenticated_user"
+      allowed_actions:
+          - "view_public_legal"
+      data_policy:
+          cache: "static_or_revalidated"
+          sensitive: false
+
+    - id: "privacy"
+      path: "/legal/privacy"
+      group: "public"
+      feature: "legal_privacy"
+      access:
+          subjects:
+              - "anonymous"
+              - "authenticated_user"
+      allowed_actions:
+          - "view_public_legal"
+      data_policy:
+          cache: "static_or_revalidated"
+          sensitive: false
+
+    - id: "sign_in"
+      path: "/sign-in"
+      group: "auth"
+      feature: "auth_sign_in"
+      access:
+          subjects:
+              - "anonymous"
+      allowed_actions:
+          - "start_auth_flow"
+      redirect_if_authenticated: "/dashboard"
+
+    - id: "sign_up"
+      path: "/sign-up"
+      group: "auth"
+      feature: "auth_sign_up"
+      access:
+          subjects:
+              - "anonymous"
+      allowed_actions:
+          - "start_auth_flow"
+      redirect_if_authenticated: "/dashboard"
+
+    - id: "dashboard"
+      path: "/dashboard"
+      group: "app"
+      feature: "dashboard"
+      access:
+          subjects:
+              - "authenticated_user"
+      allowed_actions:
+          - "view_dashboard"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+      query_params:
+          status:
+              type: "string"
+              optional: true
+              allowed_values:
+                  - "action_required"
+                  - "active"
+                  - "pending"
+                  - "completed"
+                  - "expired"
+                  - "refunded"
+          page:
+              type: "integer"
+              optional: true
+          sort:
+              type: "string"
+              optional: true
+              allowed_values:
+                  - "newest"
+                  - "oldest"
+                  - "deadline"
+
+    - id: "setup"
+      path: "/setup"
+      group: "app"
+      feature: "setup_checklist"
+      access:
+          subjects:
+              - "authenticated_user"
+      allowed_actions:
+          - "view_setup_status"
+          - "start_verification"
+          - "start_payment_setup"
+          - "start_payout_setup"
+          - "accept_terms"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+      query_params:
+          return_to:
+              type: "string"
+              optional: true
+              validation: "must be internal path"
+
+    - id: "account_settings"
+      path: "/settings"
+      group: "app"
+      feature: "account_settings"
+      access:
+          subjects:
+              - "authenticated_user"
+      allowed_actions:
+          - "view_own_account"
+          - "start_payment_setup"
+          - "start_payout_setup"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+
+    - id: "vouches_index"
+      path: "/vouches"
+      group: "app"
+      feature: "vouch_list"
+      access:
+          subjects:
+              - "authenticated_user"
+      allowed_actions:
+          - "view_dashboard"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+      query_params:
+          status:
+              type: "string"
+              optional: true
+          page:
+              type: "integer"
+              optional: true
+          sort:
+              type: "string"
+              optional: true
+
+    - id: "vouch_create"
+      path: "/vouches/new"
+      group: "app"
+      feature: "create_vouch"
+      access:
+          subjects:
+              - "authenticated_user"
+      required_capability: "create_vouch"
+      setup_gate:
+          required:
+              - "identity_verified"
+              - "adult_verified"
+              - "payment_ready"
+              - "terms_accepted"
+          redirect_if_blocked: "/setup?return_to=/vouches/new"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+
+    - id: "vouch_detail"
+      path: "/vouches/[vouchId]"
+      group: "app"
+      feature: "vouch_detail"
+      access:
+          subjects:
+              - "authenticated_user"
+      required_policy:
+          - "payer_may_read_created_vouch"
+          - "payee_may_read_accepted_vouch"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+      params:
+          vouchId:
+              type: "string"
+              required: true
+
+    - id: "vouch_invite"
+      path: "/vouches/invite/[token]"
+      group: "public"
+      feature: "accept_vouch"
+      access:
+          subjects:
+              - "anonymous"
+              - "authenticated_user"
+      allowed_actions:
+          - "open_invite_landing"
+          - "read_invited_summary"
+          - "accept_vouch_if_eligible"
+          - "decline_vouch"
+      auth_behavior:
+          unauthenticated: "preserve token and redirect to sign-up/sign-in before acceptance"
+          authenticated: "show invited summary if token valid"
+      setup_gate:
+          required_for_acceptance:
+              - "identity_verified"
+              - "adult_verified"
+              - "payout_ready"
+              - "terms_accepted"
+          redirect_if_blocked: "/setup"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+      params:
+          token:
+              type: "string"
+              required: true
+              handling: "hash before lookup"
+
+    - id: "vouch_confirm"
+      path: "/vouches/[vouchId]/confirm"
+      group: "app"
+      feature: "confirm_presence"
+      access:
+          subjects:
+              - "authenticated_user"
+      required_capability: "confirm_presence"
+      required_policy:
+          - "participant_may_confirm_presence"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+      params:
+          vouchId:
+              type: "string"
+              required: true
+
+    - id: "payment_setup"
+      path: "/settings/payment"
+      group: "app"
+      feature: "payment_setup"
+      access:
+          subjects:
+              - "authenticated_user"
+      allowed_actions:
+          - "start_payment_setup"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+
+    - id: "payout_setup"
+      path: "/settings/payout"
+      group: "app"
+      feature: "payout_setup"
+      access:
+          subjects:
+              - "authenticated_user"
+      allowed_actions:
+          - "start_payout_setup"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+
+    - id: "verification"
+      path: "/settings/verification"
+      group: "app"
+      feature: "verification"
+      access:
+          subjects:
+              - "authenticated_user"
+      allowed_actions:
+          - "start_verification"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+
+    - id: "admin_dashboard"
+      path: "/admin"
+      group: "admin"
+      feature: "admin_dashboard"
+      access:
+          subjects:
+              - "admin"
+      required_capability: "view_admin_dashboard"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+
+    - id: "admin_vouches"
+      path: "/admin/vouches"
+      group: "admin"
+      feature: "admin_vouches"
+      access:
+          subjects:
+              - "admin"
+      required_capability: "view_vouches_operational"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+      query_params:
+          status:
+              type: "string"
+              optional: true
+          payment_status:
+              type: "string"
+              optional: true
+          page:
+              type: "integer"
+              optional: true
+
+    - id: "admin_vouch_detail"
+      path: "/admin/vouches/[vouchId]"
+      group: "admin"
+      feature: "admin_vouch_detail"
+      access:
+          subjects:
+              - "admin"
+      required_capability: "view_vouches_operational"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+      params:
+          vouchId:
+              type: "string"
+              required: true
+
+    - id: "admin_users"
+      path: "/admin/users"
+      group: "admin"
+      feature: "admin_users"
+      access:
+          subjects:
+              - "admin"
+      required_capability: "view_users_operational"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+
+    - id: "admin_payments"
+      path: "/admin/payments"
+      group: "admin"
+      feature: "admin_payments"
+      access:
+          subjects:
+              - "admin"
+      required_capability: "view_payment_records_operational"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+
+    - id: "admin_audit"
+      path: "/admin/audit"
+      group: "admin"
+      feature: "admin_audit"
+      access:
+          subjects:
+              - "admin"
+      required_capability: "view_audit_events_operational"
+      data_policy:
+          cache: "dynamic"
+          sensitive: true
+
+    - id: "api_stripe_webhook"
+      path: "/api/webhooks/stripe"
+      group: "api"
+      feature: "stripe_webhook"
+      access:
+          subjects:
+              - "payment_provider"
+      required:
+          - "valid provider signature"
+          - "idempotent event handling"
+      allowed_actions:
+          - "payment.webhook_received"
+          - "payment.webhook_processed"
+          - "payment.webhook_ignored"
+          - "payment.reconciliation_failed"
+      data_policy:
+          cache: "no_store"
+          sensitive: true
+
+    - id: "api_clerk_webhook"
+      path: "/api/webhooks/clerk"
+      group: "api"
+      feature: "auth_webhook"
+      access:
+          subjects:
+              - "auth_provider"
+      required:
+          - "valid provider signature"
+          - "idempotent event handling"
+      allowed_actions:
+          - "user.created"
+          - "user.signed_in"
+      data_policy:
+          cache: "no_store"
+          sensitive: true
+
+route_forbidden:
+    - path: "/browse"
+      reason: "Marketplace/discovery behavior prohibited."
+    - path: "/providers"
+      reason: "Public provider profile behavior prohibited."
+    - path: "/messages"
+      reason: "Messaging system prohibited."
+    - path: "/reviews"
+      reason: "Reviews/ratings prohibited."
+    - path: "/categories"
+      reason: "Marketplace category behavior prohibited."
+    - path: "/disputes"
+      reason: "Arbitration/dispute workflow prohibited."
+```
+
+---

@@ -1,0 +1,42 @@
+import type { NextConfig } from "next";
+
+const securityHeaders = [
+  {
+    key: "X-DNS-Prefetch-Control",
+    value: "on",
+  },
+  {
+    key: "X-Frame-Options",
+    value: "DENY",
+  },
+  {
+    key: "X-Content-Type-Options",
+    value: "nosniff",
+  },
+  {
+    key: "Referrer-Policy",
+    value: "strict-origin-when-cross-origin",
+  },
+];
+
+const nextConfig: NextConfig = {
+  typedRoutes: true,
+  poweredByHeader: false,
+  compress: true,
+
+  typescript: {
+    ignoreBuildErrors: false,
+    tsconfigPath: "tsconfig.json",
+  },
+
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: securityHeaders,
+      },
+    ];
+  },
+};
+
+export default nextConfig;
