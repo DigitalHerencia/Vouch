@@ -1,5 +1,12 @@
-import { RoutePlaceholder } from "@/features/system/route-placeholder"
+import { AdminTablePage } from "@/features/admin"
 
-export default function Page() {
-  return <RoutePlaceholder title="admin / users" />
+export default function AdminUsersRoute() {
+  return (
+    <AdminTablePage
+      title="Admin Users"
+      description="Inspect user readiness and account status. No public profiles or reputation scores."
+      columns={[{ key: "id", label: "ID" }, { key: "status", label: "Status" }, { key: "verification", label: "Verification" }, { key: "payout", label: "Payout" }]}
+      rows={[]}
+    />
+  )
 }

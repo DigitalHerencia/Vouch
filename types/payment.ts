@@ -1,46 +1,44 @@
-import type { z } from "zod"
-import type {
-  authorizeVouchPaymentInputSchema,
-  captureOrReleaseVouchPaymentInputSchema,
-  initializeVouchPaymentInputSchema,
-  paymentFailureInputSchema,
-  paymentFailureStageSchema,
-  paymentOperationInputSchema,
-  paymentProviderReturnInputSchema,
-  paymentProviderSchema,
-  paymentWebhookEnvelopeSchema,
-  paymentWebhookProcessInputSchema,
-  paymentReadinessStatusSchema,
-  paymentStatusSchema,
-  payoutReadinessStatusSchema,
-  refundReasonSchema,
-  refundStatusSchema,
-  refundOrVoidVouchPaymentInputSchema,
-  startPaymentMethodSetupInputSchema,
-  startPayoutOnboardingInputSchema,
-  stripeWebhookHeadersSchema,
-  verificationProviderSchema,
-} from "@/schemas/payment"
+export const PAYMENT_PROVIDERS = ["stripe"] as const
 
-export type PaymentProvider = z.infer<typeof paymentProviderSchema>
-export type VerificationProvider = z.infer<typeof verificationProviderSchema>
-export type PaymentReadinessStatus = z.infer<typeof paymentReadinessStatusSchema>
-export type PayoutReadinessStatus = z.infer<typeof payoutReadinessStatusSchema>
-export type PaymentStatus = z.infer<typeof paymentStatusSchema>
-export type RefundStatus = z.infer<typeof refundStatusSchema>
-export type RefundReason = z.infer<typeof refundReasonSchema>
-export type StartPaymentMethodSetupInput = z.infer<typeof startPaymentMethodSetupInputSchema>
-export type StartPayoutOnboardingInput = z.infer<typeof startPayoutOnboardingInputSchema>
-export type PaymentProviderReturnInput = z.infer<typeof paymentProviderReturnInputSchema>
-export type PaymentOperationInput = z.infer<typeof paymentOperationInputSchema>
-export type InitializeVouchPaymentInput = z.infer<typeof initializeVouchPaymentInputSchema>
-export type AuthorizeVouchPaymentInput = z.infer<typeof authorizeVouchPaymentInputSchema>
-export type CaptureOrReleaseVouchPaymentInput = z.infer<
-  typeof captureOrReleaseVouchPaymentInputSchema
->
-export type RefundOrVoidVouchPaymentInput = z.infer<typeof refundOrVoidVouchPaymentInputSchema>
-export type PaymentFailureInput = z.infer<typeof paymentFailureInputSchema>
-export type PaymentFailureStage = z.infer<typeof paymentFailureStageSchema>
-export type StripeWebhookHeaders = z.infer<typeof stripeWebhookHeadersSchema>
-export type PaymentWebhookEnvelope = z.infer<typeof paymentWebhookEnvelopeSchema>
-export type PaymentWebhookProcessInput = z.infer<typeof paymentWebhookProcessInputSchema>
+export type PaymentProvider = (typeof PAYMENT_PROVIDERS)[number]
+
+export const PAYMENT_STATUSES = [
+    "not_started",
+    "requires_payment_method",
+    "authorized",
+    "captured",
+    "release_pending",
+    "released",
+    "refund_pending",
+    "refunded",
+    "voided",
+    "failed",
+] as const
+
+export type PaymentStatus = (typeof PAYMENT_STATUSES)[number]
+
+export const REFUND_STATUSES = ["not_required", "pending", "succeeded", "failed"] as const
+
+export type RefundStatus = (typeof REFUND_STATUSES)[number]
+
+export const REFUND_REASONS = [
+    "not_accepted",
+    "confirmation_incomplete",
+    "canceled_before_acceptance",
+    "payment_failure",
+    "provider_required",
+] as const
+
+export type RefundReason = (typeof REFUND_REASONS)[number]
+
+export type MoneyAmount = {
+    amountCents: number
+    currency: "usd"
+}
+
+export type FeeBreakdown = {
+    amountCents: number
+    platformFeeCents: number
+    totalCents: number
+    currency: "usd"
+}

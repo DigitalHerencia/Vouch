@@ -1,5 +1,5 @@
-import { RoutePlaceholder } from "@/features/system/route-placeholder"
+import { LandingPage } from "@/features/marketing"
 
-export default function Page() {
-  return <RoutePlaceholder title="(public)" />
+export default function HomePage() {
+  return <LandingPage />
 }

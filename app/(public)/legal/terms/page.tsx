@@ -1,5 +1,10 @@
-import { RoutePlaceholder } from "@/features/system/route-placeholder"
+import { LegalPage } from "@/features/marketing"
 
-export default function Page() {
-  return <RoutePlaceholder title="legal / terms" />
+export default function TermsRoute() {
+  return (
+    <LegalPage
+      title="Terms"
+      description="Vouch coordinates commitment-backed payment outcomes through provider infrastructure. Vouch is not a marketplace, escrow provider, broker, or dispute-resolution platform."
+    />
+  )
 }

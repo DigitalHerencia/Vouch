@@ -1,5 +1,5 @@
-import { RoutePlaceholder } from "@/features/system/route-placeholder"
+import { HowItWorksPage } from "@/features/marketing"
 
-export default function Page() {
-  return <RoutePlaceholder title="how-it-works" />
+export default function HowItWorksRoute() {
+  return <HowItWorksPage />
 }

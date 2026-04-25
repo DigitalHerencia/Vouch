@@ -1,220 +1,91 @@
 import { z } from "zod"
-import {
-  currencyCodeSchema,
-  emailSchema,
-  invitationTokenSchema,
-  isoDateTimeSchema,
-  optionalTrimmedStringSchema,
-  positiveMoneyCentsSchema,
-  privateNoteSchema,
-  shortLabelSchema,
-  vouchIdSchema,
-} from "./common"
 
-const PLATFORM_MIN_AMOUNT_CENTS = 500
+export const vouchCurrencySchema = z.literal("usd")
 
-export const vouchStatusSchema = z.enum([
-  "pending",
-  "active",
-  "completed",
-  "expired",
-  "refunded",
-  "canceled",
-  "failed",
-])
+export const vouchLabelSchema = z
+    .string()
+    .trim()
+    .min(1, "Label must not be empty.")
+    .max(120, "Label must be 120 characters or fewer.")
+    .optional()
 
-export const invitationStatusSchema = z.enum([
-  "created",
-  "sent",
-  "opened",
-  "accepted",
-  "declined",
-  "expired",
-  "invalidated",
-])
+export const createVouchSchema = z
+    .object({
+        amountCents: z
+            .number()
+            .int("Amount must be represented in whole cents.")
+            .min(100, "Amount must be at least $1.00."),
+        currency: vouchCurrencySchema.default("usd"),
+        meetingStartsAt: z.coerce.date(),
+        confirmationOpensAt: z.coerce.date(),
+        confirmationExpiresAt: z.coerce.date(),
+        recipientEmail: z
+            .string()
+            .trim()
+            .email("Enter a valid email address.")
+            .max(320)
+            .optional()
+            .or(z.literal("").transform(() => undefined)),
+        label: vouchLabelSchema,
+        termsAccepted: z.literal(true, {
+            error: "You must accept the Vouch terms before creating a Vouch.",
+        }),
+    })
+    .superRefine((value, ctx) => {
+        if (value.confirmationOpensAt >= value.confirmationExpiresAt) {
+            ctx.addIssue({
+                code: "custom",
+                path: ["confirmationExpiresAt"],
+                message: "Confirmation expiration must be after confirmation opening.",
+            })
+        }
 
-export const participantRoleSchema = z.enum(["payer", "payee"])
+        if (value.meetingStartsAt > value.confirmationExpiresAt) {
+            ctx.addIssue({
+                code: "custom",
+                path: ["meetingStartsAt"],
+                message: "Meeting start must be before the confirmation deadline.",
+            })
+        }
+    })
 
-export const confirmationStatusSchema = z.enum([
-  "not_confirmed",
-  "confirmed",
-  "ineligible",
-  "window_not_open",
-  "window_closed",
-])
+export type CreateVouchInput = z.infer<typeof createVouchSchema>
 
-export const aggregateConfirmationStatusSchema = z.enum([
-  "none_confirmed",
-  "payer_confirmed",
-  "payee_confirmed",
-  "both_confirmed",
-])
-
-export const confirmationMethodSchema = z.enum(["manual", "gps", "system"])
-export const recipientMethodSchema = z.enum(["email", "share_link"])
-
-export const sanitizedVouchLabelSchema = shortLabelSchema
-export const sanitizedPrivateNoteSchema = privateNoteSchema
-export const sanitizedInviteTokenSchema = invitationTokenSchema
-export const sanitizedDeclineReasonSchema = optionalTrimmedStringSchema
-
-export const createVouchInputSchema = z
-  .object({
-    amountCents: positiveMoneyCentsSchema,
-    currency: currencyCodeSchema,
-    meetingStartsAt: isoDateTimeSchema,
-    confirmationOpensAt: isoDateTimeSchema,
-    confirmationExpiresAt: isoDateTimeSchema,
-    recipientMethod: recipientMethodSchema,
-    recipientEmail: emailSchema.optional(),
-    label: sanitizedVouchLabelSchema,
-    privateNote: sanitizedPrivateNoteSchema,
-    acceptedTerms: z.literal(true),
-  })
-  .strict()
-  .superRefine((value, ctx) => {
-    if (value.amountCents < PLATFORM_MIN_AMOUNT_CENTS) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["amountCents"],
-        message: `Amount must be at least ${PLATFORM_MIN_AMOUNT_CENTS} cents.`,
-      })
-    }
-
-    const meetingStartsAt = new Date(value.meetingStartsAt).getTime()
-    const confirmationOpensAt = new Date(value.confirmationOpensAt).getTime()
-    const confirmationExpiresAt = new Date(value.confirmationExpiresAt).getTime()
-
-    if (confirmationOpensAt >= confirmationExpiresAt) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["confirmationExpiresAt"],
-        message: "Confirmation expiration must be after confirmation opening.",
-      })
-    }
-
-    if (meetingStartsAt > confirmationOpensAt) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["meetingStartsAt"],
-        message: "Meeting start must be before or at confirmation opening.",
-      })
-    }
-
-    if (value.recipientMethod === "email" && !value.recipientEmail) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["recipientEmail"],
-        message: "Recipient email is required when sending by email.",
-      })
-    }
-
-    if (value.recipientMethod === "share_link" && value.recipientEmail) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["recipientEmail"],
-        message: "Recipient email should be omitted when using a share link.",
-      })
-    }
-  })
-
-export const createVouchDraftInputSchema = createVouchInputSchema.partial().extend({
-  acceptedTerms: z.boolean().optional(),
+export const acceptVouchSchema = z.object({
+    token: z.string().trim().min(24, "Invite token is invalid."),
+    termsAccepted: z.literal(true, {
+        error: "You must accept the Vouch terms before accepting.",
+    }),
 })
 
-export const feePreviewInputSchema = z.object({
-  amountCents: positiveMoneyCentsSchema,
-  currency: currencyCodeSchema,
+export type AcceptVouchInput = z.infer<typeof acceptVouchSchema>
+
+export const declineVouchSchema = z.object({
+    token: z.string().trim().min(24, "Invite token is invalid."),
 })
 
-export const sendVouchInvitationInputSchema = z.object({
-  vouchId: vouchIdSchema,
-  recipientEmail: emailSchema,
+export type DeclineVouchInput = z.infer<typeof declineVouchSchema>
+
+export const confirmPresenceSchema = z.object({
+    vouchId: z.string().trim().min(1, "Vouch ID is required."),
+    method: z.enum(["manual", "gps", "system"]).default("manual"),
 })
 
-export const resendVouchInvitationInputSchema = z.object({
-  vouchId: vouchIdSchema,
+export type ConfirmPresenceInput = z.infer<typeof confirmPresenceSchema>
+
+export const vouchListSearchParamsSchema = z.object({
+    status: z
+        .enum([
+            "action_required",
+            "active",
+            "pending",
+            "completed",
+            "expired",
+            "refunded",
+        ])
+        .optional(),
+    page: z.coerce.number().int().min(1).default(1),
+    sort: z.enum(["newest", "oldest", "deadline"]).default("newest"),
 })
 
-export const inviteTokenInputSchema = z.object({
-  token: sanitizedInviteTokenSchema,
-})
-
-export const acceptVouchInputSchema = z.object({
-  token: sanitizedInviteTokenSchema,
-  acceptedTerms: z.literal(true),
-})
-
-export const declineVouchInputSchema = z.object({
-  token: sanitizedInviteTokenSchema,
-  reason: sanitizedDeclineReasonSchema,
-})
-
-export const cancelPendingVouchInputSchema = z.object({
-  vouchId: vouchIdSchema,
-  reason: sanitizedDeclineReasonSchema,
-})
-
-export const confirmPresenceInputSchema = z.object({
-  vouchId: vouchIdSchema,
-  participantRole: participantRoleSchema,
-  method: confirmationMethodSchema.default("manual"),
-})
-
-export const vouchIdParamSchema = z.object({
-  vouchId: vouchIdSchema,
-})
-
-export const inviteTokenParamSchema = z.object({
-  token: sanitizedInviteTokenSchema,
-})
-
-export const vouchListStatusFilterSchema = z.enum([
-  "pending",
-  "active",
-  "completed",
-  "expired",
-  "refunded",
-  "action_required",
-  "all",
-])
-
-export const vouchListSortSchema = z.enum(["newest", "oldest", "deadline"])
-
-export const vouchListQuerySchema = z.object({
-  status: vouchListStatusFilterSchema.optional(),
-  page: z.coerce.number().int().min(1).optional(),
-  sort: vouchListSortSchema.optional(),
-})
-
-export const vouchDetailVariantSchema = z.enum([
-  "pending_payer",
-  "pending_invite_sent",
-  "active_before_window",
-  "active_window_open",
-  "payer_confirmed_waiting_for_payee",
-  "payee_confirmed_waiting_for_payer",
-  "both_confirmed_processing_release",
-  "completed",
-  "expired",
-  "refunded",
-  "failed_payment",
-  "failed_release",
-  "failed_refund",
-  "unauthorized_or_not_found",
-  "loading",
-])
-
-export const confirmPresenceVariantSchema = z.enum([
-  "payer",
-  "payee",
-  "before_window",
-  "window_open",
-  "already_confirmed",
-  "waiting_for_other_party",
-  "both_confirmed_success",
-  "window_closed",
-  "duplicate_confirmation_error",
-  "unauthorized_participant",
-  "provider_payment_failure",
-])
+export type VouchListSearchParams = z.infer<typeof vouchListSearchParamsSchema>

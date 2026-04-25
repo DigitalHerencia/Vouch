@@ -1,11 +1,17 @@
-export interface SubmitButtonProps {
-  className?: string
-}
+import { Button } from "@/components/ui/button"
 
-export function SubmitButton({ className }: SubmitButtonProps) {
+export function SubmitButton({
+  pending = false,
+  pendingLabel = "Working…",
+  children,
+  ...props
+}: React.ComponentProps<typeof Button> & {
+  pending?: boolean
+  pendingLabel?: string
+}) {
   return (
-    <div className={className}>
-      <p className="text-sm text-neutral-400">components/forms/submit-button.tsx</p>
-    </div>
+    <Button type="submit" aria-disabled={pending} disabled={pending || props.disabled} {...props}>
+      {pending ? pendingLabel : children}
+    </Button>
   )
 }

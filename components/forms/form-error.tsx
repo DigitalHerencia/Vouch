@@ -1,11 +1,11 @@
-export interface FormErrorProps {
-  className?: string
-}
+import { cn } from "@/lib/utils"
 
-export function FormError({ className }: FormErrorProps) {
+export function FormError({ message, className }: { message?: string | null; className?: string }) {
+  if (!message) return null
+
   return (
-    <div className={className}>
-      <p className="text-sm text-neutral-400">components/forms/form-error.tsx</p>
-    </div>
+    <p role="alert" className={cn("rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200", className)}>
+      {message}
+    </p>
   )
 }

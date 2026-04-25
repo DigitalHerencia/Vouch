@@ -1,5 +1,12 @@
-import { RoutePlaceholder } from "@/features/system/route-placeholder"
+import { AdminTablePage } from "@/features/admin"
 
-export default function Page() {
-  return <RoutePlaceholder title="admin / vouches" />
+export default function AdminVouchesRoute() {
+  return (
+    <AdminTablePage
+      title="Admin Vouches"
+      description="Inspect Vouch lifecycle state. No arbitration controls."
+      columns={[{ key: "id", label: "ID" }, { key: "status", label: "Status" }, { key: "paymentStatus", label: "Payment" }, { key: "deadline", label: "Deadline" }]}
+      rows={[]}
+    />
+  )
 }

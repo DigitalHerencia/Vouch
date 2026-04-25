@@ -1,5 +1,5 @@
-import { RoutePlaceholder } from "@/features/system/route-placeholder"
+import { FaqPage } from "@/features/marketing"
 
-export default function Page() {
-  return <RoutePlaceholder title="faq" />
+export default function FaqRoute() {
+  return <FaqPage />
 }

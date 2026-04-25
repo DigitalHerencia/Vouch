@@ -71,6 +71,6 @@
     "coverage",
     "playwright-report",
     "test-results",
-    "generated/prisma"
+    "prisma/generated/prisma"
   ]
 }
