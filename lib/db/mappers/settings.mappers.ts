@@ -4,13 +4,13 @@ import "server-only"
 // These should convert Prisma records into transport-safe DTO/read models.
 
 export function mapAccountSettings(_record: unknown): never {
-  throw new Error($name not implemented in lib/db/mappers/settings.mappers.ts)
+  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: mapper stub in lib/db/mappers/settings.mappers.ts")
 }
 
 export function mapProfileBasics(_record: unknown): never {
-  throw new Error($name not implemented in lib/db/mappers/settings.mappers.ts)
+  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: mapper stub in lib/db/mappers/settings.mappers.ts")
 }
 
 export function mapTermsStatusCard(_record: unknown): never {
-  throw new Error($name not implemented in lib/db/mappers/settings.mappers.ts)
+  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: mapper stub in lib/db/mappers/settings.mappers.ts")
 }

@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2024",
-    "lib": ["dom", "dom.iterable", "es2024"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "es2024"
+    ],
     "allowJs": false,
     "skipLibCheck": true,
     "strict": true,
@@ -18,21 +22,37 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "verbatimModuleSyntax": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "plugins": [
       {
         "name": "next"
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@/app/*": ["./app/*"],
-      "@/features/*": ["./features/*"],
-      "@/components/*": ["./components/*"],
-      "@/lib/*": ["./lib/*"],
-      "@/schemas/*": ["./schemas/*"],
-      "@/types/*": ["./types/*"],
-      "@/generated/prisma/*": ["./generated/prisma/*"]
+      "@/*": [
+        "./*"
+      ],
+      "@/app/*": [
+        "./app/*"
+      ],
+      "@/features/*": [
+        "./features/*"
+      ],
+      "@/components/*": [
+        "./components/*"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
+      "@/schemas/*": [
+        "./schemas/*"
+      ],
+      "@/types/*": [
+        "./types/*"
+      ],
+      "@/generated/prisma/*": [
+        "./src/generated/prisma/*"
+      ]
     }
   },
   "include": [
@@ -41,7 +61,8 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.mts",
-    "**/*.cts"
+    "**/*.cts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
