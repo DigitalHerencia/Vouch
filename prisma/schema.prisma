@@ -90,6 +90,13 @@ enum ConfirmationStatus {
   window_closed
 }
 
+enum AggregateConfirmationStatus {
+  none_confirmed
+  payer_confirmed
+  payee_confirmed
+  both_confirmed
+}
+
 enum ConfirmationMethod {
   manual
   gps
@@ -163,16 +170,6 @@ enum NotificationStatus {
   sent
   failed
   skipped
-}
-
-enum NotificationType {
-  invite
-  vouch_accepted
-  confirmation_window_open
-  confirmation_recorded
-  vouch_completed
-  vouch_expired_refunded
-  payment_failed
 }
 
 enum AnalyticsEventGroup {
@@ -448,8 +445,7 @@ model PaymentRecord {
   currency         String @default("usd") @db.VarChar(3)
   platformFeeCents Int    @default(0)
 
-  lastErrorCode        String?
-  safeLastErrorMessage String?
+  lastErrorCode String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -608,37 +604,31 @@ model AuditEvent {
 model NotificationEvent {
   id String @id @default(cuid())
 
-  type    NotificationType
+  eventName String
   channel NotificationChannel @default(email)
   status  NotificationStatus  @default(queued)
 
-  recipientUserId String?
-  recipientEmail  String? @db.VarChar(320)
-
-  vouchId String?
+  recipientUserId String
+  vouchId         String?
 
   providerMessageId String?
-  failureCode       String?
-
-  queuedAt DateTime @default(now())
-  sentAt   DateTime?
-  failedAt DateTime?
-  skippedAt DateTime?
+  errorCode         String?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  sentAt    DateTime?
+  failedAt  DateTime?
 
-  recipient User?  @relation("NotificationRecipient", fields: [recipientUserId], references: [id], onDelete: SetNull)
+  recipient User   @relation("NotificationRecipient", fields: [recipientUserId], references: [id], onDelete: Restrict)
   vouch     Vouch? @relation(fields: [vouchId], references: [id], onDelete: SetNull)
 
   @@index([recipientUserId])
-  @@index([recipientEmail])
   @@index([vouchId])
   @@index([vouchId, status])
-  @@index([type])
+  @@index([eventName])
   @@index([channel])
   @@index([status])
-  @@index([queuedAt])
+  @@index([errorCode])
+  @@index([createdAt])
   @@map("notification_events")
 }
 

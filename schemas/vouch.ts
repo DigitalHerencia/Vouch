@@ -71,6 +71,7 @@ export const createVouchInputSchema = z
     privateNote: sanitizedPrivateNoteSchema,
     acceptedTerms: z.literal(true),
   })
+  .strict()
   .superRefine((value, ctx) => {
     if (value.amountCents < PLATFORM_MIN_AMOUNT_CENTS) {
       ctx.addIssue({

@@ -49,7 +49,8 @@ export const idSchema = z.string().min(1).max(128)
 export const publicIdSchema = z.string().min(1).max(128)
 export const userIdSchema = idSchema
 export const vouchIdSchema = idSchema
-export const invitationTokenSchema = z.string().min(16).max(256)
+export const invitationTokenSchema = z
+  .preprocess(trimString, z.string().min(16).max(256).regex(/^[A-Za-z0-9_-]+$/))
 
 export const isoDateTimeSchema = z
   .string()

@@ -13,11 +13,13 @@ import type {
   feePreviewInputSchema,
   invitationStatusSchema,
   inviteTokenInputSchema,
+  inviteTokenParamSchema,
   participantRoleSchema,
   recipientMethodSchema,
   resendVouchInvitationInputSchema,
   sendVouchInvitationInputSchema,
   vouchDetailVariantSchema,
+  vouchIdParamSchema,
   vouchListQuerySchema,
   vouchListSortSchema,
   vouchListStatusFilterSchema,
@@ -42,6 +44,8 @@ export type AcceptVouchInput = z.infer<typeof acceptVouchInputSchema>
 export type DeclineVouchInput = z.infer<typeof declineVouchInputSchema>
 export type CancelPendingVouchInput = z.infer<typeof cancelPendingVouchInputSchema>
 export type ConfirmPresenceInput = z.infer<typeof confirmPresenceInputSchema>
+export type VouchIdParam = z.infer<typeof vouchIdParamSchema>
+export type InviteTokenParam = z.infer<typeof inviteTokenParamSchema>
 
 export type VouchListQuery = z.infer<typeof vouchListQuerySchema>
 export type VouchListStatusFilter = z.infer<typeof vouchListStatusFilterSchema>
