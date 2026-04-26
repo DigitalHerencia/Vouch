@@ -1,4 +1,4 @@
-import { AdminVouchDetailPage } from "@/features/admin"
+import { AdminVouchDetailPage } from "@/features/admin/"
 
 type PageProps = { params: Promise<{ vouchId: string }> }
 
