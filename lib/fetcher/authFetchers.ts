@@ -1,21 +1,27 @@
 import "server-only"
 
-// Auto-generated fetcher stubs. Implement authenticate -> authorize -> minimal select -> DTO mapping.
+import {
+  getCurrentUser as getAuthCurrentUser,
+  getCurrentUserId as getAuthCurrentUserId,
+  requireActiveUser as requireAuthActiveUser,
+  requireUser as requireAuthUser,
+} from "@/lib/auth/current-user"
+import { prisma } from "@/lib/db/prisma"
 
-export async function getCurrentUser(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/authFetchers.ts")
+export async function getCurrentUser() {
+  return getAuthCurrentUser()
 }
 
-export async function getCurrentUserId(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/authFetchers.ts")
+export async function getCurrentUserId() {
+  return getAuthCurrentUserId()
 }
 
-export async function requireUser(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/authFetchers.ts")
+export async function requireUser() {
+  return requireAuthUser()
 }
 
-export async function requireActiveUser(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/authFetchers.ts")
+export async function requireActiveUser() {
+  return requireAuthActiveUser()
 }
 
 export async function getAuthPageState(..._args: unknown[]): Promise<never> {
@@ -38,8 +44,32 @@ export async function getSignedOutRedirectState(..._args: unknown[]): Promise<ne
   throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/authFetchers.ts")
 }
 
-export async function getUserSetupStatus(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/authFetchers.ts")
+export async function getUserSetupStatus() {
+  const user = await requireAuthActiveUser()
+  const setup = await prisma.user.findUniqueOrThrow({
+    where: { id: user.id },
+    select: {
+      status: true,
+      verificationProfile: {
+        select: {
+          identityStatus: true,
+          adultStatus: true,
+          paymentReadiness: true,
+          payoutReadiness: true,
+        },
+      },
+      termsAcceptances: { select: { id: true }, take: 1 },
+    },
+  })
+
+  return {
+    userStatus: setup.status,
+    identityStatus: setup.verificationProfile?.identityStatus ?? "unstarted",
+    adultStatus: setup.verificationProfile?.adultStatus ?? "unstarted",
+    paymentReadiness: setup.verificationProfile?.paymentReadiness ?? "not_started",
+    payoutReadiness: setup.verificationProfile?.payoutReadiness ?? "not_started",
+    termsAccepted: setup.termsAcceptances.length > 0,
+  }
 }
 
 export async function getUserAuthzSnapshot(..._args: unknown[]): Promise<never> {

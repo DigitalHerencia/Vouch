@@ -1,5 +1,7 @@
 import "server-only"
 
+import type { Prisma } from "@/prisma/generated/prisma/client"
+
 import { prisma } from "@/lib/db/prisma"
 
 export type WebhookProviderName = "clerk" | "stripe" | "stripe_identity"
@@ -25,7 +27,7 @@ export async function recordProviderWebhookReceived(input: ProviderWebhookLedger
       eventType: input.eventType,
       status: "received",
       processed: false,
-      safeMetadata: input.safeMetadata ?? {},
+      safeMetadata: (input.safeMetadata ?? {}) as Prisma.InputJsonValue,
     },
     update: {},
   })

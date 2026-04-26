@@ -5,13 +5,13 @@
     "generated_at": "2026-04-24T00:00:00.000Z",
     "purpose": "Provides current project handoff state, next actions, blockers, risks, and stop conditions for the next coding agent.",
     "current_state": {
-        "phase": "governance_artifact_generation_complete",
-        "implementation_started": false,
+        "phase": "auth_foundation_implemented",
+        "implementation_started": true,
         "docs_created": true,
         "contracts_created": true,
         "instructions_created": true,
         "execution_json_created": true,
-        "validation_run": false
+        "validation_run": true
     },
     "source_of_truth_order": [
         ".agents/docs/*.md",
@@ -90,7 +90,7 @@
             "id": "NEXT-004",
             "priority": "P0",
             "title": "Implement auth and authz foundation",
-            "details": "Implement Clerk sync, user helpers, setup gates, participant-scoped authz, admin authz, and denial-by-default behavior."
+            "details": "Completed Clerk sync, current-user helpers, participant/admin authz helpers, and Clerk webhook verification/idempotency. Remaining auth work is route/action integration after broader scaffold modules compile."
         },
         {
             "id": "NEXT-005",
@@ -139,8 +139,8 @@
         {
             "id": "BLOCK-003",
             "severity": "high",
-            "title": "Implementation not started",
-            "impact": "All validation gates remain not_run until repo code exists.",
+            "title": "Repo scaffold gaps block full validation",
+            "impact": "pnpm typecheck and full pnpm test fail due missing feature/type/schema/helper modules and Vitest collecting Playwright specs outside the Clerk auth work.",
             "unblocks": ["mvp_local"]
         }
     ],

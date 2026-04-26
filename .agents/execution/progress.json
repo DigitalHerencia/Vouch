@@ -98,6 +98,35 @@
             ],
             "validation_status": "not_run",
             "notes": "Execution files record state and do not define business logic."
+        },
+        {
+            "id": "PRG-006",
+            "date": "2026-04-25",
+            "status": "completed",
+            "category": "implementation",
+            "title": "Implemented Clerk auth foundation and authz helpers",
+            "summary": "Added Clerk-backed current-user resolution, local user sync with default VerificationProfile creation, server-side authz policies for admin/participant/invite access, Svix-verified Clerk webhook handling, idempotent webhook ledger use, and focused authz/webhook tests.",
+            "files": [
+                "lib/auth/current-user.ts",
+                "lib/auth/clerk.ts",
+                "lib/auth/webhooks.ts",
+                "lib/actions/authActions.ts",
+                "lib/fetcher/authFetchers.ts",
+                "lib/authz/admin.ts",
+                "lib/authz/assertions.ts",
+                "lib/authz/capabilities.ts",
+                "lib/authz/participants.ts",
+                "lib/authz/policies.ts",
+                "lib/db/transactions/authTransactions.ts",
+                "lib/clerk/process-clerk-webhook.ts",
+                "lib/clerk/webhook-events.ts",
+                "lib/webhooks/provider-webhook-ledger.ts",
+                "lib/webhooks/provider-webhook-status.ts",
+                "app/api/webhooks/clerk/route.ts",
+                "tests/unit/authz/policies.test.ts"
+            ],
+            "validation_status": "partial_pass",
+            "notes": "Focused authz/webhook tests and Prisma validation pass. Full typecheck/test remain blocked by pre-existing scaffold gaps outside this auth implementation."
         }
     ],
     "next_expected_phase": "repo_implementation",

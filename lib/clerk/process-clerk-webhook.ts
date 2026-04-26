@@ -32,9 +32,29 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent) {
 
   try {
     if (event.type === "user.deleted") {
-      await prisma.user.updateMany({
-        where: { clerkUserId: event.data.id },
-        data: { status: "disabled" },
+      await prisma.$transaction(async (tx) => {
+        const updated = await tx.user.updateMany({
+          where: { clerkUserId: event.data.id },
+          data: { status: "disabled" },
+        })
+
+        const user = await tx.user.findUnique({
+          where: { clerkUserId: event.data.id },
+          select: { id: true },
+        })
+
+        await tx.auditEvent.create({
+          data: {
+            eventName: "user.deleted",
+            actorType: "auth_provider",
+            entityType: "user",
+            entityId: user?.id ?? event.data.id,
+            metadata: {
+              clerk_user_id: event.data.id,
+              local_user_updated: updated.count > 0,
+            },
+          },
+        })
       })
       await markProviderWebhookProcessed(ledger.id)
       return { ok: true as const, ignored: false as const }
@@ -54,15 +74,15 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent) {
         where: { clerkUserId: event.data.id },
         create: {
           clerkUserId: event.data.id,
-          email,
-          phone,
-          displayName,
+          email: email ?? null,
+          phone: phone ?? null,
+          displayName: displayName ?? null,
           status: "active",
         },
         update: {
-          email,
-          phone,
-          displayName,
+          email: email ?? null,
+          phone: phone ?? null,
+          displayName: displayName ?? null,
         },
       })
 

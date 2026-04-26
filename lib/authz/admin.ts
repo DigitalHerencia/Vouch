@@ -1,19 +1,25 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
+import { requireActiveUser, type CurrentUser } from "@/lib/auth/current-user"
+import { assertCapability } from "@/lib/authz/capabilities"
 
-export async function assertAdmin(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/admin.ts")
+export async function assertAdmin(): Promise<CurrentUser> {
+  const user = await requireActiveUser()
+  assertCapability(user, "view_admin_dashboard")
+  return user
 }
 
-export async function canViewOperationalState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/admin.ts")
+export function canViewOperationalState(user: Pick<CurrentUser, "isAdmin" | "status">): boolean {
+  return user.status === "active" && user.isAdmin
 }
 
-export async function canRunSafeRetry(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/admin.ts")
+export function canRunSafeRetry(user: Pick<CurrentUser, "isAdmin" | "status">): boolean {
+  return canViewOperationalState(user)
 }
 
-export async function canDisableUserOperationally(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/admin.ts")
+export function canDisableUserOperationally(
+  user: Pick<CurrentUser, "id" | "isAdmin" | "status">,
+  targetUserId: string
+): boolean {
+  return canViewOperationalState(user) && user.id !== targetUserId
 }

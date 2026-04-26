@@ -1,23 +1,48 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
+import { assertAllowed } from "@/lib/authz/assertions"
 
-export async function assertVouchParticipant(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/participants.ts")
+export type VouchParticipantInput = {
+  userId: string
+  payerId: string
+  payeeId?: string | null
 }
 
-export async function assertPayer(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/participants.ts")
+export type ParticipantRole = "payer" | "payee"
+
+export function getParticipantRoleForVouch(input: VouchParticipantInput): ParticipantRole | null {
+  if (input.userId === input.payerId) {
+    return "payer"
+  }
+  if (input.payeeId && input.userId === input.payeeId) {
+    return "payee"
+  }
+  return null
 }
 
-export async function assertPayee(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/participants.ts")
+export function assertVouchParticipant(input: VouchParticipantInput): ParticipantRole {
+  const role = getParticipantRoleForVouch(input)
+  if (!role) {
+    assertAllowed(false, "User is not a Vouch participant")
+  }
+  return role
 }
 
-export async function assertInviteCandidate(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/participants.ts")
+export function assertPayer(input: VouchParticipantInput): void {
+  assertAllowed(getParticipantRoleForVouch(input) === "payer", "Payer access required")
 }
 
-export async function getParticipantRoleForVouch(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/participants.ts")
+export function assertPayee(input: VouchParticipantInput): void {
+  assertAllowed(getParticipantRoleForVouch(input) === "payee", "Accepted payee access required")
+}
+
+export function assertInviteCandidate(input: {
+  userId: string
+  payerId: string
+  vouchStatus: string
+  inviteValid: boolean
+}): void {
+  assertAllowed(input.vouchStatus === "pending", "Vouch is not pending")
+  assertAllowed(input.userId !== input.payerId, "Payer may not accept their own Vouch")
+  assertAllowed(input.inviteValid, "Valid invitation required")
 }

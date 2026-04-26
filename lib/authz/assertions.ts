@@ -1,19 +1,35 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
+import type { CurrentUser } from "@/lib/auth/current-user"
 
-export async function deny(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/assertions.ts")
+export class AuthzError extends Error {
+  constructor(
+    message: string,
+    readonly code: "UNAUTHENTICATED" | "FORBIDDEN" | "DISABLED" = "FORBIDDEN"
+  ) {
+    super(message)
+    this.name = "AuthzError"
+  }
 }
 
-export async function assertAllowed(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/assertions.ts")
+export function deny(message = "Forbidden", code: "UNAUTHENTICATED" | "FORBIDDEN" | "DISABLED" = "FORBIDDEN"): never {
+  throw new AuthzError(message, code)
 }
 
-export async function assertActiveAccount(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/assertions.ts")
+export function assertAllowed(allowed: boolean, message = "Forbidden"): asserts allowed {
+  if (!allowed) {
+    deny(message)
+  }
 }
 
-export async function assertNotSelfAcceptance(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/assertions.ts")
+export function assertActiveAccount(user: Pick<CurrentUser, "status">): void {
+  if (user.status !== "active") {
+    deny("Active user required", "DISABLED")
+  }
+}
+
+export function assertNotSelfAcceptance(input: { userId: string; payerId: string }): void {
+  if (input.userId === input.payerId) {
+    deny("Payer may not accept their own Vouch")
+  }
 }

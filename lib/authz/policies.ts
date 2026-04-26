@@ -1,27 +1,121 @@
-import "server-only"
+import type { CurrentUser } from "@/lib/auth/current-user"
 
-// Auto-generated server helper stubs.
-
-export async function canViewVouch(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/policies.ts")
+export type VouchAccessInput = {
+  userId?: string | null
+  payerId: string
+  payeeId?: string | null
+  isAdmin?: boolean
+  inviteValid?: boolean
 }
 
-export async function canCreateVouch(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/policies.ts")
+export type VouchReadinessInput = {
+  userStatus?: "active" | "disabled"
+  identityStatus?: string
+  adultStatus?: string
+  paymentReadiness?: string
+  payoutReadiness?: string
+  termsAccepted?: boolean
 }
 
-export async function canAcceptVouch(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/policies.ts")
+export type AcceptVouchInput = VouchReadinessInput & {
+  userId?: string | null
+  payerId: string
+  existingPayeeId?: string | null
+  status: string
+  inviteValid: boolean
+  eligible?: boolean
 }
 
-export async function canDeclineVouch(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/policies.ts")
+export type ConfirmPresenceInput = {
+  userId?: string | null
+  payerId: string
+  payeeId?: string | null
+  status: string
+  windowOpen: boolean
+  alreadyConfirmed: boolean
+  userStatus?: "active" | "disabled"
 }
 
-export async function canConfirmPresence(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/policies.ts")
+function isActive(input: VouchReadinessInput): boolean {
+  return input.userStatus !== "disabled"
 }
 
-export async function canViewAdmin(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/authz/policies.ts")
+function hasCreateReadiness(input: VouchReadinessInput): boolean {
+  return (
+    isActive(input) &&
+    input.identityStatus === "verified" &&
+    input.adultStatus === "verified" &&
+    input.paymentReadiness === "ready" &&
+    input.termsAccepted === true
+  )
 }
+
+function hasAcceptReadiness(input: VouchReadinessInput & { eligible?: boolean }): boolean {
+  if (input.eligible !== undefined) {
+    return input.eligible
+  }
+
+  return (
+    isActive(input) &&
+    input.identityStatus === "verified" &&
+    input.adultStatus === "verified" &&
+    input.payoutReadiness === "ready" &&
+    input.termsAccepted === true
+  )
+}
+
+export function canViewVouch(input: VouchAccessInput): boolean {
+  if (!input.userId) {
+    return false
+  }
+
+  return (
+    input.isAdmin === true ||
+    input.userId === input.payerId ||
+    input.userId === input.payeeId ||
+    input.inviteValid === true
+  )
+}
+
+export function canCreateVouch(input: VouchReadinessInput): boolean {
+  return hasCreateReadiness(input)
+}
+
+export function canAcceptVouch(input: AcceptVouchInput): boolean {
+  return (
+    Boolean(input.userId) &&
+    isActive(input) &&
+    input.status === "pending" &&
+    !input.existingPayeeId &&
+    input.userId !== input.payerId &&
+    input.inviteValid &&
+    hasAcceptReadiness(input)
+  )
+}
+
+export function canDeclineVouch(input: {
+  userId?: string | null
+  payerId: string
+  status: string
+  inviteValid: boolean
+}): boolean {
+  return Boolean(input.userId) && input.status === "pending" && input.userId !== input.payerId && input.inviteValid
+}
+
+export function canConfirmPresence(input: ConfirmPresenceInput): boolean {
+  const isParticipant = Boolean(input.userId) && (input.userId === input.payerId || input.userId === input.payeeId)
+  return (
+    isParticipant &&
+    input.userStatus !== "disabled" &&
+    input.status === "active" &&
+    input.windowOpen &&
+    !input.alreadyConfirmed
+  )
+}
+
+export function canViewAdmin(user: Pick<CurrentUser, "isAdmin" | "status"> | null): boolean {
+  return user?.status === "active" && user.isAdmin
+}
+
+export const canAccessVouch = canViewVouch
+export const canConfirmVouch = canConfirmPresence

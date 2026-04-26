@@ -1,15 +1,19 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
+import { verifyWebhook as verifyClerkRequestWebhook } from "@clerk/nextjs/webhooks"
+import type { NextRequest } from "next/server"
 
-export async function verifyClerkWebhook(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/auth/webhooks.ts")
+import { parseClerkWebhookJson, type ClerkWebhookEvent } from "@/lib/clerk/webhook-events"
+import { processClerkWebhookEvent } from "@/lib/clerk/process-clerk-webhook"
+
+export async function verifyClerkWebhook(request: NextRequest): Promise<unknown> {
+  return verifyClerkRequestWebhook(request)
 }
 
-export async function parseClerkWebhookEvent(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/auth/webhooks.ts")
+export function parseClerkWebhookEvent(rawBody: string): ClerkWebhookEvent {
+  return parseClerkWebhookJson(rawBody)
 }
 
-export async function handleVerifiedClerkWebhook(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/auth/webhooks.ts")
+export async function handleVerifiedClerkWebhook(event: unknown) {
+  return processClerkWebhookEvent(event as ClerkWebhookEvent)
 }
