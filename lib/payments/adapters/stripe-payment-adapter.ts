@@ -109,12 +109,14 @@ export async function releaseStripePaymentForCompletedVouch(
   }
 
   try {
-    const captured = await stripe.paymentIntents.capture(paymentRecord.providerPaymentId, {
+    const captureParams = {
       application_fee_amount: paymentRecord.platformFeeCents,
       transfer_data: {
         destination: connectedAccountId,
       },
-    })
+    } as unknown as Parameters<typeof stripe.paymentIntents.capture>[1]
+
+    const captured = await stripe.paymentIntents.capture(paymentRecord.providerPaymentId, captureParams)
 
     await prisma.paymentRecord.update({
       where: { id: paymentRecord.id },

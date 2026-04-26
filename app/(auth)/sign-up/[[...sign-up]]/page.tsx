@@ -1,7 +1,7 @@
 import { ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
-import { SignupForm } from '@/features/auth/signup-form-client'
+import { SignupForm } from '@/features/auth/sign-up-page'
 import { type SignupPageProps } from '@/types/auth.types'
 
 export default async function SignUpPage({ searchParams }: SignupPageProps) {

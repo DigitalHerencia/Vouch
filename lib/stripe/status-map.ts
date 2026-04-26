@@ -37,7 +37,7 @@ export function mapStripePaymentIntentStatus(
   }
 }
 
-export function mapStripeRefundStatus(status: Stripe.Refund.Status | null): LocalRefundStatus {
+export function mapStripeRefundStatus(status: Stripe.Refund["status"] | null): LocalRefundStatus {
   switch (status) {
     case "pending":
       return "pending"

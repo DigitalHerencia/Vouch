@@ -57,7 +57,7 @@ export async function processStripeIdentityWebhookEvent(event: Stripe.Event) {
   }
 }
 
-function mapStripeIdentityStatus(status: Stripe.Identity.VerificationSession.Status) {
+function mapStripeIdentityStatus(status: Stripe.Identity.VerificationSession["status"]) {
   switch (status) {
     case "verified":
       return "verified" as const

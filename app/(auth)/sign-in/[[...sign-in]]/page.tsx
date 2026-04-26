@@ -1,7 +1,7 @@
 import { ShieldCheck } from 'lucide-react'
 import Link from 'next/link'
 
-import { LoginForm } from '@/features/auth/login-form-client'
+import { LoginForm } from '@/features/auth/sign-in-page'
 import { type LoginPageProps } from '@/types/auth.types'
 
 export default async function SignInPage({ searchParams }: LoginPageProps) {

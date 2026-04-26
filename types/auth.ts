@@ -109,9 +109,9 @@ export interface SignupFormValues {
 }
 
 export interface LoginFormProps extends ComponentProps<'form'> {
-    redirectUrl?: string
+    redirectUrl?: string | undefined
 }
 
 export interface SignupFormProps extends ComponentProps<'form'> {
-    redirectUrl?: string
+    redirectUrl?: string | undefined
 }

@@ -1,5 +1,7 @@
 import { z } from "zod"
 
+export const baseRoleSchema = z.enum(["anonymous", "authenticated_user", "admin", "system"])
+
 export const userSyncSchema = z.object({
     clerkUserId: z.string().trim().min(1),
     email: z.string().trim().email().max(320).optional(),
