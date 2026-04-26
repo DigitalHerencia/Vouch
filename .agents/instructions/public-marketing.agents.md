@@ -1,4 +1,4 @@
-# Discovery Instructions — Anti-Discovery / Public Marketing Only
+# Public Marketing Instructions — Informational Pages Only
 
 ## Issue Type
 
@@ -7,14 +7,6 @@ Implementation Instruction
 ## Domain
 
 Public marketing, education, legal-safe positioning, and explicit prevention of marketplace/discovery behavior.
-
-## Naming Note
-
-This legacy filename says “discovery,” but Vouch explicitly prohibits marketplace discovery.
-
-This file means:
-
-> Build public informational surfaces only. Do not build user/service discovery.
 
 ## Source Contracts
 

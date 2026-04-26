@@ -14,6 +14,6 @@ const config = {
 
   tailwindStylesheet: "./app/globals.css",
   tailwindFunctions: ["cn", "cva", "clsx"],
-};
+}
 
-export default config;
+export default config

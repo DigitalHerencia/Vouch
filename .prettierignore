@@ -1,21 +1,38 @@
+# Dependencies
+node_modules
+.pnpm-store
+
+# Next / build output
 .next
 out
 build
 dist
+
+# Generated
+generated
+src/generated
+prisma/generated
+next-env.d.ts
+
+# Test output
 coverage
 playwright-report
 test-results
-node_modules
 
-generated/prisma
-src/generated/prisma
-
+# Package manager / logs
 pnpm-lock.yaml
 package-lock.json
 yarn.lock
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
+# Environment
 .env
 .env.*
 !.env.example
 
-*.log
+# Misc
+.DS_Store
+*.tsbuildinfo

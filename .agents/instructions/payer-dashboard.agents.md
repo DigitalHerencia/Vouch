@@ -1,4 +1,4 @@
-# Guest Inbox Instructions — Payer / Client Dashboard
+# Payer Dashboard Instructions — Client Action Queue
 
 ## Issue Type
 
@@ -7,14 +7,6 @@ Implementation Instruction
 ## Domain
 
 Authenticated user dashboard, payer/client action queue, invite-aware state, and Vouch list views.
-
-## Naming Note
-
-This legacy filename says “guest.” In Vouch, map “guest” to:
-
-> Payer / client / authenticated user viewing their Vouch obligations and outcomes.
-
-Do not implement marketplace guest browsing.
 
 ## Source Contracts
 

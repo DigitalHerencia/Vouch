@@ -1,4 +1,4 @@
-# Host Dashboard Instructions — Payee / Provider Operational Dashboard
+# Payee Dashboard Instructions — Provider Operational Dashboard
 
 ## Issue Type
 
@@ -7,14 +7,6 @@ Implementation Instruction
 ## Domain
 
 Payee/provider-facing dashboard surfaces for accepted Vouches, payout readiness, confirmation actions, and final outcomes.
-
-## Naming Note
-
-This legacy filename says “host.” In Vouch, map “host” to:
-
-> Payee / provider receiving commitment-backed funds after successful dual confirmation.
-
-This is not a public provider dashboard or marketplace profile.
 
 ## Source Contracts
 

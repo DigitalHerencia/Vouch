@@ -90,8 +90,8 @@ const useCases = [
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#050807] text-neutral-100 selection:bg-blue-600 selection:text-white">
-      <section className="mx-auto min-h-screen w-full max-w-375 border-x border-neutral-800/80 bg-[radial-gradient(circle_at_18%_16%,rgba(255,255,255,0.045),transparent_28%),radial-gradient(circle_at_85%_22%,rgba(37,99,235,0.13),transparent_28%),linear-gradient(180deg,#050807_0%,#060908_55%,#050706_100%)]">
+    <main className="min-h-screen text-neutral-100 selection:bg-blue-600 selection:text-white">
+      <section className="mx-auto min-h-screen w-full max-w-375 border-x">
         <SiteHeader />
 
         <div className="relative overflow-hidden px-5 pt-8 pb-10 sm:px-8 md:px-10 lg:px-12 lg:pt-14 lg:pb-16">
@@ -178,7 +178,7 @@ function HeroCopy() {
 
       <p className="mt-6 max-w-117.5 text-base leading-6 font-semibold text-neutral-300 sm:text-lg sm:leading-7">
         A simple way to protect appointments and in-person agreements. Both parties confirm. Then
-        funds release. Otherwise, you're covered.
+        funds release. Otherwise, your&apos;re covered.
       </p>
 
       <div className="mt-7 grid gap-3 sm:flex sm:items-center sm:gap-6">

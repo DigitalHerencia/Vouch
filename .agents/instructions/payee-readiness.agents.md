@@ -1,4 +1,4 @@
-# Host Onboarding Instructions — Payee / Provider Readiness
+# Payee Readiness Instructions — Verification, Payout, and Terms
 
 ## Issue Type
 
@@ -7,14 +7,6 @@ Implementation Instruction
 ## Domain
 
 Payout setup, verification, terms acceptance, and payee/provider eligibility.
-
-## Naming Note
-
-This legacy filename says “host onboarding.” In Vouch, map this to:
-
-> Payee/provider readiness to accept Vouches and receive released funds.
-
-Do not build marketplace host onboarding, provider profiles, or service listing setup.
 
 ## Source Contracts
 

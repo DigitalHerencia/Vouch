@@ -1,4 +1,4 @@
-# Database / Prisma Instructions — Vouch
+# Database / Prisma Instructions — Vouch Persistence
 
 ## Issue Type
 

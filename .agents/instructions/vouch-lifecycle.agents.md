@@ -1,4 +1,4 @@
-# Booking Instructions — Vouch Lifecycle
+# Vouch Lifecycle Instructions — Creation, Acceptance, Confirmation, Resolution
 
 ## Issue Type
 
@@ -7,16 +7,6 @@ Implementation Instruction
 ## Domain
 
 Vouch creation, invitation, acceptance, confirmation, expiration, release, refund, and deterministic lifecycle resolution.
-
-## Naming Note
-
-This legacy filename uses “booking,” but Vouch is not a scheduler or booking marketplace.
-
-In this repo, “booking” means:
-
-> The Vouch lifecycle for a pre-arranged appointment or in-person agreement.
-
-Do not build scheduling software.
 
 ## Source Contracts
 

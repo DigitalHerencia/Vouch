@@ -1,4 +1,4 @@
-# Admin Moderation Instructions — Operational Inspection Only
+# Admin Operations Instructions — Operational Inspection Only
 
 ## Issue Type
 
@@ -7,16 +7,6 @@ Implementation Instruction
 ## Domain
 
 Admin operational visibility, diagnostics, safe retries, account disabling, audit inspection, and strict no-arbitration enforcement.
-
-## Naming Note
-
-This legacy filename says “moderation,” but Vouch does not moderate disputes.
-
-In Vouch, admin moderation means:
-
-> Operational inspection and technical remediation only.
-
-Admins do not decide who is right.
 
 ## Source Contracts
 
