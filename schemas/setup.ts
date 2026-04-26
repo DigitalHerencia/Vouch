@@ -1,12 +1,18 @@
 import { z } from "zod"
 
-export const internalReturnToSchema = z
-    .string()
-    .trim()
-    .startsWith("/", "Return path must be an internal path.")
-    .refine((value) => !value.startsWith("//"), "Return path must be an internal path.")
-    .refine((value) => !value.includes("://"), "Return path must be an internal path.")
-    .optional()
+import { emptyStringToUndefined, sanitizeInternalPath } from "./common"
+
+export const internalReturnToSchema = z.preprocess(
+    emptyStringToUndefined,
+    z
+        .string()
+        .refine(
+            (value) => sanitizeInternalPath(value) === value.trim(),
+            "Return path must be an internal path.",
+        )
+        .transform((value) => value.trim())
+        .optional(),
+)
 
 export const acceptTermsSchema = z.object({
     termsVersion: z.string().trim().min(1).max(64),
@@ -18,12 +24,14 @@ export const acceptTermsSchema = z.object({
 
 export type AcceptTermsInput = z.infer<typeof acceptTermsSchema>
 
-export const setupIntentSchema = z.object({
-    intent: z.enum(["create", "accept", "both"]).default("both"),
+export const setupIntentSchema = z.enum(["create", "accept", "both"])
+
+export const setupPageStateInputSchema = z.object({
+    intent: setupIntentSchema.default("both"),
     returnTo: internalReturnToSchema,
 })
 
-export type SetupIntentInput = z.infer<typeof setupIntentSchema>
+export type SetupIntentInput = z.infer<typeof setupPageStateInputSchema>
 
 export const startSetupProviderFlowSchema = z.object({
     returnTo: internalReturnToSchema,

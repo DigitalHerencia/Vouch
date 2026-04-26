@@ -18,7 +18,7 @@
     },
     "summary": {
         "overall_status": "fail",
-        "reason": "Auth-focused tests and Prisma validation pass, but full typecheck and full Vitest are blocked by existing scaffold/module gaps outside the auth implementation.",
+        "reason": "Focused auth and setup-gate tests pass, but full typecheck and full Vitest are blocked by existing scaffold/module gaps outside the setup-gate implementation.",
         "latest_validation_at": "2026-04-25T00:00:00.000Z",
         "latest_validator": "Codex"
     },
@@ -33,13 +33,13 @@
             "id": "CMD-002",
             "command": "pnpm typecheck",
             "status": "fail",
-            "evidence": "Ran 2026-04-25. Fails on pre-existing missing feature/type/schema modules, Clerk UserButton prop drift, Stripe type drift, and related scaffold gaps; no remaining reported errors in the auth files changed for this task."
+            "evidence": "Ran 2026-04-25. Fails on pre-existing missing feature/type/schema modules, Clerk UserButton prop drift, Stripe type drift, scaffold gaps, and test import gaps; no remaining reported errors in the setup-gate implementation files."
         },
         {
             "id": "CMD-003",
             "command": "pnpm test",
             "status": "fail",
-            "evidence": "Ran 2026-04-25. Focused authz/webhook subset passed separately. Full suite fails on existing missing schema/vouch/payment modules, Playwright specs included in Vitest, setup helper gaps, and forbidden filename contract failures unrelated to Clerk auth."
+            "evidence": "Ran 2026-04-25. Focused setup subset passed separately: pnpm test tests/unit/setup/status.test.ts tests/unit/schemas/setup.schemas.test.ts. Full suite fails on existing missing schema/vouch/payment modules, Playwright specs included in Vitest, setup checklist component mismatch, and forbidden filename contract failures unrelated to this setup-gate work."
         },
         {
             "id": "CMD-004",
@@ -150,9 +150,9 @@
         {
             "id": "setup_gates",
             "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires setup gate implementation and tests."
+            "status": "pass",
+            "evidence": "Focused setup gate tests passed for create readiness, accept readiness, verification/payment/payout blockers, confirmation participant/window/duplicate blockers, and internal return-path validation.",
+            "notes": "Route/action integration still needs broader coverage once the repo-wide scaffold compiles."
         },
         {
             "id": "vouch_create_flow",
@@ -298,6 +298,11 @@
             "id": "VAL-NOTE-002",
             "date": "2026-04-25",
             "message": "Auth-focused validation was executed: pnpm prisma:validate passed, focused authz/webhook Vitest files passed, pnpm typecheck and full pnpm test failed on existing scaffold gaps outside this task. pnpm validate:contracts failed because scripts/validate-contracts.mjs is missing."
+        },
+        {
+            "id": "VAL-NOTE-003",
+            "date": "2026-04-25",
+            "message": "Setup-gate focused validation was executed: pnpm test tests/unit/setup/status.test.ts tests/unit/schemas/setup.schemas.test.ts passed. pnpm typecheck and full pnpm test still fail on repo-wide scaffold gaps outside this task."
         }
     ]
 }

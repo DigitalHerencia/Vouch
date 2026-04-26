@@ -127,6 +127,32 @@
             ],
             "validation_status": "partial_pass",
             "notes": "Focused authz/webhook tests and Prisma validation pass. Full typecheck/test remain blocked by pre-existing scaffold gaps outside this auth implementation."
+        },
+        {
+            "id": "PRG-007",
+            "date": "2026-04-25",
+            "status": "completed",
+            "category": "implementation",
+            "title": "Implemented setup gates and verification readiness helpers",
+            "summary": "Centralized setup eligibility for create Vouch, accept Vouch, confirmation, and settings; added terms acceptance persistence; implemented setup page state and verification status/action helpers using provider references and statuses only.",
+            "files": [
+                "lib/setup/status.ts",
+                "lib/auth/setup-gates.ts",
+                "lib/fetcher/setupFetchers.ts",
+                "lib/actions/setupActions.ts",
+                "lib/fetcher/verificationFetchers.ts",
+                "lib/actions/verificationActions.ts",
+                "lib/db/transactions/setupTransactions.ts",
+                "lib/db/transactions/verificationTransactions.ts",
+                "schemas/setup.ts",
+                "schemas/setup.schemas.ts",
+                "types/setup.ts",
+                "types/setup.types.ts",
+                "tests/unit/setup/status.test.ts",
+                "tests/unit/schemas/setup.schemas.test.ts"
+            ],
+            "validation_status": "partial_pass",
+            "notes": "Focused setup gate and return-path tests pass. Full typecheck/test remain blocked by repo-wide scaffold gaps unrelated to setup gates."
         }
     ],
     "next_expected_phase": "repo_implementation",

@@ -30,6 +30,8 @@ describe("setup schemas", () => {
     expect(internalReturnToSchema.safeParse("/vouches/invite/token").success).toBe(true)
     expect(internalReturnToSchema.safeParse("https://evil.example/vouches").success).toBe(false)
     expect(internalReturnToSchema.safeParse("//evil.example").success).toBe(false)
+    expect(internalReturnToSchema.safeParse("javascript:alert(1)").success).toBe(false)
+    expect(internalReturnToSchema.safeParse("/\\evil").success).toBe(false)
   })
 
   it("accepts supported setup intents", () => {

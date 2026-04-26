@@ -93,6 +93,12 @@
             "details": "Completed Clerk sync, current-user helpers, participant/admin authz helpers, and Clerk webhook verification/idempotency. Remaining auth work is route/action integration after broader scaffold modules compile."
         },
         {
+            "id": "NEXT-004A",
+            "priority": "P0",
+            "title": "Wire setup gates into payment-bearing Vouch actions",
+            "details": "Setup gate calculation and server helpers are implemented. Next Vouch action work should call create, accept, and confirmation gates before any payment-bearing mutation."
+        },
+        {
             "id": "NEXT-005",
             "priority": "P0",
             "title": "Implement Vouch lifecycle",
