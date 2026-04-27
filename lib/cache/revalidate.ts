@@ -1,19 +1,23 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
+import { revalidatePath, revalidateTag } from "next/cache"
 
-export async function revalidateVouch(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/cache/revalidate.ts")
+export async function revalidateVouch(vouchId: string): Promise<void> {
+  revalidateTag(`vouch:${vouchId}`)
+  revalidatePath(`/vouches/${vouchId}`)
 }
 
-export async function revalidateUserVouches(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/cache/revalidate.ts")
+export async function revalidateUserVouches(userId: string): Promise<void> {
+  revalidateTag(`user:${userId}:vouches`)
+  revalidatePath("/vouches")
 }
 
-export async function revalidateDashboard(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/cache/revalidate.ts")
+export async function revalidateDashboard(): Promise<void> {
+  revalidateTag("dashboard")
+  revalidatePath("/dashboard")
 }
 
-export async function revalidateAdminOperationalViews(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/cache/revalidate.ts")
+export async function revalidateAdminOperationalViews(): Promise<void> {
+  revalidateTag("admin")
+  revalidatePath("/admin")
 }
