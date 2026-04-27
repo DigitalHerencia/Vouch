@@ -18,7 +18,14 @@ const eslintConfig = defineConfig([
       "react-hook-form/destructuring-formstate": "error",
       "react-hook-form/no-access-control": "error",
       "react-hook-form/no-nested-object-setvalue": "error",
-      "react-hook-form/no-use-watch": "warn",
+
+      /*
+       * eslint-plugin-react-hook-form@0.3.1 still calls context.getScope(),
+       * which was removed from the ESLint 9 rule context API. Keep the plugin's
+       * compatible rules, but disable this one until the plugin ships ESLint 9
+       * support or we replace it with a project-local rule.
+       */
+      "react-hook-form/no-use-watch": "off",
     },
   },
 
