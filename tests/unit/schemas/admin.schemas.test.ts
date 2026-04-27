@@ -1,14 +1,14 @@
 import { describe, expect, it } from "vitest"
 
 import {
-  adminAuditFiltersSchema,
-  adminSafeRetrySchema,
-  adminVouchFiltersSchema,
-} from "@/schemas/admin.schemas"
+  adminAuditFilterInputSchema,
+  adminSafeRetryInputSchema,
+  adminVouchFilterInputSchema,
+} from "@/schemas/admin"
 
 describe("admin schemas", () => {
   it("normalizes admin vouch filters", () => {
-    const result = adminVouchFiltersSchema.safeParse({
+    const result = adminVouchFilterInputSchema.safeParse({
       status: "failed",
       page: "2",
       pageSize: "25",
@@ -24,7 +24,7 @@ describe("admin schemas", () => {
 
   it("rejects unsafe retry operations", () => {
     expect(
-      adminSafeRetrySchema.safeParse({
+      adminSafeRetryInputSchema.safeParse({
         operation: "manual_award_funds",
         entityType: "vouch",
         entityId: "vouch_123",
@@ -34,7 +34,7 @@ describe("admin schemas", () => {
 
   it("accepts audit filter query", () => {
     expect(
-      adminAuditFiltersSchema.safeParse({
+      adminAuditFilterInputSchema.safeParse({
         entityType: "vouch",
         entityId: "abc",
         page: 1,

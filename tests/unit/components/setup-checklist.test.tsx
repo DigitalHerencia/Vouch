@@ -10,16 +10,15 @@ describe("SetupChecklist", () => {
         items={[
           {
             id: "identity",
-            label: "Identity verification",
             description: "Required before payment-bearing flows.",
             status: "complete",
+            title: "",
           },
           {
             id: "payout",
-            label: "Payout setup",
             description: "Required before accepting Vouches.",
             status: "blocked",
-            actionLabel: "Connect payout account",
+            title: "",
           },
         ]}
       />

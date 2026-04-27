@@ -5,7 +5,7 @@ import {
   confirmPresenceSchema,
   createVouchSchema,
   declineVouchSchema,
-} from "@/schemas/vouches.schemas"
+} from "@/schemas/vouch"
 
 describe("vouch schemas", () => {
   it("accepts a valid create Vouch payload", () => {

@@ -40,20 +40,18 @@ export const adminSafeRetryOperationSchema = z.enum([
 ])
 
 export const sanitizedAdminReasonSchema = z.string().trim().min(1).max(500)
-export const sanitizedAdminSortParamSchema = z.enum([
-  "newest",
-  "oldest",
-  "deadline",
-  "failure",
-]).optional()
+export const sanitizedAdminSortParamSchema = z
+  .enum(["newest", "oldest", "deadline", "failure", "created_desc", "created_asc"])
+  .optional()
 
 export const redactedProviderReferenceSchema = z.string().max(256).optional()
 
 export const adminVouchFilterInputSchema = z.object({
   status: vouchStatusSchema.optional(),
   paymentStatus: paymentStatusSchema.optional(),
-  page: z.coerce.number().int().min(1).optional(),
-  sort: sanitizedAdminSortParamSchema,
+  page: z.coerce.number().int().min(1).default(1),
+  pageSize: z.coerce.number().int().min(1).max(100).default(25),
+  sort: sanitizedAdminSortParamSchema.default("created_desc"),
 })
 
 export const adminUserFilterInputSchema = z.object({

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { calculatePlatformFeeCents } from "@/lib/vouches/fees"
+import { calculatePlatformFeeCents } from "@/lib/vouch/fees"
 
 describe("calculatePlatformFeeCents", () => {
   it("uses minimum fee when percentage would be lower", () => {

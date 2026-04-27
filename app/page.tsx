@@ -330,7 +330,7 @@ function TrustBand() {
           Serious by design. Trusted by default.
         </h2>
         <p className="mt-2 max-w-180 text-sm leading-5 font-semibold text-neutral-400 sm:text-base sm:leading-6">
-          We're not a marketplace. We don't rate. We don't arbitrate. We protect commitments so you
+          We're not a marketplace. We don&apos;t rate. We don't arbitrate. We protect commitments so you
           can show up with confidence.
         </p>
       </div>

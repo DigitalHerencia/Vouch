@@ -153,6 +153,19 @@
             ],
             "validation_status": "partial_pass",
             "notes": "Focused setup gate and return-path tests pass. Full typecheck/test remain blocked by repo-wide scaffold gaps unrelated to setup gates."
+        },
+        {
+            "id": "PRG-008",
+            "date": "2026-04-26",
+            "status": "completed",
+            "category": "handoff",
+            "title": "Generated ChatGPT MVP onboarding audit",
+            "summary": "Created a takeover-oriented audit report summarizing source-of-truth files, current scaffold burden, MVP critical path, risks, stop conditions, and a ready-to-use ChatGPT onboarding prompt.",
+            "files": [
+                ".agents/reports/chatgpt-mvp-onboarding-audit.md"
+            ],
+            "validation_status": "not_run",
+            "notes": "Documentation-only handoff artifact. No code validation was run."
         }
     ],
     "next_expected_phase": "repo_implementation",

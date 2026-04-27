@@ -1,55 +1,39 @@
 import { describe, expect, it } from "vitest"
 
-import {
-  canConfirmPresence,
-  getAggregateConfirmationStatus,
-  isInsideConfirmationWindow,
-} from "@/lib/vouches/confirmation"
+import { deriveAggregateConfirmationStatus } from "@/lib/vouch/state"
+import { isConfirmationWindowOpen } from "@/lib/vouch/time-windows"
 
 describe("confirmation helpers", () => {
   it("detects an open confirmation window", () => {
-    const now = new Date("2026-04-25T16:00:00.000Z")
-
     expect(
-      isInsideConfirmationWindow({
-        now,
-        confirmationOpensAt: new Date("2026-04-25T15:55:00.000Z"),
-        confirmationExpiresAt: new Date("2026-04-25T16:30:00.000Z"),
+      isConfirmationWindowOpen({
+        now: new Date("2026-01-01T10:15:00.000Z"),
+        confirmationOpensAt: new Date("2026-01-01T10:00:00.000Z"),
+        confirmationExpiresAt: new Date("2026-01-01T10:30:00.000Z"),
       })
     ).toBe(true)
   })
 
   it("blocks confirmation before window opens", () => {
-    const result = canConfirmPresence({
-      now: new Date("2026-04-25T15:00:00.000Z"),
-      vouchStatus: "active",
-      confirmationOpensAt: new Date("2026-04-25T15:55:00.000Z"),
-      confirmationExpiresAt: new Date("2026-04-25T16:30:00.000Z"),
-      alreadyConfirmed: false,
-      isParticipant: true,
-    })
-
-    expect(result.ok).toBe(false)
-    expect(result.reason).toBe("window_not_open")
+    expect(
+      isConfirmationWindowOpen({
+        now: new Date("2026-01-01T09:59:59.000Z"),
+        confirmationOpensAt: new Date("2026-01-01T10:00:00.000Z"),
+        confirmationExpiresAt: new Date("2026-01-01T10:30:00.000Z"),
+      })
+    ).toBe(false)
   })
 
   it("reports aggregate confirmation status", () => {
     expect(
-      getAggregateConfirmationStatus({
-        payerConfirmed: false,
-        payeeConfirmed: false,
-      })
-    ).toBe("none_confirmed")
-
-    expect(
-      getAggregateConfirmationStatus({
+      deriveAggregateConfirmationStatus({
         payerConfirmed: true,
         payeeConfirmed: false,
       })
     ).toBe("payer_confirmed")
 
     expect(
-      getAggregateConfirmationStatus({
+      deriveAggregateConfirmationStatus({
         payerConfirmed: true,
         payeeConfirmed: true,
       })

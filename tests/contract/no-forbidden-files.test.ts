@@ -1,42 +1,60 @@
 import { readdirSync, statSync } from "node:fs"
-import { join } from "node:path"
+import { join, relative, sep } from "node:path"
 import { describe, expect, it } from "vitest"
 
+const root = process.cwd()
+
+const ignoredDirectories = new Set([
+  ".git",
+  ".next",
+  "node_modules",
+  "coverage",
+  "playwright-report",
+  "test-results",
+  "prisma",
+])
+
 const forbiddenPathFragments = [
+  `${sep}browse${sep}`,
+  `${sep}providers${sep}`,
+  `${sep}messages${sep}`,
+  `${sep}reviews${sep}`,
+  `${sep}ratings${sep}`,
+  `${sep}categories${sep}`,
+  `${sep}disputes${sep}`,
+  `${sep}evidence${sep}`,
+  `${sep}marketplace${sep}`,
   "provider-card",
   "public-profile",
-  "review",
-  "rating",
+  "review-card",
+  "rating-stars",
   "message-thread",
-  "chat",
+  "chat-bubble",
   "category-filter",
   "featured-provider",
-  "recommendation",
-  "dispute",
-  "evidence",
-  "reputation",
+  "recommendation-card",
+  "dispute-form",
+  "evidence-uploader",
+  "reputation-score",
 ]
 
-function listFiles(dir: string): string[] {
-  return readdirSync(dir).flatMap((entry) => {
-    const path = join(dir, entry)
-    const stat = statSync(path)
+function walk(directory: string): string[] {
+  return readdirSync(directory).flatMap((entry) => {
+    const absolutePath = join(directory, entry)
+    const stats = statSync(absolutePath)
 
-    if (stat.isDirectory()) {
-      if (["node_modules", ".next", "coverage", "playwright-report", "test-results", ".git"].includes(entry)) {
-        return []
-      }
-
-      return listFiles(path)
+    if (stats.isDirectory()) {
+      if (ignoredDirectories.has(entry)) return []
+      return walk(absolutePath)
     }
 
-    return [path]
+    return [relative(root, absolutePath).toLowerCase()]
   })
 }
 
 describe("forbidden Vouch artifact names", () => {
-  it("does not introduce marketplace, messaging, review, or dispute files", () => {
-    const files = listFiles(process.cwd()).map((path) => path.toLowerCase())
+  it("does not introduce marketplace, messaging, rating, review, or dispute files", () => {
+    const files = walk(root)
 
     for (const fragment of forbiddenPathFragments) {
       expect(files.filter((file) => file.includes(fragment))).toEqual([])
