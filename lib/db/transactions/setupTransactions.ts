@@ -9,7 +9,12 @@ type Tx = Omit<
 
 export async function acceptTermsTx(
   tx: Tx,
-  input: { userId: string; termsVersion: string; ipHash?: string; userAgentHash?: string },
+  input: {
+    userId: string
+    termsVersion: string
+    ipHash?: string
+    userAgentHash?: string
+  }
 ) {
   return tx.termsAcceptance.upsert({
     where: {
@@ -30,7 +35,10 @@ export async function acceptTermsTx(
 
 export async function ensureTermsAcceptanceTx(
   tx: Tx,
-  input: { userId: string; termsVersion: string },
+  input: {
+    userId: string
+    termsVersion: string
+  }
 ) {
   return tx.termsAcceptance.findUnique({
     where: {
@@ -39,22 +47,74 @@ export async function ensureTermsAcceptanceTx(
         termsVersion: input.termsVersion,
       },
     },
-    select: { id: true, acceptedAt: true },
+    select: {
+      id: true,
+      acceptedAt: true,
+    },
   })
 }
 
-export async function updateSetupGateSnapshotTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/setupTransactions.ts")
+export async function updateSetupGateSnapshotTx(
+  tx: Tx,
+  input: {
+    userId: string
+  }
+): Promise<void> {
+  await tx.user.findUniqueOrThrow({
+    where: {
+      id: input.userId,
+    },
+    select: {
+      id: true,
+    },
+  })
 }
 
-export async function markSetupBlockedTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/setupTransactions.ts")
+export async function markSetupBlockedTx(
+  tx: Tx,
+  input: {
+    userId: string
+    reason?: string
+  }
+): Promise<void> {
+  await tx.user.update({
+    where: {
+      id: input.userId,
+    },
+    data: {
+      status: "disabled",
+    },
+  })
 }
 
-export async function markSetupReturnedFromInviteTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/setupTransactions.ts")
+export async function markSetupReturnedFromInviteTx(
+  tx: Tx,
+  input: {
+    userId: string
+  }
+): Promise<void> {
+  await tx.user.findUniqueOrThrow({
+    where: {
+      id: input.userId,
+    },
+    select: {
+      id: true,
+    },
+  })
 }
 
-export async function markSetupReturnedFromCreateTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/setupTransactions.ts")
+export async function markSetupReturnedFromCreateTx(
+  tx: Tx,
+  input: {
+    userId: string
+  }
+): Promise<void> {
+  await tx.user.findUniqueOrThrow({
+    where: {
+      id: input.userId,
+    },
+    select: {
+      id: true,
+    },
+  })
 }

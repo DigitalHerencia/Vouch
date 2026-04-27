@@ -1,14 +1,85 @@
-import type { z } from "zod"
-import type {
-  auditActorTypeSchema,
-  auditEntityTypeSchema,
-  auditEventNameSchema,
-  auditFilterInputSchema,
-  writeAuditEventInputSchema,
-} from "@/schemas/audit"
+import type { UserID, ID } from "./common"
 
-export type AuditActorType = z.infer<typeof auditActorTypeSchema>
-export type AuditEntityType = z.infer<typeof auditEntityTypeSchema>
-export type AuditEventName = z.infer<typeof auditEventNameSchema>
-export type WriteAuditEventInput = z.infer<typeof writeAuditEventInputSchema>
-export type AuditFilterInput = z.infer<typeof auditFilterInputSchema>
+export type AuditActorType =
+  | "user"
+  | "system"
+  | "admin"
+  | "payment_provider"
+  | "auth_provider"
+  | "verification_provider"
+
+export type AuditEntityType =
+  | "User"
+  | "VerificationProfile"
+  | "PaymentCustomer"
+  | "ConnectedAccount"
+  | "Vouch"
+  | "Invitation"
+  | "PresenceConfirmation"
+  | "PaymentRecord"
+  | "RefundRecord"
+  | "TermsAcceptance"
+  | "NotificationEvent"
+  | "PaymentWebhookEvent"
+
+export type AuditEventName =
+  | "user.created"
+  | "user.signed_in"
+  | "user.verification.started"
+  | "user.verification.completed"
+  | "user.verification.rejected"
+  | "user.payment_method.added"
+  | "user.connected_account.created"
+  | "user.connected_account.ready"
+  | "user.terms.accepted"
+  | "vouch.created"
+  | "vouch.invite.sent"
+  | "vouch.invite.opened"
+  | "vouch.accepted"
+  | "vouch.declined"
+  | "vouch.canceled"
+  | "vouch.confirmation_window.opened"
+  | "vouch.payer_confirmed"
+  | "vouch.payee_confirmed"
+  | "vouch.completed"
+  | "vouch.expired"
+  | "vouch.refunded"
+  | "vouch.failed"
+  | "payment.initialized"
+  | "payment.authorized"
+  | "payment.captured"
+  | "payment.release_requested"
+  | "payment.released"
+  | "payment.refund_requested"
+  | "payment.refunded"
+  | "payment.voided"
+  | "payment.failed"
+  | "payment.webhook_received"
+  | "payment.webhook_processed"
+  | "payment.webhook_ignored"
+  | "payment.reconciliation_failed"
+  | "admin.user.viewed"
+  | "admin.vouch.viewed"
+  | "admin.payment.viewed"
+  | "admin.retry.started"
+  | "admin.retry.completed"
+  | "admin.account.disabled"
+
+export interface WriteAuditEventInput {
+  eventName: AuditEventName
+  actorType: AuditActorType
+  actorUserId?: UserID
+  entityType: AuditEntityType
+  entityId: ID
+  requestId?: string
+  participantSafe?: boolean
+  metadata?: Record<string, unknown>
+}
+
+export interface AuditFilterInput {
+  entityType?: AuditEntityType
+  entityId?: ID
+  actorType?: AuditActorType
+  eventName?: AuditEventName
+  page?: number
+}

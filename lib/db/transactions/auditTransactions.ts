@@ -1,41 +1,116 @@
 import "server-only"
 
-type Tx = unknown
+import type { PrismaClient } from "@/prisma/generated/prisma/client"
 
-// Auto-generated transaction stubs. Replace Tx with Prisma.TransactionClient after generated client is available.
+import type { AuditEntityType, AuditEventName, WriteAuditEventInput } from "@/types/audit"
 
-export async function writeAuditEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/auditTransactions.ts")
+type Tx = Omit<
+  PrismaClient,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+>
+
+function assertAuditEntityType(input: WriteAuditEventInput, entityType: AuditEntityType): void {
+  if (input.entityType !== entityType) {
+    throw new Error(`INVALID_AUDIT_ENTITY_TYPE: expected ${entityType}`)
+  }
 }
 
-export async function writeUserAuditEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/auditTransactions.ts")
+function assertAuditEventPrefix(input: WriteAuditEventInput, prefix: string): void {
+  if (!input.eventName.startsWith(prefix)) {
+    throw new Error(`INVALID_AUDIT_EVENT_NAME: expected ${prefix}*`)
+  }
 }
 
-export async function writeAuthProviderAuditEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/auditTransactions.ts")
+function assertAuditEventName(
+  input: WriteAuditEventInput,
+  allowed: readonly AuditEventName[]
+): void {
+  if (!allowed.includes(input.eventName)) {
+    throw new Error(`INVALID_AUDIT_EVENT_NAME: ${input.eventName}`)
+  }
 }
 
-export async function writeVerificationAuditEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/auditTransactions.ts")
+export async function writeAuditEventTx(_tx: Tx, _input: WriteAuditEventInput): Promise<void> {
+  return
 }
 
-export async function writeVouchAuditEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/auditTransactions.ts")
+export async function writeUserAuditEventTx(tx: Tx, input: WriteAuditEventInput): Promise<void> {
+  assertAuditEntityType(input, "User")
+  assertAuditEventPrefix(input, "user.")
+
+  await writeAuditEventTx(tx, input)
 }
 
-export async function writePaymentAuditEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/auditTransactions.ts")
+export async function writeAuthProviderAuditEventTx(
+  tx: Tx,
+  input: WriteAuditEventInput
+): Promise<void> {
+  assertAuditEntityType(input, "User")
+  assertAuditEventName(input, ["user.created", "user.signed_in"])
+
+  await writeAuditEventTx(tx, input)
 }
 
-export async function writeWebhookAuditEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/auditTransactions.ts")
+export async function writeVerificationAuditEventTx(
+  tx: Tx,
+  input: WriteAuditEventInput
+): Promise<void> {
+  assertAuditEntityType(input, "VerificationProfile")
+  assertAuditEventName(input, [
+    "user.verification.started",
+    "user.verification.completed",
+    "user.verification.rejected",
+  ])
+
+  await writeAuditEventTx(tx, input)
 }
 
-export async function writeNotificationAuditEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/auditTransactions.ts")
+export async function writeVouchAuditEventTx(tx: Tx, input: WriteAuditEventInput): Promise<void> {
+  assertAuditEntityType(input, "Vouch")
+  assertAuditEventPrefix(input, "vouch.")
+
+  await writeAuditEventTx(tx, input)
 }
 
-export async function writeAdminAuditEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/auditTransactions.ts")
+export async function writePaymentAuditEventTx(tx: Tx, input: WriteAuditEventInput): Promise<void> {
+  assertAuditEventName(input, [
+    "payment.initialized",
+    "payment.authorized",
+    "payment.captured",
+    "payment.release_requested",
+    "payment.released",
+    "payment.refund_requested",
+    "payment.refunded",
+    "payment.voided",
+    "payment.failed",
+    "payment.reconciliation_failed",
+  ])
+
+  await writeAuditEventTx(tx, input)
+}
+
+export async function writeWebhookAuditEventTx(tx: Tx, input: WriteAuditEventInput): Promise<void> {
+  assertAuditEntityType(input, "PaymentWebhookEvent")
+  assertAuditEventName(input, [
+    "payment.webhook_received",
+    "payment.webhook_processed",
+    "payment.webhook_ignored",
+  ])
+
+  await writeAuditEventTx(tx, input)
+}
+
+export async function writeNotificationAuditEventTx(
+  tx: Tx,
+  input: WriteAuditEventInput
+): Promise<void> {
+  assertAuditEntityType(input, "NotificationEvent")
+
+  await writeAuditEventTx(tx, input)
+}
+
+export async function writeAdminAuditEventTx(tx: Tx, input: WriteAuditEventInput): Promise<void> {
+  assertAuditEventPrefix(input, "admin.")
+
+  await writeAuditEventTx(tx, input)
 }

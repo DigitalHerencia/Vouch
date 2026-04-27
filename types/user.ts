@@ -1,16 +1,29 @@
-import type { z } from "zod"
-import type {
-  accountPageVariantSchema,
-  privateAccountInfoSchema,
-  profileBasicsInputSchema,
-  userSafeIdentitySchema,
-  userStatusChangeInputSchema,
-  userStatusSchema,
-} from "@/schemas/user"
+import type { UserID } from "./common"
 
-export type UserStatus = z.infer<typeof userStatusSchema>
-export type UserSafeIdentity = z.infer<typeof userSafeIdentitySchema>
-export type PrivateAccountInfo = z.infer<typeof privateAccountInfoSchema>
-export type ProfileBasicsInput = z.infer<typeof profileBasicsInputSchema>
-export type UserStatusChangeInput = z.infer<typeof userStatusChangeInputSchema>
-export type AccountPageVariant = z.infer<typeof accountPageVariantSchema>
+export type UserStatus = "active" | "disabled"
+
+export interface UserSafeIdentity {
+  userId: UserID
+  displayName?: string
+  email?: string
+}
+
+export interface PrivateAccountInfo {
+  userId: UserID
+  email?: string
+  phone?: string
+  displayName?: string
+  status: UserStatus
+}
+
+export interface ProfileBasicsInput {
+  displayName?: string
+  phone?: string
+}
+
+export interface UserStatusChangeInput {
+  userId: UserID
+  reason?: string
+}
+
+export type AccountPageVariant = "overview" | "private_info" | "disabled" | "loading" | "error"

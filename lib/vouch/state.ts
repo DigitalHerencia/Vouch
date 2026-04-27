@@ -1,8 +1,4 @@
-import type {
-  AggregateConfirmationStatus,
-  ParticipantRole,
-  VouchStatus,
-} from "@/types/vouch-status.types"
+import type { AggregateConfirmationStatus, ParticipantRole, VouchStatus } from "@/types/vouch"
 
 import { isConfirmationWindowClosed, isConfirmationWindowOpen, type DateLike } from "./time-windows"
 
@@ -144,10 +140,9 @@ export function deriveVouchDetailVariant(input: DeriveDetailVariantInput): Vouch
       ) {
         return "active_window_open"
       }
-
-      return "active_before_window"
     }
   }
+  return "active_before_window"
 }
 
 export function deriveNextVouchAction(input: DeriveNextVouchActionInput): NextVouchAction {

@@ -1,21 +1,102 @@
 import "server-only"
 
-type Tx = unknown
+import type { PrismaClient } from "@/prisma/generated/prisma/client"
 
-// Auto-generated transaction stubs. Replace Tx with Prisma.TransactionClient after generated client is available.
+type Tx = Omit<
+  PrismaClient,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+>
 
-export async function recordOperationalErrorTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/systemTransactions.ts")
+type SystemEventInput = {
+  code: string
+  message: string
+  metadata?: Record<string, unknown>
 }
 
-export async function recordServerActionFailureTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/systemTransactions.ts")
+async function writeSystemAudit(
+  tx: Tx,
+  input: {
+    eventName: string
+    entityId: string
+    metadata?: Record<string, unknown>
+  }
+): Promise<void> {
+  await tx.auditEvent.create({
+    data: {
+      eventName: input.eventName,
+      actorType: "system",
+      entityType: "User",
+      entityId: input.entityId,
+      participantSafe: false,
+    },
+  })
 }
 
-export async function recordProviderUnavailableTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/systemTransactions.ts")
+export async function recordOperationalErrorTx(tx: Tx, input: SystemEventInput): Promise<void> {
+  await writeSystemAudit(tx, {
+    eventName: "payment.reconciliation_failed",
+    entityId: "system",
+    metadata: {
+      code: input.code,
+      message: input.message,
+      ...(input.metadata ? { metadata: input.metadata } : {}),
+    },
+  })
 }
 
-export async function recordMaintenanceBannerTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/systemTransactions.ts")
+export async function recordServerActionFailureTx(
+  tx: Tx,
+  input: {
+    actionName: string
+    code?: string
+    message?: string
+    requestId?: string
+  }
+): Promise<void> {
+  await writeSystemAudit(tx, {
+    eventName: "payment.reconciliation_failed",
+    entityId: "system",
+    metadata: {
+      actionName: input.actionName,
+      ...(input.code !== undefined ? { code: input.code } : {}),
+      ...(input.message !== undefined ? { message: input.message } : {}),
+      ...(input.requestId !== undefined ? { requestId: input.requestId } : {}),
+    },
+  })
+}
+
+export async function recordProviderUnavailableTx(
+  tx: Tx,
+  input: {
+    provider: string
+    code?: string
+    message?: string
+  }
+): Promise<void> {
+  await writeSystemAudit(tx, {
+    eventName: "payment.reconciliation_failed",
+    entityId: "system",
+    metadata: {
+      provider: input.provider,
+      ...(input.code !== undefined ? { code: input.code } : {}),
+      ...(input.message !== undefined ? { message: input.message } : {}),
+    },
+  })
+}
+
+export async function recordMaintenanceBannerTx(
+  tx: Tx,
+  input: {
+    title: string
+    message?: string
+  }
+): Promise<void> {
+  await writeSystemAudit(tx, {
+    eventName: "payment.reconciliation_failed",
+    entityId: "system",
+    metadata: {
+      title: input.title,
+      ...(input.message !== undefined ? { message: input.message } : {}),
+    },
+  })
 }

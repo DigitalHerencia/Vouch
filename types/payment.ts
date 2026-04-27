@@ -1,44 +1,70 @@
-export const PAYMENT_PROVIDERS = ["stripe"] as const
+import type { VouchID, ID } from "./common"
 
-export type PaymentProvider = (typeof PAYMENT_PROVIDERS)[number]
+export type PaymentProvider = "stripe"
+export type VerificationProvider = "stripe_identity"
 
-export const PAYMENT_STATUSES = [
-    "not_started",
-    "requires_payment_method",
-    "authorized",
-    "captured",
-    "release_pending",
-    "released",
-    "refund_pending",
-    "refunded",
-    "voided",
-    "failed",
-] as const
+export type PaymentReadinessStatus = "not_started" | "requires_action" | "ready" | "failed"
 
-export type PaymentStatus = (typeof PAYMENT_STATUSES)[number]
+export type PayoutReadinessStatus =
+  | "not_started"
+  | "requires_action"
+  | "ready"
+  | "restricted"
+  | "failed"
 
-export const REFUND_STATUSES = ["not_required", "pending", "succeeded", "failed"] as const
+export type PaymentStatus =
+  | "not_started"
+  | "requires_payment_method"
+  | "authorized"
+  | "captured"
+  | "release_pending"
+  | "released"
+  | "refund_pending"
+  | "refunded"
+  | "voided"
+  | "failed"
 
-export type RefundStatus = (typeof REFUND_STATUSES)[number]
+export type RefundStatus = "not_required" | "pending" | "succeeded" | "failed"
 
-export const REFUND_REASONS = [
-    "not_accepted",
-    "confirmation_incomplete",
-    "canceled_before_acceptance",
-    "payment_failure",
-    "provider_required",
-] as const
+export type RefundReason =
+  | "not_accepted"
+  | "confirmation_incomplete"
+  | "canceled_before_acceptance"
+  | "payment_failure"
+  | "provider_required"
 
-export type RefundReason = (typeof REFUND_REASONS)[number]
-
-export type MoneyAmount = {
-    amountCents: number
-    currency: "usd"
+export interface StartPaymentMethodSetupInput {
+  returnTo?: string
 }
 
-export type FeeBreakdown = {
-    amountCents: number
-    platformFeeCents: number
-    totalCents: number
-    currency: "usd"
+export interface StartPayoutOnboardingInput {
+  returnTo?: string
 }
+
+export interface PaymentProviderReturnInput {
+  provider: PaymentProvider
+  setupSessionId?: string
+  returnTo?: string
+}
+
+export interface PaymentOperationInput {
+  vouchId: VouchID
+  idempotencyKey?: string
+}
+
+export interface PaymentFailureInput {
+  vouchId?: VouchID
+  paymentRecordId?: ID
+  failureStage: PaymentFailureStage
+  failureCode?: string
+  safeMessage?: string
+}
+
+export type PaymentFailureStage =
+  | "create"
+  | "accept"
+  | "confirm"
+  | "release"
+  | "refund"
+  | "webhook"
+  | "unknown"

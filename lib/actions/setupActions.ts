@@ -8,13 +8,17 @@ import { acceptTermsTx } from "@/lib/db/transactions/setupTransactions"
 import { acceptTermsSchema, startSetupProviderFlowSchema } from "@/schemas/setup"
 import { CURRENT_TERMS_VERSION } from "@/lib/constants/terms"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
-import { getSetupPageState } from "@/lib/fetcher/setupFetchers"
+import { getSetupPageState } from "@/lib/fetchers/setupFetchers"
 
 export async function acceptTerms(input: unknown): Promise<ActionResult<{ acceptedAt: string }>> {
   const user = await requireActiveUser()
   const parsed = acceptTermsSchema.safeParse(input)
   if (!parsed.success) {
-    return actionFailure("VALIDATION_FAILED", "Check the terms acceptance fields.", parsed.error.flatten().fieldErrors)
+    return actionFailure(
+      "VALIDATION_FAILED",
+      "Check the terms acceptance fields.",
+      parsed.error.flatten().fieldErrors
+    )
   }
   if (parsed.data.termsVersion !== CURRENT_TERMS_VERSION) {
     return actionFailure("TERMS_VERSION_MISMATCH", "Refresh and accept the current terms.")
@@ -42,7 +46,9 @@ export async function acceptTerms(input: unknown): Promise<ActionResult<{ accept
   return actionSuccess({ acceptedAt: terms.acceptedAt.toISOString() })
 }
 
-export async function refreshSetupStatus(input?: unknown): Promise<ActionResult<Awaited<ReturnType<typeof getSetupPageState>>>> {
+export async function refreshSetupStatus(
+  input?: unknown
+): Promise<ActionResult<Awaited<ReturnType<typeof getSetupPageState>>>> {
   return actionSuccess(await getSetupPageState(input))
 }
 

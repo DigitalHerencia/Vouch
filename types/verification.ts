@@ -1,16 +1,38 @@
-import type { z } from "zod"
-import type {
-  verificationKindSchema,
-  verificationPageVariantSchema,
-  verificationProviderReturnInputSchema,
-  verificationStartInputSchema,
-  verificationStatusSchema,
-  verificationStatusUpdateInputSchema,
-} from "@/schemas/verification"
+import type { UserID } from "./common"
 
-export type VerificationStatus = z.infer<typeof verificationStatusSchema>
-export type VerificationKind = z.infer<typeof verificationKindSchema>
-export type VerificationStartInput = z.infer<typeof verificationStartInputSchema>
-export type VerificationProviderReturnInput = z.infer<typeof verificationProviderReturnInputSchema>
-export type VerificationStatusUpdateInput = z.infer<typeof verificationStatusUpdateInputSchema>
-export type VerificationPageVariant = z.infer<typeof verificationPageVariantSchema>
+export type VerificationStatus =
+  | "unstarted"
+  | "pending"
+  | "verified"
+  | "rejected"
+  | "requires_action"
+  | "expired"
+
+export type VerificationKind = "identity" | "adult"
+
+export interface VerificationStartInput {
+  kind: VerificationKind
+  returnTo?: string
+}
+
+export interface VerificationProviderReturnInput {
+  provider: "stripe_identity"
+  sessionId?: string
+  returnTo?: string
+}
+
+export interface VerificationStatusUpdateInput {
+  userId: UserID
+  identityStatus?: VerificationStatus
+  adultStatus?: VerificationStatus
+  providerReference?: string
+  failureCode?: string
+}
+
+export type VerificationPageVariant =
+  | "start"
+  | "pending"
+  | "success"
+  | "rejected"
+  | "requires_action"
+  | "failed"

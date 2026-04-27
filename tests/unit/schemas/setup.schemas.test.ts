@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import {
-  acceptTermsSchema,
-  internalReturnToSchema,
-  setupIntentSchema,
-} from "@/schemas/setup.schemas"
+import { acceptTermsSchema, internalReturnToSchema, setupIntentSchema } from "@/schemas/setup"
 
 describe("setup schemas", () => {
   it("accepts current terms agreement", () => {

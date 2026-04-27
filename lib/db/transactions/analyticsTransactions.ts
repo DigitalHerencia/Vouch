@@ -1,33 +1,92 @@
 import "server-only"
 
-type Tx = unknown
+import type { PrismaClient } from "@/prisma/generated/prisma/client"
 
-// Auto-generated transaction stubs. Replace Tx with Prisma.TransactionClient after generated client is available.
+import type { AnalyticsEventName, TrackAnalyticsEventInput } from "@/types/analytics"
+import { trackAnalyticsEventInputSchema } from "@/schemas/analytics"
 
-export async function recordAnalyticsEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/analyticsTransactions.ts")
+type Tx = Omit<
+  PrismaClient,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
+>
+
+type AnalyticsEventPrefix =
+  | "marketing."
+  | "setup."
+  | "vouch."
+  | "payment."
+  | "notification."
+  | "admin."
+
+function assertEventPrefix(eventName: AnalyticsEventName, prefix: AnalyticsEventPrefix): void {
+  if (!eventName.startsWith(prefix)) {
+    throw new Error(`INVALID_ANALYTICS_EVENT_GROUP: expected ${prefix}`)
+  }
 }
 
-export async function recordMarketingAnalyticsEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/analyticsTransactions.ts")
+export async function recordAnalyticsEventTx(
+  _tx: Tx,
+  input: TrackAnalyticsEventInput
+): Promise<void> {
+  trackAnalyticsEventInputSchema.parse(input)
 }
 
-export async function recordSetupAnalyticsEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/analyticsTransactions.ts")
+export async function recordMarketingAnalyticsEventTx(
+  tx: Tx,
+  input: TrackAnalyticsEventInput
+): Promise<void> {
+  const parsed = trackAnalyticsEventInputSchema.parse(input)
+  assertEventPrefix(parsed.eventName, "marketing.")
+
+  await recordAnalyticsEventTx(tx, input)
 }
 
-export async function recordVouchLifecycleAnalyticsEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/analyticsTransactions.ts")
+export async function recordSetupAnalyticsEventTx(
+  tx: Tx,
+  input: TrackAnalyticsEventInput
+): Promise<void> {
+  const parsed = trackAnalyticsEventInputSchema.parse(input)
+  assertEventPrefix(parsed.eventName, "setup.")
+
+  await recordAnalyticsEventTx(tx, input)
 }
 
-export async function recordPaymentAnalyticsEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/analyticsTransactions.ts")
+export async function recordVouchLifecycleAnalyticsEventTx(
+  tx: Tx,
+  input: TrackAnalyticsEventInput
+): Promise<void> {
+  const parsed = trackAnalyticsEventInputSchema.parse(input)
+  assertEventPrefix(parsed.eventName, "vouch.")
+
+  await recordAnalyticsEventTx(tx, input)
 }
 
-export async function recordNotificationAnalyticsEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/analyticsTransactions.ts")
+export async function recordPaymentAnalyticsEventTx(
+  tx: Tx,
+  input: TrackAnalyticsEventInput
+): Promise<void> {
+  const parsed = trackAnalyticsEventInputSchema.parse(input)
+  assertEventPrefix(parsed.eventName, "payment.")
+
+  await recordAnalyticsEventTx(tx, input)
 }
 
-export async function recordAdminAnalyticsEventTx(_tx: Tx, _input?: unknown): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/db/transactions/analyticsTransactions.ts")
+export async function recordNotificationAnalyticsEventTx(
+  tx: Tx,
+  input: TrackAnalyticsEventInput
+): Promise<void> {
+  const parsed = trackAnalyticsEventInputSchema.parse(input)
+  assertEventPrefix(parsed.eventName, "notification.")
+
+  await recordAnalyticsEventTx(tx, input)
+}
+
+export async function recordAdminAnalyticsEventTx(
+  tx: Tx,
+  input: TrackAnalyticsEventInput
+): Promise<void> {
+  const parsed = trackAnalyticsEventInputSchema.parse(input)
+  assertEventPrefix(parsed.eventName, "admin.")
+
+  await recordAnalyticsEventTx(tx, input)
 }

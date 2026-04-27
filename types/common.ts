@@ -1,27 +1,12 @@
-import type { z } from "zod"
-import type {
-  currencyCodeSchema,
-  dateRangeInputSchema,
-  idSchema,
-  isoDateTimeSchema,
-  moneyCentsSchema,
-  paginationInputSchema,
-  percentageBasisPointsSchema,
-  publicIdSchema,
-  userIdSchema,
-  vouchIdSchema,
-  invitationTokenSchema,
-} from "@/schemas/common"
-
-export type ID = z.infer<typeof idSchema>
-export type PublicID = z.infer<typeof publicIdSchema>
-export type UserID = z.infer<typeof userIdSchema>
-export type VouchID = z.infer<typeof vouchIdSchema>
-export type InvitationToken = z.infer<typeof invitationTokenSchema>
-export type ISODateTime = z.infer<typeof isoDateTimeSchema>
-export type CurrencyCode = z.infer<typeof currencyCodeSchema>
-export type MoneyCents = z.infer<typeof moneyCentsSchema>
-export type PercentageBasisPoints = z.infer<typeof percentageBasisPointsSchema>
+export type ID = string
+export type PublicID = string
+export type UserID = string
+export type VouchID = string
+export type InvitationToken = string
+export type ISODateTime = string
+export type CurrencyCode = "usd"
+export type MoneyCents = number
+export type PercentageBasisPoints = number
 
 export type Environment = "development" | "preview" | "production"
 export type SortDirection = "asc" | "desc"
@@ -38,7 +23,10 @@ export type ActionResult<T> =
       fieldErrors?: Record<string, string[]>
     }
 
-export type PaginationInput = z.infer<typeof paginationInputSchema>
+export interface PaginationInput {
+  page?: number
+  pageSize?: number
+}
 
 export interface PaginationState {
   page: number
@@ -47,7 +35,10 @@ export interface PaginationState {
   totalPages?: number
 }
 
-export type DateRangeInput = z.infer<typeof dateRangeInputSchema>
+export interface DateRangeInput {
+  from?: ISODateTime
+  to?: ISODateTime
+}
 
 export interface SelectOption<TValue extends string = string> {
   value: TValue

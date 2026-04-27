@@ -1,16 +1,28 @@
-import type { z } from "zod"
-import type {
-  legalPageIdSchema,
-  marketingCtaClickedSchema,
-  marketingCtaIdSchema,
-  marketingPageIdSchema,
-  marketingPageViewedSchema,
-  publicNavigationItemSchema,
-} from "@/schemas/marketing"
+export type MarketingPageID = "home" | "how_it_works" | "pricing" | "faq" | "terms" | "privacy"
 
-export type MarketingPageID = z.infer<typeof marketingPageIdSchema>
-export type MarketingCtaID = z.infer<typeof marketingCtaIdSchema>
-export type LegalPageID = z.infer<typeof legalPageIdSchema>
-export type PublicNavigationItem = z.infer<typeof publicNavigationItemSchema>
-export type MarketingEventInput = z.infer<typeof marketingPageViewedSchema>
-export type MarketingCtaEventInput = z.infer<typeof marketingCtaClickedSchema>
+export type MarketingCtaID =
+  | "create_vouch"
+  | "how_it_works"
+  | "sign_in"
+  | "get_started"
+  | "learn_principles"
+
+export type LegalPageID = "terms" | "privacy"
+
+export interface PublicNavigationItem {
+  label: string
+  href: string
+  external?: boolean
+}
+
+export interface MarketingEventInput {
+  pageId: MarketingPageID
+  path: string
+  referrerDomain?: string
+}
+
+export interface MarketingCtaEventInput {
+  ctaId: MarketingCtaID
+  pageId: MarketingPageID
+  destination?: string
+}

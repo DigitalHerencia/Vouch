@@ -15,14 +15,23 @@ import {
   verificationStatusUpdateInputSchema,
 } from "@/schemas/verification"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
-import type { VerificationStatusReadModel } from "@/lib/fetcher/verificationFetchers"
-import { getVerificationStatus } from "@/lib/fetcher/verificationFetchers"
+import type { VerificationStatusReadModel } from "@/lib/fetchers/verificationFetchers"
+import { getVerificationStatus } from "@/lib/fetchers/verificationFetchers"
 
-export async function startIdentityVerification(input?: unknown): Promise<ActionResult<VerificationStatusReadModel>> {
+export async function startIdentityVerification(
+  input?: unknown
+): Promise<ActionResult<VerificationStatusReadModel>> {
   const user = await requireActiveUser()
-  const parsed = verificationStartInputSchema.safeParse({ kind: "identity", ...(typeof input === "object" && input ? input : {}) })
+  const parsed = verificationStartInputSchema.safeParse({
+    kind: "identity",
+    ...(typeof input === "object" && input ? input : {}),
+  })
   if (!parsed.success) {
-    return actionFailure("VALIDATION_FAILED", "Check the verification request.", parsed.error.flatten().fieldErrors)
+    return actionFailure(
+      "VALIDATION_FAILED",
+      "Check the verification request.",
+      parsed.error.flatten().fieldErrors
+    )
   }
   await prisma.$transaction(async (tx) => {
     await updateVerificationProfileTx(tx, {
@@ -43,11 +52,20 @@ export async function startIdentityVerification(input?: unknown): Promise<Action
   return actionSuccess(await getVerificationStatus())
 }
 
-export async function startAdultVerification(input?: unknown): Promise<ActionResult<VerificationStatusReadModel>> {
+export async function startAdultVerification(
+  input?: unknown
+): Promise<ActionResult<VerificationStatusReadModel>> {
   const user = await requireActiveUser()
-  const parsed = verificationStartInputSchema.safeParse({ kind: "adult", ...(typeof input === "object" && input ? input : {}) })
+  const parsed = verificationStartInputSchema.safeParse({
+    kind: "adult",
+    ...(typeof input === "object" && input ? input : {}),
+  })
   if (!parsed.success) {
-    return actionFailure("VALIDATION_FAILED", "Check the verification request.", parsed.error.flatten().fieldErrors)
+    return actionFailure(
+      "VALIDATION_FAILED",
+      "Check the verification request.",
+      parsed.error.flatten().fieldErrors
+    )
   }
   await prisma.$transaction(async (tx) => {
     await updateVerificationProfileTx(tx, {
@@ -68,27 +86,44 @@ export async function startAdultVerification(input?: unknown): Promise<ActionRes
   return actionSuccess(await getVerificationStatus())
 }
 
-export async function handleVerificationProviderReturn(input: unknown): Promise<ActionResult<VerificationStatusReadModel>> {
+export async function handleVerificationProviderReturn(
+  input: unknown
+): Promise<ActionResult<VerificationStatusReadModel>> {
   await requireActiveUser()
   const parsed = verificationProviderReturnInputSchema.safeParse(input)
   if (!parsed.success) {
-    return actionFailure("VALIDATION_FAILED", "Check the provider return parameters.", parsed.error.flatten().fieldErrors)
+    return actionFailure(
+      "VALIDATION_FAILED",
+      "Check the provider return parameters.",
+      parsed.error.flatten().fieldErrors
+    )
   }
   return actionSuccess(await getVerificationStatus())
 }
 
-export async function reconcileVerificationProfile(input: unknown): Promise<ActionResult<VerificationStatusReadModel>> {
+export async function reconcileVerificationProfile(
+  input: unknown
+): Promise<ActionResult<VerificationStatusReadModel>> {
   const user = await requireActiveUser()
-  const parsed = verificationStatusUpdateInputSchema.safeParse({ userId: user.id, ...(typeof input === "object" && input ? input : {}) })
+  const parsed = verificationStatusUpdateInputSchema.safeParse({
+    userId: user.id,
+    ...(typeof input === "object" && input ? input : {}),
+  })
   if (!parsed.success) {
-    return actionFailure("VALIDATION_FAILED", "Check the verification status update.", parsed.error.flatten().fieldErrors)
+    return actionFailure(
+      "VALIDATION_FAILED",
+      "Check the verification status update.",
+      parsed.error.flatten().fieldErrors
+    )
   }
   await prisma.$transaction(async (tx) => {
     await updateVerificationProfileTx(tx, {
       userId: user.id,
       ...(parsed.data.identityStatus ? { identityStatus: parsed.data.identityStatus } : {}),
       ...(parsed.data.adultStatus ? { adultStatus: parsed.data.adultStatus } : {}),
-      ...(parsed.data.providerReference ? { providerReference: parsed.data.providerReference } : {}),
+      ...(parsed.data.providerReference
+        ? { providerReference: parsed.data.providerReference }
+        : {}),
     })
     await tx.auditEvent.create({
       data: {
@@ -103,19 +138,25 @@ export async function reconcileVerificationProfile(input: unknown): Promise<Acti
   return actionSuccess(await getVerificationStatus())
 }
 
-export async function markVerificationRequiresAction(): Promise<ActionResult<VerificationStatusReadModel>> {
+export async function markVerificationRequiresAction(): Promise<
+  ActionResult<VerificationStatusReadModel>
+> {
   const user = await requireActiveUser()
   await prisma.$transaction((tx) => markVerificationRequiresActionTx(tx, { userId: user.id }))
   return actionSuccess(await getVerificationStatus())
 }
 
-export async function markVerificationRejected(): Promise<ActionResult<VerificationStatusReadModel>> {
+export async function markVerificationRejected(): Promise<
+  ActionResult<VerificationStatusReadModel>
+> {
   const user = await requireActiveUser()
   await prisma.$transaction((tx) => markVerificationRejectedTx(tx, { userId: user.id }))
   return actionSuccess(await getVerificationStatus())
 }
 
-export async function markVerificationVerified(): Promise<ActionResult<VerificationStatusReadModel>> {
+export async function markVerificationVerified(): Promise<
+  ActionResult<VerificationStatusReadModel>
+> {
   const user = await requireActiveUser()
   await prisma.$transaction((tx) => markVerificationVerifiedTx(tx, { userId: user.id }))
   return actionSuccess(await getVerificationStatus())

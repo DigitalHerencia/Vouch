@@ -1,4 +1,4 @@
-import type { AggregateConfirmationStatus, VouchStatus } from "@/types/vouch-status.types"
+import type { AggregateConfirmationStatus, VouchStatus } from "@/types/vouch"
 
 import { deriveAggregateConfirmationStatus, type ConfirmationStateInput } from "./state"
 import { isConfirmationWindowClosed, type DateLike } from "./time-windows"

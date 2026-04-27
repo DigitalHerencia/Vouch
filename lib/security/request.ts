@@ -49,7 +49,7 @@ export async function getClientIpHash(input?: RequestMetadataInput): Promise<str
 
   if (!clientIp) return null
 
-  return hashSensitiveValue(clientIp, { namespace: "client-ip" })
+  return hashSensitiveValue(clientIp)
 }
 
 export async function getUserAgentHash(input?: RequestMetadataInput): Promise<string | null> {
@@ -58,5 +58,5 @@ export async function getUserAgentHash(input?: RequestMetadataInput): Promise<st
 
   if (!userAgent) return null
 
-  return hashSensitiveValue(userAgent, { namespace: "user-agent" })
+  return hashSensitiveValue(userAgent)
 }

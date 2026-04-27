@@ -1,12 +1,31 @@
-import type { z } from "zod"
-import type {
-  dashboardSearchParamsSchema,
-  dashboardSectionIdSchema,
-  dashboardSectionStateSchema,
-  dashboardVariantSchema,
-} from "@/schemas/dashboard"
+import type { VouchListSort } from "./vouch"
 
-export type DashboardSectionID = z.infer<typeof dashboardSectionIdSchema>
-export type DashboardVariant = z.infer<typeof dashboardVariantSchema>
-export type DashboardSearchParams = z.infer<typeof dashboardSearchParamsSchema>
-export type DashboardSectionState = z.infer<typeof dashboardSectionStateSchema>
+export type DashboardSectionID =
+  | "action_required"
+  | "active"
+  | "pending"
+  | "completed"
+  | "expired_refunded"
+
+export type DashboardVariant =
+  | "empty"
+  | "action_required"
+  | "active_vouches"
+  | "mixed_vouch_states"
+  | "payer_focused"
+  | "payee_focused"
+  | "loading"
+  | "error"
+
+export interface DashboardSearchParams {
+  status?: DashboardSectionID | "all"
+  page?: number
+  sort?: VouchListSort
+}
+
+export interface DashboardSectionState {
+  id: DashboardSectionID
+  title: string
+  count: number
+  collapsed?: boolean
+}
