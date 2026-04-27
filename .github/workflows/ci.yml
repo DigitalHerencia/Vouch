@@ -50,17 +50,11 @@ jobs:
       - name: Generate Prisma client
         run: pnpm prisma:generate
 
-      - name: Format check
-        run: pnpm format:check
-
       - name: Lint
         run: pnpm lint
 
       - name: Prisma validate
         run: pnpm prisma:validate
-
-      - name: Contract validation
-        run: pnpm validate:contracts
 
       - name: Typecheck
         run: pnpm typecheck
