@@ -1,15 +1,38 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
+import type { ZodError } from "zod"
 
-export async function toActionFailure(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/errors/action-errors.ts")
+import { actionFailure, type ActionResult, type FieldErrors } from "@/types/action-result"
+
+export function toFieldErrors(error: ZodError): FieldErrors {
+  return error.flatten().fieldErrors
 }
 
-export async function toFieldErrors(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/errors/action-errors.ts")
+export function toActionFailure(error: unknown, fallbackCode = "ACTION_FAILED", fallbackMessage = "We could not complete that action."): ActionResult<never> {
+  if (error instanceof Error) {
+    return actionFailure(error.message || fallbackCode, fallbackMessage)
+  }
+
+  return actionFailure(fallbackCode, fallbackMessage)
 }
 
-export async function isRetryableProviderError(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/errors/action-errors.ts")
+export function isRetryableProviderError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false
+
+  const maybe = error as { code?: unknown; statusCode?: unknown; type?: unknown }
+  const code = typeof maybe.code === "string" ? maybe.code : ""
+  const type = typeof maybe.type === "string" ? maybe.type : ""
+  const statusCode = typeof maybe.statusCode === "number" ? maybe.statusCode : undefined
+
+  return (
+    statusCode === 408 ||
+    statusCode === 409 ||
+    statusCode === 425 ||
+    statusCode === 429 ||
+    Boolean(statusCode && statusCode >= 500) ||
+    code === "rate_limit" ||
+    code === "lock_timeout" ||
+    type === "StripeConnectionError" ||
+    type === "StripeAPIError"
+  )
 }
