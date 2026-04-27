@@ -76,6 +76,23 @@ const ALLOWED_TRANSITIONS: ReadonlyMap<VouchStatus, readonly VouchStatus[]> = ne
     ["failed", []],
 ])
 
+function buildWindowInput(input: {
+    now?: DateLike
+    confirmationOpensAt: DateLike
+    confirmationExpiresAt: DateLike
+}) {
+    return input.now === undefined
+        ? {
+              confirmationOpensAt: input.confirmationOpensAt,
+              confirmationExpiresAt: input.confirmationExpiresAt,
+          }
+        : {
+              now: input.now,
+              confirmationOpensAt: input.confirmationOpensAt,
+              confirmationExpiresAt: input.confirmationExpiresAt,
+          }
+}
+
 export function deriveAggregateConfirmationStatus(
     input: ConfirmationStateInput,
 ): AggregateConfirmationStatus {
@@ -116,11 +133,13 @@ export function deriveVouchDetailVariant(input: DeriveDetailVariantInput): Vouch
             if (
                 input.confirmationOpensAt !== undefined &&
                 input.confirmationExpiresAt !== undefined &&
-                isConfirmationWindowOpen({
-                    now: input.now,
-                    confirmationOpensAt: input.confirmationOpensAt,
-                    confirmationExpiresAt: input.confirmationExpiresAt,
-                })
+                isConfirmationWindowOpen(
+                    buildWindowInput({
+                        now: input.now,
+                        confirmationOpensAt: input.confirmationOpensAt,
+                        confirmationExpiresAt: input.confirmationExpiresAt,
+                    }),
+                )
             ) {
                 return "active_window_open"
             }
@@ -169,11 +188,13 @@ export function deriveNextVouchAction(input: DeriveNextVouchActionInput): NextVo
         if (
             input.confirmationOpensAt !== undefined &&
             input.confirmationExpiresAt !== undefined &&
-            isConfirmationWindowOpen({
-                now: input.now,
-                confirmationOpensAt: input.confirmationOpensAt,
-                confirmationExpiresAt: input.confirmationExpiresAt,
-            })
+            isConfirmationWindowOpen(
+                buildWindowInput({
+                    now: input.now,
+                    confirmationOpensAt: input.confirmationOpensAt,
+                    confirmationExpiresAt: input.confirmationExpiresAt,
+                }),
+            )
         ) {
             return {
                 kind: "confirm_presence",
@@ -185,11 +206,13 @@ export function deriveNextVouchAction(input: DeriveNextVouchActionInput): NextVo
         if (
             input.confirmationOpensAt !== undefined &&
             input.confirmationExpiresAt !== undefined &&
-            isConfirmationWindowClosed({
-                now: input.now,
-                confirmationOpensAt: input.confirmationOpensAt,
-                confirmationExpiresAt: input.confirmationExpiresAt,
-            })
+            isConfirmationWindowClosed(
+                buildWindowInput({
+                    now: input.now,
+                    confirmationOpensAt: input.confirmationOpensAt,
+                    confirmationExpiresAt: input.confirmationExpiresAt,
+                }),
+            )
         ) {
             return {
                 kind: "view_outcome",
