@@ -5,7 +5,11 @@ import { redirect } from "next/navigation"
 import { requireActiveUser } from "@/lib/auth/current-user"
 import { prisma } from "@/lib/db/prisma"
 import { acceptTermsTx } from "@/lib/db/transactions/setupTransactions"
-import { acceptTermsSchema, startSetupProviderFlowSchema } from "@/schemas/setup"
+import {
+  acceptTermsSchema,
+  setupPageStateInputSchema,
+  startSetupProviderFlowSchema,
+} from "@/schemas/setup"
 import { CURRENT_TERMS_VERSION } from "@/lib/constants/terms"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
 import { getSetupPageState } from "@/lib/fetchers/setupFetchers"
@@ -49,7 +53,17 @@ export async function acceptTerms(input: unknown): Promise<ActionResult<{ accept
 export async function refreshSetupStatus(
   input?: unknown
 ): Promise<ActionResult<Awaited<ReturnType<typeof getSetupPageState>>>> {
-  return actionSuccess(await getSetupPageState(input))
+  const parsed = setupPageStateInputSchema.safeParse(input ?? {})
+
+  if (!parsed.success) {
+    return actionFailure(
+      "VALIDATION_FAILED",
+      "Check the setup status request.",
+      parsed.error.flatten().fieldErrors
+    )
+  }
+
+  return actionSuccess(await getSetupPageState({ returnTo: parsed.data.returnTo ?? null }))
 }
 
 export async function continueAfterSetup(input?: unknown): Promise<never> {

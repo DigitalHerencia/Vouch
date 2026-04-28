@@ -2,7 +2,7 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 
-import { requireActiveUser } from "@/lib/fetcher/authFetchers"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
 import {
   adminNotificationEventSelect,

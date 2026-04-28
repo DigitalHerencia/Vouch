@@ -587,8 +587,8 @@ Initial monetization model:
 
 Recommended starting model:
 
-- $1 minimum
-- 2.5% platform fee
+- $5 minimum
+- 5% platform fee
 
 Fees must be shown clearly before payment commitment.
 

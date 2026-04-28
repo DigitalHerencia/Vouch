@@ -4,13 +4,15 @@ import { calculatePlatformFeeCents } from "@/lib/vouch/fees"
 
 describe("calculatePlatformFeeCents", () => {
   it("uses minimum fee when percentage would be lower", () => {
-    expect(calculatePlatformFeeCents({ amountCents: 1000 })).toBeGreaterThanOrEqual(100)
+    expect(calculatePlatformFeeCents({ amountCents: 1000 })).toBe(500)
   })
 
   it("scales with amount", () => {
     const small = calculatePlatformFeeCents({ amountCents: 5000 })
     const large = calculatePlatformFeeCents({ amountCents: 50_000 })
 
+    expect(small).toBe(500)
+    expect(large).toBe(2500)
     expect(large).toBeGreaterThan(small)
   })
 

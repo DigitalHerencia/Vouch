@@ -4,8 +4,8 @@ export type PlatformFeeInput = {
   minimumFeeCents?: number
 }
 
-export const DEFAULT_PLATFORM_FEE_RATE = 0.025
-export const DEFAULT_MINIMUM_PLATFORM_FEE_CENTS = 100
+export const DEFAULT_PLATFORM_FEE_RATE = 0.05
+export const DEFAULT_MINIMUM_PLATFORM_FEE_CENTS = 500
 
 export function calculatePlatformFeeCents({
   amountCents,

@@ -19,8 +19,9 @@ const iso = (v: Date | null | undefined) => (v ? v.toISOString() : null)
 
 function mapDates(record: any): any {
   if (!record || typeof record !== "object") return record
+  if (Array.isArray(record)) return record.map(mapDates)
 
-  const mapped: Record<string, unknown> = Array.isArray(record) ? [] : {}
+  const mapped: Record<string, unknown> = {}
 
   for (const [key, value] of Object.entries(record)) {
     if (value instanceof Date) mapped[key] = iso(value)

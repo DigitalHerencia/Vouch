@@ -142,15 +142,32 @@ export async function bindPayeeToVouchTx(
   input: BindPayeeToVouchTxInput
 ): Promise<VouchResult> {
   const now = new Date()
+  const vouchId = assertNonEmptyString(input.vouchId, "vouchId")
+  const payeeId = assertNonEmptyString(input.payeeId, "payeeId")
 
-  return tx.vouch.update({
+  const updated = await tx.vouch.updateMany({
     where: {
-      id: assertNonEmptyString(input.vouchId, "vouchId"),
+      id: vouchId,
+      status: "pending",
+      payeeId: null,
+      payerId: {
+        not: payeeId,
+      },
     },
     data: {
-      payeeId: assertNonEmptyString(input.payeeId, "payeeId"),
+      payeeId,
       status: "active",
       acceptedAt: now,
+    },
+  })
+
+  if (updated.count !== 1) {
+    throw new Error("VOUCH_ACCEPTANCE_CONFLICT")
+  }
+
+  return tx.vouch.findUniqueOrThrow({
+    where: {
+      id: vouchId,
     },
     select: VOUCH_SELECT,
   })

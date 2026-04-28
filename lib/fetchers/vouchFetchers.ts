@@ -3,7 +3,13 @@ import "server-only"
 import { auth } from "@clerk/nextjs/server"
 import { unstable_noStore as noStore } from "next/cache"
 
+import {
+  calculatePlatformFeeCents,
+  DEFAULT_MINIMUM_PLATFORM_FEE_CENTS,
+  DEFAULT_PLATFORM_FEE_RATE,
+} from "@/lib/vouch/fees"
 import { prisma } from "@/lib/db/prisma"
+import { hashInvitationToken } from "@/lib/invitations/tokens"
 import { getAcceptVouchSetupGate, getCreateVouchSetupGate } from "@/lib/fetchers/setupFetchers"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import {
@@ -27,8 +33,6 @@ import { invitationTokenLookupSelect } from "@/lib/db/selects/invitation.selects
 import { participantSafeAuditTimelineItemSelect } from "@/lib/db/selects/audit.selects"
 
 const DEFAULT_PAGE_SIZE = 20
-const MIN_PLATFORM_FEE_CENTS = 100
-const PLATFORM_FEE_BPS = 200
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : null)
 
@@ -49,7 +53,7 @@ function mapDates<T>(value: T): T {
 }
 
 function calculateFee(amountCents: number) {
-  return Math.max(MIN_PLATFORM_FEE_CENTS, Math.ceil((amountCents * PLATFORM_FEE_BPS) / 10_000))
+  return calculatePlatformFeeCents({ amountCents })
 }
 
 async function getOptionalCurrentUserId() {
@@ -64,7 +68,10 @@ async function getOptionalCurrentUserId() {
   return user?.id ?? null
 }
 
-async function requireParticipantVouch(vouchId: string, select: any = vouchDetailBaseSelect) {
+async function requireParticipantVouch(
+  vouchId: string,
+  select: any = vouchDetailBaseSelect
+): Promise<any> {
   noStore()
 
   const user = await requireActiveUser()
@@ -97,7 +104,7 @@ async function getInvitationByToken(token: string) {
   noStore()
 
   return prisma.invitation.findFirst({
-    where: { tokenHash: token },
+    where: { tokenHash: await hashInvitationToken(token) },
     select: invitationTokenLookupSelect,
   })
 }
@@ -166,10 +173,10 @@ export async function getCreateVouchFeePreview(input: { amountCents: number; cur
     amountCents,
     currency: input.currency ?? "usd",
     platformFeeCents,
-    totalCents: amountCents + platformFeeCents,
+      totalCents: amountCents + platformFeeCents,
     feeModel: {
-      minimumFeeCents: MIN_PLATFORM_FEE_CENTS,
-      basisPoints: PLATFORM_FEE_BPS,
+      minimumFeeCents: DEFAULT_MINIMUM_PLATFORM_FEE_CENTS,
+      basisPoints: Math.round(DEFAULT_PLATFORM_FEE_RATE * 10_000),
     },
   }
 }

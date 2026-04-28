@@ -1780,6 +1780,7 @@ export const PaymentRecordScalarFieldEnum = {
   currency: 'currency',
   platformFeeCents: 'platformFeeCents',
   lastErrorCode: 'lastErrorCode',
+  lastErrorMessage: 'lastErrorMessage',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

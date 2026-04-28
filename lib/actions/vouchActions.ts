@@ -1,7 +1,5 @@
 "use server"
 
-import { createHash, randomBytes } from "node:crypto"
-
 import { revalidatePath } from "next/cache"
 
 import { requireActiveUser } from "@/lib/auth/current-user"
@@ -33,10 +31,15 @@ import {
   markVouchFailedTx,
 } from "@/lib/db/transactions/vouchTransactions"
 import {
+  createInvitationToken,
+  hashInvitationToken,
+} from "@/lib/invitations/tokens"
+import {
   initializeStripePaymentForVouch,
   refundOrVoidStripePaymentForVouch,
   releaseStripePaymentForCompletedVouch,
 } from "@/lib/payments/adapters/stripe-payment-adapter"
+import { calculatePlatformFeeCents } from "@/lib/vouch/fees"
 import {
   acceptVouchInputSchema,
   cancelPendingVouchInputSchema,
@@ -50,8 +53,6 @@ import {
 } from "@/schemas/vouch"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
 
-const PLATFORM_FEE_BPS = 200
-const PLATFORM_MIN_FEE_CENTS = 100
 const INVITATION_TTL_DAYS = 14
 
 type FieldErrorsSource = {
@@ -82,14 +83,6 @@ type AggregateConfirmationStatus =
 type InvitationByToken = Awaited<ReturnType<typeof getInvitationByToken>>
 type UsableInvitation = NonNullable<InvitationByToken>
 
-function hashInviteToken(token: string): string {
-  return createHash("sha256").update(token).digest("hex")
-}
-
-function createInviteToken(): string {
-  return randomBytes(VOUCH_LIMITS.inviteTokenBytes).toString("base64url")
-}
-
 function invitationExpiresAt(): Date {
   const expiresAt = new Date()
   expiresAt.setDate(expiresAt.getDate() + INVITATION_TTL_DAYS)
@@ -101,8 +94,24 @@ function getFieldErrors(error: FieldErrorsSource) {
 }
 
 function calculateFee(amountCents: number): number {
-  const percentageFee = Math.ceil((amountCents * PLATFORM_FEE_BPS) / 10_000)
-  return Math.max(PLATFORM_MIN_FEE_CENTS, percentageFee)
+  return calculatePlatformFeeCents({ amountCents })
+}
+
+async function getSetupBlockedFailure(
+  assertion: Promise<unknown>
+): Promise<ActionResult<never> | null> {
+  try {
+    await assertion
+    return null
+  } catch (error) {
+    if (!(error instanceof Error)) throw error
+
+    if (error.message.startsWith("SETUP_BLOCKED:")) {
+      return actionFailure("SETUP_BLOCKED", "Finish setup before continuing.")
+    }
+
+    throw error
+  }
 }
 
 function isConfirmationWindowOpen(input: { opensAt: Date; expiresAt: Date; now?: Date }): boolean {
@@ -126,7 +135,7 @@ async function revalidateVouchSurfaces(
 
 async function getInvitationByToken(token: string) {
   return prisma.invitation.findUnique({
-    where: { tokenHash: hashInviteToken(token) },
+    where: { tokenHash: await hashInvitationToken(token) },
     select: {
       id: true,
       vouchId: true,
@@ -233,7 +242,8 @@ export async function validateCreateVouchDraft(input: unknown): Promise<ActionRe
 
 export async function createVouch(input: unknown): Promise<ActionResult<CreatedVouchResult>> {
   const user = await requireActiveUser()
-  await assertCreateVouchSetupReady(user.id)
+  const setupFailure = await getSetupBlockedFailure(assertCreateVouchSetupReady(user.id))
+  if (setupFailure) return setupFailure
 
   const parsed = createVouchInputSchema.safeParse(input)
 
@@ -255,8 +265,8 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
   }
 
   const platformFeeCents = calculateFee(amountCents)
-  const inviteToken = createInviteToken()
-  const tokenHash = hashInviteToken(inviteToken)
+  const inviteToken = await createInvitationToken(VOUCH_LIMITS.inviteTokenBytes)
+  const tokenHash = await hashInvitationToken(inviteToken)
 
   const created = await prisma.$transaction(async (tx) => {
     const vouch = await createVouchTx(tx, {
@@ -362,13 +372,14 @@ export async function createVouchInvitation(
     return actionFailure("INVALID_VOUCH_STATE", "Only pending Vouches can be invited.")
   }
 
-  const inviteToken = createInviteToken()
+  const inviteToken = await createInvitationToken(VOUCH_LIMITS.inviteTokenBytes)
+  const tokenHash = await hashInvitationToken(inviteToken)
 
   const invitation = await prisma.$transaction(async (tx) => {
     const created = await createInvitationTx(tx, {
       vouchId: vouch.id,
       recipientEmail: parsed.data.recipientEmail ?? null,
-      tokenHash: hashInviteToken(inviteToken),
+      tokenHash,
       expiresAt: invitationExpiresAt(),
     })
 
@@ -474,12 +485,13 @@ export async function resendVouchInvitation(
     return actionFailure("INVALID_VOUCH_STATE", "Only pending Vouches can be resent.")
   }
 
-  const inviteToken = createInviteToken()
+  const inviteToken = await createInvitationToken(VOUCH_LIMITS.inviteTokenBytes)
+  const tokenHash = await hashInvitationToken(inviteToken)
 
   await prisma.$transaction(async (tx) => {
     await rotateInvitationTokenHashTx(tx, {
       invitationId: invitation.id,
-      tokenHash: hashInviteToken(inviteToken),
+      tokenHash,
       expiresAt: invitationExpiresAt(),
     })
 
@@ -601,7 +613,8 @@ export async function markInviteOpened(
 
 export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
   const user = await requireActiveUser()
-  await assertAcceptVouchSetupReady(user.id)
+  const setupFailure = await getSetupBlockedFailure(assertAcceptVouchSetupReady(user.id))
+  if (setupFailure) return setupFailure
 
   const parsed = acceptVouchInputSchema.safeParse(input)
 
@@ -631,34 +644,47 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
     return actionFailure("VOUCH_ALREADY_ACCEPTED", "Vouch already has a payee.")
   }
 
-  const vouch = await prisma.$transaction(async (tx) => {
-    const accepted = await bindPayeeToVouchTx(tx, {
-      vouchId: invitation.vouch.id,
-      payeeId: user.id,
+  let vouch: Awaited<ReturnType<typeof bindPayeeToVouchTx>>
+
+  try {
+    vouch = await prisma.$transaction(async (tx) => {
+      const accepted = await bindPayeeToVouchTx(tx, {
+        vouchId: invitation.vouch.id,
+        payeeId: user.id,
+      })
+
+      await markInvitationAcceptedTx(tx, { invitationId: invitation.id })
+
+      await tx.auditEvent.create({
+        data: {
+          eventName: "vouch.accepted",
+          actorType: "user",
+          actorUserId: user.id,
+          entityType: "Vouch",
+          entityId: accepted.id,
+          participantSafe: true,
+        },
+      })
+
+      await queueNotificationTx(tx, {
+        type: "vouch_accepted",
+        channel: "email",
+        recipientUserId: accepted.payerId,
+        vouchId: accepted.id,
+      })
+
+      return accepted
     })
+  } catch (error) {
+    if (error instanceof Error && error.message === "VOUCH_ACCEPTANCE_CONFLICT") {
+      return actionFailure(
+        "VOUCH_ACCEPTANCE_CONFLICT",
+        "This Vouch is no longer available to accept."
+      )
+    }
 
-    await markInvitationAcceptedTx(tx, { invitationId: invitation.id })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.accepted",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "Vouch",
-        entityId: accepted.id,
-        participantSafe: true,
-      },
-    })
-
-    await queueNotificationTx(tx, {
-      type: "vouch_accepted",
-      channel: "email",
-      recipientUserId: accepted.payerId,
-      vouchId: accepted.id,
-    })
-
-    return accepted
-  })
+    throw error
+  }
 
   await revalidateVouchSurfaces(vouch.id, [vouch.payerId, user.id])
   return actionSuccess({ vouchId: vouch.id })

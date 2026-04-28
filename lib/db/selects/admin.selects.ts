@@ -64,3 +64,4 @@ export const adminWebhookEventListSelect = paymentWebhookEventListItemSelect
 export const adminWebhookEventDetailSelect = paymentWebhookEventDetailSelect
 
 export const adminAuditLogSelect = adminAuditListItemSelect
+export { adminAuditEventDetailSelect }

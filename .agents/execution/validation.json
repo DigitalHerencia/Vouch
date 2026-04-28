@@ -7,33 +7,39 @@
   "policy": {
     "business_logic_allowed": false,
     "truthfulness_required": true,
-    "status_values": ["pass", "fail", "not_run", "blocked", "not_applicable"],
+    "status_values": [
+      "pass",
+      "fail",
+      "not_run",
+      "blocked",
+      "not_applicable"
+    ],
     "evidence_required_for_pass": true
   },
   "summary": {
     "overall_status": "fail",
-    "reason": "Focused auth and setup-gate tests pass, but full typecheck and full Vitest are blocked by existing scaffold/module gaps outside the setup-gate implementation.",
-    "latest_validation_at": "2026-04-25T00:00:00.000Z",
+    "reason": "Phase 0 validation restored: contract validation, Prisma validation, typecheck, and unit tests pass. pnpm lint still fails on existing scaffold any-typing and copied Stripe sample code issues.",
+    "latest_validation_at": "2026-04-28T00:00:00.000Z",
     "latest_validator": "Codex"
   },
   "commands": [
     {
       "id": "CMD-001",
       "command": "pnpm lint",
-      "status": "not_run",
-      "evidence": null
+      "status": "fail",
+      "evidence": "Ran 2026-04-28. Fails on existing scaffold no-explicit-any errors in fetchers and React lint errors/warnings inside .agents/stripe-sample-code."
     },
     {
       "id": "CMD-002",
       "command": "pnpm typecheck",
-      "status": "fail",
-      "evidence": "Ran 2026-04-25. Fails on pre-existing missing feature/type/schema modules, Clerk UserButton prop drift, Stripe type drift, scaffold gaps, and test import gaps; no remaining reported errors in the setup-gate implementation files."
+      "status": "pass",
+      "evidence": "Ran 2026-04-28. next typegen and tsc --noEmit completed successfully after select/schema/type alignment fixes."
     },
     {
       "id": "CMD-003",
       "command": "pnpm test",
-      "status": "fail",
-      "evidence": "Ran 2026-04-25. Focused setup subset passed separately: pnpm test tests/unit/setup/status.test.ts tests/unit/schemas/setup.schemas.test.ts. Full suite fails on existing missing schema/vouch/payment modules, Playwright specs included in Vitest, setup checklist component mismatch, and forbidden filename contract failures unrelated to this setup-gate work."
+      "status": "pass",
+      "evidence": "Ran 2026-04-28. Vitest passed: 15 test files, 53 tests."
     },
     {
       "id": "CMD-004",
@@ -45,13 +51,13 @@
       "id": "CMD-005",
       "command": "pnpm prisma:validate",
       "status": "pass",
-      "evidence": "Ran 2026-04-25. Prisma schema loaded from prisma/schema.prisma and validated successfully."
+      "evidence": "Ran 2026-04-28. Prisma schema loaded from prisma/schema.prisma and validated successfully."
     },
     {
       "id": "CMD-006",
       "command": "pnpm validate:contracts",
-      "status": "fail",
-      "evidence": "Ran 2026-04-25. Failed because scripts/validate-contracts.mjs is missing from the repo."
+      "status": "pass",
+      "evidence": "Ran 2026-04-28. scripts/validate-contracts.mjs validated 7 contract files and 5 execution JSON files."
     }
   ],
   "milestones": {
@@ -297,6 +303,11 @@
       "id": "VAL-NOTE-003",
       "date": "2026-04-25",
       "message": "Setup-gate focused validation was executed: pnpm test tests/unit/setup/status.test.ts tests/unit/schemas/setup.schemas.test.ts passed. pnpm typecheck and full pnpm test still fail on repo-wide scaffold gaps outside this task."
+    },
+    {
+      "id": "VAL-NOTE-004",
+      "date": "2026-04-28",
+      "message": "Phase 0 validation restoration completed: added scripts/validate-contracts.mjs, aligned PaymentRecord.lastErrorMessage, corrected Prisma client output/shadow DB config, fixed typecheck blockers, regenerated Prisma, and ran validation. pnpm lint still fails on existing scaffold/sample-code issues."
     }
   ]
 }

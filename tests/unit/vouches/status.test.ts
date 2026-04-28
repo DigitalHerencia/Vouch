@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest"
 
-import { deriveNextVouchAction, type NextVouchAction } from "@/lib/vouch/state"
+import {
+  assertValidVouchTransition,
+  deriveNextVouchAction,
+  type NextVouchAction,
+} from "@/lib/vouch/state"
 import { getVouchStatusLabel, isFinalVouchStatus } from "@/lib/vouch/status"
 
 describe("vouch status helpers", () => {
@@ -38,5 +42,15 @@ describe("vouch status helpers", () => {
 
     expect(action.kind).toBe("waiting")
     expect(action.label.toLowerCase()).not.toContain("release")
+  })
+
+  it("allows deterministic expired to refunded resolution", () => {
+    expect(() => assertValidVouchTransition({ from: "expired", to: "refunded" })).not.toThrow()
+  })
+
+  it("blocks skipping directly from active to refunded", () => {
+    expect(() => assertValidVouchTransition({ from: "active", to: "refunded" })).toThrow(
+      "Invalid Vouch transition"
+    )
   })
 })

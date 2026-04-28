@@ -190,7 +190,7 @@ Vouch charges a transparent platform fee before payment commitment. You will alw
 
 ### Example
 
-For each Vouch, the platform fee may include a minimum fee plus a percentage of the committed amount.
+For each Vouch, the platform fee is 5% of the committed amount with a $5 minimum.
 
 Final fee structure is shown before payment.
 

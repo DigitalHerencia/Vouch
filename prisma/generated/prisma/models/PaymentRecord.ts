@@ -48,6 +48,7 @@ export type PaymentRecordMinAggregateOutputType = {
   currency: string | null
   platformFeeCents: number | null
   lastErrorCode: string | null
+  lastErrorMessage: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -64,6 +65,7 @@ export type PaymentRecordMaxAggregateOutputType = {
   currency: string | null
   platformFeeCents: number | null
   lastErrorCode: string | null
+  lastErrorMessage: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -80,6 +82,7 @@ export type PaymentRecordCountAggregateOutputType = {
   currency: number
   platformFeeCents: number
   lastErrorCode: number
+  lastErrorMessage: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -108,6 +111,7 @@ export type PaymentRecordMinAggregateInputType = {
   currency?: true
   platformFeeCents?: true
   lastErrorCode?: true
+  lastErrorMessage?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -124,6 +128,7 @@ export type PaymentRecordMaxAggregateInputType = {
   currency?: true
   platformFeeCents?: true
   lastErrorCode?: true
+  lastErrorMessage?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -140,6 +145,7 @@ export type PaymentRecordCountAggregateInputType = {
   currency?: true
   platformFeeCents?: true
   lastErrorCode?: true
+  lastErrorMessage?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -243,6 +249,7 @@ export type PaymentRecordGroupByOutputType = {
   currency: string
   platformFeeCents: number
   lastErrorCode: string | null
+  lastErrorMessage: string | null
   createdAt: Date
   updatedAt: Date
   _count: PaymentRecordCountAggregateOutputType | null
@@ -282,6 +289,7 @@ export type PaymentRecordWhereInput = {
   currency?: Prisma.StringFilter<"PaymentRecord"> | string
   platformFeeCents?: Prisma.IntFilter<"PaymentRecord"> | number
   lastErrorCode?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
+  lastErrorMessage?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PaymentRecord"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PaymentRecord"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
@@ -301,6 +309,7 @@ export type PaymentRecordOrderByWithRelationInput = {
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   vouch?: Prisma.VouchOrderByWithRelationInput
@@ -323,6 +332,7 @@ export type PaymentRecordWhereUniqueInput = Prisma.AtLeast<{
   currency?: Prisma.StringFilter<"PaymentRecord"> | string
   platformFeeCents?: Prisma.IntFilter<"PaymentRecord"> | number
   lastErrorCode?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
+  lastErrorMessage?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PaymentRecord"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PaymentRecord"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
@@ -342,6 +352,7 @@ export type PaymentRecordOrderByWithAggregationInput = {
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PaymentRecordCountOrderByAggregateInput
@@ -366,6 +377,7 @@ export type PaymentRecordScalarWhereWithAggregatesInput = {
   currency?: Prisma.StringWithAggregatesFilter<"PaymentRecord"> | string
   platformFeeCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
   lastErrorCode?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
+  lastErrorMessage?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PaymentRecord"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PaymentRecord"> | Date | string
 }
@@ -381,6 +393,7 @@ export type PaymentRecordCreateInput = {
   currency?: string
   platformFeeCents?: number
   lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   vouch: Prisma.VouchCreateNestedOneWithoutPaymentRecordInput
@@ -400,6 +413,7 @@ export type PaymentRecordUncheckedCreateInput = {
   currency?: string
   platformFeeCents?: number
   lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   refundRecord?: Prisma.RefundRecordUncheckedCreateNestedOneWithoutPaymentRecordInput
@@ -417,6 +431,7 @@ export type PaymentRecordUpdateInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vouch?: Prisma.VouchUpdateOneRequiredWithoutPaymentRecordNestedInput
@@ -436,6 +451,7 @@ export type PaymentRecordUncheckedUpdateInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refundRecord?: Prisma.RefundRecordUncheckedUpdateOneWithoutPaymentRecordNestedInput
@@ -454,6 +470,7 @@ export type PaymentRecordCreateManyInput = {
   currency?: string
   platformFeeCents?: number
   lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -469,6 +486,7 @@ export type PaymentRecordUpdateManyMutationInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -485,6 +503,7 @@ export type PaymentRecordUncheckedUpdateManyInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -506,6 +525,7 @@ export type PaymentRecordCountOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -527,6 +547,7 @@ export type PaymentRecordMaxOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -543,6 +564,7 @@ export type PaymentRecordMinOrderByAggregateInput = {
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -634,6 +656,7 @@ export type PaymentRecordCreateWithoutVouchInput = {
   currency?: string
   platformFeeCents?: number
   lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   refundRecord?: Prisma.RefundRecordCreateNestedOneWithoutPaymentRecordInput
@@ -651,6 +674,7 @@ export type PaymentRecordUncheckedCreateWithoutVouchInput = {
   currency?: string
   platformFeeCents?: number
   lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   refundRecord?: Prisma.RefundRecordUncheckedCreateNestedOneWithoutPaymentRecordInput
@@ -684,6 +708,7 @@ export type PaymentRecordUpdateWithoutVouchInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refundRecord?: Prisma.RefundRecordUpdateOneWithoutPaymentRecordNestedInput
@@ -701,6 +726,7 @@ export type PaymentRecordUncheckedUpdateWithoutVouchInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refundRecord?: Prisma.RefundRecordUncheckedUpdateOneWithoutPaymentRecordNestedInput
@@ -718,6 +744,7 @@ export type PaymentRecordCreateWithoutRefundRecordInput = {
   currency?: string
   platformFeeCents?: number
   lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   vouch: Prisma.VouchCreateNestedOneWithoutPaymentRecordInput
@@ -736,6 +763,7 @@ export type PaymentRecordUncheckedCreateWithoutRefundRecordInput = {
   currency?: string
   platformFeeCents?: number
   lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   webhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentRecordInput
@@ -768,6 +796,7 @@ export type PaymentRecordUpdateWithoutRefundRecordInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vouch?: Prisma.VouchUpdateOneRequiredWithoutPaymentRecordNestedInput
@@ -786,6 +815,7 @@ export type PaymentRecordUncheckedUpdateWithoutRefundRecordInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   webhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutPaymentRecordNestedInput
@@ -802,6 +832,7 @@ export type PaymentRecordCreateWithoutWebhookEventsInput = {
   currency?: string
   platformFeeCents?: number
   lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   vouch: Prisma.VouchCreateNestedOneWithoutPaymentRecordInput
@@ -820,6 +851,7 @@ export type PaymentRecordUncheckedCreateWithoutWebhookEventsInput = {
   currency?: string
   platformFeeCents?: number
   lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   refundRecord?: Prisma.RefundRecordUncheckedCreateNestedOneWithoutPaymentRecordInput
@@ -852,6 +884,7 @@ export type PaymentRecordUpdateWithoutWebhookEventsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vouch?: Prisma.VouchUpdateOneRequiredWithoutPaymentRecordNestedInput
@@ -870,6 +903,7 @@ export type PaymentRecordUncheckedUpdateWithoutWebhookEventsInput = {
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refundRecord?: Prisma.RefundRecordUncheckedUpdateOneWithoutPaymentRecordNestedInput
@@ -918,6 +952,7 @@ export type PaymentRecordSelect<ExtArgs extends runtime.Types.Extensions.Interna
   currency?: boolean
   platformFeeCents?: boolean
   lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
@@ -938,6 +973,7 @@ export type PaymentRecordSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   currency?: boolean
   platformFeeCents?: boolean
   lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
@@ -955,6 +991,7 @@ export type PaymentRecordSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   currency?: boolean
   platformFeeCents?: boolean
   lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
@@ -972,11 +1009,12 @@ export type PaymentRecordSelectScalar = {
   currency?: boolean
   platformFeeCents?: boolean
   lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PaymentRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "provider" | "providerPaymentId" | "providerChargeId" | "providerTransferId" | "status" | "amountCents" | "currency" | "platformFeeCents" | "lastErrorCode" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentRecord"]>
+export type PaymentRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "provider" | "providerPaymentId" | "providerChargeId" | "providerTransferId" | "status" | "amountCents" | "currency" | "platformFeeCents" | "lastErrorCode" | "lastErrorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentRecord"]>
 export type PaymentRecordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
   refundRecord?: boolean | Prisma.PaymentRecord$refundRecordArgs<ExtArgs>
@@ -1009,6 +1047,7 @@ export type $PaymentRecordPayload<ExtArgs extends runtime.Types.Extensions.Inter
     currency: string
     platformFeeCents: number
     lastErrorCode: string | null
+    lastErrorMessage: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["paymentRecord"]>
@@ -1448,6 +1487,7 @@ export interface PaymentRecordFieldRefs {
   readonly currency: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly platformFeeCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
   readonly lastErrorCode: Prisma.FieldRef<"PaymentRecord", 'String'>
+  readonly lastErrorMessage: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly createdAt: Prisma.FieldRef<"PaymentRecord", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PaymentRecord", 'DateTime'>
 }

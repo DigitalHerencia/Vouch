@@ -22,20 +22,6 @@ const authReadinessSelect = {
       payoutReadiness: true,
     },
   },
-  paymentCustomer: {
-    select: {
-      readiness: true,
-      defaultPaymentMethodReady: true,
-    },
-  },
-  connectedAccount: {
-    select: {
-      readiness: true,
-      chargesEnabled: true,
-      payoutsEnabled: true,
-      detailsSubmitted: true,
-    },
-  },
   termsAcceptances: latestTermsAcceptanceArgs,
 } as const
 
@@ -71,6 +57,7 @@ export const contextualParticipantRoleSelect = {
 
 export const inviteCandidateAuthSelect = {
   id: true,
+  vouchId: true,
   tokenHash: true,
   recipientEmail: true,
   status: true,

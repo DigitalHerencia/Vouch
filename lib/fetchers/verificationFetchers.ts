@@ -13,7 +13,9 @@ import {
 
 const iso = (v: Date | null | undefined) => (v ? v.toISOString() : null)
 
-function mapVerification(record) {
+export type VerificationStatusReadModel = Record<string, unknown> | null
+
+function mapVerification(record: any): VerificationStatusReadModel {
   return record
     ? {
         ...record,

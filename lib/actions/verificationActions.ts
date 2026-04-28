@@ -49,7 +49,7 @@ export async function startIdentityVerification(
       },
     })
   })
-  return actionSuccess(await getVerificationStatus())
+  return actionSuccess(await getVerificationStatus(user.id))
 }
 
 export async function startAdultVerification(
@@ -83,13 +83,13 @@ export async function startAdultVerification(
       },
     })
   })
-  return actionSuccess(await getVerificationStatus())
+  return actionSuccess(await getVerificationStatus(user.id))
 }
 
 export async function handleVerificationProviderReturn(
   input: unknown
 ): Promise<ActionResult<VerificationStatusReadModel>> {
-  await requireActiveUser()
+  const user = await requireActiveUser()
   const parsed = verificationProviderReturnInputSchema.safeParse(input)
   if (!parsed.success) {
     return actionFailure(
@@ -98,7 +98,7 @@ export async function handleVerificationProviderReturn(
       parsed.error.flatten().fieldErrors
     )
   }
-  return actionSuccess(await getVerificationStatus())
+  return actionSuccess(await getVerificationStatus(user.id))
 }
 
 export async function reconcileVerificationProfile(
@@ -135,7 +135,7 @@ export async function reconcileVerificationProfile(
       },
     })
   })
-  return actionSuccess(await getVerificationStatus())
+  return actionSuccess(await getVerificationStatus(user.id))
 }
 
 export async function markVerificationRequiresAction(): Promise<
@@ -143,7 +143,7 @@ export async function markVerificationRequiresAction(): Promise<
 > {
   const user = await requireActiveUser()
   await prisma.$transaction((tx) => markVerificationRequiresActionTx(tx, { userId: user.id }))
-  return actionSuccess(await getVerificationStatus())
+  return actionSuccess(await getVerificationStatus(user.id))
 }
 
 export async function markVerificationRejected(): Promise<
@@ -151,7 +151,7 @@ export async function markVerificationRejected(): Promise<
 > {
   const user = await requireActiveUser()
   await prisma.$transaction((tx) => markVerificationRejectedTx(tx, { userId: user.id }))
-  return actionSuccess(await getVerificationStatus())
+  return actionSuccess(await getVerificationStatus(user.id))
 }
 
 export async function markVerificationVerified(): Promise<
@@ -159,5 +159,5 @@ export async function markVerificationVerified(): Promise<
 > {
   const user = await requireActiveUser()
   await prisma.$transaction((tx) => markVerificationVerifiedTx(tx, { userId: user.id }))
-  return actionSuccess(await getVerificationStatus())
+  return actionSuccess(await getVerificationStatus(user.id))
 }

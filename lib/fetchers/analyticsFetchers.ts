@@ -13,10 +13,15 @@ type AnalyticsRangeInput = {
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : null)
 
 function getRange(input?: AnalyticsRangeInput) {
-  return {
-    gte: input?.from ? new Date(input.from) : undefined,
-    lte: input?.to ? new Date(input.to) : undefined,
-  }
+  const range: { gte?: Date; lte?: Date } = {}
+  if (input?.from) range.gte = new Date(input.from)
+  if (input?.to) range.lte = new Date(input.to)
+  return Object.keys(range).length > 0 ? range : undefined
+}
+
+type CountedRow<T extends string> = {
+  eventName: T
+  _count: true | Record<string, number | undefined> | undefined
 }
 
 async function requireAnalyticsAdmin() {
@@ -35,19 +40,22 @@ async function requireAnalyticsAdmin() {
   return user
 }
 
-function countMap<T extends string>(rows: Array<{ eventName: T; _count: { _all: number } }>) {
-  return Object.fromEntries(rows.map((row) => [row.eventName, row._count._all])) as Record<
-    T,
-    number
-  >
+function countAll(row: { _count: true | Record<string, number | undefined> | undefined }) {
+  return row._count && row._count !== true ? (row._count._all ?? 0) : 0
+}
+
+function countMap<T extends string>(rows: Array<CountedRow<T>>) {
+  return Object.fromEntries(rows.map((row) => [row.eventName, countAll(row)])) as Record<T, number>
 }
 
 async function countEvents(input: AnalyticsRangeInput | undefined, eventNames: string[]) {
+  const range = getRange(input)
+
   const rows = await prisma.analyticsEvent.groupBy({
     by: ["eventName"],
     where: {
       eventName: { in: eventNames },
-      occurredAt: getRange(input),
+      ...(range ? { occurredAt: range } : {}),
     },
     _count: { _all: true },
   })
@@ -84,16 +92,16 @@ export async function getLifecycleAnalyticsSummary(input?: AnalyticsRangeInput) 
       to: input?.to ? iso(new Date(input.to)) : null,
     },
     vouchesByStatus: Object.fromEntries(
-      vouchesByStatus.map((row) => [row.status, row._count._all])
+      vouchesByStatus.map((row) => [row.status, countAll(row)])
     ),
     paymentsByStatus: Object.fromEntries(
-      paymentsByStatus.map((row) => [row.status, row._count._all])
+      paymentsByStatus.map((row) => [row.status, countAll(row)])
     ),
     refundsByStatus: Object.fromEntries(
-      refundsByStatus.map((row) => [row.status, row._count._all])
+      refundsByStatus.map((row) => [row.status, countAll(row)])
     ),
     confirmationsByStatus: Object.fromEntries(
-      confirmations.map((row) => [row.status, row._count._all])
+      confirmations.map((row) => [row.status, countAll(row)])
     ),
   }
 }
@@ -126,7 +134,7 @@ export async function getSetupFunnelSummary(input?: AnalyticsRangeInput) {
       adultStatus: row.adultStatus,
       paymentReadiness: row.paymentReadiness,
       payoutReadiness: row.payoutReadiness,
-      count: row._count._all,
+      count: countAll(row),
     })),
   }
 }
@@ -161,13 +169,14 @@ export async function getVouchFunnelSummary(input?: AnalyticsRangeInput) {
 
   return {
     events,
-    vouchesByStatus: Object.fromEntries(statuses.map((row) => [row.status, row._count._all])),
+    vouchesByStatus: Object.fromEntries(statuses.map((row) => [row.status, countAll(row)])),
   }
 }
 
 export async function getPaymentFailureAnalytics(input?: AnalyticsRangeInput) {
   noStore()
   await requireAnalyticsAdmin()
+  const range = getRange(input)
 
   const [paymentFailures, failedPayments, failedRefunds] = await Promise.all([
     countEvents(input, ["payment.failed"]),
@@ -175,7 +184,7 @@ export async function getPaymentFailureAnalytics(input?: AnalyticsRangeInput) {
       by: ["lastErrorCode"],
       where: {
         status: "failed",
-        updatedAt: getRange(input),
+        ...(range ? { updatedAt: range } : {}),
       },
       _count: { _all: true },
     }),
@@ -183,7 +192,7 @@ export async function getPaymentFailureAnalytics(input?: AnalyticsRangeInput) {
       by: ["status", "reason"],
       where: {
         status: "failed",
-        updatedAt: getRange(input),
+        ...(range ? { updatedAt: range } : {}),
       },
       _count: { _all: true },
     }),
@@ -192,12 +201,12 @@ export async function getPaymentFailureAnalytics(input?: AnalyticsRangeInput) {
   return {
     events: paymentFailures,
     failedPaymentsByCode: Object.fromEntries(
-      failedPayments.map((row) => [row.lastErrorCode ?? "unknown", row._count._all])
+      failedPayments.map((row) => [row.lastErrorCode ?? "unknown", countAll(row)])
     ),
     failedRefunds: failedRefunds.map((row) => ({
       status: row.status,
       reason: row.reason,
-      count: row._count._all,
+      count: countAll(row),
     })),
   }
 }
@@ -205,14 +214,13 @@ export async function getPaymentFailureAnalytics(input?: AnalyticsRangeInput) {
 export async function getNotificationDeliveryAnalytics(input?: AnalyticsRangeInput) {
   noStore()
   await requireAnalyticsAdmin()
+  const range = getRange(input)
 
   const [events, delivery] = await Promise.all([
     countEvents(input, ["notification.queued", "notification.sent", "notification.failed"]),
     prisma.notificationEvent.groupBy({
       by: ["status", "channel", "eventName"],
-      where: {
-        createdAt: getRange(input),
-      },
+      where: range ? { createdAt: range } : {},
       _count: { _all: true },
     }),
   ])
@@ -223,7 +231,7 @@ export async function getNotificationDeliveryAnalytics(input?: AnalyticsRangeInp
       status: row.status,
       channel: row.channel,
       eventName: row.eventName,
-      count: row._count._all,
+      count: countAll(row),
     })),
   }
 }
@@ -231,6 +239,7 @@ export async function getNotificationDeliveryAnalytics(input?: AnalyticsRangeInp
 export async function getAdminOperationalAnalytics(input?: AnalyticsRangeInput) {
   noStore()
   await requireAnalyticsAdmin()
+  const range = getRange(input)
 
   const [adminEvents, auditEvents, operationalRetries] = await Promise.all([
     countEvents(input, [
@@ -243,26 +252,24 @@ export async function getAdminOperationalAnalytics(input?: AnalyticsRangeInput) 
       by: ["eventName"],
       where: {
         actorType: "admin",
-        createdAt: getRange(input),
+        ...(range ? { createdAt: range } : {}),
       },
       _count: { _all: true },
     }),
     prisma.operationalRetry.groupBy({
       by: ["operation", "status"],
-      where: {
-        createdAt: getRange(input),
-      },
+      where: range ? { createdAt: range } : {},
       _count: { _all: true },
     }),
   ])
 
   return {
     events: adminEvents,
-    auditEvents: Object.fromEntries(auditEvents.map((row) => [row.eventName, row._count._all])),
+    auditEvents: Object.fromEntries(auditEvents.map((row) => [row.eventName, countAll(row)])),
     operationalRetries: operationalRetries.map((row) => ({
       operation: row.operation,
       status: row.status,
-      count: row._count._all,
+      count: countAll(row),
     })),
   }
 }

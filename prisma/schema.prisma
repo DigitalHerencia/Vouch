@@ -1,6 +1,6 @@
 generator client {
   provider   = "prisma-client"
-  output     = "./prisma/generated/prisma"
+  output     = "./generated/prisma"
   engineType = "client"
 }
 
@@ -445,7 +445,8 @@ model PaymentRecord {
   currency         String @default("usd") @db.VarChar(3)
   platformFeeCents Int    @default(0)
 
-  lastErrorCode String?
+  lastErrorCode    String?
+  lastErrorMessage String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
