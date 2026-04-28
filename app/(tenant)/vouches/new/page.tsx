@@ -1,5 +1,7 @@
-import { RoutePlaceholder } from "@/features/system/route-placeholder"
+import { CreateVouchPage } from "@/features/vouches"
+import { getCreateVouchPageState } from "@/lib/fetchers/vouchFetchers"
 
-export default function Page() {
-  return <RoutePlaceholder title="vouches / new" />
+export default async function Page() {
+  const state = await getCreateVouchPageState()
+  return <CreateVouchPage {...(state.variant === "blocked" ? { blockedReason: state.gate.blockers.join(", ") } : {})} />
 }

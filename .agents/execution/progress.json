@@ -222,6 +222,30 @@
       ],
       "validation_status": "partial_pass",
       "notes": "pnpm typecheck passed after this work. Full lint/test were intentionally not re-run per launch/token-priority instruction; earlier lint was already failing on scaffold/sample-code issues."
+    },
+    {
+      "id": "PRG-011",
+      "date": "2026-04-28",
+      "status": "completed",
+      "category": "implementation",
+      "title": "Finished backend gap wiring and server-backed route shells",
+      "summary": "Implemented notification email templates/provider/dispatch helpers, admin safe retry persistence and idempotent processors, cache/env helpers, and wired setup/payment/payout/verification/dashboard/Vouch/admin route shells to protected fetchers/actions.",
+      "files": [
+        "lib/notifications/queue.ts",
+        "lib/integrations/email/provider.ts",
+        "lib/integrations/email/templates.ts",
+        "lib/actions/adminActions.ts",
+        "lib/cache/revalidate.ts",
+        "lib/constants/cache-tags.ts",
+        "lib/env.ts",
+        ".env.example",
+        "eslint.config.mjs",
+        "app/(tenant)/**/page.tsx",
+        "app/(public)/vouches/invite/[token]/page.tsx",
+        "app/(admin)/admin/**/page.tsx"
+      ],
+      "validation_status": "pass_with_warnings",
+      "notes": "pnpm typecheck, prisma:validate, validate:contracts, targeted Vouch tests, and lint pass. Lint passes with warnings. Stripe sandbox payment flows were not executed in this local run."
     }
   ],
   "next_expected_phase": "repo_implementation",

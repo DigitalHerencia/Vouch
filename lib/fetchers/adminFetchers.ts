@@ -2,6 +2,8 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 
+import type { PaymentStatus, UserStatus, VouchStatus } from "@/prisma/generated/prisma/client"
+
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
 import {
@@ -144,8 +146,8 @@ export async function getAdminFailureHeavyState(input?: { page?: number; pageSiz
 }
 
 export async function listAdminVouches(input?: {
-  status?: string
-  paymentStatus?: string
+  status?: VouchStatus
+  paymentStatus?: PaymentStatus
   page?: number
   pageSize?: number
 }) {
@@ -156,8 +158,8 @@ export async function listAdminVouches(input?: {
 
   const rows = await prisma.vouch.findMany({
     where: {
-      ...(input?.status ? { status: input.status as any } : {}),
-      ...(input?.paymentStatus ? { paymentRecord: { status: input.paymentStatus as any } } : {}),
+      ...(input?.status ? { status: input.status } : {}),
+      ...(input?.paymentStatus ? { paymentRecord: { status: input.paymentStatus } } : {}),
     },
     orderBy: { updatedAt: "desc" },
     skip: page.skip,
@@ -206,7 +208,7 @@ export async function getAdminVouchPaymentFailedState(input: { vouchId: string }
 }
 
 export async function listAdminUsers(input?: {
-  status?: string
+  status?: UserStatus
   page?: number
   pageSize?: number
 }) {
@@ -217,7 +219,7 @@ export async function listAdminUsers(input?: {
 
   const rows = await prisma.user.findMany({
     where: {
-      ...(input?.status ? { status: input.status as any } : {}),
+      ...(input?.status ? { status: input.status } : {}),
     },
     orderBy: { createdAt: "desc" },
     skip: page.skip,
@@ -241,7 +243,7 @@ export async function getAdminUserDetail(input: { userId: string }) {
 }
 
 export async function listAdminPayments(input?: {
-  paymentStatus?: string
+  paymentStatus?: PaymentStatus
   page?: number
   pageSize?: number
 }) {
@@ -252,7 +254,7 @@ export async function listAdminPayments(input?: {
 
   const rows = await prisma.paymentRecord.findMany({
     where: {
-      ...(input?.paymentStatus ? { status: input.paymentStatus as any } : {}),
+      ...(input?.paymentStatus ? { status: input.paymentStatus } : {}),
     },
     orderBy: { updatedAt: "desc" },
     skip: page.skip,

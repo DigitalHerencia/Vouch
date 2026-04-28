@@ -1,13 +1,17 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import type { Prisma } from "@/prisma/generated/prisma/client"
 
 import { requireActiveUser } from "@/lib/auth/current-user"
 import { assertCapability } from "@/lib/authz/capabilities"
 import { prisma } from "@/lib/db/prisma"
+import { dispatchQueuedNotification } from "@/lib/notifications/queue"
+import { runPaymentReconciliationJob } from "@/lib/jobs/reconcile-payments"
+import { processPaymentWebhookEvent, reconcileRefundStatus } from "@/lib/actions/paymentActions"
 import { adminDisableUserInputSchema, adminSafeRetryInputSchema } from "@/schemas/admin"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
-import type { AdminDisableUserInput, AdminSafeRetryInput } from "@/types/admin"
+import type { AdminSafeRetryInput } from "@/types/admin"
 
 type AdminAuditInput = {
   entityType?: string
@@ -21,6 +25,7 @@ type SafeRetryResult = {
   operation: AdminSafeRetryInput["operation"]
   entityId: string
   recordedAt: string
+  status?: "completed" | "failed" | "skipped"
 }
 
 function adminValidationFailure(
@@ -59,8 +64,33 @@ async function writeAdminAudit(input: {
       entityType: input.entityType,
       entityId: input.entityId,
       participantSafe: false,
+      ...(input.metadata ? { metadata: input.metadata as Prisma.InputJsonValue } : {}),
     },
   })
+}
+
+async function runSafeRetryOperation(input: {
+  operation: AdminSafeRetryInput["operation"]
+  entityId: string
+  reason?: string
+}) {
+  switch (input.operation) {
+    case "retry_notification_send":
+      await dispatchQueuedNotification({ notificationEventId: input.entityId })
+      return "completed" as const
+    case "retry_provider_reconciliation":
+      await runPaymentReconciliationJob({ limit: 25 })
+      return "completed" as const
+    case "retry_webhook_processing":
+      await processPaymentWebhookEvent({
+        providerEventId: input.entityId,
+        eventType: "manual_admin_retry",
+      })
+      return "completed" as const
+    case "retry_refund_status_sync":
+      await reconcileRefundStatus({ vouchId: input.entityId })
+      return "completed" as const
+  }
 }
 
 export async function disableUserAccount(
@@ -218,7 +248,42 @@ export async function recordAdminSafeRetryCompleted(
     )
   }
 
+  const retry = await prisma.operationalRetry.create({
+    data: {
+      operation: parsed.data.operation,
+      status: "started",
+      entityType: "admin_safe_retry",
+      entityId: parsed.data.entityId,
+      adminUserId: admin.id,
+      reason: parsed.data.reason ?? null,
+    },
+    select: { id: true },
+  })
+
+  let status: "completed" | "failed" | "skipped" = "completed"
+  let errorCode: string | undefined
+
+  try {
+    status = await runSafeRetryOperation({
+      operation: parsed.data.operation,
+      entityId: parsed.data.entityId,
+      ...(parsed.data.reason ? { reason: parsed.data.reason } : {}),
+    })
+  } catch (error) {
+    status = "failed"
+    errorCode = error instanceof Error ? error.message.slice(0, 200) : "SAFE_RETRY_FAILED"
+  }
+
   await prisma.$transaction(async (tx) => {
+    await tx.operationalRetry.update({
+      where: { id: retry.id },
+      data: {
+        status,
+        completedAt: new Date(),
+        ...(errorCode ? { errorCode } : {}),
+      },
+    })
+
     await tx.auditEvent.create({
       data: {
         eventName: "admin.retry.started",
@@ -245,7 +310,8 @@ export async function recordAdminSafeRetryCompleted(
         metadata: {
           operation: parsed.data.operation,
           reason: parsed.data.reason,
-          outcome: "recorded_for_idempotent_processor",
+          outcome: status,
+          ...(errorCode ? { error_code: errorCode } : {}),
         },
       },
     })
@@ -257,5 +323,6 @@ export async function recordAdminSafeRetryCompleted(
     operation: parsed.data.operation,
     entityId: parsed.data.entityId,
     recordedAt: new Date().toISOString(),
+    status,
   })
 }

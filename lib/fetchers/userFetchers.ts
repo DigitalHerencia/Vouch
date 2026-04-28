@@ -14,12 +14,13 @@ import {
 
 const iso = (v: Date | null | undefined) => (v ? v.toISOString() : null)
 
-function mapUser(record: any) {
+function mapUser<T extends object | null>(record: T) {
+  const dated = record as (T & { createdAt?: Date | null; updatedAt?: Date | null }) | null
   return record
     ? {
         ...record,
-        createdAt: iso(record.createdAt),
-        updatedAt: iso(record.updatedAt),
+        createdAt: iso(dated?.createdAt),
+        updatedAt: iso(dated?.updatedAt),
       }
     : null
 }

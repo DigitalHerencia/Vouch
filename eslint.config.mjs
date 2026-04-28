@@ -19,6 +19,7 @@ const eslintConfig = defineConfig([
       "playwright-report/**",
       "test-results/**",
       "node_modules/**",
+      ".agents/**",
 
       "generated/**",
       "src/generated/**",
