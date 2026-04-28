@@ -15,11 +15,11 @@ export function AdminMetricCard({
   return (
     <Card className={cn(className)}>
       <CardHeader>
-        <CardTitle className="text-sm text-muted-foreground">{label}</CardTitle>
+        <CardTitle className="text-muted-foreground text-sm">{label}</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-1">
         <div className="text-2xl font-semibold tabular-nums">{value}</div>
-        {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
+        {description ? <p className="text-muted-foreground text-sm">{description}</p> : null}
       </CardContent>
     </Card>
   )

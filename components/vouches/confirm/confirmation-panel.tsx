@@ -2,7 +2,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 
-type ConfirmationState = "not_confirmed" | "confirmed" | "ineligible" | "window_not_open" | "window_closed"
+type ConfirmationState =
+  | "not_confirmed"
+  | "confirmed"
+  | "ineligible"
+  | "window_not_open"
+  | "window_closed"
 
 const LABELS: Record<ConfirmationState, string> = {
   not_confirmed: "Not confirmed",
@@ -15,9 +20,16 @@ const LABELS: Record<ConfirmationState, string> = {
 function ConfirmationLine({ label, state }: { label: string; state: ConfirmationState }) {
   const confirmed = state === "confirmed"
   return (
-    <div className="flex items-center justify-between gap-4 rounded-lg border bg-muted/20 px-3 py-2">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <Badge variant="outline" className={confirmed ? "border-green-500/30 bg-green-500/10 text-green-200" : "border-neutral-500/30 bg-neutral-500/10 text-neutral-200"}>
+    <div className="bg-muted/20 flex items-center justify-between gap-4 rounded-lg border px-3 py-2">
+      <span className="text-muted-foreground text-sm">{label}</span>
+      <Badge
+        variant="outline"
+        className={
+          confirmed
+            ? "border-green-500/30 bg-green-500/10 text-green-200"
+            : "border-neutral-500/30 bg-neutral-500/10 text-neutral-200"
+        }
+      >
         {LABELS[state]}
       </Badge>
     </div>
@@ -45,7 +57,7 @@ export function ConfirmationPanel({
       <CardContent className="grid gap-3">
         <ConfirmationLine label="Payer" state={payerState} />
         <ConfirmationLine label="Payee" state={payeeState} />
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Funds release only after both parties confirm presence during the confirmation window.
         </p>
         {deadline ? <div>{deadline}</div> : null}

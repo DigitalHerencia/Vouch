@@ -5,7 +5,10 @@ import { revalidatePath } from "next/cache"
 
 import { mapClerkUserToLocalInput, type LocalUserSyncInput } from "@/lib/auth/clerk"
 import { prisma } from "@/lib/db/prisma"
-import { createDefaultVerificationProfileTx, upsertUserFromClerkTx } from "@/lib/db/transactions/authTransactions"
+import {
+  createDefaultVerificationProfileTx,
+  upsertUserFromClerkTx,
+} from "@/lib/db/transactions/authTransactions"
 
 export async function syncClerkUser(input: LocalUserSyncInput) {
   const user = await prisma.$transaction(async (tx) => {

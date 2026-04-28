@@ -20,10 +20,10 @@ export function VouchDeadline({
   return (
     <div className={cn("grid gap-1 text-sm", className)}>
       <div className="text-muted-foreground">{label}</div>
-      <time dateTime={date.toISOString()} className="font-medium text-foreground">
+      <time dateTime={date.toISOString()} className="text-foreground font-medium">
         {absolute}
       </time>
-      {helperText ? <p className="text-xs text-muted-foreground">{helperText}</p> : null}
+      {helperText ? <p className="text-muted-foreground text-xs">{helperText}</p> : null}
     </div>
   )
 }

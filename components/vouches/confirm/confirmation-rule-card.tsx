@@ -5,7 +5,9 @@ export interface ConfirmationRuleCardProps {
 export function ConfirmationRuleCard({ className }: ConfirmationRuleCardProps) {
   return (
     <div className={className}>
-      <p className="text-sm text-neutral-400">components/vouches/confirm/confirmation-rule-card.tsx</p>
+      <p className="text-sm text-neutral-400">
+        components/vouches/confirm/confirmation-rule-card.tsx
+      </p>
     </div>
   )
 }

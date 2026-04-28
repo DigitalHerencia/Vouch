@@ -1,308 +1,302 @@
 {
-    "schema_version": "1.0.0",
-    "file": "validation.json",
-    "product": "Vouch",
-    "generated_at": "2026-04-24T00:00:00.000Z",
-    "purpose": "Records validation checks, gate status, command results, and evidence.",
-    "policy": {
-        "business_logic_allowed": false,
-        "truthfulness_required": true,
-        "status_values": [
-            "pass",
-            "fail",
-            "not_run",
-            "blocked",
-            "not_applicable"
-        ],
-        "evidence_required_for_pass": true
+  "schema_version": "1.0.0",
+  "file": "validation.json",
+  "product": "Vouch",
+  "generated_at": "2026-04-24T00:00:00.000Z",
+  "purpose": "Records validation checks, gate status, command results, and evidence.",
+  "policy": {
+    "business_logic_allowed": false,
+    "truthfulness_required": true,
+    "status_values": ["pass", "fail", "not_run", "blocked", "not_applicable"],
+    "evidence_required_for_pass": true
+  },
+  "summary": {
+    "overall_status": "fail",
+    "reason": "Focused auth and setup-gate tests pass, but full typecheck and full Vitest are blocked by existing scaffold/module gaps outside the setup-gate implementation.",
+    "latest_validation_at": "2026-04-25T00:00:00.000Z",
+    "latest_validator": "Codex"
+  },
+  "commands": [
+    {
+      "id": "CMD-001",
+      "command": "pnpm lint",
+      "status": "not_run",
+      "evidence": null
     },
-    "summary": {
-        "overall_status": "fail",
-        "reason": "Focused auth and setup-gate tests pass, but full typecheck and full Vitest are blocked by existing scaffold/module gaps outside the setup-gate implementation.",
-        "latest_validation_at": "2026-04-25T00:00:00.000Z",
-        "latest_validator": "Codex"
+    {
+      "id": "CMD-002",
+      "command": "pnpm typecheck",
+      "status": "fail",
+      "evidence": "Ran 2026-04-25. Fails on pre-existing missing feature/type/schema modules, Clerk UserButton prop drift, Stripe type drift, scaffold gaps, and test import gaps; no remaining reported errors in the setup-gate implementation files."
     },
-    "commands": [
-        {
-            "id": "CMD-001",
-            "command": "pnpm lint",
-            "status": "not_run",
-            "evidence": null
-        },
-        {
-            "id": "CMD-002",
-            "command": "pnpm typecheck",
-            "status": "fail",
-            "evidence": "Ran 2026-04-25. Fails on pre-existing missing feature/type/schema modules, Clerk UserButton prop drift, Stripe type drift, scaffold gaps, and test import gaps; no remaining reported errors in the setup-gate implementation files."
-        },
-        {
-            "id": "CMD-003",
-            "command": "pnpm test",
-            "status": "fail",
-            "evidence": "Ran 2026-04-25. Focused setup subset passed separately: pnpm test tests/unit/setup/status.test.ts tests/unit/schemas/setup.schemas.test.ts. Full suite fails on existing missing schema/vouch/payment modules, Playwright specs included in Vitest, setup checklist component mismatch, and forbidden filename contract failures unrelated to this setup-gate work."
-        },
-        {
-            "id": "CMD-004",
-            "command": "pnpm test:e2e",
-            "status": "not_run",
-            "evidence": null
-        },
-        {
-            "id": "CMD-005",
-            "command": "pnpm prisma:validate",
-            "status": "pass",
-            "evidence": "Ran 2026-04-25. Prisma schema loaded from prisma/schema.prisma and validated successfully."
-        },
-        {
-            "id": "CMD-006",
-            "command": "pnpm validate:contracts",
-            "status": "fail",
-            "evidence": "Ran 2026-04-25. Failed because scripts/validate-contracts.mjs is missing from the repo."
-        }
-    ],
-    "milestones": {
-        "mvp_local": {
-            "status": "not_run",
-            "required_gates": [
-                "contract_integrity",
-                "domain_model_integrity",
-                "no_marketplace_surface",
-                "no_arbitration_surface",
-                "auth_enforcement",
-                "vouch_create_flow",
-                "vouch_accept_flow",
-                "manual_confirmation_flow",
-                "deterministic_resolution",
-                "audit_events",
-                "basic_tests"
-            ]
-        },
-        "mvp_preview": {
-            "status": "not_run",
-            "required_gates": [
-                "mvp_local",
-                "payment_provider_sandbox",
-                "webhook_idempotency",
-                "route_access_control",
-                "setup_gates",
-                "notification_lifecycle",
-                "admin_operational_visibility",
-                "e2e_smoke"
-            ]
-        },
-        "production_candidate": {
-            "status": "not_run",
-            "required_gates": [
-                "mvp_preview",
-                "legal_copy_review",
-                "payment_flow_review",
-                "security_review",
-                "privacy_review",
-                "observability_review",
-                "recovery_paths",
-                "migration_integrity"
-            ]
-        }
+    {
+      "id": "CMD-003",
+      "command": "pnpm test",
+      "status": "fail",
+      "evidence": "Ran 2026-04-25. Focused setup subset passed separately: pnpm test tests/unit/setup/status.test.ts tests/unit/schemas/setup.schemas.test.ts. Full suite fails on existing missing schema/vouch/payment modules, Playwright specs included in Vitest, setup checklist component mismatch, and forbidden filename contract failures unrelated to this setup-gate work."
     },
-    "gate_results": [
-        {
-            "id": "contract_integrity",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires YAML parsing and contract validator execution."
-        },
-        {
-            "id": "domain_model_integrity",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires Prisma schema and domain model comparison after implementation."
-        },
-        {
-            "id": "no_marketplace_surface",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires route/component/entity scan for forbidden marketplace surfaces."
-        },
-        {
-            "id": "no_arbitration_surface",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires scan for dispute, claim, evidence, award, and confirmation rewrite features."
-        },
-        {
-            "id": "no_platform_custody",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires payment architecture review and provider implementation inspection."
-        },
-        {
-            "id": "auth_enforcement",
-            "severity": "critical",
-            "status": "pass",
-            "evidence": "Focused authz tests passed for unauthenticated denial, disabled user denial, unrelated Vouch denial, self-accept denial, participant confirmation, and admin requirement.",
-            "notes": "Route-level enforcement still needs broader integration once scaffolded routes/features compile."
-        },
-        {
-            "id": "setup_gates",
-            "severity": "critical",
-            "status": "pass",
-            "evidence": "Focused setup gate tests passed for create readiness, accept readiness, verification/payment/payout blockers, confirmation participant/window/duplicate blockers, and internal return-path validation.",
-            "notes": "Route/action integration still needs broader coverage once the repo-wide scaffold compiles."
-        },
-        {
-            "id": "vouch_create_flow",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires createVouch implementation and tests."
-        },
-        {
-            "id": "vouch_accept_flow",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires acceptVouch implementation and tests."
-        },
-        {
-            "id": "manual_confirmation_flow",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires confirmPresence implementation and tests."
-        },
-        {
-            "id": "deterministic_resolution",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires completion and expiration/refund logic."
-        },
-        {
-            "id": "payment_provider_sandbox",
-            "severity": "critical",
-            "status": "blocked",
-            "evidence": null,
-            "notes": "Blocked until exact Stripe Connect flow is selected and implemented."
-        },
-        {
-            "id": "webhook_idempotency",
-            "severity": "critical",
-            "status": "pass",
-            "evidence": "Clerk webhook handling uses ProviderWebhookEvent unique provider/event ID ledger and focused provider webhook status tests passed.",
-            "notes": "Stripe webhook idempotency remains separately covered by payment implementation work."
-        },
-        {
-            "id": "route_access_control",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires route implementation and auth/access tests."
-        },
-        {
-            "id": "notification_lifecycle",
-            "severity": "medium",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires notification event queue/send implementation."
-        },
-        {
-            "id": "admin_operational_visibility",
-            "severity": "high",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires admin routes and no-arbitration review."
-        },
-        {
-            "id": "audit_events",
-            "severity": "critical",
-            "status": "pass",
-            "evidence": "Clerk user.created, user.updated, user.deleted, user.synced, and user.synced_from_session paths write safe audit events.",
-            "notes": "Other domain actions still require audit coverage when implemented."
-        },
-        {
-            "id": "basic_tests",
-            "severity": "high",
-            "status": "fail",
-            "evidence": "Focused authz/webhook tests pass. Full pnpm test fails due scaffold gaps and E2E specs being collected by Vitest.",
-            "notes": "Do not mark the full basic_tests gate passing until the repo-wide suite is repaired."
-        },
-        {
-            "id": "e2e_smoke",
-            "severity": "high",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires Playwright coverage."
-        },
-        {
-            "id": "legal_copy_review",
-            "severity": "critical",
-            "status": "blocked",
-            "evidence": null,
-            "notes": "Requires qualified legal/compliance review before production."
-        },
-        {
-            "id": "payment_flow_review",
-            "severity": "critical",
-            "status": "blocked",
-            "evidence": null,
-            "notes": "Requires final payment architecture decision."
-        },
-        {
-            "id": "security_review",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires implemented code and security review."
-        },
-        {
-            "id": "privacy_review",
-            "severity": "critical",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires implemented data collection/storage review."
-        },
-        {
-            "id": "observability_review",
-            "severity": "high",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires logging, admin visibility, and failure diagnostics."
-        },
-        {
-            "id": "recovery_paths",
-            "severity": "high",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires safe retry and failed-state handling."
-        },
-        {
-            "id": "migration_integrity",
-            "severity": "high",
-            "status": "not_run",
-            "evidence": null,
-            "notes": "Requires Prisma schema/migration implementation."
-        }
-    ],
-    "latest_notes": [
-        {
-            "id": "VAL-NOTE-001",
-            "date": "2026-04-24",
-            "message": "No validation commands have been executed yet. Do not mark any gate as pass until command output or review evidence exists."
-        },
-        {
-            "id": "VAL-NOTE-002",
-            "date": "2026-04-25",
-            "message": "Auth-focused validation was executed: pnpm prisma:validate passed, focused authz/webhook Vitest files passed, pnpm typecheck and full pnpm test failed on existing scaffold gaps outside this task. pnpm validate:contracts failed because scripts/validate-contracts.mjs is missing."
-        },
-        {
-            "id": "VAL-NOTE-003",
-            "date": "2026-04-25",
-            "message": "Setup-gate focused validation was executed: pnpm test tests/unit/setup/status.test.ts tests/unit/schemas/setup.schemas.test.ts passed. pnpm typecheck and full pnpm test still fail on repo-wide scaffold gaps outside this task."
-        }
-    ]
+    {
+      "id": "CMD-004",
+      "command": "pnpm test:e2e",
+      "status": "not_run",
+      "evidence": null
+    },
+    {
+      "id": "CMD-005",
+      "command": "pnpm prisma:validate",
+      "status": "pass",
+      "evidence": "Ran 2026-04-25. Prisma schema loaded from prisma/schema.prisma and validated successfully."
+    },
+    {
+      "id": "CMD-006",
+      "command": "pnpm validate:contracts",
+      "status": "fail",
+      "evidence": "Ran 2026-04-25. Failed because scripts/validate-contracts.mjs is missing from the repo."
+    }
+  ],
+  "milestones": {
+    "mvp_local": {
+      "status": "not_run",
+      "required_gates": [
+        "contract_integrity",
+        "domain_model_integrity",
+        "no_marketplace_surface",
+        "no_arbitration_surface",
+        "auth_enforcement",
+        "vouch_create_flow",
+        "vouch_accept_flow",
+        "manual_confirmation_flow",
+        "deterministic_resolution",
+        "audit_events",
+        "basic_tests"
+      ]
+    },
+    "mvp_preview": {
+      "status": "not_run",
+      "required_gates": [
+        "mvp_local",
+        "payment_provider_sandbox",
+        "webhook_idempotency",
+        "route_access_control",
+        "setup_gates",
+        "notification_lifecycle",
+        "admin_operational_visibility",
+        "e2e_smoke"
+      ]
+    },
+    "production_candidate": {
+      "status": "not_run",
+      "required_gates": [
+        "mvp_preview",
+        "legal_copy_review",
+        "payment_flow_review",
+        "security_review",
+        "privacy_review",
+        "observability_review",
+        "recovery_paths",
+        "migration_integrity"
+      ]
+    }
+  },
+  "gate_results": [
+    {
+      "id": "contract_integrity",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires YAML parsing and contract validator execution."
+    },
+    {
+      "id": "domain_model_integrity",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires Prisma schema and domain model comparison after implementation."
+    },
+    {
+      "id": "no_marketplace_surface",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires route/component/entity scan for forbidden marketplace surfaces."
+    },
+    {
+      "id": "no_arbitration_surface",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires scan for dispute, claim, evidence, award, and confirmation rewrite features."
+    },
+    {
+      "id": "no_platform_custody",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires payment architecture review and provider implementation inspection."
+    },
+    {
+      "id": "auth_enforcement",
+      "severity": "critical",
+      "status": "pass",
+      "evidence": "Focused authz tests passed for unauthenticated denial, disabled user denial, unrelated Vouch denial, self-accept denial, participant confirmation, and admin requirement.",
+      "notes": "Route-level enforcement still needs broader integration once scaffolded routes/features compile."
+    },
+    {
+      "id": "setup_gates",
+      "severity": "critical",
+      "status": "pass",
+      "evidence": "Focused setup gate tests passed for create readiness, accept readiness, verification/payment/payout blockers, confirmation participant/window/duplicate blockers, and internal return-path validation.",
+      "notes": "Route/action integration still needs broader coverage once the repo-wide scaffold compiles."
+    },
+    {
+      "id": "vouch_create_flow",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires createVouch implementation and tests."
+    },
+    {
+      "id": "vouch_accept_flow",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires acceptVouch implementation and tests."
+    },
+    {
+      "id": "manual_confirmation_flow",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires confirmPresence implementation and tests."
+    },
+    {
+      "id": "deterministic_resolution",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires completion and expiration/refund logic."
+    },
+    {
+      "id": "payment_provider_sandbox",
+      "severity": "critical",
+      "status": "blocked",
+      "evidence": null,
+      "notes": "Blocked until exact Stripe Connect flow is selected and implemented."
+    },
+    {
+      "id": "webhook_idempotency",
+      "severity": "critical",
+      "status": "pass",
+      "evidence": "Clerk webhook handling uses ProviderWebhookEvent unique provider/event ID ledger and focused provider webhook status tests passed.",
+      "notes": "Stripe webhook idempotency remains separately covered by payment implementation work."
+    },
+    {
+      "id": "route_access_control",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires route implementation and auth/access tests."
+    },
+    {
+      "id": "notification_lifecycle",
+      "severity": "medium",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires notification event queue/send implementation."
+    },
+    {
+      "id": "admin_operational_visibility",
+      "severity": "high",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires admin routes and no-arbitration review."
+    },
+    {
+      "id": "audit_events",
+      "severity": "critical",
+      "status": "pass",
+      "evidence": "Clerk user.created, user.updated, user.deleted, user.synced, and user.synced_from_session paths write safe audit events.",
+      "notes": "Other domain actions still require audit coverage when implemented."
+    },
+    {
+      "id": "basic_tests",
+      "severity": "high",
+      "status": "fail",
+      "evidence": "Focused authz/webhook tests pass. Full pnpm test fails due scaffold gaps and E2E specs being collected by Vitest.",
+      "notes": "Do not mark the full basic_tests gate passing until the repo-wide suite is repaired."
+    },
+    {
+      "id": "e2e_smoke",
+      "severity": "high",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires Playwright coverage."
+    },
+    {
+      "id": "legal_copy_review",
+      "severity": "critical",
+      "status": "blocked",
+      "evidence": null,
+      "notes": "Requires qualified legal/compliance review before production."
+    },
+    {
+      "id": "payment_flow_review",
+      "severity": "critical",
+      "status": "blocked",
+      "evidence": null,
+      "notes": "Requires final payment architecture decision."
+    },
+    {
+      "id": "security_review",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires implemented code and security review."
+    },
+    {
+      "id": "privacy_review",
+      "severity": "critical",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires implemented data collection/storage review."
+    },
+    {
+      "id": "observability_review",
+      "severity": "high",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires logging, admin visibility, and failure diagnostics."
+    },
+    {
+      "id": "recovery_paths",
+      "severity": "high",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires safe retry and failed-state handling."
+    },
+    {
+      "id": "migration_integrity",
+      "severity": "high",
+      "status": "not_run",
+      "evidence": null,
+      "notes": "Requires Prisma schema/migration implementation."
+    }
+  ],
+  "latest_notes": [
+    {
+      "id": "VAL-NOTE-001",
+      "date": "2026-04-24",
+      "message": "No validation commands have been executed yet. Do not mark any gate as pass until command output or review evidence exists."
+    },
+    {
+      "id": "VAL-NOTE-002",
+      "date": "2026-04-25",
+      "message": "Auth-focused validation was executed: pnpm prisma:validate passed, focused authz/webhook Vitest files passed, pnpm typecheck and full pnpm test failed on existing scaffold gaps outside this task. pnpm validate:contracts failed because scripts/validate-contracts.mjs is missing."
+    },
+    {
+      "id": "VAL-NOTE-003",
+      "date": "2026-04-25",
+      "message": "Setup-gate focused validation was executed: pnpm test tests/unit/setup/status.test.ts tests/unit/schemas/setup.schemas.test.ts passed. pnpm typecheck and full pnpm test still fail on repo-wide scaffold gaps outside this task."
+    }
+  ]
 }

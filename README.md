@@ -73,7 +73,7 @@ lib/authz/              authorization helpers
 schemas/                Zod validation and sanitization
 types/                  domain types and schema-derived inputs
 prisma/                 schema, migrations, seed
-````
+```
 
 ## Local Development
 
@@ -101,11 +101,11 @@ Create `.env` from `.env.example`.
 
 Required services:
 
-* Clerk
-* Neon PostgreSQL
-* Stripe
-* Stripe Connect
-* Upstash Redis, if rate limiting is enabled
+- Clerk
+- Neon PostgreSQL
+- Stripe
+- Stripe Connect
+- Upstash Redis, if rate limiting is enabled
 
 ## Security
 

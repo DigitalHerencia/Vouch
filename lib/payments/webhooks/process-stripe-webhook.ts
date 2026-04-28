@@ -41,7 +41,10 @@ export async function processStripeWebhookEvent(
 
   try {
     if (isStripeIdentityEvent(event) || isStripeAccountEvent(event)) {
-      await markProviderWebhookIgnored(ledger.id, "Handled by verification/account webhook processor.")
+      await markProviderWebhookIgnored(
+        ledger.id,
+        "Handled by verification/account webhook processor."
+      )
       return {
         ok: true,
         status: 200,
@@ -72,7 +75,8 @@ export async function processStripeWebhookEvent(
       reason: "Unsupported event type.",
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown Stripe webhook processing error."
+    const message =
+      error instanceof Error ? error.message : "Unknown Stripe webhook processing error."
     await markProviderWebhookFailed(ledger.id, message)
     return { ok: false, status: 500, message }
   }

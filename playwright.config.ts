@@ -1,7 +1,7 @@
-import { defineConfig, devices } from "@playwright/test";
+import { defineConfig, devices } from "@playwright/test"
 
-const PORT = Number(process.env.PORT ?? 3000);
-const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORT}`;
+const PORT = Number(process.env.PORT ?? 3000)
+const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? `http://127.0.0.1:${PORT}`
 
 export default defineConfig({
   testDir: "./tests/e2e",
@@ -32,4 +32,4 @@ export default defineConfig({
       use: { ...devices["Pixel 7"] },
     },
   ],
-});
+})

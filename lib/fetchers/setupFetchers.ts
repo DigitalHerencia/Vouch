@@ -41,7 +41,7 @@ export async function getSetupProgress(): Promise<{ completed: number; total: nu
 }
 
 export async function getSetupBlockersForAction(
-  action: "create_vouch" | "accept_vouch" | "settings",
+  action: "create_vouch" | "accept_vouch" | "settings"
 ): Promise<SetupGateResult> {
   const setup = await getUserSetupStatus()
   if (action === "create_vouch") return getCreateVouchSetupGate()
@@ -58,14 +58,18 @@ export async function getAcceptVouchSetupGate(): Promise<SetupGateResult> {
 }
 
 export async function getConfirmPresenceSetupGate(): Promise<never> {
-  throw new Error("CONFIRMATION_CONTEXT_REQUIRED: use assertConfirmPresenceSetupReady with Vouch context")
+  throw new Error(
+    "CONFIRMATION_CONTEXT_REQUIRED: use assertConfirmPresenceSetupReady with Vouch context"
+  )
 }
 
 export async function getTermsAcceptanceStatus(): Promise<{ accepted: boolean }> {
   return { accepted: (await getUserSetupStatus()).termsAccepted }
 }
 
-export async function getSetupReturnContext(input?: unknown): Promise<Pick<SetupPageState, "returnTo" | "returnState">> {
+export async function getSetupReturnContext(
+  input?: unknown
+): Promise<Pick<SetupPageState, "returnTo" | "returnState">> {
   const parsed = setupPageStateInputSchema.parse(input ?? {})
   return {
     ...(parsed.returnTo ? { returnTo: parsed.returnTo } : {}),

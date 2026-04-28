@@ -16,7 +16,7 @@ export function RoutePlaceholder({
   return (
     <main className="min-h-screen bg-neutral-950 p-6 text-neutral-100">
       <section className="mx-auto flex min-h-[50vh] max-w-3xl flex-col justify-center rounded-2xl border border-neutral-800 bg-neutral-950 p-8">
-        <p className="mb-3 text-xs uppercase tracking-[0.24em] text-neutral-500">Vouch</p>
+        <p className="mb-3 text-xs tracking-[0.24em] text-neutral-500 uppercase">Vouch</p>
         <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
         <p className="mt-3 max-w-xl text-sm leading-6 text-neutral-400">{description}</p>
         {actionLabel ? (

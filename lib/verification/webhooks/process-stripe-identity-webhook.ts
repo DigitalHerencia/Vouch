@@ -29,10 +29,14 @@ export async function processStripeIdentityWebhookEvent(event: Stripe.Event) {
     }
 
     const session = event.data.object as Stripe.Identity.VerificationSession
-    const userId = typeof session.metadata?.user_id === "string" ? session.metadata.user_id : undefined
+    const userId =
+      typeof session.metadata?.user_id === "string" ? session.metadata.user_id : undefined
 
     if (!userId) {
-      await markProviderWebhookIgnored(ledger.id, "Verification session has no local user metadata.")
+      await markProviderWebhookIgnored(
+        ledger.id,
+        "Verification session has no local user metadata."
+      )
       return { ok: true as const, ignored: true as const, reason: "Missing user metadata." }
     }
 
@@ -51,7 +55,8 @@ export async function processStripeIdentityWebhookEvent(event: Stripe.Event) {
     await markProviderWebhookProcessed(ledger.id)
     return { ok: true as const, ignored: false as const }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Stripe Identity webhook processing failed."
+    const message =
+      error instanceof Error ? error.message : "Stripe Identity webhook processing failed."
     await markProviderWebhookFailed(ledger.id, message)
     return { ok: false as const, message }
   }

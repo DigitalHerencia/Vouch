@@ -1,6 +1,14 @@
 import { cn } from "@/lib/utils"
 
-export function FieldError({ id, message, className }: { id?: string; message?: string | null; className?: string }) {
+export function FieldError({
+  id,
+  message,
+  className,
+}: {
+  id?: string
+  message?: string | null
+  className?: string
+}) {
   if (!message) return null
 
   return (

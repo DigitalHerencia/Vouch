@@ -12,7 +12,10 @@ export class AuthzError extends Error {
   }
 }
 
-export function deny(message = "Forbidden", code: "UNAUTHENTICATED" | "FORBIDDEN" | "DISABLED" = "FORBIDDEN"): never {
+export function deny(
+  message = "Forbidden",
+  code: "UNAUTHENTICATED" | "FORBIDDEN" | "DISABLED" = "FORBIDDEN"
+): never {
   throw new AuthzError(message, code)
 }
 

@@ -13,14 +13,11 @@ export const displayNameSchema = z.preprocess(
   z.string().min(1).max(120).optional()
 )
 
-export const optionalPhoneSchema = z.preprocess(
-  (value) => {
-    if (typeof value !== "string") return value
-    const trimmed = value.trim()
-    return trimmed === "" ? undefined : trimmed
-  },
-  z.string().min(7).max(32).optional()
-)
+export const optionalPhoneSchema = z.preprocess((value) => {
+  if (typeof value !== "string") return value
+  const trimmed = value.trim()
+  return trimmed === "" ? undefined : trimmed
+}, z.string().min(7).max(32).optional())
 
 export const profileBasicsInputSchema = z.object({
   displayName: displayNameSchema,

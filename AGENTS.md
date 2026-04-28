@@ -258,7 +258,7 @@ Pages should be thin:
 
 ```tsx
 export default async function Page(props) {
-    return <SomeFeatureBlock {...props} />
+  return <SomeFeatureBlock {...props} />
 }
 ```
 
@@ -569,13 +569,13 @@ Action result shape should be consistent:
 
 ```ts
 export type ActionResult<T> =
-    | { ok: true; data: T }
-    | {
-          ok: false
-          formError?: string
-          fieldErrors?: Record<string, string[]>
-          code?: string
-      }
+  | { ok: true; data: T }
+  | {
+      ok: false
+      formError?: string
+      fieldErrors?: Record<string, string[]>
+      code?: string
+    }
 ```
 
 Map server errors back into forms at feature level.
@@ -590,15 +590,15 @@ Use DTOs/read models such as:
 
 ```ts
 type VouchListItem = {
-    id: string
-    publicId: string
-    role: "payer" | "payee"
-    status: VouchStatus
-    amountCents: number
-    currency: string
-    otherPartyLabel: string | null
-    confirmationExpiresAt: string
-    nextAction: string | null
+  id: string
+  publicId: string
+  role: "payer" | "payee"
+  status: VouchStatus
+  amountCents: number
+  currency: string
+  otherPartyLabel: string | null
+  confirmationExpiresAt: string
+  nextAction: string | null
 }
 ```
 
@@ -859,11 +859,11 @@ Do not add dependencies unless necessary and justified.
 
 - Keep schema aligned with `domain-model.yaml`.
 - Add indexes for:
-    - participant Vouch lookup
-    - invite token hash
-    - provider event ID
-    - status/deadline queries
-    - audit entity lookup
+  - participant Vouch lookup
+  - invite token hash
+  - provider event ID
+  - status/deadline queries
+  - audit entity lookup
 
 - Do not store raw card data or raw identity documents.
 - Use transactions for multi-entity state transitions.

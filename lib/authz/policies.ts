@@ -99,11 +99,17 @@ export function canDeclineVouch(input: {
   status: string
   inviteValid: boolean
 }): boolean {
-  return Boolean(input.userId) && input.status === "pending" && input.userId !== input.payerId && input.inviteValid
+  return (
+    Boolean(input.userId) &&
+    input.status === "pending" &&
+    input.userId !== input.payerId &&
+    input.inviteValid
+  )
 }
 
 export function canConfirmPresence(input: ConfirmPresenceInput): boolean {
-  const isParticipant = Boolean(input.userId) && (input.userId === input.payerId || input.userId === input.payeeId)
+  const isParticipant =
+    Boolean(input.userId) && (input.userId === input.payerId || input.userId === input.payeeId)
   return (
     isParticipant &&
     input.userStatus !== "disabled" &&

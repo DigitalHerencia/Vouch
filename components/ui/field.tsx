@@ -24,7 +24,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
   return (
     <p
       data-slot="field-description"
-      className={cn("text-sm text-muted-foreground", className)}
+      className={cn("text-muted-foreground text-sm", className)}
       {...props}
     />
   )
@@ -42,7 +42,7 @@ function FieldError({
   }
 
   return (
-    <div data-slot="field-error" className={cn("text-sm text-destructive", className)} {...props}>
+    <div data-slot="field-error" className={cn("text-destructive text-sm", className)} {...props}>
       {message}
     </div>
   )

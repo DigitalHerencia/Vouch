@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import {
-  canAccessVouch,
-  canAcceptVouch,
-  canConfirmVouch,
-} from "@/lib/authz/policies"
+import { canAccessVouch, canAcceptVouch, canConfirmVouch } from "@/lib/authz/policies"
 
 describe("authz policies", () => {
   it("allows payer to access own Vouch", () => {

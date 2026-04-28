@@ -11,9 +11,7 @@ import {
 } from "lucide-react"
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const theme = (useTheme().theme ?? "system") as NonNullable<
-    ToasterProps["theme"]
-  >
+  const theme = (useTheme().theme ?? "system") as NonNullable<ToasterProps["theme"]>
 
   return (
     <Sonner

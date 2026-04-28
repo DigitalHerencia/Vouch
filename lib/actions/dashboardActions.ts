@@ -6,20 +6,52 @@ import { z } from "zod"
 import { requireActiveUser } from "@/lib/auth/current-user"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
 
+const dashboardStatusSchema = z.enum([
+  "action_required",
+  "active",
+  "pending",
+  "completed",
+  "expired",
+  "refunded",
+])
+
+const dashboardSortSchema = z.enum(["newest", "oldest", "deadline"])
+
 const dashboardPreferencesSchema = z.object({
-  status: z.enum(["action_required", "active", "pending", "completed", "expired", "refunded"]).optional(),
-  sort: z.enum(["newest", "oldest", "deadline"]).optional(),
+  status: dashboardStatusSchema.optional(),
+  sort: dashboardSortSchema.optional(),
   page: z.coerce.number().int().min(1).optional(),
 })
 
+type FieldErrors = Record<string, string[]>
+
+type DashboardStatus = z.infer<typeof dashboardStatusSchema>
+type DashboardSort = z.infer<typeof dashboardSortSchema>
+
 export type DashboardPreferencesResult = {
   userId: string
-  status?: "action_required" | "active" | "pending" | "completed" | "expired" | "refunded"
-  sort?: "newest" | "oldest" | "deadline"
-  page?: number
+  status: DashboardStatus | null
+  sort: DashboardSort | null
+  page: number | null
 }
 
-export async function updateDashboardPreferences(input: unknown): Promise<ActionResult<DashboardPreferencesResult>> {
+function getFieldErrors(error: {
+  issues: Array<{ path: PropertyKey[]; message: string }>
+}): FieldErrors {
+  const fieldErrors: FieldErrors = {}
+
+  for (const issue of error.issues) {
+    const field = String(issue.path[0] ?? "form")
+    fieldErrors[field] ??= []
+    fieldErrors[field].push(issue.message)
+  }
+
+  return fieldErrors
+}
+
+export async function updateDashboardPreferences(
+  input: unknown
+): Promise<ActionResult<DashboardPreferencesResult>> {
   const user = await requireActiveUser()
   const parsed = dashboardPreferencesSchema.safeParse(input ?? {})
 
@@ -27,7 +59,7 @@ export async function updateDashboardPreferences(input: unknown): Promise<Action
     return actionFailure(
       "VALIDATION_FAILED",
       "Check the dashboard preference fields.",
-      parsed.error.flatten().fieldErrors,
+      getFieldErrors(parsed.error)
     )
   }
 
@@ -35,6 +67,8 @@ export async function updateDashboardPreferences(input: unknown): Promise<Action
 
   return actionSuccess({
     userId: user.id,
-    ...parsed.data,
+    status: parsed.data.status ?? null,
+    sort: parsed.data.sort ?? null,
+    page: parsed.data.page ?? null,
   })
 }

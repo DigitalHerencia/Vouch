@@ -49,8 +49,14 @@ export const idSchema = z.string().min(1).max(128)
 export const publicIdSchema = z.string().min(1).max(128)
 export const userIdSchema = idSchema
 export const vouchIdSchema = idSchema
-export const invitationTokenSchema = z
-  .preprocess(trimString, z.string().min(16).max(256).regex(/^[A-Za-z0-9_-]+$/))
+export const invitationTokenSchema = z.preprocess(
+  trimString,
+  z
+    .string()
+    .min(16)
+    .max(256)
+    .regex(/^[A-Za-z0-9_-]+$/)
+)
 
 export const isoDateTimeSchema = z
   .string()
@@ -59,15 +65,9 @@ export const isoDateTimeSchema = z
 
 export const currencyCodeSchema = z.preprocess(normalizeCurrency, z.literal("usd"))
 
-export const moneyCentsSchema = z.preprocess(
-  coerceMoneyCents,
-  z.number().int().nonnegative()
-)
+export const moneyCentsSchema = z.preprocess(coerceMoneyCents, z.number().int().nonnegative())
 
-export const positiveMoneyCentsSchema = z.preprocess(
-  coerceMoneyCents,
-  z.number().int().positive()
-)
+export const positiveMoneyCentsSchema = z.preprocess(coerceMoneyCents, z.number().int().positive())
 
 export const percentageBasisPointsSchema = z.number().int().min(0).max(10_000)
 
@@ -97,15 +97,9 @@ export const internalReturnToPathSchema = z
   .preprocess(emptyStringToUndefined, z.string().optional())
   .transform(sanitizeInternalPath)
 
-export const emailSchema = z.preprocess(
-  normalizeEmail,
-  z.string().email().max(320)
-)
+export const emailSchema = z.preprocess(normalizeEmail, z.string().email().max(320))
 
-export const optionalEmailSchema = z.preprocess(
-  emptyStringToUndefined,
-  emailSchema.optional()
-)
+export const optionalEmailSchema = z.preprocess(emptyStringToUndefined, emailSchema.optional())
 
 export const trimmedStringSchema = z.preprocess(trimString, z.string())
 export const optionalTrimmedStringSchema = z.preprocess(

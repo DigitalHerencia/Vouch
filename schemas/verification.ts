@@ -1,9 +1,5 @@
 import { z } from "zod"
-import {
-  internalReturnToPathSchema,
-  optionalTrimmedStringSchema,
-  userIdSchema,
-} from "./common"
+import { internalReturnToPathSchema, optionalTrimmedStringSchema, userIdSchema } from "./common"
 
 export const verificationStatusSchema = z.enum([
   "unstarted",

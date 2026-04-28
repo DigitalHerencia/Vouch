@@ -1,180 +1,178 @@
 {
-    "schema_version": "1.0.0",
-    "file": "progress.json",
-    "product": "Vouch",
-    "generated_at": "2026-04-24T00:00:00.000Z",
-    "purpose": "Append-only progress log of planning and implementation work.",
-    "policy": {
-        "append_only_preferred": true,
-        "business_logic_allowed": false,
-        "status_values": ["completed", "in_progress", "blocked", "not_started"]
+  "schema_version": "1.0.0",
+  "file": "progress.json",
+  "product": "Vouch",
+  "generated_at": "2026-04-24T00:00:00.000Z",
+  "purpose": "Append-only progress log of planning and implementation work.",
+  "policy": {
+    "append_only_preferred": true,
+    "business_logic_allowed": false,
+    "status_values": ["completed", "in_progress", "blocked", "not_started"]
+  },
+  "current_phase": "governance_artifact_generation",
+  "implementation_status": "not_started",
+  "entries": [
+    {
+      "id": "PRG-001",
+      "date": "2026-04-24",
+      "status": "completed",
+      "category": "docs",
+      "title": "Generated docs intent layer",
+      "summary": "Created PRD, technical requirements, user flows, design system, launch copy, and source normalization for Vouch.",
+      "files": [
+        ".agents/docs/prd.md",
+        ".agents/docs/tech-requirements.md",
+        ".agents/docs/user-flows.md",
+        ".agents/docs/design-system.md",
+        ".agents/docs/launch-copy.md",
+        ".agents/docs/source-normalization.md"
+      ],
+      "validation_status": "not_run",
+      "notes": "Docs define human intent only and should not be parsed directly by implementation agents."
     },
-    "current_phase": "governance_artifact_generation",
-    "implementation_status": "not_started",
-    "entries": [
-        {
-            "id": "PRG-001",
-            "date": "2026-04-24",
-            "status": "completed",
-            "category": "docs",
-            "title": "Generated docs intent layer",
-            "summary": "Created PRD, technical requirements, user flows, design system, launch copy, and source normalization for Vouch.",
-            "files": [
-                ".agents/docs/prd.md",
-                ".agents/docs/tech-requirements.md",
-                ".agents/docs/user-flows.md",
-                ".agents/docs/design-system.md",
-                ".agents/docs/launch-copy.md",
-                ".agents/docs/source-normalization.md"
-            ],
-            "validation_status": "not_run",
-            "notes": "Docs define human intent only and should not be parsed directly by implementation agents."
-        },
-        {
-            "id": "PRG-002",
-            "date": "2026-04-24",
-            "status": "completed",
-            "category": "contracts",
-            "title": "Generated deterministic YAML contract layer",
-            "summary": "Created domain model, roles, authz, routes, features, analytics, and acceptance gates.",
-            "files": [
-                ".agents/contracts/domain-model.yaml",
-                ".agents/contracts/roles.yaml",
-                ".agents/contracts/authz.yaml",
-                ".agents/contracts/routes.yaml",
-                ".agents/contracts/features.yaml",
-                ".agents/contracts/analytics.yaml",
-                ".agents/contracts/acceptance-gates.yaml"
-            ],
-            "validation_status": "not_run",
-            "notes": "Contracts are intended to be the machine-readable implementation authority."
-        },
-        {
-            "id": "PRG-003",
-            "date": "2026-04-24",
-            "status": "completed",
-            "category": "agents",
-            "title": "Generated repo-level AGENTS.md guidance",
-            "summary": "Created Codex-oriented AGENTS.md instructions and 8000-character condensed variant.",
-            "files": ["AGENTS.md"],
-            "validation_status": "not_run",
-            "notes": "AGENTS.md summarizes implementation rules, stop conditions, and reporting format."
-        },
-        {
-            "id": "PRG-004",
-            "date": "2026-04-24",
-            "status": "completed",
-            "category": "instructions",
-            "title": "Generated instruction layer",
-            "summary": "Created domain-specific implementation instruction files using the requested legacy filenames and Vouch-safe normalized meanings.",
-            "files": [
-                ".agents/instructions/admin-moderation.instructions.md",
-                ".agents/instructions/auth.instructions.md",
-                ".agents/instructions/booking.instructions.md",
-                ".agents/instructions/database-prisma.instructions.md",
-                ".agents/instructions/discovery.instructions.md",
-                ".agents/instructions/guest-inbox.instructions.md",
-                ".agents/instructions/host-dashboard.instructions.md",
-                ".agents/instructions/host-onboarding.instructions.md",
-                ".agents/instructions/host-profile.instructions.md",
-                ".agents/instructions/shared-components.instructions.md"
-            ],
-            "validation_status": "not_run",
-            "notes": "Legacy terms were normalized: booking means Vouch lifecycle, guest means payer/client, host means payee/provider, discovery means public marketing and anti-discovery."
-        },
-        {
-            "id": "PRG-005",
-            "date": "2026-04-24",
-            "status": "completed",
-            "category": "execution",
-            "title": "Generated execution JSON seed files",
-            "summary": "Created initial backlog, decisions, progress, handoff, and validation state files.",
-            "files": [
-                ".agents/execution/backlog.json",
-                ".agents/execution/decisions.json",
-                ".agents/execution/handoff.json",
-                ".agents/execution/progress.json",
-                ".agents/execution/validation.json"
-            ],
-            "validation_status": "not_run",
-            "notes": "Execution files record state and do not define business logic."
-        },
-        {
-            "id": "PRG-006",
-            "date": "2026-04-25",
-            "status": "completed",
-            "category": "implementation",
-            "title": "Implemented Clerk auth foundation and authz helpers",
-            "summary": "Added Clerk-backed current-user resolution, local user sync with default VerificationProfile creation, server-side authz policies for admin/participant/invite access, Svix-verified Clerk webhook handling, idempotent webhook ledger use, and focused authz/webhook tests.",
-            "files": [
-                "lib/auth/current-user.ts",
-                "lib/auth/clerk.ts",
-                "lib/auth/webhooks.ts",
-                "lib/actions/authActions.ts",
-                "lib/fetcher/authFetchers.ts",
-                "lib/authz/admin.ts",
-                "lib/authz/assertions.ts",
-                "lib/authz/capabilities.ts",
-                "lib/authz/participants.ts",
-                "lib/authz/policies.ts",
-                "lib/db/transactions/authTransactions.ts",
-                "lib/clerk/process-clerk-webhook.ts",
-                "lib/clerk/webhook-events.ts",
-                "lib/webhooks/provider-webhook-ledger.ts",
-                "lib/webhooks/provider-webhook-status.ts",
-                "app/api/webhooks/clerk/route.ts",
-                "tests/unit/authz/policies.test.ts"
-            ],
-            "validation_status": "partial_pass",
-            "notes": "Focused authz/webhook tests and Prisma validation pass. Full typecheck/test remain blocked by pre-existing scaffold gaps outside this auth implementation."
-        },
-        {
-            "id": "PRG-007",
-            "date": "2026-04-25",
-            "status": "completed",
-            "category": "implementation",
-            "title": "Implemented setup gates and verification readiness helpers",
-            "summary": "Centralized setup eligibility for create Vouch, accept Vouch, confirmation, and settings; added terms acceptance persistence; implemented setup page state and verification status/action helpers using provider references and statuses only.",
-            "files": [
-                "lib/setup/status.ts",
-                "lib/auth/setup-gates.ts",
-                "lib/fetcher/setupFetchers.ts",
-                "lib/actions/setupActions.ts",
-                "lib/fetcher/verificationFetchers.ts",
-                "lib/actions/verificationActions.ts",
-                "lib/db/transactions/setupTransactions.ts",
-                "lib/db/transactions/verificationTransactions.ts",
-                "schemas/setup.ts",
-                "schemas/setup.schemas.ts",
-                "types/setup.ts",
-                "types/setup.types.ts",
-                "tests/unit/setup/status.test.ts",
-                "tests/unit/schemas/setup.schemas.test.ts"
-            ],
-            "validation_status": "partial_pass",
-            "notes": "Focused setup gate and return-path tests pass. Full typecheck/test remain blocked by repo-wide scaffold gaps unrelated to setup gates."
-        },
-        {
-            "id": "PRG-008",
-            "date": "2026-04-26",
-            "status": "completed",
-            "category": "handoff",
-            "title": "Generated ChatGPT MVP onboarding audit",
-            "summary": "Created a takeover-oriented audit report summarizing source-of-truth files, current scaffold burden, MVP critical path, risks, stop conditions, and a ready-to-use ChatGPT onboarding prompt.",
-            "files": [
-                ".agents/reports/chatgpt-mvp-onboarding-audit.md"
-            ],
-            "validation_status": "not_run",
-            "notes": "Documentation-only handoff artifact. No code validation was run."
-        }
-    ],
-    "next_expected_phase": "repo_implementation",
-    "next_expected_work": [
-        "Add generated .agents files to repo.",
-        "Validate JSON/YAML syntax.",
-        "Implement Prisma schema from domain model.",
-        "Implement auth/authz and setup gates.",
-        "Implement Vouch lifecycle actions and fetchers.",
-        "Implement payment provider adapter after Stripe flow decision."
-    ]
+    {
+      "id": "PRG-002",
+      "date": "2026-04-24",
+      "status": "completed",
+      "category": "contracts",
+      "title": "Generated deterministic YAML contract layer",
+      "summary": "Created domain model, roles, authz, routes, features, analytics, and acceptance gates.",
+      "files": [
+        ".agents/contracts/domain-model.yaml",
+        ".agents/contracts/roles.yaml",
+        ".agents/contracts/authz.yaml",
+        ".agents/contracts/routes.yaml",
+        ".agents/contracts/features.yaml",
+        ".agents/contracts/analytics.yaml",
+        ".agents/contracts/acceptance-gates.yaml"
+      ],
+      "validation_status": "not_run",
+      "notes": "Contracts are intended to be the machine-readable implementation authority."
+    },
+    {
+      "id": "PRG-003",
+      "date": "2026-04-24",
+      "status": "completed",
+      "category": "agents",
+      "title": "Generated repo-level AGENTS.md guidance",
+      "summary": "Created Codex-oriented AGENTS.md instructions and 8000-character condensed variant.",
+      "files": ["AGENTS.md"],
+      "validation_status": "not_run",
+      "notes": "AGENTS.md summarizes implementation rules, stop conditions, and reporting format."
+    },
+    {
+      "id": "PRG-004",
+      "date": "2026-04-24",
+      "status": "completed",
+      "category": "instructions",
+      "title": "Generated instruction layer",
+      "summary": "Created domain-specific implementation instruction files using the requested legacy filenames and Vouch-safe normalized meanings.",
+      "files": [
+        ".agents/instructions/admin-moderation.instructions.md",
+        ".agents/instructions/auth.instructions.md",
+        ".agents/instructions/booking.instructions.md",
+        ".agents/instructions/database-prisma.instructions.md",
+        ".agents/instructions/discovery.instructions.md",
+        ".agents/instructions/guest-inbox.instructions.md",
+        ".agents/instructions/host-dashboard.instructions.md",
+        ".agents/instructions/host-onboarding.instructions.md",
+        ".agents/instructions/host-profile.instructions.md",
+        ".agents/instructions/shared-components.instructions.md"
+      ],
+      "validation_status": "not_run",
+      "notes": "Legacy terms were normalized: booking means Vouch lifecycle, guest means payer/client, host means payee/provider, discovery means public marketing and anti-discovery."
+    },
+    {
+      "id": "PRG-005",
+      "date": "2026-04-24",
+      "status": "completed",
+      "category": "execution",
+      "title": "Generated execution JSON seed files",
+      "summary": "Created initial backlog, decisions, progress, handoff, and validation state files.",
+      "files": [
+        ".agents/execution/backlog.json",
+        ".agents/execution/decisions.json",
+        ".agents/execution/handoff.json",
+        ".agents/execution/progress.json",
+        ".agents/execution/validation.json"
+      ],
+      "validation_status": "not_run",
+      "notes": "Execution files record state and do not define business logic."
+    },
+    {
+      "id": "PRG-006",
+      "date": "2026-04-25",
+      "status": "completed",
+      "category": "implementation",
+      "title": "Implemented Clerk auth foundation and authz helpers",
+      "summary": "Added Clerk-backed current-user resolution, local user sync with default VerificationProfile creation, server-side authz policies for admin/participant/invite access, Svix-verified Clerk webhook handling, idempotent webhook ledger use, and focused authz/webhook tests.",
+      "files": [
+        "lib/auth/current-user.ts",
+        "lib/auth/clerk.ts",
+        "lib/auth/webhooks.ts",
+        "lib/actions/authActions.ts",
+        "lib/fetcher/authFetchers.ts",
+        "lib/authz/admin.ts",
+        "lib/authz/assertions.ts",
+        "lib/authz/capabilities.ts",
+        "lib/authz/participants.ts",
+        "lib/authz/policies.ts",
+        "lib/db/transactions/authTransactions.ts",
+        "lib/clerk/process-clerk-webhook.ts",
+        "lib/clerk/webhook-events.ts",
+        "lib/webhooks/provider-webhook-ledger.ts",
+        "lib/webhooks/provider-webhook-status.ts",
+        "app/api/webhooks/clerk/route.ts",
+        "tests/unit/authz/policies.test.ts"
+      ],
+      "validation_status": "partial_pass",
+      "notes": "Focused authz/webhook tests and Prisma validation pass. Full typecheck/test remain blocked by pre-existing scaffold gaps outside this auth implementation."
+    },
+    {
+      "id": "PRG-007",
+      "date": "2026-04-25",
+      "status": "completed",
+      "category": "implementation",
+      "title": "Implemented setup gates and verification readiness helpers",
+      "summary": "Centralized setup eligibility for create Vouch, accept Vouch, confirmation, and settings; added terms acceptance persistence; implemented setup page state and verification status/action helpers using provider references and statuses only.",
+      "files": [
+        "lib/setup/status.ts",
+        "lib/auth/setup-gates.ts",
+        "lib/fetcher/setupFetchers.ts",
+        "lib/actions/setupActions.ts",
+        "lib/fetcher/verificationFetchers.ts",
+        "lib/actions/verificationActions.ts",
+        "lib/db/transactions/setupTransactions.ts",
+        "lib/db/transactions/verificationTransactions.ts",
+        "schemas/setup.ts",
+        "schemas/setup.schemas.ts",
+        "types/setup.ts",
+        "types/setup.types.ts",
+        "tests/unit/setup/status.test.ts",
+        "tests/unit/schemas/setup.schemas.test.ts"
+      ],
+      "validation_status": "partial_pass",
+      "notes": "Focused setup gate and return-path tests pass. Full typecheck/test remain blocked by repo-wide scaffold gaps unrelated to setup gates."
+    },
+    {
+      "id": "PRG-008",
+      "date": "2026-04-26",
+      "status": "completed",
+      "category": "handoff",
+      "title": "Generated ChatGPT MVP onboarding audit",
+      "summary": "Created a takeover-oriented audit report summarizing source-of-truth files, current scaffold burden, MVP critical path, risks, stop conditions, and a ready-to-use ChatGPT onboarding prompt.",
+      "files": [".agents/reports/chatgpt-mvp-onboarding-audit.md"],
+      "validation_status": "not_run",
+      "notes": "Documentation-only handoff artifact. No code validation was run."
+    }
+  ],
+  "next_expected_phase": "repo_implementation",
+  "next_expected_work": [
+    "Add generated .agents files to repo.",
+    "Validate JSON/YAML syntax.",
+    "Implement Prisma schema from domain model.",
+    "Implement auth/authz and setup gates.",
+    "Implement Vouch lifecycle actions and fetchers.",
+    "Implement payment provider adapter after Stripe flow decision."
+  ]
 }

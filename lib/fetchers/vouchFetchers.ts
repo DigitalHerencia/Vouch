@@ -146,7 +146,9 @@ export async function getVouchDetailFailedRefundState(..._args: unknown[]): Prom
   throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/vouchFetchers.ts")
 }
 
-export async function getVouchDetailUnauthorizedOrNotFoundState(..._args: unknown[]): Promise<never> {
+export async function getVouchDetailUnauthorizedOrNotFoundState(
+  ..._args: unknown[]
+): Promise<never> {
   throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/vouchFetchers.ts")
 }
 

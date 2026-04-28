@@ -40,7 +40,12 @@ export async function getVerificationStatus(): Promise<VerificationStatusReadMod
   }
 }
 
-export async function getIdentityVerificationState(): Promise<Pick<VerificationStatusReadModel, "identityStatus" | "provider" | "providerReference" | "updatedAt">> {
+export async function getIdentityVerificationState(): Promise<
+  Pick<
+    VerificationStatusReadModel,
+    "identityStatus" | "provider" | "providerReference" | "updatedAt"
+  >
+> {
   const status = await getVerificationStatus()
   return {
     identityStatus: status.identityStatus,
@@ -50,7 +55,9 @@ export async function getIdentityVerificationState(): Promise<Pick<VerificationS
   }
 }
 
-export async function getAdultVerificationState(): Promise<Pick<VerificationStatusReadModel, "adultStatus" | "provider" | "providerReference" | "updatedAt">> {
+export async function getAdultVerificationState(): Promise<
+  Pick<VerificationStatusReadModel, "adultStatus" | "provider" | "providerReference" | "updatedAt">
+> {
   const status = await getVerificationStatus()
   return {
     adultStatus: status.adultStatus,
@@ -64,7 +71,10 @@ export async function getVerificationProviderReturnState(): Promise<Verification
   return getVerificationStatus()
 }
 
-export async function getVerificationBlockedState(): Promise<{ blocked: boolean; reason: string | null }> {
+export async function getVerificationBlockedState(): Promise<{
+  blocked: boolean
+  reason: string | null
+}> {
   const status = await getVerificationStatus()
   const blocked =
     status.identityStatus === "rejected" ||

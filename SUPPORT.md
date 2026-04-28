@@ -1,24 +1,23 @@
-
 # Support
 
 ## Project Support
 
 For project questions, implementation coordination, or repository access issues, contact:
 
-* support@example.com
+- support@example.com
 
 ## What to Include
 
 When requesting support, include:
 
-* clear description of the issue
-* expected behavior
-* actual behavior
-* relevant route, feature, or module
-* reproduction steps
-* screenshots or terminal output when useful
-* commit hash or branch name
-* environment: local, preview, or production
+- clear description of the issue
+- expected behavior
+- actual behavior
+- relevant route, feature, or module
+- reproduction steps
+- screenshots or terminal output when useful
+- commit hash or branch name
+- environment: local, preview, or production
 
 ## Security Issues
 

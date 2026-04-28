@@ -106,15 +106,15 @@ Stack from `package.json`:
 
 Top-level code inventory observed:
 
-| Area | File count |
-|---|---:|
-| `app` | 102 |
-| `components` | 148 |
-| `features` | 139 |
-| `lib` | 128 |
-| `schemas` | 18 |
-| `types` | 21 |
-| `tests` | 18 |
+| Area         | File count |
+| ------------ | ---------: |
+| `app`        |        102 |
+| `components` |        148 |
+| `features`   |        139 |
+| `lib`        |        128 |
+| `schemas`    |         18 |
+| `types`      |         21 |
+| `tests`      |         18 |
 
 ## Database Status
 
@@ -160,24 +160,24 @@ Execution log says completed or partially completed:
 
 Verified current scaffold burden:
 
-| Area | `SCAFFOLD_NOT_IMPLEMENTED` markers |
-|---|---:|
-| `lib/fetcher` | 168 |
-| `lib/actions` | 94 |
-| `lib/db/transactions` | 91 |
-| `lib/db/mappers` | 49 |
-| `lib/integrations/stripe` | 13 |
-| `lib/security` | 10 |
-| `lib/vouch` | 10 |
-| `lib/integrations/email` | 9 |
-| `lib/cache` | 4 |
-| `lib/jobs` | 4 |
-| `lib/observability` | 4 |
-| `lib/errors` | 3 |
-| `lib/invitations` | 3 |
-| `lib/notifications` | 3 |
-| `lib/integrations/clerk` | 2 |
-| Total | 467 |
+| Area                      | `SCAFFOLD_NOT_IMPLEMENTED` markers |
+| ------------------------- | ---------------------------------: |
+| `lib/fetcher`             |                                168 |
+| `lib/actions`             |                                 94 |
+| `lib/db/transactions`     |                                 91 |
+| `lib/db/mappers`          |                                 49 |
+| `lib/integrations/stripe` |                                 13 |
+| `lib/security`            |                                 10 |
+| `lib/vouch`               |                                 10 |
+| `lib/integrations/email`  |                                  9 |
+| `lib/cache`               |                                  4 |
+| `lib/jobs`                |                                  4 |
+| `lib/observability`       |                                  4 |
+| `lib/errors`              |                                  3 |
+| `lib/invitations`         |                                  3 |
+| `lib/notifications`       |                                  3 |
+| `lib/integrations/clerk`  |                                  2 |
+| Total                     |                                467 |
 
 Interpretation: the repo is scaffold-heavy. Do not assume a named function is implemented just because the file exists.
 
@@ -559,16 +559,16 @@ E2E tests before MVP ship:
 
 ## Known Gaps And Decisions
 
-| Gap | Severity | Recommendation |
-|---|---:|---|
-| 467 scaffold markers remain | Critical | Replace in dependency order. Do not wire routes to scaffolded functions. |
-| Stripe Connect flow unresolved | Critical | Decide/document before production payment release. |
-| Legal/compliance review unresolved | Critical | Avoid “escrow” and production legal claims. |
-| Admin extension routes not in `routes.yaml` | High | Do not implement routes until contract update or explicit approval. |
-| Duplicate type/schema surfaces exist | Medium | Migrate imports gradually; delete only after audit. |
-| `lib/stripe` and `lib/integrations/stripe` overlap | Medium | Keep if responsibilities are distinct; consolidate only after implementation reveals duplication. |
-| Route matrix import examples use `@/schema` | Low | Use actual `@/schemas` path. |
-| Report filename typo `Backernd` | Low | Leave unless user approves rename. |
+| Gap                                                | Severity | Recommendation                                                                                    |
+| -------------------------------------------------- | -------: | ------------------------------------------------------------------------------------------------- |
+| 467 scaffold markers remain                        | Critical | Replace in dependency order. Do not wire routes to scaffolded functions.                          |
+| Stripe Connect flow unresolved                     | Critical | Decide/document before production payment release.                                                |
+| Legal/compliance review unresolved                 | Critical | Avoid “escrow” and production legal claims.                                                       |
+| Admin extension routes not in `routes.yaml`        |     High | Do not implement routes until contract update or explicit approval.                               |
+| Duplicate type/schema surfaces exist               |   Medium | Migrate imports gradually; delete only after audit.                                               |
+| `lib/stripe` and `lib/integrations/stripe` overlap |   Medium | Keep if responsibilities are distinct; consolidate only after implementation reveals duplication. |
+| Route matrix import examples use `@/schema`        |      Low | Use actual `@/schemas` path.                                                                      |
+| Report filename typo `Backernd`                    |      Low | Leave unless user approves rename.                                                                |
 
 ## Stop Conditions For Next Agent
 
@@ -642,4 +642,3 @@ Run focused Vitest tests plus pnpm prisma:validate.
 ```
 
 Reason: it establishes the invariant core before actions/fetchers depend on it.
-

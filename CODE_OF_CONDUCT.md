@@ -1,4 +1,3 @@
-
 # Code of Conduct
 
 ## Purpose
@@ -11,24 +10,24 @@ Contributors are expected to keep discussion focused on implementation quality, 
 
 Expected behavior includes:
 
-* direct, respectful technical communication
-* clear reproduction steps for bugs
-* good-faith review comments
-* respect for project boundaries
-* no attempts to introduce forbidden product concepts
-* no public disclosure of secrets, vulnerabilities, or private provider details
+- direct, respectful technical communication
+- clear reproduction steps for bugs
+- good-faith review comments
+- respect for project boundaries
+- no attempts to introduce forbidden product concepts
+- no public disclosure of secrets, vulnerabilities, or private provider details
 
 ## Unacceptable Behavior
 
 Unacceptable behavior includes:
 
-* harassment, threats, or personal attacks
-* spam
-* doxxing
-* publishing secrets
-* intentionally bypassing security controls
-* introducing arbitration, dispute, marketplace, messaging, review, or reputation features against project governance
-* using the issue tracker for non-project disputes
+- harassment, threats, or personal attacks
+- spam
+- doxxing
+- publishing secrets
+- intentionally bypassing security controls
+- introducing arbitration, dispute, marketplace, messaging, review, or reputation features against project governance
+- using the issue tracker for non-project disputes
 
 ## Enforcement
 
@@ -38,7 +37,7 @@ Maintainers may close issues, block contributors, remove comments, or revoke acc
 
 Report conduct concerns to:
 
-* support@example.com
+- support@example.com
   '@
 
   "CONTRIBUTING.md" = @'
@@ -65,22 +64,22 @@ If contracts conflict with docs, stop and report the conflict.
 
 Do not add:
 
-* provider profiles
-* public profiles
-* listings
-* search/discovery
-* marketplace categories
-* recommendations
-* featured providers
-* ratings or reviews
-* reputation scores
-* messaging
-* dispute cases
-* evidence uploads
-* appeals
-* admin fund-award controls
-* manual release overrides
-* confirmation rewrites
+- provider profiles
+- public profiles
+- listings
+- search/discovery
+- marketplace categories
+- recommendations
+- featured providers
+- ratings or reviews
+- reputation scores
+- messaging
+- dispute cases
+- evidence uploads
+- appeals
+- admin fund-award controls
+- manual release overrides
+- confirmation rewrites
 
 Forbidden route concepts:
 
@@ -115,10 +114,10 @@ types/                  schema-derived/domain types
 
 ## Server-First Rules
 
-* Auth, authz, payment, confirmation, lifecycle transitions, and provider calls stay server-side.
-* Components must not import Prisma, Stripe, Clerk server helpers, or server actions directly unless they are intentional client forms wired by features.
-* Fetchers return transport-safe data only.
-* Actions must authenticate, authorize, validate, transact, audit, revalidate, and return typed results.
+- Auth, authz, payment, confirmation, lifecycle transitions, and provider calls stay server-side.
+- Components must not import Prisma, Stripe, Clerk server helpers, or server actions directly unless they are intentional client forms wired by features.
+- Fetchers return transport-safe data only.
+- Actions must authenticate, authorize, validate, transact, audit, revalidate, and return typed results.
 
 ## Branches
 
@@ -164,16 +163,16 @@ pnpm test:e2e
 
 Every PR should answer:
 
-* Does this preserve Vouch’s core lifecycle?
-* Does this avoid marketplace/dispute/arbitration features?
-* Are reads routed through fetchers?
-* Are writes routed through server actions and transactions?
-* Are inputs validated with Zod?
-* Are provider payloads minimized?
-* Are audit events written where required?
-* Are participant/admin authorization checks server-side?
-* Are UI components presentational?
-* Are tests or validation steps included?
+- Does this preserve Vouch’s core lifecycle?
+- Does this avoid marketplace/dispute/arbitration features?
+- Are reads routed through fetchers?
+- Are writes routed through server actions and transactions?
+- Are inputs validated with Zod?
+- Are provider payloads minimized?
+- Are audit events written where required?
+- Are participant/admin authorization checks server-side?
+- Are UI components presentational?
+- Are tests or validation steps included?
 
 ## Security
 

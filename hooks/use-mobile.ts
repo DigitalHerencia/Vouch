@@ -1,9 +1,9 @@
-"use client";
+"use client"
 
-import { useMediaQuery } from "@/hooks/use-media-query";
+import { useMediaQuery } from "@/hooks/use-media-query"
 
-const MOBILE_BREAKPOINT = 768;
+const MOBILE_BREAKPOINT = 768
 
 export function useIsMobile(): boolean {
-  return useMediaQuery(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+  return useMediaQuery(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`)
 }

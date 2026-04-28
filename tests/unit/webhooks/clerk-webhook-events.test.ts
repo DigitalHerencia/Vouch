@@ -21,13 +21,15 @@ describe("Clerk webhook helpers", () => {
   })
 
   it("builds a display name", () => {
-    expect(extractClerkDisplayName({ id: "user_1", first_name: "Ada", last_name: "Lovelace" })).toBe(
-      "Ada Lovelace"
-    )
+    expect(
+      extractClerkDisplayName({ id: "user_1", first_name: "Ada", last_name: "Lovelace" })
+    ).toBe("Ada Lovelace")
   })
 
   it("parses valid webhook JSON", () => {
-    expect(parseClerkWebhookJson(JSON.stringify({ type: "user.created", data: { id: "user_1" } }))).toEqual({
+    expect(
+      parseClerkWebhookJson(JSON.stringify({ type: "user.created", data: { id: "user_1" } }))
+    ).toEqual({
       type: "user.created",
       data: { id: "user_1" },
     })

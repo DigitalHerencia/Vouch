@@ -11,6 +11,9 @@ export async function hashInvitationToken(token: string): Promise<string> {
   return hashSensitiveValue(token)
 }
 
-export async function verifyInvitationTokenHash(token: string, expectedHash: string): Promise<boolean> {
+export async function verifyInvitationTokenHash(
+  token: string,
+  expectedHash: string
+): Promise<boolean> {
   return compareSensitiveHash(token, expectedHash)
 }

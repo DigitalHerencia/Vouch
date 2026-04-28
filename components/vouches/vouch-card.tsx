@@ -30,7 +30,7 @@ export function VouchCard({
   className?: string
 }) {
   return (
-    <Card className={cn("transition-colors hover:bg-muted/30", className)}>
+    <Card className={cn("hover:bg-muted/30 transition-colors", className)}>
       <CardHeader className="gap-2">
         <div className="flex items-start justify-between gap-3">
           <div className="grid gap-1">
@@ -39,7 +39,7 @@ export function VouchCard({
                 {formatMoney(amountCents, currency)} Vouch
               </Link>
             </CardTitle>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               You are the {role}. Other party: {otherPartyLabel}.
             </p>
           </div>
@@ -48,8 +48,10 @@ export function VouchCard({
       </CardHeader>
       <CardContent className="grid gap-3">
         <VouchDeadline value={confirmationExpiresAt} />
-        {nextActionLabel ? <p className="text-sm font-medium">Next action: {nextActionLabel}</p> : null}
-        {outcomeText ? <p className="text-sm text-muted-foreground">{outcomeText}</p> : null}
+        {nextActionLabel ? (
+          <p className="text-sm font-medium">Next action: {nextActionLabel}</p>
+        ) : null}
+        {outcomeText ? <p className="text-muted-foreground text-sm">{outcomeText}</p> : null}
       </CardContent>
     </Card>
   )

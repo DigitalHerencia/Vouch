@@ -1,188 +1,174 @@
 {
-    "schema_version": "1.0.0",
-    "file": "decisions.json",
-    "product": "Vouch",
-    "generated_at": "2026-04-24T00:00:00.000Z",
-    "purpose": "Records architecture, product, and governance decisions for traceability.",
-    "policy": {
-        "append_only_preferred": true,
-        "business_logic_allowed": false,
-        "decision_status_values": [
-            "accepted",
-            "superseded",
-            "rejected",
-            "pending_review"
-        ]
+  "schema_version": "1.0.0",
+  "file": "decisions.json",
+  "product": "Vouch",
+  "generated_at": "2026-04-24T00:00:00.000Z",
+  "purpose": "Records architecture, product, and governance decisions for traceability.",
+  "policy": {
+    "append_only_preferred": true,
+    "business_logic_allowed": false,
+    "decision_status_values": ["accepted", "superseded", "rejected", "pending_review"]
+  },
+  "decisions": [
+    {
+      "id": "DEC-001",
+      "status": "accepted",
+      "date": "2026-04-24",
+      "title": "Use layered .agents governance",
+      "decision": "Use docs for human intent, contracts for deterministic structure, instructions for agent implementation guidance, and execution JSON for runtime logs/state.",
+      "rationale": "Separates meaning, structure, execution guidance, and runtime reporting.",
+      "source_refs": [".agents/docs/prd.md", ".agents/contracts/acceptance-gates.yaml"],
+      "consequences": [
+        "Agents must consume YAML contracts for deterministic implementation.",
+        "Execution JSON must not store business logic.",
+        "Changes must follow docs → contracts → instructions → execution."
+      ]
     },
-    "decisions": [
-        {
-            "id": "DEC-001",
-            "status": "accepted",
-            "date": "2026-04-24",
-            "title": "Use layered .agents governance",
-            "decision": "Use docs for human intent, contracts for deterministic structure, instructions for agent implementation guidance, and execution JSON for runtime logs/state.",
-            "rationale": "Separates meaning, structure, execution guidance, and runtime reporting.",
-            "source_refs": [
-                ".agents/docs/prd.md",
-                ".agents/contracts/acceptance-gates.yaml"
-            ],
-            "consequences": [
-                "Agents must consume YAML contracts for deterministic implementation.",
-                "Execution JSON must not store business logic.",
-                "Changes must follow docs → contracts → instructions → execution."
-            ]
-        },
-        {
-            "id": "DEC-002",
-            "status": "accepted",
-            "date": "2026-04-24",
-            "title": "Keep Vouch narrow",
-            "decision": "Vouch will remain a commitment-backed payment coordination system, not a marketplace, scheduler, broker, social app, escrow provider, or dispute-resolution platform.",
-            "rationale": "The product is legally and operationally safer when it only coordinates deterministic payment release/refund around dual confirmation.",
-            "source_refs": [
-                ".agents/docs/prd.md",
-                ".agents/contracts/domain-model.yaml",
-                ".agents/contracts/features.yaml"
-            ],
-            "consequences": [
-                "No public profiles, listings, reviews, ratings, messages, categories, or recommendation systems.",
-                "No dispute cases, claims, evidence uploads, appeals, or manual award actions.",
-                "Public pages must explain the mechanism without implying marketplace behavior."
-            ]
-        },
-        {
-            "id": "DEC-003",
-            "status": "accepted",
-            "date": "2026-04-24",
-            "title": "Manual dual confirmation is MVP confirmation method",
-            "decision": "MVP will use manual payer/payee confirmation during a valid confirmation window.",
-            "rationale": "Manual confirmation is enough to validate the core product loop before GPS proximity or more complex presence methods.",
-            "source_refs": [
-                ".agents/docs/prd.md",
-                ".agents/contracts/features.yaml",
-                ".agents/instructions/booking.instructions.md"
-            ],
-            "consequences": [
-                "GPS confirmation is deferred.",
-                "Both payer and payee must confirm within the window.",
-                "One-sided confirmation creates waiting state only and never releases funds."
-            ]
-        },
-        {
-            "id": "DEC-004",
-            "status": "accepted",
-            "date": "2026-04-24",
-            "title": "Server-first architecture",
-            "decision": "Use Next.js App Router with route shells in app, feature orchestration in features, pure UI in components, server reads in fetchers, server writes in actions, and Zod schemas for runtime validation.",
-            "rationale": "Vouch requires server-authoritative payment, authorization, confirmation, and lifecycle state.",
-            "source_refs": [".agents/docs/tech-requirements.md"],
-            "consequences": [
-                "No raw Prisma queries in app or components.",
-                "No payment or authorization logic in UI components.",
-                "All protected fetchers and actions authenticate and authorize."
-            ]
-        },
-        {
-            "id": "DEC-005",
-            "status": "accepted",
-            "date": "2026-04-24",
-            "title": "Use provider-backed payment state only",
-            "decision": "Vouch coordinates payment state through Stripe Connect or equivalent provider infrastructure and does not directly custody funds.",
-            "rationale": "Avoids direct custody and aligns product with payment coordination positioning.",
-            "source_refs": [
-                ".agents/contracts/domain-model.yaml",
-                ".agents/contracts/acceptance-gates.yaml"
-            ],
-            "consequences": [
-                "Store provider references and statuses only.",
-                "Do not store raw card data, raw identity documents, or full provider payloads.",
-                "Exact Stripe flow requires payment-flow review before production."
-            ]
-        },
-        {
-            "id": "DEC-006",
-            "status": "accepted",
-            "date": "2026-04-24",
-            "title": "Admin is operational-only",
-            "decision": "Admin surfaces may inspect Vouch, user, payment, refund, webhook, notification, and audit records, but cannot arbitrate outcomes.",
-            "rationale": "Admin judgment would contradict deterministic dual-confirmation rules.",
-            "source_refs": [
-                ".agents/contracts/authz.yaml",
-                ".agents/instructions/admin-moderation.instructions.md"
-            ],
-            "consequences": [
-                "No admin award funds action.",
-                "No confirmation rewrite action.",
-                "No dispute UI.",
-                "Safe retries must be idempotent and technical only."
-            ]
-        },
-        {
-            "id": "DEC-007",
-            "status": "accepted",
-            "date": "2026-04-24",
-            "title": "Use legacy instruction filenames with Vouch-normalized meanings",
-            "decision": "Retain the original instruction filenames from the requested tree while mapping legacy marketplace terms to Vouch-safe domains.",
-            "rationale": "Preserves requested directory structure without violating Vouch constraints.",
-            "source_refs": [
-                ".agents/instructions/discovery.instructions.md",
-                ".agents/instructions/host-dashboard.instructions.md",
-                ".agents/instructions/guest-inbox.instructions.md"
-            ],
-            "consequences": [
-                "booking means Vouch lifecycle, not scheduling software.",
-                "guest means payer/client dashboard, not marketplace browsing.",
-                "host means payee/provider readiness or dashboard, not public provider profile.",
-                "discovery means public marketing and anti-discovery constraints."
-            ]
-        }
-    ],
-    "pending_decisions": [
-        {
-            "id": "PDEC-001",
-            "status": "pending_review",
-            "title": "Select exact Stripe Connect flow",
-            "question": "Which Stripe Connect flow best satisfies commitment, release/refund, platform fee, and no-custody requirements?",
-            "required_before": [
-                "payment_provider_sandbox",
-                "production_candidate"
-            ],
-            "owner": "human/legal/payment architecture review"
-        },
-        {
-            "id": "PDEC-002",
-            "status": "pending_review",
-            "title": "Define Vouch amount limits",
-            "question": "What minimum and maximum Vouch amounts should be enforced for MVP?",
-            "required_before": ["vouch_create_flow"],
-            "owner": "product"
-        },
-        {
-            "id": "PDEC-003",
-            "status": "pending_review",
-            "title": "Define confirmation window constraints",
-            "question": "What minimum, maximum, and default confirmation windows should be enforced?",
-            "required_before": [
-                "vouch_create_flow",
-                "manual_confirmation_flow"
-            ],
-            "owner": "product"
-        },
-        {
-            "id": "PDEC-004",
-            "status": "pending_review",
-            "title": "Select verification provider flow",
-            "question": "Use Stripe Identity, Connect identity requirements, Clerk metadata, or another provider for identity/adult eligibility?",
-            "required_before": ["setup_gates", "production_candidate"],
-            "owner": "product/compliance"
-        },
-        {
-            "id": "PDEC-005",
-            "status": "pending_review",
-            "title": "Legal copy and terms review",
-            "question": "What exact terms/privacy/payment language is legally approved for production?",
-            "required_before": ["legal_copy_review", "production_candidate"],
-            "owner": "legal"
-        }
-    ]
+    {
+      "id": "DEC-002",
+      "status": "accepted",
+      "date": "2026-04-24",
+      "title": "Keep Vouch narrow",
+      "decision": "Vouch will remain a commitment-backed payment coordination system, not a marketplace, scheduler, broker, social app, escrow provider, or dispute-resolution platform.",
+      "rationale": "The product is legally and operationally safer when it only coordinates deterministic payment release/refund around dual confirmation.",
+      "source_refs": [
+        ".agents/docs/prd.md",
+        ".agents/contracts/domain-model.yaml",
+        ".agents/contracts/features.yaml"
+      ],
+      "consequences": [
+        "No public profiles, listings, reviews, ratings, messages, categories, or recommendation systems.",
+        "No dispute cases, claims, evidence uploads, appeals, or manual award actions.",
+        "Public pages must explain the mechanism without implying marketplace behavior."
+      ]
+    },
+    {
+      "id": "DEC-003",
+      "status": "accepted",
+      "date": "2026-04-24",
+      "title": "Manual dual confirmation is MVP confirmation method",
+      "decision": "MVP will use manual payer/payee confirmation during a valid confirmation window.",
+      "rationale": "Manual confirmation is enough to validate the core product loop before GPS proximity or more complex presence methods.",
+      "source_refs": [
+        ".agents/docs/prd.md",
+        ".agents/contracts/features.yaml",
+        ".agents/instructions/booking.instructions.md"
+      ],
+      "consequences": [
+        "GPS confirmation is deferred.",
+        "Both payer and payee must confirm within the window.",
+        "One-sided confirmation creates waiting state only and never releases funds."
+      ]
+    },
+    {
+      "id": "DEC-004",
+      "status": "accepted",
+      "date": "2026-04-24",
+      "title": "Server-first architecture",
+      "decision": "Use Next.js App Router with route shells in app, feature orchestration in features, pure UI in components, server reads in fetchers, server writes in actions, and Zod schemas for runtime validation.",
+      "rationale": "Vouch requires server-authoritative payment, authorization, confirmation, and lifecycle state.",
+      "source_refs": [".agents/docs/tech-requirements.md"],
+      "consequences": [
+        "No raw Prisma queries in app or components.",
+        "No payment or authorization logic in UI components.",
+        "All protected fetchers and actions authenticate and authorize."
+      ]
+    },
+    {
+      "id": "DEC-005",
+      "status": "accepted",
+      "date": "2026-04-24",
+      "title": "Use provider-backed payment state only",
+      "decision": "Vouch coordinates payment state through Stripe Connect or equivalent provider infrastructure and does not directly custody funds.",
+      "rationale": "Avoids direct custody and aligns product with payment coordination positioning.",
+      "source_refs": [
+        ".agents/contracts/domain-model.yaml",
+        ".agents/contracts/acceptance-gates.yaml"
+      ],
+      "consequences": [
+        "Store provider references and statuses only.",
+        "Do not store raw card data, raw identity documents, or full provider payloads.",
+        "Exact Stripe flow requires payment-flow review before production."
+      ]
+    },
+    {
+      "id": "DEC-006",
+      "status": "accepted",
+      "date": "2026-04-24",
+      "title": "Admin is operational-only",
+      "decision": "Admin surfaces may inspect Vouch, user, payment, refund, webhook, notification, and audit records, but cannot arbitrate outcomes.",
+      "rationale": "Admin judgment would contradict deterministic dual-confirmation rules.",
+      "source_refs": [
+        ".agents/contracts/authz.yaml",
+        ".agents/instructions/admin-moderation.instructions.md"
+      ],
+      "consequences": [
+        "No admin award funds action.",
+        "No confirmation rewrite action.",
+        "No dispute UI.",
+        "Safe retries must be idempotent and technical only."
+      ]
+    },
+    {
+      "id": "DEC-007",
+      "status": "accepted",
+      "date": "2026-04-24",
+      "title": "Use legacy instruction filenames with Vouch-normalized meanings",
+      "decision": "Retain the original instruction filenames from the requested tree while mapping legacy marketplace terms to Vouch-safe domains.",
+      "rationale": "Preserves requested directory structure without violating Vouch constraints.",
+      "source_refs": [
+        ".agents/instructions/discovery.instructions.md",
+        ".agents/instructions/host-dashboard.instructions.md",
+        ".agents/instructions/guest-inbox.instructions.md"
+      ],
+      "consequences": [
+        "booking means Vouch lifecycle, not scheduling software.",
+        "guest means payer/client dashboard, not marketplace browsing.",
+        "host means payee/provider readiness or dashboard, not public provider profile.",
+        "discovery means public marketing and anti-discovery constraints."
+      ]
+    }
+  ],
+  "pending_decisions": [
+    {
+      "id": "PDEC-001",
+      "status": "pending_review",
+      "title": "Select exact Stripe Connect flow",
+      "question": "Which Stripe Connect flow best satisfies commitment, release/refund, platform fee, and no-custody requirements?",
+      "required_before": ["payment_provider_sandbox", "production_candidate"],
+      "owner": "human/legal/payment architecture review"
+    },
+    {
+      "id": "PDEC-002",
+      "status": "pending_review",
+      "title": "Define Vouch amount limits",
+      "question": "What minimum and maximum Vouch amounts should be enforced for MVP?",
+      "required_before": ["vouch_create_flow"],
+      "owner": "product"
+    },
+    {
+      "id": "PDEC-003",
+      "status": "pending_review",
+      "title": "Define confirmation window constraints",
+      "question": "What minimum, maximum, and default confirmation windows should be enforced?",
+      "required_before": ["vouch_create_flow", "manual_confirmation_flow"],
+      "owner": "product"
+    },
+    {
+      "id": "PDEC-004",
+      "status": "pending_review",
+      "title": "Select verification provider flow",
+      "question": "Use Stripe Identity, Connect identity requirements, Clerk metadata, or another provider for identity/adult eligibility?",
+      "required_before": ["setup_gates", "production_candidate"],
+      "owner": "product/compliance"
+    },
+    {
+      "id": "PDEC-005",
+      "status": "pending_review",
+      "title": "Legal copy and terms review",
+      "question": "What exact terms/privacy/payment language is legally approved for production?",
+      "required_before": ["legal_copy_review", "production_candidate"],
+      "owner": "legal"
+    }
+  ]
 }

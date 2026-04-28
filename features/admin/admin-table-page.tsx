@@ -31,7 +31,7 @@ export function AdminTablePage<Row extends { id: string; href?: string }>({
         </CardHeader>
         <CardContent className="overflow-x-auto">
           {rows.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{emptyLabel}</p>
+            <p className="text-muted-foreground text-sm">{emptyLabel}</p>
           ) : (
             <table className="w-full min-w-180 text-left text-sm">
               <thead className="text-muted-foreground">

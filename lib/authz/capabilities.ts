@@ -32,11 +32,17 @@ export function getUserCapabilities(user: Pick<CurrentUser, "isAdmin" | "status"
   return ADMIN_CAPABILITIES
 }
 
-export function hasCapability(user: Pick<CurrentUser, "isAdmin" | "status">, capability: Capability): boolean {
+export function hasCapability(
+  user: Pick<CurrentUser, "isAdmin" | "status">,
+  capability: Capability
+): boolean {
   return getUserCapabilities(user).includes(capability)
 }
 
-export function assertCapability(user: Pick<CurrentUser, "isAdmin" | "status">, capability: Capability): void {
+export function assertCapability(
+  user: Pick<CurrentUser, "isAdmin" | "status">,
+  capability: Capability
+): void {
   if (!hasCapability(user, capability)) {
     deny("Required capability missing")
   }

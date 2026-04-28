@@ -5,7 +5,10 @@ import { redirect } from "next/navigation"
 
 import { mapClerkUserToLocalInput } from "@/lib/auth/clerk"
 import { prisma } from "@/lib/db/prisma"
-import { createDefaultVerificationProfileTx, upsertUserFromClerkTx } from "@/lib/db/transactions/authTransactions"
+import {
+  createDefaultVerificationProfileTx,
+  upsertUserFromClerkTx,
+} from "@/lib/db/transactions/authTransactions"
 
 export type CurrentUser = {
   id: string

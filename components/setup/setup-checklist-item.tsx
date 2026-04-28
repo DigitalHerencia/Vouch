@@ -26,12 +26,27 @@ export function SetupChecklistItem({
 }) {
   const Icon = ICONS[status]
   return (
-    <div className={cn("flex items-start justify-between gap-4 rounded-lg border bg-muted/20 p-3", className)}>
+    <div
+      className={cn(
+        "bg-muted/20 flex items-start justify-between gap-4 rounded-lg border p-3",
+        className
+      )}
+    >
       <div className="flex items-start gap-3">
-        <Icon className={cn("mt-0.5 size-4", status === "complete" ? "text-green-400" : status === "blocked" ? "text-amber-400" : "text-muted-foreground")} aria-hidden="true" />
+        <Icon
+          className={cn(
+            "mt-0.5 size-4",
+            status === "complete"
+              ? "text-green-400"
+              : status === "blocked"
+                ? "text-amber-400"
+                : "text-muted-foreground"
+          )}
+          aria-hidden="true"
+        />
         <div className="grid gap-1">
           <div className="text-sm font-medium">{title}</div>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-muted-foreground text-sm">{description}</p>
         </div>
       </div>
       {action ? <div className="shrink-0">{action}</div> : null}

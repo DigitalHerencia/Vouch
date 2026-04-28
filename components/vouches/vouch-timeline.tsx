@@ -22,11 +22,16 @@ export function VouchTimeline({
           <li key={item.id} className="grid gap-1 border-l pl-4">
             <div className="text-sm font-medium">{item.label}</div>
             {date ? (
-              <time dateTime={date.toISOString()} className="text-xs text-muted-foreground">
-                {new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" }).format(date)}
+              <time dateTime={date.toISOString()} className="text-muted-foreground text-xs">
+                {new Intl.DateTimeFormat("en-US", {
+                  dateStyle: "medium",
+                  timeStyle: "short",
+                }).format(date)}
               </time>
             ) : null}
-            {item.description ? <p className="text-sm text-muted-foreground">{item.description}</p> : null}
+            {item.description ? (
+              <p className="text-muted-foreground text-sm">{item.description}</p>
+            ) : null}
           </li>
         )
       })}

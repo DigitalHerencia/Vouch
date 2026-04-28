@@ -193,6 +193,7 @@ pnpm validate:contracts
 
 If auth requirements conflict with `authz.yaml`, stop and report. Do not invent new access rules.
 
-````
+```
 
 ---
+```

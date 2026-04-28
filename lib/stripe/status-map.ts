@@ -51,8 +51,6 @@ export function mapStripeRefundStatus(status: Stripe.Refund["status"] | null): L
   }
 }
 
-export function isTerminalStripePaymentIntentStatus(
-  status: Stripe.PaymentIntent.Status
-): boolean {
+export function isTerminalStripePaymentIntentStatus(status: Stripe.PaymentIntent.Status): boolean {
   return status === "succeeded" || status === "canceled"
 }

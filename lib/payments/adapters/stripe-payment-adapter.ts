@@ -98,14 +98,22 @@ export async function releaseStripePaymentForCompletedVouch(
   })
 
   if (!paymentRecord?.providerPaymentId) {
-    return { ok: false, code: "PAYMENT_RECORD_NOT_READY", message: "No provider payment ID exists." }
+    return {
+      ok: false,
+      code: "PAYMENT_RECORD_NOT_READY",
+      message: "No provider payment ID exists.",
+    }
   }
 
   const connectedAccountId =
     input.connectedAccountId ?? paymentRecord.vouch.payee?.connectedAccount?.providerAccountId
 
   if (!connectedAccountId) {
-    return { ok: false, code: "CONNECTED_ACCOUNT_REQUIRED", message: "Payee payout account is required." }
+    return {
+      ok: false,
+      code: "CONNECTED_ACCOUNT_REQUIRED",
+      message: "Payee payout account is required.",
+    }
   }
 
   try {
@@ -116,13 +124,17 @@ export async function releaseStripePaymentForCompletedVouch(
       },
     } as unknown as Parameters<typeof stripe.paymentIntents.capture>[1]
 
-    const captured = await stripe.paymentIntents.capture(paymentRecord.providerPaymentId, captureParams)
+    const captured = await stripe.paymentIntents.capture(
+      paymentRecord.providerPaymentId,
+      captureParams
+    )
 
     await prisma.paymentRecord.update({
       where: { id: paymentRecord.id },
       data: {
         status: captured.status === "succeeded" ? "released" : "release_pending",
-        providerChargeId: typeof captured.latest_charge === "string" ? captured.latest_charge : null,
+        providerChargeId:
+          typeof captured.latest_charge === "string" ? captured.latest_charge : null,
         lastErrorCode: null,
       },
     })
@@ -140,7 +152,12 @@ export async function releaseStripePaymentForCompletedVouch(
 
 export async function refundOrVoidStripePaymentForVouch(input: {
   paymentRecordId: string
-  reason: "not_accepted" | "confirmation_incomplete" | "canceled_before_acceptance" | "payment_failure" | "provider_required"
+  reason:
+    | "not_accepted"
+    | "confirmation_incomplete"
+    | "canceled_before_acceptance"
+    | "payment_failure"
+    | "provider_required"
 }): Promise<{ ok: true } | { ok: false; code: string; message: string }> {
   const stripe = getStripeClient()
   const paymentRecord = await prisma.paymentRecord.findUnique({
@@ -155,7 +172,11 @@ export async function refundOrVoidStripePaymentForVouch(input: {
   })
 
   if (!paymentRecord?.providerPaymentId) {
-    return { ok: false, code: "PAYMENT_RECORD_NOT_READY", message: "No provider payment ID exists." }
+    return {
+      ok: false,
+      code: "PAYMENT_RECORD_NOT_READY",
+      message: "No provider payment ID exists.",
+    }
   }
 
   try {

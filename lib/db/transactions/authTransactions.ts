@@ -35,12 +35,24 @@ export async function createDefaultVerificationProfileTx(tx: Tx, input: { userId
   })
 }
 
-export async function syncUserEmailFromClerkTx(tx: Tx, input: { clerkUserId: string; email?: string }) {
-  return tx.user.update({ where: { clerkUserId: input.clerkUserId }, data: { email: input.email ?? null } })
+export async function syncUserEmailFromClerkTx(
+  tx: Tx,
+  input: { clerkUserId: string; email?: string }
+) {
+  return tx.user.update({
+    where: { clerkUserId: input.clerkUserId },
+    data: { email: input.email ?? null },
+  })
 }
 
-export async function syncUserPhoneFromClerkTx(tx: Tx, input: { clerkUserId: string; phone?: string }) {
-  return tx.user.update({ where: { clerkUserId: input.clerkUserId }, data: { phone: input.phone ?? null } })
+export async function syncUserPhoneFromClerkTx(
+  tx: Tx,
+  input: { clerkUserId: string; phone?: string }
+) {
+  return tx.user.update({
+    where: { clerkUserId: input.clerkUserId },
+    data: { phone: input.phone ?? null },
+  })
 }
 
 export async function syncUserDisplayNameFromClerkTx(

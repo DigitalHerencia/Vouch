@@ -8,11 +8,7 @@ import {
   getConfirmPresenceReadiness,
   getCreateReadiness,
 } from "@/lib/setup/status"
-import type {
-  ConfirmationGateInput,
-  SetupGateResult,
-  SetupStatus,
-} from "@/types/setup"
+import type { ConfirmationGateInput, SetupGateResult, SetupStatus } from "@/types/setup"
 import { CURRENT_TERMS_VERSION } from "@/lib/constants/terms"
 
 export async function getUserSetupStatus(userId?: string): Promise<SetupStatus> {
@@ -74,7 +70,7 @@ export async function assertAcceptVouchSetupReady(userId?: string): Promise<Setu
 }
 
 export async function assertConfirmPresenceSetupReady(
-  input: ConfirmationGateInput,
+  input: ConfirmationGateInput
 ): Promise<SetupGateResult> {
   const gate = getConfirmPresenceReadiness(input)
   if (!gate.ok) {

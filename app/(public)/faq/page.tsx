@@ -6,12 +6,23 @@ export default function FaqRoute() {
       <h1 className="text-4xl font-semibold tracking-tight">FAQ</h1>
       <div className="mt-8 grid gap-4">
         {[
-          ["What is Vouch?", "A commitment-backed payment layer for appointments and in-person agreements."],
-          ["When do funds release?", "Only after both parties confirm presence within the confirmation window."],
-          ["What if both people do not confirm?", "The payment is refunded, voided, or not captured according to the provider flow."],
+          [
+            "What is Vouch?",
+            "A commitment-backed payment layer for appointments and in-person agreements.",
+          ],
+          [
+            "When do funds release?",
+            "Only after both parties confirm presence within the confirmation window.",
+          ],
+          [
+            "What if both people do not confirm?",
+            "The payment is refunded, voided, or not captured according to the provider flow.",
+          ],
         ].map(([title, body]) => (
           <Card key={title}>
-            <CardHeader><CardTitle>{title}</CardTitle></CardHeader>
+            <CardHeader>
+              <CardTitle>{title}</CardTitle>
+            </CardHeader>
             <CardContent className="text-muted-foreground">{body}</CardContent>
           </Card>
         ))}

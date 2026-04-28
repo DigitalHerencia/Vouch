@@ -25,8 +25,12 @@ export function PaymentSummary({
         <PaymentStatusBadge status={paymentStatus} />
       </CardHeader>
       <CardContent className="grid gap-4">
-        <VouchAmountSummary amountCents={amountCents} platformFeeCents={platformFeeCents} currency={currency} />
-        <p className="text-sm text-muted-foreground">{note}</p>
+        <VouchAmountSummary
+          amountCents={amountCents}
+          platformFeeCents={platformFeeCents}
+          currency={currency}
+        />
+        <p className="text-muted-foreground text-sm">{note}</p>
       </CardContent>
     </Card>
   )

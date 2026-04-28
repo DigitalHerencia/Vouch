@@ -37,12 +37,7 @@ export const paymentStatusSchema = z.enum([
   "failed",
 ])
 
-export const refundStatusSchema = z.enum([
-  "not_required",
-  "pending",
-  "succeeded",
-  "failed",
-])
+export const refundStatusSchema = z.enum(["not_required", "pending", "succeeded", "failed"])
 
 export const refundReasonSchema = z.enum([
   "not_accepted",

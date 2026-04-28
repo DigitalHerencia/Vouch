@@ -563,13 +563,13 @@ Standard action result shape:
 
 ```ts
 type ActionResult<T> =
-    | { ok: true; data: T }
-    | {
-          ok: false
-          formError?: string
-          fieldErrors?: Record<string, string[]>
-          code?: string
-      }
+  | { ok: true; data: T }
+  | {
+      ok: false
+      formError?: string
+      fieldErrors?: Record<string, string[]>
+      code?: string
+    }
 ```
 
 ### Payment Errors

@@ -1,9 +1,14 @@
 "use server"
 
 import { prisma } from "@/lib/db/prisma"
+import type { Prisma } from "@/prisma/generated/prisma/client"
 import { trackAnalyticsEventInputSchema } from "@/schemas/analytics"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
-import type { AnalyticsEventGroup, AnalyticsEventName, TrackAnalyticsEventInput } from "@/types/analytics"
+import type {
+  AnalyticsEventGroup,
+  AnalyticsEventName,
+  TrackAnalyticsEventInput,
+} from "@/types/analytics"
 
 const EVENT_GROUP_BY_PREFIX: Record<string, AnalyticsEventGroup> = {
   marketing: "acquisition",
@@ -22,26 +27,46 @@ type AnalyticsActionResult = {
   occurredAt: string
 }
 
+type FieldErrors = Record<string, string[]>
+
+function getFieldErrors(error: {
+  issues: Array<{ path: PropertyKey[]; message: string }>
+}): FieldErrors {
+  const fieldErrors: FieldErrors = {}
+
+  for (const issue of error.issues) {
+    const field = String(issue.path[0] ?? "form")
+    fieldErrors[field] ??= []
+    fieldErrors[field].push(issue.message)
+  }
+
+  return fieldErrors
+}
+
 function getAnalyticsEventGroup(eventName: AnalyticsEventName): AnalyticsEventGroup {
-  const prefix = eventName.split(".")[0]
+  const prefix = eventName.split(".")[0] ?? "vouch"
   return EVENT_GROUP_BY_PREFIX[prefix] ?? "vouch"
 }
 
-function getEnvironment() {
+function getEnvironment(): "development" | "preview" | "production" {
   if (process.env.VERCEL_ENV === "production" || process.env.NODE_ENV === "production") {
-    return "production" as const
+    return "production"
   }
 
   if (process.env.VERCEL_ENV === "preview") {
-    return "preview" as const
+    return "preview"
   }
 
-  return "development" as const
+  return "development"
+}
+
+function toPrismaJson(value: Record<string, unknown>): Prisma.InputJsonObject {
+  return JSON.parse(JSON.stringify(value)) as Prisma.InputJsonObject
 }
 
 async function trackAnalyticsEvent(
   input: unknown,
-  allowedGroups: AnalyticsEventGroup[],
+  allowedGroups: AnalyticsEventGroup[]
 ): Promise<ActionResult<AnalyticsActionResult>> {
   const parsed = trackAnalyticsEventInputSchema.safeParse(input)
 
@@ -49,7 +74,7 @@ async function trackAnalyticsEvent(
     return actionFailure(
       "VALIDATION_FAILED",
       "Check the analytics event payload.",
-      parsed.error.flatten().fieldErrors,
+      getFieldErrors(parsed.error)
     )
   }
 
@@ -61,17 +86,35 @@ async function trackAnalyticsEvent(
 
   const occurredAt = parsed.data.occurredAt ? new Date(parsed.data.occurredAt) : new Date()
 
+  const data: Prisma.AnalyticsEventCreateInput = {
+    eventName: parsed.data.eventName,
+    eventGroup,
+    environment: getEnvironment(),
+    occurredAt,
+  }
+
+  if (parsed.data.userId) {
+    data.user = {
+      connect: {
+        id: parsed.data.userId,
+      },
+    }
+  }
+
+  if (parsed.data.sessionId) {
+    data.sessionId = parsed.data.sessionId
+  }
+
+  if (parsed.data.requestId) {
+    data.requestId = parsed.data.requestId
+  }
+
+  if (parsed.data.properties) {
+    data.properties = toPrismaJson(parsed.data.properties)
+  }
+
   const event = await prisma.analyticsEvent.create({
-    data: {
-      eventName: parsed.data.eventName,
-      eventGroup,
-      environment: getEnvironment(),
-      userId: parsed.data.userId,
-      sessionId: parsed.data.sessionId,
-      requestId: parsed.data.requestId,
-      occurredAt,
-      properties: parsed.data.properties ?? {},
-    },
+    data,
     select: {
       id: true,
       eventName: true,
@@ -88,26 +131,38 @@ async function trackAnalyticsEvent(
   })
 }
 
-export async function trackMarketingEvent(input: TrackAnalyticsEventInput): Promise<ActionResult<AnalyticsActionResult>> {
+export async function trackMarketingEvent(
+  input: TrackAnalyticsEventInput
+): Promise<ActionResult<AnalyticsActionResult>> {
   return trackAnalyticsEvent(input, ["acquisition"])
 }
 
-export async function trackSetupEvent(input: TrackAnalyticsEventInput): Promise<ActionResult<AnalyticsActionResult>> {
+export async function trackSetupEvent(
+  input: TrackAnalyticsEventInput
+): Promise<ActionResult<AnalyticsActionResult>> {
   return trackAnalyticsEvent(input, ["setup"])
 }
 
-export async function trackVouchLifecycleEvent(input: TrackAnalyticsEventInput): Promise<ActionResult<AnalyticsActionResult>> {
+export async function trackVouchLifecycleEvent(
+  input: TrackAnalyticsEventInput
+): Promise<ActionResult<AnalyticsActionResult>> {
   return trackAnalyticsEvent(input, ["vouch"])
 }
 
-export async function trackPaymentEvent(input: TrackAnalyticsEventInput): Promise<ActionResult<AnalyticsActionResult>> {
+export async function trackPaymentEvent(
+  input: TrackAnalyticsEventInput
+): Promise<ActionResult<AnalyticsActionResult>> {
   return trackAnalyticsEvent(input, ["payment"])
 }
 
-export async function trackNotificationEvent(input: TrackAnalyticsEventInput): Promise<ActionResult<AnalyticsActionResult>> {
+export async function trackNotificationEvent(
+  input: TrackAnalyticsEventInput
+): Promise<ActionResult<AnalyticsActionResult>> {
   return trackAnalyticsEvent(input, ["notification"])
 }
 
-export async function trackAdminOperationalEvent(input: TrackAnalyticsEventInput): Promise<ActionResult<AnalyticsActionResult>> {
+export async function trackAdminOperationalEvent(
+  input: TrackAnalyticsEventInput
+): Promise<ActionResult<AnalyticsActionResult>> {
   return trackAnalyticsEvent(input, ["admin"])
 }

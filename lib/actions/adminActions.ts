@@ -23,11 +23,16 @@ type SafeRetryResult = {
   recordedAt: string
 }
 
-function adminValidationFailure(message: string, fieldErrors?: Record<string, string[]>): ActionResult<never> {
+function adminValidationFailure(
+  message: string,
+  fieldErrors?: Record<string, string[]>
+): ActionResult<never> {
   return actionFailure("VALIDATION_FAILED", message, fieldErrors)
 }
 
-async function requireAdminForAction(capability: "retry_safe_technical_operation" | "disable_user_account") {
+async function requireAdminForAction(
+  capability: "retry_safe_technical_operation" | "disable_user_account"
+) {
   const user = await requireActiveUser()
   assertCapability(user, capability)
   return user
@@ -35,7 +40,13 @@ async function requireAdminForAction(capability: "retry_safe_technical_operation
 
 async function writeAdminAudit(input: {
   actorUserId: string
-  eventName: "admin.user.viewed" | "admin.vouch.viewed" | "admin.payment.viewed" | "admin.retry.started" | "admin.retry.completed" | "admin.account.disabled"
+  eventName:
+    | "admin.user.viewed"
+    | "admin.vouch.viewed"
+    | "admin.payment.viewed"
+    | "admin.retry.started"
+    | "admin.retry.completed"
+    | "admin.account.disabled"
   entityType: string
   entityId: string
   metadata?: Record<string, unknown>
@@ -48,17 +59,21 @@ async function writeAdminAudit(input: {
       entityType: input.entityType,
       entityId: input.entityId,
       participantSafe: false,
-      metadata: input.metadata ?? {},
     },
   })
 }
 
-export async function disableUserAccount(input: unknown): Promise<ActionResult<{ userId: string }>> {
+export async function disableUserAccount(
+  input: unknown
+): Promise<ActionResult<{ userId: string }>> {
   const admin = await requireAdminForAction("disable_user_account")
   const parsed = adminDisableUserInputSchema.safeParse(input)
 
   if (!parsed.success) {
-    return adminValidationFailure("Check the account disable request.", parsed.error.flatten().fieldErrors)
+    return adminValidationFailure(
+      "Check the account disable request.",
+      parsed.error.flatten().fieldErrors
+    )
   }
 
   if (parsed.data.userId === admin.id) {
@@ -93,35 +108,45 @@ export async function disableUserAccount(input: unknown): Promise<ActionResult<{
   return actionSuccess({ userId: updated.id })
 }
 
-export async function retryNotificationSend(input: unknown): Promise<ActionResult<SafeRetryResult>> {
+export async function retryNotificationSend(
+  input: unknown
+): Promise<ActionResult<SafeRetryResult>> {
   return recordAdminSafeRetryCompleted({
     ...(typeof input === "object" && input ? input : {}),
     operation: "retry_notification_send",
   })
 }
 
-export async function retryProviderReconciliation(input: unknown): Promise<ActionResult<SafeRetryResult>> {
+export async function retryProviderReconciliation(
+  input: unknown
+): Promise<ActionResult<SafeRetryResult>> {
   return recordAdminSafeRetryCompleted({
     ...(typeof input === "object" && input ? input : {}),
     operation: "retry_provider_reconciliation",
   })
 }
 
-export async function retryWebhookProcessing(input: unknown): Promise<ActionResult<SafeRetryResult>> {
+export async function retryWebhookProcessing(
+  input: unknown
+): Promise<ActionResult<SafeRetryResult>> {
   return recordAdminSafeRetryCompleted({
     ...(typeof input === "object" && input ? input : {}),
     operation: "retry_webhook_processing",
   })
 }
 
-export async function retryRefundStatusSync(input: unknown): Promise<ActionResult<SafeRetryResult>> {
+export async function retryRefundStatusSync(
+  input: unknown
+): Promise<ActionResult<SafeRetryResult>> {
   return recordAdminSafeRetryCompleted({
     ...(typeof input === "object" && input ? input : {}),
     operation: "retry_refund_status_sync",
   })
 }
 
-export async function recordAdminViewAuditEvent(input: AdminAuditInput): Promise<ActionResult<{ auditEventId: string }>> {
+export async function recordAdminViewAuditEvent(
+  input: AdminAuditInput
+): Promise<ActionResult<{ auditEventId: string }>> {
   const admin = await requireAdminForAction("retry_safe_technical_operation")
   const entityId = input.entityId?.trim()
   const entityType = input.entityType?.trim() ?? "admin_view"
@@ -142,18 +167,22 @@ export async function recordAdminViewAuditEvent(input: AdminAuditInput): Promise
     eventName,
     entityType,
     entityId,
-    metadata: input.metadata,
   })
 
   return actionSuccess({ auditEventId: audit.id })
 }
 
-export async function recordAdminSafeRetryStarted(input: unknown): Promise<ActionResult<SafeRetryResult>> {
+export async function recordAdminSafeRetryStarted(
+  input: unknown
+): Promise<ActionResult<SafeRetryResult>> {
   const admin = await requireAdminForAction("retry_safe_technical_operation")
   const parsed = adminSafeRetryInputSchema.safeParse(input)
 
   if (!parsed.success) {
-    return adminValidationFailure("Check the safe retry request.", parsed.error.flatten().fieldErrors)
+    return adminValidationFailure(
+      "Check the safe retry request.",
+      parsed.error.flatten().fieldErrors
+    )
   }
 
   await writeAdminAudit({
@@ -176,12 +205,17 @@ export async function recordAdminSafeRetryStarted(input: unknown): Promise<Actio
   })
 }
 
-export async function recordAdminSafeRetryCompleted(input: unknown): Promise<ActionResult<SafeRetryResult>> {
+export async function recordAdminSafeRetryCompleted(
+  input: unknown
+): Promise<ActionResult<SafeRetryResult>> {
   const admin = await requireAdminForAction("retry_safe_technical_operation")
   const parsed = adminSafeRetryInputSchema.safeParse(input)
 
   if (!parsed.success) {
-    return adminValidationFailure("Check the safe retry completion request.", parsed.error.flatten().fieldErrors)
+    return adminValidationFailure(
+      "Check the safe retry completion request.",
+      parsed.error.flatten().fieldErrors
+    )
   }
 
   await prisma.$transaction(async (tx) => {

@@ -77,57 +77,51 @@ export type PercentageBasisPoints = number
 export type Environment = "development" | "preview" | "production"
 export type SortDirection = "asc" | "desc"
 export type AsyncStatus = "idle" | "pending" | "success" | "error"
-export type PageMode =
-    | "default"
-    | "loading"
-    | "error"
-    | "empty"
-    | "blocked"
-    | "success"
+export type PageMode = "default" | "loading" | "error" | "empty" | "blocked" | "success"
 export type DeviceVariant = "desktop" | "mobile"
 
 export type ActionResult<T> =
-    | { ok: true; data: T }
-    | {
-          ok: false
-          code?: string
-          formError?: string
-          fieldErrors?: Record<string, string[]>
-      }
+  | { ok: true; data: T }
+  | {
+      ok: false
+      code?: string
+      formError?: string
+      fieldErrors?: Record<string, string[]>
+    }
 
 export interface PaginationInput {
-    page?: number
-    pageSize?: number
+  page?: number
+  pageSize?: number
 }
 
 export interface PaginationState {
-    page: number
-    pageSize: number
-    totalItems?: number
-    totalPages?: number
+  page: number
+  pageSize: number
+  totalItems?: number
+  totalPages?: number
 }
 
 export interface DateRangeInput {
-    from?: ISODateTime
-    to?: ISODateTime
+  from?: ISODateTime
+  to?: ISODateTime
 }
 
 export interface SelectOption<TValue extends string = string> {
-    value: TValue
-    label: string
-    disabled?: boolean
+  value: TValue
+  label: string
+  disabled?: boolean
 }
 
 export interface FieldErrorState {
-    field: string
-    message: string
+  field: string
+  message: string
 }
 
 export interface ServerErrorState {
-    code: string
-    title: string
-    message: string
-    retryable: boolean
+  code: string
+  title: string
+  message: string
+  retryable: boolean
 }
 ```
 
@@ -174,39 +168,33 @@ export function coerceMoneyCents(value: unknown): unknown
 # 2. `/types/marketing.ts`
 
 ```ts
-export type MarketingPageID =
-    | "home"
-    | "how_it_works"
-    | "pricing"
-    | "faq"
-    | "terms"
-    | "privacy"
+export type MarketingPageID = "home" | "how_it_works" | "pricing" | "faq" | "terms" | "privacy"
 
 export type MarketingCtaID =
-    | "create_vouch"
-    | "how_it_works"
-    | "sign_in"
-    | "get_started"
-    | "learn_principles"
+  | "create_vouch"
+  | "how_it_works"
+  | "sign_in"
+  | "get_started"
+  | "learn_principles"
 
 export type LegalPageID = "terms" | "privacy"
 
 export interface PublicNavigationItem {
-    label: string
-    href: string
-    external?: boolean
+  label: string
+  href: string
+  external?: boolean
 }
 
 export interface MarketingEventInput {
-    pageId: MarketingPageID
-    path: string
-    referrerDomain?: string
+  pageId: MarketingPageID
+  path: string
+  referrerDomain?: string
 }
 
 export interface MarketingCtaEventInput {
-    ctaId: MarketingCtaID
-    pageId: MarketingPageID
-    destination?: string
+  ctaId: MarketingCtaID
+  pageId: MarketingPageID
+  destination?: string
 }
 ```
 
@@ -237,61 +225,56 @@ Keep analytics minimal: page views and CTA clicks only. No provider discovery, s
 
 ```ts
 export type BaseRole =
-    | "anonymous"
-    | "authenticated_user"
-    | "admin"
-    | "system"
-    | "payment_provider"
-    | "auth_provider"
-    | "verification_provider"
+  | "anonymous"
+  | "authenticated_user"
+  | "admin"
+  | "system"
+  | "payment_provider"
+  | "auth_provider"
+  | "verification_provider"
 
 export type ContextualRole = "payer" | "payee" | "invited_payee_candidate"
 
-export type AuthEntryContext =
-    | "landing"
-    | "invite"
-    | "create_vouch"
-    | "dashboard"
-    | "unknown"
+export type AuthEntryContext = "landing" | "invite" | "create_vouch" | "dashboard" | "unknown"
 
 export type AuthPageVariant =
-    | "sign_in"
-    | "sign_in_error"
-    | "sign_up"
-    | "sign_up_from_invite"
-    | "sign_up_from_create_vouch"
-    | "verification_pending"
-    | "callback_loading"
-    | "auth_error"
-    | "signed_out_redirect"
+  | "sign_in"
+  | "sign_in_error"
+  | "sign_up"
+  | "sign_up_from_invite"
+  | "sign_up_from_create_vouch"
+  | "verification_pending"
+  | "callback_loading"
+  | "auth_error"
+  | "signed_out_redirect"
 
 export interface AuthRedirectContext {
-    entryContext: AuthEntryContext
-    returnTo?: string
-    inviteToken?: string
+  entryContext: AuthEntryContext
+  returnTo?: string
+  inviteToken?: string
 }
 
 export interface SessionUser {
-    id: UserID
-    clerkUserId: string
-    email?: string
-    displayName?: string
-    status: UserStatus
-    baseRole: BaseRole
+  id: UserID
+  clerkUserId: string
+  email?: string
+  displayName?: string
+  status: UserStatus
+  baseRole: BaseRole
 }
 
 export interface AuthzSnapshot {
-    userId: UserID
-    baseRole: BaseRole
-    contextualRoles: ContextualRole[]
-    isAdmin: boolean
-    isActive: boolean
+  userId: UserID
+  baseRole: BaseRole
+  contextualRoles: ContextualRole[]
+  isAdmin: boolean
+  isActive: boolean
 }
 
 export interface ClerkUserSyncInput {
-    clerkUserId: string
-    email?: string
-    displayName?: string
+  clerkUserId: string
+  email?: string
+  displayName?: string
 }
 ```
 
@@ -331,35 +314,30 @@ The auth layer must support Clerk-backed user sync, server-side authz, participa
 export type UserStatus = "active" | "disabled"
 
 export interface UserSafeIdentity {
-    userId: UserID
-    displayName?: string
-    email?: string
+  userId: UserID
+  displayName?: string
+  email?: string
 }
 
 export interface PrivateAccountInfo {
-    userId: UserID
-    email?: string
-    phone?: string
-    displayName?: string
-    status: UserStatus
+  userId: UserID
+  email?: string
+  phone?: string
+  displayName?: string
+  status: UserStatus
 }
 
 export interface ProfileBasicsInput {
-    displayName?: string
-    phone?: string
+  displayName?: string
+  phone?: string
 }
 
 export interface UserStatusChangeInput {
-    userId: UserID
-    reason?: string
+  userId: UserID
+  reason?: string
 }
 
-export type AccountPageVariant =
-    | "overview"
-    | "private_info"
-    | "disabled"
-    | "loading"
-    | "error"
+export type AccountPageVariant = "overview" | "private_info" | "disabled" | "loading" | "error"
 ```
 
 ## `/schema/user.ts`
@@ -387,47 +365,47 @@ Do not create public profile types. The page inventory explicitly forbids public
 
 ```ts
 export type SetupRequirement =
-    | "account_active"
-    | "identity_verified"
-    | "adult_verified"
-    | "payment_ready"
-    | "payout_ready"
-    | "terms_accepted"
+  | "account_active"
+  | "identity_verified"
+  | "adult_verified"
+  | "payment_ready"
+  | "payout_ready"
+  | "terms_accepted"
 
 export type SetupRequirementStatus =
-    | "complete"
-    | "pending"
-    | "requires_action"
-    | "blocked"
-    | "not_started"
-    | "failed"
+  | "complete"
+  | "pending"
+  | "requires_action"
+  | "blocked"
+  | "not_started"
+  | "failed"
 
 export type SetupActionContext =
-    | "create_vouch"
-    | "accept_vouch"
-    | "confirm_presence"
-    | "settings"
-    | "dashboard"
+  | "create_vouch"
+  | "accept_vouch"
+  | "confirm_presence"
+  | "settings"
+  | "dashboard"
 
 export interface SetupChecklistItemState {
-    requirement: SetupRequirement
-    status: SetupRequirementStatus
-    title: string
-    description: string
-    actionLabel?: string
-    blockedReason?: string
+  requirement: SetupRequirement
+  status: SetupRequirementStatus
+  title: string
+  description: string
+  actionLabel?: string
+  blockedReason?: string
 }
 
 export interface SetupGateResult {
-    allowed: boolean
-    actionContext: SetupActionContext
-    missingRequirements: SetupRequirement[]
-    blockedRequirements: SetupRequirement[]
+  allowed: boolean
+  actionContext: SetupActionContext
+  missingRequirements: SetupRequirement[]
+  blockedRequirements: SetupRequirement[]
 }
 
 export interface AcceptTermsInput {
-    termsVersion: string
-    returnTo?: string
+  termsVersion: string
+  returnTo?: string
 }
 ```
 
@@ -459,41 +437,41 @@ Setup must support incomplete, complete, blocked-by-verification, blocked-by-pay
 
 ```ts
 export type VerificationStatus =
-    | "unstarted"
-    | "pending"
-    | "verified"
-    | "rejected"
-    | "requires_action"
-    | "expired"
+  | "unstarted"
+  | "pending"
+  | "verified"
+  | "rejected"
+  | "requires_action"
+  | "expired"
 
 export type VerificationKind = "identity" | "adult"
 
 export interface VerificationStartInput {
-    kind: VerificationKind
-    returnTo?: string
+  kind: VerificationKind
+  returnTo?: string
 }
 
 export interface VerificationProviderReturnInput {
-    provider: "stripe_identity"
-    sessionId?: string
-    returnTo?: string
+  provider: "stripe_identity"
+  sessionId?: string
+  returnTo?: string
 }
 
 export interface VerificationStatusUpdateInput {
-    userId: UserID
-    identityStatus?: VerificationStatus
-    adultStatus?: VerificationStatus
-    providerReference?: string
-    failureCode?: string
+  userId: UserID
+  identityStatus?: VerificationStatus
+  adultStatus?: VerificationStatus
+  providerReference?: string
+  failureCode?: string
 }
 
 export type VerificationPageVariant =
-    | "start"
-    | "pending"
-    | "success"
-    | "rejected"
-    | "requires_action"
-    | "failed"
+  | "start"
+  | "pending"
+  | "success"
+  | "rejected"
+  | "requires_action"
+  | "failed"
 ```
 
 ## `/schema/verification.ts`
@@ -525,75 +503,71 @@ Verification states are canonical and must align with `unstarted`, `pending`, `v
 export type PaymentProvider = "stripe"
 export type VerificationProvider = "stripe_identity"
 
-export type PaymentReadinessStatus =
-    | "not_started"
-    | "requires_action"
-    | "ready"
-    | "failed"
+export type PaymentReadinessStatus = "not_started" | "requires_action" | "ready" | "failed"
 
 export type PayoutReadinessStatus =
-    | "not_started"
-    | "requires_action"
-    | "ready"
-    | "restricted"
-    | "failed"
+  | "not_started"
+  | "requires_action"
+  | "ready"
+  | "restricted"
+  | "failed"
 
 export type PaymentStatus =
-    | "not_started"
-    | "requires_payment_method"
-    | "authorized"
-    | "captured"
-    | "release_pending"
-    | "released"
-    | "refund_pending"
-    | "refunded"
-    | "voided"
-    | "failed"
+  | "not_started"
+  | "requires_payment_method"
+  | "authorized"
+  | "captured"
+  | "release_pending"
+  | "released"
+  | "refund_pending"
+  | "refunded"
+  | "voided"
+  | "failed"
 
 export type RefundStatus = "not_required" | "pending" | "succeeded" | "failed"
 
 export type RefundReason =
-    | "not_accepted"
-    | "confirmation_incomplete"
-    | "canceled_before_acceptance"
-    | "payment_failure"
-    | "provider_required"
+  | "not_accepted"
+  | "confirmation_incomplete"
+  | "canceled_before_acceptance"
+  | "payment_failure"
+  | "provider_required"
 
 export interface StartPaymentMethodSetupInput {
-    returnTo?: string
+  returnTo?: string
 }
 
 export interface StartPayoutOnboardingInput {
-    returnTo?: string
+  returnTo?: string
 }
 
 export interface PaymentProviderReturnInput {
-    provider: PaymentProvider
-    setupSessionId?: string
-    returnTo?: string
+  provider: PaymentProvider
+  setupSessionId?: string
+  returnTo?: string
 }
 
 export interface PaymentOperationInput {
-    vouchId: VouchID
-    idempotencyKey?: string
+  vouchId: VouchID
+  idempotencyKey?: string
 }
 
 export interface PaymentFailureInput {
-    vouchId?: VouchID
-    paymentRecordId?: ID
-    failureStage: PaymentFailureStage
-    failureCode?: string
-    safeMessage?: string
+  vouchId?: VouchID
+  paymentRecordId?: ID
+  failureStage: PaymentFailureStage
+  failureCode?: string
+  safeMessage?: string
 }
 
 export type PaymentFailureStage =
-    | "create"
-    | "accept"
-    | "confirm"
-    | "release"
-    | "refund"
-    | "webhook"
-    | "unknown"
+  | "create"
+  | "accept"
+  | "confirm"
+  | "release"
+  | "refund"
+  | "webhook"
+  | "unknown"
 ```
 
 ## `/schema/payment.ts`
@@ -642,142 +616,142 @@ This is the central type file. Keep it to domain enums, input shapes, state disc
 
 ```ts
 export type VouchStatus =
-    | "pending"
-    | "active"
-    | "completed"
-    | "expired"
-    | "refunded"
-    | "canceled"
-    | "failed"
+  | "pending"
+  | "active"
+  | "completed"
+  | "expired"
+  | "refunded"
+  | "canceled"
+  | "failed"
 
 export type InvitationStatus =
-    | "created"
-    | "sent"
-    | "opened"
-    | "accepted"
-    | "declined"
-    | "expired"
-    | "invalidated"
+  | "created"
+  | "sent"
+  | "opened"
+  | "accepted"
+  | "declined"
+  | "expired"
+  | "invalidated"
 
 export type ParticipantRole = "payer" | "payee"
 
 export type ConfirmationStatus =
-    | "not_confirmed"
-    | "confirmed"
-    | "ineligible"
-    | "window_not_open"
-    | "window_closed"
+  | "not_confirmed"
+  | "confirmed"
+  | "ineligible"
+  | "window_not_open"
+  | "window_closed"
 
 export type AggregateConfirmationStatus =
-    | "none_confirmed"
-    | "payer_confirmed"
-    | "payee_confirmed"
-    | "both_confirmed"
+  | "none_confirmed"
+  | "payer_confirmed"
+  | "payee_confirmed"
+  | "both_confirmed"
 
 export type ConfirmationMethod = "manual" | "gps" | "system"
 
 export type RecipientMethod = "email" | "share_link"
 
 export interface CreateVouchInput {
-    amountCents: MoneyCents
-    currency: CurrencyCode
-    meetingStartsAt: ISODateTime
-    confirmationOpensAt: ISODateTime
-    confirmationExpiresAt: ISODateTime
-    recipientMethod: RecipientMethod
-    recipientEmail?: string
-    label?: string
-    privateNote?: string
-    acceptedTerms: boolean
+  amountCents: MoneyCents
+  currency: CurrencyCode
+  meetingStartsAt: ISODateTime
+  confirmationOpensAt: ISODateTime
+  confirmationExpiresAt: ISODateTime
+  recipientMethod: RecipientMethod
+  recipientEmail?: string
+  label?: string
+  privateNote?: string
+  acceptedTerms: boolean
 }
 
 export interface CreateVouchDraftInput extends Partial<CreateVouchInput> {}
 
 export interface FeePreviewInput {
-    amountCents: MoneyCents
-    currency: CurrencyCode
+  amountCents: MoneyCents
+  currency: CurrencyCode
 }
 
 export interface SendVouchInvitationInput {
-    vouchId: VouchID
-    recipientEmail: string
+  vouchId: VouchID
+  recipientEmail: string
 }
 
 export interface ResendVouchInvitationInput {
-    vouchId: VouchID
+  vouchId: VouchID
 }
 
 export interface InviteTokenInput {
-    token: InvitationToken
+  token: InvitationToken
 }
 
 export interface AcceptVouchInput {
-    token: InvitationToken
-    acceptedTerms: boolean
+  token: InvitationToken
+  acceptedTerms: boolean
 }
 
 export interface DeclineVouchInput {
-    token: InvitationToken
-    reason?: string
+  token: InvitationToken
+  reason?: string
 }
 
 export interface CancelPendingVouchInput {
-    vouchId: VouchID
-    reason?: string
+  vouchId: VouchID
+  reason?: string
 }
 
 export interface ConfirmPresenceInput {
-    vouchId: VouchID
-    participantRole: ParticipantRole
-    method: ConfirmationMethod
+  vouchId: VouchID
+  participantRole: ParticipantRole
+  method: ConfirmationMethod
 }
 
 export interface VouchListQuery {
-    status?: VouchListStatusFilter
-    page?: number
-    sort?: VouchListSort
+  status?: VouchListStatusFilter
+  page?: number
+  sort?: VouchListSort
 }
 
 export type VouchListStatusFilter =
-    | "pending"
-    | "active"
-    | "completed"
-    | "expired"
-    | "refunded"
-    | "action_required"
-    | "all"
+  | "pending"
+  | "active"
+  | "completed"
+  | "expired"
+  | "refunded"
+  | "action_required"
+  | "all"
 
 export type VouchListSort = "newest" | "oldest" | "deadline"
 
 export type VouchDetailVariant =
-    | "pending_payer"
-    | "pending_invite_sent"
-    | "active_before_window"
-    | "active_window_open"
-    | "payer_confirmed_waiting_for_payee"
-    | "payee_confirmed_waiting_for_payer"
-    | "both_confirmed_processing_release"
-    | "completed"
-    | "expired"
-    | "refunded"
-    | "failed_payment"
-    | "failed_release"
-    | "failed_refund"
-    | "unauthorized_or_not_found"
-    | "loading"
+  | "pending_payer"
+  | "pending_invite_sent"
+  | "active_before_window"
+  | "active_window_open"
+  | "payer_confirmed_waiting_for_payee"
+  | "payee_confirmed_waiting_for_payer"
+  | "both_confirmed_processing_release"
+  | "completed"
+  | "expired"
+  | "refunded"
+  | "failed_payment"
+  | "failed_release"
+  | "failed_refund"
+  | "unauthorized_or_not_found"
+  | "loading"
 
 export type ConfirmPresenceVariant =
-    | "payer"
-    | "payee"
-    | "before_window"
-    | "window_open"
-    | "already_confirmed"
-    | "waiting_for_other_party"
-    | "both_confirmed_success"
-    | "window_closed"
-    | "duplicate_confirmation_error"
-    | "unauthorized_participant"
-    | "provider_payment_failure"
+  | "payer"
+  | "payee"
+  | "before_window"
+  | "window_open"
+  | "already_confirmed"
+  | "waiting_for_other_party"
+  | "both_confirmed_success"
+  | "window_closed"
+  | "duplicate_confirmation_error"
+  | "unauthorized_participant"
+  | "provider_payment_failure"
 ```
 
 ## `/schema/vouch.ts`
@@ -847,33 +821,33 @@ Vouch canonical states, invitation states, confirmation states, aggregate confir
 
 ```ts
 export type DashboardSectionID =
-    | "action_required"
-    | "active"
-    | "pending"
-    | "completed"
-    | "expired_refunded"
+  | "action_required"
+  | "active"
+  | "pending"
+  | "completed"
+  | "expired_refunded"
 
 export type DashboardVariant =
-    | "empty"
-    | "action_required"
-    | "active_vouches"
-    | "mixed_vouch_states"
-    | "payer_focused"
-    | "payee_focused"
-    | "loading"
-    | "error"
+  | "empty"
+  | "action_required"
+  | "active_vouches"
+  | "mixed_vouch_states"
+  | "payer_focused"
+  | "payee_focused"
+  | "loading"
+  | "error"
 
 export interface DashboardSearchParams {
-    status?: DashboardSectionID | "all"
-    page?: number
-    sort?: VouchListSort
+  status?: DashboardSectionID | "all"
+  page?: number
+  sort?: VouchListSort
 }
 
 export interface DashboardSectionState {
-    id: DashboardSectionID
-    title: string
-    count: number
-    collapsed?: boolean
+  id: DashboardSectionID
+  title: string
+  count: number
+  collapsed?: boolean
 }
 ```
 
@@ -901,32 +875,32 @@ Dashboard states and filtered Vouch list states are part of the required page in
 
 ```ts
 export type SettingsPageVariant =
-    | "overview"
-    | "profile_basics"
-    | "verification_status"
-    | "payment_readiness"
-    | "payout_readiness"
-    | "terms_legal_status"
-    | "account_disabled"
-    | "loading"
-    | "error"
+  | "overview"
+  | "profile_basics"
+  | "verification_status"
+  | "payment_readiness"
+  | "payout_readiness"
+  | "terms_legal_status"
+  | "account_disabled"
+  | "loading"
+  | "error"
 
 export type SettingsSectionID =
-    | "profile"
-    | "verification"
-    | "payment"
-    | "payout"
-    | "terms"
-    | "security"
+  | "profile"
+  | "verification"
+  | "payment"
+  | "payout"
+  | "terms"
+  | "security"
 
 export interface SettingsSearchParams {
-    section?: SettingsSectionID
-    returnTo?: string
+  section?: SettingsSectionID
+  returnTo?: string
 }
 
 export interface UpdateProfileBasicsInput {
-    displayName?: string
-    phone?: string
+  displayName?: string
+  phone?: string
 }
 ```
 
@@ -954,65 +928,65 @@ Settings/account pages require profile basics, private account info, verificatio
 
 ```ts
 export type AdminRouteSection =
-    | "dashboard"
-    | "vouches"
-    | "users"
-    | "payments"
-    | "webhooks"
-    | "audit"
+  | "dashboard"
+  | "vouches"
+  | "users"
+  | "payments"
+  | "webhooks"
+  | "audit"
 
 export type AdminPageVariant =
-    | "dashboard"
-    | "failure_heavy"
-    | "vouch_list"
-    | "vouch_detail"
-    | "user_list"
-    | "user_detail"
-    | "payment_list"
-    | "payment_detail"
-    | "webhook_event_list"
-    | "webhook_event_detail"
-    | "audit_log"
-    | "audit_event_detail"
-    | "safe_retry_confirmation"
-    | "safe_retry_success"
-    | "safe_retry_failure"
-    | "unauthorized"
+  | "dashboard"
+  | "failure_heavy"
+  | "vouch_list"
+  | "vouch_detail"
+  | "user_list"
+  | "user_detail"
+  | "payment_list"
+  | "payment_detail"
+  | "webhook_event_list"
+  | "webhook_event_detail"
+  | "audit_log"
+  | "audit_event_detail"
+  | "safe_retry_confirmation"
+  | "safe_retry_success"
+  | "safe_retry_failure"
+  | "unauthorized"
 
 export type AdminSafeRetryOperation =
-    | "retry_notification_send"
-    | "retry_provider_reconciliation"
-    | "retry_webhook_processing"
-    | "retry_refund_status_sync"
+  | "retry_notification_send"
+  | "retry_provider_reconciliation"
+  | "retry_webhook_processing"
+  | "retry_refund_status_sync"
 
 export interface AdminVouchFilterInput {
-    status?: VouchStatus
-    paymentStatus?: PaymentStatus
-    page?: number
-    sort?: "newest" | "oldest" | "deadline" | "failure"
+  status?: VouchStatus
+  paymentStatus?: PaymentStatus
+  page?: number
+  sort?: "newest" | "oldest" | "deadline" | "failure"
 }
 
 export interface AdminUserFilterInput {
-    status?: UserStatus
-    page?: number
-    sort?: "newest" | "oldest"
+  status?: UserStatus
+  page?: number
+  sort?: "newest" | "oldest"
 }
 
 export interface AdminPaymentFilterInput {
-    paymentStatus?: PaymentStatus
-    refundStatus?: RefundStatus
-    page?: number
+  paymentStatus?: PaymentStatus
+  refundStatus?: RefundStatus
+  page?: number
 }
 
 export interface AdminSafeRetryInput {
-    operation: AdminSafeRetryOperation
-    entityId: ID
-    reason?: string
+  operation: AdminSafeRetryOperation
+  entityId: ID
+  reason?: string
 }
 
 export interface AdminDisableUserInput {
-    userId: UserID
-    reason: string
+  userId: UserID
+  reason: string
 }
 ```
 
@@ -1049,87 +1023,87 @@ Admin states must stay operational only: dashboard, failure-heavy, Vouch/user/pa
 
 ```ts
 export type AuditActorType =
-    | "user"
-    | "system"
-    | "admin"
-    | "payment_provider"
-    | "auth_provider"
-    | "verification_provider"
+  | "user"
+  | "system"
+  | "admin"
+  | "payment_provider"
+  | "auth_provider"
+  | "verification_provider"
 
 export type AuditEntityType =
-    | "User"
-    | "VerificationProfile"
-    | "PaymentCustomer"
-    | "ConnectedAccount"
-    | "Vouch"
-    | "Invitation"
-    | "PresenceConfirmation"
-    | "PaymentRecord"
-    | "RefundRecord"
-    | "TermsAcceptance"
-    | "NotificationEvent"
-    | "PaymentWebhookEvent"
+  | "User"
+  | "VerificationProfile"
+  | "PaymentCustomer"
+  | "ConnectedAccount"
+  | "Vouch"
+  | "Invitation"
+  | "PresenceConfirmation"
+  | "PaymentRecord"
+  | "RefundRecord"
+  | "TermsAcceptance"
+  | "NotificationEvent"
+  | "PaymentWebhookEvent"
 
 export type AuditEventName =
-    | "user.created"
-    | "user.signed_in"
-    | "user.verification.started"
-    | "user.verification.completed"
-    | "user.verification.rejected"
-    | "user.payment_method.added"
-    | "user.connected_account.created"
-    | "user.connected_account.ready"
-    | "user.terms.accepted"
-    | "vouch.created"
-    | "vouch.invite.sent"
-    | "vouch.invite.opened"
-    | "vouch.accepted"
-    | "vouch.declined"
-    | "vouch.canceled"
-    | "vouch.confirmation_window.opened"
-    | "vouch.payer_confirmed"
-    | "vouch.payee_confirmed"
-    | "vouch.completed"
-    | "vouch.expired"
-    | "vouch.refunded"
-    | "vouch.failed"
-    | "payment.initialized"
-    | "payment.authorized"
-    | "payment.captured"
-    | "payment.release_requested"
-    | "payment.released"
-    | "payment.refund_requested"
-    | "payment.refunded"
-    | "payment.voided"
-    | "payment.failed"
-    | "payment.webhook_received"
-    | "payment.webhook_processed"
-    | "payment.webhook_ignored"
-    | "payment.reconciliation_failed"
-    | "admin.user.viewed"
-    | "admin.vouch.viewed"
-    | "admin.payment.viewed"
-    | "admin.retry.started"
-    | "admin.retry.completed"
-    | "admin.account.disabled"
+  | "user.created"
+  | "user.signed_in"
+  | "user.verification.started"
+  | "user.verification.completed"
+  | "user.verification.rejected"
+  | "user.payment_method.added"
+  | "user.connected_account.created"
+  | "user.connected_account.ready"
+  | "user.terms.accepted"
+  | "vouch.created"
+  | "vouch.invite.sent"
+  | "vouch.invite.opened"
+  | "vouch.accepted"
+  | "vouch.declined"
+  | "vouch.canceled"
+  | "vouch.confirmation_window.opened"
+  | "vouch.payer_confirmed"
+  | "vouch.payee_confirmed"
+  | "vouch.completed"
+  | "vouch.expired"
+  | "vouch.refunded"
+  | "vouch.failed"
+  | "payment.initialized"
+  | "payment.authorized"
+  | "payment.captured"
+  | "payment.release_requested"
+  | "payment.released"
+  | "payment.refund_requested"
+  | "payment.refunded"
+  | "payment.voided"
+  | "payment.failed"
+  | "payment.webhook_received"
+  | "payment.webhook_processed"
+  | "payment.webhook_ignored"
+  | "payment.reconciliation_failed"
+  | "admin.user.viewed"
+  | "admin.vouch.viewed"
+  | "admin.payment.viewed"
+  | "admin.retry.started"
+  | "admin.retry.completed"
+  | "admin.account.disabled"
 
 export interface WriteAuditEventInput {
-    eventName: AuditEventName
-    actorType: AuditActorType
-    actorUserId?: UserID
-    entityType: AuditEntityType
-    entityId: ID
-    requestId?: string
-    participantSafe?: boolean
-    metadata?: Record<string, unknown>
+  eventName: AuditEventName
+  actorType: AuditActorType
+  actorUserId?: UserID
+  entityType: AuditEntityType
+  entityId: ID
+  requestId?: string
+  participantSafe?: boolean
+  metadata?: Record<string, unknown>
 }
 
 export interface AuditFilterInput {
-    entityType?: AuditEntityType
-    entityId?: ID
-    actorType?: AuditActorType
-    eventName?: AuditEventName
-    page?: number
+  entityType?: AuditEntityType
+  entityId?: ID
+  actorType?: AuditActorType
+  eventName?: AuditEventName
+  page?: number
 }
 ```
 
@@ -1164,31 +1138,31 @@ export type NotificationChannel = "email"
 export type NotificationStatus = "queued" | "sent" | "failed" | "skipped"
 
 export type NotificationType =
-    | "invite"
-    | "vouch_accepted"
-    | "confirmation_window_open"
-    | "confirmation_recorded"
-    | "vouch_completed"
-    | "vouch_expired_refunded"
-    | "payment_failed"
+  | "invite"
+  | "vouch_accepted"
+  | "confirmation_window_open"
+  | "confirmation_recorded"
+  | "vouch_completed"
+  | "vouch_expired_refunded"
+  | "payment_failed"
 
 export interface QueueNotificationInput {
-    type: NotificationType
-    channel: NotificationChannel
-    recipientUserId?: UserID
-    recipientEmail?: string
-    vouchId?: VouchID
+  type: NotificationType
+  channel: NotificationChannel
+  recipientUserId?: UserID
+  recipientEmail?: string
+  vouchId?: VouchID
 }
 
 export interface SendQueuedNotificationInput {
-    notificationEventId: ID
+  notificationEventId: ID
 }
 
 export interface UpdateNotificationDeliveryStatusInput {
-    notificationEventId: ID
-    status: NotificationStatus
-    providerMessageId?: string
-    failureCode?: string
+  notificationEventId: ID
+  status: NotificationStatus
+  providerMessageId?: string
+  failureCode?: string
 }
 ```
 
@@ -1220,67 +1194,67 @@ The required notification/email states include invite, accepted, confirmation wi
 
 ```ts
 export type AnalyticsEventGroup =
-    | "acquisition"
-    | "setup"
-    | "vouch"
-    | "payment"
-    | "notification"
-    | "admin"
+  | "acquisition"
+  | "setup"
+  | "vouch"
+  | "payment"
+  | "notification"
+  | "admin"
 
 export type AnalyticsEventName =
-    | "marketing.page_viewed"
-    | "marketing.cta_clicked"
-    | "auth.sign_up_started"
-    | "auth.sign_up_completed"
-    | "auth.sign_in_completed"
-    | "setup.checklist_viewed"
-    | "setup.verification_started"
-    | "setup.verification_completed"
-    | "setup.verification_failed"
-    | "setup.payment_started"
-    | "setup.payment_ready"
-    | "setup.payout_started"
-    | "setup.payout_ready"
-    | "setup.terms_accepted"
-    | "vouch.create_started"
-    | "vouch.create_submitted"
-    | "vouch.created"
-    | "vouch.invite_copied"
-    | "vouch.invite_sent"
-    | "vouch.invite_opened"
-    | "vouch.accept_started"
-    | "vouch.accepted"
-    | "vouch.declined"
-    | "vouch.canceled"
-    | "vouch.confirmation_window_opened"
-    | "vouch.confirmation_submitted"
-    | "vouch.partially_confirmed"
-    | "vouch.completed"
-    | "vouch.expired"
-    | "vouch.refunded"
-    | "vouch.failed"
-    | "payment.initialized"
-    | "payment.authorized"
-    | "payment.release_requested"
-    | "payment.released"
-    | "payment.refund_requested"
-    | "payment.refunded"
-    | "payment.failed"
-    | "notification.queued"
-    | "notification.sent"
-    | "notification.failed"
-    | "admin.dashboard_viewed"
-    | "admin.vouch_viewed"
-    | "admin.safe_retry_started"
-    | "admin.safe_retry_completed"
+  | "marketing.page_viewed"
+  | "marketing.cta_clicked"
+  | "auth.sign_up_started"
+  | "auth.sign_up_completed"
+  | "auth.sign_in_completed"
+  | "setup.checklist_viewed"
+  | "setup.verification_started"
+  | "setup.verification_completed"
+  | "setup.verification_failed"
+  | "setup.payment_started"
+  | "setup.payment_ready"
+  | "setup.payout_started"
+  | "setup.payout_ready"
+  | "setup.terms_accepted"
+  | "vouch.create_started"
+  | "vouch.create_submitted"
+  | "vouch.created"
+  | "vouch.invite_copied"
+  | "vouch.invite_sent"
+  | "vouch.invite_opened"
+  | "vouch.accept_started"
+  | "vouch.accepted"
+  | "vouch.declined"
+  | "vouch.canceled"
+  | "vouch.confirmation_window_opened"
+  | "vouch.confirmation_submitted"
+  | "vouch.partially_confirmed"
+  | "vouch.completed"
+  | "vouch.expired"
+  | "vouch.refunded"
+  | "vouch.failed"
+  | "payment.initialized"
+  | "payment.authorized"
+  | "payment.release_requested"
+  | "payment.released"
+  | "payment.refund_requested"
+  | "payment.refunded"
+  | "payment.failed"
+  | "notification.queued"
+  | "notification.sent"
+  | "notification.failed"
+  | "admin.dashboard_viewed"
+  | "admin.vouch_viewed"
+  | "admin.safe_retry_started"
+  | "admin.safe_retry_completed"
 
 export interface TrackAnalyticsEventInput {
-    eventName: AnalyticsEventName
-    occurredAt?: ISODateTime
-    userId?: UserID
-    sessionId?: string
-    requestId?: string
-    properties?: Record<string, unknown>
+  eventName: AnalyticsEventName
+  occurredAt?: ISODateTime
+  userId?: UserID
+  sessionId?: string
+  requestId?: string
+  properties?: Record<string, unknown>
 }
 ```
 
@@ -1314,42 +1288,42 @@ Explicitly prohibit raw card data, raw identity documents, detailed meeting purp
 
 ```ts
 export type SystemPageVariant =
-    | "global_loading"
-    | "route_loading_skeleton"
-    | "global_error"
-    | "protected_route_unauthorized"
-    | "entity_not_found"
-    | "toast_notification"
-    | "form_validation_error"
-    | "server_action_failure"
-    | "payment_provider_unavailable"
-    | "maintenance"
-    | "degraded_service"
+  | "global_loading"
+  | "route_loading_skeleton"
+  | "global_error"
+  | "protected_route_unauthorized"
+  | "entity_not_found"
+  | "toast_notification"
+  | "form_validation_error"
+  | "server_action_failure"
+  | "payment_provider_unavailable"
+  | "maintenance"
+  | "degraded_service"
 
 export type ToastIntent = "success" | "info" | "warning" | "error"
 
 export interface ToastState {
-    intent: ToastIntent
-    title: string
-    message?: string
+  intent: ToastIntent
+  title: string
+  message?: string
 }
 
 export interface ProtectedRouteUnauthorizedInput {
-    path: string
-    requiredRole?: BaseRole
-    requiredCapability?: string
+  path: string
+  requiredRole?: BaseRole
+  requiredCapability?: string
 }
 
 export interface EntityNotFoundInput {
-    entityType: string
-    entityId?: string
+  entityType: string
+  entityId?: string
 }
 
 export interface ServerActionFailureInput {
-    actionName: string
-    code?: string
-    message?: string
-    requestId?: string
+  actionName: string
+  code?: string
+  message?: string
+  requestId?: string
 }
 ```
 

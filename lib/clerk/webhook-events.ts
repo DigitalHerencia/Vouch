@@ -1,8 +1,4 @@
-export type ClerkWebhookEventType =
-  | "user.created"
-  | "user.updated"
-  | "user.deleted"
-  | string
+export type ClerkWebhookEventType = "user.created" | "user.updated" | "user.deleted" | string
 
 export type ClerkWebhookUserData = {
   id: string

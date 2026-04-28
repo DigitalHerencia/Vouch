@@ -1,27 +1,25 @@
-import type { Metadata, Viewport } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
-import { Archivo, JetBrains_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next"
+import { ClerkProvider } from "@clerk/nextjs"
+import { Archivo, JetBrains_Mono } from "next/font/google"
 
-import "./globals.css";
+import "./globals.css"
 
 const archivo = Archivo({
   variable: "--font-sans",
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600", "700", "800", "900"],
-});
+})
 
 const jetBrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600", "700", "800"],
-});
+})
 
 const appUrl =
-  process.env.NEXT_PUBLIC_APP_URL ??
-  process.env.NEXT_PUBLIC_SITE_URL ??
-  "http://localhost:3000";
+  process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
@@ -76,7 +74,7 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/site.webmanifest",
-};
+}
 
 export const viewport: Viewport = {
   themeColor: "#050807",
@@ -84,11 +82,11 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 1,
-};
+}
 
 type RootLayoutProps = Readonly<{
-  children: React.ReactNode;
-}>;
+  children: React.ReactNode
+}>
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
@@ -101,5 +99,5 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <body>{children}</body>
       </html>
     </ClerkProvider>
-  );
+  )
 }

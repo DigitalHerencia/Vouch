@@ -19,7 +19,12 @@ export async function createVerificationProfileTx(tx: Tx, input: { userId: strin
 
 export async function updateIdentityVerificationStatusTx(
   tx: Tx,
-  input: { userId: string; status: VerificationStatus; providerReference?: string; failureCode?: string },
+  input: {
+    userId: string
+    status: VerificationStatus
+    providerReference?: string
+    failureCode?: string
+  }
 ) {
   return updateVerificationProfileTx(tx, {
     ...input,
@@ -29,7 +34,12 @@ export async function updateIdentityVerificationStatusTx(
 
 export async function updateAdultVerificationStatusTx(
   tx: Tx,
-  input: { userId: string; status: VerificationStatus; providerReference?: string; failureCode?: string },
+  input: {
+    userId: string
+    status: VerificationStatus
+    providerReference?: string
+    failureCode?: string
+  }
 ) {
   return updateVerificationProfileTx(tx, {
     ...input,
@@ -39,7 +49,7 @@ export async function updateAdultVerificationStatusTx(
 
 export async function updateVerificationProviderReferenceTx(
   tx: Tx,
-  input: { userId: string; providerReference?: string },
+  input: { userId: string; providerReference?: string }
 ) {
   return updateVerificationProfileTx(tx, input)
 }
@@ -60,7 +70,10 @@ export async function markVerificationVerifiedTx(tx: Tx, input: { userId: string
   })
 }
 
-export async function markVerificationRejectedTx(tx: Tx, input: { userId: string; failureCode?: string }) {
+export async function markVerificationRejectedTx(
+  tx: Tx,
+  input: { userId: string; failureCode?: string }
+) {
   return updateVerificationProfileTx(tx, {
     userId: input.userId,
     identityStatus: "rejected",
@@ -95,7 +108,7 @@ export async function updateVerificationProfileTx(
     payoutReadiness?: PayoutReadinessStatus
     providerReference?: string
     failureCode?: string
-  },
+  }
 ) {
   return tx.verificationProfile.upsert({
     where: { userId: input.userId },
@@ -113,7 +126,9 @@ export async function updateVerificationProfileTx(
       ...(input.adultStatus ? { adultStatus: input.adultStatus } : {}),
       ...(input.paymentReadiness ? { paymentReadiness: input.paymentReadiness } : {}),
       ...(input.payoutReadiness ? { payoutReadiness: input.payoutReadiness } : {}),
-      ...(input.providerReference ? { provider: "stripe_identity", providerReference: input.providerReference } : {}),
+      ...(input.providerReference
+        ? { provider: "stripe_identity", providerReference: input.providerReference }
+        : {}),
     },
   })
 }

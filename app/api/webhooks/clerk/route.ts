@@ -13,6 +13,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true, ignored: result.ignored })
   } catch {
-    return NextResponse.json({ ok: false, error: "Invalid Clerk webhook signature or payload." }, { status: 400 })
+    return NextResponse.json(
+      { ok: false, error: "Invalid Clerk webhook signature or payload." },
+      { status: 400 }
+    )
   }
 }
