@@ -1,31 +1,103 @@
-"use server"
+import "server-only"
 
-// Auto-generated action stubs. Implement authenticate -> authorize -> validate -> transact -> audit -> revalidate.
+import type { Prisma } from "@/prisma/generated/prisma/client"
 
-export async function writeAuditEvent(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/auditActions.ts")
+const latestTermsAcceptanceArgs = {
+  orderBy: { acceptedAt: "desc" },
+  take: 1,
+  select: {
+    id: true,
+    userId: true,
+    termsVersion: true,
+    acceptedAt: true,
+  },
+} as const
+
+const authReadinessSelect = {
+  verificationProfile: {
+    select: {
+      identityStatus: true,
+      adultStatus: true,
+      paymentReadiness: true,
+      payoutReadiness: true,
+    },
+  },
+  paymentCustomer: {
+    select: {
+      readiness: true,
+      defaultPaymentMethodReady: true,
+    },
+  },
+  connectedAccount: {
+    select: {
+      readiness: true,
+      chargesEnabled: true,
+      payoutsEnabled: true,
+      detailsSubmitted: true,
+    },
+  },
+  termsAcceptances: latestTermsAcceptanceArgs,
+} as const
+
+export const currentUserAuthSelect = {
+  id: true,
+  clerkUserId: true,
+  email: true,
+  displayName: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+  ...authReadinessSelect,
 }
+export const activeUserGateSelect = {
+  id: true,
+  status: true,
+} as const satisfies Prisma.UserSelect
 
-export async function writeUserAuditEvent(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/auditActions.ts")
-}
+export const adminCapabilitySelect = {
+  id: true,
+  status: true,
+  clerkUserId: true,
+  email: true,
+} as const satisfies Prisma.UserSelect
 
-export async function writeVouchAuditEvent(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/auditActions.ts")
-}
+export const contextualParticipantRoleSelect = {
+  id: true,
+  payerId: true,
+  payeeId: true,
+  status: true,
+} as const satisfies Prisma.VouchSelect
 
-export async function writePaymentAuditEvent(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/auditActions.ts")
-}
+export const inviteCandidateAuthSelect = {
+  id: true,
+  tokenHash: true,
+  recipientEmail: true,
+  status: true,
+  expiresAt: true,
+  vouch: {
+    select: {
+      id: true,
+      publicId: true,
+      payerId: true,
+      payeeId: true,
+      status: true,
+      amountCents: true,
+      currency: true,
+      platformFeeCents: true,
+      meetingStartsAt: true,
+      confirmationOpensAt: true,
+      confirmationExpiresAt: true,
+    },
+  },
+} as const satisfies Prisma.InvitationSelect
 
-export async function writeWebhookAuditEvent(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/auditActions.ts")
-}
-
-export async function writeAdminAuditEvent(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/auditActions.ts")
-}
-
-export async function writeNotificationAuditEvent(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/auditActions.ts")
-}
+export const authWebhookUserSyncSelect = {
+  id: true,
+  clerkUserId: true,
+  email: true,
+  phone: true,
+  displayName: true,
+  status: true,
+  createdAt: true,
+  updatedAt: true,
+} as const satisfies Prisma.UserSelect

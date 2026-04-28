@@ -1,10 +1,55 @@
 import "server-only"
 
-// Auto-generated Prisma select/include projection stubs.
-// Replace empty objects with Prisma-safe select shapes before wiring fetchers.
+import type { Prisma } from "@/prisma/generated/prisma/client"
 
-export const notificationEventListItemSelect = {} as const
-export const notificationEventDetailSelect = {} as const
-export const notificationDeliveryStateSelect = {} as const
-export const vouchNotificationEventsSelect = {} as const
-export const adminNotificationEventSelect = {} as const
+export const notificationEventListItemSelect = {
+  id: true,
+  recipientUserId: true,
+  vouchId: true,
+  eventName: true,
+  channel: true,
+  status: true,
+  providerMessageId: true,
+  errorCode: true,
+  createdAt: true,
+  sentAt: true,
+  failedAt: true,
+} as const satisfies Prisma.NotificationEventSelect
+
+export const notificationEventDetailSelect = {
+  ...notificationEventListItemSelect,
+  recipient: {
+    select: {
+      id: true,
+      email: true,
+      displayName: true,
+      status: true,
+    },
+  },
+  vouch: {
+    select: {
+      id: true,
+      publicId: true,
+      status: true,
+      payerId: true,
+      payeeId: true,
+    },
+  },
+} as const satisfies Prisma.NotificationEventSelect
+
+export const notificationDeliveryStateSelect = notificationEventListItemSelect
+
+export const vouchNotificationEventsSelect = {
+  id: true,
+  eventName: true,
+  channel: true,
+  status: true,
+  recipientUserId: true,
+  vouchId: true,
+  errorCode: true,
+  createdAt: true,
+  sentAt: true,
+  failedAt: true,
+} as const satisfies Prisma.NotificationEventSelect
+
+export const adminNotificationEventSelect = notificationEventDetailSelect

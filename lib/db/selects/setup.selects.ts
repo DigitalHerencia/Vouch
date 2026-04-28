@@ -1,12 +1,56 @@
 import "server-only"
 
-// Auto-generated Prisma select/include projection stubs.
-// Replace empty objects with Prisma-safe select shapes before wiring fetchers.
+import type { Prisma } from "@/prisma/generated/prisma/client"
 
-export const setupChecklistSelect = {} as const
-export const setupProgressSelect = {} as const
-export const createVouchSetupGateSelect = {} as const
-export const acceptVouchSetupGateSelect = {} as const
-export const confirmPresenceSetupGateSelect = {} as const
-export const accountReadinessSummarySelect = {} as const
-export const termsAcceptanceStatusSelect = {} as const
+const latestTermsAcceptanceArgs = {
+  orderBy: { acceptedAt: "desc" },
+  take: 1,
+  select: {
+    id: true,
+    userId: true,
+    termsVersion: true,
+    acceptedAt: true,
+  },
+} as const
+
+export const setupChecklistSelect = {
+  id: true,
+  status: true,
+  verificationProfile: {
+    select: {
+      identityStatus: true,
+      adultStatus: true,
+      paymentReadiness: true,
+      payoutReadiness: true,
+      updatedAt: true,
+    },
+  },
+  paymentCustomer: {
+    select: {
+      updatedAt: true,
+    },
+  },
+  connectedAccount: {
+    select: {
+      readiness: true,
+      chargesEnabled: true,
+      payoutsEnabled: true,
+      detailsSubmitted: true,
+      updatedAt: true,
+    },
+  },
+  termsAcceptances: latestTermsAcceptanceArgs,
+} as const satisfies Prisma.UserSelect
+
+export const setupProgressSelect = setupChecklistSelect
+export const createVouchSetupGateSelect = setupChecklistSelect
+export const acceptVouchSetupGateSelect = setupChecklistSelect
+export const confirmPresenceSetupGateSelect = setupChecklistSelect
+export const accountReadinessSummarySelect = setupChecklistSelect
+
+export const termsAcceptanceStatusSelect = {
+  id: true,
+  userId: true,
+  termsVersion: true,
+  acceptedAt: true,
+} as const satisfies Prisma.TermsAcceptanceSelect
