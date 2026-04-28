@@ -7,7 +7,12 @@
   "policy": {
     "append_only_preferred": true,
     "business_logic_allowed": false,
-    "status_values": ["completed", "in_progress", "blocked", "not_started"]
+    "status_values": [
+      "completed",
+      "in_progress",
+      "blocked",
+      "not_started"
+    ]
   },
   "current_phase": "repo_implementation",
   "implementation_status": "in_progress",
@@ -56,7 +61,9 @@
       "category": "agents",
       "title": "Generated repo-level AGENTS.md guidance",
       "summary": "Created Codex-oriented AGENTS.md instructions and 8000-character condensed variant.",
-      "files": ["AGENTS.md"],
+      "files": [
+        "AGENTS.md"
+      ],
       "validation_status": "not_run",
       "notes": "AGENTS.md summarizes implementation rules, stop conditions, and reporting format."
     },
@@ -161,7 +168,9 @@
       "category": "handoff",
       "title": "Generated ChatGPT MVP onboarding audit",
       "summary": "Created a takeover-oriented audit report summarizing source-of-truth files, current scaffold burden, MVP critical path, risks, stop conditions, and a ready-to-use ChatGPT onboarding prompt.",
-      "files": [".agents/reports/chatgpt-mvp-onboarding-audit.md"],
+      "files": [
+        ".agents/reports/chatgpt-mvp-onboarding-audit.md"
+      ],
       "validation_status": "not_run",
       "notes": "Documentation-only handoff artifact. No code validation was run."
     },
@@ -190,6 +199,29 @@
       ],
       "validation_status": "partial_pass",
       "notes": "pnpm prisma:validate, pnpm validate:contracts, pnpm typecheck, and pnpm test pass. pnpm lint still fails on existing scaffold no-explicit-any errors and copied Stripe sample code React lint errors."
+    },
+    {
+      "id": "PRG-010",
+      "date": "2026-04-28",
+      "status": "completed",
+      "category": "implementation",
+      "title": "Made Stripe provider state authoritative",
+      "summary": "Consolidated Stripe provider helpers, moved authorization/readiness updates behind Stripe-confirmed state, restricted user-callable release/refund actions, implemented system expiration/reconciliation jobs, and updated webhook refund reconciliation to mark Vouches refunded on provider success.",
+      "files": [
+        "lib/integrations/stripe/client.ts",
+        "lib/integrations/stripe/connect.ts",
+        "lib/integrations/stripe/identity.ts",
+        "lib/integrations/stripe/payment-intents.ts",
+        "lib/payments/adapters/stripe-payment-adapter.ts",
+        "lib/actions/paymentActions.ts",
+        "lib/actions/verificationActions.ts",
+        "lib/jobs/expire-vouches.ts",
+        "lib/jobs/reconcile-payments.ts",
+        "lib/payments/webhooks/process-stripe-webhook.ts",
+        "lib/stripe/status-map.ts"
+      ],
+      "validation_status": "partial_pass",
+      "notes": "pnpm typecheck passed after this work. Full lint/test were intentionally not re-run per launch/token-priority instruction; earlier lint was already failing on scaffold/sample-code issues."
     }
   ],
   "next_expected_phase": "repo_implementation",

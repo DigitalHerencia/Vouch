@@ -7,12 +7,18 @@
   "policy": {
     "business_logic_allowed": false,
     "truthfulness_required": true,
-    "status_values": ["pass", "fail", "not_run", "blocked", "not_applicable"],
+    "status_values": [
+      "pass",
+      "fail",
+      "not_run",
+      "blocked",
+      "not_applicable"
+    ],
     "evidence_required_for_pass": true
   },
   "summary": {
     "overall_status": "fail",
-    "reason": "Phase 0 validation restored: contract validation, Prisma validation, typecheck, and unit tests pass. pnpm lint still fails on existing scaffold any-typing and copied Stripe sample code issues.",
+    "reason": "Stripe provider-authoritative backend work typechecks. Full validation remains incomplete because pnpm lint had known scaffold/sample-code failures and full tests were not re-run after this phase per token conservation instruction.",
     "latest_validation_at": "2026-04-28T00:00:00.000Z",
     "latest_validator": "Codex"
   },
@@ -27,7 +33,7 @@
       "id": "CMD-002",
       "command": "pnpm typecheck",
       "status": "pass",
-      "evidence": "Ran 2026-04-28. next typegen and tsc --noEmit completed successfully after select/schema/type alignment fixes."
+      "evidence": "Ran 2026-04-28 after Stripe provider-authoritative backend edits. next typegen and tsc --noEmit completed successfully."
     },
     {
       "id": "CMD-003",
@@ -180,15 +186,15 @@
       "id": "payment_provider_sandbox",
       "severity": "critical",
       "status": "blocked",
-      "evidence": null,
-      "notes": "Blocked until exact Stripe Connect flow is selected and implemented."
+      "evidence": "Backend now uses Stripe-confirmed readiness/authorization paths and system-only release/refund, but sandbox live payment verification was not run.",
+      "notes": "Requires Stripe sandbox end-to-end run with real configured account/webhook before production."
     },
     {
       "id": "webhook_idempotency",
       "severity": "critical",
       "status": "pass",
-      "evidence": "Clerk webhook handling uses ProviderWebhookEvent unique provider/event ID ledger and focused provider webhook status tests passed.",
-      "notes": "Stripe webhook idempotency remains separately covered by payment implementation work."
+      "evidence": "Stripe webhook processor records provider events by unique provider/event ID and ignores already processed ledger records; refund success updates RefundRecord, PaymentRecord, and Vouch state.",
+      "notes": "Concurrency stress testing still not run."
     },
     {
       "id": "route_access_control",
@@ -302,6 +308,11 @@
       "id": "VAL-NOTE-004",
       "date": "2026-04-28",
       "message": "Phase 0 validation restoration completed: added scripts/validate-contracts.mjs, aligned PaymentRecord.lastErrorMessage, corrected Prisma client output/shadow DB config, fixed typecheck blockers, regenerated Prisma, and ran validation. pnpm lint still fails on existing scaffold/sample-code issues."
+    },
+    {
+      "id": "VAL-NOTE-005",
+      "date": "2026-04-28",
+      "message": "Phase 2-4 backend payment work: pnpm typecheck passed. Full lint/test/prisma/contracts were not re-run after these edits by instruction to conserve tokens and prioritize production code."
     }
   ]
 }

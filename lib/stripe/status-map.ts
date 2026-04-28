@@ -25,7 +25,7 @@ export function mapStripePaymentIntentStatus(
     case "requires_confirmation":
     case "requires_action":
     case "processing":
-      return "authorized"
+      return "requires_payment_method"
     case "requires_capture":
       return "authorized"
     case "succeeded":

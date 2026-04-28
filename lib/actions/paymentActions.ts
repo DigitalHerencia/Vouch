@@ -8,9 +8,13 @@ import { requireActiveUser } from "@/lib/auth/current-user"
 import { assertCapability } from "@/lib/authz/capabilities"
 import { prisma } from "@/lib/db/prisma"
 import {
+  createStripeConnectAccount,
+  createStripeConnectOnboardingLink,
+  refreshStripeConnectReadiness,
+} from "@/lib/integrations/stripe/connect"
+import { getStripeServerClient } from "@/lib/integrations/stripe/client"
+import {
   initializeStripePaymentForVouch,
-  refundOrVoidStripePaymentForVouch,
-  releaseStripePaymentForCompletedVouch,
 } from "@/lib/payments/adapters/stripe-payment-adapter"
 import {
   authorizeVouchPaymentInputSchema,
@@ -57,6 +61,7 @@ type ReadinessResult = {
 
 type ProviderRedirectResult = {
   redirectTo: string
+  clientSecret?: string | null
 }
 
 type WebhookRecordResult = {
@@ -91,6 +96,13 @@ function normalizeInternalReturnTo(value: string | undefined, fallback: string):
   if (value.startsWith("//")) return fallback
   if (value.includes("://")) return fallback
   return value
+}
+
+function getAppUrl(): string {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+  )
 }
 
 async function revalidatePaymentSurfaces(input: {
@@ -197,7 +209,38 @@ export async function startPaymentMethodSetup(
     )
   }
 
+  const stripe = getStripeServerClient()
+  const customer = await prisma.paymentCustomer.findUnique({
+    where: { userId: user.id },
+    select: { providerCustomerId: true },
+  })
+  const providerCustomerId =
+    customer?.providerCustomerId ??
+    (
+      await stripe.customers.create(
+        {
+          ...(user.email ? { email: user.email } : {}),
+          ...(user.displayName ? { name: user.displayName } : {}),
+          metadata: { vouch_user_id: user.id },
+        },
+        { idempotencyKey: `user:${user.id}:stripe_customer` }
+      )
+    ).id
+  const setupIntent = await stripe.setupIntents.create(
+    {
+      customer: providerCustomerId,
+      usage: "off_session",
+      metadata: { vouch_user_id: user.id },
+    },
+    { idempotencyKey: `user:${user.id}:setup_intent` }
+  )
+
   await prisma.$transaction(async (tx) => {
+    await tx.paymentCustomer.upsert({
+      where: { userId: user.id },
+      create: { userId: user.id, providerCustomerId },
+      update: { providerCustomerId },
+    })
     await tx.verificationProfile.upsert({
       where: { userId: user.id },
       create: {
@@ -227,7 +270,10 @@ export async function startPaymentMethodSetup(
   await revalidatePaymentSurfaces({ userId: user.id })
 
   const returnTo = normalizeInternalReturnTo(parsed.data.returnTo, "/settings/payment")
-  redirect(`/settings/payment?returnTo=${encodeURIComponent(returnTo)}`)
+  return actionSuccess({
+    redirectTo: `/settings/payment?returnTo=${encodeURIComponent(returnTo)}`,
+    clientSecret: setupIntent.client_secret ?? null,
+  })
 }
 
 export async function handlePaymentMethodSetupReturn(
@@ -248,15 +294,31 @@ export async function handlePaymentMethodSetupReturn(
     return actionFailure("UNSUPPORTED_PROVIDER", "Unsupported payment provider.")
   }
 
+  const setupIntentId = parsed.data.setupSessionId
+  if (!setupIntentId) {
+    return actionFailure("PROVIDER_REFERENCE_REQUIRED", "Stripe setup reference is required.")
+  }
+
+  const setupIntent = await getStripeServerClient().setupIntents.retrieve(setupIntentId)
+  const readiness = setupIntent.status === "succeeded" ? "ready" : "requires_action"
+
+  if (setupIntent.customer && typeof setupIntent.customer === "string") {
+    await prisma.paymentCustomer.upsert({
+      where: { userId: user.id },
+      create: { userId: user.id, providerCustomerId: setupIntent.customer },
+      update: { providerCustomerId: setupIntent.customer },
+    })
+  }
+
   await prisma.$transaction(async (tx) => {
     await tx.verificationProfile.upsert({
       where: { userId: user.id },
       create: {
         userId: user.id,
-        paymentReadiness: "ready",
+        paymentReadiness: readiness,
       },
       update: {
-        paymentReadiness: "ready",
+        paymentReadiness: readiness,
       },
     })
 
@@ -280,7 +342,7 @@ export async function handlePaymentMethodSetupReturn(
 
   return actionSuccess({
     userId: user.id,
-    readiness: "ready",
+    readiness,
   })
 }
 
@@ -304,15 +366,16 @@ export async function refreshPaymentReadiness(
     return actionFailure("AUTHZ_DENIED", "You cannot refresh another user's payment readiness.")
   }
 
+  const customer = await prisma.paymentCustomer.findUnique({
+    where: { userId: targetUserId },
+    select: { providerCustomerId: true },
+  })
+  const readiness = customer ? "ready" : "not_started"
   const profile = await prisma.verificationProfile.upsert({
     where: { userId: targetUserId },
-    create: {
-      userId: targetUserId,
-    },
-    update: {},
-    select: {
-      paymentReadiness: true,
-    },
+    create: { userId: targetUserId, paymentReadiness: readiness },
+    update: { paymentReadiness: readiness },
+    select: { paymentReadiness: true },
   })
 
   await revalidatePaymentSurfaces({ userId: targetUserId })
@@ -337,7 +400,33 @@ export async function startPayoutOnboarding(
     )
   }
 
+  const existing = await prisma.connectedAccount.findUnique({
+    where: { userId: user.id },
+    select: { providerAccountId: true },
+  })
+  const providerAccountId =
+    existing?.providerAccountId ??
+    (
+      await createStripeConnectAccount({
+        userId: user.id,
+        email: user.email,
+        displayName: user.displayName,
+      })
+    ).providerAccountId
+  const appUrl = getAppUrl()
+  const returnTo = normalizeInternalReturnTo(parsed.data.returnTo, "/settings/payout")
+  const link = await createStripeConnectOnboardingLink({
+    providerAccountId,
+    refreshUrl: `${appUrl}/settings/payout?returnTo=${encodeURIComponent(returnTo)}`,
+    returnUrl: `${appUrl}/settings/payout?provider=stripe&setupSessionId=${encodeURIComponent(providerAccountId)}&returnTo=${encodeURIComponent(returnTo)}`,
+  })
+
   await prisma.$transaction(async (tx) => {
+    await tx.connectedAccount.upsert({
+      where: { userId: user.id },
+      create: { userId: user.id, providerAccountId, readiness: "requires_action" },
+      update: { providerAccountId, readiness: "requires_action" },
+    })
     await tx.verificationProfile.upsert({
       where: { userId: user.id },
       create: {
@@ -366,8 +455,7 @@ export async function startPayoutOnboarding(
 
   await revalidatePaymentSurfaces({ userId: user.id })
 
-  const returnTo = normalizeInternalReturnTo(parsed.data.returnTo, "/settings/payout")
-  redirect(`/settings/payout?returnTo=${encodeURIComponent(returnTo)}`)
+  redirect(link.url)
 }
 
 export async function handlePayoutOnboardingReturn(
@@ -388,15 +476,38 @@ export async function handlePayoutOnboardingReturn(
     return actionFailure("UNSUPPORTED_PROVIDER", "Unsupported payout provider.")
   }
 
+  const accountId = parsed.data.setupSessionId
+  if (!accountId) {
+    return actionFailure("PROVIDER_REFERENCE_REQUIRED", "Stripe account reference is required.")
+  }
+  const readiness = await refreshStripeConnectReadiness({ providerAccountId: accountId })
+
   await prisma.$transaction(async (tx) => {
+    await tx.connectedAccount.upsert({
+      where: { userId: user.id },
+      create: {
+        userId: user.id,
+        providerAccountId: accountId,
+        readiness: readiness.readiness,
+        chargesEnabled: readiness.chargesEnabled,
+        payoutsEnabled: readiness.payoutsEnabled,
+        detailsSubmitted: readiness.detailsSubmitted,
+      },
+      update: {
+        readiness: readiness.readiness,
+        chargesEnabled: readiness.chargesEnabled,
+        payoutsEnabled: readiness.payoutsEnabled,
+        detailsSubmitted: readiness.detailsSubmitted,
+      },
+    })
     await tx.verificationProfile.upsert({
       where: { userId: user.id },
       create: {
         userId: user.id,
-        payoutReadiness: "ready",
+        payoutReadiness: readiness.readiness,
       },
       update: {
-        payoutReadiness: "ready",
+        payoutReadiness: readiness.readiness,
       },
     })
 
@@ -420,7 +531,7 @@ export async function handlePayoutOnboardingReturn(
 
   return actionSuccess({
     userId: user.id,
-    readiness: "ready",
+    readiness: readiness.readiness,
   })
 }
 
@@ -444,15 +555,34 @@ export async function refreshPayoutReadiness(
     return actionFailure("AUTHZ_DENIED", "You cannot refresh another user's payout readiness.")
   }
 
+  const account = await prisma.connectedAccount.findUnique({
+    where: { userId: targetUserId },
+    select: { providerAccountId: true },
+  })
+  const readiness = account
+    ? await refreshStripeConnectReadiness({ providerAccountId: account.providerAccountId })
+    : {
+        readiness: "not_started" as const,
+        chargesEnabled: false,
+        payoutsEnabled: false,
+        detailsSubmitted: false,
+      }
+
+  await prisma.connectedAccount.updateMany({
+    where: { userId: targetUserId },
+    data: {
+      readiness: readiness.readiness,
+      chargesEnabled: readiness.chargesEnabled,
+      payoutsEnabled: readiness.payoutsEnabled,
+      detailsSubmitted: readiness.detailsSubmitted,
+    },
+  })
+
   const profile = await prisma.verificationProfile.upsert({
     where: { userId: targetUserId },
-    create: {
-      userId: targetUserId,
-    },
-    update: {},
-    select: {
-      payoutReadiness: true,
-    },
+    create: { userId: targetUserId, payoutReadiness: readiness.readiness },
+    update: { payoutReadiness: readiness.readiness },
+    select: { payoutReadiness: true },
   })
 
   await revalidatePaymentSurfaces({ userId: targetUserId })
@@ -632,7 +762,7 @@ export async function authorizeVouchPayment(
 export async function captureOrReleaseVouchPayment(
   input: unknown
 ): Promise<ActionResult<PaymentActionResult>> {
-  const user = await requireActiveUser()
+  await requireActiveUser()
   const parsed = captureOrReleaseVouchPaymentInputSchema.safeParse(input)
 
   if (!parsed.success) {
@@ -643,98 +773,16 @@ export async function captureOrReleaseVouchPayment(
     )
   }
 
-  const record = await getParticipantPaymentRecord({
-    vouchId: parsed.data.vouchId,
-    userId: user.id,
-  })
-
-  if (!record) return actionFailure("NOT_FOUND", "Payment record not found.")
-  if (!canAccessPaymentRecord(record, user.id))
-    return actionFailure("AUTHZ_DENIED", "Participant access required.")
-
-  const aggregate = await prisma.presenceConfirmation.groupBy({
-    by: ["participantRole"],
-    where: {
-      vouchId: parsed.data.vouchId,
-      status: "confirmed",
-    },
-  })
-
-  const confirmedRoles = new Set(aggregate.map((item) => item.participantRole))
-  const bothConfirmed = confirmedRoles.has("payer") && confirmedRoles.has("payee")
-
-  if (!bothConfirmed) {
-    return actionFailure(
-      "DUAL_CONFIRMATION_REQUIRED",
-      "Both parties must confirm before funds release."
-    )
-  }
-
-  if (!record.vouch.payeeId) {
-    return actionFailure("PAYEE_REQUIRED", "Payee is required before funds release.")
-  }
-
-  const release = await releaseStripePaymentForCompletedVouch({
-    paymentRecordId: record.id,
-  })
-
-  if (!release.ok) {
-    await markPaymentFailed({
-      vouchId: record.vouchId,
-      paymentRecordId: record.id,
-      failureStage: "release",
-      failureCode: release.code,
-      safeMessage: release.message,
-    })
-
-    return actionFailure(release.code, release.message)
-  }
-
-  const updated = await prisma.$transaction(async (tx) => {
-    const payment = await tx.paymentRecord.update({
-      where: { id: record.id },
-      data: {
-        status: "released",
-        lastErrorCode: null,
-      },
-      select: {
-        id: true,
-        vouchId: true,
-        status: true,
-      },
-    })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payment.released",
-        actorType: "system",
-        entityType: "PaymentRecord",
-        entityId: payment.id,
-        participantSafe: true,
-        metadata: {
-          vouch_id: payment.vouchId,
-          provider: "stripe",
-          amount_cents: record.amountCents,
-        },
-      },
-    })
-
-    return payment
-  })
-
-  await revalidatePaymentSurfaces({
-    userId: user.id,
-    vouchId: updated.vouchId,
-    paymentRecordId: updated.id,
-  })
-
-  return actionSuccess(paymentResult(updated))
+  return actionFailure(
+    "SYSTEM_ONLY_PAYMENT_RELEASE",
+    "Payment release runs only after deterministic confirmation resolution."
+  )
 }
 
 export async function refundOrVoidVouchPayment(
   input: unknown
 ): Promise<ActionResult<PaymentActionResult>> {
-  const user = await requireActiveUser()
+  await requireActiveUser()
   const parsed = refundOrVoidVouchPaymentInputSchema.safeParse(input)
 
   if (!parsed.success) {
@@ -745,66 +793,10 @@ export async function refundOrVoidVouchPayment(
     )
   }
 
-  const record = await getParticipantPaymentRecord({
-    vouchId: parsed.data.vouchId,
-    userId: user.id,
-  })
-
-  if (!record) return actionFailure("NOT_FOUND", "Payment record not found.")
-  if (record.vouch.payerId !== user.id && !user.isAdmin) {
-    return actionFailure("AUTHZ_DENIED", "Payer or admin access required.")
-  }
-
-  const result = await refundOrVoidStripePaymentForVouch({
-    paymentRecordId: record.id,
-    reason: "provider_required",
-  })
-
-  if (!result.ok) {
-    await markPaymentFailed({
-      vouchId: record.vouchId,
-      paymentRecordId: record.id,
-      failureStage: "refund",
-      failureCode: result.code,
-      safeMessage: result.message,
-    })
-
-    return actionFailure(result.code, result.message)
-  }
-
-  const updated = await prisma.paymentRecord.findUnique({
-    where: { id: record.id },
-    select: {
-      id: true,
-      vouchId: true,
-      status: true,
-    },
-  })
-
-  if (!updated)
-    return actionFailure("PAYMENT_RECORD_NOT_READY", "Payment record not found after refund.")
-
-  await prisma.auditEvent.create({
-    data: {
-      eventName: "payment.refund_requested",
-      actorType: "system",
-      entityType: "PaymentRecord",
-      entityId: updated.id,
-      participantSafe: true,
-      metadata: {
-        vouch_id: updated.vouchId,
-        reason: "provider_required",
-      },
-    },
-  })
-
-  await revalidatePaymentSurfaces({
-    userId: user.id,
-    vouchId: updated.vouchId,
-    paymentRecordId: updated.id,
-  })
-
-  return actionSuccess(paymentResult(updated))
+  return actionFailure(
+    "SYSTEM_ONLY_REFUND_OR_VOID",
+    "Refunds and voids run only through expiration, jobs, or provider webhooks."
+  )
 }
 
 export async function handleStripeWebhook(

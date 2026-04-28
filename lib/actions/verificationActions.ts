@@ -2,6 +2,7 @@
 
 import { requireActiveUser } from "@/lib/auth/current-user"
 import { prisma } from "@/lib/db/prisma"
+import { createStripeIdentitySession, refreshStripeIdentityStatus } from "@/lib/integrations/stripe/identity"
 import {
   markVerificationPendingTx,
   markVerificationRejectedTx,
@@ -33,10 +34,20 @@ export async function startIdentityVerification(
       parsed.error.flatten().fieldErrors
     )
   }
+  const appUrl =
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+  const session = await createStripeIdentitySession({
+    userId: user.id,
+    returnUrl: `${appUrl}/settings/verification`,
+  })
+
   await prisma.$transaction(async (tx) => {
     await updateVerificationProfileTx(tx, {
       userId: user.id,
       identityStatus: "pending",
+      adultStatus: "pending",
+      providerReference: session.providerReference,
     })
     await tx.auditEvent.create({
       data: {
@@ -45,7 +56,7 @@ export async function startIdentityVerification(
         actorUserId: user.id,
         entityType: "verification_profile",
         entityId: user.id,
-        metadata: { provider: "stripe_identity" },
+        metadata: { provider: "stripe_identity", provider_reference: session.providerReference },
       },
     })
   })
@@ -116,9 +127,19 @@ export async function reconcileVerificationProfile(
       parsed.error.flatten().fieldErrors
     )
   }
+  const profile = await prisma.verificationProfile.findUnique({
+    where: { userId: user.id },
+    select: { providerReference: true },
+  })
+  const providerStatus = profile?.providerReference
+    ? await refreshStripeIdentityStatus({ providerReference: profile.providerReference })
+    : null
+
   await prisma.$transaction(async (tx) => {
     await updateVerificationProfileTx(tx, {
       userId: user.id,
+      ...(providerStatus ? { identityStatus: providerStatus.identityStatus } : {}),
+      ...(providerStatus ? { adultStatus: providerStatus.adultStatus } : {}),
       ...(parsed.data.identityStatus ? { identityStatus: parsed.data.identityStatus } : {}),
       ...(parsed.data.adultStatus ? { adultStatus: parsed.data.adultStatus } : {}),
       ...(parsed.data.providerReference

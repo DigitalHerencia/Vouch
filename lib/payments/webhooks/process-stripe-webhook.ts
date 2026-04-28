@@ -115,6 +115,7 @@ async function processPaymentIntentEvent(event: Stripe.Event, providerWebhookEve
       data: {
         status: localStatus,
         lastErrorCode: intent.last_payment_error?.code ?? null,
+        lastErrorMessage: intent.last_payment_error?.message ?? null,
       },
     }),
     prisma.paymentWebhookEvent.create({
@@ -128,6 +129,21 @@ async function processPaymentIntentEvent(event: Stripe.Event, providerWebhookEve
         processed: true,
         processedAt: new Date(),
         safeMetadata: {
+          payment_intent: intent.id,
+          status: intent.status,
+        },
+      },
+    }),
+    prisma.auditEvent.create({
+      data: {
+        eventName: "payment.webhook_processed",
+        actorType: "payment_provider",
+        entityType: "PaymentWebhookEvent",
+        entityId: event.id,
+        participantSafe: false,
+        metadata: {
+          provider_event_id: event.id,
+          event_type: event.type,
           payment_intent: intent.id,
           status: intent.status,
         },
@@ -163,16 +179,16 @@ async function processRefundEvent(event: Stripe.Event, providerWebhookEventId: s
     return
   }
 
-  await prisma.$transaction([
-    prisma.refundRecord.update({
+  await prisma.$transaction(async (tx) => {
+    await tx.refundRecord.update({
       where: { id: refundRecord.id },
       data: { status: localStatus },
-    }),
-    prisma.paymentRecord.update({
+    })
+    await tx.paymentRecord.update({
       where: { id: refundRecord.paymentRecordId },
       data: { status: localStatus === "succeeded" ? "refunded" : "refund_pending" },
-    }),
-    prisma.paymentWebhookEvent.create({
+    })
+    await tx.paymentWebhookEvent.create({
       data: {
         provider: "stripe",
         providerEventId: event.id,
@@ -188,6 +204,27 @@ async function processRefundEvent(event: Stripe.Event, providerWebhookEventId: s
           status: refund.status,
         },
       },
-    }),
-  ])
+    })
+    await tx.auditEvent.create({
+      data: {
+        eventName: "payment.webhook_processed",
+        actorType: "payment_provider",
+        entityType: "PaymentWebhookEvent",
+        entityId: event.id,
+        participantSafe: false,
+        metadata: {
+          provider_event_id: event.id,
+          event_type: event.type,
+          refund: refund.id,
+          status: refund.status,
+        },
+      },
+    })
+    if (localStatus === "succeeded") {
+      await tx.vouch.update({
+        where: { id: refundRecord.vouchId },
+        data: { status: "refunded" },
+      })
+    }
+  })
 }

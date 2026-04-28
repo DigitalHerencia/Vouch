@@ -1,27 +1,71 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
+import type Stripe from "stripe"
 
-export async function createStripePaymentAuthorization(..._args: unknown[]): Promise<never> {
-  throw new Error(
-    "SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/integrations/stripe/payment-intents.ts"
+import { getStripeServerClient } from "./client"
+
+export type CreateStripePaymentAuthorizationInput = {
+  vouchId: string
+  amountCents: number
+  currency: string
+  platformFeeCents: number
+  providerCustomerId?: string
+  connectedAccountId?: string
+  idempotencyKey: string
+}
+
+export async function createStripePaymentAuthorization(
+  input: CreateStripePaymentAuthorizationInput
+): Promise<Stripe.PaymentIntent> {
+  const stripe = getStripeServerClient()
+
+  return stripe.paymentIntents.create(
+    {
+      amount: input.amountCents + input.platformFeeCents,
+      currency: input.currency,
+      capture_method: "manual",
+      ...(input.providerCustomerId ? { customer: input.providerCustomerId } : {}),
+      ...(input.connectedAccountId
+        ? {
+            application_fee_amount: input.platformFeeCents,
+            transfer_data: { destination: input.connectedAccountId },
+          }
+        : {}),
+      metadata: {
+        vouch_id: input.vouchId,
+        payment_role: "payer_commitment",
+      },
+    },
+    { idempotencyKey: input.idempotencyKey }
   )
 }
 
-export async function captureStripePayment(..._args: unknown[]): Promise<never> {
-  throw new Error(
-    "SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/integrations/stripe/payment-intents.ts"
+export async function captureStripePayment(input: {
+  providerPaymentId: string
+  idempotencyKey: string
+}): Promise<Stripe.PaymentIntent> {
+  return getStripeServerClient().paymentIntents.capture(input.providerPaymentId, undefined, {
+    idempotencyKey: input.idempotencyKey,
+  })
+}
+
+export async function voidStripeAuthorization(input: {
+  providerPaymentId: string
+  idempotencyKey: string
+}): Promise<Stripe.PaymentIntent> {
+  return getStripeServerClient().paymentIntents.cancel(
+    input.providerPaymentId,
+    {},
+    { idempotencyKey: input.idempotencyKey }
   )
 }
 
-export async function voidStripeAuthorization(..._args: unknown[]): Promise<never> {
-  throw new Error(
-    "SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/integrations/stripe/payment-intents.ts"
-  )
-}
-
-export async function refundStripePayment(..._args: unknown[]): Promise<never> {
-  throw new Error(
-    "SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/integrations/stripe/payment-intents.ts"
+export async function refundStripePayment(input: {
+  providerPaymentId: string
+  idempotencyKey: string
+}): Promise<Stripe.Refund> {
+  return getStripeServerClient().refunds.create(
+    { payment_intent: input.providerPaymentId },
+    { idempotencyKey: input.idempotencyKey }
   )
 }
