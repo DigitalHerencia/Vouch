@@ -1,93 +1,105 @@
 import "server-only"
 
-import { requireActiveUser } from "@/lib/auth/current-user"
+import { unstable_noStore as noStore } from "next/cache"
+
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
-import type { VerificationStatus } from "@/types/verification"
+import {
+  adultVerificationStateSelect,
+  identityVerificationStateSelect,
+  verificationStatusCardSelect,
+  verificationStatusSelect,
+} from "@/lib/db/selects/verification.selects"
 
-export type VerificationStatusReadModel = {
-  identityStatus: VerificationStatus
-  adultStatus: VerificationStatus
-  provider: "stripe_identity" | null
-  providerReference: string | null
-  paymentReadiness: "not_started" | "requires_action" | "ready" | "failed"
-  payoutReadiness: "not_started" | "requires_action" | "ready" | "restricted" | "failed"
-  updatedAt: string | null
+const iso = (v: Date | null | undefined) => (v ? v.toISOString() : null)
+
+function mapVerification(record) {
+  return record
+    ? {
+        ...record,
+        providerReference: record.providerReference
+          ? `ref_${String(record.providerReference).slice(-6)}`
+          : null,
+        createdAt: iso(record.createdAt),
+        updatedAt: iso(record.updatedAt),
+      }
+    : null
 }
 
-export async function getVerificationStatus(): Promise<VerificationStatusReadModel> {
-  const user = await requireActiveUser()
-  const profile = await prisma.verificationProfile.findUnique({
-    where: { userId: user.id },
-    select: {
-      identityStatus: true,
-      adultStatus: true,
-      provider: true,
-      providerReference: true,
-      paymentReadiness: true,
-      payoutReadiness: true,
-      updatedAt: true,
-    },
-  })
+async function assertSelf(userId: string) {
+  const current = await requireActiveUser()
+  return current.id === userId
+}
+
+export async function getVerificationStatus(userId: string) {
+  noStore()
+  if (!(await assertSelf(userId))) return null
+
+  return mapVerification(
+    await prisma.verificationProfile.findUnique({
+      where: { userId },
+      select: verificationStatusSelect,
+    })
+  )
+}
+
+export async function getIdentityVerificationState(userId: string) {
+  noStore()
+  if (!(await assertSelf(userId))) return null
+
+  return mapVerification(
+    await prisma.verificationProfile.findUnique({
+      where: { userId },
+      select: identityVerificationStateSelect,
+    })
+  )
+}
+
+export async function getAdultVerificationState(userId: string) {
+  noStore()
+  if (!(await assertSelf(userId))) return null
+
+  return mapVerification(
+    await prisma.verificationProfile.findUnique({
+      where: { userId },
+      select: adultVerificationStateSelect,
+    })
+  )
+}
+
+export async function getVerificationProviderReturnState(input: {
+  userId: string
+  provider?: string | null
+  status?: string | null
+}) {
+  const status = await getVerificationStatus(input.userId)
 
   return {
-    identityStatus: profile?.identityStatus ?? "unstarted",
-    adultStatus: profile?.adultStatus ?? "unstarted",
-    provider: profile?.provider ?? null,
-    providerReference: profile?.providerReference ?? null,
-    paymentReadiness: profile?.paymentReadiness ?? "not_started",
-    payoutReadiness: profile?.payoutReadiness ?? "not_started",
-    updatedAt: profile?.updatedAt.toISOString() ?? null,
+    variant: input.status === "success" ? "returned_success" : "returned_pending",
+    provider: input.provider ?? "verification_provider",
+    status,
   }
 }
 
-export async function getIdentityVerificationState(): Promise<
-  Pick<
-    VerificationStatusReadModel,
-    "identityStatus" | "provider" | "providerReference" | "updatedAt"
-  >
-> {
-  const status = await getVerificationStatus()
+export async function getVerificationBlockedState(userId: string) {
+  const status = await getVerificationStatus(userId)
+
   return {
-    identityStatus: status.identityStatus,
-    provider: status.provider,
-    providerReference: status.providerReference,
-    updatedAt: status.updatedAt,
+    blocked: !status || status.identityStatus !== "verified" || status.adultStatus !== "verified",
+    identityBlocked: status?.identityStatus !== "verified",
+    adultBlocked: status?.adultStatus !== "verified",
+    status,
   }
 }
 
-export async function getAdultVerificationState(): Promise<
-  Pick<VerificationStatusReadModel, "adultStatus" | "provider" | "providerReference" | "updatedAt">
-> {
-  const status = await getVerificationStatus()
-  return {
-    adultStatus: status.adultStatus,
-    provider: status.provider,
-    providerReference: status.providerReference,
-    updatedAt: status.updatedAt,
-  }
-}
+export async function getVerificationStatusCard(userId: string) {
+  noStore()
+  if (!(await assertSelf(userId))) return null
 
-export async function getVerificationProviderReturnState(): Promise<VerificationStatusReadModel> {
-  return getVerificationStatus()
-}
-
-export async function getVerificationBlockedState(): Promise<{
-  blocked: boolean
-  reason: string | null
-}> {
-  const status = await getVerificationStatus()
-  const blocked =
-    status.identityStatus === "rejected" ||
-    status.identityStatus === "expired" ||
-    status.adultStatus === "rejected" ||
-    status.adultStatus === "expired"
-
-  return {
-    blocked,
-    reason: blocked ? "Verification must be completed before payment-backed flows." : null,
-  }
-}
-
-export async function getVerificationStatusCard(): Promise<VerificationStatusReadModel> {
-  return getVerificationStatus()
+  return mapVerification(
+    await prisma.verificationProfile.findUnique({
+      where: { userId },
+      select: verificationStatusCardSelect,
+    })
+  )
 }

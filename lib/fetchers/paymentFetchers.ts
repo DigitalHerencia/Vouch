@@ -1,75 +1,204 @@
 import "server-only"
 
-// Auto-generated fetcher stubs. Implement authenticate -> authorize -> minimal select -> DTO mapping.
+import { unstable_noStore as noStore } from "next/cache"
 
-export async function getPaymentSettingsPageState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
+import { prisma } from "@/lib/db/prisma"
+import {
+  connectedAccountReadinessSelect,
+  paymentCustomerReadinessSelect,
+  paymentRecordParticipantSummarySelect,
+  refundRecordParticipantSummarySelect,
+} from "@/lib/db/selects/payment.selects"
+
+const iso = (v: Date | null | undefined) => (v ? v.toISOString() : null)
+
+function mapRecord(record: any) {
+  if (!record) return null
+  return {
+    ...record,
+    providerCustomerId: record.providerCustomerId
+      ? `cus_${String(record.providerCustomerId).slice(-6)}`
+      : undefined,
+    providerAccountId: record.providerAccountId
+      ? `acct_${String(record.providerAccountId).slice(-6)}`
+      : undefined,
+    createdAt: iso(record.createdAt),
+    updatedAt: iso(record.updatedAt),
+  }
 }
 
-export async function getPaymentMethodReadiness(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+async function assertSelf(userId: string) {
+  const current = await requireActiveUser()
+  return current.id === userId
 }
 
-export async function getPaymentMethodSetupState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+async function getVerification(userId: string) {
+  return prisma.verificationProfile.findUnique({
+    where: { userId },
+    select: {
+      paymentReadiness: true,
+      payoutReadiness: true,
+    },
+  })
 }
 
-export async function getPaymentMethodProviderRedirectState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPaymentMethodReadiness(userId: string) {
+  noStore()
+  if (!(await assertSelf(userId))) return null
+
+  const [verification, customer] = await Promise.all([
+    getVerification(userId),
+    prisma.paymentCustomer.findUnique({
+      where: { userId },
+      select: paymentCustomerReadinessSelect,
+    }),
+  ])
+
+  return {
+    userId,
+    readiness: verification?.paymentReadiness ?? "not_started",
+    customer: mapRecord(customer),
+  }
 }
 
-export async function getPaymentMethodReadyState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPaymentSettingsPageState(userId: string) {
+  const readiness = await getPaymentMethodReadiness(userId)
+  return {
+    variant: readiness?.readiness === "ready" ? "ready" : "setup_required",
+    readiness,
+  }
 }
 
-export async function getPaymentMethodFailedState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPaymentMethodSetupState(userId: string) {
+  const readiness = await getPaymentMethodReadiness(userId)
+  return { variant: "setup", readiness }
 }
 
-export async function getPayoutSettingsPageState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPaymentMethodProviderRedirectState(input: {
+  userId: string
+  returnUrl?: string | null
+}) {
+  return {
+    variant: "provider_redirect",
+    returnUrl: input.returnUrl ?? "/settings",
+    readiness: await getPaymentMethodReadiness(input.userId),
+  }
 }
 
-export async function getPayoutReadiness(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPaymentMethodReadyState(userId: string) {
+  return { variant: "ready", readiness: await getPaymentMethodReadiness(userId) }
 }
 
-export async function getPayoutSetupState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPaymentMethodFailedState(userId: string) {
+  return { variant: "failed", readiness: await getPaymentMethodReadiness(userId) }
 }
 
-export async function getPayoutProviderRedirectState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPayoutReadiness(userId: string) {
+  noStore()
+  if (!(await assertSelf(userId))) return null
+
+  const [verification, account] = await Promise.all([
+    getVerification(userId),
+    prisma.connectedAccount.findUnique({
+      where: { userId },
+      select: connectedAccountReadinessSelect,
+    }),
+  ])
+
+  return {
+    userId,
+    readiness: verification?.payoutReadiness ?? "not_started",
+    connectedAccount: mapRecord(account),
+  }
 }
 
-export async function getPayoutReadyState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPayoutSettingsPageState(userId: string) {
+  const readiness = await getPayoutReadiness(userId)
+  return {
+    variant: readiness?.readiness === "ready" ? "ready" : "setup_required",
+    readiness,
+  }
 }
 
-export async function getPayoutRestrictedState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPayoutSetupState(userId: string) {
+  return { variant: "setup", readiness: await getPayoutReadiness(userId) }
 }
 
-export async function getPayoutSetupFailedState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPayoutProviderRedirectState(input: {
+  userId: string
+  returnUrl?: string | null
+}) {
+  return {
+    variant: "provider_redirect",
+    returnUrl: input.returnUrl ?? "/settings",
+    readiness: await getPayoutReadiness(input.userId),
+  }
 }
 
-export async function getParticipantSafePaymentSummary(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPayoutReadyState(userId: string) {
+  return { variant: "ready", readiness: await getPayoutReadiness(userId) }
 }
 
-export async function getParticipantSafeRefundSummary(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPayoutRestrictedState(userId: string) {
+  return { variant: "restricted", readiness: await getPayoutReadiness(userId) }
 }
 
-export async function getPaymentStatusCard(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getPayoutSetupFailedState(userId: string) {
+  return { variant: "failed", readiness: await getPayoutReadiness(userId) }
 }
 
-export async function getRefundStatusCard(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+async function assertParticipantForVouch(vouchId: string) {
+  const current = await requireActiveUser()
+
+  const vouch = await prisma.vouch.findFirst({
+    where: {
+      id: vouchId,
+      OR: [{ payerId: current.id }, { payeeId: current.id }],
+    },
+    select: { id: true },
+  })
+
+  return Boolean(vouch)
 }
 
-export async function getProviderUnavailableState(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/fetcher/paymentFetchers.ts")
+export async function getParticipantSafePaymentSummary(vouchId: string) {
+  noStore()
+  if (!(await assertParticipantForVouch(vouchId))) return null
+
+  return mapRecord(
+    await prisma.paymentRecord.findUnique({
+      where: { vouchId },
+      select: paymentRecordParticipantSummarySelect,
+    })
+  )
+}
+
+export async function getParticipantSafeRefundSummary(vouchId: string) {
+  noStore()
+  if (!(await assertParticipantForVouch(vouchId))) return null
+
+  return mapRecord(
+    await prisma.refundRecord.findUnique({
+      where: { vouchId },
+      select: refundRecordParticipantSummarySelect,
+    })
+  )
+}
+
+export async function getPaymentStatusCard(vouchId: string) {
+  return getParticipantSafePaymentSummary(vouchId)
+}
+
+export async function getRefundStatusCard(vouchId: string) {
+  return getParticipantSafeRefundSummary(vouchId)
+}
+
+export async function getProviderUnavailableState() {
+  return {
+    variant: "provider_unavailable",
+    title: "Payment provider unavailable",
+    message:
+      "Payment setup or resolution is temporarily unavailable. No funds were released by this state.",
+  }
 }
