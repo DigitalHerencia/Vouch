@@ -2,6 +2,8 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 
+import type { NotificationStatus } from "@/prisma/generated/prisma/client"
+
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
 import {
@@ -77,7 +79,7 @@ async function canReadVouchNotifications(vouchId: string) {
 
 export async function listUserNotificationEvents(input?: {
   userId?: string
-  status?: string
+  status?: NotificationStatus
   page?: number
   pageSize?: number
 }) {
@@ -93,7 +95,7 @@ export async function listUserNotificationEvents(input?: {
   const rows = await prisma.notificationEvent.findMany({
     where: {
       recipientUserId: userId,
-      ...(input?.status ? { status: input.status as any } : {}),
+      ...(input?.status ? { status: input.status } : {}),
     },
     orderBy: { createdAt: "desc" },
     skip: page.skip,
@@ -147,7 +149,7 @@ export async function getNotificationPreferences(userId: string) {
 }
 
 export async function listAdminNotificationEvents(input?: {
-  status?: string
+  status?: NotificationStatus
   eventName?: string
   recipientUserId?: string
   vouchId?: string
@@ -161,7 +163,7 @@ export async function listAdminNotificationEvents(input?: {
 
   const rows = await prisma.notificationEvent.findMany({
     where: {
-      ...(input?.status ? { status: input.status as any } : {}),
+      ...(input?.status ? { status: input.status } : {}),
       ...(input?.eventName ? { eventName: input.eventName } : {}),
       ...(input?.recipientUserId ? { recipientUserId: input.recipientUserId } : {}),
       ...(input?.vouchId ? { vouchId: input.vouchId } : {}),

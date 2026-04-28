@@ -30,10 +30,7 @@ import {
   markVouchExpiredTx,
   markVouchFailedTx,
 } from "@/lib/db/transactions/vouchTransactions"
-import {
-  createInvitationToken,
-  hashInvitationToken,
-} from "@/lib/invitations/tokens"
+import { createInvitationToken, hashInvitationToken } from "@/lib/invitations/tokens"
 import {
   initializeStripePaymentForVouch,
   refundOrVoidStripePaymentForVouch,

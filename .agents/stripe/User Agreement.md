@@ -1,4 +1,4 @@
-# ACCOUNT USER AGREEMENT (Signup Clickwrap)**
+# ACCOUNT USER AGREEMENT (Signup Clickwrap)\*\*
 
 This is what they accept when creating an account.
 

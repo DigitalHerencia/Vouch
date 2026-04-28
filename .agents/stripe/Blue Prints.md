@@ -1,9 +1,11 @@
 ## Stripe integration task
 
 ### Objective
+
 Implement this Stripe integration using the blueprint below. The blueprint describes the required API operations, parameters, and sequencing. Adapt the implementation to your architecture, data models, and tech stack.
 
 ### How to use the resources
+
 - Treat the blueprint as the source of truth for required API operations and parameters.
 - Prefer reusing outputs from earlier steps as inputs to later ones (e.g., use the created customer ID when creating a subscription).
 - Persist and retrieve required Stripe resource identifiers in your datastore (e.g., customer_id, subscription_id) and associate them with existing domain models.
@@ -18,6 +20,7 @@ Implement this Stripe integration using the blueprint below. The blueprint descr
 ### Resources
 
 #### Blueprints (authoritative "what to call")
+
 <blueprints-json>
 [
   {

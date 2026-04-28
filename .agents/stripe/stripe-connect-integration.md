@@ -57,8 +57,6 @@ Unless you’re eligible for [cross-border payouts](https://docs.stripe.com/conn
 
 #### Item 1
 
-
-
 #### Item 2
 
 Your platform is liable for losses incurred by negative balances on your connected accounts. Your platform is responsible for reviewing new connected accounts during onboarding and determining the risk profile of your users.

@@ -91,15 +91,11 @@ export async function getLifecycleAnalyticsSummary(input?: AnalyticsRangeInput) 
       from: input?.from ? iso(new Date(input.from)) : null,
       to: input?.to ? iso(new Date(input.to)) : null,
     },
-    vouchesByStatus: Object.fromEntries(
-      vouchesByStatus.map((row) => [row.status, countAll(row)])
-    ),
+    vouchesByStatus: Object.fromEntries(vouchesByStatus.map((row) => [row.status, countAll(row)])),
     paymentsByStatus: Object.fromEntries(
       paymentsByStatus.map((row) => [row.status, countAll(row)])
     ),
-    refundsByStatus: Object.fromEntries(
-      refundsByStatus.map((row) => [row.status, countAll(row)])
-    ),
+    refundsByStatus: Object.fromEntries(refundsByStatus.map((row) => [row.status, countAll(row)])),
     confirmationsByStatus: Object.fromEntries(
       confirmations.map((row) => [row.status, countAll(row)])
     ),

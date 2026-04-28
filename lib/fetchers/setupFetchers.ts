@@ -2,13 +2,17 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 
+import type { Prisma } from "@/prisma/generated/prisma/client"
+
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
 import { setupChecklistSelect } from "@/lib/db/selects/setup.selects"
 
 const iso = (v: Date | null | undefined) => (v ? v.toISOString() : null)
 
-function normalizeSetup(record: any) {
+type SetupChecklistRecord = Prisma.UserGetPayload<{ select: typeof setupChecklistSelect }>
+
+function normalizeSetup(record: SetupChecklistRecord | null) {
   const terms = record?.termsAcceptances?.[0] ?? null
   const verification = record?.verificationProfile ?? null
   const paymentCustomer = record?.paymentCustomer ?? null

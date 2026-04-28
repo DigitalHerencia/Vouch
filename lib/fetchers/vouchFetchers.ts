@@ -3,6 +3,13 @@ import "server-only"
 import { auth } from "@clerk/nextjs/server"
 import { unstable_noStore as noStore } from "next/cache"
 
+import type {
+  ConfirmationStatus,
+  ParticipantRole,
+  Prisma,
+  VouchStatus,
+} from "@/prisma/generated/prisma/client"
+
 import {
   calculatePlatformFeeCents,
   DEFAULT_MINIMUM_PLATFORM_FEE_CENTS,
@@ -35,6 +42,43 @@ import { participantSafeAuditTimelineItemSelect } from "@/lib/db/selects/audit.s
 const DEFAULT_PAGE_SIZE = 20
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : null)
+
+type VouchDetailSelect =
+  | typeof vouchDetailBaseSelect
+  | typeof vouchDetailPendingInviteSentSelect
+  | typeof vouchDetailPendingPayerSelect
+  | typeof vouchDetailActiveBeforeWindowSelect
+  | typeof vouchDetailActiveWindowOpenSelect
+  | typeof vouchDetailCompletedSelect
+  | typeof vouchDetailExpiredSelect
+  | typeof vouchDetailRefundedSelect
+  | typeof vouchDetailFailedSelect
+  | typeof vouchPaymentSummarySelect
+  | typeof vouchTimelineSelect
+  | typeof vouchWindowSummarySelect
+  | typeof vouchConfirmationStateSelect
+  | typeof whatHappensNextSelect
+
+type ParticipantConfirmation = {
+  participantRole: ParticipantRole
+  status: ConfirmationStatus
+  userId: string
+}
+
+type ConfirmableVouch = {
+  payerId?: string | null
+  payeeId?: string | null
+  confirmationOpensAt?: string | Date | null
+  confirmationExpiresAt?: string | Date | null
+  presenceConfirmations?: ParticipantConfirmation[]
+}
+
+type StatusFilterInput = {
+  userId?: string
+  status?: VouchStatus
+  page?: number
+  pageSize?: number
+}
 
 function mapDates<T>(value: T): T {
   if (!value || typeof value !== "object") return value
@@ -70,8 +114,8 @@ async function getOptionalCurrentUserId() {
 
 async function requireParticipantVouch(
   vouchId: string,
-  select: any = vouchDetailBaseSelect
-): Promise<any> {
+  select: VouchDetailSelect = vouchDetailBaseSelect
+): Promise<unknown | null> {
   noStore()
 
   const user = await requireActiveUser()
@@ -90,7 +134,7 @@ async function requireParticipantVouch(
 async function readParticipantVouchByState(
   vouchId: string,
   variant: string,
-  select: any = vouchDetailBaseSelect
+  select: VouchDetailSelect = vouchDetailBaseSelect
 ) {
   const vouch = await requireParticipantVouch(vouchId, select)
 
@@ -109,12 +153,12 @@ async function getInvitationByToken(token: string) {
   })
 }
 
-function getConfirmationFacts(vouch: any, currentUserId?: string | null) {
+function getConfirmationFacts(vouch: ConfirmableVouch | null, currentUserId?: string | null) {
   const confirmations = vouch?.presenceConfirmations ?? []
-  const payerConfirmation = confirmations.find((c: any) => c.participantRole === "payer")
-  const payeeConfirmation = confirmations.find((c: any) => c.participantRole === "payee")
+  const payerConfirmation = confirmations.find((c) => c.participantRole === "payer")
+  const payeeConfirmation = confirmations.find((c) => c.participantRole === "payee")
   const currentUserConfirmation = currentUserId
-    ? confirmations.find((c: any) => c.userId === currentUserId)
+    ? confirmations.find((c) => c.userId === currentUserId)
     : null
 
   return {
@@ -129,7 +173,9 @@ function getConfirmationFacts(vouch: any, currentUserId?: string | null) {
   }
 }
 
-function getWindowState(vouch: any) {
+function getWindowState(
+  vouch: Pick<ConfirmableVouch, "confirmationOpensAt" | "confirmationExpiresAt"> | null
+) {
   const now = Date.now()
   const opensAt = vouch?.confirmationOpensAt ? new Date(vouch.confirmationOpensAt).getTime() : 0
   const expiresAt = vouch?.confirmationExpiresAt
@@ -139,6 +185,18 @@ function getWindowState(vouch: any) {
   if (opensAt && now < opensAt) return "before_window"
   if (expiresAt && now > expiresAt) return "window_closed"
   return "window_open"
+}
+
+function pageArgs(input?: { page?: number; pageSize?: number }) {
+  const page = Math.max(input?.page ?? 1, 1)
+  const pageSize = Math.min(Math.max(input?.pageSize ?? DEFAULT_PAGE_SIZE, 1), 100)
+
+  return {
+    page,
+    pageSize,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  }
 }
 
 // Create flow
@@ -173,7 +231,7 @@ export async function getCreateVouchFeePreview(input: { amountCents: number; cur
     amountCents,
     currency: input.currency ?? "usd",
     platformFeeCents,
-      totalCents: amountCents + platformFeeCents,
+    totalCents: amountCents + platformFeeCents,
     feeModel: {
       minimumFeeCents: DEFAULT_MINIMUM_PLATFORM_FEE_CENTS,
       basisPoints: Math.round(DEFAULT_PLATFORM_FEE_RATE * 10_000),
@@ -362,12 +420,7 @@ export async function getSelfAcceptanceDeniedState(input: { token?: string; vouc
 
 // Vouch list/detail
 
-export async function listUserVouches(input?: {
-  userId?: string
-  status?: string
-  page?: number
-  pageSize?: number
-}) {
+export async function listUserVouches(input?: StatusFilterInput) {
   noStore()
 
   const user = await requireActiveUser()
@@ -375,29 +428,25 @@ export async function listUserVouches(input?: {
 
   if (user.id !== userId) return []
 
-  const page = Math.max(input?.page ?? 1, 1)
-  const pageSize = Math.min(Math.max(input?.pageSize ?? DEFAULT_PAGE_SIZE, 1), 100)
+  const page = pageArgs(input)
+
+  const where: Prisma.VouchWhereInput = {
+    OR: [{ payerId: userId }, { payeeId: userId }],
+    ...(input?.status ? { status: input.status } : {}),
+  }
 
   const rows = await prisma.vouch.findMany({
-    where: {
-      OR: [{ payerId: userId }, { payeeId: userId }],
-      ...(input?.status ? { status: input.status as any } : {}),
-    },
+    where,
     orderBy: { updatedAt: "desc" },
-    skip: (page - 1) * pageSize,
-    take: pageSize,
+    skip: page.skip,
+    take: page.take,
     select: vouchCardSelect,
   })
 
   return rows.map(mapDates)
 }
 
-export async function listPayerVouches(input?: {
-  userId?: string
-  status?: string
-  page?: number
-  pageSize?: number
-}) {
+export async function listPayerVouches(input?: StatusFilterInput) {
   noStore()
 
   const user = await requireActiveUser()
@@ -405,29 +454,25 @@ export async function listPayerVouches(input?: {
 
   if (user.id !== userId) return []
 
-  const page = Math.max(input?.page ?? 1, 1)
-  const pageSize = Math.min(Math.max(input?.pageSize ?? DEFAULT_PAGE_SIZE, 1), 100)
+  const page = pageArgs(input)
+
+  const where: Prisma.VouchWhereInput = {
+    payerId: userId,
+    ...(input?.status ? { status: input.status } : {}),
+  }
 
   const rows = await prisma.vouch.findMany({
-    where: {
-      payerId: userId,
-      ...(input?.status ? { status: input.status as any } : {}),
-    },
+    where,
     orderBy: { updatedAt: "desc" },
-    skip: (page - 1) * pageSize,
-    take: pageSize,
+    skip: page.skip,
+    take: page.take,
     select: vouchCardSelect,
   })
 
   return rows.map(mapDates)
 }
 
-export async function listPayeeVouches(input?: {
-  userId?: string
-  status?: string
-  page?: number
-  pageSize?: number
-}) {
+export async function listPayeeVouches(input?: StatusFilterInput) {
   noStore()
 
   const user = await requireActiveUser()
@@ -435,17 +480,18 @@ export async function listPayeeVouches(input?: {
 
   if (user.id !== userId) return []
 
-  const page = Math.max(input?.page ?? 1, 1)
-  const pageSize = Math.min(Math.max(input?.pageSize ?? DEFAULT_PAGE_SIZE, 1), 100)
+  const page = pageArgs(input)
+
+  const where: Prisma.VouchWhereInput = {
+    payeeId: userId,
+    ...(input?.status ? { status: input.status } : {}),
+  }
 
   const rows = await prisma.vouch.findMany({
-    where: {
-      payeeId: userId,
-      ...(input?.status ? { status: input.status as any } : {}),
-    },
+    where,
     orderBy: { updatedAt: "desc" },
-    skip: (page - 1) * pageSize,
-    take: pageSize,
+    skip: page.skip,
+    take: page.take,
     select: vouchCardSelect,
   })
 
@@ -541,7 +587,10 @@ export async function getConfirmPresencePageState(input: { vouchId: string }) {
   noStore()
 
   const user = await requireActiveUser()
-  const vouch = await requireParticipantVouch(input.vouchId, vouchConfirmationStateSelect)
+  const vouch = (await requireParticipantVouch(
+    input.vouchId,
+    vouchConfirmationStateSelect
+  )) as ConfirmableVouch | null
 
   if (!vouch) return getConfirmUnauthorizedState(input.vouchId)
 
@@ -659,7 +708,11 @@ export async function getSendInvitationState(vouchId: string) {
 // Timeline / summaries
 
 export async function getVouchConfirmationState(vouchId: string) {
-  const vouch = await requireParticipantVouch(vouchId, vouchConfirmationStateSelect)
+  const vouch = (await requireParticipantVouch(
+    vouchId,
+    vouchConfirmationStateSelect
+  )) as ConfirmableVouch | null
+
   if (!vouch) return null
 
   return {
@@ -670,7 +723,11 @@ export async function getVouchConfirmationState(vouchId: string) {
 }
 
 export async function getVouchWindowSummary(vouchId: string) {
-  const vouch = await requireParticipantVouch(vouchId, vouchWindowSummarySelect)
+  const vouch = (await requireParticipantVouch(
+    vouchId,
+    vouchWindowSummarySelect
+  )) as ConfirmableVouch | null
+
   if (!vouch) return null
 
   return {
@@ -716,7 +773,9 @@ export async function getParticipantSafeAuditTimeline(vouchId: string) {
 }
 
 export async function getWhatHappensNextState(vouchId: string) {
-  const vouch = await requireParticipantVouch(vouchId, whatHappensNextSelect)
+  const vouch = (await requireParticipantVouch(vouchId, whatHappensNextSelect)) as
+    | (ConfirmableVouch & { status?: VouchStatus })
+    | null
 
   if (!vouch) {
     return {

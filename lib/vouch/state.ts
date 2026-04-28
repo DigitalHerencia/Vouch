@@ -60,7 +60,7 @@ export type DeriveNextVouchActionInput = ConfirmationStateInput & {
 
 const ALLOWED_TRANSITIONS: ReadonlyMap<VouchStatus, readonly VouchStatus[]> = new Map([
   ["pending", ["active", "canceled", "expired", "refunded", "failed"]],
-  ["active", ["completed", "expired", "refunded", "failed"]],
+  ["active", ["completed", "expired", "failed"]],
   ["expired", ["refunded", "failed"]],
   ["completed", []],
   ["refunded", []],

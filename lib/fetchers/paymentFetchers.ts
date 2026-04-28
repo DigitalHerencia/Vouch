@@ -13,8 +13,16 @@ import {
 
 const iso = (v: Date | null | undefined) => (v ? v.toISOString() : null)
 
-function mapRecord(record: any) {
+type PaymentReadRecord = Record<string, unknown> & {
+  providerCustomerId?: string | null
+  providerAccountId?: string | null
+  createdAt?: Date | null
+  updatedAt?: Date | null
+}
+
+function mapRecord<T extends PaymentReadRecord | null>(record: T) {
   if (!record) return null
+
   return {
     ...record,
     providerCustomerId: record.providerCustomerId

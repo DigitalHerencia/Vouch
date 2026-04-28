@@ -7,13 +7,7 @@
   "policy": {
     "business_logic_allowed": false,
     "truthfulness_required": true,
-    "status_values": [
-      "pass",
-      "fail",
-      "not_run",
-      "blocked",
-      "not_applicable"
-    ],
+    "status_values": ["pass", "fail", "not_run", "blocked", "not_applicable"],
     "evidence_required_for_pass": true
   },
   "summary": {

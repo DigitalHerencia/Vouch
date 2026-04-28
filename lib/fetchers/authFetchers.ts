@@ -11,6 +11,26 @@ import {
   inviteCandidateAuthSelect,
 } from "@/lib/db/selects/auth.selects"
 
+type CurrentUserAuthRecord = {
+  id: string
+  clerkUserId: string
+  email: string | null
+  displayName: string | null
+  status: string
+  createdAt: Date
+  updatedAt: Date
+  verificationProfile: {
+    identityStatus: string
+    adultStatus: string
+    paymentReadiness: string
+    payoutReadiness: string
+  } | null
+  termsAcceptances: Array<{
+    termsVersion: string
+    acceptedAt: Date
+  }>
+}
+
 function toIso(value: Date | null | undefined) {
   return value ? value.toISOString() : null
 }
@@ -19,7 +39,7 @@ function isActive(user: { status: string } | null | undefined) {
   return user?.status === "active"
 }
 
-function mapCurrentUser(record: any) {
+function mapCurrentUser(record: CurrentUserAuthRecord | null) {
   if (!record) return null
 
   const terms = record.termsAcceptances?.[0] ?? null

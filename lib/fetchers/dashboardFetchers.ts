@@ -2,6 +2,8 @@ import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
 
+import type { Prisma, VouchStatus } from "@/prisma/generated/prisma/client"
+
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { getCreateVouchSetupGate } from "@/lib/fetchers/setupFetchers"
 import { prisma } from "@/lib/db/prisma"
@@ -9,7 +11,9 @@ import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
 
 const iso = (v: Date | null | undefined) => (v ? v.toISOString() : null)
 
-function mapVouch(v: any) {
+type VouchCardRecord = Prisma.VouchGetPayload<{ select: typeof vouchCardSelect }>
+
+function mapVouch(v: VouchCardRecord | null) {
   return v
     ? {
         ...v,
@@ -42,7 +46,7 @@ export async function parseDashboardSearchParams(
   }
 }
 
-async function listForUser(userId: string, where: any, take = 10) {
+async function listForUser(userId: string, where: Prisma.VouchWhereInput, take = 10) {
   noStore()
   const rows = await prisma.vouch.findMany({
     where: {
@@ -113,15 +117,15 @@ export async function getActionRequiredVouches(input: { userId: string }) {
 }
 
 export async function getActiveVouches(input: { userId: string }) {
-  return listForUser(input.userId, { status: "active" })
+  return listForUser(input.userId, { status: "active" satisfies VouchStatus })
 }
 
 export async function getPendingVouches(input: { userId: string }) {
-  return listForUser(input.userId, { status: "pending" })
+  return listForUser(input.userId, { status: "pending" satisfies VouchStatus })
 }
 
 export async function getCompletedVouches(input: { userId: string }) {
-  return listForUser(input.userId, { status: "completed" })
+  return listForUser(input.userId, { status: "completed" satisfies VouchStatus })
 }
 
 export async function getExpiredRefundedVouches(input: { userId: string }) {

@@ -7,12 +7,7 @@
   "policy": {
     "append_only_preferred": true,
     "business_logic_allowed": false,
-    "status_values": [
-      "completed",
-      "in_progress",
-      "blocked",
-      "not_started"
-    ]
+    "status_values": ["completed", "in_progress", "blocked", "not_started"]
   },
   "current_phase": "repo_implementation",
   "implementation_status": "in_progress",
@@ -61,9 +56,7 @@
       "category": "agents",
       "title": "Generated repo-level AGENTS.md guidance",
       "summary": "Created Codex-oriented AGENTS.md instructions and 8000-character condensed variant.",
-      "files": [
-        "AGENTS.md"
-      ],
+      "files": ["AGENTS.md"],
       "validation_status": "not_run",
       "notes": "AGENTS.md summarizes implementation rules, stop conditions, and reporting format."
     },
@@ -168,9 +161,7 @@
       "category": "handoff",
       "title": "Generated ChatGPT MVP onboarding audit",
       "summary": "Created a takeover-oriented audit report summarizing source-of-truth files, current scaffold burden, MVP critical path, risks, stop conditions, and a ready-to-use ChatGPT onboarding prompt.",
-      "files": [
-        ".agents/reports/chatgpt-mvp-onboarding-audit.md"
-      ],
+      "files": [".agents/reports/chatgpt-mvp-onboarding-audit.md"],
       "validation_status": "not_run",
       "notes": "Documentation-only handoff artifact. No code validation was run."
     },
