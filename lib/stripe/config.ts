@@ -8,7 +8,7 @@ export type StripeRuntimeConfig = {
 
 export function getStripeRuntimeConfig(): StripeRuntimeConfig {
   const secretKey = process.env.STRIPE_SECRET_KEY
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? process.env.STRIPE_SIGNING_SECRET
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 
   if (!secretKey) {

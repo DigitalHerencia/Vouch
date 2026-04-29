@@ -31,13 +31,23 @@ export function getOptionalEnv(name: string): string | undefined {
   return process.env[name]
 }
 
+function getStripeWebhookSecret(): string {
+  const value = getOptionalEnv("STRIPE_WEBHOOK_SECRET") ?? getOptionalEnv("STRIPE_SIGNING_SECRET")
+
+  if (!value) {
+    throw new Error("Missing required environment variable: STRIPE_WEBHOOK_SECRET")
+  }
+
+  return value
+}
+
 export function getRuntimeEnv(): RuntimeEnv {
   return {
     databaseUrl: getRequiredEnv("DATABASE_URL"),
     clerkSecretKey: getOptionalEnv("CLERK_SECRET_KEY"),
     clerkWebhookSecret: getOptionalEnv("CLERK_WEBHOOK_SECRET"),
     stripeSecretKey: getRequiredEnv("STRIPE_SECRET_KEY"),
-    stripeWebhookSecret: getRequiredEnv("STRIPE_WEBHOOK_SECRET"),
+    stripeWebhookSecret: getStripeWebhookSecret(),
     stripePublishableKey: getOptionalEnv("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"),
     appUrl:
       getOptionalEnv("NEXT_PUBLIC_APP_URL") ??

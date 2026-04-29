@@ -5,6 +5,7 @@ import {
   captureStripePayment,
   createStripePaymentAuthorization,
   refundStripePayment,
+  transferCapturedVouchFunds,
   voidStripeAuthorization,
 } from "@/lib/integrations/stripe/payment-intents"
 
@@ -34,7 +35,11 @@ export async function initializeStripePaymentForVouch(
     return { ok: true, providerPaymentId: existing.providerPaymentId, clientSecret: null }
   }
 
-  if (existing && existing.status !== "not_started" && existing.status !== "requires_payment_method") {
+  if (
+    existing &&
+    existing.status !== "not_started" &&
+    existing.status !== "requires_payment_method"
+  ) {
     return {
       ok: false,
       code: "PAYMENT_ALREADY_IN_PROGRESS",
@@ -75,7 +80,11 @@ export async function initializeStripePaymentForVouch(
       },
     })
 
-    if (paymentIntent.status !== "requires_capture") {
+    if (
+      !["requires_capture", "requires_payment_method", "requires_confirmation"].includes(
+        paymentIntent.status
+      )
+    ) {
       return {
         ok: false,
         code: "STRIPE_AUTHORIZATION_NOT_CONFIRMED",
@@ -160,12 +169,37 @@ export async function releaseStripePaymentForCompletedVouch(
       idempotencyKey: input.idempotencyKey ?? `payment:${paymentRecord.id}:capture`,
     })
 
+    const providerChargeId =
+      typeof captured.latest_charge === "string" ? captured.latest_charge : null
+
+    if (captured.status !== "succeeded" || !providerChargeId) {
+      await prisma.paymentRecord.update({
+        where: { id: paymentRecord.id },
+        data: {
+          status: "release_pending",
+          providerChargeId,
+          lastErrorCode: null,
+          lastErrorMessage: null,
+        },
+      })
+      return { ok: true }
+    }
+
+    const transfer = await transferCapturedVouchFunds({
+      amountCents: paymentRecord.amountCents,
+      currency: paymentRecord.currency,
+      connectedAccountId,
+      providerChargeId,
+      vouchId: paymentRecord.vouch.id,
+      idempotencyKey: input.idempotencyKey ?? `payment:${paymentRecord.id}:transfer`,
+    })
+
     await prisma.paymentRecord.update({
       where: { id: paymentRecord.id },
       data: {
-        status: captured.status === "succeeded" ? "released" : "release_pending",
-        providerChargeId:
-          typeof captured.latest_charge === "string" ? captured.latest_charge : null,
+        status: "released",
+        providerChargeId,
+        providerTransferId: transfer.id,
         lastErrorCode: null,
         lastErrorMessage: null,
       },

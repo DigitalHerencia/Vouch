@@ -246,15 +246,30 @@
       ],
       "validation_status": "pass_with_warnings",
       "notes": "pnpm typecheck, prisma:validate, validate:contracts, targeted Vouch tests, and lint pass. Lint passes with warnings. Stripe sandbox payment flows were not executed in this local run."
+    },
+    {
+      "id": "PRG-012",
+      "date": "2026-04-28",
+      "status": "completed",
+      "category": "implementation",
+      "title": "Patched Stripe launch blockers found during dashboard readiness review",
+      "summary": "Allowed local Stripe webhook secret aliasing, made manual-capture PaymentIntent initialization return a client secret instead of failing before browser confirmation, and added release-time transfer to the connected payee account after capture succeeds.",
+      "files": [
+        "lib/stripe/config.ts",
+        "lib/env.ts",
+        "lib/integrations/stripe/payment-intents.ts",
+        "lib/payments/adapters/stripe-payment-adapter.ts",
+        ".env.example"
+      ],
+      "validation_status": "not_run",
+      "notes": "Validation gates intentionally not run per user launch-token instruction. Browser Use attached to Stripe URL/title but DOM/screenshot bridge failed, so no live dashboard setting changes were made."
     }
   ],
   "next_expected_phase": "repo_implementation",
   "next_expected_work": [
-    "Add generated .agents files to repo.",
-    "Validate JSON/YAML syntax.",
-    "Implement Prisma schema from domain model.",
-    "Implement auth/authz and setup gates.",
-    "Implement Vouch lifecycle actions and fetchers.",
-    "Implement payment provider adapter after Stripe flow decision."
+    "Run sandbox create, payment confirmation, accept, dual-confirm, capture, and transfer flow.",
+    "Run sandbox incomplete confirmation expiration and void/non-capture flow.",
+    "Verify webhook endpoint URL and event subscriptions in Stripe live and sandbox.",
+    "Run final launch gates after sandbox proof."
   ]
 }

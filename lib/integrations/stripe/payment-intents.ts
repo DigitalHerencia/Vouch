@@ -24,6 +24,7 @@ export async function createStripePaymentAuthorization(
       amount: input.amountCents + input.platformFeeCents,
       currency: input.currency,
       capture_method: "manual",
+      automatic_payment_methods: { enabled: true },
       ...(input.providerCustomerId ? { customer: input.providerCustomerId } : {}),
       ...(input.connectedAccountId
         ? {
@@ -34,6 +35,30 @@ export async function createStripePaymentAuthorization(
       metadata: {
         vouch_id: input.vouchId,
         payment_role: "payer_commitment",
+      },
+    },
+    { idempotencyKey: input.idempotencyKey }
+  )
+}
+
+export async function transferCapturedVouchFunds(input: {
+  amountCents: number
+  currency: string
+  connectedAccountId: string
+  providerChargeId: string
+  vouchId: string
+  idempotencyKey: string
+}): Promise<Stripe.Transfer> {
+  return getStripeServerClient().transfers.create(
+    {
+      amount: input.amountCents,
+      currency: input.currency,
+      destination: input.connectedAccountId,
+      source_transaction: input.providerChargeId,
+      transfer_group: `vouch:${input.vouchId}`,
+      metadata: {
+        vouch_id: input.vouchId,
+        payment_role: "payee_release",
       },
     },
     { idempotencyKey: input.idempotencyKey }
