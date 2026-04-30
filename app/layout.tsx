@@ -11,13 +11,6 @@ const archivo = Archivo({
   weight: ["400", "500", "600", "700", "800", "900"],
 })
 
-const jetBrainsMono = JetBrains_Mono({
-  variable: "--font-mono",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700", "800"],
-})
-
 const archivoBlack = Archivo_Black({
   variable: "--font-brand",
   subsets: ["latin"],
@@ -30,6 +23,13 @@ const bebasNeue = Bebas_Neue({
   subsets: ["latin"],
   display: "swap",
   weight: "400",
+})
+
+const jetBrainsMono = JetBrains_Mono({
+  variable: "--font-mono",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
 })
 
 const appUrl =
@@ -66,32 +66,36 @@ export const metadata: Metadata = {
     siteName: "Vouch",
     title: "Vouch — Commitment-backed payments",
     description:
-      "A simple payment coordination layer for appointments and in-person agreements. Both parties confirm presence, then funds release.",
+      "A payment coordination layer for appointments and in-person agreements. Both parties confirm presence, then funds release.",
+    images: [
+      {
+        url: "/VOUCHdark.png",
+        width: 1200,
+        height: 630,
+        alt: "Vouch",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Vouch — Commitment-backed payments",
     description:
       "Both parties confirm presence, then funds release. Otherwise, refund or non-capture.",
+    images: ["/VOUCHdark.png"],
   },
   robots: {
     index: true,
     follow: true,
   },
   icons: {
-    icon: [
-      { url: "/favicon.ico" },
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
-      { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
-    ],
-    apple: [{ url: "/apple-icon.png", sizes: "180x180", type: "image/png" }],
+    icon: [{ url: "/favicon.ico" }, { url: "/handshake.png", type: "image/png" }],
+    apple: [{ url: "/handshake.png", type: "image/png" }],
   },
   manifest: "/site.webmanifest",
 }
 
 export const viewport: Viewport = {
-  themeColor: "#050807",
+  themeColor: "#000000",
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
@@ -106,10 +110,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${jetBrainsMono.variable} ${archivoBlack.variable} ${bebasNeue.variable} dark`}
+      className={`${archivo.variable} ${archivoBlack.variable} ${bebasNeue.variable} ${jetBrainsMono.variable} dark`}
       suppressHydrationWarning
     >
-      <body>
+      <body className="min-h-dvh overflow-x-hidden bg-black bg-[radial-gradient(circle_at_20%_15%,rgba(29,78,216,0.22),transparent_30%),radial-gradient(circle_at_80%_80%,rgba(29,78,216,0.12),transparent_32%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-size-[auto,auto,64px_64px,64px_64px] bg-position-[center,center,center,center] font-sans text-white antialiased">
         <ClerkProvider dynamic>{children}</ClerkProvider>
       </body>
     </html>

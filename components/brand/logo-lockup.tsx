@@ -7,6 +7,7 @@ export interface LogoLockupProps {
   markClassName?: string
   wordmarkClassName?: string
   showWordmark?: boolean
+  variant?: "lockup" | "mark-word"
 }
 
 export function LogoLockup({
@@ -14,22 +15,38 @@ export function LogoLockup({
   markClassName,
   wordmarkClassName,
   showWordmark = true,
+  variant = "lockup",
 }: LogoLockupProps) {
-  return (
-    <div className={cn("inline-flex items-center gap-2 text-neutral-50", className)} aria-label="Vouch">
-      <div
-        className={cn(
-          "grid size-8 place-items-center",
-          markClassName
-        )}
-      >
-        <Image src="/handshake.svg" alt="" width={32} height={32} className="size-8" />
+  if (variant === "lockup") {
+    return (
+      <div className={cn("inline-flex items-center", className)} aria-label="Vouch">
+        <Image
+          src="/VOUCHdark.png"
+          alt="Vouch"
+          width={240}
+          height={80}
+          priority
+          className={cn("h-10 w-auto object-contain", wordmarkClassName)}
+        />
       </div>
+    )
+  }
+
+  return (
+    <div className={cn("inline-flex items-center gap-3 text-white", className)} aria-label="Vouch">
+      <Image
+        src="/handshake.png"
+        alt=""
+        width={40}
+        height={40}
+        priority
+        className={cn("size-10 object-contain", markClassName)}
+      />
 
       {showWordmark ? (
         <span
           className={cn(
-            "font-heading text-2xl leading-none font-black tracking-normal text-white",
+            "font-[family-name:var(--font-brand)] text-2xl leading-none font-black tracking-tight text-white uppercase",
             wordmarkClassName
           )}
         >

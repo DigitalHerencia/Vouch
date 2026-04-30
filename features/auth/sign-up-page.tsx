@@ -8,13 +8,24 @@ import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
-import { LogoLockup } from "@/components/brand/logo-lockup"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { cn } from "@/lib/utils"
 import { signupSchema, verificationSchema } from "@/schemas/auth"
 import { type SignupFormProps, type SignupFormValues } from "@/types/auth"
+
+const inputClassName =
+  "h-12 rounded-none border border-neutral-900 bg-black px-4 font-[family-name:var(--font-sans)] text-base font-semibold text-white shadow-none outline-none placeholder:text-neutral-800 focus-visible:border-[#1D4ED8] focus-visible:ring-0"
+
+const labelClassName =
+  "font-[family-name:var(--font-display)] text-lg font-normal tracking-wide text-white"
+
+const primaryButtonClassName =
+  "h-12 w-full rounded-none bg-[#1D4ED8] font-[family-name:var(--font-display)] text-xl font-normal tracking-wide text-white shadow-none transition hover:bg-[#1D4ED8]/90 focus-visible:ring-0"
+
+const secondaryButtonClassName =
+  "h-12 rounded-none border border-neutral-900 bg-black font-[family-name:var(--font-display)] text-lg font-normal tracking-wide text-white shadow-none transition hover:border-[#1D4ED8] hover:bg-black hover:text-[#1D4ED8] focus-visible:ring-0"
 
 function getErrorMessage(error: unknown, fallback: string): string {
   const clerkError = error as { errors?: Array<{ message?: string }> }
@@ -65,6 +76,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
         }
 
         const url = decorateUrl(nextUrl)
+
         if (url.startsWith("http")) {
           window.location.href = url
         } else {
@@ -99,9 +111,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
   }
 
   const handleSubmit = form.handleSubmit(async (values) => {
-    if (!fetchStatus) {
-      return
-    }
+    if (!fetchStatus) return
 
     form.clearErrors()
     setNotice(null)
@@ -203,46 +213,39 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
 
   return (
     <form
-      className={cn("flex flex-col gap-6", className)}
+      className={cn("mx-auto flex w-full max-w-120 flex-col bg-transparent text-white", className)}
       onSubmit={handleSubmit}
       noValidate
       {...props}
     >
-      <FieldGroup className="gap-6 border border-neutral-800 bg-neutral-950 p-6 shadow-2xl shadow-black/30 sm:p-8">
-        <div className="flex flex-col items-center text-center">
-          <Link
-            href="/"
-            className="mb-8 inline-flex items-center gap-2 text-neutral-50 transition hover:text-blue-300"
-          >
-            <LogoLockup />
-          </Link>
-
-          <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-50 uppercase sm:text-4xl">
-            Create your Vouch account
+      <FieldGroup className="gap-4 border-0 bg-transparent p-0 shadow-none">
+        <div className="mb-2 text-center">
+          <h1 className="font-(family-name:--font-brand) text-5xl leading-[0.9] font-black tracking-[-0.06em] text-white uppercase sm:text-6xl">
+            Back your commitment.
           </h1>
 
-          <p className="mt-3 max-w-sm text-sm leading-6 text-neutral-400">
-            Create Vouches, accept commitment links, and manage setup for payment-backed
-            confirmation.
+          <p className="mx-auto mt-4 max-w-105 text-base leading-7 font-semibold text-neutral-500">
+            Create your account to send Vouches, accept commitment links, and manage setup for
+            payment-backed confirmation.
           </p>
         </div>
 
         {notice ? (
-          <div className="border border-blue-900/60 bg-blue-950/40 px-4 py-3 text-sm text-blue-100">
+          <div className="border border-[#1D4ED8]/70 bg-[#1D4ED8]/10 px-4 py-3 font-mono text-sm text-blue-100">
             {notice}
           </div>
         ) : null}
 
         {form.formState.errors.root?.message ? (
-          <div className="border border-red-950/60 bg-red-950/30 px-4 py-3 text-sm text-red-100">
+          <div className="border border-red-950/70 bg-red-950/30 px-4 py-3 font-mono text-sm text-red-100">
             {form.formState.errors.root.message}
           </div>
         ) : null}
 
         {awaitingVerification ? (
-          <div className="space-y-5">
+          <div className="space-y-4">
             <Field>
-              <FieldLabel className="text-neutral-100" htmlFor="verificationCode">
+              <FieldLabel className={labelClassName} htmlFor="verificationCode">
                 Verification code
               </FieldLabel>
 
@@ -252,7 +255,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 inputMode="numeric"
                 autoComplete="one-time-code"
                 placeholder="Enter the code you received"
-                className="h-12 border-neutral-800 bg-neutral-900 px-3 text-neutral-50 placeholder:text-neutral-500"
+                className={inputClassName}
                 disabled={isBusy}
                 {...form.register("verificationCode", {
                   setValueAs: (value: string) =>
@@ -260,31 +263,23 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 })}
               />
 
-              <FieldDescription className="text-neutral-400">
+              <FieldDescription className="font-mono text-sm text-neutral-600">
                 Confirm your email to finish account creation.
               </FieldDescription>
 
               <FieldError
                 errors={
                   form.formState.errors.verificationCode?.message
-                    ? [
-                        {
-                          message: form.formState.errors.verificationCode.message,
-                        },
-                      ]
+                    ? [{ message: form.formState.errors.verificationCode.message }]
                     : undefined
                 }
               />
             </Field>
 
             <div className="grid gap-3 sm:grid-cols-2">
-              <Button
-                type="submit"
-                disabled={isBusy}
-                className="h-12 bg-blue-600 text-xs font-semibold text-neutral-100 transition-all duration-300 hover:border-2 hover:border-blue-600 hover:bg-transparent hover:text-blue-400 sm:text-sm"
-              >
+              <Button type="submit" disabled={isBusy} className={primaryButtonClassName}>
                 {form.formState.isSubmitting ? (
-                  <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                  <LoaderCircle className="mr-2 size-4 animate-spin" />
                 ) : null}
                 Verify code
               </Button>
@@ -293,7 +288,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 type="button"
                 disabled={isBusy}
                 variant="outline"
-                className="h-12 border border-neutral-700 bg-neutral-900 text-neutral-100 transition-all duration-300 hover:border-blue-600 hover:bg-neutral-950"
+                className={secondaryButtonClassName}
                 onClick={() => {
                   startResending(async () => {
                     form.clearErrors("root")
@@ -302,7 +297,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                   })
                 }}
               >
-                {isResending ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : null}
+                {isResending ? <LoaderCircle className="mr-2 size-4 animate-spin" /> : null}
                 Resend code
               </Button>
             </div>
@@ -311,7 +306,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
               type="button"
               disabled={isBusy}
               variant="ghost"
-              className="w-full border border-neutral-700 bg-neutral-900 text-neutral-100 transition-all duration-300 hover:border-blue-600 hover:bg-neutral-950"
+              className={secondaryButtonClassName}
               onClick={() => {
                 startResetting(async () => {
                   await signUp.reset()
@@ -327,15 +322,15 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 })
               }}
             >
-              {isResetting ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : null}
+              {isResetting ? <LoaderCircle className="mr-2 size-4 animate-spin" /> : null}
               Start over
             </Button>
           </div>
         ) : (
-          <div className="space-y-5">
+          <div className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
               <Field>
-                <FieldLabel className="text-neutral-100" htmlFor="firstName">
+                <FieldLabel className={labelClassName} htmlFor="firstName">
                   First name
                 </FieldLabel>
 
@@ -343,11 +338,10 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                   id="firstName"
                   type="text"
                   autoComplete="given-name"
-                  className="h-12 border-neutral-800 bg-neutral-900 px-3 text-neutral-50 placeholder:text-neutral-500"
+                  className={inputClassName}
                   disabled={isBusy}
                   {...form.register("firstName", {
-                    setValueAs: (value: string) =>
-                      typeof value === "string" ? value.trim() : "",
+                    setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
                   })}
                 />
 
@@ -361,7 +355,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
               </Field>
 
               <Field>
-                <FieldLabel className="text-neutral-100" htmlFor="lastName">
+                <FieldLabel className={labelClassName} htmlFor="lastName">
                   Last name
                 </FieldLabel>
 
@@ -369,11 +363,10 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                   id="lastName"
                   type="text"
                   autoComplete="family-name"
-                  className="h-12 border-neutral-800 bg-neutral-900 px-3 text-neutral-50 placeholder:text-neutral-500"
+                  className={inputClassName}
                   disabled={isBusy}
                   {...form.register("lastName", {
-                    setValueAs: (value: string) =>
-                      typeof value === "string" ? value.trim() : "",
+                    setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
                   })}
                 />
 
@@ -388,7 +381,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
             </div>
 
             <Field>
-              <FieldLabel className="text-neutral-100" htmlFor="email">
+              <FieldLabel className={labelClassName} htmlFor="email">
                 Email
               </FieldLabel>
 
@@ -397,7 +390,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 type="email"
                 autoComplete="email"
                 placeholder="m@example.com"
-                className="h-12 border-neutral-800 bg-neutral-900 px-3 text-neutral-50 placeholder:text-neutral-500"
+                className={inputClassName}
                 disabled={isBusy}
                 {...form.register("email", {
                   setValueAs: (value: string) =>
@@ -415,7 +408,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
             </Field>
 
             <Field>
-              <FieldLabel className="text-neutral-100" htmlFor="password">
+              <FieldLabel className={labelClassName} htmlFor="password">
                 Password
               </FieldLabel>
 
@@ -424,12 +417,12 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 type="password"
                 autoComplete="new-password"
                 placeholder="At least 8 characters"
-                className="h-12 border-neutral-800 bg-neutral-900 px-3 text-neutral-50 placeholder:text-neutral-500"
+                className={inputClassName}
                 disabled={isBusy}
                 {...form.register("password")}
               />
 
-              <FieldDescription className="text-neutral-400">
+              <FieldDescription className="font-mono text-sm text-neutral-600">
                 Use a strong password you haven&apos;t used elsewhere.
               </FieldDescription>
 
@@ -442,27 +435,22 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
               />
             </Field>
 
-            <Button
-              type="submit"
-              disabled={isBusy}
-              className="flex h-12 w-full items-center gap-2 bg-blue-600 text-xs font-semibold text-neutral-100 transition-all duration-300 hover:border-2 hover:border-blue-600 hover:bg-transparent hover:text-blue-400 sm:text-sm"
-            >
+            <Button type="submit" disabled={isBusy} className={primaryButtonClassName}>
               {form.formState.isSubmitting ? (
-                <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />
+                <LoaderCircle className="mr-2 size-4 animate-spin" />
               ) : null}
               Create account
             </Button>
 
-            <div className="flex flex-wrap items-center justify-center gap-1 text-sm text-neutral-400">
+            <div className="flex flex-wrap items-center justify-center gap-1 text-base font-semibold text-neutral-500">
               <span>Already have an account?</span>
-
               <Link
                 href={
                   redirectUrl
                     ? `/sign-in?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-in"
                 }
-                className="font-medium text-blue-500 transition hover:text-blue-300"
+                className="text-[#1D4ED8] transition hover:text-blue-400"
               >
                 Sign in
               </Link>

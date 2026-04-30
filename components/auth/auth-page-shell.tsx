@@ -1,5 +1,6 @@
-import { ShieldCheck } from "lucide-react"
 import Link from "next/link"
+
+import { LogoLockup } from "@/components/brand/logo-lockup"
 
 export interface AuthPageShellProps {
   children: React.ReactNode
@@ -17,29 +18,23 @@ export function AuthPageShell({
   footnote,
 }: AuthPageShellProps) {
   return (
-    <main className="grid min-h-svh bg-neutral-950 text-neutral-50 lg:grid-cols-2">
-      <section className="relative hidden overflow-hidden border-r border-neutral-800 bg-neutral-950 lg:block">
-        <div className="bg-neutral-200, absolute inset-0" />
-        <div className="relative flex h-full flex-col justify-between p-12">
-          <Link href="/" className="inline-flex items-center gap-2 text-neutral-50">
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-500/40 bg-blue-600/15 text-blue-300">
-              <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <span className="text-lg font-semibold tracking-tight">Vouch</span>
+    <main className="grid h-dvh w-full overflow-hidden px-5 py-6 text-white sm:px-8 lg:px-10">
+      <section className="mx-auto grid h-full w-full max-w-140 grid-rows-[auto_1fr_auto]">
+        <header className="flex items-center justify-center">
+          <Link href="/" aria-label="Go to Vouch home">
+            <LogoLockup className="scale-90" />
           </Link>
-          <div className="max-w-xl">
-            <p className="mb-4 text-xs font-semibold tracking-[0.28em] text-blue-300 uppercase">
-              {eyebrow}
-            </p>
-            <h1 className="text-5xl font-semibold tracking-tight text-neutral-50">{title}</h1>
-            <p className="mt-6 text-base leading-7 text-neutral-300">{description}</p>
-          </div>
-          <p className="max-w-lg text-sm leading-6 text-neutral-500">{footnote}</p>
-        </div>
-      </section>
+        </header>
 
-      <section className="flex items-center justify-center p-6 md:p-16">
-        <div className="w-full max-w-sm">{children}</div>
+        <div className="flex min-h-0 items-center justify-center py-4">
+          <div className="w-full">{children}</div>
+        </div>
+
+        <footer className="mx-auto max-w-md text-center font-mono text-xs leading-5 text-neutral-600">
+          <span className="text-[#1D4ED8]">{eyebrow}</span>
+          <span className="mx-2 text-neutral-800">/</span>
+          {footnote}
+        </footer>
       </section>
     </main>
   )
