@@ -20,7 +20,10 @@ import {
   refundStripePayment,
   voidStripeAuthorization,
 } from "@/lib/integrations/stripe/payment-intents"
-import { mapStripePaymentIntentStatus, mapStripeRefundStatus } from "@/lib/integrations/stripe/status-map"
+import {
+  mapStripePaymentIntentStatus,
+  mapStripeRefundStatus,
+} from "@/lib/integrations/stripe/status-map"
 import {
   isStripeAccountEvent,
   isStripeIdentityEvent,
@@ -1800,9 +1803,9 @@ export async function runPaymentReconciliationJob(input?: {
   }
 }
 
-export function normalizeProviderWebhookStatus(
+export async function normalizeProviderWebhookStatus(
   input: ProviderWebhookStatusInput
-): NormalizedProviderWebhookStatus {
+): Promise<NormalizedProviderWebhookStatus> {
   if (input.processed) {
     return "processed"
   }

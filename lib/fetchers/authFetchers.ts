@@ -63,19 +63,21 @@ function isActive(user: { status: string } | null | undefined) {
   return user?.status === "active"
 }
 
-function mapCurrentUser(record: CurrentUserAuthRecord | null): (CurrentUser & {
-  createdAt: string | null
-  updatedAt: string | null
-  readiness: {
-    identityStatus: string
-    adultStatus: string
-    paymentReadiness: string
-    payoutReadiness: string
-    termsAccepted: boolean
-    termsVersion: string | null
-    termsAcceptedAt: string | null
-  }
-}) | null {
+function mapCurrentUser(record: CurrentUserAuthRecord | null):
+  | (CurrentUser & {
+      createdAt: string | null
+      updatedAt: string | null
+      readiness: {
+        identityStatus: string
+        adultStatus: string
+        paymentReadiness: string
+        payoutReadiness: string
+        termsAccepted: boolean
+        termsVersion: string | null
+        termsAcceptedAt: string | null
+      }
+    })
+  | null {
   if (!record) return null
 
   const terms = record.termsAcceptances?.[0] ?? null

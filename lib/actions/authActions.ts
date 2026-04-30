@@ -40,22 +40,28 @@ export async function syncClerkUser(input: LocalUserSyncInput) {
   return { ok: true as const, data: { userId: user.id } }
 }
 
-export function extractClerkUserEmail(data: ClerkWebhookUserData): string | undefined {
+export async function extractClerkUserEmail(
+  data: ClerkWebhookUserData
+): Promise<string | undefined> {
   const primary = data.email_addresses?.find((email) => email.id === data.primary_email_address_id)
   return primary?.email_address ?? data.email_addresses?.[0]?.email_address
 }
 
-export function extractClerkUserPhone(data: ClerkWebhookUserData): string | undefined {
+export async function extractClerkUserPhone(
+  data: ClerkWebhookUserData
+): Promise<string | undefined> {
   const primary = data.phone_numbers?.find((phone) => phone.id === data.primary_phone_number_id)
   return primary?.phone_number ?? data.phone_numbers?.[0]?.phone_number
 }
 
-export function extractClerkDisplayName(data: ClerkWebhookUserData): string | undefined {
+export async function extractClerkDisplayName(
+  data: ClerkWebhookUserData
+): Promise<string | undefined> {
   const name = [data.first_name, data.last_name].filter(Boolean).join(" ").trim()
   return name || data.username || extractClerkUserEmail(data)
 }
 
-export function parseClerkWebhookJson(rawBody: string): ClerkWebhookEvent {
+export async function parseClerkWebhookJson(rawBody: string): Promise<ClerkWebhookEvent> {
   return clerkWebhookEventSchema.parse(JSON.parse(rawBody)) as ClerkWebhookEvent
 }
 
@@ -119,15 +125,11 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent) {
         where: { clerkUserId: event.data.id },
         create: {
           clerkUserId: event.data.id,
-          email: email ?? null,
-          phone: phone ?? null,
-          displayName: displayName ?? null,
           status: "active",
         },
         update: {
-          email: email ?? null,
-          phone: phone ?? null,
-          displayName: displayName ?? null,
+          clerkUserId: event.data.id,
+          status: "active",
         },
       })
 

@@ -55,7 +55,10 @@ function getEnvironment(): "development" | "preview" | "production" {
   return "development"
 }
 
-export async function recordAnalyticsEventTx(tx: Tx, input: TrackAnalyticsEventInput): Promise<void> {
+export async function recordAnalyticsEventTx(
+  tx: Tx,
+  input: TrackAnalyticsEventInput
+): Promise<void> {
   const parsed = trackAnalyticsEventInputSchema.parse(input)
 
   await tx.analyticsEvent.create({

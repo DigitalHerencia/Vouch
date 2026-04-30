@@ -10,10 +10,6 @@ export async function verifyClerkWebhook(request: NextRequest): Promise<unknown>
   return verifyClerkRequestWebhook(request)
 }
 
-export function parseClerkWebhookEvent(rawBody: string): ClerkWebhookEvent {
-  return parseClerkWebhookJson(rawBody)
-}
-
 export async function handleVerifiedClerkWebhook(event: unknown) {
   return processClerkWebhookEvent(event as ClerkWebhookEvent)
 }
