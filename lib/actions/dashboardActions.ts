@@ -4,34 +4,17 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
 import { requireActiveUser } from "@/lib/auth/current-user"
+import { dashboardPreferencesSchema } from "@/schemas/dashboard"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
-
-const dashboardStatusSchema = z.enum([
-  "action_required",
-  "active",
-  "pending",
-  "completed",
-  "expired",
-  "refunded",
-])
-
-const dashboardSortSchema = z.enum(["newest", "oldest", "deadline"])
-
-const dashboardPreferencesSchema = z.object({
-  status: dashboardStatusSchema.optional(),
-  sort: dashboardSortSchema.optional(),
-  page: z.coerce.number().int().min(1).optional(),
-})
 
 type FieldErrors = Record<string, string[]>
 
-type DashboardStatus = z.infer<typeof dashboardStatusSchema>
-type DashboardSort = z.infer<typeof dashboardSortSchema>
+type DashboardPreferences = z.infer<typeof dashboardPreferencesSchema>
 
 export type DashboardPreferencesResult = {
   userId: string
-  status: DashboardStatus | null
-  sort: DashboardSort | null
+  status: DashboardPreferences["status"] | null
+  sort: DashboardPreferences["sort"] | null
   page: number | null
 }
 

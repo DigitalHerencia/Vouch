@@ -3,15 +3,7 @@ import "server-only"
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
 import { prisma } from "@/lib/db/prisma"
-
-export type WebhookProviderName = "clerk" | "stripe" | "stripe_identity"
-
-export type ProviderWebhookLedgerInput = {
-  provider: WebhookProviderName
-  providerEventId: string
-  eventType: string
-  safeMetadata?: Record<string, unknown>
-}
+import type { ProviderWebhookLedgerInput } from "@/types/webhooks"
 
 export async function recordProviderWebhookReceived(input: ProviderWebhookLedgerInput) {
   return prisma.providerWebhookEvent.upsert({

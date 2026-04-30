@@ -41,6 +41,54 @@ export type AuthCapability =
   | "retry_safe_technical_operation"
   | "disable_user_account"
 
+export type AdminCapability = Extract<
+  AuthCapability,
+  | "view_admin_dashboard"
+  | "view_users_operational"
+  | "view_vouches_operational"
+  | "view_payment_records_operational"
+  | "view_audit_events_operational"
+  | "view_webhook_events_operational"
+  | "retry_safe_technical_operation"
+  | "disable_user_account"
+>
+
+export type VouchAccessInput = {
+  userId?: string | null
+  payerId: string
+  payeeId?: string | null
+  isAdmin?: boolean
+  inviteValid?: boolean
+}
+
+export type VouchReadinessInput = {
+  userStatus?: UserStatus
+  identityStatus?: string
+  adultStatus?: string
+  paymentReadiness?: string
+  payoutReadiness?: string
+  termsAccepted?: boolean
+}
+
+export type AcceptVouchAuthzInput = VouchReadinessInput & {
+  userId?: string | null
+  payerId: string
+  existingPayeeId?: string | null
+  status: string
+  inviteValid: boolean
+  eligible?: boolean
+}
+
+export type ConfirmPresenceAuthzInput = {
+  userId?: string | null
+  payerId: string
+  payeeId?: string | null
+  status: string
+  windowOpen: boolean
+  alreadyConfirmed: boolean
+  userStatus?: UserStatus
+}
+
 export interface AuthzContext {
   userId: string | null
   baseRole: BaseRole

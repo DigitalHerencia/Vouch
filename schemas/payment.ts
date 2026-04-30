@@ -115,3 +115,7 @@ export const paymentWebhookProcessInputSchema = z.object({
   eventType: z.string().min(1),
   idempotencyKey: idempotencyKeySchema.optional(),
 })
+
+export const paymentReadinessInputSchema = z.object({
+  userId: z.string().trim().min(1).optional(),
+})

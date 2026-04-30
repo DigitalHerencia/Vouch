@@ -1,11 +1,6 @@
 import "server-only"
 
-export type RateLimitResult = {
-  allowed: boolean
-  limit: number | null
-  remaining: number | null
-  resetAt: Date | null
-}
+import type { RateLimitResult } from "@/types/security"
 
 const allowed: RateLimitResult = {
   allowed: true,

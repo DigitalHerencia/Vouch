@@ -32,3 +32,7 @@ export const settingsSearchParamsSchema = z.object({
 })
 
 export const updateProfileBasicsInputSchema = profileBasicsInputSchema
+
+export const settingsStartFlowSchema = z.object({
+  returnTo: internalReturnToPathSchema.optional(),
+})

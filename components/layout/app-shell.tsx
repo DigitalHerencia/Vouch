@@ -1,5 +1,5 @@
 import { AppHeader } from "@/components/layout/app-header"
-import { cn } from "@/lib/utils/cn"
+import { cn } from "@/lib/utils"
 
 export interface AppShellProps {
   children: React.ReactNode

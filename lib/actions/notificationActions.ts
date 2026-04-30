@@ -1,7 +1,6 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { z } from "zod"
 
 import { requireActiveUser } from "@/lib/auth/current-user"
 import { assertCapability } from "@/lib/authz/capabilities"
@@ -16,6 +15,7 @@ import {
 } from "@/lib/db/transactions/notificationTransactions"
 import {
   queueNotificationInputSchema,
+  notificationFailureInputSchema,
   sendQueuedNotificationInputSchema,
   updateNotificationDeliveryStatusInputSchema,
 } from "@/schemas/notification"
@@ -51,10 +51,6 @@ type NotificationRecord = {
   failedAt: Date | null
   createdAt: Date
 }
-
-const notificationFailureInputSchema = sendQueuedNotificationInputSchema.extend({
-  failureCode: z.string().trim().min(1).max(128).optional(),
-})
 
 function getFieldErrors(error: {
   issues: Array<{ path: PropertyKey[]; message: string }>

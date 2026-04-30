@@ -33,6 +33,14 @@ export const dashboardSearchParamsSchema = z.object({
   sort: sanitizedDashboardSortParamSchema,
 })
 
+export const dashboardPreferencesSchema = z.object({
+  status: z
+    .enum(["action_required", "active", "pending", "completed", "expired", "refunded"])
+    .optional(),
+  sort: vouchListSortSchema.optional(),
+  page: z.coerce.number().int().min(1).optional(),
+})
+
 export const dashboardSectionStateSchema = z.object({
   id: dashboardSectionIdSchema,
   title: z.string().min(1).max(120),

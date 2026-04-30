@@ -1,12 +1,6 @@
 import { createHash } from "node:crypto"
 
-export type IdempotencyKeyParts = {
-  actorId?: string | null
-  action: string
-  resourceId?: string | null
-  requestId?: string | null
-  payloadHash?: string | null
-}
+import type { IdempotencyKeyParts } from "@/types/security"
 
 const IDEMPOTENCY_KEY_PATTERN = /^[a-z0-9][a-z0-9:_-]{15,191}$/
 

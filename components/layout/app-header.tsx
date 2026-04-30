@@ -2,7 +2,7 @@ import { ShieldCheck } from "lucide-react"
 import Link from "next/link"
 
 import { UserMenu } from "@/components/navigation/user-menu"
-import { cn } from "@/lib/utils/cn"
+import { cn } from "@/lib/utils"
 
 export interface AppHeaderProps {
   className?: string

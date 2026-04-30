@@ -29,6 +29,13 @@ export const userStatusChangeInputSchema = z.object({
   reason: optionalTrimmedStringSchema,
 })
 
+export const authProviderUserInputSchema = z.object({
+  clerkUserId: z.string().trim().min(1).max(256),
+  email: emailSchema.optional(),
+  phone: optionalPhoneSchema,
+  displayName: displayNameSchema,
+})
+
 export const userSafeIdentitySchema = z.object({
   userId: userIdSchema,
   displayName: displayNameSchema,

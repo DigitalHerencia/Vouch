@@ -1,40 +1,10 @@
 import type { CurrentUser } from "@/lib/auth/current-user"
-
-export type VouchAccessInput = {
-  userId?: string | null
-  payerId: string
-  payeeId?: string | null
-  isAdmin?: boolean
-  inviteValid?: boolean
-}
-
-export type VouchReadinessInput = {
-  userStatus?: "active" | "disabled"
-  identityStatus?: string
-  adultStatus?: string
-  paymentReadiness?: string
-  payoutReadiness?: string
-  termsAccepted?: boolean
-}
-
-export type AcceptVouchInput = VouchReadinessInput & {
-  userId?: string | null
-  payerId: string
-  existingPayeeId?: string | null
-  status: string
-  inviteValid: boolean
-  eligible?: boolean
-}
-
-export type ConfirmPresenceInput = {
-  userId?: string | null
-  payerId: string
-  payeeId?: string | null
-  status: string
-  windowOpen: boolean
-  alreadyConfirmed: boolean
-  userStatus?: "active" | "disabled"
-}
+import type {
+  AcceptVouchAuthzInput,
+  ConfirmPresenceAuthzInput,
+  VouchAccessInput,
+  VouchReadinessInput,
+} from "@/types/auth"
 
 function isActive(input: VouchReadinessInput): boolean {
   return input.userStatus !== "disabled"
@@ -81,7 +51,7 @@ export function canCreateVouch(input: VouchReadinessInput): boolean {
   return hasCreateReadiness(input)
 }
 
-export function canAcceptVouch(input: AcceptVouchInput): boolean {
+export function canAcceptVouch(input: AcceptVouchAuthzInput): boolean {
   return (
     Boolean(input.userId) &&
     isActive(input) &&
@@ -107,7 +77,7 @@ export function canDeclineVouch(input: {
   )
 }
 
-export function canConfirmPresence(input: ConfirmPresenceInput): boolean {
+export function canConfirmPresence(input: ConfirmPresenceAuthzInput): boolean {
   const isParticipant =
     Boolean(input.userId) && (input.userId === input.payerId || input.userId === input.payeeId)
   return (

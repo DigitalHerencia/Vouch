@@ -14,15 +14,6 @@ export type AsyncStatus = "idle" | "pending" | "success" | "error"
 export type PageMode = "default" | "loading" | "error" | "empty" | "blocked" | "success"
 export type DeviceVariant = "desktop" | "mobile"
 
-export type ActionResult<T> =
-  | { ok: true; data: T }
-  | {
-      ok: false
-      code?: string
-      formError?: string
-      fieldErrors?: Record<string, string[]>
-    }
-
 export interface PaginationInput {
   page?: number
   pageSize?: number

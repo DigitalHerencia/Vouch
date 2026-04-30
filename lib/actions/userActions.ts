@@ -1,7 +1,6 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { z } from "zod"
 
 import type { LocalUserSyncInput } from "@/lib/auth/clerk"
 import { requireActiveUser } from "@/lib/auth/current-user"
@@ -16,7 +15,11 @@ import {
   reactivateUserTx,
   updateUserPrivateAccountInfoTx,
 } from "@/lib/db/transactions/userTransactions"
-import { profileBasicsInputSchema, userStatusChangeInputSchema } from "@/schemas/user"
+import {
+  authProviderUserInputSchema,
+  profileBasicsInputSchema,
+  userStatusChangeInputSchema,
+} from "@/schemas/user"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
 import type { PrivateAccountInfo } from "@/types/user"
 
@@ -25,13 +28,6 @@ type FieldErrors = Record<string, string[]>
 type UserActionResult = PrivateAccountInfo & {
   clerkUserId: string
 }
-
-const authProviderUserInputSchema = z.object({
-  clerkUserId: z.string().trim().min(1).max(256),
-  email: z.string().trim().email().max(320).optional(),
-  phone: z.string().trim().min(7).max(32).optional(),
-  displayName: z.string().trim().min(1).max(120).optional(),
-})
 
 function getFieldErrors(error: {
   issues: Array<{ path: PropertyKey[]; message: string }>

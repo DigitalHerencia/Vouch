@@ -2,14 +2,17 @@
 
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { z } from "zod"
 
 import { requireActiveUser } from "@/lib/auth/current-user"
 import { prisma } from "@/lib/db/prisma"
 import { updateUserPrivateAccountInfoTx } from "@/lib/db/transactions/userTransactions"
 import { acceptTermsTx } from "@/lib/db/transactions/setupTransactions"
 import { CURRENT_TERMS_VERSION } from "@/lib/constants/terms"
-import { settingsSearchParamsSchema, updateProfileBasicsInputSchema } from "@/schemas/settings"
+import {
+  settingsSearchParamsSchema,
+  settingsStartFlowSchema,
+  updateProfileBasicsInputSchema,
+} from "@/schemas/settings"
 import { acceptTermsSchema } from "@/schemas/setup"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
 import type { PrivateAccountInfo } from "@/types/user"
@@ -36,10 +39,6 @@ type TermsAcceptanceResult = {
   acceptedAt: string
   termsVersion: string
 }
-
-const settingsStartFlowSchema = z.object({
-  returnTo: z.string().trim().startsWith("/").max(256).optional(),
-})
 
 function getFieldErrors(error: {
   issues: Array<{ path: PropertyKey[]; message: string }>

@@ -15,6 +15,10 @@ export function normalizeReturnTo(
   return value
 }
 
+export function sanitizePostAuthRedirect(value: string | null | undefined): string {
+  return normalizeReturnTo(value)
+}
+
 export function getPostAuthRedirect(searchParams: {
   redirect_url?: string | string[] | undefined
   redirectUrl?: string | string[] | undefined

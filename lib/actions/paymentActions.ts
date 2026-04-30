@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import { z } from "zod"
 
 import { requireActiveUser } from "@/lib/auth/current-user"
 import { assertCapability } from "@/lib/authz/capabilities"
@@ -19,6 +18,7 @@ import {
   captureOrReleaseVouchPaymentInputSchema,
   initializeVouchPaymentInputSchema,
   paymentFailureInputSchema,
+  paymentReadinessInputSchema,
   paymentProviderReturnInputSchema,
   paymentWebhookEnvelopeSchema,
   paymentWebhookProcessInputSchema,
@@ -69,10 +69,6 @@ type WebhookRecordResult = {
   eventType: string
   processed: boolean
 }
-
-const paymentReadinessSchema = z.object({
-  userId: z.string().trim().min(1).optional(),
-})
 
 function getFieldErrors(error: {
   issues: Array<{ path: PropertyKey[]; message: string }>
@@ -354,7 +350,7 @@ export async function refreshPaymentReadiness(
   input?: unknown
 ): Promise<ActionResult<ReadinessResult>> {
   const user = await requireActiveUser()
-  const parsed = paymentReadinessSchema.safeParse(input ?? {})
+  const parsed = paymentReadinessInputSchema.safeParse(input ?? {})
 
   if (!parsed.success) {
     return actionFailure(
@@ -543,7 +539,7 @@ export async function refreshPayoutReadiness(
   input?: unknown
 ): Promise<ActionResult<ReadinessResult>> {
   const user = await requireActiveUser()
-  const parsed = paymentReadinessSchema.safeParse(input ?? {})
+  const parsed = paymentReadinessInputSchema.safeParse(input ?? {})
 
   if (!parsed.success) {
     return actionFailure(

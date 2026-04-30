@@ -1,9 +1,7 @@
-export type ProviderWebhookStatusInput = {
-  processed: boolean
-  processingError: string | null
-}
-
-export type NormalizedProviderWebhookStatus = "received" | "processed" | "failed"
+import type {
+  NormalizedProviderWebhookStatus,
+  ProviderWebhookStatusInput,
+} from "@/types/webhooks"
 
 export function normalizeProviderWebhookStatus(
   input: ProviderWebhookStatusInput

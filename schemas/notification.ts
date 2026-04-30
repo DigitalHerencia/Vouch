@@ -46,6 +46,10 @@ export const sendQueuedNotificationInputSchema = z.object({
   notificationEventId: idSchema,
 })
 
+export const notificationFailureInputSchema = sendQueuedNotificationInputSchema.extend({
+  failureCode: z.string().trim().min(1).max(128).optional(),
+})
+
 export const updateNotificationDeliveryStatusInputSchema = z.object({
   notificationEventId: idSchema,
   status: notificationStatusSchema,
