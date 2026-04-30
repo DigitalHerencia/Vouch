@@ -108,9 +108,7 @@ export async function createStripeConnectOnboardingLink(input: {
   return { url: link.url }
 }
 
-export async function refreshStripeConnectReadiness(input: {
-  providerAccountId: string
-}): Promise<{
+export async function refreshStripeConnectReadiness(input: { providerAccountId: string }): Promise<{
   readiness: PayoutReadinessStatus
   chargesEnabled: boolean
   payoutsEnabled: boolean

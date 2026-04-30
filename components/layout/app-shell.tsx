@@ -1,11 +1,16 @@
+import { AppHeader } from "@/components/layout/app-header"
+import { cn } from "@/lib/utils/cn"
+
 export interface AppShellProps {
+  children: React.ReactNode
   className?: string
 }
 
-export function AppShell({ className }: AppShellProps) {
+export function AppShell({ children, className }: AppShellProps) {
   return (
-    <div className={className}>
-      <p className="text-sm text-neutral-400">components/layout/app-shell.tsx</p>
+    <div className={cn("min-h-svh bg-neutral-950 text-neutral-50", className)}>
+      <AppHeader />
+      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">{children}</main>
     </div>
   )
 }

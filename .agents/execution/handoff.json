@@ -67,9 +67,7 @@
       ".agents/execution/progress.json",
       ".agents/execution/validation.json"
     ],
-    "repo_root": [
-      "AGENTS.md"
-    ]
+    "repo_root": ["AGENTS.md"]
   },
   "next_actions": [
     {
@@ -133,30 +131,21 @@
       "severity": "critical",
       "title": "Legal/compliance review not completed",
       "impact": "Blocks production launch and approved payment/escrow-adjacent language.",
-      "unblocks": [
-        "legal_copy_review",
-        "production_candidate"
-      ]
+      "unblocks": ["legal_copy_review", "production_candidate"]
     },
     {
       "id": "BLOCK-003",
       "severity": "high",
       "title": "Repo scaffold gaps block full validation",
       "impact": "pnpm typecheck and full pnpm test fail due missing feature/type/schema/helper modules and Vitest collecting Playwright specs outside the Clerk auth work.",
-      "unblocks": [
-        "mvp_local"
-      ]
+      "unblocks": ["mvp_local"]
     },
     {
       "id": "BLOCK-004",
       "severity": "critical",
       "title": "Stripe sandbox lifecycle proof not completed",
       "impact": "Blocks production confidence for authorization, manual capture, destination charge transfer, application fee, void/refund, and webhook reconciliation.",
-      "unblocks": [
-        "payment_provider_sandbox",
-        "payment_flow_review",
-        "production_candidate"
-      ]
+      "unblocks": ["payment_provider_sandbox", "payment_flow_review", "production_candidate"]
     }
   ],
   "risks": [

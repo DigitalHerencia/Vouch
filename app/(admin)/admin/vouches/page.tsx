@@ -8,7 +8,9 @@ export default async function AdminVouchesRoute() {
       id: String(v.id),
       href: `/admin/vouches/${v.id}`,
       status: String(v.status),
-      paymentStatus: String((v.paymentRecord as Record<string, unknown> | null)?.status ?? "not_started"),
+      paymentStatus: String(
+        (v.paymentRecord as Record<string, unknown> | null)?.status ?? "not_started"
+      ),
       deadline: String(v.confirmationExpiresAt ?? ""),
     }
   })

@@ -13,12 +13,23 @@ export default async function AdminVouchDetailRoute({ params }: PageProps) {
       status={String(vouch?.status ?? "not_found")}
       payerId={String(vouch?.payerId ?? "unknown")}
       {...(vouch?.payeeId ? { payeeId: String(vouch.payeeId) } : {})}
-      paymentStatus={String((vouch?.paymentRecord as Record<string, unknown> | null)?.status ?? "not_started")}
-      refundStatus={String((vouch?.refundRecord as Record<string, unknown> | null)?.status ?? "not_required")}
-      confirmationStatus={String((vouch?.presenceConfirmations as unknown[] | undefined)?.length ?? 0)}
+      paymentStatus={String(
+        (vouch?.paymentRecord as Record<string, unknown> | null)?.status ?? "not_started"
+      )}
+      refundStatus={String(
+        (vouch?.refundRecord as Record<string, unknown> | null)?.status ?? "not_required"
+      )}
+      confirmationStatus={String(
+        (vouch?.presenceConfirmations as unknown[] | undefined)?.length ?? 0
+      )}
       auditEvents={audits.map((event) => {
         const e = event as Record<string, unknown>
-        return { id: String(e.id), eventName: String(e.eventName), actorType: String(e.actorType), createdAtLabel: String(e.createdAt) }
+        return {
+          id: String(e.id),
+          eventName: String(e.eventName),
+          actorType: String(e.actorType),
+          createdAtLabel: String(e.createdAt),
+        }
       })}
     />
   )

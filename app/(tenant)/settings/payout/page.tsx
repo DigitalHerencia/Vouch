@@ -14,5 +14,7 @@ export default async function Page() {
     "use server"
     await refreshPayoutReadiness()
   }
-  return <PayoutSettingsPage state={state} startAction={startAction} refreshAction={refreshAction} />
+  return (
+    <PayoutSettingsPage state={state} startAction={startAction} refreshAction={refreshAction} />
+  )
 }

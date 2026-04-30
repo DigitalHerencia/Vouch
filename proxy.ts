@@ -27,13 +27,22 @@ const isPublicRoute = createRouteMatcher([
 
 const isAuthRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"])
 
+function isInternalRedirect(value: string | null): value is string {
+  return !!value && value.startsWith("/") && !value.startsWith("//") && !value.includes("://")
+}
+
+function getRequestedRedirect(req: Request): string | null {
+  const url = new URL(req.url)
+  const requested = url.searchParams.get("return_to") ?? url.searchParams.get("redirect_url")
+  return isInternalRedirect(requested) ? requested : null
+}
+
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth()
   const { pathname, search } = req.nextUrl
 
   if (isAuthRoute(req) && userId) {
-    const redirectUrl = new URL("/dashboard", req.url)
-    return NextResponse.redirect(redirectUrl)
+    return NextResponse.redirect(new URL(getRequestedRedirect(req) ?? "/dashboard", req.url))
   }
 
   if (isPublicRoute(req)) {
@@ -42,7 +51,7 @@ export default clerkMiddleware(async (auth, req) => {
 
   if (!userId) {
     const signInUrl = new URL("/sign-in", req.url)
-    signInUrl.searchParams.set("redirect_url", `${pathname}${search}`)
+    signInUrl.searchParams.set("return_to", `${pathname}${search}`)
     return NextResponse.redirect(signInUrl)
   }
 

@@ -14,5 +14,7 @@ export default async function Page() {
     "use server"
     await refreshPaymentReadiness()
   }
-  return <PaymentSettingsPage state={state} startAction={startAction} refreshAction={refreshAction} />
+  return (
+    <PaymentSettingsPage state={state} startAction={startAction} refreshAction={refreshAction} />
+  )
 }

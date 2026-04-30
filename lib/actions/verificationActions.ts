@@ -2,7 +2,10 @@
 
 import { requireActiveUser } from "@/lib/auth/current-user"
 import { prisma } from "@/lib/db/prisma"
-import { createStripeIdentitySession, refreshStripeIdentityStatus } from "@/lib/integrations/stripe/identity"
+import {
+  createStripeIdentitySession,
+  refreshStripeIdentityStatus,
+} from "@/lib/integrations/stripe/identity"
 import {
   markVerificationPendingTx,
   markVerificationRejectedTx,

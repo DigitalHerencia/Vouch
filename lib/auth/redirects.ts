@@ -18,13 +18,15 @@ export function normalizeReturnTo(
 export function getPostAuthRedirect(searchParams: {
   redirect_url?: string | string[] | undefined
   redirectUrl?: string | string[] | undefined
+  return_to?: string | string[] | undefined
   returnTo?: string | string[] | undefined
 }): string {
-  const returnTo = first(searchParams.returnTo)
-  const redirectUrl = first(searchParams.redirectUrl)
-  const redirect_url = first(searchParams.redirect_url)
+  const returnToSnake = first(searchParams.return_to)
+  const returnToCamel = first(searchParams.returnTo)
+  const redirectUrlCamel = first(searchParams.redirectUrl)
+  const redirectUrlSnake = first(searchParams.redirect_url)
 
-  return normalizeReturnTo(returnTo ?? redirectUrl ?? redirect_url)
+  return normalizeReturnTo(returnToSnake ?? returnToCamel ?? redirectUrlCamel ?? redirectUrlSnake)
 }
 
 function first(value: string | string[] | undefined): string | undefined {

@@ -28,6 +28,7 @@ export type UserSyncInput = z.infer<typeof userSyncSchema>
 export const authRedirectSearchParamsSchema = z.object({
   redirect_url: z.string().optional(),
   redirectUrl: z.string().optional(),
+  return_to: z.string().optional(),
   returnTo: z.string().optional(),
 })
 

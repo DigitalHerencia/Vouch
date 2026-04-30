@@ -7,12 +7,7 @@
   "policy": {
     "append_only_preferred": true,
     "business_logic_allowed": false,
-    "decision_status_values": [
-      "accepted",
-      "superseded",
-      "rejected",
-      "pending_review"
-    ]
+    "decision_status_values": ["accepted", "superseded", "rejected", "pending_review"]
   },
   "decisions": [
     {
@@ -22,10 +17,7 @@
       "title": "Use layered .agents governance",
       "decision": "Use docs for human intent, contracts for deterministic structure, instructions for agent implementation guidance, and execution JSON for runtime logs/state.",
       "rationale": "Separates meaning, structure, execution guidance, and runtime reporting.",
-      "source_refs": [
-        ".agents/docs/prd.md",
-        ".agents/contracts/acceptance-gates.yaml"
-      ],
+      "source_refs": [".agents/docs/prd.md", ".agents/contracts/acceptance-gates.yaml"],
       "consequences": [
         "Agents must consume YAML contracts for deterministic implementation.",
         "Execution JSON must not store business logic.",
@@ -75,9 +67,7 @@
       "title": "Server-first architecture",
       "decision": "Use Next.js App Router with route shells in app, feature orchestration in features, pure UI in components, server reads in fetchers, server writes in actions, and Zod schemas for runtime validation.",
       "rationale": "Vouch requires server-authoritative payment, authorization, confirmation, and lifecycle state.",
-      "source_refs": [
-        ".agents/docs/tech-requirements.md"
-      ],
+      "source_refs": [".agents/docs/tech-requirements.md"],
       "consequences": [
         "No raw Prisma queries in app or components.",
         "No payment or authorization logic in UI components.",
@@ -183,10 +173,7 @@
       "status": "superseded",
       "title": "Select exact Stripe Connect flow",
       "question": "Superseded by DEC-008 and DEC-009; sandbox/legal review remains required before production launch.",
-      "required_before": [
-        "payment_provider_sandbox",
-        "production_candidate"
-      ],
+      "required_before": ["payment_provider_sandbox", "production_candidate"],
       "owner": "human/legal/payment architecture review"
     },
     {
@@ -194,9 +181,7 @@
       "status": "pending_review",
       "title": "Define Vouch amount limits",
       "question": "What minimum and maximum Vouch amounts should be enforced for MVP?",
-      "required_before": [
-        "vouch_create_flow"
-      ],
+      "required_before": ["vouch_create_flow"],
       "owner": "product"
     },
     {
@@ -204,10 +189,7 @@
       "status": "pending_review",
       "title": "Define confirmation window constraints",
       "question": "What minimum, maximum, and default confirmation windows should be enforced?",
-      "required_before": [
-        "vouch_create_flow",
-        "manual_confirmation_flow"
-      ],
+      "required_before": ["vouch_create_flow", "manual_confirmation_flow"],
       "owner": "product"
     },
     {
@@ -215,10 +197,7 @@
       "status": "pending_review",
       "title": "Select verification provider flow",
       "question": "Use Stripe Identity, Connect identity requirements, Clerk metadata, or another provider for identity/adult eligibility?",
-      "required_before": [
-        "setup_gates",
-        "production_candidate"
-      ],
+      "required_before": ["setup_gates", "production_candidate"],
       "owner": "product/compliance"
     },
     {
@@ -226,10 +205,7 @@
       "status": "pending_review",
       "title": "Legal copy and terms review",
       "question": "What exact terms/privacy/payment language is legally approved for production?",
-      "required_before": [
-        "legal_copy_review",
-        "production_candidate"
-      ],
+      "required_before": ["legal_copy_review", "production_candidate"],
       "owner": "legal"
     }
   ]

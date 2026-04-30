@@ -12,7 +12,9 @@ export async function reconcileStuckPaymentRecords(input?: {
     where: {
       provider: "stripe",
       providerPaymentId: { not: null },
-      status: { in: ["requires_payment_method", "authorized", "release_pending", "refund_pending"] },
+      status: {
+        in: ["requires_payment_method", "authorized", "release_pending", "refund_pending"],
+      },
     },
     take: input?.limit ?? 50,
     orderBy: { updatedAt: "asc" },

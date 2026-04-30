@@ -15,7 +15,9 @@ type EmailContext = {
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
 
 function render(type: NotificationType, context: EmailContext = {}): LifecycleEmail {
-  const vouchUrl = context.vouchId ? `${context.appUrl ?? APP_URL}/vouches/${context.vouchId}` : APP_URL
+  const vouchUrl = context.vouchId
+    ? `${context.appUrl ?? APP_URL}/vouches/${context.vouchId}`
+    : APP_URL
 
   switch (type) {
     case "invite":
@@ -26,15 +28,30 @@ function render(type: NotificationType, context: EmailContext = {}): LifecycleEm
     case "vouch_accepted":
       return { subject: "Your Vouch was accepted", text: `Your Vouch was accepted: ${vouchUrl}` }
     case "confirmation_window_open":
-      return { subject: "Confirm presence for your Vouch", text: `The confirmation window is open: ${vouchUrl}` }
+      return {
+        subject: "Confirm presence for your Vouch",
+        text: `The confirmation window is open: ${vouchUrl}`,
+      }
     case "confirmation_recorded":
-      return { subject: "Vouch confirmation recorded", text: `A confirmation was recorded: ${vouchUrl}` }
+      return {
+        subject: "Vouch confirmation recorded",
+        text: `A confirmation was recorded: ${vouchUrl}`,
+      }
     case "vouch_completed":
-      return { subject: "Vouch completed", text: `Both parties confirmed and funds were released: ${vouchUrl}` }
+      return {
+        subject: "Vouch completed",
+        text: `Both parties confirmed and funds were released: ${vouchUrl}`,
+      }
     case "vouch_expired_refunded":
-      return { subject: "Vouch expired", text: `Both confirmations were not completed, so funds did not release: ${vouchUrl}` }
+      return {
+        subject: "Vouch expired",
+        text: `Both confirmations were not completed, so funds did not release: ${vouchUrl}`,
+      }
     case "payment_failed":
-      return { subject: "Vouch payment needs attention", text: `A payment provider issue needs review: ${vouchUrl}` }
+      return {
+        subject: "Vouch payment needs attention",
+        text: `A payment provider issue needs review: ${vouchUrl}`,
+      }
   }
 }
 

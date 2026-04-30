@@ -1,7 +1,10 @@
 import { VerificationSettingsPage } from "@/features/settings/verification-settings-page"
 import { requireActiveUser } from "@/lib/auth/current-user"
 import { getVerificationStatus } from "@/lib/fetchers/verificationFetchers"
-import { reconcileVerificationProfile, startIdentityVerification } from "@/lib/actions/verificationActions"
+import {
+  reconcileVerificationProfile,
+  startIdentityVerification,
+} from "@/lib/actions/verificationActions"
 
 export default async function Page() {
   const user = await requireActiveUser()
@@ -14,5 +17,11 @@ export default async function Page() {
     "use server"
     await reconcileVerificationProfile({})
   }
-  return <VerificationSettingsPage status={status} startIdentityAction={startIdentityAction} reconcileAction={reconcileAction} />
+  return (
+    <VerificationSettingsPage
+      status={status}
+      startIdentityAction={startIdentityAction}
+      reconcileAction={reconcileAction}
+    />
+  )
 }

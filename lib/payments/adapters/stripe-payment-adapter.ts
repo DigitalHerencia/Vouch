@@ -69,14 +69,16 @@ export async function initializeStripePaymentForVouch(
         vouchId: input.vouchId,
         provider: "stripe",
         providerPaymentId: paymentIntent.id,
-        status: paymentIntent.status === "requires_capture" ? "authorized" : "requires_payment_method",
+        status:
+          paymentIntent.status === "requires_capture" ? "authorized" : "requires_payment_method",
         amountCents: input.amountCents,
         currency: input.currency,
         platformFeeCents: input.platformFeeCents,
       },
       update: {
         providerPaymentId: paymentIntent.id,
-        status: paymentIntent.status === "requires_capture" ? "authorized" : "requires_payment_method",
+        status:
+          paymentIntent.status === "requires_capture" ? "authorized" : "requires_payment_method",
         amountCents: input.amountCents,
         currency: input.currency,
         platformFeeCents: input.platformFeeCents,

@@ -13,8 +13,18 @@ export function PayoutSettingsPage({ state, startAction, refreshAction }: Payout
       <h1 className="text-3xl font-semibold tracking-tight">Payout account</h1>
       <p className="text-muted-foreground">Status: {readiness}</p>
       <div className="flex gap-3">
-        {startAction ? <form action={startAction}><Button type="submit">Start onboarding</Button></form> : null}
-        {refreshAction ? <form action={refreshAction}><Button type="submit" variant="outline">Refresh</Button></form> : null}
+        {startAction ? (
+          <form action={startAction}>
+            <Button type="submit">Start onboarding</Button>
+          </form>
+        ) : null}
+        {refreshAction ? (
+          <form action={refreshAction}>
+            <Button type="submit" variant="outline">
+              Refresh
+            </Button>
+          </form>
+        ) : null}
       </div>
     </section>
   )

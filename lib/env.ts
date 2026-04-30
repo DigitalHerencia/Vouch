@@ -51,7 +51,9 @@ export function getRuntimeEnv(): RuntimeEnv {
     stripePublishableKey: getOptionalEnv("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY"),
     appUrl:
       getOptionalEnv("NEXT_PUBLIC_APP_URL") ??
-      (getOptionalEnv("VERCEL_URL") ? `https://${getOptionalEnv("VERCEL_URL")}` : "http://localhost:3000"),
+      (getOptionalEnv("VERCEL_URL")
+        ? `https://${getOptionalEnv("VERCEL_URL")}`
+        : "http://localhost:3000"),
     vercelUrl: getOptionalEnv("VERCEL_URL"),
     adminEmail: getOptionalEnv("ADMIN_EMAIL"),
     adminUserIds: (getOptionalEnv("ADMIN_USER_IDS") ?? "")

@@ -12,10 +12,17 @@ export default async function Page() {
       receivedAt: String(w.receivedAt),
     }
   })
-  return <AdminTablePage title="Admin Webhooks" description="Inspect provider webhook processing state." columns={[
-    { key: "id", label: "ID" },
-    { key: "eventType", label: "Event" },
-    { key: "processed", label: "Processed" },
-    { key: "receivedAt", label: "Received" },
-  ]} rows={rows} />
+  return (
+    <AdminTablePage
+      title="Admin Webhooks"
+      description="Inspect provider webhook processing state."
+      columns={[
+        { key: "id", label: "ID" },
+        { key: "eventType", label: "Event" },
+        { key: "processed", label: "Processed" },
+        { key: "receivedAt", label: "Received" },
+      ]}
+      rows={rows}
+    />
+  )
 }
