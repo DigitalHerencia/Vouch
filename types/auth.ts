@@ -163,3 +163,22 @@ export interface LoginFormProps extends ComponentProps<"form"> {
 export interface SignupFormProps extends ComponentProps<"form"> {
   redirectUrl?: string | undefined
 }
+
+export type ClerkWebhookEventType = "user.created" | "user.updated" | "user.deleted" | string
+
+export type ClerkWebhookUserData = {
+  id: string
+  email_addresses?: Array<{ email_address?: string; id?: string }>
+  primary_email_address_id?: string | null
+  phone_numbers?: Array<{ phone_number?: string; id?: string }>
+  primary_phone_number_id?: string | null
+  first_name?: string | null
+  last_name?: string | null
+  username?: string | null
+}
+
+export type ClerkWebhookEvent = {
+  id?: string
+  type: ClerkWebhookEventType
+  data: ClerkWebhookUserData
+}

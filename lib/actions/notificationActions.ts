@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache"
 
-import { requireActiveUser } from "@/lib/auth/current-user"
-import { assertCapability } from "@/lib/authz/capabilities"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
+import { assertCapability } from "@/lib/auth/authorization/capabilities"
 import { prisma } from "@/lib/db/prisma"
 import {
   markNotificationFailedTx,
@@ -12,7 +12,7 @@ import {
   queueNotificationTx,
   retryNotificationTx,
   updateNotificationDeliveryStatusTx,
-} from "@/lib/db/transactions/notificationTransactions"
+} from "@/lib/actions/transactions/notificationTransactions"
 import {
   queueNotificationInputSchema,
   notificationFailureInputSchema,

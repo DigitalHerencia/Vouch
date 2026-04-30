@@ -1,5 +1,5 @@
 import { PayoutSettingsPage } from "@/features/settings/payout-settings-page"
-import { requireActiveUser } from "@/lib/auth/current-user"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { getPayoutSettingsPageState } from "@/lib/fetchers/paymentFetchers"
 import { refreshPayoutReadiness, startPayoutOnboarding } from "@/lib/actions/paymentActions"
 

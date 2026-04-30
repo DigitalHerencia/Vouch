@@ -139,12 +139,28 @@ export async function getCreateVouchSetupGate(userId: string) {
   return { allowed: blockers.length === 0, blockers, setup }
 }
 
+export async function assertCreateVouchSetupReady(userId: string) {
+  const gate = await getCreateVouchSetupGate(userId)
+  if (!gate.allowed) {
+    throw new Error(`SETUP_BLOCKED: ${gate.blockers.join(",")}`)
+  }
+  return { ok: true as const, blockers: [] as string[] }
+}
+
 export async function getAcceptVouchSetupGate(input: { userId: string }) {
   const setup = await getSetupChecklist(input.userId)
   if (!setup) return { allowed: false, blockers: ["unauthorized"] }
 
   const blockers = blockersFor("accept", setup)
   return { allowed: blockers.length === 0, blockers, setup }
+}
+
+export async function assertAcceptVouchSetupReady(userId: string) {
+  const gate = await getAcceptVouchSetupGate({ userId })
+  if (!gate.allowed) {
+    throw new Error(`SETUP_BLOCKED: ${gate.blockers.join(",")}`)
+  }
+  return { ok: true as const, blockers: [] as string[] }
 }
 
 export async function getConfirmPresenceSetupGate(input: { userId: string }) {

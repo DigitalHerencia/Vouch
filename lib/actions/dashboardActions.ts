@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
-import { requireActiveUser } from "@/lib/auth/current-user"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { dashboardPreferencesSchema } from "@/schemas/dashboard"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
 

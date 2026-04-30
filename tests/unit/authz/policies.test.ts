@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { canAccessVouch, canAcceptVouch, canConfirmVouch } from "@/lib/authz/policies"
+import { canAccessVouch, canAcceptVouch, canConfirmVouch } from "@/lib/auth/authorization/policies"
 
 describe("authz policies", () => {
   it("allows payer to access own Vouch", () => {
@@ -77,7 +77,7 @@ describe("authz policies", () => {
   })
 
   it("requires admin capability for admin views", async () => {
-    const { canViewAdmin } = await import("@/lib/authz/policies")
+    const { canViewAdmin } = await import("@/lib/auth/authorization/policies")
 
     expect(canViewAdmin({ status: "active", isAdmin: false })).toBe(false)
     expect(canViewAdmin({ status: "disabled", isAdmin: true })).toBe(false)

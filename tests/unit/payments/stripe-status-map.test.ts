@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { mapStripePaymentIntentStatus, mapStripeRefundStatus } from "@/lib/stripe/status-map"
+import { mapStripePaymentIntentStatus, mapStripeRefundStatus } from "@/lib/integrations/stripe/status-map"
 
 describe("Stripe status mapping", () => {
   it("maps requires_payment_method", () => {

@@ -3,16 +3,16 @@
 import { revalidatePath } from "next/cache"
 import type Stripe from "stripe"
 
-import { requireActiveUser } from "@/lib/auth/current-user"
-import { assertAcceptVouchSetupReady, assertCreateVouchSetupReady } from "@/lib/auth/setup-gates"
-import { getParticipantRoleForVouch } from "@/lib/authz/participants"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
+import { assertAcceptVouchSetupReady, assertCreateVouchSetupReady } from "@/lib/fetchers/setupFetchers"
+import { getParticipantRoleForVouch } from "@/lib/auth/authorization/participants"
 import { VOUCH_LIMITS } from "@/lib/constants/limits"
 import { prisma } from "@/lib/db/prisma"
 import {
   assertNoDuplicateConfirmationTx,
   createPresenceConfirmationTx,
   getAggregateConfirmationStatusTx,
-} from "@/lib/db/transactions/confirmationTransactions"
+} from "@/lib/actions/transactions/confirmationTransactions"
 import {
   createInvitationTx,
   invalidateInvitationTx,
@@ -21,8 +21,8 @@ import {
   markInvitationOpenedTx,
   markInvitationSentTx,
   rotateInvitationTokenHashTx,
-} from "@/lib/db/transactions/invitationTransactions"
-import { queueNotificationTx } from "@/lib/db/transactions/notificationTransactions"
+} from "@/lib/actions/transactions/invitationTransactions"
+import { queueNotificationTx } from "@/lib/actions/transactions/notificationTransactions"
 import {
   bindPayeeToVouchTx,
   cancelPendingVouchTx,
@@ -30,14 +30,14 @@ import {
   markVouchCompletedTx,
   markVouchExpiredTx,
   markVouchFailedTx,
-} from "@/lib/db/transactions/vouchTransactions"
+} from "@/lib/actions/transactions/vouchTransactions"
 import { createInvitationToken, hashInvitationToken } from "@/lib/invitations/tokens"
 import { getStripeServerClient } from "@/lib/integrations/stripe/client"
 import {
   initializeStripePaymentForVouch,
   refundOrVoidStripePaymentForVouch,
   releaseStripePaymentForCompletedVouch,
-} from "@/lib/payments/adapters/stripe-payment-adapter"
+} from "@/lib/actions/stripePaymentActions"
 import { calculatePlatformFeeCents } from "@/lib/vouch/fees"
 import {
   acceptVouchInputSchema,

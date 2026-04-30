@@ -3,10 +3,10 @@
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
-import { requireActiveUser } from "@/lib/auth/current-user"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
-import { updateUserPrivateAccountInfoTx } from "@/lib/db/transactions/userTransactions"
-import { acceptTermsTx } from "@/lib/db/transactions/setupTransactions"
+import { updateUserPrivateAccountInfoTx } from "@/lib/actions/transactions/userTransactions"
+import { acceptTermsTx } from "@/lib/actions/transactions/setupTransactions"
 import { CURRENT_TERMS_VERSION } from "@/lib/constants/terms"
 import {
   settingsSearchParamsSchema,

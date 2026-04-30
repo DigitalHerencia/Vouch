@@ -1,5 +1,5 @@
 import { VerificationSettingsPage } from "@/features/settings/verification-settings-page"
-import { requireActiveUser } from "@/lib/auth/current-user"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { getVerificationStatus } from "@/lib/fetchers/verificationFetchers"
 import {
   reconcileVerificationProfile,

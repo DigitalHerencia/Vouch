@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 
-import { processStripeWebhookEvent } from "@/lib/payments/webhooks/process-stripe-webhook"
-import { verifyStripeWebhookEvent } from "@/lib/stripe/webhook-events"
+import { processStripeWebhookEvent } from "@/lib/actions/stripeWebhookActions"
+import { verifyStripeWebhookEvent } from "@/lib/integrations/stripe/webhook-events"
 
 export async function POST(request: NextRequest) {
   const rawBody = await request.text()

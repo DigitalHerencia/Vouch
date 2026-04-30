@@ -1,6 +1,5 @@
 // src/lib/db/prisma.ts
 import { PrismaClient } from "@/prisma/generated/prisma/client"
-import { neonConfig } from "@neondatabase/serverless"
 import { PrismaNeon } from "@prisma/adapter-neon"
 
 const connectionString = process.env.DATABASE_URL

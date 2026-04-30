@@ -1,7 +1,6 @@
 import "server-only"
 
 import type { Prisma } from "@/prisma/generated/prisma/client"
-import { participantSafeAuditTimelineItemSelect } from "./audit.selects"
 import { confirmationParticipantSummarySelect } from "./confirmation.selects"
 import { invitationSummarySelect } from "./invitation.selects"
 import {

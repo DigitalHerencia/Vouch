@@ -3,8 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
-import { requireActiveUser } from "@/lib/auth/current-user"
-import { assertCapability } from "@/lib/authz/capabilities"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
+import { assertCapability } from "@/lib/auth/authorization/capabilities"
 import { prisma } from "@/lib/db/prisma"
 import {
   createStripeConnectAccount,
@@ -12,7 +12,7 @@ import {
   refreshStripeConnectReadiness,
 } from "@/lib/integrations/stripe/connect"
 import { getStripeServerClient } from "@/lib/integrations/stripe/client"
-import { initializeStripePaymentForVouch } from "@/lib/payments/adapters/stripe-payment-adapter"
+import { initializeStripePaymentForVouch } from "@/lib/actions/stripePaymentActions"
 import {
   authorizeVouchPaymentInputSchema,
   captureOrReleaseVouchPaymentInputSchema,

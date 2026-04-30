@@ -1,5 +1,5 @@
 import { PaymentSettingsPage } from "@/features/settings/payment-settings-page"
-import { requireActiveUser } from "@/lib/auth/current-user"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { getPaymentSettingsPageState } from "@/lib/fetchers/paymentFetchers"
 import { refreshPaymentReadiness, startPaymentMethodSetup } from "@/lib/actions/paymentActions"
 

@@ -1,18 +1,17 @@
 "use server"
 
-import { requireActiveUser } from "@/lib/auth/current-user"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
 import {
   createStripeIdentitySession,
   refreshStripeIdentityStatus,
 } from "@/lib/integrations/stripe/identity"
 import {
-  markVerificationPendingTx,
   markVerificationRejectedTx,
   markVerificationRequiresActionTx,
   markVerificationVerifiedTx,
   updateVerificationProfileTx,
-} from "@/lib/db/transactions/verificationTransactions"
+} from "@/lib/actions/transactions/verificationTransactions"
 import {
   verificationProviderReturnInputSchema,
   verificationStartInputSchema,

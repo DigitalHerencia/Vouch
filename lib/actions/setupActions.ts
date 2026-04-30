@@ -2,9 +2,9 @@
 
 import { redirect } from "next/navigation"
 
-import { requireActiveUser } from "@/lib/auth/current-user"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
-import { acceptTermsTx } from "@/lib/db/transactions/setupTransactions"
+import { acceptTermsTx } from "@/lib/actions/transactions/setupTransactions"
 import {
   acceptTermsSchema,
   setupPageStateInputSchema,

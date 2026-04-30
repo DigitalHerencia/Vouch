@@ -4,11 +4,11 @@ vi.mock("next/cache", () => ({
   revalidatePath: vi.fn(),
 }))
 
-vi.mock("@/lib/auth/current-user", () => ({
+vi.mock("@/lib/fetchers/authFetchers", () => ({
   requireActiveUser: vi.fn().mockResolvedValue({ id: "user_1", status: "active" }),
 }))
 
-vi.mock("@/lib/auth/setup-gates", () => ({
+vi.mock("@/lib/fetchers/setupFetchers", () => ({
   assertCreateVouchSetupReady: vi.fn(),
   assertAcceptVouchSetupReady: vi.fn(),
 }))
@@ -22,30 +22,30 @@ vi.mock("@/lib/db/prisma", () => ({
   },
 }))
 
-vi.mock("@/lib/payments/adapters/stripe-payment-adapter", () => ({
+vi.mock("@/lib/actions/stripePaymentActions", () => ({
   initializeStripePaymentForVouch: vi.fn(),
   refundOrVoidStripePaymentForVouch: vi.fn(),
   releaseStripePaymentForCompletedVouch: vi.fn(),
 }))
 
-vi.mock("@/lib/db/transactions/vouchTransactions", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/db/transactions/vouchTransactions")>()
+vi.mock("@/lib/actions/transactions/vouchTransactions", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/actions/transactions/vouchTransactions")>()
   return {
     ...actual,
     bindPayeeToVouchTx: vi.fn(),
   }
 })
 
-vi.mock("@/lib/db/transactions/invitationTransactions", async (importOriginal) => {
+vi.mock("@/lib/actions/transactions/invitationTransactions", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/lib/db/transactions/invitationTransactions")>()
+    await importOriginal<typeof import("@/lib/actions/transactions/invitationTransactions")>()
   return {
     ...actual,
     markInvitationAcceptedTx: vi.fn(),
   }
 })
 
-vi.mock("@/lib/db/transactions/notificationTransactions", () => ({
+vi.mock("@/lib/actions/transactions/notificationTransactions", () => ({
   queueNotificationTx: vi.fn(),
 }))
 
@@ -55,7 +55,7 @@ describe("vouch actions", () => {
   })
 
   it("returns an ActionResult when create setup is blocked", async () => {
-    const { assertCreateVouchSetupReady } = await import("@/lib/auth/setup-gates")
+    const { assertCreateVouchSetupReady } = await import("@/lib/fetchers/setupFetchers")
     const { createVouch } = await import("@/lib/actions/vouchActions")
 
     vi.mocked(assertCreateVouchSetupReady).mockRejectedValueOnce(
@@ -78,7 +78,7 @@ describe("vouch actions", () => {
   })
 
   it("returns an ActionResult when accept setup is blocked", async () => {
-    const { assertAcceptVouchSetupReady } = await import("@/lib/auth/setup-gates")
+    const { assertAcceptVouchSetupReady } = await import("@/lib/fetchers/setupFetchers")
     const { acceptVouch } = await import("@/lib/actions/vouchActions")
 
     vi.mocked(assertAcceptVouchSetupReady).mockRejectedValueOnce(

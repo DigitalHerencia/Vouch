@@ -15,6 +15,7 @@ type CurrentUserAuthRecord = {
   id: string
   clerkUserId: string
   email: string | null
+  phone: string | null
   displayName: string | null
   status: string
   createdAt: Date
@@ -31,6 +32,29 @@ type CurrentUserAuthRecord = {
   }>
 }
 
+export type CurrentUser = {
+  id: string
+  clerkUserId: string
+  email: string | null
+  phone: string | null
+  displayName: string | null
+  status: "active" | "disabled"
+  isAdmin: boolean
+}
+
+function isAdminFromClaims(sessionClaims: unknown): boolean {
+  if (!sessionClaims || typeof sessionClaims !== "object") {
+    return false
+  }
+
+  const claims = sessionClaims as {
+    publicMetadata?: { role?: unknown; isAdmin?: unknown }
+    metadata?: { role?: unknown; isAdmin?: unknown }
+  }
+  const metadata = claims.publicMetadata ?? claims.metadata
+  return metadata?.role === "admin" || metadata?.isAdmin === true
+}
+
 function toIso(value: Date | null | undefined) {
   return value ? value.toISOString() : null
 }
@@ -39,7 +63,19 @@ function isActive(user: { status: string } | null | undefined) {
   return user?.status === "active"
 }
 
-function mapCurrentUser(record: CurrentUserAuthRecord | null) {
+function mapCurrentUser(record: CurrentUserAuthRecord | null): (CurrentUser & {
+  createdAt: string | null
+  updatedAt: string | null
+  readiness: {
+    identityStatus: string
+    adultStatus: string
+    paymentReadiness: string
+    payoutReadiness: string
+    termsAccepted: boolean
+    termsVersion: string | null
+    termsAcceptedAt: string | null
+  }
+}) | null {
   if (!record) return null
 
   const terms = record.termsAcceptances?.[0] ?? null
@@ -48,8 +84,10 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null) {
     id: record.id,
     clerkUserId: record.clerkUserId,
     email: record.email,
+    phone: record.phone,
     displayName: record.displayName,
-    status: record.status,
+    status: record.status === "active" ? ("active" as const) : ("disabled" as const),
+    isAdmin: false,
     createdAt: toIso(record.createdAt),
     updatedAt: toIso(record.updatedAt),
     readiness: {
@@ -75,7 +113,14 @@ export async function getCurrentUser() {
     select: currentUserAuthSelect,
   })
 
-  return mapCurrentUser(user)
+  const mapped = mapCurrentUser(user)
+
+  return mapped
+    ? {
+        ...mapped,
+        isAdmin: isAdminFromClaims(session.sessionClaims),
+      }
+    : null
 }
 
 export async function getCurrentUserId() {

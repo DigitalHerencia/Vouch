@@ -29,6 +29,7 @@ export const currentUserAuthSelect = {
   id: true,
   clerkUserId: true,
   email: true,
+  phone: true,
   displayName: true,
   status: true,
   createdAt: true,
