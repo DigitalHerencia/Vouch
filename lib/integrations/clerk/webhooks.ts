@@ -1,11 +1,19 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
+import type { NextRequest } from "next/server"
 
-export async function verifyClerkWebhookSignature(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/integrations/clerk/webhooks.ts")
+import { mapClerkUserToLocalInput } from "@/lib/auth/clerk"
+import { verifyClerkWebhook } from "@/lib/auth/webhooks"
+import type { ClerkWebhookEvent } from "@/lib/clerk/webhook-events"
+
+export async function verifyClerkWebhookSignature(request: NextRequest) {
+  return verifyClerkWebhook(request)
 }
 
-export async function mapClerkWebhookToUserSyncInput(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/integrations/clerk/webhooks.ts")
+export function mapClerkWebhookToUserSyncInput(event: ClerkWebhookEvent) {
+  if (event.type === "user.deleted") {
+    return null
+  }
+
+  return mapClerkUserToLocalInput(event.data)
 }

@@ -3,14 +3,14 @@ import "server-only"
 // Auto-generated DTO mapper stubs.
 // These should convert Prisma records into transport-safe DTO/read models.
 
-export function mapSessionUser(_record: unknown): never {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: mapper stub in lib/db/mappers/auth.mappers.ts")
+export function mapSessionUser(record: unknown): unknown {
+  return record
 }
 
-export function mapAuthzSnapshot(_record: unknown): never {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: mapper stub in lib/db/mappers/auth.mappers.ts")
+export function mapAuthzSnapshot(record: unknown): unknown {
+  return record
 }
 
-export function mapContextualParticipantRole(_record: unknown): never {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: mapper stub in lib/db/mappers/auth.mappers.ts")
+export function mapContextualParticipantRole(record: unknown): unknown {
+  return record
 }

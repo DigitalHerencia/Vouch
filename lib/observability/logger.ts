@@ -1,19 +1,32 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
+type LogMetadata = Record<string, unknown>
 
-export async function logInfo(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/observability/logger.ts")
+function writeLog(level: "info" | "warn" | "error", message: string, metadata?: LogMetadata) {
+  const entry = {
+    level,
+    message,
+    metadata: metadata ?? {},
+    at: new Date().toISOString(),
+  }
+
+  if (level === "error") console.error(entry)
+  else if (level === "warn") console.warn(entry)
+  else console.info(entry)
 }
 
-export async function logWarn(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/observability/logger.ts")
+export async function logInfo(message: string, metadata?: LogMetadata): Promise<void> {
+  writeLog("info", message, metadata)
 }
 
-export async function logError(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/observability/logger.ts")
+export async function logWarn(message: string, metadata?: LogMetadata): Promise<void> {
+  writeLog("warn", message, metadata)
 }
 
-export async function logAuditSafe(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/observability/logger.ts")
+export async function logError(message: string, metadata?: LogMetadata): Promise<void> {
+  writeLog("error", message, metadata)
+}
+
+export async function logAuditSafe(message: string, metadata?: LogMetadata): Promise<void> {
+  writeLog("info", message, metadata)
 }

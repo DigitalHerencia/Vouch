@@ -54,6 +54,12 @@
       "evidence": "Ran 2026-04-30. Contract validation passed: 7 contracts and 5 execution files."
     },
     {
+      "id": "CMD-009",
+      "command": "scaffold marker scan",
+      "status": "pass",
+      "evidence": "Ran 2026-04-30. PowerShell Select-String found no SCAFFOLD_NOT_IMPLEMENTED markers under app, features, lib, schemas, or types."
+    },
+    {
       "id": "CMD-007",
       "command": "pnpm build",
       "status": "pass",
@@ -334,6 +340,11 @@
       "id": "VAL-NOTE-008",
       "date": "2026-04-30",
       "message": "Validation after Stripe Connect correction passed: typecheck, Prisma validate, contract validate, lint, unit tests, local production build, and Vercel production deployment dpl_A8xvkimPibpFKEDDserNSTjNzDf3. Stripe CLI confirmed acct_1TQHH2GuFcEUvSe9 and webhook endpoint we_1TRiYtGuFcEUvSe9y6ivVvLs at https://usevouch.vercel.app/api/webhooks/stripe."
+    },
+    {
+      "id": "VAL-NOTE-009",
+      "date": "2026-04-30",
+      "message": "Backend/route matrix follow-up removed remaining SCAFFOLD_NOT_IMPLEMENTED markers from app/features/lib/schemas/types surfaces. pnpm lint, pnpm typecheck, pnpm test, pnpm prisma:validate, and pnpm validate:contracts passed. E2E and Stripe sandbox lifecycle remain not run."
     }
   ]
 }

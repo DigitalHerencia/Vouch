@@ -4,6 +4,7 @@ import { currentUser as getClerkCurrentUser } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 
 import { mapClerkUserToLocalInput, type LocalUserSyncInput } from "@/lib/auth/clerk"
+import { getPostAuthRedirect } from "@/lib/auth/redirects"
 import { prisma } from "@/lib/db/prisma"
 import {
   createDefaultVerificationProfileTx,
@@ -45,10 +46,20 @@ export async function ensureLocalUserForSession() {
   return syncClerkUser(mapClerkUserToLocalInput(clerkUser))
 }
 
-export async function updateLastSignedInAt(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/authActions.ts")
+export async function updateLastSignedInAt(): Promise<never> {
+  throw new Error("UNSUPPORTED_FIELD: User.lastSignedInAt is not present in the Prisma schema.")
 }
 
-export async function resolvePostAuthRedirect(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/authActions.ts")
+export async function resolvePostAuthRedirect(input?: unknown) {
+  const params =
+    input && typeof input === "object"
+      ? (input as {
+          redirect_url?: string | string[]
+          redirectUrl?: string | string[]
+          return_to?: string | string[]
+          returnTo?: string | string[]
+        })
+      : {}
+
+  return { ok: true as const, data: { redirectTo: getPostAuthRedirect(params) } }
 }

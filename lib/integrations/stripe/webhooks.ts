@@ -1,15 +1,22 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
+import type Stripe from "stripe"
 
-export async function verifyStripeWebhookSignature(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/integrations/stripe/webhooks.ts")
+import { verifyStripeWebhookEvent } from "@/lib/stripe/webhook-events"
+
+export async function verifyStripeWebhookSignature(rawBody: string, signatureHeader: string | null) {
+  return verifyStripeWebhookEvent(rawBody, signatureHeader)
 }
 
-export async function parseStripeWebhookEvent(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/integrations/stripe/webhooks.ts")
+export function parseStripeWebhookEvent(event: Stripe.Event) {
+  return event
 }
 
-export async function mapStripeWebhookToPaymentUpdate(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/integrations/stripe/webhooks.ts")
+export function mapStripeWebhookToPaymentUpdate(event: Stripe.Event) {
+  return {
+    provider: "stripe" as const,
+    providerEventId: event.id,
+    eventType: event.type,
+    livemode: event.livemode,
+  }
 }

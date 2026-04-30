@@ -71,14 +71,14 @@ export async function continueAfterSetup(input?: unknown): Promise<never> {
   redirect(parsed.returnTo ?? "/dashboard")
 }
 
-export async function startRequiredSetupForCreate(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/setupActions.ts")
+export async function startRequiredSetupForCreate(): Promise<never> {
+  redirect("/settings/payment")
 }
 
-export async function startRequiredSetupForAccept(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/setupActions.ts")
+export async function startRequiredSetupForAccept(): Promise<never> {
+  redirect("/settings/payout")
 }
 
-export async function startRequiredSetupForConfirm(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/actions/setupActions.ts")
+export async function startRequiredSetupForConfirm(): Promise<never> {
+  redirect("/setup")
 }

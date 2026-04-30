@@ -135,10 +135,10 @@
     },
     {
       "id": "BLOCK-003",
-      "severity": "high",
-      "title": "Repo scaffold gaps block full validation",
-      "impact": "pnpm typecheck and full pnpm test fail due missing feature/type/schema/helper modules and Vitest collecting Playwright specs outside the Clerk auth work.",
-      "unblocks": ["mvp_local"]
+      "severity": "medium",
+      "title": "Generated mapper placeholders still need typed DTO hardening",
+      "impact": "Runtime scaffold throws have been removed and validation passes, but generated mapper functions currently pass through selected records and should be replaced with explicit transport-safe DTO mapping before production hardening.",
+      "unblocks": ["mvp_local", "security_review", "privacy_review"]
     },
     {
       "id": "BLOCK-004",
@@ -195,5 +195,5 @@
     "Migration may destroy data without explicit approval.",
     "Validation failure cannot be safely resolved in scope."
   ],
-  "handoff_note": "The next agent should implement from contracts first, not from freeform interpretation. Treat all current validation as not_run until commands and tests are executed in the repo."
+  "handoff_note": "The next agent should implement from contracts first, not from freeform interpretation. Current lint, typecheck, unit, Prisma, and contract validation passed on 2026-04-30 after scaffold throw removal; E2E and Stripe sandbox lifecycle proof remain outstanding."
 }

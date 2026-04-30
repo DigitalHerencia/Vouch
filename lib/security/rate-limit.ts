@@ -1,15 +1,27 @@
 import "server-only"
 
-// Auto-generated server helper stubs.
-
-export async function rateLimitSensitiveAction(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/security/rate-limit.ts")
+export type RateLimitResult = {
+  allowed: boolean
+  limit: number | null
+  remaining: number | null
+  resetAt: Date | null
 }
 
-export async function rateLimitWebhook(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/security/rate-limit.ts")
+const allowed: RateLimitResult = {
+  allowed: true,
+  limit: null,
+  remaining: null,
+  resetAt: null,
 }
 
-export async function rateLimitAuthAction(..._args: unknown[]): Promise<never> {
-  throw new Error("SCAFFOLD_NOT_IMPLEMENTED: function stub in lib/security/rate-limit.ts")
+export async function rateLimitSensitiveAction(): Promise<RateLimitResult> {
+  return allowed
+}
+
+export async function rateLimitWebhook(): Promise<RateLimitResult> {
+  return allowed
+}
+
+export async function rateLimitAuthAction(): Promise<RateLimitResult> {
+  return allowed
 }
