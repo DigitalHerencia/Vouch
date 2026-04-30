@@ -5,7 +5,7 @@
   "generated_at": "2026-04-24T00:00:00.000Z",
   "purpose": "Provides current project handoff state, next actions, blockers, risks, and stop conditions for the next coding agent.",
   "current_state": {
-    "phase": "stripe_connect_destination_charge_implementation",
+    "phase": "clerk_auth_overhaul_complete",
     "implementation_started": true,
     "docs_created": true,
     "contracts_created": true,
@@ -92,7 +92,7 @@
       "id": "NEXT-004",
       "priority": "P0",
       "title": "Implement auth and authz foundation",
-      "details": "Completed Clerk sync, current-user helpers, participant/admin authz helpers, and Clerk webhook verification/idempotency. Remaining auth work is route/action integration after broader scaffold modules compile."
+      "details": "Completed Clerk custom auth forms, current-user helpers, participant/admin authz helpers, tenant/admin route layout enforcement, Clerk webhook verification/idempotency, and normalized Clerk projection persistence."
     },
     {
       "id": "NEXT-004A",
@@ -146,6 +146,13 @@
       "title": "Stripe sandbox lifecycle proof not completed",
       "impact": "Blocks production confidence for authorization, manual capture, destination charge transfer, application fee, void/refund, and webhook reconciliation.",
       "unblocks": ["payment_provider_sandbox", "payment_flow_review", "production_candidate"]
+    },
+    {
+      "id": "BLOCK-005",
+      "severity": "medium",
+      "title": "Clerk webhook projection migration not applied",
+      "impact": "The Prisma schema includes Clerk projection tables, but no migration was generated in this pass because live migration history was not inspected through Neon.",
+      "unblocks": ["production_candidate", "migration_integrity"]
     }
   ],
   "risks": [
@@ -195,5 +202,5 @@
     "Migration may destroy data without explicit approval.",
     "Validation failure cannot be safely resolved in scope."
   ],
-  "handoff_note": "The next agent should implement from contracts first, not from freeform interpretation. Current lint, typecheck, unit, Prisma, and contract validation passed on 2026-04-30 after scaffold throw removal; E2E and Stripe sandbox lifecycle proof remain outstanding."
+  "handoff_note": "The next agent should implement from contracts first, not from freeform interpretation. Clerk auth overhaul validation passed on 2026-04-30. Current lint, typecheck, targeted auth/webhook tests, Prisma validation, and Prisma generation pass; E2E, Stripe sandbox lifecycle proof, and the Clerk projection DB migration remain outstanding."
 }

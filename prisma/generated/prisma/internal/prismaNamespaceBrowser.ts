@@ -62,6 +62,10 @@ export const ModelName = {
   PaymentRecord: 'PaymentRecord',
   RefundRecord: 'RefundRecord',
   ProviderWebhookEvent: 'ProviderWebhookEvent',
+  ClerkSession: 'ClerkSession',
+  ClerkEmail: 'ClerkEmail',
+  ClerkSms: 'ClerkSms',
+  ClerkInvitation: 'ClerkInvitation',
   PaymentWebhookEvent: 'PaymentWebhookEvent',
   AuditEvent: 'AuditEvent',
   NotificationEvent: 'NotificationEvent',
@@ -260,6 +264,66 @@ export const ProviderWebhookEventScalarFieldEnum = {
 } as const
 
 export type ProviderWebhookEventScalarFieldEnum = (typeof ProviderWebhookEventScalarFieldEnum)[keyof typeof ProviderWebhookEventScalarFieldEnum]
+
+
+export const ClerkSessionScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  status: 'status',
+  lastEventType: 'lastEventType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  endedAt: 'endedAt',
+  removedAt: 'removedAt',
+  revokedAt: 'revokedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ClerkSessionScalarFieldEnum = (typeof ClerkSessionScalarFieldEnum)[keyof typeof ClerkSessionScalarFieldEnum]
+
+
+export const ClerkEmailScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  status: 'status',
+  toEmail: 'toEmail',
+  lastEventType: 'lastEventType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ClerkEmailScalarFieldEnum = (typeof ClerkEmailScalarFieldEnum)[keyof typeof ClerkEmailScalarFieldEnum]
+
+
+export const ClerkSmsScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  status: 'status',
+  toPhone: 'toPhone',
+  lastEventType: 'lastEventType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ClerkSmsScalarFieldEnum = (typeof ClerkSmsScalarFieldEnum)[keyof typeof ClerkSmsScalarFieldEnum]
+
+
+export const ClerkInvitationScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  emailAddress: 'emailAddress',
+  status: 'status',
+  lastEventType: 'lastEventType',
+  acceptedAt: 'acceptedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ClerkInvitationScalarFieldEnum = (typeof ClerkInvitationScalarFieldEnum)[keyof typeof ClerkInvitationScalarFieldEnum]
 
 
 export const PaymentWebhookEventScalarFieldEnum = {

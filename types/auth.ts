@@ -133,7 +133,9 @@ export interface SetupStatus {
 
 export interface AuthRedirectSearchParams {
   redirect_url?: string
+  redirectUrl?: string
   return_to?: string
+  returnTo?: string
 }
 
 export interface LoginPageProps {
@@ -151,6 +153,8 @@ export interface LoginFormValues {
 }
 
 export interface SignupFormValues {
+  firstName: string
+  lastName: string
   email: string
   password: string
   verificationCode: string
@@ -164,7 +168,25 @@ export interface SignupFormProps extends ComponentProps<"form"> {
   redirectUrl?: string | undefined
 }
 
-export type ClerkWebhookEventType = "user.created" | "user.updated" | "user.deleted" | string
+export const SUPPORTED_CLERK_WEBHOOK_EVENT_TYPES = [
+  "email.created",
+  "invitation.accepted",
+  "invitation.created",
+  "invitation.revoked",
+  "session.created",
+  "session.ended",
+  "session.pending",
+  "session.removed",
+  "session.revoked",
+  "sms.created",
+  "user.created",
+  "user.deleted",
+  "user.updated",
+] as const
+
+export type SupportedClerkWebhookEventType = (typeof SUPPORTED_CLERK_WEBHOOK_EVENT_TYPES)[number]
+
+export type ClerkWebhookEventType = SupportedClerkWebhookEventType | (string & {})
 
 export type ClerkWebhookUserData = {
   id: string
@@ -175,6 +197,12 @@ export type ClerkWebhookUserData = {
   first_name?: string | null
   last_name?: string | null
   username?: string | null
+  status?: string | null
+  user_id?: string | null
+  email_address?: string | null
+  email_address_id?: string | null
+  phone_number?: string | null
+  phone_number_id?: string | null
 }
 
 export type ClerkWebhookEvent = {
@@ -182,3 +210,9 @@ export type ClerkWebhookEvent = {
   type: ClerkWebhookEventType
   data: ClerkWebhookUserData
 }
+
+export type ClerkWebhookProcessingStatus = "processed" | "ignored" | "duplicate"
+
+export type ClerkWebhookProcessingResult =
+  | { ok: true; status: ClerkWebhookProcessingStatus; ignored?: boolean; reason?: string }
+  | { ok: false; status: "failed"; message: string }

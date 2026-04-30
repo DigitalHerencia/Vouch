@@ -312,6 +312,37 @@
       ],
       "validation_status": "pass",
       "notes": "pnpm lint, pnpm typecheck, pnpm test, pnpm prisma:validate, and pnpm validate:contracts passed on 2026-04-30. E2E and Stripe sandbox lifecycle were not run."
+    },
+    {
+      "id": "PRG-015",
+      "date": "2026-04-30",
+      "status": "completed",
+      "category": "implementation",
+      "title": "Overhauled Clerk auth boundaries and webhook projections",
+      "summary": "Normalized custom Clerk sign-in/sign-up flows, added required first and last name sign-up fields, moved auth pages to thin route shells, enforced tenant/admin layouts server-side, corrected proxy public webhook routes, used svix-id idempotency for Clerk webhooks, and added safe Clerk session/email/SMS/auth-provider invitation projection tables.",
+      "files": [
+        "app/layout.tsx",
+        "app/(auth)/sign-in/[[...sign-in]]/page.tsx",
+        "app/(auth)/sign-up/[[...sign-up]]/page.tsx",
+        "app/(tenant)/layout.tsx",
+        "app/(admin)/admin/layout.tsx",
+        "app/api/clerk/webhook-handler/route.ts",
+        "components/auth/auth-page-shell.tsx",
+        "components/auth/sign-out.tsx",
+        "components/auth/user-menu.tsx",
+        "components/layout/admin-shell.tsx",
+        "features/auth/sign-in-page.tsx",
+        "features/auth/sign-up-page.tsx",
+        "lib/actions/authActions.ts",
+        "lib/auth/webhooks.ts",
+        "lib/auth/redirects.ts",
+        "prisma/schema.prisma",
+        "proxy.ts",
+        "schemas/auth.ts",
+        "types/auth.ts"
+      ],
+      "validation_status": "pass",
+      "notes": "pnpm prisma:validate, pnpm prisma:generate, pnpm typecheck, pnpm lint, pnpm test -- auth, and pnpm test -- webhook passed. Local .env/.env.local currently use CLERK_SIGNING_SECRET; .env.example now documents CLERK_WEBHOOK_SIGNING_SECRET and the code supports the legacy local alias as a fallback."
     }
   ],
   "next_expected_phase": "repo_implementation",

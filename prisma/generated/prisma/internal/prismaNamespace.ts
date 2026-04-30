@@ -395,6 +395,10 @@ export const ModelName = {
   PaymentRecord: 'PaymentRecord',
   RefundRecord: 'RefundRecord',
   ProviderWebhookEvent: 'ProviderWebhookEvent',
+  ClerkSession: 'ClerkSession',
+  ClerkEmail: 'ClerkEmail',
+  ClerkSms: 'ClerkSms',
+  ClerkInvitation: 'ClerkInvitation',
   PaymentWebhookEvent: 'PaymentWebhookEvent',
   AuditEvent: 'AuditEvent',
   NotificationEvent: 'NotificationEvent',
@@ -415,7 +419,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "verificationProfile" | "paymentCustomer" | "connectedAccount" | "termsAcceptance" | "vouch" | "invitation" | "presenceConfirmation" | "paymentRecord" | "refundRecord" | "providerWebhookEvent" | "paymentWebhookEvent" | "auditEvent" | "notificationEvent" | "analyticsEvent" | "operationalRetry"
+    modelProps: "user" | "verificationProfile" | "paymentCustomer" | "connectedAccount" | "termsAcceptance" | "vouch" | "invitation" | "presenceConfirmation" | "paymentRecord" | "refundRecord" | "providerWebhookEvent" | "clerkSession" | "clerkEmail" | "clerkSms" | "clerkInvitation" | "paymentWebhookEvent" | "auditEvent" | "notificationEvent" | "analyticsEvent" | "operationalRetry"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1233,6 +1237,302 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ClerkSession: {
+      payload: Prisma.$ClerkSessionPayload<ExtArgs>
+      fields: Prisma.ClerkSessionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ClerkSessionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ClerkSessionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload>
+        }
+        findFirst: {
+          args: Prisma.ClerkSessionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ClerkSessionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload>
+        }
+        findMany: {
+          args: Prisma.ClerkSessionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload>[]
+        }
+        create: {
+          args: Prisma.ClerkSessionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload>
+        }
+        createMany: {
+          args: Prisma.ClerkSessionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ClerkSessionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload>[]
+        }
+        delete: {
+          args: Prisma.ClerkSessionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload>
+        }
+        update: {
+          args: Prisma.ClerkSessionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload>
+        }
+        deleteMany: {
+          args: Prisma.ClerkSessionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ClerkSessionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ClerkSessionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload>[]
+        }
+        upsert: {
+          args: Prisma.ClerkSessionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSessionPayload>
+        }
+        aggregate: {
+          args: Prisma.ClerkSessionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateClerkSession>
+        }
+        groupBy: {
+          args: Prisma.ClerkSessionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClerkSessionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ClerkSessionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClerkSessionCountAggregateOutputType> | number
+        }
+      }
+    }
+    ClerkEmail: {
+      payload: Prisma.$ClerkEmailPayload<ExtArgs>
+      fields: Prisma.ClerkEmailFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ClerkEmailFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ClerkEmailFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload>
+        }
+        findFirst: {
+          args: Prisma.ClerkEmailFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ClerkEmailFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload>
+        }
+        findMany: {
+          args: Prisma.ClerkEmailFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload>[]
+        }
+        create: {
+          args: Prisma.ClerkEmailCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload>
+        }
+        createMany: {
+          args: Prisma.ClerkEmailCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ClerkEmailCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload>[]
+        }
+        delete: {
+          args: Prisma.ClerkEmailDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload>
+        }
+        update: {
+          args: Prisma.ClerkEmailUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload>
+        }
+        deleteMany: {
+          args: Prisma.ClerkEmailDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ClerkEmailUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ClerkEmailUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload>[]
+        }
+        upsert: {
+          args: Prisma.ClerkEmailUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkEmailPayload>
+        }
+        aggregate: {
+          args: Prisma.ClerkEmailAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateClerkEmail>
+        }
+        groupBy: {
+          args: Prisma.ClerkEmailGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClerkEmailGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ClerkEmailCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClerkEmailCountAggregateOutputType> | number
+        }
+      }
+    }
+    ClerkSms: {
+      payload: Prisma.$ClerkSmsPayload<ExtArgs>
+      fields: Prisma.ClerkSmsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ClerkSmsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ClerkSmsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload>
+        }
+        findFirst: {
+          args: Prisma.ClerkSmsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ClerkSmsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload>
+        }
+        findMany: {
+          args: Prisma.ClerkSmsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload>[]
+        }
+        create: {
+          args: Prisma.ClerkSmsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload>
+        }
+        createMany: {
+          args: Prisma.ClerkSmsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ClerkSmsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload>[]
+        }
+        delete: {
+          args: Prisma.ClerkSmsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload>
+        }
+        update: {
+          args: Prisma.ClerkSmsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload>
+        }
+        deleteMany: {
+          args: Prisma.ClerkSmsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ClerkSmsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ClerkSmsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload>[]
+        }
+        upsert: {
+          args: Prisma.ClerkSmsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkSmsPayload>
+        }
+        aggregate: {
+          args: Prisma.ClerkSmsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateClerkSms>
+        }
+        groupBy: {
+          args: Prisma.ClerkSmsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClerkSmsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ClerkSmsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClerkSmsCountAggregateOutputType> | number
+        }
+      }
+    }
+    ClerkInvitation: {
+      payload: Prisma.$ClerkInvitationPayload<ExtArgs>
+      fields: Prisma.ClerkInvitationFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ClerkInvitationFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ClerkInvitationFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload>
+        }
+        findFirst: {
+          args: Prisma.ClerkInvitationFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ClerkInvitationFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload>
+        }
+        findMany: {
+          args: Prisma.ClerkInvitationFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload>[]
+        }
+        create: {
+          args: Prisma.ClerkInvitationCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload>
+        }
+        createMany: {
+          args: Prisma.ClerkInvitationCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ClerkInvitationCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload>[]
+        }
+        delete: {
+          args: Prisma.ClerkInvitationDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload>
+        }
+        update: {
+          args: Prisma.ClerkInvitationUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload>
+        }
+        deleteMany: {
+          args: Prisma.ClerkInvitationDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ClerkInvitationUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ClerkInvitationUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload>[]
+        }
+        upsert: {
+          args: Prisma.ClerkInvitationUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ClerkInvitationPayload>
+        }
+        aggregate: {
+          args: Prisma.ClerkInvitationAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateClerkInvitation>
+        }
+        groupBy: {
+          args: Prisma.ClerkInvitationGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClerkInvitationGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ClerkInvitationCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.ClerkInvitationCountAggregateOutputType> | number
+        }
+      }
+    }
     PaymentWebhookEvent: {
       payload: Prisma.$PaymentWebhookEventPayload<ExtArgs>
       fields: Prisma.PaymentWebhookEventFieldRefs
@@ -1817,6 +2117,66 @@ export const ProviderWebhookEventScalarFieldEnum = {
 } as const
 
 export type ProviderWebhookEventScalarFieldEnum = (typeof ProviderWebhookEventScalarFieldEnum)[keyof typeof ProviderWebhookEventScalarFieldEnum]
+
+
+export const ClerkSessionScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  status: 'status',
+  lastEventType: 'lastEventType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  endedAt: 'endedAt',
+  removedAt: 'removedAt',
+  revokedAt: 'revokedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ClerkSessionScalarFieldEnum = (typeof ClerkSessionScalarFieldEnum)[keyof typeof ClerkSessionScalarFieldEnum]
+
+
+export const ClerkEmailScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  status: 'status',
+  toEmail: 'toEmail',
+  lastEventType: 'lastEventType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ClerkEmailScalarFieldEnum = (typeof ClerkEmailScalarFieldEnum)[keyof typeof ClerkEmailScalarFieldEnum]
+
+
+export const ClerkSmsScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  status: 'status',
+  toPhone: 'toPhone',
+  lastEventType: 'lastEventType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ClerkSmsScalarFieldEnum = (typeof ClerkSmsScalarFieldEnum)[keyof typeof ClerkSmsScalarFieldEnum]
+
+
+export const ClerkInvitationScalarFieldEnum = {
+  id: 'id',
+  clerkUserId: 'clerkUserId',
+  emailAddress: 'emailAddress',
+  status: 'status',
+  lastEventType: 'lastEventType',
+  acceptedAt: 'acceptedAt',
+  revokedAt: 'revokedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type ClerkInvitationScalarFieldEnum = (typeof ClerkInvitationScalarFieldEnum)[keyof typeof ClerkInvitationScalarFieldEnum]
 
 
 export const PaymentWebhookEventScalarFieldEnum = {
@@ -2471,6 +2831,10 @@ export type GlobalOmitConfig = {
   paymentRecord?: Prisma.PaymentRecordOmit
   refundRecord?: Prisma.RefundRecordOmit
   providerWebhookEvent?: Prisma.ProviderWebhookEventOmit
+  clerkSession?: Prisma.ClerkSessionOmit
+  clerkEmail?: Prisma.ClerkEmailOmit
+  clerkSms?: Prisma.ClerkSmsOmit
+  clerkInvitation?: Prisma.ClerkInvitationOmit
   paymentWebhookEvent?: Prisma.PaymentWebhookEventOmit
   auditEvent?: Prisma.AuditEventOmit
   notificationEvent?: Prisma.NotificationEventOmit

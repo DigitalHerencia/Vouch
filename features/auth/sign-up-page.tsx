@@ -35,6 +35,8 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
   const form = useForm<SignupFormValues>({
     mode: "onBlur",
     defaultValues: {
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
       verificationCode: "",
@@ -52,7 +54,23 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
       return false
     }
 
-    const finalizeResult = await signUp.finalize()
+    const finalizeResult = await signUp.finalize({
+      navigate: ({ session, decorateUrl }) => {
+        if (session?.currentTask) {
+          form.setError("root", {
+            message: "Finish the required account step before continuing.",
+          })
+          return
+        }
+
+        const url = decorateUrl(nextUrl)
+        if (url.startsWith("http")) {
+          window.location.href = url
+        } else {
+          router.push(url)
+        }
+      },
+    })
 
     if (finalizeResult.error) {
       form.setError("root", {
@@ -61,7 +79,6 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
       return false
     }
 
-    router.push(nextUrl)
     router.refresh()
     return true
   }
@@ -129,7 +146,13 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
         for (const issue of parsedSignup.error.issues) {
           const field = issue.path[0]
 
-          if (typeof field === "string" && (field === "email" || field === "password")) {
+          if (
+            typeof field === "string" &&
+            (field === "firstName" ||
+              field === "lastName" ||
+              field === "email" ||
+              field === "password")
+          ) {
             form.setError(field, { message: issue.message })
           }
         }
@@ -140,6 +163,8 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
       const passwordResult = await signUp.password({
         emailAddress: parsedSignup.data.email,
         password: parsedSignup.data.password,
+        firstName: parsedSignup.data.firstName,
+        lastName: parsedSignup.data.lastName,
       })
 
       if (passwordResult.error) {
@@ -295,6 +320,8 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                   setAwaitingVerification(false)
                   setNotice(null)
                   form.reset({
+                    firstName: form.getValues("firstName"),
+                    lastName: form.getValues("lastName"),
                     email: form.getValues("email"),
                     password: "",
                     verificationCode: "",
@@ -308,6 +335,60 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
           </div>
         ) : (
           <div className="space-y-5">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field>
+                <FieldLabel className="text-neutral-100" htmlFor="firstName">
+                  First name
+                </FieldLabel>
+
+                <Input
+                  id="firstName"
+                  type="text"
+                  autoComplete="given-name"
+                  className="h-12 border-neutral-800 bg-neutral-900 px-3 text-neutral-50 placeholder:text-neutral-500"
+                  disabled={isBusy}
+                  {...form.register("firstName", {
+                    setValueAs: (value: string) =>
+                      typeof value === "string" ? value.trim() : "",
+                  })}
+                />
+
+                <FieldError
+                  errors={
+                    form.formState.errors.firstName?.message
+                      ? [{ message: form.formState.errors.firstName.message }]
+                      : undefined
+                  }
+                />
+              </Field>
+
+              <Field>
+                <FieldLabel className="text-neutral-100" htmlFor="lastName">
+                  Last name
+                </FieldLabel>
+
+                <Input
+                  id="lastName"
+                  type="text"
+                  autoComplete="family-name"
+                  className="h-12 border-neutral-800 bg-neutral-900 px-3 text-neutral-50 placeholder:text-neutral-500"
+                  disabled={isBusy}
+                  {...form.register("lastName", {
+                    setValueAs: (value: string) =>
+                      typeof value === "string" ? value.trim() : "",
+                  })}
+                />
+
+                <FieldError
+                  errors={
+                    form.formState.errors.lastName?.message
+                      ? [{ message: form.formState.errors.lastName.message }]
+                      : undefined
+                  }
+                />
+              </Field>
+            </div>
+
             <Field>
               <FieldLabel className="text-neutral-100" htmlFor="email">
                 Email

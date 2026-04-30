@@ -1,7 +1,11 @@
-export default function AdminAdminLayout({
+import { AdminShell } from "@/components/layout/admin-shell"
+import { assertAdmin } from "@/lib/authz/admin"
+
+export default async function AdminLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return children
+  await assertAdmin()
+  return <AdminShell>{children}</AdminShell>
 }

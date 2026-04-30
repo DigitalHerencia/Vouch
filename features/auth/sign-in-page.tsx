@@ -46,7 +46,23 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
   const isBusy = form.formState.isSubmitting || isResending || isResetting || !fetchStatus
 
   async function finalizeAndRedirect(): Promise<boolean> {
-    const finalizeResult = await signIn.finalize()
+    const finalizeResult = await signIn.finalize({
+      navigate: ({ session, decorateUrl }) => {
+        if (session?.currentTask) {
+          form.setError("root", {
+            message: "Finish the required account step before continuing.",
+          })
+          return
+        }
+
+        const url = decorateUrl(nextUrl)
+        if (url.startsWith("http")) {
+          window.location.href = url
+        } else {
+          router.push(url)
+        }
+      },
+    })
 
     if (finalizeResult.error) {
       form.setError("root", {
@@ -55,7 +71,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
       return false
     }
 
-    router.push(nextUrl)
+    router.refresh()
     return true
   }
 
@@ -162,7 +178,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
       }
 
       const passwordResult = await signIn.password({
-        identifier: parsedLogin.data.email,
+        emailAddress: parsedLogin.data.email,
         password: parsedLogin.data.password,
       })
 

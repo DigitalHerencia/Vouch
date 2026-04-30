@@ -524,6 +524,71 @@ model ProviderWebhookEvent {
   @@map("provider_webhook_events")
 }
 
+model ClerkSession {
+  id            String    @id
+  clerkUserId   String?
+  status        String
+  lastEventType String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  endedAt       DateTime?
+  removedAt     DateTime?
+  revokedAt     DateTime?
+  deletedAt     DateTime?
+
+  @@index([clerkUserId])
+  @@index([status])
+  @@map("clerk_sessions")
+}
+
+model ClerkEmail {
+  id            String    @id
+  clerkUserId   String?
+  status        String?
+  toEmail       String?   @db.VarChar(320)
+  lastEventType String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  @@index([clerkUserId])
+  @@index([status])
+  @@map("clerk_emails")
+}
+
+model ClerkSms {
+  id            String    @id
+  clerkUserId   String?
+  status        String?
+  toPhone       String?   @db.VarChar(32)
+  lastEventType String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  @@index([clerkUserId])
+  @@index([status])
+  @@map("clerk_sms")
+}
+
+model ClerkInvitation {
+  id            String    @id
+  clerkUserId   String?
+  emailAddress  String?   @db.VarChar(320)
+  status        String
+  lastEventType String
+  acceptedAt    DateTime?
+  revokedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  @@index([clerkUserId])
+  @@index([emailAddress])
+  @@index([status])
+  @@map("clerk_invitations")
+}
+
 /**
  * Stripe/payment-specific webhook projection.
  *

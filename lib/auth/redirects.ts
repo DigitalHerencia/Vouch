@@ -1,10 +1,8 @@
 const DEFAULT_AUTHENTICATED_REDIRECT = "/dashboard"
 
-const INTERNAL_PATH_PATTERN = /^\/(?!\/)(?!.*:\/\/).*/
-
 export function isInternalPath(value: string | null | undefined): value is string {
   if (!value) return false
-  return INTERNAL_PATH_PATTERN.test(value)
+  return value.startsWith("/") && !value.startsWith("//") && !value.includes("://")
 }
 
 export function normalizeReturnTo(

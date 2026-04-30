@@ -1803,9 +1803,9 @@ export async function runPaymentReconciliationJob(input?: {
   }
 }
 
-export async function normalizeProviderWebhookStatus(
+export function normalizeProviderWebhookStatus(
   input: ProviderWebhookStatusInput
-): Promise<NormalizedProviderWebhookStatus> {
+): NormalizedProviderWebhookStatus {
   if (input.processed) {
     return "processed"
   }

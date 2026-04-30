@@ -101,6 +101,26 @@ export type RefundRecord = Prisma.RefundRecordModel
  */
 export type ProviderWebhookEvent = Prisma.ProviderWebhookEventModel
 /**
+ * Model ClerkSession
+ * 
+ */
+export type ClerkSession = Prisma.ClerkSessionModel
+/**
+ * Model ClerkEmail
+ * 
+ */
+export type ClerkEmail = Prisma.ClerkEmailModel
+/**
+ * Model ClerkSms
+ * 
+ */
+export type ClerkSms = Prisma.ClerkSmsModel
+/**
+ * Model ClerkInvitation
+ * 
+ */
+export type ClerkInvitation = Prisma.ClerkInvitationModel
+/**
  * Model PaymentWebhookEvent
  * *
  *  * Stripe/payment-specific webhook projection.

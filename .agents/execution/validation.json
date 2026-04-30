@@ -12,8 +12,8 @@
   },
   "summary": {
     "overall_status": "pass",
-    "reason": "Stripe Connect destination-charge code and governance correction passed typecheck, build, Prisma validation, contract validation, lint, and unit tests. Stripe account/env/webhook alignment was confirmed, and production deployment completed.",
-    "latest_validation_at": "2026-04-30T01:35:00.000Z",
+    "reason": "Clerk auth overhaul passed Prisma validation/generation, typecheck, lint, and targeted auth/webhook unit tests. Earlier Stripe validation remains recorded; E2E and live sandbox payment proof remain outstanding.",
+    "latest_validation_at": "2026-04-30T10:31:00.000Z",
     "latest_validator": "Codex"
   },
   "commands": [
@@ -70,6 +70,24 @@
       "command": "vercel deploy --prod --yes",
       "status": "pass",
       "evidence": "Ran 2026-04-30. Production deployment dpl_A8xvkimPibpFKEDDserNSTjNzDf3 is READY and aliased to https://usevouch.vercel.app. Added .vercelignore before the final deploy to exclude local env files from uploads."
+    },
+    {
+      "id": "CMD-010",
+      "command": "pnpm prisma:generate",
+      "status": "pass",
+      "evidence": "Ran 2026-04-30 after adding ClerkSession, ClerkEmail, ClerkSms, and ClerkInvitation projection models. Prisma Client 7.8.0 generated successfully."
+    },
+    {
+      "id": "CMD-011",
+      "command": "pnpm test -- auth",
+      "status": "pass",
+      "evidence": "Ran 2026-04-30. Vitest targeted auth run: 18 files passed, 61 tests passed."
+    },
+    {
+      "id": "CMD-012",
+      "command": "pnpm test -- webhook",
+      "status": "pass",
+      "evidence": "Ran 2026-04-30. Vitest targeted webhook run: 18 files passed, 61 tests passed."
     }
   ],
   "milestones": {
@@ -345,6 +363,11 @@
       "id": "VAL-NOTE-009",
       "date": "2026-04-30",
       "message": "Backend/route matrix follow-up removed remaining SCAFFOLD_NOT_IMPLEMENTED markers from app/features/lib/schemas/types surfaces. pnpm lint, pnpm typecheck, pnpm test, pnpm prisma:validate, and pnpm validate:contracts passed. E2E and Stripe sandbox lifecycle remain not run."
+    },
+    {
+      "id": "VAL-NOTE-010",
+      "date": "2026-04-30",
+      "message": "Clerk auth overhaul validation passed: pnpm prisma:validate, pnpm prisma:generate, pnpm typecheck, pnpm lint, pnpm test -- auth, and pnpm test -- webhook. Clerk webhook processing now uses svix-id as the ProviderWebhookEvent idempotency key and persists safe projections for required user/session/email/SMS/auth-provider invitation events."
     }
   ]
 }

@@ -90,14 +90,14 @@ type RootLayoutProps = Readonly<{
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <ClerkProvider>
-      <html
-        lang="en"
-        className={`${archivo.variable} ${jetBrainsMono.variable} dark`}
-        suppressHydrationWarning
-      >
-        <body>{children}</body>
-      </html>
-    </ClerkProvider>
+    <html
+      lang="en"
+      className={`${archivo.variable} ${jetBrainsMono.variable} dark`}
+      suppressHydrationWarning
+    >
+      <body>
+        <ClerkProvider dynamic>{children}</ClerkProvider>
+      </body>
+    </html>
   )
 }

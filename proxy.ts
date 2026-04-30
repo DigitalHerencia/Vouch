@@ -21,8 +21,8 @@ const isPublicRoute = createRouteMatcher([
   "/sign-in(.*)",
   "/sign-up(.*)",
   "/vouches/invite(.*)",
-  "/api/webhooks/clerk(.*)",
-  "/api/webhooks/stripe(.*)",
+  "/api/clerk/webhook-handler",
+  "/api/stripe/webhooks",
 ])
 
 const isAuthRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"])
@@ -33,7 +33,11 @@ function isInternalRedirect(value: string | null): value is string {
 
 function getRequestedRedirect(req: Request): string | null {
   const url = new URL(req.url)
-  const requested = url.searchParams.get("return_to") ?? url.searchParams.get("redirect_url")
+  const requested =
+    url.searchParams.get("return_to") ??
+    url.searchParams.get("returnTo") ??
+    url.searchParams.get("redirect_url") ??
+    url.searchParams.get("redirectUrl")
   return isInternalRedirect(requested) ? requested : null
 }
 
