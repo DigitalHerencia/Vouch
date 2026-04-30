@@ -31,6 +31,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
   const [notice, setNotice] = useState<string | null>(null)
   const [isResending, startResending] = useTransition()
   const [isResetting, startResetting] = useTransition()
+
   const form = useForm<SignupFormValues>({
     mode: "onBlur",
     defaultValues: {
@@ -39,10 +40,18 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
       verificationCode: "",
     },
   })
+
   const nextUrl = sanitizePostAuthRedirect(redirectUrl)
   const isBusy = form.formState.isSubmitting || isResending || isResetting || !fetchStatus
 
   async function finalizeAndRedirect(): Promise<boolean> {
+    if (signUp.status !== "complete" && !signUp.createdSessionId) {
+      form.setError("root", {
+        message: `Cannot finalize sign-up yet. Current Clerk status: ${signUp.status}.`,
+      })
+      return false
+    }
+
     const finalizeResult = await signUp.finalize()
 
     if (finalizeResult.error) {
@@ -53,6 +62,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
     }
 
     router.push(nextUrl)
+    router.refresh()
     return true
   }
 
@@ -102,18 +112,28 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
           return
         }
 
-        await finalizeAndRedirect()
+        if (signUp.status === "complete" || !!signUp.createdSessionId) {
+          await finalizeAndRedirect()
+          return
+        }
+
+        form.setError("root", {
+          message: `Verification was accepted, but Clerk has not created a session yet. Current status: ${signUp.status}.`,
+        })
         return
       }
 
       const parsedSignup = signupSchema.safeParse(values)
+
       if (!parsedSignup.success) {
         for (const issue of parsedSignup.error.issues) {
           const field = issue.path[0]
+
           if (typeof field === "string" && (field === "email" || field === "password")) {
             form.setError(field, { message: issue.message })
           }
         }
+
         return
       }
 
@@ -136,15 +156,17 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
 
       if (signUp.unverifiedFields?.includes("email_address")) {
         const sent = await sendVerificationCode()
+
         if (sent) {
           setAwaitingVerification(true)
           form.resetField("verificationCode")
         }
+
         return
       }
 
       form.setError("root", {
-        message: "Sign-up encountered an unexpected state. Please try again.",
+        message: `Sign-up encountered an unexpected Clerk state: ${signUp.status}.`,
       })
     } catch (error) {
       form.setError("root", {
@@ -171,9 +193,11 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
             </span>
             <span className="text-lg font-semibold tracking-tight">Vouch</span>
           </Link>
+
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-50 uppercase sm:text-4xl">
             Create your Vouch account
           </h1>
+
           <p className="mt-3 max-w-sm text-sm leading-6 text-neutral-400">
             Create Vouches, accept commitment links, and manage setup for payment-backed
             confirmation.
@@ -198,6 +222,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
               <FieldLabel className="text-neutral-100" htmlFor="verificationCode">
                 Verification code
               </FieldLabel>
+
               <Input
                 id="verificationCode"
                 type="text"
@@ -211,9 +236,11 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     typeof value === "string" ? value.replace(/\s+/g, "").trim() : "",
                 })}
               />
+
               <FieldDescription className="text-neutral-400">
                 Confirm your email to finish account creation.
               </FieldDescription>
+
               <FieldError
                 errors={
                   form.formState.errors.verificationCode?.message
@@ -238,6 +265,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 ) : null}
                 Verify code
               </Button>
+
               <Button
                 type="button"
                 disabled={isBusy}
@@ -284,6 +312,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
               <FieldLabel className="text-neutral-100" htmlFor="email">
                 Email
               </FieldLabel>
+
               <Input
                 id="email"
                 type="email"
@@ -296,6 +325,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     typeof value === "string" ? value.trim().toLowerCase() : "",
                 })}
               />
+
               <FieldError
                 errors={
                   form.formState.errors.email?.message
@@ -309,6 +339,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
               <FieldLabel className="text-neutral-100" htmlFor="password">
                 Password
               </FieldLabel>
+
               <Input
                 id="password"
                 type="password"
@@ -318,9 +349,11 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 disabled={isBusy}
                 {...form.register("password")}
               />
+
               <FieldDescription className="text-neutral-400">
                 Use a strong password you haven&apos;t used elsewhere.
               </FieldDescription>
+
               <FieldError
                 errors={
                   form.formState.errors.password?.message
@@ -343,6 +376,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
 
             <div className="flex flex-wrap items-center justify-center gap-1 text-sm text-neutral-400">
               <span>Already have an account?</span>
+
               <Link
                 href={
                   redirectUrl
@@ -354,6 +388,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 Sign in
               </Link>
             </div>
+
             <div id="clerk-captcha" />
           </div>
         )}
