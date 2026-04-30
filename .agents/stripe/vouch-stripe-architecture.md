@@ -14,7 +14,11 @@ Source references:
 
 ## Decision
 
-Vouch uses Stripe as a provider-backed payment coordination layer. Vouch does not hold funds directly, does not arbitrate disputes, and must not describe itself as escrow or as a marketplace in product copy.
+Vouch uses Stripe as a provider-backed payment coordination layer. Vouch is a
+SaaS tool for registered, verified users with their own pre-arranged
+appointments or in-person agreements. Vouch does not hold funds directly, does
+not arbitrate disputes, and must not describe itself as escrow, a broker, a
+booking service, or a consumer marketplace in product copy.
 
 The payment architecture is:
 
@@ -39,6 +43,15 @@ Vouch should use Stripe Connect Accounts v2 for payee payout readiness:
 - webhook reconciliation for account requirement and capability changes
 
 Stripe documentation and blueprints may use the word "marketplace" as Connect taxonomy. Vouch product code, routes, UI, and user-facing copy must not adopt marketplace behavior or marketplace language.
+
+Stripe product selection is:
+
+- non-recurring payments
+- build a platform or marketplace
+- identity verification
+- fraud protection
+
+Use "SaaS tool" and "payment coordination" in Stripe description boxes.
 
 ## PaymentIntent Timing
 

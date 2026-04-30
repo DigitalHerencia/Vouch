@@ -18,8 +18,8 @@
   },
   "summary": {
     "overall_status": "pass",
-    "reason": "Backend and server-backed route wiring validation passed for typecheck, Prisma, contracts, targeted Vouch tests, and lint after excluding .agents sample code. Lint still reports warnings.",
-    "latest_validation_at": "2026-04-28T00:00:00.000Z",
+    "reason": "Stripe Connect destination-charge code and governance correction passed typecheck, build, Prisma validation, contract validation, lint, and unit tests. Stripe account/env/webhook alignment was confirmed, and production deployment completed.",
+    "latest_validation_at": "2026-04-30T01:35:00.000Z",
     "latest_validator": "Codex"
   },
   "commands": [
@@ -27,19 +27,19 @@
       "id": "CMD-001",
       "command": "pnpm lint",
       "status": "pass",
-      "evidence": "Ran 2026-04-28 after excluding .agents sample code. ESLint exited 0 with warnings only."
+      "evidence": "Ran 2026-04-30. ESLint exited 0 with warnings only."
     },
     {
       "id": "CMD-002",
       "command": "pnpm typecheck",
       "status": "pass",
-      "evidence": "Ran 2026-04-28 after backend route/notification/admin wiring. next typegen and tsc --noEmit passed."
+      "evidence": "Ran 2026-04-30. next typegen and tsc --noEmit passed."
     },
     {
       "id": "CMD-003",
       "command": "pnpm test",
       "status": "pass",
-      "evidence": "Ran targeted Vouch tests 2026-04-28: 5 files, 14 tests passed. Full suite was not run this pass."
+      "evidence": "Ran 2026-04-30. Vitest: 18 files passed, 61 tests passed."
     },
     {
       "id": "CMD-004",
@@ -51,13 +51,25 @@
       "id": "CMD-005",
       "command": "pnpm prisma:validate",
       "status": "pass",
-      "evidence": "Ran 2026-04-28. Prisma schema is valid."
+      "evidence": "Ran 2026-04-30. Prisma schema is valid."
     },
     {
       "id": "CMD-006",
       "command": "pnpm validate:contracts",
       "status": "pass",
-      "evidence": "Ran 2026-04-28. Contract validation passed: 7 contracts and 5 execution files."
+      "evidence": "Ran 2026-04-30. Contract validation passed: 7 contracts and 5 execution files."
+    },
+    {
+      "id": "CMD-007",
+      "command": "pnpm build",
+      "status": "pass",
+      "evidence": "Ran 2026-04-30. Next production build completed successfully."
+    },
+    {
+      "id": "CMD-008",
+      "command": "vercel deploy --prod --yes",
+      "status": "pass",
+      "evidence": "Ran 2026-04-30. Production deployment dpl_A8xvkimPibpFKEDDserNSTjNzDf3 is READY and aliased to https://usevouch.vercel.app. Added .vercelignore before the final deploy to exclude local env files from uploads."
     }
   ],
   "milestones": {
@@ -136,9 +148,9 @@
     {
       "id": "no_platform_custody",
       "severity": "critical",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires payment architecture review and provider implementation inspection."
+      "status": "pass",
+      "evidence": "Code uses Stripe provider references, Connect destination charges, application fees, and manual capture; it does not store raw card data or raw identity documents.",
+      "notes": "Legal/compliance review remains required before production launch claims."
     },
     {
       "id": "auth_enforcement",
@@ -186,8 +198,8 @@
       "id": "payment_provider_sandbox",
       "severity": "critical",
       "status": "blocked",
-      "evidence": "Backend now uses Stripe-confirmed readiness/authorization paths and system-only release/refund, but sandbox live payment verification was not run.",
-      "notes": "Requires real Stripe sandbox create/accept/authorize/capture/refund verification with configured account and webhook."
+      "evidence": "Stripe account, webhook, env vars, and deployment are configured. A real sandbox Vouch lifecycle transaction has not been run.",
+      "notes": "Run a live sandbox Vouch payment through create, accept, authorization, dual confirmation, capture, webhook, and expiration/refund cases."
     },
     {
       "id": "webhook_idempotency",
@@ -227,9 +239,9 @@
     {
       "id": "basic_tests",
       "severity": "high",
-      "status": "fail",
-      "evidence": "Focused authz/webhook tests pass. Full pnpm test fails due scaffold gaps and E2E specs being collected by Vitest.",
-      "notes": "Do not mark the full basic_tests gate passing until the repo-wide suite is repaired."
+      "status": "pass",
+      "evidence": "pnpm test passed on 2026-04-30: 18 files, 61 tests.",
+      "notes": "E2E remains not run."
     },
     {
       "id": "e2e_smoke",
@@ -248,9 +260,9 @@
     {
       "id": "payment_flow_review",
       "severity": "critical",
-      "status": "blocked",
-      "evidence": null,
-      "notes": "Requires final payment architecture decision."
+      "status": "pass",
+      "evidence": "Implementation selected Accounts v2 onboarding plus PaymentIntent destination charges with application_fee_amount and transfer_data.destination. Official Stripe docs checked for destination charges and Accounts v2 event guidance.",
+      "notes": "Sandbox transaction proof remains required."
     },
     {
       "id": "security_review",
@@ -318,6 +330,16 @@
       "id": "VAL-NOTE-006",
       "date": "2026-04-28",
       "message": "Backend gap pass completed: notification dispatch/provider/templates, admin retry persistence, env/cache helpers, route shell fetcher/action wiring. Stripe sandbox E2E was not run and remains required before production launch."
+    },
+    {
+      "id": "VAL-NOTE-007",
+      "date": "2026-04-30",
+      "message": "Stripe Connect correction: target account acct_1TQHH2GuFcEUvSe9 was confirmed through Stripe CLI/MCP, local/Vercel/GitHub env names were aligned to STRIPE_WEBHOOK_SECRET, a webhook destination was created, and code was changed toward Accounts v2 plus destination charges with application fees. New validation must be run."
+    },
+    {
+      "id": "VAL-NOTE-008",
+      "date": "2026-04-30",
+      "message": "Validation after Stripe Connect correction passed: typecheck, Prisma validate, contract validate, lint, unit tests, local production build, and Vercel production deployment dpl_A8xvkimPibpFKEDDserNSTjNzDf3. Stripe CLI confirmed acct_1TQHH2GuFcEUvSe9 and webhook endpoint we_1TRiYtGuFcEUvSe9y6ivVvLs at https://usevouch.vercel.app/api/webhooks/stripe."
     }
   ]
 }

@@ -32,7 +32,7 @@ export function getOptionalEnv(name: string): string | undefined {
 }
 
 function getStripeWebhookSecret(): string {
-  const value = getOptionalEnv("STRIPE_WEBHOOK_SECRET") ?? getOptionalEnv("STRIPE_SIGNING_SECRET")
+  const value = getOptionalEnv("STRIPE_WEBHOOK_SECRET")
 
   if (!value) {
     throw new Error("Missing required environment variable: STRIPE_WEBHOOK_SECRET")

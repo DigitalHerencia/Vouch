@@ -12,8 +12,11 @@ feature_rules:
     - id: "features_must_support_core_mechanism"
       rule: "Every MVP feature must directly support account readiness, Vouch creation, acceptance, confirmation, payment resolution, auditability, or operational diagnosis."
 
-    - id: "features_must_not_create_marketplace"
-      rule: "No feature may introduce discovery, profiles, reviews, messaging, ratings, recommendations, or service listings."
+    - id: "features_must_not_create_product_marketplace"
+      rule: "No feature may introduce discovery, public profiles, reviews, messaging, ratings, recommendations, booking, matching, categories, or service listings."
+
+    - id: "stripe_connect_platform_is_allowed"
+      rule: "Stripe Connect platform infrastructure is allowed for connected accounts, payouts, destination charges, and application fees; this does not authorize marketplace product surfaces."
 
     - id: "features_must_not_create_arbitration"
       rule: "No feature may allow staff or users to decide who deserved funds outside deterministic confirmation rules."
@@ -41,7 +44,7 @@ features:
             - "primary_cta"
         prohibited_content:
             - "escrow claims"
-            - "marketplace positioning"
+            - "consumer marketplace positioning"
             - "service guarantees"
             - "public profiles"
             - "reviews"
@@ -84,7 +87,7 @@ features:
             - "authenticated_user"
         required_content:
             - "Vouch is payment coordination"
-            - "Vouch is not marketplace"
+            - "Vouch is not a consumer marketplace"
             - "Vouch is not arbitration"
             - "payment provider handles payment processing"
             - "dual confirmation rule"

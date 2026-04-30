@@ -13,9 +13,7 @@ import {
   refreshStripeConnectReadiness,
 } from "@/lib/integrations/stripe/connect"
 import { getStripeServerClient } from "@/lib/integrations/stripe/client"
-import {
-  initializeStripePaymentForVouch,
-} from "@/lib/payments/adapters/stripe-payment-adapter"
+import { initializeStripePaymentForVouch } from "@/lib/payments/adapters/stripe-payment-adapter"
 import {
   authorizeVouchPaymentInputSchema,
   captureOrReleaseVouchPaymentInputSchema,
@@ -303,6 +301,12 @@ export async function handlePaymentMethodSetupReturn(
   const readiness = setupIntent.status === "succeeded" ? "ready" : "requires_action"
 
   if (setupIntent.customer && typeof setupIntent.customer === "string") {
+    if (setupIntent.payment_method && typeof setupIntent.payment_method === "string") {
+      await getStripeServerClient().customers.update(setupIntent.customer, {
+        invoice_settings: { default_payment_method: setupIntent.payment_method },
+      })
+    }
+
     await prisma.paymentCustomer.upsert({
       where: { userId: user.id },
       create: { userId: user.id, providerCustomerId: setupIntent.customer },
@@ -630,11 +634,23 @@ export async function initializeVouchPayment(
           },
         },
       },
+      payee: {
+        select: {
+          connectedAccount: {
+            select: {
+              providerAccountId: true,
+            },
+          },
+        },
+      },
     },
   })
 
   if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
   if (vouch.payerId !== user.id) return actionFailure("AUTHZ_DENIED", "Payer access required.")
+  if (!vouch.payee?.connectedAccount?.providerAccountId) {
+    return actionFailure("CONNECTED_ACCOUNT_REQUIRED", "Payee payout account is required.")
+  }
 
   const initialized = await initializeStripePaymentForVouch({
     vouchId: vouch.id,
@@ -644,6 +660,7 @@ export async function initializeVouchPayment(
     ...(vouch.payer.paymentCustomer?.providerCustomerId
       ? { providerCustomerId: vouch.payer.paymentCustomer.providerCustomerId }
       : {}),
+    connectedAccountId: vouch.payee.connectedAccount.providerAccountId,
   })
 
   if (!initialized.ok) {

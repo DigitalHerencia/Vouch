@@ -155,6 +155,26 @@
         "Expiration, reconciliation, and webhooks are responsible for deterministic provider resolution.",
         "Production still requires Stripe sandbox and legal/payment-flow review."
       ]
+    },
+    {
+      "id": "DEC-009",
+      "status": "accepted",
+      "date": "2026-04-30",
+      "title": "Use Connect platform infrastructure without product marketplace behavior",
+      "decision": "Vouch is a SaaS payment coordination tool that uses Stripe Connect accounts, payouts, destination charges, application fees, Identity, and fraud protection, while avoiding discovery, listings, profiles, matching, reviews, booking, escrow, brokerage, and dispute-resolution behavior.",
+      "rationale": "Stripe taxonomy uses platform/marketplace to select Connect infrastructure; Vouch product taxonomy must remain payment coordination for pre-arranged appointments and in-person agreements.",
+      "source_refs": [
+        "AGENTS.md",
+        ".agents/docs/prd.md",
+        ".agents/contracts/domain-model.yaml",
+        ".agents/contracts/features.yaml",
+        ".agents/stripe/vouch-stripe-architecture.md"
+      ],
+      "consequences": [
+        "Connect Accounts v2 and destination charges are allowed implementation infrastructure.",
+        "Public consumer marketplace features remain prohibited.",
+        "Stripe dashboard descriptions should use SaaS tool and payment coordination language."
+      ]
     }
   ],
   "pending_decisions": [
@@ -162,7 +182,7 @@
       "id": "PDEC-001",
       "status": "superseded",
       "title": "Select exact Stripe Connect flow",
-      "question": "Superseded by DEC-008 for implementation; still requires sandbox/legal review before production.",
+      "question": "Superseded by DEC-008 and DEC-009; sandbox/legal review remains required before production launch.",
       "required_before": [
         "payment_provider_sandbox",
         "production_candidate"

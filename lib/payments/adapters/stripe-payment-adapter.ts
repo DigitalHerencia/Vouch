@@ -5,7 +5,6 @@ import {
   captureStripePayment,
   createStripePaymentAuthorization,
   refundStripePayment,
-  transferCapturedVouchFunds,
   voidStripeAuthorization,
 } from "@/lib/integrations/stripe/payment-intents"
 
@@ -19,7 +18,9 @@ export type InitializeStripePaymentInput = {
   currency: string
   platformFeeCents: number
   providerCustomerId?: string
+  providerPaymentMethodId?: string
   connectedAccountId?: string
+  confirmOffSession?: boolean
   idempotencyKey?: string
 }
 
@@ -54,7 +55,11 @@ export async function initializeStripePaymentForVouch(
       currency: input.currency,
       platformFeeCents: input.platformFeeCents,
       ...(input.providerCustomerId ? { providerCustomerId: input.providerCustomerId } : {}),
+      ...(input.providerPaymentMethodId
+        ? { providerPaymentMethodId: input.providerPaymentMethodId }
+        : {}),
       ...(input.connectedAccountId ? { connectedAccountId: input.connectedAccountId } : {}),
+      ...(input.confirmOffSession ? { confirmOffSession: input.confirmOffSession } : {}),
       idempotencyKey: input.idempotencyKey ?? `vouch:${input.vouchId}:payment_authorization`,
     })
 
@@ -185,21 +190,11 @@ export async function releaseStripePaymentForCompletedVouch(
       return { ok: true }
     }
 
-    const transfer = await transferCapturedVouchFunds({
-      amountCents: paymentRecord.amountCents,
-      currency: paymentRecord.currency,
-      connectedAccountId,
-      providerChargeId,
-      vouchId: paymentRecord.vouch.id,
-      idempotencyKey: input.idempotencyKey ?? `payment:${paymentRecord.id}:transfer`,
-    })
-
     await prisma.paymentRecord.update({
       where: { id: paymentRecord.id },
       data: {
         status: "released",
         providerChargeId,
-        providerTransferId: transfer.id,
         lastErrorCode: null,
         lastErrorMessage: null,
       },

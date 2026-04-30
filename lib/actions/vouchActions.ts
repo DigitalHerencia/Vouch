@@ -1,6 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
+import type Stripe from "stripe"
 
 import { requireActiveUser } from "@/lib/auth/current-user"
 import { assertAcceptVouchSetupReady, assertCreateVouchSetupReady } from "@/lib/auth/setup-gates"
@@ -31,6 +32,7 @@ import {
   markVouchFailedTx,
 } from "@/lib/db/transactions/vouchTransactions"
 import { createInvitationToken, hashInvitationToken } from "@/lib/invitations/tokens"
+import { getStripeServerClient } from "@/lib/integrations/stripe/client"
 import {
   initializeStripePaymentForVouch,
   refundOrVoidStripePaymentForVouch,
@@ -92,6 +94,16 @@ function getFieldErrors(error: FieldErrorsSource) {
 
 function calculateFee(amountCents: number): number {
   return calculatePlatformFeeCents({ amountCents })
+}
+
+function getDefaultPaymentMethodId(
+  customer: Stripe.Response<Stripe.Customer | Stripe.DeletedCustomer>
+): string | null {
+  if ("deleted" in customer && customer.deleted) return null
+
+  const paymentMethod = customer.invoice_settings.default_payment_method
+  if (typeof paymentMethod === "string") return paymentMethod
+  return paymentMethod?.id ?? null
 }
 
 async function getSetupBlockedFailure(
@@ -303,36 +315,6 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
     return { vouch, invitation }
   })
 
-  const payment = await initializeStripePaymentForVouch({
-    vouchId: created.vouch.id,
-    amountCents,
-    currency: parsed.data.currency,
-    platformFeeCents,
-  })
-
-  if (!payment.ok) {
-    await prisma.$transaction(async (tx) => {
-      await markVouchFailedTx(tx, { vouchId: created.vouch.id })
-
-      await tx.auditEvent.create({
-        data: {
-          eventName: "payment.failed",
-          actorType: "system",
-          entityType: "PaymentRecord",
-          entityId: created.vouch.id,
-          participantSafe: true,
-          metadata: {
-            code: payment.code,
-            stage: "create",
-          },
-        },
-      })
-    })
-
-    await revalidateVouchSurfaces(created.vouch.id, [user.id])
-    return actionFailure(payment.code, payment.message)
-  }
-
   await revalidateVouchSurfaces(created.vouch.id, [user.id])
 
   return actionSuccess({
@@ -340,7 +322,7 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
     invitationId: created.invitation.id,
     inviteToken,
     invitePath: `/vouches/invite/${inviteToken}`,
-    clientSecret: payment.clientSecret ?? null,
+    clientSecret: null,
   })
 }
 
@@ -681,6 +663,92 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
     }
 
     throw error
+  }
+
+  const paymentContext = await prisma.vouch.findUnique({
+    where: { id: vouch.id },
+    select: {
+      id: true,
+      amountCents: true,
+      currency: true,
+      platformFeeCents: true,
+      payer: {
+        select: {
+          paymentCustomer: {
+            select: {
+              providerCustomerId: true,
+            },
+          },
+        },
+      },
+      payee: {
+        select: {
+          connectedAccount: {
+            select: {
+              providerAccountId: true,
+            },
+          },
+        },
+      },
+    },
+  })
+
+  const providerCustomerId = paymentContext?.payer.paymentCustomer?.providerCustomerId
+  const connectedAccountId = paymentContext?.payee?.connectedAccount?.providerAccountId
+
+  if (!paymentContext || !providerCustomerId || !connectedAccountId) {
+    await markVouchFailed({ vouchId: vouch.id })
+    return actionFailure(
+      "PAYMENT_SETUP_INCOMPLETE",
+      "Both payment setup and payout setup are required before acceptance can complete."
+    )
+  }
+
+  const stripeCustomer = await getStripeServerClient().customers.retrieve(providerCustomerId, {
+    expand: ["invoice_settings.default_payment_method"],
+  })
+  const providerPaymentMethodId = getDefaultPaymentMethodId(stripeCustomer)
+
+  if (!providerPaymentMethodId) {
+    await markVouchFailed({ vouchId: vouch.id })
+    return actionFailure(
+      "PAYMENT_METHOD_REQUIRED",
+      "Payer payment method must be ready before acceptance can complete."
+    )
+  }
+
+  const payment = await initializeStripePaymentForVouch({
+    vouchId: paymentContext.id,
+    amountCents: paymentContext.amountCents,
+    currency: paymentContext.currency,
+    platformFeeCents: paymentContext.platformFeeCents,
+    providerCustomerId,
+    providerPaymentMethodId,
+    connectedAccountId,
+    confirmOffSession: true,
+  })
+
+  if (!payment.ok) {
+    await prisma.$transaction(async (tx) => {
+      await markVouchFailedTx(tx, { vouchId: vouch.id })
+
+      await tx.auditEvent.create({
+        data: {
+          eventName: "payment.failed",
+          actorType: "system",
+          entityType: "PaymentRecord",
+          entityId: vouch.id,
+          participantSafe: true,
+          metadata: {
+            code: payment.code,
+            stage: "accept",
+          },
+        },
+      })
+    })
+
+    await revalidateVouchSurfaces(vouch.id, [vouch.payerId, user.id])
+    return actionFailure(payment.code, payment.message)
   }
 
   await revalidateVouchSurfaces(vouch.id, [vouch.payerId, user.id])

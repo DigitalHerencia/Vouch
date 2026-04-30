@@ -7,11 +7,15 @@ product: "Vouch"
 
 summary:
     description: "Canonical machine-readable domain model for Vouch."
-    core_sentence: "A Vouch is a commitment-backed payment agreement between two verified parties where funds release only if both parties confirm presence during a defined time window."
+    core_sentence: "Vouch is a SaaS payment coordination tool for registered, verified users with their own pre-arranged appointments or in-person agreements."
+    stripe_product_selection: "Build a platform or marketplace means Vouch uses Connect infrastructure for connected accounts and payouts; it does not change Vouch's product category."
 
 global_invariants:
-    - id: "no_marketplace"
-      description: "Vouch must not provide discovery, public listings, search, ratings, reviews, recommendations, categories, matching, or public provider profiles."
+    - id: "no_product_marketplace"
+      description: "Vouch must not provide discovery, public listings, search, ratings, reviews, recommendations, categories, matching, booking, or public provider profiles."
+
+    - id: "connect_platform_infrastructure_allowed"
+      description: "Stripe Connect platform infrastructure, including Accounts v2, connected accounts, destination charges, application fees, and payouts, is allowed and expected."
 
     - id: "no_arbitration"
       description: "Vouch must not judge disputes, decide who was right, collect evidence, or manually award funds based on human claims."
@@ -47,12 +51,14 @@ canonical_terms:
         - "release"
         - "refund"
         - "payment coordination"
+        - "SaaS tool"
+        - "Connect platform"
 
     prohibited_or_restricted:
         - term: "escrow"
           rule: "Do not use without legal review."
         - term: "marketplace"
-          rule: "Do not describe Vouch as a marketplace."
+          rule: "Do not describe Vouch as a consumer/product marketplace. Stripe infrastructure prompts may use platform/marketplace taxonomy only to select Connect."
         - term: "dispute"
           rule: "Do not create dispute-resolution product flows."
         - term: "guaranteed safety"

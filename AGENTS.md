@@ -2,7 +2,8 @@
 
 ## Project: Vouch
 
-Vouch is a commitment-backed payment coordination system for appointments and in-person agreements.
+Vouch is a SaaS tool for commitment-backed payment coordination for registered,
+verified users with their own pre-arranged appointments or in-person agreements.
 
 Core rule:
 
@@ -25,6 +26,15 @@ It is **not**:
 - a social platform
 
 Do not add features that move the product toward any of those categories.
+
+Stripe terminology note:
+
+- Stripe product selection: "Build a platform or marketplace" means Vouch needs
+  Connect, connected accounts, and payouts.
+- Vouch business description: "Vouch is not a marketplace" means Vouch does not
+  provide discovery, listings, public profiles, matching, reviews, or booking.
+- Use "SaaS tool" and "payment coordination" language in Stripe description
+  boxes and product copy.
 
 ---
 
@@ -107,7 +117,7 @@ For Vouch, legacy instruction filenames may be renamed later. Until then, use th
 
 These are non-negotiable.
 
-### 3.1 No Marketplace
+### 3.1 No Product Marketplace
 
 Do not create:
 

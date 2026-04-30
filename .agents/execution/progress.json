@@ -263,13 +263,37 @@
       ],
       "validation_status": "not_run",
       "notes": "Validation gates intentionally not run per user launch-token instruction. Browser Use attached to Stripe URL/title but DOM/screenshot bridge failed, so no live dashboard setting changes were made."
+    },
+    {
+      "id": "PRG-013",
+      "date": "2026-04-30",
+      "status": "completed",
+      "category": "implementation",
+      "title": "Aligned Stripe Connect platform flow and account configuration",
+      "summary": "Corrected governance language for Vouch as a SaaS payment coordination tool using Stripe Connect platform infrastructure, aligned local/Vercel/GitHub Stripe environment names to STRIPE_WEBHOOK_SECRET, created the Stripe webhook destination on acct_1TQHH2GuFcEUvSe9, and corrected destination-charge release logic to avoid a second transfer after capture.",
+      "files": [
+        "AGENTS.md",
+        ".agents/docs/prd.md",
+        ".agents/contracts/domain-model.yaml",
+        ".agents/contracts/features.yaml",
+        ".agents/stripe/vouch-stripe-architecture.md",
+        ".env.example",
+        "lib/env.ts",
+        "lib/stripe/config.ts",
+        "lib/integrations/stripe/payment-intents.ts",
+        "lib/payments/adapters/stripe-payment-adapter.ts",
+        "lib/actions/paymentActions.ts",
+        "lib/actions/vouchActions.ts"
+      ],
+      "validation_status": "not_run",
+      "notes": "Stripe account and secret values were not recorded in repo artifacts. Sandbox end-to-end payment verification still must be run."
     }
   ],
   "next_expected_phase": "repo_implementation",
   "next_expected_work": [
-    "Run sandbox create, payment confirmation, accept, dual-confirm, capture, and transfer flow.",
+    "Run sandbox create, accept, off-session authorization, dual-confirm, capture, and destination-charge transfer flow on acct_1TQHH2GuFcEUvSe9.",
     "Run sandbox incomplete confirmation expiration and void/non-capture flow.",
-    "Verify webhook endpoint URL and event subscriptions in Stripe live and sandbox.",
+    "Verify Stripe webhook delivery to /api/webhooks/stripe after deployment.",
     "Run final launch gates after sandbox proof."
   ]
 }

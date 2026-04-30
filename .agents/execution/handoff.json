@@ -5,7 +5,7 @@
   "generated_at": "2026-04-24T00:00:00.000Z",
   "purpose": "Provides current project handoff state, next actions, blockers, risks, and stop conditions for the next coding agent.",
   "current_state": {
-    "phase": "auth_foundation_implemented",
+    "phase": "stripe_connect_destination_charge_implementation",
     "implementation_started": true,
     "docs_created": true,
     "contracts_created": true,
@@ -26,7 +26,9 @@
     "If both confirmations do not occur, funds must refund, void, or remain uncaptured according to provider flow.",
     "Vouch must not become a marketplace, scheduler, broker, social app, review system, messaging system, escrow provider, or dispute-resolution platform.",
     "Admins inspect operational state only and must not decide who is right.",
-    "Payment state must be provider-backed through Stripe Connect or equivalent infrastructure."
+    "Payment state must be provider-backed through Stripe Connect or equivalent infrastructure.",
+    "Stripe platform/marketplace selection means Connect infrastructure for Vouch, not public marketplace product behavior.",
+    "Stripe account acct_1TQHH2GuFcEUvSe9 is the required account for CLI, MCP, local env, GitHub, and Vercel configuration."
   ],
   "completed_artifacts": {
     "docs": [
@@ -65,7 +67,9 @@
       ".agents/execution/progress.json",
       ".agents/execution/validation.json"
     ],
-    "repo_root": ["AGENTS.md"]
+    "repo_root": [
+      "AGENTS.md"
+    ]
   },
   "next_actions": [
     {
@@ -107,8 +111,8 @@
     {
       "id": "NEXT-006",
       "priority": "P0",
-      "title": "Resolve Stripe Connect architecture",
-      "details": "Select exact payment flow for no-custody commitment, release, refund/void/non-capture, and platform fee behavior before production payment implementation."
+      "title": "Prove Stripe Connect destination-charge lifecycle in sandbox",
+      "details": "Run create, accept/off-session authorization, dual confirmation, manual capture, destination charge transfer/application fee, expiration void/refund, and webhook reconciliation on acct_1TQHH2GuFcEUvSe9."
     },
     {
       "id": "NEXT-007",
@@ -125,25 +129,34 @@
   ],
   "known_blockers": [
     {
-      "id": "BLOCK-001",
-      "severity": "critical",
-      "title": "Exact Stripe Connect payment flow not selected",
-      "impact": "Blocks production-grade payment implementation and no-custody validation.",
-      "unblocks": ["payment_provider_sandbox", "payment_flow_review", "production_candidate"]
-    },
-    {
       "id": "BLOCK-002",
       "severity": "critical",
       "title": "Legal/compliance review not completed",
       "impact": "Blocks production launch and approved payment/escrow-adjacent language.",
-      "unblocks": ["legal_copy_review", "production_candidate"]
+      "unblocks": [
+        "legal_copy_review",
+        "production_candidate"
+      ]
     },
     {
       "id": "BLOCK-003",
       "severity": "high",
       "title": "Repo scaffold gaps block full validation",
       "impact": "pnpm typecheck and full pnpm test fail due missing feature/type/schema/helper modules and Vitest collecting Playwright specs outside the Clerk auth work.",
-      "unblocks": ["mvp_local"]
+      "unblocks": [
+        "mvp_local"
+      ]
+    },
+    {
+      "id": "BLOCK-004",
+      "severity": "critical",
+      "title": "Stripe sandbox lifecycle proof not completed",
+      "impact": "Blocks production confidence for authorization, manual capture, destination charge transfer, application fee, void/refund, and webhook reconciliation.",
+      "unblocks": [
+        "payment_provider_sandbox",
+        "payment_flow_review",
+        "production_candidate"
+      ]
     }
   ],
   "risks": [
