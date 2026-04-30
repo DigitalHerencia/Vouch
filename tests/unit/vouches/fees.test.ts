@@ -1,6 +1,39 @@
 import { describe, expect, it } from "vitest"
 
-import { calculatePlatformFeeCents } from "@/lib/vouch/fees"
+import { calculatePlatformFeeCents, calculateVouchPricing } from "@/lib/vouch/fees"
+
+describe("calculateVouchPricing", () => {
+  it("calculates customer total and application fee for the minimum service fee case", () => {
+    expect(calculateVouchPricing({ protectedAmountCents: 10_000 })).toEqual({
+      protectedAmountCents: 10_000,
+      merchantReceivesCents: 10_000,
+      vouchServiceFeeCents: 500,
+      processingFeeOffsetCents: 345,
+      customerTotalCents: 10_845,
+      applicationFeeAmountCents: 845,
+    })
+  })
+
+  it("uses the 5% service fee when it exceeds the minimum", () => {
+    const pricing = calculateVouchPricing({ protectedAmountCents: 50_000 })
+
+    expect(pricing.vouchServiceFeeCents).toBe(2500)
+    expect(pricing.merchantReceivesCents).toBe(50_000)
+    expect(pricing.applicationFeeAmountCents).toBe(
+      pricing.vouchServiceFeeCents + pricing.processingFeeOffsetCents
+    )
+    expect(pricing.customerTotalCents).toBe(
+      pricing.protectedAmountCents +
+        pricing.vouchServiceFeeCents +
+        pricing.processingFeeOffsetCents
+    )
+  })
+
+  it("rejects invalid protected amounts", () => {
+    expect(() => calculateVouchPricing({ protectedAmountCents: 0 })).toThrow()
+    expect(() => calculateVouchPricing({ protectedAmountCents: -1 })).toThrow()
+  })
+})
 
 describe("calculatePlatformFeeCents", () => {
   it("uses minimum fee when percentage would be lower", () => {

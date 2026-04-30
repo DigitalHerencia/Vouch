@@ -22,6 +22,8 @@ describe("vouch schemas", () => {
       confirmationExpiresAt,
       recipientEmail: "payee@example.com",
       label: "Studio appointment",
+      termsAccepted: true,
+      disclaimerAccepted: true,
     })
 
     expect(result.success).toBe(true)
@@ -44,7 +46,9 @@ describe("vouch schemas", () => {
   })
 
   it("accepts invite token mutations", () => {
-    expect(acceptVouchSchema.safeParse({ token: "abc123securetoken" }).success).toBe(true)
+    expect(
+      acceptVouchSchema.safeParse({ token: "abc123securetoken", termsAccepted: true }).success
+    ).toBe(true)
     expect(declineVouchSchema.safeParse({ token: "abc123securetoken" }).success).toBe(true)
   })
 })

@@ -17,6 +17,12 @@ type VouchResult = {
   amountCents: number
   currency: string
   platformFeeCents: number
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
+  applicationFeeAmountCents: number
+  customerTotalCents: number
   status: VouchStatus
   label: string | null
   meetingStartsAt: Date
@@ -38,6 +44,12 @@ type CreateVouchTxInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   label?: string | null
   meetingStartsAt: Date
   confirmationOpensAt: Date
@@ -70,6 +82,12 @@ const VOUCH_SELECT = {
   amountCents: true,
   currency: true,
   platformFeeCents: true,
+  protectedAmountCents: true,
+  merchantReceivesCents: true,
+  vouchServiceFeeCents: true,
+  processingFeeOffsetCents: true,
+  applicationFeeAmountCents: true,
+  customerTotalCents: true,
   status: true,
   label: true,
   meetingStartsAt: true,
@@ -115,6 +133,12 @@ export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<
       amountCents: input.amountCents,
       currency: input.currency ?? "usd",
       platformFeeCents: input.platformFeeCents ?? 0,
+      protectedAmountCents: input.protectedAmountCents ?? input.amountCents,
+      merchantReceivesCents: input.merchantReceivesCents ?? input.amountCents,
+      vouchServiceFeeCents: input.vouchServiceFeeCents ?? input.platformFeeCents ?? 0,
+      processingFeeOffsetCents: input.processingFeeOffsetCents ?? 0,
+      applicationFeeAmountCents: input.applicationFeeAmountCents ?? input.platformFeeCents ?? 0,
+      customerTotalCents: input.customerTotalCents ?? input.amountCents + (input.platformFeeCents ?? 0),
       status: "pending",
       ...(input.label !== undefined ? { label: input.label } : {}),
       meetingStartsAt: input.meetingStartsAt,

@@ -20,6 +20,7 @@ import {
   refundStripePayment,
   voidStripeAuthorization,
 } from "@/lib/integrations/stripe/payment-intents"
+import { calculateVouchPricing, type VouchPricing } from "@/lib/vouch/fees"
 import {
   mapStripePaymentIntentStatus,
   mapStripeRefundStatus,
@@ -139,6 +140,36 @@ async function revalidatePaymentSurfaces(input: {
   }
 }
 
+function getVouchPricingSnapshot(input: {
+  amountCents: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
+}): VouchPricing {
+  if (
+    input.protectedAmountCents &&
+    input.merchantReceivesCents &&
+    input.customerTotalCents &&
+    input.applicationFeeAmountCents !== undefined &&
+    input.vouchServiceFeeCents !== undefined &&
+    input.processingFeeOffsetCents !== undefined
+  ) {
+    return {
+      protectedAmountCents: input.protectedAmountCents,
+      merchantReceivesCents: input.merchantReceivesCents,
+      vouchServiceFeeCents: input.vouchServiceFeeCents,
+      processingFeeOffsetCents: input.processingFeeOffsetCents,
+      applicationFeeAmountCents: input.applicationFeeAmountCents,
+      customerTotalCents: input.customerTotalCents,
+    }
+  }
+
+  return calculateVouchPricing({ protectedAmountCents: input.amountCents })
+}
+
 function paymentResult(record: {
   id: string
   vouchId: string
@@ -183,6 +214,12 @@ async function getParticipantPaymentRecord(input: { vouchId: string; userId: str
       amountCents: true,
       currency: true,
       platformFeeCents: true,
+      protectedAmountCents: true,
+      merchantReceivesCents: true,
+      vouchServiceFeeCents: true,
+      processingFeeOffsetCents: true,
+      applicationFeeAmountCents: true,
+      customerTotalCents: true,
       providerPaymentId: true,
       vouch: {
         select: {
@@ -192,6 +229,12 @@ async function getParticipantPaymentRecord(input: { vouchId: string; userId: str
           amountCents: true,
           currency: true,
           platformFeeCents: true,
+          protectedAmountCents: true,
+          merchantReceivesCents: true,
+          vouchServiceFeeCents: true,
+          processingFeeOffsetCents: true,
+          applicationFeeAmountCents: true,
+          customerTotalCents: true,
           status: true,
         },
       },
@@ -633,6 +676,12 @@ export async function initializeVouchPayment(
       amountCents: true,
       currency: true,
       platformFeeCents: true,
+      protectedAmountCents: true,
+      merchantReceivesCents: true,
+      vouchServiceFeeCents: true,
+      processingFeeOffsetCents: true,
+      applicationFeeAmountCents: true,
+      customerTotalCents: true,
       paymentRecord: {
         select: {
           id: true,
@@ -668,9 +717,8 @@ export async function initializeVouchPayment(
 
   const initialized = await initializeStripePaymentForVouch({
     vouchId: vouch.id,
-    amountCents: vouch.amountCents,
+    pricing: getVouchPricingSnapshot(vouch),
     currency: vouch.currency,
-    platformFeeCents: vouch.platformFeeCents,
     ...(vouch.payer.paymentCustomer?.providerCustomerId
       ? { providerCustomerId: vouch.payer.paymentCustomer.providerCustomerId }
       : {}),
@@ -709,8 +757,12 @@ export async function initializeVouchPayment(
       metadata: {
         vouch_id: vouch.id,
         provider: "stripe",
-        amount_cents: vouch.amountCents,
-        platform_fee_cents: vouch.platformFeeCents,
+        protected_amount_cents: getVouchPricingSnapshot(vouch).protectedAmountCents,
+        merchant_receives_cents: getVouchPricingSnapshot(vouch).merchantReceivesCents,
+        vouch_service_fee_cents: getVouchPricingSnapshot(vouch).vouchServiceFeeCents,
+        processing_fee_offset_cents: getVouchPricingSnapshot(vouch).processingFeeOffsetCents,
+        customer_total_cents: getVouchPricingSnapshot(vouch).customerTotalCents,
+        application_fee_amount_cents: getVouchPricingSnapshot(vouch).applicationFeeAmountCents,
       },
     },
   })
@@ -1205,9 +1257,8 @@ export type StripePaymentAdapterResult =
 
 export type InitializeStripePaymentInput = {
   vouchId: string
-  amountCents: number
+  pricing: VouchPricing
   currency: string
-  platformFeeCents: number
   providerCustomerId?: string
   providerPaymentMethodId?: string
   connectedAccountId?: string
@@ -1242,9 +1293,13 @@ export async function initializeStripePaymentForVouch(
   try {
     const paymentIntent = await createStripePaymentAuthorization({
       vouchId: input.vouchId,
-      amountCents: input.amountCents,
+      customerTotalCents: input.pricing.customerTotalCents,
       currency: input.currency,
-      platformFeeCents: input.platformFeeCents,
+      applicationFeeAmountCents: input.pricing.applicationFeeAmountCents,
+      protectedAmountCents: input.pricing.protectedAmountCents,
+      merchantReceivesCents: input.pricing.merchantReceivesCents,
+      vouchServiceFeeCents: input.pricing.vouchServiceFeeCents,
+      processingFeeOffsetCents: input.pricing.processingFeeOffsetCents,
       ...(input.providerCustomerId ? { providerCustomerId: input.providerCustomerId } : {}),
       ...(input.providerPaymentMethodId
         ? { providerPaymentMethodId: input.providerPaymentMethodId }
@@ -1262,17 +1317,29 @@ export async function initializeStripePaymentForVouch(
         providerPaymentId: paymentIntent.id,
         status:
           paymentIntent.status === "requires_capture" ? "authorized" : "requires_payment_method",
-        amountCents: input.amountCents,
+        amountCents: input.pricing.protectedAmountCents,
         currency: input.currency,
-        platformFeeCents: input.platformFeeCents,
+        platformFeeCents: input.pricing.vouchServiceFeeCents,
+        protectedAmountCents: input.pricing.protectedAmountCents,
+        merchantReceivesCents: input.pricing.merchantReceivesCents,
+        vouchServiceFeeCents: input.pricing.vouchServiceFeeCents,
+        processingFeeOffsetCents: input.pricing.processingFeeOffsetCents,
+        applicationFeeAmountCents: input.pricing.applicationFeeAmountCents,
+        customerTotalCents: input.pricing.customerTotalCents,
       },
       update: {
         providerPaymentId: paymentIntent.id,
         status:
           paymentIntent.status === "requires_capture" ? "authorized" : "requires_payment_method",
-        amountCents: input.amountCents,
+        amountCents: input.pricing.protectedAmountCents,
         currency: input.currency,
-        platformFeeCents: input.platformFeeCents,
+        platformFeeCents: input.pricing.vouchServiceFeeCents,
+        protectedAmountCents: input.pricing.protectedAmountCents,
+        merchantReceivesCents: input.pricing.merchantReceivesCents,
+        vouchServiceFeeCents: input.pricing.vouchServiceFeeCents,
+        processingFeeOffsetCents: input.pricing.processingFeeOffsetCents,
+        applicationFeeAmountCents: input.pricing.applicationFeeAmountCents,
+        customerTotalCents: input.pricing.customerTotalCents,
         lastErrorCode: null,
         lastErrorMessage: null,
       },

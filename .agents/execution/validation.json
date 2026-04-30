@@ -373,6 +373,11 @@
       "id": "VAL-NOTE-011",
       "date": "2026-04-30",
       "message": "Environment and migration cleanup passed: pnpm prisma:validate, pnpm build, pnpm prisma migrate dev --name init, pnpm prisma migrate status, and pnpm validate:contracts. Prisma now loads .env then .env.local with local override, Clerk webhook verification requires CLERK_WEBHOOK_SECRET, and the initial migration was applied."
+    },
+    {
+      "id": "VAL-NOTE-012",
+      "date": "2026-04-30",
+      "message": "Merchant/customer pricing governance migration completed. Neon MCP listed no shared Vouch project, so live schema inspection was unavailable; Prisma schema was used as the source for an additive migration. pnpm validate:contracts, pnpm prisma:validate, pnpm prisma:generate, pnpm typecheck, pnpm lint, and pnpm test passed. Lint passed with two existing auth-page-shell unused prop warnings."
     }
   ]
 }

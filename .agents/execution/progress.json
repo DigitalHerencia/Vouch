@@ -343,6 +343,35 @@
       ],
       "validation_status": "pass",
       "notes": "pnpm prisma:validate, pnpm prisma:generate, pnpm typecheck, pnpm lint, pnpm test -- auth, and pnpm test -- webhook passed. Clerk webhook configuration now uses CLERK_WEBHOOK_SECRET without legacy secret aliases."
+    },
+    {
+      "id": "PRG-016",
+      "date": "2026-04-30",
+      "status": "completed",
+      "category": "governance_and_pricing",
+      "title": "Migrated governance and pricing model to merchant/customer source of truth",
+      "summary": "Updated root governance and core .agents docs/contracts to the merchant/provider creator and customer/client paying acceptor model; added additive Prisma pricing snapshot fields; changed Stripe PaymentIntent authorization to charge customerTotalCents and collect applicationFeeAmountCents.",
+      "files": [
+        "AGENTS.md",
+        ".agents/docs/prd.md",
+        ".agents/docs/source-normalization.md",
+        ".agents/docs/stripe-connect-integration.md",
+        ".agents/contracts/domain-model.yaml",
+        ".agents/contracts/authz.yaml",
+        ".agents/contracts/features.yaml",
+        ".agents/contracts/acceptance-gates.yaml",
+        "prisma/schema.prisma",
+        "prisma/migrations/20260430233000_add_vouch_pricing_model/migration.sql",
+        "lib/vouch/fees.ts",
+        "lib/integrations/stripe/payment-intents.ts",
+        "lib/actions/paymentActions.ts",
+        "lib/actions/vouchActions.ts",
+        "lib/db/transactions/vouchTransactions.ts",
+        "lib/fetchers/vouchFetchers.ts",
+        "tests/unit/vouches/fees.test.ts"
+      ],
+      "validation_status": "pass",
+      "notes": "Neon MCP access was available but no shared Vouch project was visible, so Prisma schema was used as source and the migration was kept additive/backward-compatible. pnpm validate:contracts, pnpm prisma:validate, pnpm prisma:generate, pnpm typecheck, pnpm lint, and pnpm test passed; lint reported two existing auth-page-shell unused prop warnings."
     }
   ],
   "next_expected_phase": "repo_implementation",

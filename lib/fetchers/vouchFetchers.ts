@@ -11,9 +11,11 @@ import type {
 } from "@/prisma/generated/prisma/client"
 
 import {
-  calculatePlatformFeeCents,
-  DEFAULT_MINIMUM_PLATFORM_FEE_CENTS,
-  DEFAULT_PLATFORM_FEE_RATE,
+  calculateVouchPricing,
+  DEFAULT_MINIMUM_VOUCH_SERVICE_FEE_CENTS,
+  DEFAULT_STRIPE_FIXED_CENTS,
+  DEFAULT_STRIPE_PERCENT_BPS,
+  DEFAULT_VOUCH_SERVICE_FEE_RATE,
 } from "@/lib/vouch/fees"
 import { prisma } from "@/lib/db/prisma"
 import { hashInvitationToken } from "@/lib/invitations/tokens"
@@ -97,7 +99,7 @@ function mapDates<T>(value: T): T {
 }
 
 function calculateFee(amountCents: number) {
-  return calculatePlatformFeeCents({ amountCents })
+  return calculateVouchPricing({ protectedAmountCents: amountCents })
 }
 
 async function getOptionalCurrentUserId() {
@@ -225,16 +227,24 @@ export async function getCreateVouchBlockedState(userId: string) {
 
 export async function getCreateVouchFeePreview(input: { amountCents: number; currency?: string }) {
   const amountCents = Math.max(0, Math.trunc(input.amountCents))
-  const platformFeeCents = calculateFee(amountCents)
+  const pricing = calculateFee(amountCents)
 
   return {
     amountCents,
+    protectedAmountCents: pricing.protectedAmountCents,
     currency: input.currency ?? "usd",
-    platformFeeCents,
-    totalCents: amountCents + platformFeeCents,
+    platformFeeCents: pricing.vouchServiceFeeCents,
+    merchantReceivesCents: pricing.merchantReceivesCents,
+    vouchServiceFeeCents: pricing.vouchServiceFeeCents,
+    processingFeeOffsetCents: pricing.processingFeeOffsetCents,
+    applicationFeeAmountCents: pricing.applicationFeeAmountCents,
+    customerTotalCents: pricing.customerTotalCents,
+    totalCents: pricing.customerTotalCents,
     feeModel: {
-      minimumFeeCents: DEFAULT_MINIMUM_PLATFORM_FEE_CENTS,
-      basisPoints: Math.round(DEFAULT_PLATFORM_FEE_RATE * 10_000),
+      minimumFeeCents: DEFAULT_MINIMUM_VOUCH_SERVICE_FEE_CENTS,
+      basisPoints: Math.round(DEFAULT_VOUCH_SERVICE_FEE_RATE * 10_000),
+      stripePercentBps: DEFAULT_STRIPE_PERCENT_BPS,
+      stripeFixedCents: DEFAULT_STRIPE_FIXED_CENTS,
     },
   }
 }
@@ -258,8 +268,14 @@ export async function getCreateVouchReviewState(input: {
     gate,
     draft: {
       amountCents: fee.amountCents,
+      protectedAmountCents: fee.protectedAmountCents,
       currency: fee.currency,
       platformFeeCents: fee.platformFeeCents,
+      merchantReceivesCents: fee.merchantReceivesCents,
+      vouchServiceFeeCents: fee.vouchServiceFeeCents,
+      processingFeeOffsetCents: fee.processingFeeOffsetCents,
+      applicationFeeAmountCents: fee.applicationFeeAmountCents,
+      customerTotalCents: fee.customerTotalCents,
       totalCents: fee.totalCents,
       meetingStartsAt: input.meetingStartsAt ? new Date(input.meetingStartsAt).toISOString() : null,
       confirmationOpensAt: input.confirmationOpensAt

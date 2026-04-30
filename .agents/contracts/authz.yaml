@@ -1,529 +1,64 @@
-# `.agents/contracts/authz.yaml`
-
-```yaml
-schema_version: "1.0.0"
+schema_version: "2.0.0"
 contract_name: "authz"
 product: "Vouch"
+source_of_truth_date: "2026-04-30"
 
-summary:
-    description: "Server-side authorization policy contract for Vouch resources."
+default_policy: "deny"
+
+legacy_mapping:
+  payer: "provider / merchant / creator"
+  payee: "customer / client / paying acceptor"
 
 principles:
-    - id: "server_only_enforcement"
-      rule: "Authorization must be enforced in server fetchers, server actions, and route handlers. UI hiding is not authorization."
+  - id: "participant_scope"
+    rule: "A user may access a Vouch only when they are the merchant/provider creator, accepted customer/client, valid invite candidate, or admin."
+  - id: "self_acceptance_denied"
+    rule: "The merchant/provider creator may not accept their own Vouch as the customer/client."
+  - id: "server_authoritative"
+    rule: "Client-reported role, payment status, connected account, customer total, or confirmation eligibility is never trusted."
+  - id: "admin_no_arbitration"
+    rule: "Admins may inspect operational state and run safe idempotent retries only; they may not award funds, override confirmation truth, or decide disputes."
 
-    - id: "deny_by_default"
-      rule: "All protected resources deny access unless an allow policy explicitly applies."
-
-    - id: "participant_scoped_access"
-      rule: "Users may access Vouches only when they are payer, accepted payee, valid invited candidate, or admin."
-
-    - id: "no_unilateral_release"
-      rule: "No user, including payer or payee, may unilaterally release funds."
-
-    - id: "admin_is_operational_not_arbitral"
-      rule: "Admin may inspect technical state but must not judge disputes or manually award funds based on claims."
-
-resources:
-    - "PublicPage"
-    - "User"
-    - "VerificationProfile"
-    - "PaymentCustomer"
-    - "ConnectedAccount"
-    - "Vouch"
-    - "Invitation"
-    - "PresenceConfirmation"
-    - "PaymentRecord"
-    - "RefundRecord"
-    - "TermsAcceptance"
-    - "AuditEvent"
-    - "NotificationEvent"
-    - "PaymentWebhookEvent"
-    - "AdminView"
-
-actions:
-    PublicPage:
-        - "read"
-
-    User:
-        - "read_self"
-        - "update_self"
-        - "read_operational"
-        - "disable"
-
-    VerificationProfile:
-        - "read_self"
-        - "start_verification"
-        - "update_from_provider"
-        - "read_operational"
-
-    PaymentCustomer:
-        - "read_self"
-        - "start_payment_setup"
-        - "update_from_provider"
-        - "read_operational"
-
-    ConnectedAccount:
-        - "read_self"
-        - "start_payout_setup"
-        - "update_from_provider"
-        - "read_operational"
-
-    Vouch:
-        - "create"
-        - "read"
-        - "read_invited_summary"
-        - "accept"
-        - "decline"
-        - "cancel_pending"
-        - "confirm_presence"
-        - "complete_system"
-        - "expire_system"
-        - "refund_system"
-        - "mark_failed_system"
-        - "read_operational"
-
-    Invitation:
-        - "read_by_token"
-        - "send"
-        - "open"
-        - "accept"
-        - "decline"
-        - "invalidate_system"
-        - "read_operational"
-
-    PresenceConfirmation:
-        - "create"
-        - "read_participant"
-        - "read_operational"
-
-    PaymentRecord:
-        - "create_system"
-        - "read_participant_safe"
-        - "update_from_provider"
-        - "release_system"
-        - "refund_system"
-        - "read_operational"
-
-    RefundRecord:
-        - "read_participant_safe"
-        - "create_system"
-        - "update_from_provider"
-        - "read_operational"
-
-    TermsAcceptance:
-        - "create_self"
-        - "read_self"
-        - "read_operational"
-
-    AuditEvent:
-        - "create_system"
-        - "read_participant_safe"
-        - "read_operational"
-
-    NotificationEvent:
-        - "create_system"
-        - "read_self"
-        - "read_operational"
-        - "update_delivery_status_system"
-
-    PaymentWebhookEvent:
-        - "create_system"
-        - "process_system"
-        - "read_operational"
-
-    AdminView:
-        - "read"
-
-policies:
-    - id: "public_pages_readable"
-      effect: "allow"
-      resource: "PublicPage"
-      actions:
-          - "read"
-      subjects:
-          - "anonymous"
-          - "authenticated_user"
-          - "admin"
-      conditions:
-          - "page is marked public"
-
-    - id: "user_may_read_self"
-      effect: "allow"
-      resource: "User"
-      actions:
-          - "read_self"
-          - "update_self"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "resource.id == current_user.id"
-          - "current_user.status == active"
-
-    - id: "user_may_manage_own_setup"
-      effect: "allow"
-      resource:
-          - "VerificationProfile"
-          - "PaymentCustomer"
-          - "ConnectedAccount"
-          - "TermsAcceptance"
-      actions:
-          - "read_self"
-          - "start_verification"
-          - "start_payment_setup"
-          - "start_payout_setup"
-          - "create_self"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "resource.user_id == current_user.id"
-          - "current_user.status == active"
-
-    - id: "payer_may_create_vouch"
-      effect: "allow"
-      resource: "Vouch"
-      actions:
-          - "create"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "current_user.status == active"
-          - "VerificationProfile.identity_status == verified"
-          - "VerificationProfile.adult_status == verified"
-          - "VerificationProfile.payment_readiness == ready"
-          - "current TermsAcceptance exists"
-
-    - id: "payer_may_read_created_vouch"
-      effect: "allow"
-      resource: "Vouch"
-      actions:
-          - "read"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "Vouch.payer_id == current_user.id"
-
-    - id: "payee_may_read_accepted_vouch"
-      effect: "allow"
-      resource: "Vouch"
-      actions:
-          - "read"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "Vouch.payee_id == current_user.id"
-
-    - id: "candidate_may_read_invited_summary"
-      effect: "allow"
-      resource: "Vouch"
-      actions:
-          - "read_invited_summary"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "Invitation token is valid"
-          - "Invitation.vouch_id == Vouch.id"
-          - "Vouch.status == pending"
-          - "Invitation.expires_at > now"
-          - "Invitation.status in [created, sent, opened]"
-
-    - id: "payer_may_send_invite"
-      effect: "allow"
-      resource: "Invitation"
-      actions:
-          - "send"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "Vouch.payer_id == current_user.id"
-          - "Vouch.status == pending"
-          - "Invitation.vouch_id == Vouch.id"
-
-    - id: "anonymous_may_open_invite_landing"
-      effect: "allow"
-      resource: "Invitation"
-      actions:
-          - "read_by_token"
-          - "open"
-      subjects:
-          - "anonymous"
-          - "authenticated_user"
-      conditions:
-          - "Invitation token is valid"
-          - "Invitation.expires_at > now"
-          - "Vouch.status == pending"
-
-    - id: "eligible_candidate_may_accept_vouch"
-      effect: "allow"
-      resource: "Vouch"
-      actions:
-          - "accept"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "current_user.status == active"
-          - "Vouch.status == pending"
-          - "Vouch.payee_id is null"
-          - "Vouch.payer_id != current_user.id"
-          - "Invitation token is valid"
-          - "Invitation.expires_at > now"
-          - "VerificationProfile.identity_status == verified"
-          - "VerificationProfile.adult_status == verified"
-          - "VerificationProfile.payout_readiness == ready"
-          - "current TermsAcceptance exists"
-
-    - id: "eligible_candidate_may_decline_vouch"
-      effect: "allow"
-      resource: "Vouch"
-      actions:
-          - "decline"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "Vouch.status == pending"
-          - "Invitation token is valid"
-          - "Invitation.expires_at > now"
-          - "Vouch.payer_id != current_user.id"
-
-    - id: "payer_may_cancel_pending_vouch"
-      effect: "allow"
-      resource: "Vouch"
-      actions:
-          - "cancel_pending"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "Vouch.payer_id == current_user.id"
-          - "Vouch.status == pending"
-          - "Vouch.payee_id is null"
-
-    - id: "participant_may_confirm_presence"
-      effect: "allow"
-      resource: "PresenceConfirmation"
-      actions:
-          - "create"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "current_user.status == active"
-          - "Vouch.status == active"
-          - "current_user.id in [Vouch.payer_id, Vouch.payee_id]"
-          - "now >= Vouch.confirmation_opens_at"
-          - "now <= Vouch.confirmation_expires_at"
-          - "no existing PresenceConfirmation for this vouch_id and current_user.id"
-
-    - id: "participant_may_read_safe_payment_summary"
-      effect: "allow"
-      resource:
-          - "PaymentRecord"
-          - "RefundRecord"
-      actions:
-          - "read_participant_safe"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "current_user.id in [Vouch.payer_id, Vouch.payee_id]"
-          - "record.vouch_id == Vouch.id"
-
-    - id: "participant_may_read_safe_audit_summary"
-      effect: "allow"
-      resource: "AuditEvent"
-      actions:
-          - "read_participant_safe"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "AuditEvent.entity_type == Vouch"
-          - "AuditEvent.entity_id == Vouch.id"
-          - "current_user.id in [Vouch.payer_id, Vouch.payee_id]"
-          - "AuditEvent is marked participant_safe"
-
-    - id: "system_may_transition_vouch"
-      effect: "allow"
-      resource: "Vouch"
-      actions:
-          - "complete_system"
-          - "expire_system"
-          - "refund_system"
-          - "mark_failed_system"
-      subjects:
-          - "system"
-      conditions:
-          - "transition satisfies domain-model.yaml state_transitions"
-
-    - id: "system_may_manage_payment_records"
-      effect: "allow"
-      resource:
-          - "PaymentRecord"
-          - "RefundRecord"
-          - "PaymentWebhookEvent"
-      actions:
-          - "create_system"
-          - "update_from_provider"
-          - "release_system"
-          - "refund_system"
-          - "create_system"
-          - "process_system"
-      subjects:
-          - "system"
-          - "payment_provider"
-      conditions:
-          - "provider event signature verified when applicable"
-          - "operation is idempotent"
-
-    - id: "system_may_create_audit_and_notifications"
-      effect: "allow"
-      resource:
-          - "AuditEvent"
-          - "NotificationEvent"
-      actions:
-          - "create_system"
-          - "update_delivery_status_system"
-      subjects:
-          - "system"
-      conditions:
-          - "metadata excludes prohibited sensitive fields"
-
-    - id: "admin_may_read_operational_resources"
-      effect: "allow"
-      resource:
-          - "User"
-          - "VerificationProfile"
-          - "PaymentCustomer"
-          - "ConnectedAccount"
-          - "Vouch"
-          - "Invitation"
-          - "PresenceConfirmation"
-          - "PaymentRecord"
-          - "RefundRecord"
-          - "TermsAcceptance"
-          - "AuditEvent"
-          - "NotificationEvent"
-          - "PaymentWebhookEvent"
-          - "AdminView"
-      actions:
-          - "read_operational"
-          - "read"
-      subjects:
-          - "admin"
-      conditions:
-          - "current_user.status == active"
-          - "current_user has admin capability"
-
-    - id: "admin_may_disable_user"
-      effect: "allow"
-      resource: "User"
-      actions:
-          - "disable"
-      subjects:
-          - "admin"
-      conditions:
-          - "current_user.status == active"
-          - "current_user has admin capability"
-          - "target user is not current_user"
-
-deny_policies:
-    - id: "deny_unrelated_vouch_access"
-      effect: "deny"
-      resource: "Vouch"
-      actions:
-          - "read"
-          - "confirm_presence"
-          - "cancel_pending"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "current_user.id not in [Vouch.payer_id, Vouch.payee_id]"
-          - "current_user is not admin"
-          - "no valid invitation token applies"
-
-    - id: "deny_self_acceptance"
-      effect: "deny"
-      resource: "Vouch"
-      actions:
-          - "accept"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "Vouch.payer_id == current_user.id"
-
-    - id: "deny_release_without_dual_confirmation"
-      effect: "deny"
-      resource:
-          - "PaymentRecord"
-          - "Vouch"
-      actions:
-          - "release_system"
-          - "complete_system"
-      subjects:
-          - "system"
-          - "admin"
-          - "authenticated_user"
-      conditions:
-          - "aggregate confirmation status != both_confirmed"
-
-    - id: "deny_confirmation_outside_window"
-      effect: "deny"
-      resource: "PresenceConfirmation"
-      actions:
-          - "create"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "now < Vouch.confirmation_opens_at or now > Vouch.confirmation_expires_at"
-
-    - id: "deny_duplicate_confirmation"
-      effect: "deny"
-      resource: "PresenceConfirmation"
-      actions:
-          - "create"
-      subjects:
-          - "authenticated_user"
-      conditions:
-          - "existing PresenceConfirmation exists for Vouch and current_user"
-
-    - id: "deny_admin_arbitration"
-      effect: "deny"
-      resource:
-          - "Vouch"
-          - "PaymentRecord"
-          - "PresenceConfirmation"
-      actions:
-          - "manually_award_funds"
-          - "rewrite_confirmation_truth"
-          - "decide_dispute"
-      subjects:
-          - "admin"
-          - "authenticated_user"
-          - "system"
-      conditions:
-          - "always"
-
-redaction_rules:
-    participant_safe_payment_record:
-        include:
-            - "status"
-            - "amount_cents"
-            - "currency"
-            - "platform_fee_cents"
-            - "created_at"
-            - "updated_at"
-        exclude:
-            - "provider_payment_id"
-            - "provider_charge_id"
-            - "provider_transfer_id"
-            - "last_error_message"
-
-    participant_safe_audit_event:
-        include:
-            - "event_name"
-            - "entity_type"
-            - "entity_id"
-            - "created_at"
-        exclude:
-            - "metadata"
-            - "request_id"
-            - "provider references"
-```
-
----
+capabilities:
+  create_vouch:
+    actor: "merchant_provider"
+    requirements:
+      - "authenticated"
+      - "active user"
+      - "identity/adult requirements satisfied where enabled"
+      - "payout readiness satisfied for merchant/provider"
+      - "terms accepted"
+      - "pricing calculated server-side"
+  accept_vouch:
+    actor: "customer_client"
+    requirements:
+      - "authenticated"
+      - "active user"
+      - "valid invite token or recipient constraint"
+      - "Vouch.status == pending"
+      - "customer/client is not the merchant/provider creator"
+      - "payment readiness satisfied for customer/client"
+      - "terms accepted"
+  initialize_payment:
+    actor: "system"
+    requirements:
+      - "Vouch has merchant/provider connected account"
+      - "customer/client has provider customer/payment method when required"
+      - "PaymentIntent amount == customerTotalCents"
+      - "application_fee_amount == applicationFeeAmountCents"
+      - "transfer destination == merchant/provider connected account"
+  confirm_presence:
+    actor: "participant"
+    requirements:
+      - "authenticated"
+      - "active user"
+      - "Vouch.status == active"
+      - "confirmation window is open"
+      - "user is merchant/provider creator or accepted customer/client"
+      - "participant has not already confirmed"
+  read_admin_operational_state:
+    actor: "admin"
+    requirements:
+      - "admin capability"
+      - "operational inspection only"
+      - "no arbitration controls"

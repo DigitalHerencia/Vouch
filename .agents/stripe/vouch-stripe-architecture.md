@@ -1,121 +1,81 @@
 # Vouch Stripe Architecture Decision
 
-Date: 2026-04-28
+Date: 2026-04-30
 
-Source references:
-
-- `.agents/stripe/Blue Prints.md`
-- `.agents/stripe/stripe-connect-integration.md`
-- `.agents/stripe/Disclaimer.md`
-- `.agents/stripe/Terms of Service.md`
-- `.agents/stripe/User Agreement.md`
-- `.agents/contracts/domain-model.yaml`
-- `.agents/contracts/acceptance-gates.yaml`
+This file supersedes the 2026-04-28 Stripe architecture note where participant or fee language conflicts.
 
 ## Decision
 
-Vouch uses Stripe as a provider-backed payment coordination layer. Vouch is a
-SaaS tool for registered, verified users with their own pre-arranged
-appointments or in-person agreements. Vouch does not hold funds directly, does
-not arbitrate disputes, and must not describe itself as escrow, a broker, a
-booking service, or a consumer marketplace in product copy.
+Vouch uses Stripe as a provider-backed payment coordination layer for a SaaS commitment-backed payment product.
 
-The payment architecture is:
+Stripe account source:
 
-1. Create a Vouch and record the commitment.
-2. The invited payee accepts only after payout readiness is verified.
-3. Stripe authorization is provider-confirmed before Vouch is treated as payment-backed.
-4. If both participants confirm presence inside the confirmation window, the system captures/releases funds through Stripe.
-5. If confirmation does not complete in time, the system cancels the authorization, leaves funds uncaptured, or refunds according to provider state.
+- Account ID: `acct_1TQHH2GuFcEUvSe9`
+- Display name: `Vouch`
 
-Release and refund are system resolution operations. They must not be user-award, admin-award, dispute, or manual override flows.
+## Participant Model
 
-## Stripe Connect Model
+- Merchant/provider creates the Vouch.
+- Customer/client accepts the Vouch and pays.
+- Merchant/provider is the connected-account payout recipient.
+- Customer/client is the paying party.
 
-Vouch should use Stripe Connect Accounts v2 for payee payout readiness:
+Legacy names may remain temporarily:
 
-- `POST /v2/core/accounts`
-- `dashboard: "express"`
-- `defaults.responsibilities.fees_collector: "application"`
-- `defaults.responsibilities.losses_collector: "application"`
-- recipient transfer capability requested under `configuration.recipient.capabilities.stripe_balance.stripe_transfers`
-- account links for hosted onboarding
-- webhook reconciliation for account requirement and capability changes
+- `payer` = merchant/provider/creator.
+- `payee` = customer/client/paying acceptor.
 
-Stripe documentation and blueprints may use the word "marketplace" as Connect taxonomy. Vouch product code, routes, UI, and user-facing copy must not adopt marketplace behavior or marketplace language.
+## PaymentIntent Model
 
-Stripe product selection is:
+Vouch currently uses manual-capture PaymentIntents with destination charge parameters.
 
-- non-recurring payments
-- build a platform or marketplace
-- identity verification
-- fraud protection
+Required Stripe values:
 
-Use "SaaS tool" and "payment coordination" in Stripe description boxes.
+- `amount = customerTotalCents`
+- `application_fee_amount = applicationFeeAmountCents`
+- `transfer_data.destination = merchant/provider connected account`
 
-## PaymentIntent Timing
+Do not calculate the PaymentIntent amount as `amountCents + platformFeeCents`.
 
-The Stripe blueprint shows an immediate Checkout destination-charge example. That example is not directly sufficient for Vouch because Vouch requires conditional release after dual confirmation.
+## Money Model
 
-For Vouch, the provider flow must preserve delayed release semantics:
+```txt
+customerTotalCents =
+  protectedAmountCents
+  + processingFeeOffsetCents
+  + vouchServiceFeeCents
 
-- Use PaymentIntents with `capture_method: "manual"` for payment-backed Vouches.
-- Mark local payment `authorized` only after Stripe confirms an authorizable state such as `requires_capture`.
-- Do not treat PaymentIntent creation as authorization.
-- Do not capture/release funds from participant-callable actions.
-- Attach Connect destination and application fee parameters only at Stripe-supported stages for the selected charge flow.
+merchantReceivesCents = protectedAmountCents
 
-Open implementation decision:
+vouchServiceFeeCents =
+  max(ceil(protectedAmountCents * 0.05), 500)
 
-- Preferred sequencing is to create/confirm the manual PaymentIntent after payee acceptance, because the connected account destination is known at that point.
-- Creating a platform-only authorization before payee acceptance and transferring later is less aligned with the no-custody posture and needs payment/legal review before use.
-- Immediate Checkout destination charges without delayed capture are not acceptable for Vouch's dual-confirmation release rule.
+applicationFeeAmountCents =
+  vouchServiceFeeCents + processingFeeOffsetCents
+```
 
-## Fee Model
+The processing offset uses the configured Stripe percent/fixed formula from `.agents/contracts/domain-model.yaml`.
 
-Vouch fees are server-calculated and immutable per Vouch:
+## Provider State Rules
 
-- Platform fee rate: 5%.
-- Minimum platform fee: $5.00.
-- Store `platformFeeCents` on Vouch and PaymentRecord.
-- Show fees before payment commitment.
-- Do not accept client-calculated fee values as authoritative.
+- Payment state must be reconciled from Stripe/server-side provider state.
+- Local records store provider references and safe pricing snapshots.
+- Raw card data, raw identity documents, full Stripe payloads, and unnecessary secrets must not be stored.
+- Release/refund/void operations must be idempotent and auditable.
 
-Where compatible with the selected Connect charge flow, collect the platform fee through Stripe-supported application fee mechanics.
+## Product Boundaries
 
-## Refund, Void, And Non-Capture
+Vouch is not escrow, a marketplace, broker, scheduler, ratings/reviews system, messaging app, or dispute-resolution system.
 
-Resolution must follow provider state:
+Admins may inspect operational state and retry safe technical operations. Admins may not award funds or override confirmation truth.
 
-- Before capture: cancel the manual PaymentIntent or leave funds uncaptured according to Stripe state.
-- After capture: create a Stripe refund when provider reversal is required.
-- Record the local outcome in PaymentRecord, RefundRecord, AuditEvent, and participant-safe notification events.
-- Do not expose admin actions that decide who deserves funds.
+## Sandbox Proof Still Required
 
-## Code Paths
+Before production confidence, prove on `acct_1TQHH2GuFcEUvSe9`:
 
-Primary implementation paths:
-
-- `lib/integrations/stripe/client.ts`
-- `lib/integrations/stripe/connect.ts`
-- `lib/integrations/stripe/identity.ts`
-- `lib/integrations/stripe/payment-intents.ts`
-- `lib/integrations/stripe/webhooks.ts`
-- `lib/payments/adapters/stripe-payment-adapter.ts`
-- `lib/actions/paymentActions.ts`
-- `lib/actions/vouchActions.ts`
-- `lib/payments/webhooks/process-stripe-webhook.ts`
-- `lib/verification/webhooks/process-stripe-identity-webhook.ts`
-- `lib/jobs/expire-vouches.ts`
-- `lib/jobs/reconcile-payments.ts`
-- `prisma/schema.prisma`
-
-## Phase 2 Acceptance Criteria
-
-- Stripe readiness is reconciled from provider state, not return URLs.
-- Payout readiness is reconciled from Accounts v2 capability/status state.
-- Payment authorization is local `authorized` only after Stripe confirms authorization.
-- Capture/release is system-only and dual-confirmation gated.
-- Cancel/refund is idempotent and provider-state aware.
-- Webhook processing is idempotent and writes audit events.
-- Vouch copy continues to avoid escrow, dispute, judge, review, rating, marketplace, and broker language.
+- customer/client payment authorization for `customerTotalCents`
+- application fee collection for `applicationFeeAmountCents`
+- merchant/provider connected-account destination
+- manual capture on the release path
+- void/refund/non-capture on the non-release path
+- webhook idempotency and reconciliation

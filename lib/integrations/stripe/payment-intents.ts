@@ -6,9 +6,13 @@ import { getStripeServerClient } from "./client"
 
 export type CreateStripePaymentAuthorizationInput = {
   vouchId: string
-  amountCents: number
+  customerTotalCents: number
   currency: string
-  platformFeeCents: number
+  applicationFeeAmountCents: number
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
   providerCustomerId?: string
   providerPaymentMethodId?: string
   connectedAccountId?: string
@@ -23,7 +27,7 @@ export async function createStripePaymentAuthorization(
 
   return stripe.paymentIntents.create(
     {
-      amount: input.amountCents + input.platformFeeCents,
+      amount: input.customerTotalCents,
       currency: input.currency,
       capture_method: "manual",
       automatic_payment_methods: { enabled: true },
@@ -34,13 +38,18 @@ export async function createStripePaymentAuthorization(
         : {}),
       ...(input.connectedAccountId
         ? {
-            application_fee_amount: input.platformFeeCents,
+            application_fee_amount: input.applicationFeeAmountCents,
             transfer_data: { destination: input.connectedAccountId },
           }
         : {}),
       metadata: {
         vouch_id: input.vouchId,
-        payment_role: "payer_commitment",
+        payment_role: "customer_commitment",
+        protected_amount_cents: String(input.protectedAmountCents),
+        merchant_receives_cents: String(input.merchantReceivesCents),
+        vouch_service_fee_cents: String(input.vouchServiceFeeCents),
+        processing_fee_offset_cents: String(input.processingFeeOffsetCents),
+        application_fee_amount_cents: String(input.applicationFeeAmountCents),
       },
     },
     { idempotencyKey: input.idempotencyKey }

@@ -29,11 +29,23 @@ export type AggregateVouch = {
 export type VouchAvgAggregateOutputType = {
   amountCents: number | null
   platformFeeCents: number | null
+  protectedAmountCents: number | null
+  merchantReceivesCents: number | null
+  vouchServiceFeeCents: number | null
+  processingFeeOffsetCents: number | null
+  applicationFeeAmountCents: number | null
+  customerTotalCents: number | null
 }
 
 export type VouchSumAggregateOutputType = {
   amountCents: number | null
   platformFeeCents: number | null
+  protectedAmountCents: number | null
+  merchantReceivesCents: number | null
+  vouchServiceFeeCents: number | null
+  processingFeeOffsetCents: number | null
+  applicationFeeAmountCents: number | null
+  customerTotalCents: number | null
 }
 
 export type VouchMinAggregateOutputType = {
@@ -44,6 +56,12 @@ export type VouchMinAggregateOutputType = {
   amountCents: number | null
   currency: string | null
   platformFeeCents: number | null
+  protectedAmountCents: number | null
+  merchantReceivesCents: number | null
+  vouchServiceFeeCents: number | null
+  processingFeeOffsetCents: number | null
+  applicationFeeAmountCents: number | null
+  customerTotalCents: number | null
   status: $Enums.VouchStatus | null
   label: string | null
   meetingStartsAt: Date | null
@@ -66,6 +84,12 @@ export type VouchMaxAggregateOutputType = {
   amountCents: number | null
   currency: string | null
   platformFeeCents: number | null
+  protectedAmountCents: number | null
+  merchantReceivesCents: number | null
+  vouchServiceFeeCents: number | null
+  processingFeeOffsetCents: number | null
+  applicationFeeAmountCents: number | null
+  customerTotalCents: number | null
   status: $Enums.VouchStatus | null
   label: string | null
   meetingStartsAt: Date | null
@@ -88,6 +112,12 @@ export type VouchCountAggregateOutputType = {
   amountCents: number
   currency: number
   platformFeeCents: number
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
+  applicationFeeAmountCents: number
+  customerTotalCents: number
   status: number
   label: number
   meetingStartsAt: number
@@ -107,11 +137,23 @@ export type VouchCountAggregateOutputType = {
 export type VouchAvgAggregateInputType = {
   amountCents?: true
   platformFeeCents?: true
+  protectedAmountCents?: true
+  merchantReceivesCents?: true
+  vouchServiceFeeCents?: true
+  processingFeeOffsetCents?: true
+  applicationFeeAmountCents?: true
+  customerTotalCents?: true
 }
 
 export type VouchSumAggregateInputType = {
   amountCents?: true
   platformFeeCents?: true
+  protectedAmountCents?: true
+  merchantReceivesCents?: true
+  vouchServiceFeeCents?: true
+  processingFeeOffsetCents?: true
+  applicationFeeAmountCents?: true
+  customerTotalCents?: true
 }
 
 export type VouchMinAggregateInputType = {
@@ -122,6 +164,12 @@ export type VouchMinAggregateInputType = {
   amountCents?: true
   currency?: true
   platformFeeCents?: true
+  protectedAmountCents?: true
+  merchantReceivesCents?: true
+  vouchServiceFeeCents?: true
+  processingFeeOffsetCents?: true
+  applicationFeeAmountCents?: true
+  customerTotalCents?: true
   status?: true
   label?: true
   meetingStartsAt?: true
@@ -144,6 +192,12 @@ export type VouchMaxAggregateInputType = {
   amountCents?: true
   currency?: true
   platformFeeCents?: true
+  protectedAmountCents?: true
+  merchantReceivesCents?: true
+  vouchServiceFeeCents?: true
+  processingFeeOffsetCents?: true
+  applicationFeeAmountCents?: true
+  customerTotalCents?: true
   status?: true
   label?: true
   meetingStartsAt?: true
@@ -166,6 +220,12 @@ export type VouchCountAggregateInputType = {
   amountCents?: true
   currency?: true
   platformFeeCents?: true
+  protectedAmountCents?: true
+  merchantReceivesCents?: true
+  vouchServiceFeeCents?: true
+  processingFeeOffsetCents?: true
+  applicationFeeAmountCents?: true
+  customerTotalCents?: true
   status?: true
   label?: true
   meetingStartsAt?: true
@@ -275,6 +335,12 @@ export type VouchGroupByOutputType = {
   amountCents: number
   currency: string
   platformFeeCents: number
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
+  applicationFeeAmountCents: number
+  customerTotalCents: number
   status: $Enums.VouchStatus
   label: string | null
   meetingStartsAt: Date
@@ -320,6 +386,12 @@ export type VouchWhereInput = {
   amountCents?: Prisma.IntFilter<"Vouch"> | number
   currency?: Prisma.StringFilter<"Vouch"> | string
   platformFeeCents?: Prisma.IntFilter<"Vouch"> | number
+  protectedAmountCents?: Prisma.IntFilter<"Vouch"> | number
+  merchantReceivesCents?: Prisma.IntFilter<"Vouch"> | number
+  vouchServiceFeeCents?: Prisma.IntFilter<"Vouch"> | number
+  processingFeeOffsetCents?: Prisma.IntFilter<"Vouch"> | number
+  applicationFeeAmountCents?: Prisma.IntFilter<"Vouch"> | number
+  customerTotalCents?: Prisma.IntFilter<"Vouch"> | number
   status?: Prisma.EnumVouchStatusFilter<"Vouch"> | $Enums.VouchStatus
   label?: Prisma.StringNullableFilter<"Vouch"> | string | null
   meetingStartsAt?: Prisma.DateTimeFilter<"Vouch"> | Date | string
@@ -350,6 +422,12 @@ export type VouchOrderByWithRelationInput = {
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
   status?: Prisma.SortOrder
   label?: Prisma.SortOrderInput | Prisma.SortOrder
   meetingStartsAt?: Prisma.SortOrder
@@ -383,6 +461,12 @@ export type VouchWhereUniqueInput = Prisma.AtLeast<{
   amountCents?: Prisma.IntFilter<"Vouch"> | number
   currency?: Prisma.StringFilter<"Vouch"> | string
   platformFeeCents?: Prisma.IntFilter<"Vouch"> | number
+  protectedAmountCents?: Prisma.IntFilter<"Vouch"> | number
+  merchantReceivesCents?: Prisma.IntFilter<"Vouch"> | number
+  vouchServiceFeeCents?: Prisma.IntFilter<"Vouch"> | number
+  processingFeeOffsetCents?: Prisma.IntFilter<"Vouch"> | number
+  applicationFeeAmountCents?: Prisma.IntFilter<"Vouch"> | number
+  customerTotalCents?: Prisma.IntFilter<"Vouch"> | number
   status?: Prisma.EnumVouchStatusFilter<"Vouch"> | $Enums.VouchStatus
   label?: Prisma.StringNullableFilter<"Vouch"> | string | null
   meetingStartsAt?: Prisma.DateTimeFilter<"Vouch"> | Date | string
@@ -413,6 +497,12 @@ export type VouchOrderByWithAggregationInput = {
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
   status?: Prisma.SortOrder
   label?: Prisma.SortOrderInput | Prisma.SortOrder
   meetingStartsAt?: Prisma.SortOrder
@@ -443,6 +533,12 @@ export type VouchScalarWhereWithAggregatesInput = {
   amountCents?: Prisma.IntWithAggregatesFilter<"Vouch"> | number
   currency?: Prisma.StringWithAggregatesFilter<"Vouch"> | string
   platformFeeCents?: Prisma.IntWithAggregatesFilter<"Vouch"> | number
+  protectedAmountCents?: Prisma.IntWithAggregatesFilter<"Vouch"> | number
+  merchantReceivesCents?: Prisma.IntWithAggregatesFilter<"Vouch"> | number
+  vouchServiceFeeCents?: Prisma.IntWithAggregatesFilter<"Vouch"> | number
+  processingFeeOffsetCents?: Prisma.IntWithAggregatesFilter<"Vouch"> | number
+  applicationFeeAmountCents?: Prisma.IntWithAggregatesFilter<"Vouch"> | number
+  customerTotalCents?: Prisma.IntWithAggregatesFilter<"Vouch"> | number
   status?: Prisma.EnumVouchStatusWithAggregatesFilter<"Vouch"> | $Enums.VouchStatus
   label?: Prisma.StringNullableWithAggregatesFilter<"Vouch"> | string | null
   meetingStartsAt?: Prisma.DateTimeWithAggregatesFilter<"Vouch"> | Date | string
@@ -463,6 +559,12 @@ export type VouchCreateInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -493,6 +595,12 @@ export type VouchUncheckedCreateInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -519,6 +627,12 @@ export type VouchUpdateInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -549,6 +663,12 @@ export type VouchUncheckedUpdateInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -577,6 +697,12 @@ export type VouchCreateManyInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -597,6 +723,12 @@ export type VouchUpdateManyMutationInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -619,6 +751,12 @@ export type VouchUncheckedUpdateManyInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -651,6 +789,12 @@ export type VouchCountOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
   status?: Prisma.SortOrder
   label?: Prisma.SortOrder
   meetingStartsAt?: Prisma.SortOrder
@@ -668,6 +812,12 @@ export type VouchCountOrderByAggregateInput = {
 export type VouchAvgOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
 }
 
 export type VouchMaxOrderByAggregateInput = {
@@ -678,6 +828,12 @@ export type VouchMaxOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
   status?: Prisma.SortOrder
   label?: Prisma.SortOrder
   meetingStartsAt?: Prisma.SortOrder
@@ -700,6 +856,12 @@ export type VouchMinOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
   status?: Prisma.SortOrder
   label?: Prisma.SortOrder
   meetingStartsAt?: Prisma.SortOrder
@@ -717,6 +879,12 @@ export type VouchMinOrderByAggregateInput = {
 export type VouchSumOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
 }
 
 export type VouchScalarRelationFilter = {
@@ -923,6 +1091,12 @@ export type VouchCreateWithoutPayerInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -951,6 +1125,12 @@ export type VouchUncheckedCreateWithoutPayerInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -987,6 +1167,12 @@ export type VouchCreateWithoutPayeeInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1015,6 +1201,12 @@ export type VouchUncheckedCreateWithoutPayeeInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1072,6 +1264,12 @@ export type VouchScalarWhereInput = {
   amountCents?: Prisma.IntFilter<"Vouch"> | number
   currency?: Prisma.StringFilter<"Vouch"> | string
   platformFeeCents?: Prisma.IntFilter<"Vouch"> | number
+  protectedAmountCents?: Prisma.IntFilter<"Vouch"> | number
+  merchantReceivesCents?: Prisma.IntFilter<"Vouch"> | number
+  vouchServiceFeeCents?: Prisma.IntFilter<"Vouch"> | number
+  processingFeeOffsetCents?: Prisma.IntFilter<"Vouch"> | number
+  applicationFeeAmountCents?: Prisma.IntFilter<"Vouch"> | number
+  customerTotalCents?: Prisma.IntFilter<"Vouch"> | number
   status?: Prisma.EnumVouchStatusFilter<"Vouch"> | $Enums.VouchStatus
   label?: Prisma.StringNullableFilter<"Vouch"> | string | null
   meetingStartsAt?: Prisma.DateTimeFilter<"Vouch"> | Date | string
@@ -1108,6 +1306,12 @@ export type VouchCreateWithoutInvitationInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1137,6 +1341,12 @@ export type VouchUncheckedCreateWithoutInvitationInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1178,6 +1388,12 @@ export type VouchUpdateWithoutInvitationInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1207,6 +1423,12 @@ export type VouchUncheckedUpdateWithoutInvitationInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1232,6 +1454,12 @@ export type VouchCreateWithoutPresenceConfirmationsInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1261,6 +1489,12 @@ export type VouchUncheckedCreateWithoutPresenceConfirmationsInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1302,6 +1536,12 @@ export type VouchUpdateWithoutPresenceConfirmationsInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1331,6 +1571,12 @@ export type VouchUncheckedUpdateWithoutPresenceConfirmationsInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1356,6 +1602,12 @@ export type VouchCreateWithoutPaymentRecordInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1385,6 +1637,12 @@ export type VouchUncheckedCreateWithoutPaymentRecordInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1426,6 +1684,12 @@ export type VouchUpdateWithoutPaymentRecordInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1455,6 +1719,12 @@ export type VouchUncheckedUpdateWithoutPaymentRecordInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1480,6 +1750,12 @@ export type VouchCreateWithoutRefundRecordInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1509,6 +1785,12 @@ export type VouchUncheckedCreateWithoutRefundRecordInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1550,6 +1832,12 @@ export type VouchUpdateWithoutRefundRecordInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1579,6 +1867,12 @@ export type VouchUncheckedUpdateWithoutRefundRecordInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1604,6 +1898,12 @@ export type VouchCreateWithoutPaymentWebhookEventsInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1633,6 +1933,12 @@ export type VouchUncheckedCreateWithoutPaymentWebhookEventsInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1674,6 +1980,12 @@ export type VouchUpdateWithoutPaymentWebhookEventsInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1703,6 +2015,12 @@ export type VouchUncheckedUpdateWithoutPaymentWebhookEventsInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1728,6 +2046,12 @@ export type VouchCreateWithoutNotificationEventsInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1757,6 +2081,12 @@ export type VouchUncheckedCreateWithoutNotificationEventsInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1798,6 +2128,12 @@ export type VouchUpdateWithoutNotificationEventsInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1827,6 +2163,12 @@ export type VouchUncheckedUpdateWithoutNotificationEventsInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1853,6 +2195,12 @@ export type VouchCreateManyPayerInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1874,6 +2222,12 @@ export type VouchCreateManyPayeeInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   status?: $Enums.VouchStatus
   label?: string | null
   meetingStartsAt: Date | string
@@ -1894,6 +2248,12 @@ export type VouchUpdateWithoutPayerInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1922,6 +2282,12 @@ export type VouchUncheckedUpdateWithoutPayerInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1949,6 +2315,12 @@ export type VouchUncheckedUpdateManyWithoutPayerInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1969,6 +2341,12 @@ export type VouchUpdateWithoutPayeeInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1997,6 +2375,12 @@ export type VouchUncheckedUpdateWithoutPayeeInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2024,6 +2408,12 @@ export type VouchUncheckedUpdateManyWithoutPayeeInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
   label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   meetingStartsAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2095,6 +2485,12 @@ export type VouchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   amountCents?: boolean
   currency?: boolean
   platformFeeCents?: boolean
+  protectedAmountCents?: boolean
+  merchantReceivesCents?: boolean
+  vouchServiceFeeCents?: boolean
+  processingFeeOffsetCents?: boolean
+  applicationFeeAmountCents?: boolean
+  customerTotalCents?: boolean
   status?: boolean
   label?: boolean
   meetingStartsAt?: boolean
@@ -2126,6 +2522,12 @@ export type VouchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   amountCents?: boolean
   currency?: boolean
   platformFeeCents?: boolean
+  protectedAmountCents?: boolean
+  merchantReceivesCents?: boolean
+  vouchServiceFeeCents?: boolean
+  processingFeeOffsetCents?: boolean
+  applicationFeeAmountCents?: boolean
+  customerTotalCents?: boolean
   status?: boolean
   label?: boolean
   meetingStartsAt?: boolean
@@ -2150,6 +2552,12 @@ export type VouchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   amountCents?: boolean
   currency?: boolean
   platformFeeCents?: boolean
+  protectedAmountCents?: boolean
+  merchantReceivesCents?: boolean
+  vouchServiceFeeCents?: boolean
+  processingFeeOffsetCents?: boolean
+  applicationFeeAmountCents?: boolean
+  customerTotalCents?: boolean
   status?: boolean
   label?: boolean
   meetingStartsAt?: boolean
@@ -2174,6 +2582,12 @@ export type VouchSelectScalar = {
   amountCents?: boolean
   currency?: boolean
   platformFeeCents?: boolean
+  protectedAmountCents?: boolean
+  merchantReceivesCents?: boolean
+  vouchServiceFeeCents?: boolean
+  processingFeeOffsetCents?: boolean
+  applicationFeeAmountCents?: boolean
+  customerTotalCents?: boolean
   status?: boolean
   label?: boolean
   meetingStartsAt?: boolean
@@ -2188,7 +2602,7 @@ export type VouchSelectScalar = {
   updatedAt?: boolean
 }
 
-export type VouchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "payerId" | "payeeId" | "amountCents" | "currency" | "platformFeeCents" | "status" | "label" | "meetingStartsAt" | "confirmationOpensAt" | "confirmationExpiresAt" | "acceptedAt" | "completedAt" | "expiredAt" | "canceledAt" | "failedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["vouch"]>
+export type VouchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "payerId" | "payeeId" | "amountCents" | "currency" | "platformFeeCents" | "protectedAmountCents" | "merchantReceivesCents" | "vouchServiceFeeCents" | "processingFeeOffsetCents" | "applicationFeeAmountCents" | "customerTotalCents" | "status" | "label" | "meetingStartsAt" | "confirmationOpensAt" | "confirmationExpiresAt" | "acceptedAt" | "completedAt" | "expiredAt" | "canceledAt" | "failedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["vouch"]>
 export type VouchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   payer?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   payee?: boolean | Prisma.Vouch$payeeArgs<ExtArgs>
@@ -2229,6 +2643,12 @@ export type $VouchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     amountCents: number
     currency: string
     platformFeeCents: number
+    protectedAmountCents: number
+    merchantReceivesCents: number
+    vouchServiceFeeCents: number
+    processingFeeOffsetCents: number
+    applicationFeeAmountCents: number
+    customerTotalCents: number
     status: $Enums.VouchStatus
     label: string | null
     meetingStartsAt: Date
@@ -2679,6 +3099,12 @@ export interface VouchFieldRefs {
   readonly amountCents: Prisma.FieldRef<"Vouch", 'Int'>
   readonly currency: Prisma.FieldRef<"Vouch", 'String'>
   readonly platformFeeCents: Prisma.FieldRef<"Vouch", 'Int'>
+  readonly protectedAmountCents: Prisma.FieldRef<"Vouch", 'Int'>
+  readonly merchantReceivesCents: Prisma.FieldRef<"Vouch", 'Int'>
+  readonly vouchServiceFeeCents: Prisma.FieldRef<"Vouch", 'Int'>
+  readonly processingFeeOffsetCents: Prisma.FieldRef<"Vouch", 'Int'>
+  readonly applicationFeeAmountCents: Prisma.FieldRef<"Vouch", 'Int'>
+  readonly customerTotalCents: Prisma.FieldRef<"Vouch", 'Int'>
   readonly status: Prisma.FieldRef<"Vouch", 'VouchStatus'>
   readonly label: Prisma.FieldRef<"Vouch", 'String'>
   readonly meetingStartsAt: Prisma.FieldRef<"Vouch", 'DateTime'>

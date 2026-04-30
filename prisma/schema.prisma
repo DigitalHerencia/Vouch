@@ -19,9 +19,14 @@ datasource db {
  * - evidence uploads
  * - manual award/release controls
  *
- * Domain rule:
- * both participants confirm presence inside the confirmation window -> release.
- * otherwise -> refund, void, or non-capture through provider flow.
+ * Current participant mapping:
+ * - provider / merchant / creator = legacy payer fields.
+ * - customer / client / paying acceptor = legacy payee fields.
+ *
+ * Money model:
+ * customerTotalCents = protectedAmountCents + processingFeeOffsetCents + vouchServiceFeeCents.
+ * merchantReceivesCents = protectedAmountCents.
+ * applicationFeeAmountCents = vouchServiceFeeCents + processingFeeOffsetCents.
  */
 
 /* ================================
@@ -336,6 +341,13 @@ model Vouch {
   currency         String @default("usd") @db.VarChar(3)
   platformFeeCents Int    @default(0)
 
+  protectedAmountCents      Int @default(0)
+  merchantReceivesCents     Int @default(0)
+  vouchServiceFeeCents      Int @default(0)
+  processingFeeOffsetCents  Int @default(0)
+  applicationFeeAmountCents Int @default(0)
+  customerTotalCents        Int @default(0)
+
   status VouchStatus @default(pending)
 
   label String? @db.VarChar(120)
@@ -372,6 +384,8 @@ model Vouch {
   @@index([payerId, createdAt])
   @@index([payeeId, createdAt])
   @@index([status, confirmationExpiresAt])
+  @@index([protectedAmountCents])
+  @@index([customerTotalCents])
   @@map("vouches")
 }
 
@@ -444,6 +458,13 @@ model PaymentRecord {
   amountCents      Int
   currency         String @default("usd") @db.VarChar(3)
   platformFeeCents Int    @default(0)
+
+  protectedAmountCents      Int @default(0)
+  merchantReceivesCents     Int @default(0)
+  vouchServiceFeeCents      Int @default(0)
+  processingFeeOffsetCents  Int @default(0)
+  applicationFeeAmountCents Int @default(0)
+  customerTotalCents        Int @default(0)
 
   lastErrorCode    String?
   lastErrorMessage String?

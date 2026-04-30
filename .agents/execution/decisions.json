@@ -169,6 +169,15 @@
   ],
   "pending_decisions": [
     {
+      "id": "PDEC-006",
+      "status": "accepted",
+      "date": "2026-04-30",
+      "title": "Adopt merchant/customer participant and pricing model",
+      "question": "The 2026-04-30 source-of-truth prompt supersedes prior payer/payee and platform-fee assumptions.",
+      "required_before": [],
+      "owner": "product"
+    },
+    {
       "id": "PDEC-001",
       "status": "superseded",
       "title": "Select exact Stripe Connect flow",

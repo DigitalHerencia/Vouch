@@ -1,457 +1,71 @@
-# `.agents/contracts/acceptance-gates.yaml`
-
-```yaml
-schema_version: "1.0.0"
+schema_version: "2.0.0"
 contract_name: "acceptance-gates"
 product: "Vouch"
-
-summary:
-    description: "Deterministic gates that must pass before implementation is considered acceptable."
-
-gate_policy:
-    pass_condition: "All required gates for the relevant milestone must pass."
-    failure_condition: "Any critical gate failure blocks release."
-    evidence_required: true
-    execution_layer_output: "validation.json"
-
-severity_levels:
-    - "critical"
-    - "high"
-    - "medium"
-    - "low"
-
-milestones:
-    mvp_local:
-        description: "Local MVP implementation complete enough for developer testing."
-        required_gates:
-            - "contract_integrity"
-            - "domain_model_integrity"
-            - "no_marketplace_surface"
-            - "no_arbitration_surface"
-            - "auth_enforcement"
-            - "vouch_create_flow"
-            - "vouch_accept_flow"
-            - "manual_confirmation_flow"
-            - "deterministic_resolution"
-            - "audit_events"
-            - "basic_tests"
-
-    mvp_preview:
-        description: "Preview deployment ready for private testing."
-        required_gates:
-            - "mvp_local"
-            - "payment_provider_sandbox"
-            - "webhook_idempotency"
-            - "route_access_control"
-            - "setup_gates"
-            - "notification_lifecycle"
-            - "admin_operational_visibility"
-            - "e2e_smoke"
-
-    production_candidate:
-        description: "Production candidate pending legal/compliance review."
-        required_gates:
-            - "mvp_preview"
-            - "legal_copy_review"
-            - "payment_flow_review"
-            - "security_review"
-            - "privacy_review"
-            - "observability_review"
-            - "recovery_paths"
-            - "migration_integrity"
+source_of_truth_date: "2026-04-30"
 
 gates:
-    contract_integrity:
-        severity: "critical"
-        description: "All YAML contracts are schema-valid, deterministic, and internally consistent."
-        checks:
-            - id: "yaml_valid"
-              assertion: "All contract YAML parses successfully."
-            - id: "no_duplicate_contract_ids"
-              assertion: "No duplicate IDs exist within contract files."
-            - id: "canonical_terms_only"
-              assertion: "Contracts do not introduce non-canonical domain terms."
-            - id: "no_doc_parsing_runtime"
-              assertion: "Implementation consumes YAML contracts, not Markdown docs, for machine structure."
-            - id: "no_contract_ui_leakage"
-              assertion: "Contracts do not encode presentational UI details except route/feature requirements."
-
-    domain_model_integrity:
-        severity: "critical"
-        description: "Domain entities, states, and transitions preserve Vouch core rules."
-        checks:
-            - id: "vouch_entity_exists"
-              assertion: "Vouch entity exists with payer, optional payee, amount, currency, status, and confirmation window fields."
-            - id: "presence_confirmation_exists"
-              assertion: "PresenceConfirmation entity exists and is participant-scoped."
-            - id: "payment_record_exists"
-              assertion: "PaymentRecord entity exists and references provider payment state."
-            - id: "audit_event_exists"
-              assertion: "AuditEvent entity exists and is append-only."
-            - id: "state_transitions_defined"
-              assertion: "Vouch transitions include pending, active, completed, expired, refunded, canceled, and failed."
-            - id: "self_acceptance_blocked"
-              assertion: "payer_id cannot equal payee_id."
-
-    no_marketplace_surface:
-        severity: "critical"
-        description: "Implementation does not create marketplace behavior."
-        checks:
-            - id: "no_public_profiles"
-              assertion: "No public provider/client profile pages exist."
-            - id: "no_discovery_routes"
-              assertion: "No browse, discover, search, categories, or provider directory routes exist."
-            - id: "no_reviews_or_ratings"
-              assertion: "No review, rating, reputation, or score entities/features exist."
-            - id: "no_marketplace_nav"
-              assertion: "Navigation does not include browse, providers, categories, reviews, or messages."
-            - id: "no_service_listings"
-              assertion: "No ServiceListing or equivalent entity exists."
-
-    no_arbitration_surface:
-        severity: "critical"
-        description: "Implementation does not create dispute judgment behavior."
-        checks:
-            - id: "no_dispute_entity"
-              assertion: "No DisputeCase, Claim, EvidenceUpload, or equivalent entity exists."
-            - id: "no_admin_award_action"
-              assertion: "Admin cannot manually award funds based on human claims."
-            - id: "no_confirmation_rewrite"
-              assertion: "Admin cannot rewrite confirmation records."
-            - id: "copy_is_deterministic"
-              assertion: "User-facing copy says both confirm or refund/non-capture; it does not imply appeal or judgment."
-
-    no_platform_custody:
-        severity: "critical"
-        description: "Payment implementation avoids direct platform custody."
-        checks:
-            - id: "provider_references_only"
-              assertion: "Local database stores provider references and statuses, not raw funds or card data."
-            - id: "stripe_or_equivalent_used"
-              assertion: "Payment flow uses provider-supported payment and connected-account infrastructure."
-            - id: "no_raw_card_storage"
-              assertion: "Raw card data is never stored."
-            - id: "copy_does_not_claim_escrow"
-              assertion: "Public and product copy does not claim legal escrow status."
-
-    auth_enforcement:
-        severity: "critical"
-        description: "Protected reads and writes enforce authentication and authorization server-side."
-        checks:
-            - id: "fetchers_authz"
-              assertion: "All protected fetchers authenticate and authorize."
-            - id: "actions_authz"
-              assertion: "All protected server actions authenticate and authorize."
-            - id: "participant_scope"
-              assertion: "Users can only read Vouches where they are payer, accepted payee, valid invite candidate, or admin."
-            - id: "admin_scope"
-              assertion: "Admin routes require admin capability."
-            - id: "deny_by_default"
-              assertion: "Missing policy results in denial."
-
-    setup_gates:
-        severity: "critical"
-        description: "Payment-bearing actions are gated by readiness requirements."
-        checks:
-            - id: "create_requires_payment_readiness"
-              assertion: "Create Vouch requires identity verified, adult verified, payment ready, and terms accepted."
-            - id: "accept_requires_payout_readiness"
-              assertion: "Accept Vouch requires identity verified, adult verified, payout ready, and terms accepted."
-            - id: "confirm_requires_participant"
-              assertion: "Confirm presence requires authenticated participant and active Vouch."
-            - id: "disabled_user_blocked"
-              assertion: "Disabled users cannot create, accept, or confirm Vouches."
-
-    vouch_create_flow:
-        severity: "critical"
-        description: "Payer can create a Pending Vouch through server-authoritative flow."
-        checks:
-            - id: "create_schema_validation"
-              assertion: "Create input is validated with runtime schema."
-            - id: "amount_validated"
-              assertion: "Amount is positive and within configured limits."
-            - id: "time_window_validated"
-              assertion: "Confirmation window opens before expiration and meets policy constraints."
-            - id: "fee_calculated_server_side"
-              assertion: "Platform fee is calculated server-side."
-            - id: "payment_initialized"
-              assertion: "PaymentRecord is created or provider payment initialized."
-            - id: "pending_status"
-              assertion: "Created Vouch starts as pending."
-            - id: "audit_written"
-              assertion: "vouch.created audit event is written."
-
-    vouch_accept_flow:
-        severity: "critical"
-        description: "Payee can accept a valid Pending Vouch through server-authoritative flow."
-        checks:
-            - id: "invite_token_hashed"
-              assertion: "Invite token lookup uses hash; plaintext token is not stored."
-            - id: "pending_only"
-              assertion: "Only pending Vouches can be accepted."
-            - id: "single_payee"
-              assertion: "Only one payee can accept a Vouch."
-            - id: "not_self_acceptance"
-              assertion: "Payer cannot accept their own Vouch."
-            - id: "payee_bound"
-              assertion: "Accepted Vouch stores payee_id."
-            - id: "active_status"
-              assertion: "Accepted Vouch transitions to active."
-            - id: "audit_written"
-              assertion: "vouch.accepted audit event is written."
-
-    manual_confirmation_flow:
-        severity: "critical"
-        description: "Both parties can manually confirm within the window."
-        checks:
-            - id: "participant_only"
-              assertion: "Only payer or accepted payee can confirm."
-            - id: "active_only"
-              assertion: "Only active Vouches can be confirmed."
-            - id: "within_window"
-              assertion: "Confirmation is accepted only between confirmation_opens_at and confirmation_expires_at."
-            - id: "no_duplicate_confirmation"
-              assertion: "Each participant can confirm only once."
-            - id: "one_sided_waits"
-              assertion: "One-sided confirmation leaves Vouch active until other confirmation or expiration."
-            - id: "audit_written"
-              assertion: "payer/payee confirmation audit event is written."
-
-    deterministic_resolution:
-        severity: "critical"
-        description: "Release/refund outcomes are deterministic."
-        checks:
-            - id: "dual_confirmation_completes"
-              assertion: "Both confirmations within window trigger completion flow."
-            - id: "one_sided_expires"
-              assertion: "One confirmation without the other before expiration triggers refund/non-capture."
-            - id: "no_confirmation_expires"
-              assertion: "No confirmations before expiration trigger refund/non-capture."
-            - id: "completed_requires_release"
-              assertion: "Completed Vouch requires provider release/capture success or provider-accepted processing state."
-            - id: "expired_requires_refund_path"
-              assertion: "Expired Vouch initiates refund, void, or non-capture path."
-            - id: "final_state_audited"
-              assertion: "Completed, expired, refunded, canceled, and failed states write audit events."
-
-    payment_provider_sandbox:
-        severity: "critical"
-        description: "Payment provider sandbox flow proves payment state transitions."
-        checks:
-            - id: "payment_initialized"
-              assertion: "Provider payment can be initialized in sandbox."
-            - id: "payment_authorized_or_equivalent"
-              assertion: "Provider payment can reach committed/authorized/equivalent state."
-            - id: "release_path_tested"
-              assertion: "Release/capture/transfer path succeeds in sandbox for completed Vouch."
-            - id: "refund_path_tested"
-              assertion: "Refund/void/non-capture path succeeds in sandbox for expired Vouch."
-            - id: "provider_errors_handled"
-              assertion: "Provider failures produce safe user state and operational logs."
-
-    webhook_idempotency:
-        severity: "critical"
-        description: "Provider webhooks are secure and idempotent."
-        checks:
-            - id: "signature_verified"
-              assertion: "Webhook signature is verified before processing."
-            - id: "event_id_recorded"
-              assertion: "Provider event ID is recorded."
-            - id: "duplicates_ignored"
-              assertion: "Duplicate provider event IDs do not re-run side effects."
-            - id: "transactional_update"
-              assertion: "Webhook state updates are transactional."
-            - id: "webhook_audited"
-              assertion: "Webhook received/processed/ignored/failure events are audited."
-
-    route_access_control:
-        severity: "critical"
-        description: "Routes enforce correct access behavior."
-        checks:
-            - id: "protected_routes_require_auth"
-              assertion: "Dashboard, Vouch detail, setup, settings, and admin routes require authentication."
-            - id: "admin_routes_require_admin"
-              assertion: "Admin routes reject non-admin users."
-            - id: "invite_preserves_token"
-              assertion: "Invite route preserves valid token through auth flow."
-            - id: "unrelated_vouch_hidden"
-              assertion: "Users cannot view unrelated Vouches."
-            - id: "forbidden_routes_absent"
-              assertion: "Forbidden marketplace/dispute routes are absent."
-
-    notification_lifecycle:
-        severity: "medium"
-        description: "Lifecycle notifications are queued and tracked."
-        checks:
-            - id: "invite_notification"
-              assertion: "Invite notification can be queued/sent when recipient email exists."
-            - id: "accepted_notification"
-              assertion: "Acceptance notification can be queued/sent."
-            - id: "confirmation_notification"
-              assertion: "Confirmation-related notification can be queued/sent."
-            - id: "completion_notification"
-              assertion: "Completion notification can be queued/sent."
-            - id: "expiration_notification"
-              assertion: "Expiration/refund notification can be queued/sent."
-            - id: "notification_failures_recorded"
-              assertion: "Notification failures are recorded without breaking domain state."
-
-    admin_operational_visibility:
-        severity: "high"
-        description: "Admin can inspect operational state without arbitration powers."
-        checks:
-            - id: "admin_can_view_vouch_state"
-              assertion: "Admin can view Vouch status, payment status, confirmation status, and audit timeline."
-            - id: "admin_can_view_payment_failures"
-              assertion: "Admin can inspect provider failure state."
-            - id: "admin_can_view_webhooks"
-              assertion: "Admin can inspect webhook processing records."
-            - id: "admin_no_manual_award"
-              assertion: "Admin has no manual award/release action that bypasses dual confirmation."
-            - id: "admin_no_dispute_ui"
-              assertion: "Admin UI does not contain dispute workflow."
-
-    audit_events:
-        severity: "critical"
-        description: "Important actions produce audit records."
-        checks:
-            - id: "user_events_audited"
-              assertion: "User creation and terms acceptance are audited."
-            - id: "vouch_events_audited"
-              assertion: "Create, accept, decline, cancel, confirm, complete, expire, refund, and fail events are audited."
-            - id: "payment_events_audited"
-              assertion: "Payment initialize, release, refund, failure, and webhook events are audited."
-            - id: "metadata_safe"
-              assertion: "Audit metadata excludes raw card data, identity documents, secrets, and detailed meeting purpose."
-
-    basic_tests:
-        severity: "high"
-        description: "Core unit and integration tests exist."
-        checks:
-            - id: "schema_tests"
-              assertion: "Zod/runtime schema tests cover valid and invalid create/accept/confirm inputs."
-            - id: "authz_tests"
-              assertion: "Authz tests cover participant access, unrelated denial, self-accept denial, and admin access."
-            - id: "state_transition_tests"
-              assertion: "State transition tests cover pending→active, active→completed, active→expired, expired→refunded, and failure."
-            - id: "fee_tests"
-              assertion: "Fee calculation tests cover minimum and percentage fee."
-            - id: "webhook_idempotency_tests"
-              assertion: "Webhook idempotency tests cover duplicate provider events."
-
-    e2e_smoke:
-        severity: "high"
-        description: "Playwright smoke tests cover the main product loop."
-        checks:
-            - id: "auth_smoke"
-              assertion: "User can sign in or mocked auth state can access dashboard."
-            - id: "create_vouch_smoke"
-              assertion: "Eligible payer can create Vouch."
-            - id: "accept_vouch_smoke"
-              assertion: "Eligible payee can accept invite."
-            - id: "confirm_both_smoke"
-              assertion: "Payer and payee confirmations complete Vouch."
-            - id: "expire_refund_smoke"
-              assertion: "Incomplete confirmation expires/refunds Vouch."
-            - id: "unauthorized_access_smoke"
-              assertion: "Unrelated user cannot view protected Vouch."
-
-    legal_copy_review:
-        severity: "critical"
-        description: "Public and product copy passes legal-risk positioning review."
-        checks:
-            - id: "no_escrow_claim"
-              assertion: "Copy does not claim Vouch is legal escrow."
-            - id: "no_safety_guarantee"
-              assertion: "Copy does not guarantee safety, service quality, or attendance."
-            - id: "no_marketplace_claim"
-              assertion: "Copy does not represent Vouch as a marketplace."
-            - id: "clear_release_refund_rule"
-              assertion: "Copy explains dual-confirmation release and refund/non-capture default."
-
-    payment_flow_review:
-        severity: "critical"
-        description: "Payment architecture is reviewed before production."
-        checks:
-            - id: "connect_flow_selected"
-              assertion: "Exact Stripe Connect or equivalent payment flow is selected and documented."
-            - id: "no_custody_confirmed"
-              assertion: "Payment architecture confirms platform does not directly custody funds."
-            - id: "fee_collection_confirmed"
-              assertion: "Platform fee collection is provider-supported and documented."
-            - id: "refund_timing_confirmed"
-              assertion: "Refund/void/non-capture behavior and timing are documented."
-
-    security_review:
-        severity: "critical"
-        description: "Security controls pass release review."
-        checks:
-            - id: "secrets_not_exposed"
-              assertion: "Provider secrets are server-only."
-            - id: "webhooks_verified"
-              assertion: "All provider webhooks verify signatures."
-            - id: "idor_prevented"
-              assertion: "Object-level authorization prevents unrelated resource access."
-            - id: "rate_limits_defined"
-              assertion: "Sensitive actions are rate-limited or abuse-controlled."
-            - id: "csrf_safe"
-              assertion: "Mutation patterns are CSRF-safe within framework expectations."
-
-    privacy_review:
-        severity: "critical"
-        description: "Data collection is minimized."
-        checks:
-            - id: "no_raw_identity_docs"
-              assertion: "Raw identity documents are not stored."
-            - id: "no_raw_card_data"
-              assertion: "Raw card data is not stored."
-            - id: "no_precise_location_history"
-              assertion: "Precise location history is not stored for MVP manual confirmation."
-            - id: "no_meeting_purpose_required"
-              assertion: "Detailed meeting purpose is not required or stored."
-            - id: "analytics_minimized"
-              assertion: "Analytics excludes prohibited sensitive data."
-
-    observability_review:
-        severity: "high"
-        description: "Operational observability exists for payment and lifecycle failures."
-        checks:
-            - id: "structured_logs"
-              assertion: "Server actions and webhook handlers emit structured logs with request IDs."
-            - id: "payment_failure_visibility"
-              assertion: "Payment failures are visible to admin."
-            - id: "webhook_failure_visibility"
-              assertion: "Webhook failures are visible to admin."
-            - id: "stuck_vouch_detection"
-              assertion: "Stuck active/failed Vouches can be identified."
-            - id: "audit_traceability"
-              assertion: "Each critical action can be traced through audit events."
-
-    recovery_paths:
-        severity: "high"
-        description: "Technical failure recovery paths exist without arbitration."
-        checks:
-            - id: "safe_retry_defined"
-              assertion: "Safe retry operations are defined for idempotent provider failures."
-            - id: "failed_state_visible"
-              assertion: "Failed Vouches show safe user copy and admin diagnostics."
-            - id: "no_manual_truth_override"
-              assertion: "Recovery does not allow rewriting human confirmation truth."
-            - id: "webhook_replay_safe"
-              assertion: "Webhook replay is idempotent."
-
-    migration_integrity:
-        severity: "high"
-        description: "Database migrations and Prisma schema are production-safe."
-        checks:
-            - id: "prisma_validates"
-              assertion: "Prisma schema validates."
-            - id: "migrations_apply"
-              assertion: "Migrations apply cleanly to empty and existing database where applicable."
-            - id: "required_indexes_exist"
-              assertion: "Indexes exist for participant Vouch lookup, invitation token hash, provider event ID, and status queries."
-            - id: "unique_constraints_exist"
-              assertion: "Unique constraints exist for single confirmation per participant per Vouch and single accepted payee."
-```
-
----
+  governance_migration:
+    severity: "critical"
+    checks:
+      - id: "merchant_customer_language"
+        assertion: "Contracts and durable docs identify merchant/provider as creator and payout recipient, and customer/client as acceptor and paying party."
+      - id: "legacy_mapping_documented"
+        assertion: "Legacy payer/payee identifiers are explicitly mapped during migration."
+      - id: "old_money_model_superseded"
+        assertion: "Governance no longer treats amountCents + platformFeeCents as the authoritative customer total."
+  pricing_model:
+    severity: "critical"
+    checks:
+      - id: "pricing_function_exists"
+        assertion: "Server code calculates protectedAmountCents, merchantReceivesCents, vouchServiceFeeCents, processingFeeOffsetCents, applicationFeeAmountCents, and customerTotalCents."
+      - id: "service_fee_formula"
+        assertion: "vouchServiceFeeCents is max(5% of protectedAmountCents rounded up, 500)."
+      - id: "processing_offset_formula"
+        assertion: "processingFeeOffsetCents uses the configured Stripe percentage and fixed fee formula."
+      - id: "customer_total_formula"
+        assertion: "customerTotalCents equals protectedAmountCents + vouchServiceFeeCents + processingFeeOffsetCents."
+      - id: "application_fee_formula"
+        assertion: "applicationFeeAmountCents equals vouchServiceFeeCents + processingFeeOffsetCents."
+  stripe_payment_intent:
+    severity: "critical"
+    checks:
+      - id: "manual_capture"
+        assertion: "Stripe PaymentIntents use manual capture where this flow is implemented."
+      - id: "amount_is_customer_total"
+        assertion: "PaymentIntent amount is customerTotalCents."
+      - id: "fee_is_application_fee_amount"
+        assertion: "application_fee_amount is applicationFeeAmountCents."
+      - id: "destination_is_merchant"
+        assertion: "transfer_data.destination is the merchant/provider connected account."
+  schema_integrity:
+    severity: "critical"
+    checks:
+      - id: "vouch_pricing_snapshot"
+        assertion: "Vouch persists the full pricing snapshot or an explicitly documented migration-safe equivalent."
+      - id: "payment_pricing_snapshot"
+        assertion: "PaymentRecord persists the full pricing snapshot used for the provider authorization."
+      - id: "legacy_fields_not_authoritative"
+        assertion: "amountCents and platformFeeCents are treated as legacy compatibility fields during migration."
+  no_marketplace_surface:
+    severity: "critical"
+    checks:
+      - id: "forbidden_routes_absent"
+        assertion: "No browse, providers, reviews, categories, messages, scheduler, or dispute routes exist."
+      - id: "forbidden_entities_absent"
+        assertion: "No public profiles, service listings, reviews, ratings, messages, recommendations, disputes, claims, evidence, or reputation entities exist."
+  no_arbitration_surface:
+    severity: "critical"
+    checks:
+      - id: "admin_no_award"
+        assertion: "Admin cannot award funds or decide who was right."
+      - id: "admin_no_confirmation_override"
+        assertion: "Admin cannot rewrite confirmation records."
+  validation:
+    severity: "high"
+    checks:
+      - id: "contracts_validate"
+        assertion: "pnpm validate:contracts passes."
+      - id: "prisma_validates"
+        assertion: "pnpm prisma:validate passes."
+      - id: "pricing_tests"
+        assertion: "Unit tests cover the new Vouch pricing formula."

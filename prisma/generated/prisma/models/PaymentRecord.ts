@@ -29,11 +29,23 @@ export type AggregatePaymentRecord = {
 export type PaymentRecordAvgAggregateOutputType = {
   amountCents: number | null
   platformFeeCents: number | null
+  protectedAmountCents: number | null
+  merchantReceivesCents: number | null
+  vouchServiceFeeCents: number | null
+  processingFeeOffsetCents: number | null
+  applicationFeeAmountCents: number | null
+  customerTotalCents: number | null
 }
 
 export type PaymentRecordSumAggregateOutputType = {
   amountCents: number | null
   platformFeeCents: number | null
+  protectedAmountCents: number | null
+  merchantReceivesCents: number | null
+  vouchServiceFeeCents: number | null
+  processingFeeOffsetCents: number | null
+  applicationFeeAmountCents: number | null
+  customerTotalCents: number | null
 }
 
 export type PaymentRecordMinAggregateOutputType = {
@@ -47,6 +59,12 @@ export type PaymentRecordMinAggregateOutputType = {
   amountCents: number | null
   currency: string | null
   platformFeeCents: number | null
+  protectedAmountCents: number | null
+  merchantReceivesCents: number | null
+  vouchServiceFeeCents: number | null
+  processingFeeOffsetCents: number | null
+  applicationFeeAmountCents: number | null
+  customerTotalCents: number | null
   lastErrorCode: string | null
   lastErrorMessage: string | null
   createdAt: Date | null
@@ -64,6 +82,12 @@ export type PaymentRecordMaxAggregateOutputType = {
   amountCents: number | null
   currency: string | null
   platformFeeCents: number | null
+  protectedAmountCents: number | null
+  merchantReceivesCents: number | null
+  vouchServiceFeeCents: number | null
+  processingFeeOffsetCents: number | null
+  applicationFeeAmountCents: number | null
+  customerTotalCents: number | null
   lastErrorCode: string | null
   lastErrorMessage: string | null
   createdAt: Date | null
@@ -81,6 +105,12 @@ export type PaymentRecordCountAggregateOutputType = {
   amountCents: number
   currency: number
   platformFeeCents: number
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
+  applicationFeeAmountCents: number
+  customerTotalCents: number
   lastErrorCode: number
   lastErrorMessage: number
   createdAt: number
@@ -92,11 +122,23 @@ export type PaymentRecordCountAggregateOutputType = {
 export type PaymentRecordAvgAggregateInputType = {
   amountCents?: true
   platformFeeCents?: true
+  protectedAmountCents?: true
+  merchantReceivesCents?: true
+  vouchServiceFeeCents?: true
+  processingFeeOffsetCents?: true
+  applicationFeeAmountCents?: true
+  customerTotalCents?: true
 }
 
 export type PaymentRecordSumAggregateInputType = {
   amountCents?: true
   platformFeeCents?: true
+  protectedAmountCents?: true
+  merchantReceivesCents?: true
+  vouchServiceFeeCents?: true
+  processingFeeOffsetCents?: true
+  applicationFeeAmountCents?: true
+  customerTotalCents?: true
 }
 
 export type PaymentRecordMinAggregateInputType = {
@@ -110,6 +152,12 @@ export type PaymentRecordMinAggregateInputType = {
   amountCents?: true
   currency?: true
   platformFeeCents?: true
+  protectedAmountCents?: true
+  merchantReceivesCents?: true
+  vouchServiceFeeCents?: true
+  processingFeeOffsetCents?: true
+  applicationFeeAmountCents?: true
+  customerTotalCents?: true
   lastErrorCode?: true
   lastErrorMessage?: true
   createdAt?: true
@@ -127,6 +175,12 @@ export type PaymentRecordMaxAggregateInputType = {
   amountCents?: true
   currency?: true
   platformFeeCents?: true
+  protectedAmountCents?: true
+  merchantReceivesCents?: true
+  vouchServiceFeeCents?: true
+  processingFeeOffsetCents?: true
+  applicationFeeAmountCents?: true
+  customerTotalCents?: true
   lastErrorCode?: true
   lastErrorMessage?: true
   createdAt?: true
@@ -144,6 +198,12 @@ export type PaymentRecordCountAggregateInputType = {
   amountCents?: true
   currency?: true
   platformFeeCents?: true
+  protectedAmountCents?: true
+  merchantReceivesCents?: true
+  vouchServiceFeeCents?: true
+  processingFeeOffsetCents?: true
+  applicationFeeAmountCents?: true
+  customerTotalCents?: true
   lastErrorCode?: true
   lastErrorMessage?: true
   createdAt?: true
@@ -248,6 +308,12 @@ export type PaymentRecordGroupByOutputType = {
   amountCents: number
   currency: string
   platformFeeCents: number
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
+  applicationFeeAmountCents: number
+  customerTotalCents: number
   lastErrorCode: string | null
   lastErrorMessage: string | null
   createdAt: Date
@@ -288,6 +354,12 @@ export type PaymentRecordWhereInput = {
   amountCents?: Prisma.IntFilter<"PaymentRecord"> | number
   currency?: Prisma.StringFilter<"PaymentRecord"> | string
   platformFeeCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  protectedAmountCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  merchantReceivesCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  vouchServiceFeeCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  processingFeeOffsetCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  applicationFeeAmountCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  customerTotalCents?: Prisma.IntFilter<"PaymentRecord"> | number
   lastErrorCode?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   lastErrorMessage?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PaymentRecord"> | Date | string
@@ -308,6 +380,12 @@ export type PaymentRecordOrderByWithRelationInput = {
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
   lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -331,6 +409,12 @@ export type PaymentRecordWhereUniqueInput = Prisma.AtLeast<{
   amountCents?: Prisma.IntFilter<"PaymentRecord"> | number
   currency?: Prisma.StringFilter<"PaymentRecord"> | string
   platformFeeCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  protectedAmountCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  merchantReceivesCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  vouchServiceFeeCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  processingFeeOffsetCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  applicationFeeAmountCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  customerTotalCents?: Prisma.IntFilter<"PaymentRecord"> | number
   lastErrorCode?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   lastErrorMessage?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PaymentRecord"> | Date | string
@@ -351,6 +435,12 @@ export type PaymentRecordOrderByWithAggregationInput = {
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
   lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -376,6 +466,12 @@ export type PaymentRecordScalarWhereWithAggregatesInput = {
   amountCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
   currency?: Prisma.StringWithAggregatesFilter<"PaymentRecord"> | string
   platformFeeCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
+  protectedAmountCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
+  merchantReceivesCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
+  vouchServiceFeeCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
+  processingFeeOffsetCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
+  applicationFeeAmountCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
+  customerTotalCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
   lastErrorCode?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   lastErrorMessage?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PaymentRecord"> | Date | string
@@ -392,6 +488,12 @@ export type PaymentRecordCreateInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -412,6 +514,12 @@ export type PaymentRecordUncheckedCreateInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -430,6 +538,12 @@ export type PaymentRecordUpdateInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -450,6 +564,12 @@ export type PaymentRecordUncheckedUpdateInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -469,6 +589,12 @@ export type PaymentRecordCreateManyInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -485,6 +611,12 @@ export type PaymentRecordUpdateManyMutationInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -502,6 +634,12 @@ export type PaymentRecordUncheckedUpdateManyInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -524,6 +662,12 @@ export type PaymentRecordCountOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
   lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -533,6 +677,12 @@ export type PaymentRecordCountOrderByAggregateInput = {
 export type PaymentRecordAvgOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
 }
 
 export type PaymentRecordMaxOrderByAggregateInput = {
@@ -546,6 +696,12 @@ export type PaymentRecordMaxOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
   lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -563,6 +719,12 @@ export type PaymentRecordMinOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
   lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -572,6 +734,12 @@ export type PaymentRecordMinOrderByAggregateInput = {
 export type PaymentRecordSumOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
   platformFeeCents?: Prisma.SortOrder
+  protectedAmountCents?: Prisma.SortOrder
+  merchantReceivesCents?: Prisma.SortOrder
+  vouchServiceFeeCents?: Prisma.SortOrder
+  processingFeeOffsetCents?: Prisma.SortOrder
+  applicationFeeAmountCents?: Prisma.SortOrder
+  customerTotalCents?: Prisma.SortOrder
 }
 
 export type PaymentRecordScalarRelationFilter = {
@@ -655,6 +823,12 @@ export type PaymentRecordCreateWithoutVouchInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -673,6 +847,12 @@ export type PaymentRecordUncheckedCreateWithoutVouchInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -707,6 +887,12 @@ export type PaymentRecordUpdateWithoutVouchInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -725,6 +911,12 @@ export type PaymentRecordUncheckedUpdateWithoutVouchInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -743,6 +935,12 @@ export type PaymentRecordCreateWithoutRefundRecordInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -762,6 +960,12 @@ export type PaymentRecordUncheckedCreateWithoutRefundRecordInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -795,6 +999,12 @@ export type PaymentRecordUpdateWithoutRefundRecordInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -814,6 +1024,12 @@ export type PaymentRecordUncheckedUpdateWithoutRefundRecordInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -831,6 +1047,12 @@ export type PaymentRecordCreateWithoutWebhookEventsInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -850,6 +1072,12 @@ export type PaymentRecordUncheckedCreateWithoutWebhookEventsInput = {
   amountCents: number
   currency?: string
   platformFeeCents?: number
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -883,6 +1111,12 @@ export type PaymentRecordUpdateWithoutWebhookEventsInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -902,6 +1136,12 @@ export type PaymentRecordUncheckedUpdateWithoutWebhookEventsInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
   platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
+  vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
+  processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
+  applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -951,6 +1191,12 @@ export type PaymentRecordSelect<ExtArgs extends runtime.Types.Extensions.Interna
   amountCents?: boolean
   currency?: boolean
   platformFeeCents?: boolean
+  protectedAmountCents?: boolean
+  merchantReceivesCents?: boolean
+  vouchServiceFeeCents?: boolean
+  processingFeeOffsetCents?: boolean
+  applicationFeeAmountCents?: boolean
+  customerTotalCents?: boolean
   lastErrorCode?: boolean
   lastErrorMessage?: boolean
   createdAt?: boolean
@@ -972,6 +1218,12 @@ export type PaymentRecordSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   amountCents?: boolean
   currency?: boolean
   platformFeeCents?: boolean
+  protectedAmountCents?: boolean
+  merchantReceivesCents?: boolean
+  vouchServiceFeeCents?: boolean
+  processingFeeOffsetCents?: boolean
+  applicationFeeAmountCents?: boolean
+  customerTotalCents?: boolean
   lastErrorCode?: boolean
   lastErrorMessage?: boolean
   createdAt?: boolean
@@ -990,6 +1242,12 @@ export type PaymentRecordSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   amountCents?: boolean
   currency?: boolean
   platformFeeCents?: boolean
+  protectedAmountCents?: boolean
+  merchantReceivesCents?: boolean
+  vouchServiceFeeCents?: boolean
+  processingFeeOffsetCents?: boolean
+  applicationFeeAmountCents?: boolean
+  customerTotalCents?: boolean
   lastErrorCode?: boolean
   lastErrorMessage?: boolean
   createdAt?: boolean
@@ -1008,13 +1266,19 @@ export type PaymentRecordSelectScalar = {
   amountCents?: boolean
   currency?: boolean
   platformFeeCents?: boolean
+  protectedAmountCents?: boolean
+  merchantReceivesCents?: boolean
+  vouchServiceFeeCents?: boolean
+  processingFeeOffsetCents?: boolean
+  applicationFeeAmountCents?: boolean
+  customerTotalCents?: boolean
   lastErrorCode?: boolean
   lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PaymentRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "provider" | "providerPaymentId" | "providerChargeId" | "providerTransferId" | "status" | "amountCents" | "currency" | "platformFeeCents" | "lastErrorCode" | "lastErrorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentRecord"]>
+export type PaymentRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "provider" | "providerPaymentId" | "providerChargeId" | "providerTransferId" | "status" | "amountCents" | "currency" | "platformFeeCents" | "protectedAmountCents" | "merchantReceivesCents" | "vouchServiceFeeCents" | "processingFeeOffsetCents" | "applicationFeeAmountCents" | "customerTotalCents" | "lastErrorCode" | "lastErrorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentRecord"]>
 export type PaymentRecordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
   refundRecord?: boolean | Prisma.PaymentRecord$refundRecordArgs<ExtArgs>
@@ -1046,6 +1310,12 @@ export type $PaymentRecordPayload<ExtArgs extends runtime.Types.Extensions.Inter
     amountCents: number
     currency: string
     platformFeeCents: number
+    protectedAmountCents: number
+    merchantReceivesCents: number
+    vouchServiceFeeCents: number
+    processingFeeOffsetCents: number
+    applicationFeeAmountCents: number
+    customerTotalCents: number
     lastErrorCode: string | null
     lastErrorMessage: string | null
     createdAt: Date
@@ -1486,6 +1756,12 @@ export interface PaymentRecordFieldRefs {
   readonly amountCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
   readonly currency: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly platformFeeCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
+  readonly protectedAmountCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
+  readonly merchantReceivesCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
+  readonly vouchServiceFeeCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
+  readonly processingFeeOffsetCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
+  readonly applicationFeeAmountCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
+  readonly customerTotalCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
   readonly lastErrorCode: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly lastErrorMessage: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly createdAt: Prisma.FieldRef<"PaymentRecord", 'DateTime'>

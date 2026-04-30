@@ -1,921 +1,149 @@
-# `.agents/contracts/domain-model.yaml`
-
-```yaml
-schema_version: "1.0.0"
+schema_version: "2.0.0"
 contract_name: "domain-model"
 product: "Vouch"
+source_of_truth_date: "2026-04-30"
 
 summary:
-    description: "Canonical machine-readable domain model for Vouch."
-    core_sentence: "Vouch is a SaaS payment coordination tool for registered, verified users with their own pre-arranged appointments or in-person agreements."
-    stripe_product_selection: "Build a platform or marketplace means Vouch uses Connect infrastructure for connected accounts and payouts; it does not change Vouch's product category."
+  description: "Canonical domain model for Vouch after the merchant/customer pricing migration."
+  core_sentence: "Vouch is a commitment-backed payment coordination system for pre-arranged appointments and in-person agreements."
+  stripe_account:
+    source_account_id: "acct_1TQHH2GuFcEUvSe9"
+    display_name: "Vouch"
 
 global_invariants:
-    - id: "no_product_marketplace"
-      description: "Vouch must not provide discovery, public listings, search, ratings, reviews, recommendations, categories, matching, booking, or public provider profiles."
+  - id: "no_product_marketplace"
+    description: "Vouch must not provide discovery, listings, public profiles, matching, booking, search, categories, recommendations, reviews, ratings, or messaging."
+  - id: "no_arbitration"
+    description: "Vouch must not decide disputes, collect evidence, adjudicate claims, or let admins award funds based on human judgment."
+  - id: "no_escrow_claim"
+    description: "Vouch must not describe itself as escrow or claim direct custody of funds."
+  - id: "provider_backed_money"
+    description: "Payment state is represented by provider-backed references and statuses, not raw card data, identity documents, full provider payloads, or local custody."
+  - id: "merchant_customer_model"
+    description: "The provider/merchant creates the Vouch; the customer/client accepts and pays; the provider/merchant is the payout recipient."
+  - id: "server_authoritative"
+    description: "Identity, authz, payment state, Vouch state, pricing, confirmation eligibility, and lifecycle resolution are server-authoritative."
 
-    - id: "connect_platform_infrastructure_allowed"
-      description: "Stripe Connect platform infrastructure, including Accounts v2, connected accounts, destination charges, application fees, and payouts, is allowed and expected."
-
-    - id: "no_arbitration"
-      description: "Vouch must not judge disputes, decide who was right, collect evidence, or manually award funds based on human claims."
-
-    - id: "no_platform_custody"
-      description: "Vouch must coordinate payment state through a payment provider and must not directly custody user funds."
-
-    - id: "dual_confirmation_required"
-      description: "Funds may release only when both payer and payee confirm presence within the valid confirmation window."
-
-    - id: "default_refund_on_failed_confirmation"
-      description: "If both confirmations are not recorded before the deadline, the payment must refund, void, or remain uncaptured according to provider flow."
-
-    - id: "verified_payment_participants"
-      description: "Payment-bearing actions require the relevant participant to satisfy account, verification, payment, and payout readiness requirements."
-
-    - id: "server_authoritative"
-      description: "Client state is never authoritative for identity, authorization, payment state, Vouch state, confirmation state, or lifecycle resolution."
+legacy_mapping:
+  status: "active_migration"
+  rule: "Prefer merchant/provider/customer/client language in product UI and new code. Existing payer/payee identifiers may remain temporarily where destructive renames are unsafe."
+  mappings:
+    payer: "provider / merchant / creator"
+    payee: "customer / client / paying acceptor"
+    amountCents: "legacy alias for protectedAmountCents"
+    platformFeeCents: "legacy alias for vouchServiceFeeCents during migration"
 
 canonical_terms:
-    preferred:
-        - "Vouch"
-        - "commitment-backed payment"
-        - "payer"
-        - "payee"
-        - "client"
-        - "provider"
-        - "appointment"
-        - "in-person agreement"
-        - "confirmation"
-        - "presence confirmation"
-        - "confirmation window"
-        - "release"
-        - "refund"
-        - "payment coordination"
-        - "SaaS tool"
-        - "Connect platform"
+  preferred:
+    - "merchant"
+    - "provider"
+    - "customer"
+    - "client"
+    - "commitment-backed payment"
+    - "payment coordination"
+    - "appointment"
+    - "in-person agreement"
+    - "confirm presence"
+    - "release funds"
+    - "refund"
+  prohibited_or_restricted:
+    - term: "escrow"
+      rule: "Do not use without legal approval."
+    - term: "marketplace"
+      rule: "Do not describe the product as a marketplace; Stripe Connect/platform taxonomy is infrastructure-only."
+    - term: "dispute"
+      rule: "Do not create dispute-resolution product flows."
+    - term: "review"
+      rule: "Do not add ratings, reviews, reputation, or social proof surfaces."
 
-    prohibited_or_restricted:
-        - term: "escrow"
-          rule: "Do not use without legal review."
-        - term: "marketplace"
-          rule: "Do not describe Vouch as a consumer/product marketplace. Stripe infrastructure prompts may use platform/marketplace taxonomy only to select Connect."
-        - term: "dispute"
-          rule: "Do not create dispute-resolution product flows."
-        - term: "guaranteed safety"
-          rule: "Do not imply Vouch guarantees physical safety, service quality, or user behavior."
-        - term: "verified service"
-          rule: "Do not imply Vouch verifies the underlying service."
+money_model:
+  currency: "usd"
+  protectedAmountCents:
+    description: "Amount the merchant/provider receives when the Vouch releases."
+  merchantReceivesCents:
+    formula: "protectedAmountCents"
+  vouchServiceFeeCents:
+    formula: "max(ceil(protectedAmountCents * 0.05), 500)"
+  processingFeeOffsetCents:
+    formula: "ceil((protectedAmountCents + vouchServiceFeeCents + stripeFixedCents) / (1 - stripePercentBps / 10000) - (protectedAmountCents + vouchServiceFeeCents))"
+    defaults:
+      stripePercentBps: 290
+      stripeFixedCents: 30
+  customerTotalCents:
+    formula: "protectedAmountCents + processingFeeOffsetCents + vouchServiceFeeCents"
+  applicationFeeAmountCents:
+    formula: "vouchServiceFeeCents + processingFeeOffsetCents"
+  stripe_payment_intent:
+    amount: "customerTotalCents"
+    application_fee_amount: "applicationFeeAmountCents"
+    transfer_data_destination: "merchant/provider connected account"
 
 enums:
-    user_status:
-        - "active"
-        - "disabled"
-
-    verification_status:
-        - "unstarted"
-        - "pending"
-        - "verified"
-        - "rejected"
-        - "requires_action"
-        - "expired"
-
-    payment_readiness_status:
-        - "not_started"
-        - "requires_action"
-        - "ready"
-        - "failed"
-
-    payout_readiness_status:
-        - "not_started"
-        - "requires_action"
-        - "ready"
-        - "restricted"
-        - "failed"
-
-    vouch_status:
-        - "pending"
-        - "active"
-        - "completed"
-        - "expired"
-        - "refunded"
-        - "canceled"
-        - "failed"
-
-    invitation_status:
-        - "created"
-        - "sent"
-        - "opened"
-        - "accepted"
-        - "declined"
-        - "expired"
-        - "invalidated"
-
-    participant_role:
-        - "payer"
-        - "payee"
-
-    confirmation_status:
-        - "not_confirmed"
-        - "confirmed"
-        - "ineligible"
-        - "window_not_open"
-        - "window_closed"
-
-    aggregate_confirmation_status:
-        - "none_confirmed"
-        - "payer_confirmed"
-        - "payee_confirmed"
-        - "both_confirmed"
-
-    payment_status:
-        - "not_started"
-        - "requires_payment_method"
-        - "authorized"
-        - "captured"
-        - "release_pending"
-        - "released"
-        - "refund_pending"
-        - "refunded"
-        - "voided"
-        - "failed"
-
-    refund_status:
-        - "not_required"
-        - "pending"
-        - "succeeded"
-        - "failed"
-
-    audit_actor_type:
-        - "user"
-        - "system"
-        - "admin"
-        - "payment_provider"
-        - "auth_provider"
-        - "verification_provider"
-
-    notification_channel:
-        - "email"
-
-    notification_status:
-        - "queued"
-        - "sent"
-        - "failed"
-        - "skipped"
+  vouch_status: ["pending", "active", "completed", "expired", "refunded", "canceled", "failed"]
+  participant_role:
+    legacy_values: ["payer", "payee"]
+    preferred_meaning:
+      payer: "provider / merchant"
+      payee: "customer / client"
+  payment_status:
+    - "not_started"
+    - "requires_payment_method"
+    - "authorized"
+    - "captured"
+    - "release_pending"
+    - "released"
+    - "refund_pending"
+    - "refunded"
+    - "voided"
+    - "failed"
 
 entities:
-    User:
-        description: "Authenticated person using Vouch."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            clerk_user_id:
-                type: "string"
-                required: true
-                unique: true
-            email:
-                type: "string"
-                required: false
-                pii: true
-            phone:
-                type: "string"
-                required: false
-                pii: true
-            display_name:
-                type: "string"
-                required: false
-                pii: true
-            status:
-                type: "user_status"
-                required: true
-                default: "active"
-            created_at:
-                type: "datetime"
-                required: true
-            updated_at:
-                type: "datetime"
-                required: true
-        relationships:
-            has_one:
-                - "VerificationProfile"
-                - "PaymentCustomer"
-                - "ConnectedAccount"
-            has_many:
-                - "Vouch:payer"
-                - "Vouch:payee"
-                - "PresenceConfirmation"
-                - "TermsAcceptance"
-                - "AuditEvent"
-                - "NotificationEvent"
-        constraints:
-            - "A disabled user may not create, accept, or confirm Vouches."
-            - "A user may not act as both payer and payee on the same Vouch."
-
-    VerificationProfile:
-        description: "Eligibility profile for identity, adult verification, payment readiness, and payout readiness."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            user_id:
-                type: "string"
-                required: true
-                references: "User.id"
-                unique: true
-            identity_status:
-                type: "verification_status"
-                required: true
-                default: "unstarted"
-            adult_status:
-                type: "verification_status"
-                required: true
-                default: "unstarted"
-            payment_readiness:
-                type: "payment_readiness_status"
-                required: true
-                default: "not_started"
-            payout_readiness:
-                type: "payout_readiness_status"
-                required: true
-                default: "not_started"
-            provider_reference:
-                type: "string"
-                required: false
-                sensitive: true
-            created_at:
-                type: "datetime"
-                required: true
-            updated_at:
-                type: "datetime"
-                required: true
-        constraints:
-            - "Payment-bearing actions must evaluate this profile."
-            - "Raw identity documents must not be stored locally."
-
-    PaymentCustomer:
-        description: "Payment-provider customer reference for a payer."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            user_id:
-                type: "string"
-                required: true
-                references: "User.id"
-                unique: true
-            provider:
-                type: "string"
-                required: true
-                allowed_values:
-                    - "stripe"
-            provider_customer_id:
-                type: "string"
-                required: true
-                unique: true
-                sensitive: true
-            created_at:
-                type: "datetime"
-                required: true
-            updated_at:
-                type: "datetime"
-                required: true
-
-    ConnectedAccount:
-        description: "Payment-provider connected account reference for receiving released funds."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            user_id:
-                type: "string"
-                required: true
-                references: "User.id"
-                unique: true
-            provider:
-                type: "string"
-                required: true
-                allowed_values:
-                    - "stripe"
-            provider_account_id:
-                type: "string"
-                required: true
-                unique: true
-                sensitive: true
-            readiness:
-                type: "payout_readiness_status"
-                required: true
-                default: "not_started"
-            charges_enabled:
-                type: "boolean"
-                required: true
-                default: false
-            payouts_enabled:
-                type: "boolean"
-                required: true
-                default: false
-            details_submitted:
-                type: "boolean"
-                required: true
-                default: false
-            created_at:
-                type: "datetime"
-                required: true
-            updated_at:
-                type: "datetime"
-                required: true
-
-    Vouch:
-        description: "Central commitment-backed payment agreement."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            public_id:
-                type: "string"
-                required: true
-                unique: true
-            payer_id:
-                type: "string"
-                required: true
-                references: "User.id"
-            payee_id:
-                type: "string"
-                required: false
-                references: "User.id"
-            amount_cents:
-                type: "integer"
-                required: true
-                min: 100
-            currency:
-                type: "string"
-                required: true
-                default: "usd"
-            platform_fee_cents:
-                type: "integer"
-                required: true
-                min: 0
-            status:
-                type: "vouch_status"
-                required: true
-                default: "pending"
-            label:
-                type: "string"
-                required: false
-                max_length: 120
-            meeting_starts_at:
-                type: "datetime"
-                required: true
-            confirmation_opens_at:
-                type: "datetime"
-                required: true
-            confirmation_expires_at:
-                type: "datetime"
-                required: true
-            accepted_at:
-                type: "datetime"
-                required: false
-            completed_at:
-                type: "datetime"
-                required: false
-            expired_at:
-                type: "datetime"
-                required: false
-            canceled_at:
-                type: "datetime"
-                required: false
-            failed_at:
-                type: "datetime"
-                required: false
-            created_at:
-                type: "datetime"
-                required: true
-            updated_at:
-                type: "datetime"
-                required: true
-        relationships:
-            belongs_to:
-                - "User:payer"
-                - "User:payee"
-            has_one:
-                - "Invitation"
-                - "PaymentRecord"
-                - "RefundRecord"
-            has_many:
-                - "PresenceConfirmation"
-                - "AuditEvent"
-                - "NotificationEvent"
-        constraints:
-            - "payer_id is immutable after creation."
-            - "payee_id is null until acceptance."
-            - "payee_id must not equal payer_id."
-            - "amount_cents must be positive and within platform limits."
-            - "confirmation_opens_at must be less than confirmation_expires_at."
-            - "completed_at is required when status is completed."
-            - "expired_at is required when status is expired."
-            - "canceled_at is required when status is canceled."
-            - "failed_at is required when status is failed."
-            - "A completed Vouch is final except for provider reconciliation metadata."
-            - "A Vouch cannot release funds unless aggregate confirmation status is both_confirmed."
-
-    Invitation:
-        description: "Invite mechanism for accepting a Pending Vouch."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            vouch_id:
-                type: "string"
-                required: true
-                references: "Vouch.id"
-                unique: true
-            token_hash:
-                type: "string"
-                required: true
-                unique: true
-                sensitive: true
-            recipient_email:
-                type: "string"
-                required: false
-                pii: true
-            status:
-                type: "invitation_status"
-                required: true
-                default: "created"
-            expires_at:
-                type: "datetime"
-                required: true
-            opened_at:
-                type: "datetime"
-                required: false
-            accepted_at:
-                type: "datetime"
-                required: false
-            declined_at:
-                type: "datetime"
-                required: false
-            created_at:
-                type: "datetime"
-                required: true
-            updated_at:
-                type: "datetime"
-                required: true
-        constraints:
-            - "Invitation token must be stored as a hash, never plaintext."
-            - "Only one payee may accept a Vouch."
-            - "Invitation acceptance must transition the Vouch from pending to active."
-
-    PresenceConfirmation:
-        description: "Participant confirmation of presence within the confirmation window."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            vouch_id:
-                type: "string"
-                required: true
-                references: "Vouch.id"
-            user_id:
-                type: "string"
-                required: true
-                references: "User.id"
-            participant_role:
-                type: "participant_role"
-                required: true
-            status:
-                type: "confirmation_status"
-                required: true
-                default: "confirmed"
-            confirmed_at:
-                type: "datetime"
-                required: true
-            method:
-                type: "string"
-                required: true
-                allowed_values:
-                    - "manual"
-                    - "gps"
-                    - "system"
-            created_at:
-                type: "datetime"
-                required: true
-        uniqueness:
-            - fields:
-                  - "vouch_id"
-                  - "participant_role"
-              description: "Only one confirmation per participant role per Vouch."
-            - fields:
-                  - "vouch_id"
-                  - "user_id"
-              description: "A user may confirm a Vouch only once."
-        constraints:
-            - "Confirmation is valid only during the confirmation window."
-            - "User must be the payer or accepted payee for the Vouch."
-            - "One-sided confirmation must not release funds."
-
-    PaymentRecord:
-        description: "Provider-backed payment state for a Vouch."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            vouch_id:
-                type: "string"
-                required: true
-                references: "Vouch.id"
-                unique: true
-            provider:
-                type: "string"
-                required: true
-                allowed_values:
-                    - "stripe"
-            provider_payment_id:
-                type: "string"
-                required: false
-                unique: true
-                sensitive: true
-            provider_charge_id:
-                type: "string"
-                required: false
-                sensitive: true
-            provider_transfer_id:
-                type: "string"
-                required: false
-                sensitive: true
-            status:
-                type: "payment_status"
-                required: true
-                default: "not_started"
-            amount_cents:
-                type: "integer"
-                required: true
-            currency:
-                type: "string"
-                required: true
-            platform_fee_cents:
-                type: "integer"
-                required: true
-            last_error_code:
-                type: "string"
-                required: false
-            last_error_message:
-                type: "string"
-                required: false
-                sensitive: true
-            created_at:
-                type: "datetime"
-                required: true
-            updated_at:
-                type: "datetime"
-                required: true
-        constraints:
-            - "Payment status must be reconciled through provider-confirmed events or server-side provider calls."
-            - "Client-reported payment status must never be trusted."
-            - "Raw card data must not be stored."
-
-    RefundRecord:
-        description: "Provider-backed refund, void, or non-capture outcome."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            vouch_id:
-                type: "string"
-                required: true
-                references: "Vouch.id"
-                unique: true
-            payment_record_id:
-                type: "string"
-                required: true
-                references: "PaymentRecord.id"
-            provider_refund_id:
-                type: "string"
-                required: false
-                unique: true
-                sensitive: true
-            status:
-                type: "refund_status"
-                required: true
-                default: "not_required"
-            reason:
-                type: "string"
-                required: false
-                allowed_values:
-                    - "not_accepted"
-                    - "confirmation_incomplete"
-                    - "canceled_before_acceptance"
-                    - "payment_failure"
-                    - "provider_required"
-            amount_cents:
-                type: "integer"
-                required: true
-            created_at:
-                type: "datetime"
-                required: true
-            updated_at:
-                type: "datetime"
-                required: true
-
-    TermsAcceptance:
-        description: "Record of user acceptance of required product/payment terms."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            user_id:
-                type: "string"
-                required: true
-                references: "User.id"
-            terms_version:
-                type: "string"
-                required: true
-            accepted_at:
-                type: "datetime"
-                required: true
-            ip_hash:
-                type: "string"
-                required: false
-                sensitive: true
-            user_agent_hash:
-                type: "string"
-                required: false
-                sensitive: true
-        uniqueness:
-            - fields:
-                  - "user_id"
-                  - "terms_version"
-
-    AuditEvent:
-        description: "Immutable audit record for important actions and state transitions."
-        persistence: true
-        append_only: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            event_name:
-                type: "string"
-                required: true
-            actor_type:
-                type: "audit_actor_type"
-                required: true
-            actor_user_id:
-                type: "string"
-                required: false
-                references: "User.id"
-            entity_type:
-                type: "string"
-                required: true
-            entity_id:
-                type: "string"
-                required: true
-            request_id:
-                type: "string"
-                required: false
-            metadata:
-                type: "json"
-                required: false
-                sensitive: true
-            created_at:
-                type: "datetime"
-                required: true
-        constraints:
-            - "Audit events should be append-only."
-            - "Audit metadata must not contain raw card data, raw identity documents, secrets, or detailed meeting purpose."
-
-    NotificationEvent:
-        description: "Lifecycle notification record."
-        persistence: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            event_name:
-                type: "string"
-                required: true
-            channel:
-                type: "notification_channel"
-                required: true
-                default: "email"
-            status:
-                type: "notification_status"
-                required: true
-                default: "queued"
-            recipient_user_id:
-                type: "string"
-                required: true
-                references: "User.id"
-            vouch_id:
-                type: "string"
-                required: false
-                references: "Vouch.id"
-            provider_message_id:
-                type: "string"
-                required: false
-                sensitive: true
-            error_code:
-                type: "string"
-                required: false
-            created_at:
-                type: "datetime"
-                required: true
-            sent_at:
-                type: "datetime"
-                required: false
-            failed_at:
-                type: "datetime"
-                required: false
-
-    PaymentWebhookEvent:
-        description: "Idempotency and reconciliation record for provider webhook events."
-        persistence: true
-        append_only: true
-        fields:
-            id:
-                type: "string"
-                required: true
-                unique: true
-            provider:
-                type: "string"
-                required: true
-                allowed_values:
-                    - "stripe"
-            provider_event_id:
-                type: "string"
-                required: true
-                unique: true
-            event_type:
-                type: "string"
-                required: true
-            processed:
-                type: "boolean"
-                required: true
-                default: false
-            processing_error:
-                type: "string"
-                required: false
-                sensitive: true
-            received_at:
-                type: "datetime"
-                required: true
-            processed_at:
-                type: "datetime"
-                required: false
-
-state_transitions:
-    Vouch:
-        - from: "pending"
-          to: "active"
-          trigger: "vouch.accepted"
-          required_conditions:
-              - "payee is authenticated"
-              - "payee is eligible"
-              - "payee_id is null before transition"
-              - "payee_id does not equal payer_id"
-              - "invitation is valid"
-              - "payment record is valid for activation"
-
-        - from: "pending"
-          to: "canceled"
-          trigger: "vouch.canceled"
-          required_conditions:
-              - "actor is payer or system"
-              - "Vouch has not been accepted"
-              - "payment is refunded, voided, or not captured"
-
-        - from: "pending"
-          to: "expired"
-          trigger: "vouch.expired"
-          required_conditions:
-              - "acceptance deadline or confirmation deadline passed"
-              - "payee_id is null or Vouch never became active"
-
-        - from: "active"
-          to: "completed"
-          trigger: "vouch.completed"
-          required_conditions:
-              - "payer confirmation exists"
-              - "payee confirmation exists"
-              - "both confirmations occurred within confirmation window"
-              - "payment release or capture operation succeeded or is provider-accepted"
-
-        - from: "active"
-          to: "expired"
-          trigger: "vouch.expired"
-          required_conditions:
-              - "confirmation_expires_at has passed"
-              - "aggregate confirmation status is not both_confirmed"
-
-        - from: "expired"
-          to: "refunded"
-          trigger: "vouch.refunded"
-          required_conditions:
-              - "payment is refunded, voided, or not captured"
-
-        - from: "pending"
-          to: "failed"
-          trigger: "vouch.failed"
-          required_conditions:
-              - "technical or provider failure prevents normal resolution"
-
-        - from: "active"
-          to: "failed"
-          trigger: "vouch.failed"
-          required_conditions:
-              - "technical or provider failure prevents normal resolution"
-
-events:
-    user:
-        - "user.created"
-        - "user.signed_in"
-        - "user.verification.started"
-        - "user.verification.completed"
-        - "user.verification.rejected"
-        - "user.payment_method.added"
-        - "user.connected_account.created"
-        - "user.connected_account.ready"
-        - "user.terms.accepted"
-
-    vouch:
-        - "vouch.created"
-        - "vouch.invite.sent"
-        - "vouch.invite.opened"
-        - "vouch.accepted"
-        - "vouch.declined"
-        - "vouch.canceled"
-        - "vouch.confirmation_window.opened"
-        - "vouch.payer_confirmed"
-        - "vouch.payee_confirmed"
-        - "vouch.completed"
-        - "vouch.expired"
-        - "vouch.refunded"
-        - "vouch.failed"
-
-    payment:
-        - "payment.initialized"
-        - "payment.authorized"
-        - "payment.captured"
-        - "payment.release_requested"
-        - "payment.released"
-        - "payment.refund_requested"
-        - "payment.refunded"
-        - "payment.voided"
-        - "payment.failed"
-        - "payment.webhook_received"
-        - "payment.webhook_processed"
-        - "payment.webhook_ignored"
-        - "payment.reconciliation_failed"
-
-    notification:
-        - "notification.invite.queued"
-        - "notification.invite.sent"
-        - "notification.accepted.sent"
-        - "notification.confirmation_window.sent"
-        - "notification.confirmation_recorded.sent"
-        - "notification.completed.sent"
-        - "notification.expired.sent"
-        - "notification.failed"
-
-    admin:
-        - "admin.user.viewed"
-        - "admin.vouch.viewed"
-        - "admin.payment.viewed"
-        - "admin.retry.started"
-        - "admin.retry.completed"
-        - "admin.account.disabled"
+  User:
+    description: "Authenticated account holder."
+  ConnectedAccount:
+    description: "Stripe connected account for the merchant/provider payout recipient."
+  PaymentCustomer:
+    description: "Stripe customer/payment-method reference for the customer/client who pays."
+  Vouch:
+    description: "Merchant-created commitment-backed payment agreement accepted and paid by a customer."
+    required_money_fields:
+      - "protectedAmountCents"
+      - "merchantReceivesCents"
+      - "vouchServiceFeeCents"
+      - "processingFeeOffsetCents"
+      - "applicationFeeAmountCents"
+      - "customerTotalCents"
+    legacy_money_fields:
+      - "amountCents"
+      - "platformFeeCents"
+    constraints:
+      - "Provider/merchant creator is immutable after creation."
+      - "Customer/client acceptor is null until acceptance."
+      - "Provider/merchant must not accept their own Vouch."
+      - "Pricing must be calculated server-side."
+      - "Provider/merchant receives protectedAmountCents on successful release."
+  PaymentRecord:
+    description: "Provider-backed payment state and pricing snapshot for a Vouch."
+    required_money_fields:
+      - "protectedAmountCents"
+      - "merchantReceivesCents"
+      - "vouchServiceFeeCents"
+      - "processingFeeOffsetCents"
+      - "applicationFeeAmountCents"
+      - "customerTotalCents"
+  RefundRecord:
+    description: "Provider-backed refund, void, or non-capture outcome."
+  PresenceConfirmation:
+    description: "Participant confirmation of presence. Existing legacy roles map to provider/customer during migration."
 
 forbidden_entities:
-    - "PublicProfile"
-    - "Review"
-    - "Rating"
-    - "MessageThread"
-    - "ServiceListing"
-    - "MarketplaceCategory"
-    - "Recommendation"
-    - "DisputeCase"
-    - "EvidenceUpload"
-    - "ReputationScore"
-```
-
----
+  - "PublicProfile"
+  - "Review"
+  - "Rating"
+  - "MessageThread"
+  - "ServiceListing"
+  - "MarketplaceCategory"
+  - "Recommendation"
+  - "DisputeCase"
+  - "EvidenceUpload"
+  - "ReputationScore"

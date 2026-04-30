@@ -1,30 +1,64 @@
-export type PlatformFeeInput = {
-  amountCents: number
-  percentageRate?: number
-  minimumFeeCents?: number
+export type VouchPricingInput = {
+  protectedAmountCents: number
+  stripePercentBps?: number
+  stripeFixedCents?: number
 }
 
-export const DEFAULT_PLATFORM_FEE_RATE = 0.05
-export const DEFAULT_MINIMUM_PLATFORM_FEE_CENTS = 500
+export type VouchPricing = {
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
+  customerTotalCents: number
+  applicationFeeAmountCents: number
+}
 
-export function calculatePlatformFeeCents({
-  amountCents,
-  percentageRate = DEFAULT_PLATFORM_FEE_RATE,
-  minimumFeeCents = DEFAULT_MINIMUM_PLATFORM_FEE_CENTS,
-}: PlatformFeeInput): number {
-  if (!Number.isInteger(amountCents) || amountCents <= 0) {
-    throw new Error("amountCents must be a positive integer.")
+export const DEFAULT_STRIPE_PERCENT_BPS = 290
+export const DEFAULT_STRIPE_FIXED_CENTS = 30
+export const DEFAULT_VOUCH_SERVICE_FEE_RATE = 0.05
+export const DEFAULT_MINIMUM_VOUCH_SERVICE_FEE_CENTS = 500
+
+export function calculateVouchPricing({
+  protectedAmountCents,
+  stripePercentBps = DEFAULT_STRIPE_PERCENT_BPS,
+  stripeFixedCents = DEFAULT_STRIPE_FIXED_CENTS,
+}: VouchPricingInput): VouchPricing {
+  if (!Number.isInteger(protectedAmountCents) || protectedAmountCents <= 0) {
+    throw new Error("protectedAmountCents must be a positive integer.")
   }
 
-  if (!Number.isFinite(percentageRate) || percentageRate < 0) {
-    throw new Error("percentageRate must be a non-negative finite number.")
+  if (!Number.isInteger(stripePercentBps) || stripePercentBps < 0 || stripePercentBps >= 10_000) {
+    throw new Error("stripePercentBps must be an integer from 0 to 9999.")
   }
 
-  if (!Number.isInteger(minimumFeeCents) || minimumFeeCents < 0) {
-    throw new Error("minimumFeeCents must be a non-negative integer.")
+  if (!Number.isInteger(stripeFixedCents) || stripeFixedCents < 0) {
+    throw new Error("stripeFixedCents must be a non-negative integer.")
   }
 
-  const percentageFeeCents = Math.round(amountCents * percentageRate)
+  const vouchServiceFeeCents = Math.max(
+    Math.ceil(protectedAmountCents * DEFAULT_VOUCH_SERVICE_FEE_RATE),
+    DEFAULT_MINIMUM_VOUCH_SERVICE_FEE_CENTS
+  )
 
-  return Math.max(percentageFeeCents, minimumFeeCents)
+  const subtotalBeforeProcessing = protectedAmountCents + vouchServiceFeeCents
+  const processingFeeOffsetCents = Math.ceil(
+    (subtotalBeforeProcessing + stripeFixedCents) / (1 - stripePercentBps / 10_000) -
+      subtotalBeforeProcessing
+  )
+  const customerTotalCents =
+    protectedAmountCents + vouchServiceFeeCents + processingFeeOffsetCents
+  const applicationFeeAmountCents = vouchServiceFeeCents + processingFeeOffsetCents
+
+  return {
+    protectedAmountCents,
+    merchantReceivesCents: protectedAmountCents,
+    vouchServiceFeeCents,
+    processingFeeOffsetCents,
+    customerTotalCents,
+    applicationFeeAmountCents,
+  }
+}
+
+export function calculatePlatformFeeCents(input: { amountCents: number }): number {
+  return calculateVouchPricing({ protectedAmountCents: input.amountCents }).vouchServiceFeeCents
 }

@@ -41,7 +41,7 @@ import {
   refundOrVoidStripePaymentForVouch,
   releaseStripePaymentForCompletedVouch,
 } from "@/lib/actions/paymentActions"
-import { calculatePlatformFeeCents } from "@/lib/vouch/fees"
+import { calculateVouchPricing, type VouchPricing } from "@/lib/vouch/fees"
 import {
   acceptVouchInputSchema,
   cancelPendingVouchInputSchema,
@@ -65,6 +65,12 @@ type FeePreview = {
   amountCents: number
   currency: "usd"
   platformFeeCents: number
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
+  applicationFeeAmountCents: number
+  customerTotalCents: number
   totalCents: number
 }
 
@@ -95,8 +101,25 @@ function getFieldErrors(error: FieldErrorsSource) {
   return error.flatten().fieldErrors
 }
 
-function calculateFee(amountCents: number): number {
-  return calculatePlatformFeeCents({ amountCents })
+function calculatePricing(amountCents: number): VouchPricing {
+  return calculateVouchPricing({ protectedAmountCents: amountCents })
+}
+
+function toFeePreview(amountCents: number, currency: "usd"): FeePreview {
+  const pricing = amountCents > 0 ? calculatePricing(amountCents) : null
+
+  return {
+    amountCents,
+    currency,
+    platformFeeCents: pricing?.vouchServiceFeeCents ?? 0,
+    protectedAmountCents: pricing?.protectedAmountCents ?? amountCents,
+    merchantReceivesCents: pricing?.merchantReceivesCents ?? amountCents,
+    vouchServiceFeeCents: pricing?.vouchServiceFeeCents ?? 0,
+    processingFeeOffsetCents: pricing?.processingFeeOffsetCents ?? 0,
+    applicationFeeAmountCents: pricing?.applicationFeeAmountCents ?? 0,
+    customerTotalCents: pricing?.customerTotalCents ?? amountCents,
+    totalCents: pricing?.customerTotalCents ?? amountCents,
+  }
 }
 
 function getDefaultPaymentMethodId(
@@ -163,6 +186,12 @@ async function getInvitationByToken(token: string) {
           amountCents: true,
           currency: true,
           platformFeeCents: true,
+          protectedAmountCents: true,
+          merchantReceivesCents: true,
+          vouchServiceFeeCents: true,
+          processingFeeOffsetCents: true,
+          applicationFeeAmountCents: true,
+          customerTotalCents: true,
           paymentRecord: {
             select: {
               id: true,
@@ -219,15 +248,7 @@ export async function calculatePlatformFee(input: unknown): Promise<ActionResult
     return actionFailure("VALIDATION_FAILED", "Check the amount.", getFieldErrors(parsed.error))
   }
 
-  const amountCents = parsed.data.amountCents
-  const platformFeeCents = calculateFee(amountCents)
-
-  return actionSuccess({
-    amountCents,
-    currency: "usd",
-    platformFeeCents,
-    totalCents: amountCents + platformFeeCents,
-  })
+  return actionSuccess(toFeePreview(parsed.data.amountCents, "usd"))
 }
 
 export async function validateCreateVouchDraft(input: unknown): Promise<ActionResult<FeePreview>> {
@@ -242,14 +263,7 @@ export async function validateCreateVouchDraft(input: unknown): Promise<ActionRe
   }
 
   const amountCents = parsed.data.amountCents ?? 0
-  const platformFeeCents = amountCents > 0 ? calculateFee(amountCents) : 0
-
-  return actionSuccess({
-    amountCents,
-    currency: parsed.data.currency,
-    platformFeeCents,
-    totalCents: amountCents + platformFeeCents,
-  })
+  return actionSuccess(toFeePreview(amountCents, parsed.data.currency))
 }
 
 export async function createVouch(input: unknown): Promise<ActionResult<CreatedVouchResult>> {
@@ -276,7 +290,7 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
     )
   }
 
-  const platformFeeCents = calculateFee(amountCents)
+  const pricing = calculatePricing(amountCents)
   const inviteToken = await createInvitationToken(VOUCH_LIMITS.inviteTokenBytes)
   const tokenHash = await hashInvitationToken(inviteToken)
 
@@ -285,7 +299,13 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
       payerId: user.id,
       amountCents,
       currency: parsed.data.currency,
-      platformFeeCents,
+      platformFeeCents: pricing.vouchServiceFeeCents,
+      protectedAmountCents: pricing.protectedAmountCents,
+      merchantReceivesCents: pricing.merchantReceivesCents,
+      vouchServiceFeeCents: pricing.vouchServiceFeeCents,
+      processingFeeOffsetCents: pricing.processingFeeOffsetCents,
+      applicationFeeAmountCents: pricing.applicationFeeAmountCents,
+      customerTotalCents: pricing.customerTotalCents,
       label: parsed.data.label ?? null,
       meetingStartsAt: parsed.data.meetingStartsAt,
       confirmationOpensAt: parsed.data.confirmationOpensAt,
@@ -310,7 +330,12 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
         metadata: {
           amount_cents: amountCents,
           currency: parsed.data.currency,
-          platform_fee_cents: platformFeeCents,
+          protected_amount_cents: pricing.protectedAmountCents,
+          merchant_receives_cents: pricing.merchantReceivesCents,
+          vouch_service_fee_cents: pricing.vouchServiceFeeCents,
+          processing_fee_offset_cents: pricing.processingFeeOffsetCents,
+          application_fee_amount_cents: pricing.applicationFeeAmountCents,
+          customer_total_cents: pricing.customerTotalCents,
         },
       },
     })
@@ -675,6 +700,12 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
       amountCents: true,
       currency: true,
       platformFeeCents: true,
+      protectedAmountCents: true,
+      merchantReceivesCents: true,
+      vouchServiceFeeCents: true,
+      processingFeeOffsetCents: true,
+      applicationFeeAmountCents: true,
+      customerTotalCents: true,
       payer: {
         select: {
           paymentCustomer: {
@@ -722,9 +753,18 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
 
   const payment = await initializeStripePaymentForVouch({
     vouchId: paymentContext.id,
-    amountCents: paymentContext.amountCents,
+    pricing:
+      paymentContext.customerTotalCents > 0
+        ? {
+            protectedAmountCents: paymentContext.protectedAmountCents,
+            merchantReceivesCents: paymentContext.merchantReceivesCents,
+            vouchServiceFeeCents: paymentContext.vouchServiceFeeCents,
+            processingFeeOffsetCents: paymentContext.processingFeeOffsetCents,
+            applicationFeeAmountCents: paymentContext.applicationFeeAmountCents,
+            customerTotalCents: paymentContext.customerTotalCents,
+          }
+        : calculatePricing(paymentContext.amountCents),
     currency: paymentContext.currency,
-    platformFeeCents: paymentContext.platformFeeCents,
     providerCustomerId,
     providerPaymentMethodId,
     connectedAccountId,

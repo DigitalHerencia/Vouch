@@ -1,124 +1,66 @@
-# Interactive platform guide
+# Stripe Connect Integration
 
-Create a personalized platform integration guide for your business.
+Source of truth date: 2026-04-30
 
-> **Integration guides available:**We've generated integration guides for you. View the quickstart guide or copy integration details for use with an LLM assistant.
+Stripe account source:
 
-Generate a personalized integration guide by selecting the options that best apply to your business.
+- Account ID: `acct_1TQHH2GuFcEUvSe9`
+- Display name: `Vouch`
 
-### 1. Select your business model
+## Product Positioning
 
-Your business model determines the appropriate flow of funds for your integration.
+Vouch uses Stripe Connect/platform infrastructure for connected accounts and payouts. This does not make Vouch a marketplace product in public positioning.
 
-- **Marketplace:**Your platform collects payments and distributes funds to sellers. For example, a food delivery service that connects customers with restaurants and drivers.
+Use "SaaS tool" and "payment coordination" language in product copy and Stripe description boxes.
 
-### 2. Select a monetization strategy
+Do not describe Vouch as escrow.
 
-You can select one or more ways for your platform to charge connected accounts.
+## Participant Mapping
 
-- **Application fees:**Charge a commission or fee for each payment.
-- **SaaS subscriptions:**Charge a SaaS subscription fee to connected accounts.
-- **Additional Stripe products:**Offer Stripe products with your branding and a markup to connected accounts. For example, instant payouts, Capital financing, or Issuing cards.
+- Merchant/provider creates the Vouch and owns the connected account destination.
+- Customer/client accepts the Vouch and pays.
+- Legacy `payer` fields currently mean merchant/provider.
+- Legacy `payee` fields currently mean customer/client.
 
-## Setup
+## PaymentIntent Pricing
 
-Based on your selections, the sections below provide a personalized setup.
+Manual-capture PaymentIntents must use:
 
-### Accept a payment
+- `amount`: `customerTotalCents`
+- `application_fee_amount`: `applicationFeeAmountCents`
+- `transfer_data.destination`: merchant/provider connected account ID
 
-#### Item 1
+The application fee amount is:
 
-A direct charge is a customer payment made directly to a connected account. Customers directly transact with your connected account, often unaware of your platform’s existence.
+```txt
+applicationFeeAmountCents =
+  vouchServiceFeeCents + processingFeeOffsetCents
+```
 
-This charge type is best suited for platforms providing software as a service. For example, Shopify provides tools for building online storefronts, and Thinkific enables educators to sell online courses.
+The connected-account transfer amount is the remaining charge amount after the application fee. This is intended to leave the merchant/provider with `protectedAmountCents`, subject to provider settlement behavior and required sandbox verification.
 
-#### Item 2
+## Required Local Snapshots
 
-Create destination charges on your platform to immediately transfer funds to connected accounts. Customers transact with your platform for products or services provided by your connected accounts.
+Persist the full pricing snapshot on `Vouch` and `PaymentRecord`:
 
-This charge type is best suited for marketplaces such as home rental marketplaces (like Airbnb) or ridesharing apps (like Lyft).
+- `protectedAmountCents`
+- `merchantReceivesCents`
+- `vouchServiceFeeCents`
+- `processingFeeOffsetCents`
+- `applicationFeeAmountCents`
+- `customerTotalCents`
 
-Destination charges are created on the platform, but as part of the charge operation, funds immediately transfer to the connected account you specify. You can decide whether to transfer some or all of those funds.
+Keep provider IDs and statuses only. Do not store raw card data or full Stripe payloads.
 
-Unless you’re eligible for [cross-border payouts](https://docs.stripe.com/connect/cross-border-payouts.md), your platform and the connected account you transfer funds to must be in the same region to create a destination charge. Attempting to transfer funds across a disallowed border returns an error.
+## Open Verification
 
-#### Item 3
+Before production confidence, prove in Stripe sandbox:
 
-Create separate charges and transfers to transfer funds from one payment to multiple connected accounts, or when a specific user isn’t known at the time of charge. The charge on your platform account is decoupled from the transfers to your connected accounts.
-
-This charge type is best suited for marketplaces that need to split payments between multiple parties, such as DoorDash (a restaurant delivery platform).
-
-While separate charges and transfers provide you flexibility, they require a more complex integration to manage account balances between your platform and your users. You must monitor your platform account balance carefully to make sure you have enough available funds to cover the transfer amount.
-
-Unless you’re eligible for [cross-border payouts](https://docs.stripe.com/connect/cross-border-payouts.md), your platform and the connected account you transfer funds to must be in the same region to use separate charges and transfers. Attempting to transfer funds across a disallowed border returns an error.
-
-### Risk and compliance responsibilities
-
-#### Item 1
-
-#### Item 2
-
-Your platform is liable for losses incurred by negative balances on your connected accounts. Your platform is responsible for reviewing new connected accounts during onboarding and determining the risk profile of your users.
-
-Recommended for marketplaces that collect payments from buyers to payout sellers, or for advanced platforms that want full control over how risk and negative liabilities are managed on connected accounts:
-
-- Your platform must monitor connected accounts for ongoing risk of loss.
-- Your platform has to build flows to communicate and remediate connected accounts when you detect fraud or risk.
-- You have the engineering resources to establish processes for managing ongoing risk of loss and preventing fraud.
-
-Before creating accounts with this setup, carefully consider and acknowledge your platform responsibilities for negative balance liabilities.
-
-Learn about [managing refunds and disputes in your marketplace](https://docs.stripe.com/connect/marketplace/tasks/refunds-disputes.md), particularly for platforms using indirect charges.
-
-#### Item 3
-
-Stripe monitors risk signals on connected accounts, implements risk interventions on connected accounts in response to observed signals, and seeks to recover negative balances from your connected accounts.
-
-For most software as a service platforms, this is the best choice, especially for those that are new to embedding payments:
-
-- Stripe monitors your connected accounts for credit and fraud risk, as well as protection against risk of loss in the event of negative balances attributed to business risk.
-- Stripe handles all the end to end communications and remediations directly with your connected accounts through hosted flows or embedded components.
-
-Learn about [managing funds movement for payment reversals specifically for SaaS platforms](https://docs.stripe.com/connect/saas/tasks/refunds-disputes.md), including how to handle refunds and dispute chargebacks effectively.
-
-## Preview the user experience
-
-Connected accounts use hosted onboarding and manage their accounts from a hosted surface.
-
-#### Onboarding
-
-[Stripe-hosted onboarding](https://docs.stripe.com/connect/hosted-onboarding.md) handles the collection of business and identity verification information from connected accounts, requiring minimal effort from the platform. A web form hosted by Stripe renders dynamically, based on the capabilities, country, and business type of each connected account.
-![](https://b.stripecdn.com/docs-statics-srv/assets/hosted_onboarding_form.e59ba8300f563e43489953f06127f52c.png)
-
-#### Dashboard
-
-#### Item 1
-
-Provide access to the Stripe Dashboard to connected accounts.
-
-The Stripe Dashboard provides connected accounts with a full suite of functionality, including viewing payouts, managing refunds, handling disputes, accessing reporting, and processing charges on their own. Users can sign into their Stripe Dashboard at any time and can access the Dashboard by visiting Stripe directly. Users have access to Stripe support and Stripe can reach out and communicate with users about their account.
-
-Use the Stripe Dashboard when:
-
-- Your users need access to powerful payments workflows and advanced user management features.
-- You prefer Stripe to manage risk of loss and take responsibility for negative balance liability on connected accounts, which is the typical configuration for the full Stripe Dashboard.
-- You’re comfortable with Stripe branding and limited platform co-branding.
-
-You can always add [embedded components](https://docs.stripe.com/connect/get-started-connect-embedded-components.md) to your own website in tandem with providing access to the Stripe Dashboard.
-
-#### Item 2
-
-Provide access to the Express dashboard for connected accounts to manage their account.
-
-The Express Dashboard enables connected accounts to view their available balance, see upcoming payouts, and track their earnings in real time. You can enable users to manage refunds or disputes through their Express Dashboard in the [Express Dashboard settings](https://dashboard.stripe.com/settings/connect/express-dashboard/features). Users have access to Stripe support and Stripe can reach out and communicate with users about their account.
-
-Use the Express Dashboard when:
-
-- Your users are marketplace sellers that need limited access to workflows.
-- You primarily send payouts to these users. You can optionally enable them to manage refunds and disputes directly.
-- You want to fully brand the dashboard look and feel.
-- Your platform is typically responsible for negative balance liability and managing risk of loss on connected accounts.
-
-You can always add [Connect embedded components](https://docs.stripe.com/connect/get-started-connect-embedded-components.md) to your own website in tandem with providing access to the Stripe Dashboard.
-
-> **Integration guides available:**We've generated integration guides for you. View the quickstart guide or copy integration details for use with an LLM assistant.
+- create merchant/provider connected account
+- create customer/client payment method
+- authorize manual-capture PaymentIntent for `customerTotalCents`
+- verify `application_fee_amount`
+- verify connected account destination
+- capture on valid completion path
+- void/refund on non-release path
+- reconcile webhooks idempotently
