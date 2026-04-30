@@ -1,11 +1,9 @@
+import Image from "next/image"
+
 export interface VerificationMarkProps {
   className?: string
 }
 
 export function VerificationMark({ className }: VerificationMarkProps) {
-  return (
-    <div className={className}>
-      <p className="text-sm text-neutral-400">components/brand/verification-mark.tsx</p>
-    </div>
-  )
+  return <Image src="/handshake.svg" alt="" width={32} height={32} className={className} />
 }

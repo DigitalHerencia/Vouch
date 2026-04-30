@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { CreateVouchForm } from "@/features/vouches/create/create-vouch-form.client"
 
 type CreateVouchPageProps = {
   blockedReason?: string
@@ -15,9 +16,10 @@ export function CreateVouchPage({
   children,
 }: CreateVouchPageProps) {
   return (
-    <main className="mx-auto flex w-full max-w-4xl flex-col gap-6 px-6 py-8">
+    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6">
       <div className="space-y-2">
-        <h1 className="text-3xl font-semibold tracking-tight">Create a Vouch</h1>
+        <a href="/dashboard" className="text-sm text-blue-500">← Back to dashboard</a>
+        <h1 className="font-heading text-5xl text-white">Create a Vouch</h1>
         <p className="text-muted-foreground">
           Set the amount, meeting window, and recipient. Funds release only if both parties confirm
           presence during the confirmation window.
@@ -34,7 +36,7 @@ export function CreateVouchPage({
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <Card className="rounded-none border-neutral-800 bg-neutral-900/40">
           <CardHeader>
             <CardTitle>Vouch details</CardTitle>
             <CardDescription>
@@ -42,10 +44,10 @@ export function CreateVouchPage({
               confirm in time, the payment is refunded or not captured.
             </CardDescription>
           </CardHeader>
-          <CardContent>{children}</CardContent>
+          <CardContent>{children ?? <CreateVouchForm />}</CardContent>
         </Card>
       )}
-      <Card>
+      <Card className="rounded-none border-neutral-800 bg-neutral-950/60">
         <CardHeader>
           <CardTitle>Before you create</CardTitle>
         </CardHeader>

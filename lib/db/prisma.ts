@@ -1,6 +1,10 @@
 // src/lib/db/prisma.ts
+import { config } from "dotenv"
 import { PrismaClient } from "@/prisma/generated/prisma/client"
 import { PrismaNeon } from "@prisma/adapter-neon"
+
+config({ path: ".env" })
+config({ path: ".env.local", override: true })
 
 const connectionString = process.env.DATABASE_URL
 

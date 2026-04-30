@@ -44,11 +44,7 @@ import {
   startPayoutOnboardingInputSchema,
 } from "@/schemas/payment"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
-import type {
-  NormalizedProviderWebhookStatus,
-  ProviderWebhookLedgerInput,
-  ProviderWebhookStatusInput,
-} from "@/types/webhooks"
+import type { ProviderWebhookLedgerInput } from "@/types/webhooks"
 
 type FieldErrors = Record<string, string[]>
 
@@ -1801,20 +1797,6 @@ export async function runPaymentReconciliationJob(input?: {
     reconciledCount: payments.reconciledCount + refundReconciled,
     failedCount: payments.failedCount + refundFailed,
   }
-}
-
-export function normalizeProviderWebhookStatus(
-  input: ProviderWebhookStatusInput
-): NormalizedProviderWebhookStatus {
-  if (input.processed) {
-    return "processed"
-  }
-
-  if (input.processingError) {
-    return "failed"
-  }
-
-  return "received"
 }
 
 export async function recordProviderWebhookReceived(input: ProviderWebhookLedgerInput) {

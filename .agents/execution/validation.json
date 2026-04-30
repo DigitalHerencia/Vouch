@@ -12,8 +12,8 @@
   },
   "summary": {
     "overall_status": "pass",
-    "reason": "Clerk auth overhaul passed Prisma validation/generation, typecheck, lint, and targeted auth/webhook unit tests. Earlier Stripe validation remains recorded; E2E and live sandbox payment proof remain outstanding.",
-    "latest_validation_at": "2026-04-30T10:31:00.000Z",
+    "reason": "Environment normalization and initial Prisma migration passed Prisma validation, production build, migration status, and contract validation. E2E and live sandbox payment proof remain outstanding.",
+    "latest_validation_at": "2026-04-30T17:40:00.000Z",
     "latest_validator": "Codex"
   },
   "commands": [
@@ -368,6 +368,11 @@
       "id": "VAL-NOTE-010",
       "date": "2026-04-30",
       "message": "Clerk auth overhaul validation passed: pnpm prisma:validate, pnpm prisma:generate, pnpm typecheck, pnpm lint, pnpm test -- auth, and pnpm test -- webhook. Clerk webhook processing now uses svix-id as the ProviderWebhookEvent idempotency key and persists safe projections for required user/session/email/SMS/auth-provider invitation events."
+    },
+    {
+      "id": "VAL-NOTE-011",
+      "date": "2026-04-30",
+      "message": "Environment and migration cleanup passed: pnpm prisma:validate, pnpm build, pnpm prisma migrate dev --name init, pnpm prisma migrate status, and pnpm validate:contracts. Prisma now loads .env then .env.local with local override, Clerk webhook verification requires CLERK_WEBHOOK_SECRET, and the initial migration was applied."
     }
   ]
 }

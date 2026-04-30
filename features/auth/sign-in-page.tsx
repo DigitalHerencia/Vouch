@@ -1,13 +1,14 @@
 "use client"
 
 import { useSignIn } from "@clerk/nextjs"
-import { LoaderCircle, ShieldCheck } from "lucide-react"
+import { LoaderCircle } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
+import { LogoLockup } from "@/components/brand/logo-lockup"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
@@ -226,10 +227,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
             href="/"
             className="mb-8 inline-flex items-center gap-2 text-neutral-50 transition hover:text-blue-300"
           >
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl border border-blue-500/40 bg-blue-600/15 text-blue-300">
-              <ShieldCheck className="h-5 w-5" aria-hidden="true" />
-            </span>
-            <span className="text-lg font-semibold tracking-tight">Vouch</span>
+            <LogoLockup />
           </Link>
           <h1 className="mt-2 text-3xl font-semibold tracking-tight text-neutral-50 uppercase sm:text-4xl">
             Sign in to Vouch

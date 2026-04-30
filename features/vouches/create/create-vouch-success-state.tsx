@@ -1,11 +1,7 @@
+import { ShareVouchPanel } from "@/features/vouches/share/share-vouch-panel"
+
 export function CreateVouchSuccessState() {
-  return (
-    <section className="rounded-2xl border border-neutral-800 bg-neutral-950 p-6">
-      <p className="text-sm text-neutral-400">
-        features/vouches/create/create-vouch-success-state.tsx
-      </p>
-    </section>
-  )
+  return <ShareVouchPanel />
 }
 
 export default CreateVouchSuccessState

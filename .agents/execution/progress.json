@@ -342,7 +342,7 @@
         "types/auth.ts"
       ],
       "validation_status": "pass",
-      "notes": "pnpm prisma:validate, pnpm prisma:generate, pnpm typecheck, pnpm lint, pnpm test -- auth, and pnpm test -- webhook passed. Local .env/.env.local currently use CLERK_SIGNING_SECRET; .env.example now documents CLERK_WEBHOOK_SIGNING_SECRET and the code supports the legacy local alias as a fallback."
+      "notes": "pnpm prisma:validate, pnpm prisma:generate, pnpm typecheck, pnpm lint, pnpm test -- auth, and pnpm test -- webhook passed. Clerk webhook configuration now uses CLERK_WEBHOOK_SECRET without legacy secret aliases."
     }
   ],
   "next_expected_phase": "repo_implementation",

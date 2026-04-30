@@ -13,6 +13,7 @@ import {
   Wrench,
 } from "lucide-react"
 
+import { LogoLockup } from "@/components/brand/logo-lockup"
 import { Button } from "@/components/ui/button"
 
 const processSteps = [
@@ -59,7 +60,7 @@ const stats = [
     body: "Create, accept, confirm, release. That's it.",
   },
   {
-    label: "Not an Escrow",
+    label: "No Custody",
     value: "0%",
     body: "Vouch coordinates. Providers process.",
   },
@@ -116,12 +117,8 @@ export default function HomePage() {
 function SiteHeader() {
   return (
     <header className="flex h-16 items-center justify-between border-b border-neutral-800/90 px-5 sm:h-18 sm:px-8 md:px-10 lg:px-12">
-      <Link
-        href="/"
-        aria-label="Vouch home"
-        className="text-2xl leading-none font-black tracking-[-0.08em] text-white uppercase sm:text-[28px]"
-      >
-        Vouch
+      <Link href="/" aria-label="Vouch home">
+        <LogoLockup />
       </Link>
 
       <nav className="hidden items-center gap-10 text-[11px] font-black tracking-[0.12em] text-neutral-300 uppercase lg:flex">
@@ -133,9 +130,6 @@ function SiteHeader() {
         </Link>
         <Link href="/faq" className="transition hover:text-white">
           FAQ
-        </Link>
-        <Link href="/about" className="transition hover:text-white">
-          About
         </Link>
       </nav>
 
@@ -178,7 +172,7 @@ function HeroCopy() {
 
       <p className="mt-6 max-w-117.5 text-base leading-6 font-semibold text-neutral-300 sm:text-lg sm:leading-7">
         A simple way to protect appointments and in-person agreements. Both parties confirm. Then
-        funds release. Otherwise, your&apos;re covered.
+        funds release. Otherwise, refund or non-capture applies.
       </p>
 
       <div className="mt-7 grid gap-3 sm:flex sm:items-center sm:gap-6">
@@ -268,7 +262,7 @@ function StatsGrid() {
           <p className="mt-3 text-[38px] leading-none font-black tracking-[-0.07em] text-white uppercase sm:text-[44px]">
             {stat.value}
           </p>
-          <p className="mt-3 max-w-55 text-sm leading-5 font-semibold text-neutral-300">
+      <p className="mt-3 max-w-55 text-sm leading-5 font-semibold text-neutral-300">
             {stat.body}
           </p>
         </article>

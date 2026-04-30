@@ -4,7 +4,7 @@ import {
   extractClerkDisplayName,
   extractClerkUserEmail,
   parseClerkWebhookJson,
-} from "@/lib/actions/authActions"
+} from "@/lib/auth/clerk-webhook-helpers"
 
 describe("Clerk webhook helpers", () => {
   it("extracts the primary email", () => {

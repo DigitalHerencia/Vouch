@@ -37,9 +37,8 @@
   --sidebar-border: oklch(0.24 0 0);
   --sidebar-ring: oklch(0.58 0.22 264);
 
-  --font-sans: var(--font-sans);
-  --font-mono: var(--font-mono);
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-brand), var(--font-sans);
+  --font-display: var(--font-display), var(--font-mono);
 }
 
 @layer base {
@@ -79,9 +78,8 @@
     min-height: 100vh;
     margin: 0;
     background:
-      linear-gradient(90deg, oklch(100% 0 0 / 0.028) 1px, transparent 1px),
-      linear-gradient(180deg, oklch(100% 0 0 / 0.02) 1px, transparent 1px),
-      radial-gradient(circle at 50% 0%, oklch(100% 0 0 / 0.045), transparent 34rem),
+      linear-gradient(90deg, oklch(100% 0 0 / 0.025) 1px, transparent 1px),
+      linear-gradient(180deg, oklch(100% 0 0 / 0.018) 1px, transparent 1px),
       linear-gradient(180deg, oklch(7% 0 0), oklch(4.25% 0 0)), var(--background);
     background-size:
       8rem 8rem,
@@ -153,7 +151,7 @@
     color: var(--foreground);
     font-family: var(--font-heading), var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     font-weight: 900;
-    letter-spacing: -0.055em;
+    letter-spacing: 0;
     text-transform: uppercase;
     text-wrap: balance;
   }
@@ -161,13 +159,13 @@
   h1 {
     font-size: clamp(3rem, 10vw, 7.5rem);
     line-height: 0.88;
-    letter-spacing: -0.035em;
+    letter-spacing: 0;
   }
 
   h2 {
     font-size: clamp(2rem, 5vw, 4rem);
     line-height: 0.92;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
   }
 
   h3 {
@@ -205,8 +203,11 @@
 
   nav,
   button,
-  .eyebrow {
+  .eyebrow,
+  .vouch-label {
+    font-family: var(--font-display), var(--font-mono), ui-monospace, monospace;
     letter-spacing: 0.045em;
+    text-transform: uppercase;
   }
 
   .prose,

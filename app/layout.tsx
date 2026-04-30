@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { ClerkProvider } from "@clerk/nextjs"
-import { Archivo, JetBrains_Mono } from "next/font/google"
+import { Archivo, Archivo_Black, Bebas_Neue, JetBrains_Mono } from "next/font/google"
 
 import "./globals.css"
 
@@ -16,6 +16,20 @@ const jetBrainsMono = JetBrains_Mono({
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600", "700", "800"],
+})
+
+const archivoBlack = Archivo_Black({
+  variable: "--font-brand",
+  subsets: ["latin"],
+  display: "swap",
+  weight: "400",
+})
+
+const bebasNeue = Bebas_Neue({
+  variable: "--font-display",
+  subsets: ["latin"],
+  display: "swap",
+  weight: "400",
 })
 
 const appUrl =
@@ -92,7 +106,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${jetBrainsMono.variable} dark`}
+      className={`${archivo.variable} ${jetBrainsMono.variable} ${archivoBlack.variable} ${bebasNeue.variable} dark`}
       suppressHydrationWarning
     >
       <body>

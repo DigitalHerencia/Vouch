@@ -4,15 +4,13 @@ import { verifyWebhook as verifyClerkRequestWebhook } from "@clerk/nextjs/webhoo
 import type { NextRequest } from "next/server"
 
 import { processClerkWebhookEvent } from "@/lib/actions/authActions"
+import { getRequiredEnv } from "@/lib/env"
 import type { ClerkWebhookEvent } from "@/types/auth"
 
 export async function verifyClerkWebhook(request: NextRequest): Promise<unknown> {
-  const signingSecret =
-    process.env.CLERK_WEBHOOK_SIGNING_SECRET ?? process.env.CLERK_SIGNING_SECRET
-
-  return signingSecret
-    ? verifyClerkRequestWebhook(request, { signingSecret })
-    : verifyClerkRequestWebhook(request)
+  return verifyClerkRequestWebhook(request, {
+    signingSecret: getRequiredEnv("CLERK_WEBHOOK_SECRET"),
+  })
 }
 
 export async function handleVerifiedClerkWebhook(input: { svixId: string; event: unknown }) {
