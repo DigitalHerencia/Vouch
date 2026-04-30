@@ -105,7 +105,12 @@ export const createVouchSchema = z
       .optional()
       .or(z.literal("").transform(() => undefined)),
     label: vouchLabelSchema,
-    termsAccepted: z.literal(true).optional(),
+    termsAccepted: z.literal(true, {
+      error: "You must accept the Vouch terms before creating this Vouch.",
+    }),
+    disclaimerAccepted: z.literal(true, {
+      error: "You must accept the conditional payment disclaimer before creating this Vouch.",
+    }),
   })
   .superRefine((value, ctx) => {
     if (value.confirmationOpensAt >= value.confirmationExpiresAt) {
@@ -129,7 +134,9 @@ export type CreateVouchInput = z.infer<typeof createVouchSchema>
 
 export const acceptVouchSchema = z.object({
   token: z.string().trim().min(8, "Invite token is invalid."),
-  termsAccepted: z.literal(true).optional(),
+  termsAccepted: z.literal(true, {
+    error: "You must accept the Vouch terms before accepting this Vouch.",
+  }),
 })
 
 export type AcceptVouchInput = z.infer<typeof acceptVouchSchema>

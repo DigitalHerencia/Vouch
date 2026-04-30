@@ -176,7 +176,7 @@ function VouchRow({ vouch, primary = false }: { vouch: DashboardVouch; primary?:
     <div className="grid gap-4 border-b border-neutral-800 py-4 last:border-b-0 sm:grid-cols-[1fr_auto_auto] sm:items-center">
       <div className="flex items-center gap-4">
         <span className="grid size-11 place-items-center rounded-full bg-blue-950 text-blue-500">
-          <UserRound className="size-5" />
+            <UserRound />
         </span>
         <div>
           <Link href={vouch.href} className="font-bold text-white">{vouch.title}</Link>

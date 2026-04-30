@@ -158,6 +158,7 @@ export interface SignupFormValues {
   email: string
   password: string
   verificationCode: string
+  acceptedUserAgreement: boolean
 }
 
 export interface LoginFormProps extends ComponentProps<"form"> {

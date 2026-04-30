@@ -20,7 +20,7 @@ export function AppMobileBottomNav({ className }: AppMobileBottomNavProps) {
     <nav
       aria-label="Mobile navigation"
       className={cn(
-        "fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-neutral-800 bg-neutral-950/95 px-2 py-2 backdrop-blur md:hidden",
+        "fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t-2 border-neutral-900 bg-black/90 px-2 py-2 backdrop-blur md:hidden",
         className
       )}
     >
@@ -33,13 +33,7 @@ export function AppMobileBottomNav({ className }: AppMobileBottomNavProps) {
             href={item.href}
             className="flex flex-col items-center gap-1 text-[11px] text-neutral-400"
           >
-            <span
-              className={
-                isPrimary
-                  ? "grid size-11 place-items-center rounded-full bg-blue-700 text-white"
-                  : "grid size-6 place-items-center text-blue-500"
-              }
-            >
+            <span className={isPrimary ? "grid size-11 place-items-center bg-blue-700 text-white" : "grid size-6 place-items-center text-blue-500"}>
               <Icon className={isPrimary ? "size-5" : "size-4"} />
             </span>
             {item.label}

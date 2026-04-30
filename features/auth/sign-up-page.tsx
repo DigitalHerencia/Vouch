@@ -5,9 +5,10 @@ import { LoaderCircle } from "lucide-react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldDescription, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
@@ -52,7 +53,12 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
       email: "",
       password: "",
       verificationCode: "",
+      acceptedUserAgreement: false,
     },
+  })
+  const acceptedUserAgreement = useWatch({
+    control: form.control,
+    name: "acceptedUserAgreement",
   })
 
   const nextUrl = sanitizePostAuthRedirect(redirectUrl)
@@ -162,7 +168,8 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
             (field === "firstName" ||
               field === "lastName" ||
               field === "email" ||
-              field === "password")
+              field === "password" ||
+              field === "acceptedUserAgreement")
           ) {
             form.setError(field, { message: issue.message })
           }
@@ -318,6 +325,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     email: form.getValues("email"),
                     password: "",
                     verificationCode: "",
+                    acceptedUserAgreement: form.getValues("acceptedUserAgreement"),
                   })
                 })
               }}
@@ -430,6 +438,42 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 errors={
                   form.formState.errors.password?.message
                     ? [{ message: form.formState.errors.password.message }]
+                    : undefined
+                }
+              />
+            </Field>
+
+            <Field data-invalid={Boolean(form.formState.errors.acceptedUserAgreement?.message)}>
+              <label className="flex items-start gap-3 border border-neutral-900 bg-black p-4">
+                <Checkbox
+                  className="mt-1 rounded-none"
+                  checked={acceptedUserAgreement}
+                  aria-invalid={Boolean(form.formState.errors.acceptedUserAgreement?.message)}
+                  disabled={isBusy}
+                  onCheckedChange={(checked) => {
+                    form.setValue("acceptedUserAgreement", checked === true, {
+                      shouldDirty: true,
+                      shouldValidate: true,
+                    })
+                  }}
+                />
+                <span className="text-sm font-semibold leading-6 text-neutral-400">
+                  I agree to the User Agreement,{" "}
+                  <Link href="/legal/terms" className="text-blue-500">
+                    Terms of Service
+                  </Link>
+                  , and{" "}
+                  <Link href="/legal/privacy" className="text-blue-500">
+                    Privacy Policy
+                  </Link>
+                  . I understand Vouch is a neutral payment coordination tool and not a marketplace,
+                  escrow provider, or dispute-resolution service.
+                </span>
+              </label>
+              <FieldError
+                errors={
+                  form.formState.errors.acceptedUserAgreement?.message
+                    ? [{ message: form.formState.errors.acceptedUserAgreement.message }]
                     : undefined
                 }
               />

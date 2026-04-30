@@ -2,13 +2,17 @@
 
 import { ArrowRight, LockKeyhole, ShieldCheck } from "lucide-react"
 import type { ReactNode } from "react"
+import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Switch } from "@/components/ui/switch"
 import { Textarea } from "@/components/ui/textarea"
 
 export function CreateVouchForm() {
+  const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(false)
+
   return (
     <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
       <section className="border border-neutral-800 bg-neutral-950/60">
@@ -61,7 +65,20 @@ export function CreateVouchForm() {
           <h2 className="font-bold text-white">Secure and neutral</h2>
           <p className="mt-2 text-sm text-neutral-400">Payments are processed by Stripe. Vouch does not hold funds or judge outcomes.</p>
         </div>
-        <Button className="h-12 rounded-none bg-blue-700">
+        <label className="flex items-start gap-3 border border-neutral-800 bg-neutral-950/70 p-5">
+          <Checkbox
+            className="mt-1 rounded-none"
+            checked={acceptedDisclaimer}
+            onCheckedChange={(checked) => setAcceptedDisclaimer(checked === true)}
+          />
+          <span className="text-sm leading-6 text-neutral-300">
+            I understand and agree to the conditional payment terms for this Vouch. Funds release
+            only if both parties confirm presence within the allowed time; otherwise the provider
+            flow refunds, voids, or does not capture. Vouch does not verify the meeting purpose,
+            guarantee outcomes, mediate disputes, or reverse completed outcomes.
+          </span>
+        </label>
+        <Button className="h-12 rounded-none bg-blue-700 disabled:opacity-40" disabled={!acceptedDisclaimer}>
           Review & commit <ArrowRight className="ml-auto size-5" />
         </Button>
       </aside>

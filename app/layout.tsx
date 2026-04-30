@@ -113,7 +113,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${archivo.variable} ${archivoBlack.variable} ${bebasNeue.variable} ${jetBrainsMono.variable} dark`}
       suppressHydrationWarning
     >
-      <body className="min-h-dvh overflow-x-hidden bg-black bg-[radial-gradient(circle_at_20%_15%,rgba(29,78,216,0.22),transparent_30%),radial-gradient(circle_at_80%_80%,rgba(29,78,216,0.12),transparent_32%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-size-[auto,auto,64px_64px,64px_64px] bg-position-[center,center,center,center] font-sans text-white antialiased">
+      <body className="min-h-dvh overflow-x-hidden bg-black bg-[radial-gradient(circle_at_16%_8%,rgba(29,78,216,0.28),transparent_30%),radial-gradient(circle_at_85%_78%,rgba(29,78,216,0.14),transparent_34%),linear-gradient(to_right,rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-size-[auto,auto,72px_72px,72px_72px] bg-position-[center,center,center,center] font-sans text-white antialiased">
         <ClerkProvider dynamic>{children}</ClerkProvider>
       </body>
     </html>
