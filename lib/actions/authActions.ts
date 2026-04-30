@@ -9,13 +9,13 @@ import { prisma } from "@/lib/db/prisma"
 import {
   createDefaultVerificationProfileTx,
   upsertUserFromClerkTx,
-} from "@/lib/actions/transactions/authTransactions"
+} from "@/lib/db/transactions/authTransactions"
 import {
   markProviderWebhookFailed,
   markProviderWebhookIgnored,
   markProviderWebhookProcessed,
   recordProviderWebhookReceived,
-} from "@/lib/actions/webhookActions"
+} from "@/lib/actions/paymentActions"
 import type { ClerkWebhookEvent, ClerkWebhookUserData } from "@/types/auth"
 import { clerkWebhookEventSchema } from "@/schemas/auth"
 

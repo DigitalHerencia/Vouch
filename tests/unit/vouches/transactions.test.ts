@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { bindPayeeToVouchTx } from "@/lib/actions/transactions/vouchTransactions"
+import { bindPayeeToVouchTx } from "@/lib/db/transactions/vouchTransactions"
 
 const vouchRecord = {
   id: "vouch_1",

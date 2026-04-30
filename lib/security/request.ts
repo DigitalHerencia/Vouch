@@ -3,7 +3,7 @@ import "server-only"
 import { randomUUID } from "node:crypto"
 import { headers as nextHeaders } from "next/headers"
 
-import { hashSensitiveValue } from "@/lib/auth/security/hash"
+import { hashSensitiveValue } from "@/lib/security/hash"
 import type { HeaderBag, RequestMetadataInput } from "@/types/security"
 
 async function getHeaderBag(input?: RequestMetadataInput): Promise<HeaderBag> {

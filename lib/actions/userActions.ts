@@ -4,17 +4,17 @@ import { revalidatePath } from "next/cache"
 
 import type { LocalUserSyncInput } from "@/lib/auth/clerk"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
-import { assertCapability } from "@/lib/auth/authorization/capabilities"
+import { assertCapability } from "@/lib/authz/capabilities"
 import { prisma } from "@/lib/db/prisma"
 import {
   createDefaultVerificationProfileTx,
   upsertUserFromClerkTx,
-} from "@/lib/actions/transactions/authTransactions"
+} from "@/lib/db/transactions/authTransactions"
 import {
   disableUserTx,
   reactivateUserTx,
   updateUserPrivateAccountInfoTx,
-} from "@/lib/actions/transactions/userTransactions"
+} from "@/lib/db/transactions/userTransactions"
 import {
   authProviderUserInputSchema,
   profileBasicsInputSchema,

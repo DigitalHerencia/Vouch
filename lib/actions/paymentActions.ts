@@ -2,9 +2,11 @@
 
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
+import type { Prisma } from "@/prisma/generated/prisma/client"
+import type Stripe from "stripe"
 
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
-import { assertCapability } from "@/lib/auth/authorization/capabilities"
+import { assertCapability } from "@/lib/authz/capabilities"
 import { prisma } from "@/lib/db/prisma"
 import {
   createStripeConnectAccount,
@@ -12,7 +14,19 @@ import {
   refreshStripeConnectReadiness,
 } from "@/lib/integrations/stripe/connect"
 import { getStripeServerClient } from "@/lib/integrations/stripe/client"
-import { initializeStripePaymentForVouch } from "@/lib/actions/stripePaymentActions"
+import {
+  captureStripePayment,
+  createStripePaymentAuthorization,
+  refundStripePayment,
+  voidStripeAuthorization,
+} from "@/lib/integrations/stripe/payment-intents"
+import { mapStripePaymentIntentStatus, mapStripeRefundStatus } from "@/lib/integrations/stripe/status-map"
+import {
+  isStripeAccountEvent,
+  isStripeIdentityEvent,
+  isStripePaymentIntentEvent,
+  isStripeRefundEvent,
+} from "@/lib/integrations/stripe/webhook-events"
 import {
   authorizeVouchPaymentInputSchema,
   captureOrReleaseVouchPaymentInputSchema,
@@ -27,6 +41,11 @@ import {
   startPayoutOnboardingInputSchema,
 } from "@/schemas/payment"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
+import type {
+  NormalizedProviderWebhookStatus,
+  ProviderWebhookLedgerInput,
+  ProviderWebhookStatusInput,
+} from "@/types/webhooks"
 
 type FieldErrors = Record<string, string[]>
 
@@ -1179,4 +1198,673 @@ export async function markPaymentFailed(
   })
 
   return actionSuccess(paymentResult(failed))
+}
+
+export type StripePaymentAdapterResult =
+  | { ok: true; providerPaymentId: string; clientSecret?: string | null }
+  | { ok: false; code: string; message: string }
+
+export type InitializeStripePaymentInput = {
+  vouchId: string
+  amountCents: number
+  currency: string
+  platformFeeCents: number
+  providerCustomerId?: string
+  providerPaymentMethodId?: string
+  connectedAccountId?: string
+  confirmOffSession?: boolean
+  idempotencyKey?: string
+}
+
+export async function initializeStripePaymentForVouch(
+  input: InitializeStripePaymentInput
+): Promise<StripePaymentAdapterResult> {
+  const existing = await prisma.paymentRecord.findUnique({
+    where: { vouchId: input.vouchId },
+    select: { id: true, providerPaymentId: true, status: true },
+  })
+
+  if (existing?.providerPaymentId && existing.status === "authorized") {
+    return { ok: true, providerPaymentId: existing.providerPaymentId, clientSecret: null }
+  }
+
+  if (
+    existing &&
+    existing.status !== "not_started" &&
+    existing.status !== "requires_payment_method"
+  ) {
+    return {
+      ok: false,
+      code: "PAYMENT_ALREADY_IN_PROGRESS",
+      message: "Payment already has provider state.",
+    }
+  }
+
+  try {
+    const paymentIntent = await createStripePaymentAuthorization({
+      vouchId: input.vouchId,
+      amountCents: input.amountCents,
+      currency: input.currency,
+      platformFeeCents: input.platformFeeCents,
+      ...(input.providerCustomerId ? { providerCustomerId: input.providerCustomerId } : {}),
+      ...(input.providerPaymentMethodId
+        ? { providerPaymentMethodId: input.providerPaymentMethodId }
+        : {}),
+      ...(input.connectedAccountId ? { connectedAccountId: input.connectedAccountId } : {}),
+      ...(input.confirmOffSession ? { confirmOffSession: input.confirmOffSession } : {}),
+      idempotencyKey: input.idempotencyKey ?? `vouch:${input.vouchId}:payment_authorization`,
+    })
+
+    await prisma.paymentRecord.upsert({
+      where: { vouchId: input.vouchId },
+      create: {
+        vouchId: input.vouchId,
+        provider: "stripe",
+        providerPaymentId: paymentIntent.id,
+        status:
+          paymentIntent.status === "requires_capture" ? "authorized" : "requires_payment_method",
+        amountCents: input.amountCents,
+        currency: input.currency,
+        platformFeeCents: input.platformFeeCents,
+      },
+      update: {
+        providerPaymentId: paymentIntent.id,
+        status:
+          paymentIntent.status === "requires_capture" ? "authorized" : "requires_payment_method",
+        amountCents: input.amountCents,
+        currency: input.currency,
+        platformFeeCents: input.platformFeeCents,
+        lastErrorCode: null,
+        lastErrorMessage: null,
+      },
+    })
+
+    if (
+      !["requires_capture", "requires_payment_method", "requires_confirmation"].includes(
+        paymentIntent.status
+      )
+    ) {
+      return {
+        ok: false,
+        code: "STRIPE_AUTHORIZATION_NOT_CONFIRMED",
+        message: "Stripe has not confirmed payment authorization yet.",
+      }
+    }
+
+    return {
+      ok: true,
+      providerPaymentId: paymentIntent.id,
+      clientSecret: paymentIntent.client_secret,
+    }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Stripe payment initialization failed."
+    return { ok: false, code: "STRIPE_PAYMENT_INITIALIZATION_FAILED", message }
+  }
+}
+
+export type ReleaseStripePaymentInput = {
+  paymentRecordId: string
+  connectedAccountId?: string
+  idempotencyKey?: string
+}
+
+export async function releaseStripePaymentForCompletedVouch(
+  input: ReleaseStripePaymentInput
+): Promise<{ ok: true } | { ok: false; code: string; message: string }> {
+  const paymentRecord = await prisma.paymentRecord.findUnique({
+    where: { id: input.paymentRecordId },
+    select: {
+      id: true,
+      providerPaymentId: true,
+      amountCents: true,
+      platformFeeCents: true,
+      currency: true,
+      status: true,
+      vouch: {
+        select: {
+          id: true,
+          payee: {
+            select: {
+              connectedAccount: {
+                select: { providerAccountId: true, readiness: true, payoutsEnabled: true },
+              },
+            },
+          },
+        },
+      },
+    },
+  })
+
+  if (!paymentRecord?.providerPaymentId) {
+    return {
+      ok: false,
+      code: "PAYMENT_RECORD_NOT_READY",
+      message: "No provider payment ID exists.",
+    }
+  }
+
+  if (paymentRecord.status !== "authorized") {
+    return {
+      ok: false,
+      code: "PAYMENT_NOT_AUTHORIZED",
+      message: "Payment must be provider-authorized before release.",
+    }
+  }
+
+  const connectedAccountId =
+    input.connectedAccountId ?? paymentRecord.vouch.payee?.connectedAccount?.providerAccountId
+
+  if (!connectedAccountId) {
+    return {
+      ok: false,
+      code: "CONNECTED_ACCOUNT_REQUIRED",
+      message: "Payee payout account is required.",
+    }
+  }
+
+  try {
+    const captured = await captureStripePayment({
+      providerPaymentId: paymentRecord.providerPaymentId,
+      idempotencyKey: input.idempotencyKey ?? `payment:${paymentRecord.id}:capture`,
+    })
+
+    const providerChargeId =
+      typeof captured.latest_charge === "string" ? captured.latest_charge : null
+
+    if (captured.status !== "succeeded" || !providerChargeId) {
+      await prisma.paymentRecord.update({
+        where: { id: paymentRecord.id },
+        data: {
+          status: "release_pending",
+          providerChargeId,
+          lastErrorCode: null,
+          lastErrorMessage: null,
+        },
+      })
+      return { ok: true }
+    }
+
+    await prisma.paymentRecord.update({
+      where: { id: paymentRecord.id },
+      data: {
+        status: "released",
+        providerChargeId,
+        lastErrorCode: null,
+        lastErrorMessage: null,
+      },
+    })
+
+    return { ok: true }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Stripe payment release failed."
+    await prisma.paymentRecord.update({
+      where: { id: paymentRecord.id },
+      data: {
+        status: "failed",
+        lastErrorCode: "STRIPE_RELEASE_FAILED",
+        lastErrorMessage: message,
+      },
+    })
+    return { ok: false, code: "STRIPE_RELEASE_FAILED", message }
+  }
+}
+
+export async function refundOrVoidStripePaymentForVouch(input: {
+  paymentRecordId: string
+  idempotencyKey?: string
+  reason:
+    | "not_accepted"
+    | "confirmation_incomplete"
+    | "canceled_before_acceptance"
+    | "payment_failure"
+    | "provider_required"
+}): Promise<{ ok: true } | { ok: false; code: string; message: string }> {
+  const paymentRecord = await prisma.paymentRecord.findUnique({
+    where: { id: input.paymentRecordId },
+    select: {
+      id: true,
+      vouchId: true,
+      providerPaymentId: true,
+      amountCents: true,
+      status: true,
+      vouch: {
+        select: { status: true },
+      },
+    },
+  })
+
+  if (!paymentRecord?.providerPaymentId) {
+    return {
+      ok: false,
+      code: "PAYMENT_RECORD_NOT_READY",
+      message: "No provider payment ID exists.",
+    }
+  }
+
+  try {
+    if (paymentRecord.status === "authorized") {
+      await voidStripeAuthorization({
+        providerPaymentId: paymentRecord.providerPaymentId,
+        idempotencyKey: input.idempotencyKey ?? `payment:${paymentRecord.id}:void`,
+      })
+      await prisma.$transaction([
+        prisma.paymentRecord.update({
+          where: { id: paymentRecord.id },
+          data: { status: "voided", lastErrorCode: null, lastErrorMessage: null },
+        }),
+        prisma.refundRecord.upsert({
+          where: { vouchId: paymentRecord.vouchId },
+          create: {
+            vouchId: paymentRecord.vouchId,
+            paymentRecordId: paymentRecord.id,
+            status: "succeeded",
+            reason: input.reason,
+            amountCents: paymentRecord.amountCents,
+          },
+          update: { status: "succeeded", reason: input.reason },
+        }),
+      ])
+      return { ok: true }
+    }
+
+    const refund = await refundStripePayment({
+      providerPaymentId: paymentRecord.providerPaymentId,
+      idempotencyKey: input.idempotencyKey ?? `payment:${paymentRecord.id}:refund`,
+    })
+
+    await prisma.$transaction([
+      prisma.paymentRecord.update({
+        where: { id: paymentRecord.id },
+        data: { status: "refund_pending", lastErrorCode: null, lastErrorMessage: null },
+      }),
+      prisma.refundRecord.upsert({
+        where: { vouchId: paymentRecord.vouchId },
+        create: {
+          vouchId: paymentRecord.vouchId,
+          paymentRecordId: paymentRecord.id,
+          providerRefundId: refund.id,
+          status: "pending",
+          reason: input.reason,
+          amountCents: paymentRecord.amountCents,
+        },
+        update: {
+          providerRefundId: refund.id,
+          status: "pending",
+          reason: input.reason,
+        },
+      }),
+    ])
+
+    return { ok: true }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Stripe refund/void failed."
+    await prisma.paymentRecord.update({
+      where: { id: paymentRecord.id },
+      data: {
+        status: "failed",
+        lastErrorCode: "STRIPE_REFUND_OR_VOID_FAILED",
+        lastErrorMessage: message,
+      },
+    })
+    return { ok: false, code: "STRIPE_REFUND_OR_VOID_FAILED", message }
+  }
+}
+
+export type StripeWebhookProcessingResult =
+  | { ok: true; status: 200; processed: true; ignored?: false }
+  | { ok: true; status: 200; processed: false; ignored: true; reason: string }
+  | { ok: false; status: 500; message: string }
+
+export async function processStripeWebhookEvent(
+  event: Stripe.Event
+): Promise<StripeWebhookProcessingResult> {
+  const ledger = await recordProviderWebhookReceived({
+    provider: "stripe",
+    providerEventId: event.id,
+    eventType: event.type,
+    safeMetadata: {
+      livemode: event.livemode,
+      api_version: event.api_version,
+    },
+  })
+
+  if (ledger.processed) {
+    return { ok: true, status: 200, processed: false, ignored: true, reason: "Already processed." }
+  }
+
+  try {
+    if (isStripeIdentityEvent(event) || isStripeAccountEvent(event)) {
+      await markProviderWebhookIgnored(
+        ledger.id,
+        "Handled by verification/account webhook processor."
+      )
+      return {
+        ok: true,
+        status: 200,
+        processed: false,
+        ignored: true,
+        reason: "Delegated event type.",
+      }
+    }
+
+    if (isStripePaymentIntentEvent(event)) {
+      await processPaymentIntentEvent(event, ledger.id)
+      await markProviderWebhookProcessed(ledger.id)
+      return { ok: true, status: 200, processed: true }
+    }
+
+    if (isStripeRefundEvent(event)) {
+      await processRefundEvent(event, ledger.id)
+      await markProviderWebhookProcessed(ledger.id)
+      return { ok: true, status: 200, processed: true }
+    }
+
+    await markProviderWebhookIgnored(ledger.id, "Unsupported Stripe event type.")
+    return {
+      ok: true,
+      status: 200,
+      processed: false,
+      ignored: true,
+      reason: "Unsupported event type.",
+    }
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Unknown Stripe webhook processing error."
+    await markProviderWebhookFailed(ledger.id, message)
+    return { ok: false, status: 500, message }
+  }
+}
+
+async function processPaymentIntentEvent(event: Stripe.Event, providerWebhookEventId: string) {
+  const intent = event.data.object as Stripe.PaymentIntent
+  const localStatus = mapStripePaymentIntentStatus(intent.status)
+
+  const paymentRecord = await prisma.paymentRecord.findFirst({
+    where: { providerPaymentId: intent.id },
+    select: { id: true, vouchId: true },
+  })
+
+  if (!paymentRecord) {
+    await prisma.paymentWebhookEvent.create({
+      data: {
+        provider: "stripe",
+        providerEventId: event.id,
+        eventType: event.type,
+        providerWebhookEventId,
+        processed: true,
+        processedAt: new Date(),
+        safeMetadata: {
+          payment_intent: intent.id,
+          reason: "No local payment record matched this provider payment ID.",
+        },
+      },
+    })
+    return
+  }
+
+  await prisma.$transaction([
+    prisma.paymentRecord.update({
+      where: { id: paymentRecord.id },
+      data: {
+        status: localStatus,
+        lastErrorCode: intent.last_payment_error?.code ?? null,
+        lastErrorMessage: intent.last_payment_error?.message ?? null,
+      },
+    }),
+    prisma.paymentWebhookEvent.create({
+      data: {
+        provider: "stripe",
+        providerEventId: event.id,
+        eventType: event.type,
+        providerWebhookEventId,
+        vouchId: paymentRecord.vouchId,
+        paymentRecordId: paymentRecord.id,
+        processed: true,
+        processedAt: new Date(),
+        safeMetadata: {
+          payment_intent: intent.id,
+          status: intent.status,
+        },
+      },
+    }),
+    prisma.auditEvent.create({
+      data: {
+        eventName: "payment.webhook_processed",
+        actorType: "payment_provider",
+        entityType: "PaymentWebhookEvent",
+        entityId: event.id,
+        participantSafe: false,
+        metadata: {
+          provider_event_id: event.id,
+          event_type: event.type,
+          payment_intent: intent.id,
+          status: intent.status,
+        },
+      },
+    }),
+  ])
+}
+
+async function processRefundEvent(event: Stripe.Event, providerWebhookEventId: string) {
+  const refund = event.data.object as Stripe.Refund
+  const localStatus = mapStripeRefundStatus(refund.status)
+
+  const refundRecord = await prisma.refundRecord.findFirst({
+    where: { providerRefundId: refund.id },
+    select: { id: true, vouchId: true, paymentRecordId: true },
+  })
+
+  if (!refundRecord) {
+    await prisma.paymentWebhookEvent.create({
+      data: {
+        provider: "stripe",
+        providerEventId: event.id,
+        eventType: event.type,
+        providerWebhookEventId,
+        processed: true,
+        processedAt: new Date(),
+        safeMetadata: {
+          refund: refund.id,
+          reason: "No local refund record matched this provider refund ID.",
+        },
+      },
+    })
+    return
+  }
+
+  await prisma.$transaction(async (tx) => {
+    await tx.refundRecord.update({
+      where: { id: refundRecord.id },
+      data: { status: localStatus },
+    })
+    await tx.paymentRecord.update({
+      where: { id: refundRecord.paymentRecordId },
+      data: { status: localStatus === "succeeded" ? "refunded" : "refund_pending" },
+    })
+    await tx.paymentWebhookEvent.create({
+      data: {
+        provider: "stripe",
+        providerEventId: event.id,
+        eventType: event.type,
+        providerWebhookEventId,
+        vouchId: refundRecord.vouchId,
+        paymentRecordId: refundRecord.paymentRecordId,
+        refundRecordId: refundRecord.id,
+        processed: true,
+        processedAt: new Date(),
+        safeMetadata: {
+          refund: refund.id,
+          status: refund.status,
+        },
+      },
+    })
+    await tx.auditEvent.create({
+      data: {
+        eventName: "payment.webhook_processed",
+        actorType: "payment_provider",
+        entityType: "PaymentWebhookEvent",
+        entityId: event.id,
+        participantSafe: false,
+        metadata: {
+          provider_event_id: event.id,
+          event_type: event.type,
+          refund: refund.id,
+          status: refund.status,
+        },
+      },
+    })
+    if (localStatus === "succeeded") {
+      await tx.vouch.update({
+        where: { id: refundRecord.vouchId },
+        data: { status: "refunded" },
+      })
+    }
+  })
+}
+
+export async function reconcileStuckPaymentRecords(input?: {
+  limit?: number
+}): Promise<{ reconciledCount: number; failedCount: number }> {
+  const stripe = getStripeServerClient()
+  const records = await prisma.paymentRecord.findMany({
+    where: {
+      provider: "stripe",
+      providerPaymentId: { not: null },
+      status: {
+        in: ["requires_payment_method", "authorized", "release_pending", "refund_pending"],
+      },
+    },
+    take: input?.limit ?? 50,
+    orderBy: { updatedAt: "asc" },
+    select: { id: true, providerPaymentId: true },
+  })
+
+  let reconciledCount = 0
+  let failedCount = 0
+
+  for (const record of records) {
+    if (!record.providerPaymentId) continue
+    try {
+      const intent = await stripe.paymentIntents.retrieve(record.providerPaymentId)
+      await prisma.paymentRecord.update({
+        where: { id: record.id },
+        data: {
+          status: mapStripePaymentIntentStatus(intent.status),
+          lastErrorCode: intent.last_payment_error?.code ?? null,
+          lastErrorMessage: intent.last_payment_error?.message ?? null,
+        },
+      })
+      reconciledCount += 1
+    } catch {
+      failedCount += 1
+    }
+  }
+
+  return { reconciledCount, failedCount }
+}
+
+export async function runPaymentReconciliationJob(input?: {
+  limit?: number
+}): Promise<{ reconciledCount: number; failedCount: number }> {
+  const payments = await reconcileStuckPaymentRecords(input)
+  const refunds = await prisma.refundRecord.findMany({
+    where: { providerRefundId: { not: null }, status: { in: ["pending", "failed"] } },
+    take: input?.limit ?? 50,
+    select: { id: true, paymentRecordId: true, providerRefundId: true },
+  })
+  const stripe = getStripeServerClient()
+  let refundReconciled = 0
+  let refundFailed = 0
+
+  for (const refundRecord of refunds) {
+    if (!refundRecord.providerRefundId) continue
+    try {
+      const refund = await stripe.refunds.retrieve(refundRecord.providerRefundId)
+      const status = mapStripeRefundStatus(refund.status)
+      await prisma.$transaction([
+        prisma.refundRecord.update({ where: { id: refundRecord.id }, data: { status } }),
+        prisma.paymentRecord.update({
+          where: { id: refundRecord.paymentRecordId },
+          data: { status: status === "succeeded" ? "refunded" : "refund_pending" },
+        }),
+      ])
+      refundReconciled += 1
+    } catch {
+      refundFailed += 1
+    }
+  }
+
+  return {
+    reconciledCount: payments.reconciledCount + refundReconciled,
+    failedCount: payments.failedCount + refundFailed,
+  }
+}
+
+export function normalizeProviderWebhookStatus(
+  input: ProviderWebhookStatusInput
+): NormalizedProviderWebhookStatus {
+  if (input.processed) {
+    return "processed"
+  }
+
+  if (input.processingError) {
+    return "failed"
+  }
+
+  return "received"
+}
+
+export async function recordProviderWebhookReceived(input: ProviderWebhookLedgerInput) {
+  return prisma.providerWebhookEvent.upsert({
+    where: {
+      provider_providerEventId: {
+        provider: input.provider,
+        providerEventId: input.providerEventId,
+      },
+    },
+    create: {
+      provider: input.provider,
+      providerEventId: input.providerEventId,
+      eventType: input.eventType,
+      status: "received",
+      processed: false,
+      safeMetadata: (input.safeMetadata ?? {}) as Prisma.InputJsonValue,
+    },
+    update: {},
+  })
+}
+
+export async function markProviderWebhookProcessed(id: string) {
+  return prisma.providerWebhookEvent.update({
+    where: { id },
+    data: {
+      status: "processed",
+      processed: true,
+      processedAt: new Date(),
+      processingError: null,
+    },
+  })
+}
+
+export async function markProviderWebhookIgnored(id: string, reason: string) {
+  return prisma.providerWebhookEvent.update({
+    where: { id },
+    data: {
+      status: "ignored",
+      processed: true,
+      processedAt: new Date(),
+      processingError: reason,
+    },
+  })
+}
+
+export async function markProviderWebhookFailed(id: string, error: string) {
+  return prisma.providerWebhookEvent.update({
+    where: { id },
+    data: {
+      status: "failed",
+      processed: false,
+      processingError: error,
+    },
+  })
 }

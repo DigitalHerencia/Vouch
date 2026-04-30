@@ -1,7 +1,7 @@
 import "server-only"
 
 import { requireActiveUser, type CurrentUser } from "@/lib/fetchers/authFetchers"
-import { assertCapability } from "@/lib/auth/authorization/capabilities"
+import { assertCapability } from "@/lib/authz/capabilities"
 
 export async function assertAdmin(): Promise<CurrentUser> {
   const user = await requireActiveUser()

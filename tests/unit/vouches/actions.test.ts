@@ -22,14 +22,14 @@ vi.mock("@/lib/db/prisma", () => ({
   },
 }))
 
-vi.mock("@/lib/actions/stripePaymentActions", () => ({
+vi.mock("@/lib/actions/paymentActions", () => ({
   initializeStripePaymentForVouch: vi.fn(),
   refundOrVoidStripePaymentForVouch: vi.fn(),
   releaseStripePaymentForCompletedVouch: vi.fn(),
 }))
 
 vi.mock("@/lib/actions/transactions/vouchTransactions", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/actions/transactions/vouchTransactions")>()
+  const actual = await importOriginal<typeof import("@/lib/db/transactions/vouchTransactions")>()
   return {
     ...actual,
     bindPayeeToVouchTx: vi.fn(),
@@ -38,7 +38,7 @@ vi.mock("@/lib/actions/transactions/vouchTransactions", async (importOriginal) =
 
 vi.mock("@/lib/actions/transactions/invitationTransactions", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/lib/actions/transactions/invitationTransactions")>()
+    await importOriginal<typeof import("@/lib/db/transactions/invitationTransactions")>()
   return {
     ...actual,
     markInvitationAcceptedTx: vi.fn(),

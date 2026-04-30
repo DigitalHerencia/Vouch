@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server"
 
-import { processStripeWebhookEvent } from "@/lib/actions/stripeWebhookActions"
+import { processStripeWebhookEvent } from "@/lib/actions/paymentActions"
 import { verifyStripeWebhookEvent } from "@/lib/integrations/stripe/webhook-events"
 
 export async function POST(request: NextRequest) {

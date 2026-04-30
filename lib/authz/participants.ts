@@ -1,6 +1,6 @@
 import "server-only"
 
-import { assertAllowed } from "@/lib/auth/authorization/assertions"
+import { assertAllowed } from "@/lib/authz/assertions"
 
 export type VouchParticipantInput = {
   userId: string

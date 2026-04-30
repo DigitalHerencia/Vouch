@@ -1,7 +1,7 @@
 import "server-only"
 
 import type { CurrentUser } from "@/lib/fetchers/authFetchers"
-import { deny } from "@/lib/auth/authorization/assertions"
+import { deny } from "@/lib/authz/assertions"
 import type { AdminCapability } from "@/types/auth"
 
 const ADMIN_CAPABILITIES: AdminCapability[] = [

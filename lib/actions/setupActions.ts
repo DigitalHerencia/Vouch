@@ -4,13 +4,13 @@ import { redirect } from "next/navigation"
 
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
-import { acceptTermsTx } from "@/lib/actions/transactions/setupTransactions"
+import { acceptTermsTx } from "@/lib/db/transactions/setupTransactions"
 import {
   acceptTermsSchema,
   setupPageStateInputSchema,
   startSetupProviderFlowSchema,
 } from "@/schemas/setup"
-import { CURRENT_TERMS_VERSION } from "@/lib/constants/terms"
+import { CURRENT_TERMS_VERSION } from "@/schemas/setup"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
 import { getSetupPageState } from "@/lib/fetchers/setupFetchers"
 

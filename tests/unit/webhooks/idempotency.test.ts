@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { normalizeProviderWebhookStatus } from "@/lib/actions/webhookActions"
+import { normalizeProviderWebhookStatus } from "@/lib/actions/paymentActions"
 
 describe("provider webhook status", () => {
   it("normalizes processed webhook records", () => {

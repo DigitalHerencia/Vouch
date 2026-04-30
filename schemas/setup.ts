@@ -2,6 +2,8 @@ import { z } from "zod"
 
 import { emptyStringToUndefined, sanitizeInternalPath } from "./common"
 
+export const CURRENT_TERMS_VERSION = "2026-04-24"
+
 export const internalReturnToSchema = z.preprocess(
   emptyStringToUndefined,
   z
