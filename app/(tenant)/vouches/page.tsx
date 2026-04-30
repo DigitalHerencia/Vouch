@@ -1,4 +1,4 @@
-import { VouchListPage } from "@/features/vouches"
+import { VouchListPage } from "@/features/vouches/list/vouch-list-page"
 import { listUserVouches } from "@/lib/fetchers/vouchFetchers"
 
 const money = (cents: unknown, currency: unknown) =>

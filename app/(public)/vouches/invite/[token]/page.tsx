@@ -1,4 +1,4 @@
-import { AcceptVouchPage } from "@/features/vouches"
+import { AcceptVouchPage } from "@/features/vouches/invite/accept-vouch-page"
 import { Button } from "@/components/ui/button"
 import { acceptVouch, declineVouch, markInviteOpened } from "@/lib/actions/vouchActions"
 import { getInviteLandingState } from "@/lib/fetchers/vouchFetchers"

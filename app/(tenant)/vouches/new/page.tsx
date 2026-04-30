@@ -1,4 +1,4 @@
-import { CreateVouchPage } from "@/features/vouches"
+import { CreateVouchPage } from "@/features/vouches/create/create-vouch-page"
 import { getCreateVouchPageState } from "@/lib/fetchers/vouchFetchers"
 
 export default async function Page() {

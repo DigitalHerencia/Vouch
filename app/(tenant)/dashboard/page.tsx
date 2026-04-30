@@ -1,4 +1,4 @@
-import { DashboardPage } from "@/features/dashboard"
+import { DashboardPage } from "@/features/dashboard/dashboard-page"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
 
 type PageProps = { searchParams?: Promise<Record<string, string | string[] | undefined>> }

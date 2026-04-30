@@ -1,4 +1,4 @@
-import { ConfirmPresencePage } from "@/features/vouches"
+import { ConfirmPresencePage } from "@/features/vouches/confirm/confirm-presence-page"
 import { confirmPresence } from "@/lib/actions/vouchActions"
 import { getConfirmPresencePageState } from "@/lib/fetchers/vouchFetchers"
 import { Button } from "@/components/ui/button"

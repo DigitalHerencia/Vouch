@@ -1,4 +1,4 @@
-import { AdminVouchDetailPage } from "@/features/admin"
+import { AdminVouchDetailPage } from "@/features/admin/vouches/admin-vouch-detail-page"
 import { getAdminVouchDetail, listAdminAuditEvents } from "@/lib/fetchers/adminFetchers"
 
 type PageProps = { params: Promise<{ vouchId: string }> }

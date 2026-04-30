@@ -1,4 +1,4 @@
-import { SetupPage } from "@/features/setup"
+import { SetupPage } from "@/features/setup/setup-page"
 import { getSetupPageState } from "@/lib/fetchers/setupFetchers"
 
 type PageProps = { searchParams?: Promise<{ return_to?: string }> }

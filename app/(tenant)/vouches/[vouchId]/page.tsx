@@ -1,4 +1,4 @@
-import { VouchDetailPage } from "@/features/vouches"
+import { VouchDetailPage } from "@/features/vouches/detail/vouch-detail-page"
 import {
   getParticipantSafeAuditTimeline,
   getVouchDetailForParticipant,
