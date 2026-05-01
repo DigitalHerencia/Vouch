@@ -1,10 +1,13 @@
+// app/(public)/legal/privacy/page.tsx
+
 import { BrutalistPageHeader } from "@/components/marketing/brutalist-page-header"
-import { LegalSections } from "@/components/marketing/legal-sections"
 import { privacySections } from "@/components/marketing/legal-content"
+import { LegalSections } from "@/components/marketing/legal-sections"
+import { PublicCtaPanel } from "@/components/marketing/public-cta-panel"
 
 export default function PrivacyRoute() {
   return (
-    <div className="px-6 py-10 sm:px-9 lg:px-10 lg:py-12">
+    <main className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
       <BrutalistPageHeader
         eyebrow="Legal"
         title="Privacy Policy"
@@ -12,6 +15,7 @@ export default function PrivacyRoute() {
       />
 
       <LegalSections sections={privacySections} />
-    </div>
+      <PublicCtaPanel />
+    </main>
   )
 }
