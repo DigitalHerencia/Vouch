@@ -1370,6 +1370,10 @@ export async function initializeStripePaymentForVouch(
 
 export type ReleaseStripePaymentInput = {
   paymentRecordId: string
+  /**
+   * Deprecated for destination charges. The connected account is fixed on the
+   * PaymentIntent through transfer_data.destination at authorization time.
+   */
   connectedAccountId?: string
   idempotencyKey?: string
 }
@@ -1386,18 +1390,6 @@ export async function releaseStripePaymentForCompletedVouch(
       platformFeeCents: true,
       currency: true,
       status: true,
-      vouch: {
-        select: {
-          id: true,
-          payee: {
-            select: {
-              connectedAccount: {
-                select: { providerAccountId: true, readiness: true, payoutsEnabled: true },
-              },
-            },
-          },
-        },
-      },
     },
   })
 
@@ -1414,17 +1406,6 @@ export async function releaseStripePaymentForCompletedVouch(
       ok: false,
       code: "PAYMENT_NOT_AUTHORIZED",
       message: "Payment must be provider-authorized before release.",
-    }
-  }
-
-  const connectedAccountId =
-    input.connectedAccountId ?? paymentRecord.vouch.payee?.connectedAccount?.providerAccountId
-
-  if (!connectedAccountId) {
-    return {
-      ok: false,
-      code: "CONNECTED_ACCOUNT_REQUIRED",
-      message: "Payee payout account is required.",
     }
   }
 

@@ -1,11 +1,15 @@
 # Stripe Sandbox Proof
 
-Date: 2026-04-30
+Date: 2026-05-01
 
-Stripe account source:
+Stripe account source of truth:
 
-- Account ID: `acct_1TQHH2GuFcEUvSe9`
-- Display name: `Vouch`
+- Live/main account: `Vouch` / `acct_1TQHH2GuFcEUvSe9`
+- Sandbox platform account for proof: `Vouch sandbox` / `acct_1TPa46GV5dKxUPtb`
+- Sandbox connected test account: `acct_1TQHpNGV5d6axbAJ`
+
+Do not use `acct_1TQHH2GuFcEUvSe9` for sandbox destination PaymentIntent proof.
+Do not hard-code the sandbox connected account ID into production code.
 
 ## Scope
 
@@ -17,6 +21,207 @@ This proof attempted to validate the manual-capture destination PaymentIntent fl
 - pricing snapshot metadata present on the PaymentIntent
 
 No secrets are recorded in this document.
+
+## 2026-05-01 Corrected Sandbox Platform Proof
+
+Stripe CLI profile:
+
+- `vouch sandbox`
+- Reports account: `Vouch sandbox` / `acct_1TPa46GV5dKxUPtb`
+
+Connected account:
+
+- `acct_1TQHpNGV5d6axbAJ`
+- Belongs to sandbox platform `acct_1TPa46GV5dKxUPtb`
+- Test/sandbox only.
+
+PaymentIntent created:
+
+- ID: `pi_3TS6IhGV5dKxUPtb2Qm6I8Tx`
+- latest charge: `ch_3TS6IhGV5dKxUPtb28Zv19oC`
+- livemode: `false`
+
+Verified PaymentIntent shape:
+
+- `amount`: `10845`
+- `amount_capturable`: `10845`
+- `amount_received`: `0`
+- `currency`: `usd`
+- `capture_method`: `manual`
+- `payment_method_types`: `["card"]`
+- `automatic_payment_methods`: `null`
+- `application_fee_amount`: `845`
+- `transfer_data.destination`: `acct_1TQHpNGV5d6axbAJ`
+- `on_behalf_of`: `null`
+- `status`: `requires_capture`
+
+Verified metadata:
+
+- `vouch_id`: `sandbox-proof-2026-05-01-capture`
+- `protected_amount_cents`: `10000`
+- `merchant_receives_cents`: `10000`
+- `vouch_service_fee_cents`: `500`
+- `processing_fee_offset_cents`: `345`
+- `application_fee_amount_cents`: `845`
+- `customer_total_cents`: `10845`
+- `payment_role`: `customer_commitment`
+
+Stripe CLI command class used:
+
+```txt
+stripe -p "vouch sandbox" payment_intents create --amount 10845 --currency usd --capture-method manual -d "payment_method_types[0]=card" -d application_fee_amount=845 -d "transfer_data[destination]=acct_1TQHpNGV5d6axbAJ" -d "metadata[...]=..." -d payment_method=pm_card_visa -d confirm=true
+```
+
+Proof status:
+
+- Manual-capture destination PaymentIntent proof: passed.
+- `amount = customerTotalCents`: passed.
+- `application_fee_amount = applicationFeeAmountCents`: passed.
+- `transfer_data.destination = connected account`: passed.
+- `status = requires_capture`: passed.
+- pricing metadata: passed.
+
+## 2026-05-01 Capture Proof
+
+Captured PaymentIntent:
+
+- ID: `pi_3TS6IhGV5dKxUPtb2Qm6I8Tx`
+- latest charge: `ch_3TS6IhGV5dKxUPtb28Zv19oC`
+- livemode: `false`
+
+Verified capture result:
+
+- `status`: `succeeded`
+- `amount`: `10845`
+- `amount_received`: `10845`
+- `amount_capturable`: `0`
+- `currency`: `usd`
+- `capture_method`: `manual`
+- `payment_method_types`: `["card"]`
+- `application_fee_amount`: `845`
+- `transfer_data.destination`: `acct_1TQHpNGV5d6axbAJ`
+- `automatic_payment_methods`: `null`
+
+Stripe CLI command class used:
+
+```txt
+stripe -p "vouch sandbox" payment_intents capture pi_3TS6IhGV5dKxUPtb2Qm6I8Tx
+```
+
+Capture proof status:
+
+- Capture path: passed.
+- `succeeded`/captured provider status: passed.
+- `amount_received = customerTotalCents`: passed.
+
+## 2026-05-01 Cancel Proof
+
+Separate uncaptured PaymentIntent created for cancel proof:
+
+- ID: `pi_3TS6RbGV5dKxUPtb0e8SXw7l`
+- latest charge: `ch_3TS6RbGV5dKxUPtb08fQZH2b`
+- livemode: `false`
+
+Verified pre-cancel shape:
+
+- `status`: `requires_capture`
+- `amount`: `10845`
+- `amount_capturable`: `10845`
+- `amount_received`: `0`
+- `currency`: `usd`
+- `capture_method`: `manual`
+- `payment_method_types`: `["card"]`
+- `application_fee_amount`: `845`
+- `transfer_data.destination`: `acct_1TQHpNGV5d6axbAJ`
+- `automatic_payment_methods`: `null`
+
+Verified cancel result:
+
+- `status`: `canceled`
+- `amount`: `10845`
+- `amount_capturable`: `0`
+- `amount_received`: `0`
+- `currency`: `usd`
+- `capture_method`: `manual`
+- `payment_method_types`: `["card"]`
+- `application_fee_amount`: `845`
+- `transfer_data.destination`: `acct_1TQHpNGV5d6axbAJ`
+
+Stripe CLI command classes used:
+
+```txt
+stripe -p "vouch sandbox" payment_intents create --amount 10845 --currency usd --capture-method manual -d "payment_method_types[0]=card" -d application_fee_amount=845 -d "transfer_data[destination]=acct_1TQHpNGV5d6axbAJ" -d "metadata[...]=..." -d payment_method=pm_card_visa -d confirm=true
+stripe -p "vouch sandbox" payment_intents cancel pi_3TS6RbGV5dKxUPtb0e8SXw7l
+```
+
+Cancel proof status:
+
+- Separate uncaptured PaymentIntent: passed.
+- Cancel path: passed.
+- `status = canceled`: passed.
+
+Code patch decision:
+
+- Safe to patch stale destination-charge lifecycle code that still assumes connected-account routing must be re-established at release/capture time.
+
+## 2026-05-01 Wrong Platform Attempt
+
+Requested connected account:
+
+- `acct_1TQHpNGV5d6axbAJ`
+- Test/sandbox only.
+- Must not be hard-coded into production code.
+
+Required first-proof PaymentIntent shape:
+
+- `amount`: `10845`
+- `currency`: `usd`
+- `capture_method`: `manual`
+- `payment_method_types`: `["card"]`
+- `application_fee_amount`: `845`
+- `transfer_data.destination`: `acct_1TQHpNGV5d6axbAJ`
+- `payment_method`: `pm_card_visa`
+- `confirm`: `true`
+- metadata includes the pricing snapshot and `payment_role = "customer_commitment"`
+
+Stripe CLI command class used:
+
+```txt
+stripe payment_intents create --amount 10845 --currency usd --capture-method manual -d "payment_method_types[0]=card" -d application_fee_amount=845 -d "transfer_data[destination]=acct_1TQHpNGV5d6axbAJ" -d "metadata[...]=..." -d payment_method=pm_card_visa -d confirm=true
+```
+
+Result:
+
+- PaymentIntent ID: not created
+- Stripe result: blocked
+- Stripe error code: `resource_missing`
+- Stripe error param: `transfer_data[destination]`
+- Stripe error summary: `No such destination: 'acct_1TQHpNGV5d6axbAJ'`
+- Request log URL account context: `acct_1TQHH2GuFcEUvSe9`
+
+Connected-account verification:
+
+- `stripe config --list` shows the active Stripe CLI project/account as `acct_1TQHH2GuFcEUvSe9` / `Vouch`.
+- `stripe accounts list --limit 10` does not include `acct_1TQHpNGV5d6axbAJ`; it only returned `acct_1TS3vvGlBG0RLmL4`.
+- `stripe v2 core accounts list --limit 10` does not include `acct_1TQHpNGV5d6axbAJ`; it only returned `acct_1TS3vvGlBG0RLmL4`.
+- `stripe v2 core accounts retrieve acct_1TQHpNGV5d6axbAJ ...` returned `forbidden`, indicating this platform API key cannot access that account.
+
+Proof status:
+
+- Manual-capture destination PaymentIntent proof: failed before creation.
+- `amount = customerTotalCents`: not provider-proven because no PaymentIntent was created.
+- `application_fee_amount = applicationFeeAmountCents`: not provider-proven because no PaymentIntent was created.
+- `transfer_data.destination = connected account`: failed; Stripe rejected the requested destination account.
+- `status = requires_capture`: not reached.
+- pricing metadata: not provider-proven because no PaymentIntent was created.
+- capture path: not run.
+- cancel path: not run.
+- webhook event ID idempotency: not run against a real event from this proof.
+
+Decision:
+
+- This attempt is superseded by the corrected sandbox platform proof above.
+- The error was caused by using the live/main account context for a sandbox connected account.
 
 ## Expected Pricing Snapshot
 
@@ -68,29 +273,29 @@ Connected account result:
 
 ## Release/Capture Path
 
-Not proven.
+Proven.
 
 Reason:
 
-- No connected account available in this sandbox session was ready for destination charges/transfers.
-- The PaymentIntent could not be created with `transfer_data.destination`.
+- The corrected sandbox platform successfully created and confirmed a manual-capture destination PaymentIntent with `status = requires_capture`.
+- The authorized PaymentIntent was captured successfully and Stripe returned `status = succeeded` with `amount_received = 10845`.
 
 ## Provider-Only Release Path
 
-Not proven.
+Partially proven.
 
 Reason:
 
-- Blocked before PaymentIntent authorization.
-- Existing implementation still contains dual-confirm-only release logic, so backend changes are likely required after Stripe connected-account readiness is unblocked.
+- Destination routing to the provider/merchant connected account is established at authorization time through `transfer_data.destination`.
+- Release/capture code should capture the authorized PaymentIntent and should not require a second connected-account routing decision.
 
 ## Customer-Only Refund/Void/Non-Capture Path
 
-Not proven.
+Cancel/non-capture path proven for an uncaptured PaymentIntent.
 
 Reason:
 
-- Blocked before PaymentIntent authorization.
+- A separate manual-capture destination PaymentIntent was created in `requires_capture` and then canceled successfully.
 
 ## Neither-Confirmed Refund/Void/Non-Capture Path
 
@@ -111,17 +316,9 @@ Reason:
 
 ## Unresolved Blockers
 
-- No ready merchant/provider connected account is available for destination charges in the current Stripe sandbox state.
-- A newly created Express account remains capability-inactive until onboarding is completed.
-- Creating a test-mode Custom account is blocked by the platform profile/responsibility configuration.
-- Because destination PaymentIntent creation is blocked, capture, cancel/refund, webhook reconciliation, and local DB resolution proof cannot be completed yet.
+- Capture, cancel on a separate uncaptured PaymentIntent, and webhook idempotency still need to be run as follow-up proof steps if required for release readiness.
+- The wrong-platform attempts remain in this document only as audit history.
 
 ## Required Next Step
 
-Complete one of the following in Stripe test mode for `acct_1TQHH2GuFcEUvSe9`:
-
-- Finish onboarding for the Express connected account created during this proof, or
-- Provide/create a connected account with enabled transfer capability for destination charges, or
-- Update the Stripe platform profile/responsibility settings so test-mode Custom connected accounts can be created with required capabilities.
-
-After a ready connected account exists, rerun the PaymentIntent authorization proof and continue capture, void/refund, webhook, and local reconciliation testing.
+Use Stripe CLI profile `vouch sandbox` for sandbox proof work. Do not use live/main account `acct_1TQHH2GuFcEUvSe9` for sandbox destination PaymentIntent proof.

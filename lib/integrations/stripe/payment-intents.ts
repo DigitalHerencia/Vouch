@@ -30,7 +30,7 @@ export async function createStripePaymentAuthorization(
       amount: input.customerTotalCents,
       currency: input.currency,
       capture_method: "manual",
-      automatic_payment_methods: { enabled: true },
+      payment_method_types: ["card"],
       ...(input.providerCustomerId ? { customer: input.providerCustomerId } : {}),
       ...(input.providerPaymentMethodId ? { payment_method: input.providerPaymentMethodId } : {}),
       ...(input.confirmOffSession && input.providerPaymentMethodId
@@ -50,6 +50,7 @@ export async function createStripePaymentAuthorization(
         vouch_service_fee_cents: String(input.vouchServiceFeeCents),
         processing_fee_offset_cents: String(input.processingFeeOffsetCents),
         application_fee_amount_cents: String(input.applicationFeeAmountCents),
+        customer_total_cents: String(input.customerTotalCents),
       },
     },
     { idempotencyKey: input.idempotencyKey }
