@@ -3,6 +3,8 @@
 import Link from "next/link"
 import { ArrowRight, ShieldCheck } from "lucide-react"
 
+import { vouchPrimaryButtonClassName } from "@/components/brand/button-styles"
+
 export function TrustPanel() {
   return (
     <section className="mt-10 grid gap-6 border border-neutral-700 bg-black/55 p-7 backdrop-blur-[2px] sm:grid-cols-[auto_1fr] lg:grid-cols-[auto_1fr_auto] lg:items-center">
@@ -21,11 +23,11 @@ export function TrustPanel() {
       </div>
 
       <Link
-        href="/legal/terms"
-        className="inline-flex h-14.5 min-w-62.5 items-center justify-center gap-6 bg-[#1D4ED8] px-7 text-center font-(family-name:--font-display) text-[14px] leading-none tracking-[0.08em] text-white uppercase transition-colors hover:bg-blue-700"
+        href="/sign-up?return_to=/vouches/new"
+        className={`${vouchPrimaryButtonClassName} min-w-72`}
       >
-        Learn our principles
-        <ArrowRight className="size-5" strokeWidth={1.9} />
+        <span className="translate-y-px">Create a Vouch</span>
+        <ArrowRight className="size-5 sm:size-6" strokeWidth={1.9} />
       </Link>
     </section>
   )

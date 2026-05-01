@@ -117,12 +117,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
     >
       <body className="min-h-dvh overflow-x-hidden bg-black font-sans text-white antialiased">
         <div className="pointer-events-none fixed inset-0 z-0 bg-black" />
-        <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_16%_8%,rgba(29,78,216,0.28),transparent_30%),radial-gradient(circle_at_85%_78%,rgba(29,78,216,0.14),transparent_34%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-size-[auto,auto,72px_72px,72px_72px] bg-position-[center,center,center,center]" />
-
+        <div className="pointer-events-none fixed inset-0 z-0 bg-[radial-gradient(circle_at_18%_12%,rgba(29,78,216,0.42),transparent_28%),radial-gradient(circle_at_82%_62%,rgba(29,78,216,0.32),transparent_34%),radial-gradient(circle_at_50%_38%,rgba(29,78,216,0.12),transparent_42%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-size-[auto,auto,auto,72px_72px,72px_72px] bg-position-[center,center,center,center,center]" />{" "}
         <ClerkProvider dynamic>
-          <div className="relative z-10 mx-auto min-h-dvh w-full max-w-7xl border-x border-neutral-800/80 bg-black/35 text-white shadow-[0_0_80px_rgba(0,0,0,0.55)]">
-            {children}
-          </div>
+          <div className="relative z-10 min-h-dvh w-full text-white">{children}</div>
         </ClerkProvider>
       </body>
     </html>
