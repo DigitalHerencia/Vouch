@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { ArrowRight, ShieldCheck } from "lucide-react"
 
-import { vouchPrimaryButtonClassName } from "@/components/brand/button-styles"
+import { vouchPrimaryButtonClassName } from "@/components/brand/vouch-button-styles"
 
 export function TrustPanel() {
   return (

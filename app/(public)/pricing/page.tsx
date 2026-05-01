@@ -1,30 +1,58 @@
-// app/(public)/pricing/page.tsx
+import { ArrowDown, ArrowRight } from "lucide-react"
 
+import {
+  VouchPrimaryLink,
+  VouchSecondaryLink,
+  vouchContainerClassName,
+} from "@/components/brand/vouch-elements"
 import { BrutalistPageHeader } from "@/components/marketing/brutalist-page-header"
-import { PaymentFlowPanel } from "@/components/marketing/payment-flow-panel"
-import { PricingPanel } from "@/components/marketing/pricing-panel"
+import { PricingFlowPanel, PricingPanel } from "@/components/marketing/pricing-panel"
 import { PublicCtaPanel } from "@/components/marketing/public-cta-panel"
 
 export default function PricingRoute() {
   return (
-    <main className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
-      <section className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
-        <div className="mx-auto w-full max-w-130 lg:pt-6">
-          <PaymentFlowPanel />
-        </div>
+    <main>
+      <div className={vouchContainerClassName}>
+        <BrutalistPageHeader
+          className="mt-12"
+          title={
+            <>
+              Clear before
+              <br />
+              payment-backed
+              <br />
+              commitment
+              <br />
+              release.
+            </>
+          }
+          body="Vouch charges a transparent platform fee before payment commitment. You always see the amount, platform fee, provider fee, and total before confirming."
+          actions={
+            <>
+              <VouchPrimaryLink
+                href="/sign-up?return_to=/vouches/new"
+                icon={ArrowRight}
+                className="w-full sm:w-auto sm:min-w-56"
+              >
+                Create a Vouch
+              </VouchPrimaryLink>
 
-        <div className="pt-2 lg:pt-8">
-          <BrutalistPageHeader
-            eyebrow="Pricing"
-            title="Clear before commitment"
-            body="Vouch charges a transparent platform fee before payment commitment. You always see amount, fee, and total before confirming."
-            align="right"
-          />
-        </div>
+              <VouchSecondaryLink
+                href="/how-it-works"
+                icon={ArrowDown}
+                className="w-full sm:w-auto sm:min-w-56"
+              >
+                How it works
+              </VouchSecondaryLink>
+            </>
+          }
+        />
+        <PricingFlowPanel />
+      </div>
+      <section className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
+        <PricingPanel />
+        <PublicCtaPanel />
       </section>
-
-      <PricingPanel />
-      <PublicCtaPanel />
     </main>
   )
 }

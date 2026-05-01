@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 
-import { vouchTextLinkClassName } from "@/components/brand/button-styles"
+import { vouchTextLinkClassName } from "@/components/brand/vouch-button-styles"
 
 const footerLinks = [
   { label: "Pricing", href: "/pricing" },

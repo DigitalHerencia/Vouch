@@ -1,7 +1,5 @@
 // components/marketing/legal-sections.tsx
 
-import { VouchPanel } from "@/components/brand/vouch-elements"
-
 export interface LegalSectionsProps {
   sections: Array<{
     heading: string
@@ -11,7 +9,7 @@ export interface LegalSectionsProps {
 
 export function LegalSections({ sections }: LegalSectionsProps) {
   return (
-    <VouchPanel className="mt-14 grid">
+    <section className="mt-14 grid border border-neutral-700 bg-black/55 backdrop-blur-[2px]">
       {sections.map((section) => (
         <section
           key={section.heading}
@@ -33,6 +31,6 @@ export function LegalSections({ sections }: LegalSectionsProps) {
           </div>
         </section>
       ))}
-    </VouchPanel>
+    </section>
   )
 }
