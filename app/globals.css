@@ -1,3 +1,5 @@
+/* app/globals.css */
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -38,7 +40,6 @@
   --sidebar-ring: oklch(0.58 0.22 264);
 
   --font-heading: var(--font-brand), var(--font-sans);
-  --font-display: var(--font-display), var(--font-mono);
 }
 
 @layer base {
@@ -77,16 +78,7 @@
   body {
     min-height: 100vh;
     margin: 0;
-    background:
-      linear-gradient(90deg, oklch(100% 0 0 / 0.025) 1px, transparent 1px),
-      linear-gradient(180deg, oklch(100% 0 0 / 0.018) 1px, transparent 1px),
-      linear-gradient(180deg, oklch(7% 0 0), oklch(4.25% 0 0)), var(--background);
-    background-size:
-      8rem 8rem,
-      8rem 8rem,
-      auto,
-      auto,
-      auto;
+    background: var(--background);
     color: var(--foreground);
   }
 
@@ -209,51 +201,22 @@
     letter-spacing: 0.045em;
     text-transform: uppercase;
   }
+}
 
-  .prose,
-  [data-slot="typography"] {
-    --tw-prose-body: var(--muted-foreground);
-    --tw-prose-headings: var(--foreground);
-    --tw-prose-lead: var(--muted-foreground);
-    --tw-prose-links: var(--foreground);
-    --tw-prose-bold: var(--foreground);
-    --tw-prose-counters: var(--muted-foreground);
-    --tw-prose-bullets: var(--border);
-    --tw-prose-hr: var(--border);
-    --tw-prose-quotes: var(--foreground);
-    --tw-prose-quote-borders: var(--primary);
-    --tw-prose-captions: var(--muted-foreground);
-    --tw-prose-code: var(--foreground);
-    --tw-prose-pre-code: var(--foreground);
-    --tw-prose-pre-bg: var(--card);
-    --tw-prose-th-borders: var(--border);
-    --tw-prose-td-borders: var(--border);
+@keyframes vouch-load {
+  0% {
+    width: 12%;
+    transform: translateX(0);
   }
 
-  .prose :where(h1, h2, h3, h4, h5, h6),
-  [data-slot="typography"] :where(h1, h2, h3, h4, h5, h6) {
-    letter-spacing: -0.045em;
-    text-transform: uppercase;
+  45% {
+    width: 72%;
+    transform: translateX(0);
   }
 
-  .prose :where(a),
-  [data-slot="typography"] :where(a) {
-    text-decoration-thickness: 1px;
-    text-underline-offset: 0.22em;
-  }
-
-  .prose :where(code),
-  [data-slot="typography"] :where(code) {
-    border: 1px solid var(--border);
-    background: var(--card);
-    padding: 0.125rem 0.25rem;
-    font-weight: 600;
-  }
-
-  .prose :where(pre),
-  [data-slot="typography"] :where(pre) {
-    border: 1px solid var(--border);
-    border-radius: 0;
+  100% {
+    width: 18%;
+    transform: translateX(455%);
   }
 }
 

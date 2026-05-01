@@ -26,14 +26,14 @@ export function AppHeader({ className }: AppHeaderProps) {
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 border-b-2 border-neutral-900 bg-black/78 backdrop-blur supports-[backdrop-filter]:bg-black/62",
+        "sticky top-0 z-40 border-b-2 border-neutral-900 bg-black/78 backdrop-blur supports-backdrop-filter:bg-black/62",
         className
       )}
     >
-      <div className="mx-auto flex h-[76px] w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-19 w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-7 lg:gap-10">
           <Link href="/dashboard" className="inline-flex items-center text-neutral-50">
-            <LogoLockup wordmarkClassName="h-12 sm:h-14" />
+            <LogoLockup />
           </Link>
 
           <nav aria-label="Main navigation" className="hidden items-center gap-2 md:flex">
@@ -61,7 +61,11 @@ export function AppHeader({ className }: AppHeaderProps) {
           >
             Create Vouch
           </Button>
-          <Button variant="ghost" size="icon" className="hidden rounded-none text-neutral-200 md:inline-flex">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="hidden rounded-none text-neutral-200 md:inline-flex"
+          >
             <Bell />
             <span className="sr-only">Notifications</span>
           </Button>
