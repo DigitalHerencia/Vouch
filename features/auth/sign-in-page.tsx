@@ -1,3 +1,5 @@
+// features/auth/sign-in-page.tsx
+
 "use client"
 
 import { useSignIn } from "@clerk/nextjs"
@@ -16,16 +18,16 @@ import { loginSchema, verificationSchema } from "@/schemas/auth"
 import { type LoginFormProps, type LoginFormValues } from "@/types/auth"
 
 const inputClassName =
-  "h-12 rounded-none border border-neutral-900 bg-black px-4 font-[family-name:var(--font-sans)] text-base font-semibold text-white shadow-none outline-none placeholder:text-neutral-800 focus-visible:border-[#1D4ED8] focus-visible:ring-0"
+  "h-13 rounded-none border border-neutral-700 bg-black px-4 font-(family-name:--font-sans) text-base font-semibold text-white shadow-none outline-none placeholder:text-neutral-600 focus-visible:border-[#1D4ED8] focus-visible:ring-0"
 
 const labelClassName =
-  "font-[family-name:var(--font-display)] text-lg font-normal tracking-wide text-white"
+  "font-(family-name:--font-display) text-lg leading-none tracking-[0.08em] text-white uppercase"
 
 const primaryButtonClassName =
-  "h-12 w-full rounded-none bg-[#1D4ED8] font-[family-name:var(--font-display)] text-xl font-normal tracking-wide text-white shadow-none transition hover:bg-[#1D4ED8]/90 focus-visible:ring-0"
+  "h-14.5 w-full rounded-none bg-[#1D4ED8] font-(family-name:--font-display) text-lg tracking-[0.1em] text-white uppercase shadow-none transition-all hover:bg-white hover:text-black focus-visible:ring-0"
 
 const secondaryButtonClassName =
-  "h-12 rounded-none border border-neutral-900 bg-black font-[family-name:var(--font-display)] text-lg font-normal tracking-wide text-white shadow-none transition hover:border-[#1D4ED8] hover:bg-black hover:text-[#1D4ED8] focus-visible:ring-0"
+  "h-14.5 rounded-none border border-neutral-700 bg-black font-(family-name:--font-display) text-lg tracking-[0.1em] text-white uppercase shadow-none transition-all hover:border-[#1D4ED8] hover:text-[#1D4ED8] focus-visible:ring-0"
 
 function getErrorMessage(error: unknown, fallback: string): string {
   const clerkError = error as { errors?: Array<{ message?: string }> }
@@ -235,23 +237,12 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
 
   return (
     <form
-      className={cn("mx-auto flex w-full max-w-120 flex-col bg-transparent text-white", className)}
+      className={cn("flex w-full max-w-125 flex-col bg-transparent text-white", className)}
       onSubmit={handleSubmit}
       noValidate
       {...props}
     >
-      <FieldGroup className="gap-4 border-0 bg-transparent p-0 shadow-none">
-        <div className="mb-2 text-center">
-          <h1 className="font-(family-name:--font-brand) text-5xl leading-[0.9] font-black tracking-[-0.06em] text-white uppercase sm:text-6xl">
-            Back your commitment.
-          </h1>
-
-          <p className="mx-auto mt-4 max-w-105 text-base leading-7 font-semibold text-neutral-500">
-            Sign in to manage Vouches, confirm presence, and keep payment-backed commitments on
-            track.
-          </p>
-        </div>
-
+      <FieldGroup className="gap-5 border-0 bg-transparent p-0 shadow-none">
         {notice ? (
           <div className="border border-[#1D4ED8]/70 bg-[#1D4ED8]/10 px-4 py-3 font-mono text-sm text-blue-100">
             {notice}
@@ -259,13 +250,13 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
         ) : null}
 
         {form.formState.errors.root?.message ? (
-          <div className="border border-red-950/70 bg-red-950/30 px-4 py-3 font-mono text-sm text-red-100">
+          <div className="border border-red-900 bg-red-950/30 px-4 py-3 font-mono text-sm text-red-100">
             {form.formState.errors.root.message}
           </div>
         ) : null}
 
         {awaitingSecondFactor ? (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <Field>
               <FieldLabel className={labelClassName} htmlFor="verificationCode">
                 Verification code
@@ -285,7 +276,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                 })}
               />
 
-              <FieldDescription className="font-mono text-sm text-neutral-600">
+              <FieldDescription className="font-mono text-sm text-neutral-500">
                 Use the latest code sent to your{" "}
                 {secondFactorMethod === "phone_code" ? "phone" : "email"}.
               </FieldDescription>
@@ -349,7 +340,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
             </Button>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-5">
             <Field>
               <FieldLabel className={labelClassName} htmlFor="email">
                 Email
@@ -408,7 +399,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
               Sign in
             </Button>
 
-            <div className="flex flex-wrap items-center justify-center gap-1 text-base font-semibold text-neutral-500">
+            <div className="flex flex-wrap items-center gap-2 text-base font-semibold text-neutral-500">
               <span>Need an account?</span>
               <Link
                 href={
@@ -416,7 +407,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                     ? `/sign-up?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-up"
                 }
-                className="text-[#1D4ED8] transition hover:text-blue-400"
+                className="text-[#1D4ED8] underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Create one
               </Link>

@@ -40,7 +40,7 @@ const faqItems = [
 
 export default function FaqRoute() {
   return (
-    <div className="px-6 py-10 sm:px-9 lg:px-10 lg:py-12">
+    <main className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
       <BrutalistPageHeader
         eyebrow="FAQ"
         title="Precise answers"
@@ -52,8 +52,7 @@ export default function FaqRoute() {
           <FaqItem key={item.question} index={index + 1} {...item} />
         ))}
       </div>
-
       <PublicCtaPanel />
-    </div>
+    </main>
   )
 }

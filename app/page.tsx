@@ -75,9 +75,8 @@ export default function HomePage() {
           </p>
 
           <UseCaseGrid />
+          <TrustPanel />
         </section>
-
-        <TrustPanel />
       </section>
 
       <PublicFooter />
