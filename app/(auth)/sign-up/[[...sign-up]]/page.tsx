@@ -7,13 +7,16 @@ export default async function SignUpPage({ searchParams }: SignupPageProps) {
 
   return (
     <AuthPageShell
-      eyebrow="No-show protection"
-      title="Back appointments with real commitment."
-      description="Create an account to send or accept commitment-backed payments for appointments and in-person agreements."
-      footnote="Payment-bearing actions require account readiness, verification, payment or payout setup, and current terms acceptance."
+      variant="signup"
+      eyebrow="Commitment-backed payments"
+      title="Create your Vouch account."
+      description="Set up a verified account to create Vouches, accept invites, and confirm real-world presence."
+      footnote="Vouch coordinates deterministic payment outcomes for pre-arranged, in-person commitments. It does not broker services or resolve disputes."
     >
       <SignupForm
-        redirectUrl={params.redirect_url ?? params.return_to ?? params.redirectUrl ?? params.returnTo}
+        redirectUrl={
+          params.redirect_url ?? params.return_to ?? params.redirectUrl ?? params.returnTo
+        }
       />
     </AuthPageShell>
   )
