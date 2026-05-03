@@ -9,7 +9,7 @@ export default async function SignUpPage({ searchParams }: SignupPageProps) {
     <AuthPageShell
       variant="signup"
       eyebrow="Commitment-backed payments"
-      title="Create your Vouch account."
+      title="Create your account."
       description="Set up a verified account to create Vouches, accept invites, and confirm real-world presence."
       footnote="Vouch coordinates deterministic payment outcomes for pre-arranged, in-person commitments. It does not broker services or resolve disputes."
     >
