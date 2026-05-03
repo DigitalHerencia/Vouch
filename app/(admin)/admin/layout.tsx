@@ -1,11 +1,14 @@
-import { AdminShell } from "@/components/layout/admin-shell"
+// app/(admin)/admin/layout.tsx
+
+import { AdminShell } from "@/components/navigation/admin-shell"
 import { assertAdmin } from "@/lib/authz/admin"
 
 export default async function AdminLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode
+    children: React.ReactNode
 }>) {
-  await assertAdmin()
-  return <AdminShell>{children}</AdminShell>
+    await assertAdmin()
+
+    return <AdminShell>{children}</AdminShell>
 }

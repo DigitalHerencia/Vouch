@@ -1,19 +1,11 @@
 // app/(public)/layout.tsx
 
-import { LogoLockup } from "@/components/brand/logo-lockup"
-import { PublicFooter } from "@/components/layout/public-footer"
-import { PublicHeader } from "@/components/layout/public-header"
+import { PublicShell } from "@/components/navigation/public-shell"
 
 export default function PublicLayout({
-  children,
+    children,
 }: Readonly<{
-  children: React.ReactNode
+    children: React.ReactNode
 }>) {
-  return (
-    <>
-      <PublicHeader logo={<LogoLockup />} />
-      {children}
-      <PublicFooter />
-    </>
-  )
+    return <PublicShell>{children}</PublicShell>
 }

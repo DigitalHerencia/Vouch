@@ -1,0 +1,36 @@
+{
+  "Operation": "panels-batch",
+  "BatchId": "20260502-182653",
+  "RepoRoot": "D:\\Vouch",
+  "CreatedAt": "2026-05-02T18:26:53.6197008-06:00",
+  "Files": [
+    {
+      "RelativePath": "components/shared/process-panel.tsx",
+      "TargetPath": "D:\\Vouch\\components\\shared\\process-panel.tsx",
+      "BackupPath": "D:\\Vouch\\.agent-backups\\panels-batch-20260502-182653\\components\\shared\\process-panel.tsx",
+      "HadExistingFile": false,
+      "Applied": true
+    },
+    {
+      "RelativePath": "components/shared/callout-panel.tsx",
+      "TargetPath": "D:\\Vouch\\components\\shared\\callout-panel.tsx",
+      "BackupPath": "D:\\Vouch\\.agent-backups\\panels-batch-20260502-182653\\components\\shared\\callout-panel.tsx",
+      "HadExistingFile": false,
+      "Applied": true
+    },
+    {
+      "RelativePath": "components/shared/rule-panel.tsx",
+      "TargetPath": "D:\\Vouch\\components\\shared\\rule-panel.tsx",
+      "BackupPath": "D:\\Vouch\\.agent-backups\\panels-batch-20260502-182653\\components\\shared\\rule-panel.tsx",
+      "HadExistingFile": false,
+      "Applied": true
+    },
+    {
+      "RelativePath": "components/shared/summary-panel.tsx",
+      "TargetPath": "D:\\Vouch\\components\\shared\\summary-panel.tsx",
+      "BackupPath": "D:\\Vouch\\.agent-backups\\panels-batch-20260502-182653\\components\\shared\\summary-panel.tsx",
+      "HadExistingFile": false,
+      "Applied": true
+    }
+  ]
+}
