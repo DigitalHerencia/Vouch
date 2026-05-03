@@ -51,7 +51,7 @@ export function AuthPageShell({
                 <section
                     className={cn(
                         "flex min-h-dvh flex-col bg-black px-6 py-6 sm:px-10 lg:px-14 lg:py-10 xl:px-18",
-                        isSignup ? "lg:order-2" : "lg:order-1",
+                        isSignup ? "lg:order-2" : "lg:order-1"
                     )}
                 >
                     <header className="flex items-center justify-between">
@@ -85,7 +85,7 @@ export function AuthPageShell({
                 <aside
                     className={cn(
                         "relative hidden min-h-dvh overflow-hidden border-neutral-900 px-10 py-10 lg:flex lg:flex-col lg:justify-center xl:px-16",
-                        isSignup ? "lg:order-1 lg:border-r" : "lg:order-2 lg:border-l",
+                        isSignup ? "lg:order-1 lg:border-r" : "lg:order-2 lg:border-l"
                     )}
                 >
                     <div
@@ -109,10 +109,7 @@ export function AuthPageShell({
                                     icon={principle.icon}
                                     title={principle.title}
                                     body={principle.body}
-                                    className="mt-0 border-neutral-700 bg-black/70 p-5 shadow-[8px_8px_0_0_rgba(29,78,216,0.22)] sm:p-5 lg:grid-cols-[1fr]"
-                                    iconClassName="size-12 border-neutral-700"
-                                    titleClassName="text-[26px]"
-                                    bodyClassName="text-[16px]"
+                                    className="mt-0 border-neutral-700 bg-black/70 p-5 shadow-[8px_8px_0_0_rgba(29,78,216,0.22)] sm:p-5"
                                 />
                             ))}
                         </div>
