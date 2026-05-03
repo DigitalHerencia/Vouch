@@ -9,121 +9,119 @@ import { CalloutPanel } from "@/components/shared/callout-panel"
 import { cn } from "@/lib/utils"
 
 export interface AuthPageShellProps {
-    children: ReactNode
-    eyebrow: string
-    title: string
-    description: string
-    footnote: string
-    variant?: "signin" | "signup"
+  children: ReactNode
+  eyebrow: string
+  title: string
+  description: string
+  footnote: string
+  variant?: "signin" | "signup"
 }
 
 const authPrinciples = [
-    {
-        icon: ShieldCheck,
-        title: "Neutral by design",
-        body: "Vouch follows the confirmation rule. It does not judge disputes or award funds manually.",
-    },
-    {
-        icon: CheckCircle2,
-        title: "Both confirm",
-        body: "Funds release only when both parties confirm presence inside the confirmation window.",
-    },
-    {
-        icon: CreditCard,
-        title: "Provider-backed",
-        body: "Payments run through provider infrastructure. Vouch coordinates outcomes, not custody.",
-    },
+  {
+    icon: ShieldCheck,
+    title: "Neutral by design",
+    body: "Vouch follows the confirmation rule. It does not judge disputes or award funds manually.",
+  },
+  {
+    icon: CheckCircle2,
+    title: "Both confirm",
+    body: "Funds release only when both parties confirm presence inside the confirmation window.",
+  },
+  {
+    icon: CreditCard,
+    title: "Provider-backed",
+    body: "Payments run through provider infrastructure. Vouch coordinates outcomes, not custody.",
+  },
 ] as const
 
 export function AuthPageShell({
-    children,
-    eyebrow,
-    title,
-    description,
-    footnote,
-    variant = "signin",
+  children,
+  eyebrow,
+  title,
+  description,
+  footnote,
+  variant = "signin",
 }: AuthPageShellProps) {
-    const isSignup = variant === "signup"
+  const isSignup = variant === "signup"
 
-    return (
-        <main className="min-h-dvh bg-black text-white">
-            <section className="grid min-h-dvh lg:grid-cols-2">
-                <section
-                    className={cn(
-                        "flex min-h-dvh flex-col bg-black px-6 py-6 sm:px-10 lg:px-14 lg:py-10 xl:px-18",
-                        isSignup ? "lg:order-2" : "lg:order-1"
-                    )}
-                >
-                    <header className="flex items-center justify-between">
-                        <Link
-                            href="/"
-                            aria-label="Go to Vouch home"
-                            className="inline-flex"
-                        >
-                            <LogoLockup />
-                        </Link>
+  return (
+    <main className="h-dvh max-h-dvh min-h-dvh w-full overflow-hidden bg-black text-white">
+      <section className="grid h-dvh max-h-dvh min-h-0 w-full grid-cols-1 overflow-hidden lg:grid-cols-2">
+        <section
+          className={cn(
+            "flex h-dvh max-h-dvh min-h-0 min-w-0 flex-col overflow-hidden bg-black px-4 py-4 sm:px-6 sm:py-5 lg:px-9 lg:py-6 xl:px-12",
+            isSignup ? "lg:order-2" : "lg:order-1",
+          )}
+        >
+          <header className="flex shrink-0 items-center justify-between gap-4 overflow-hidden">
+            <Link href="/" aria-label="Go to Vouch home" className="inline-flex min-w-0">
+              <LogoLockup />
+            </Link>
 
-                        <Link
-                            href="/"
-                            className="font-(family-name:--font-display) text-sm leading-none tracking-widest text-neutral-500 uppercase underline-offset-4 transition-colors hover:text-primary hover:underline sm:text-base"
-                        >
-                            Home
-                        </Link>
-                    </header>
+            <Link
+              href="/"
+              className="shrink-0 font-(family-name:--font-display) text-xs leading-none tracking-widest text-neutral-500 uppercase underline-offset-4 transition-colors hover:text-primary hover:underline sm:text-sm"
+            >
+              Home
+            </Link>
+          </header>
 
-                    <div className="flex flex-1 items-center py-10 lg:py-12">
-                        <div className="mx-auto w-full max-w-135">{children}</div>
-                    </div>
+          <div className="flex min-h-0 flex-1 items-center overflow-hidden py-3 sm:py-4 lg:py-5">
+            <div className="mx-auto flex w-full max-w-112 min-w-0 flex-col justify-center overflow-hidden xl:max-w-120">
+              {children}
+            </div>
+          </div>
 
-                    <footer className="border-t border-neutral-900 pt-6 font-mono text-xs leading-6 text-neutral-500 sm:text-sm">
-                        <span className="font-bold text-primary">{eyebrow}</span>
-                        <span className="mx-2 text-neutral-700">/</span>
-                        {footnote}
-                    </footer>
-                </section>
+          <footer className="shrink-0 overflow-hidden border-t border-neutral-900 pt-3 font-mono text-[10px] leading-4 break-words text-neutral-500 sm:pt-4 sm:text-[11px] lg:text-xs lg:leading-5">
+            <span className="font-bold text-primary">{eyebrow}</span>
+            <span className="mx-2 text-neutral-700">/</span>
+            {footnote}
+          </footer>
+        </section>
 
-                <aside
-                    className={cn(
-                        "relative hidden min-h-dvh overflow-hidden border-neutral-900 px-10 py-10 lg:flex lg:flex-col lg:justify-center xl:px-16",
-                        isSignup ? "lg:order-1 lg:border-r" : "lg:order-2 lg:border-l"
-                    )}
-                >
-                    <div
-                        aria-hidden="true"
-                        className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(29,78,216,0.42),transparent_28%),radial-gradient(circle_at_82%_62%,rgba(29,78,216,0.32),transparent_34%),radial-gradient(circle_at_50%_38%,rgba(29,78,216,0.12),transparent_42%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-size-[auto,auto,auto,72px_72px,72px_72px]"
-                    />
+        <aside
+          className={cn(
+            "relative hidden h-dvh max-h-dvh min-h-0 min-w-0 overflow-hidden border-neutral-900 px-7 py-7 lg:flex lg:flex-col lg:justify-center xl:px-10",
+            isSignup ? "lg:order-1 lg:border-r" : "lg:order-2 lg:border-l",
+          )}
+        >
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(29,78,216,0.38),transparent_28%),radial-gradient(circle_at_82%_62%,rgba(29,78,216,0.26),transparent_34%),radial-gradient(circle_at_50%_38%,rgba(29,78,216,0.1),transparent_42%),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-size-[auto,auto,auto,72px_72px,72px_72px]"
+          />
 
-                    <div className="relative z-10 max-w-180">
-                        <h1 className="font-(family-name:--font-display) text-[76px] leading-[0.86] tracking-[0.015em] text-white uppercase xl:text-[104px]">
-                            {title}
-                        </h1>
+          <div className="relative z-10 max-w-155 overflow-hidden">
+            <h1 className="font-(family-name:--font-display) text-[54px] leading-[0.86] tracking-[0.015em] text-white uppercase xl:text-[72px]">
+              {title}
+            </h1>
 
-                        <p className="mt-7 max-w-145 text-[20px] leading-[1.35] font-semibold text-neutral-300">
-                            {description}
-                        </p>
+            <p className="mt-5 max-w-120 text-[16px] leading-[1.32] font-semibold text-neutral-300 xl:text-[18px]">
+              {description}
+            </p>
 
-                        <div className="mt-12 grid gap-4">
-                            {authPrinciples.map((principle) => (
-                                <CalloutPanel
-                                    key={principle.title}
-                                    icon={principle.icon}
-                                    title={principle.title}
-                                    body={principle.body}
-                                    className="mt-0 border-neutral-700 bg-black/70 p-5 shadow-[8px_8px_0_0_rgba(29,78,216,0.22)] sm:p-5"
-                                />
-                            ))}
-                        </div>
+            <div className="mt-7 grid gap-3 xl:mt-8">
+              {authPrinciples.map((principle) => (
+                <CalloutPanel
+                  key={principle.title}
+                  icon={principle.icon}
+                  title={principle.title}
+                  body={principle.body}
+                  className="mt-0 border-neutral-700 bg-black/70 p-4 shadow-[6px_6px_0_0_rgba(29,78,216,0.18)] [&_svg]:size-8 [&_h3]:text-[24px] [&_p]:text-[14px] [&_p]:leading-[1.25] xl:[&_svg]:size-9 xl:[&_h3]:text-[28px] xl:[&_p]:text-[15px]"
+                />
+              ))}
+            </div>
 
-                        <div className="mt-9 flex items-center gap-4 font-(family-name:--font-display) text-lg leading-none tracking-widest text-neutral-500 uppercase">
-                            Commit
-                            <ArrowRight className="size-5 text-primary" />
-                            Confirm
-                            <ArrowRight className="size-5 text-primary" />
-                            Covered
-                        </div>
-                    </div>
-                </aside>
-            </section>
-        </main>
-    )
+            <div className="mt-6 flex flex-wrap items-center gap-3 font-(family-name:--font-display) text-sm leading-none tracking-widest text-neutral-500 uppercase xl:text-base">
+              Commit
+              <ArrowRight className="size-4 text-primary" />
+              Confirm
+              <ArrowRight className="size-4 text-primary" />
+              Covered
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  )
 }
