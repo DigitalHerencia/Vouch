@@ -1,9 +1,9 @@
 // app/(public)/legal/privacy/page.tsx
 
-import { privacySections } from "@/components/marketing/legal-content"
-import { PublicCtaPanel } from "@/components/marketing/public-cta-panel"
+import { CtaPanel } from "@/components/shared/cta-panel"
 import { ContentSectionList } from "@/components/shared/content-section-list"
 import { PageHeader } from "@/components/shared/page-header"
+import { privacySections } from "@/content/legal"
 
 export default function PrivacyRoute() {
     return (
@@ -15,7 +15,7 @@ export default function PrivacyRoute() {
             />
 
             <ContentSectionList sections={privacySections} />
-            <PublicCtaPanel />
+            <CtaPanel />
         </main>
     )
 }

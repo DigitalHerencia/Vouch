@@ -60,5 +60,3 @@ export function PageHeader({
         </header>
     )
 }
-
-export { PageHeader as BrutalistPageHeader }

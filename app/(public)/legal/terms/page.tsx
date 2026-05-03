@@ -1,9 +1,9 @@
 // app/(public)/legal/terms/page.tsx
 
-import { termsSections } from "@/components/marketing/legal-content"
-import { PublicCtaPanel } from "@/components/marketing/public-cta-panel"
+import { CtaPanel } from "@/components/shared/cta-panel"
 import { ContentSectionList } from "@/components/shared/content-section-list"
 import { PageHeader } from "@/components/shared/page-header"
+import { termsSections } from "@/content/legal"
 
 export default function TermsRoute() {
     return (
@@ -15,7 +15,7 @@ export default function TermsRoute() {
             />
 
             <ContentSectionList sections={termsSections} />
-            <PublicCtaPanel />
+            <CtaPanel />
         </main>
     )
 }

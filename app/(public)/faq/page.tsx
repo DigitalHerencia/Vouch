@@ -1,6 +1,6 @@
 // app/(public)/faq/page.tsx
 
-import { PublicCtaPanel } from "@/components/marketing/public-cta-panel"
+import { CtaPanel } from "@/components/shared/cta-panel"
 import { ContentSectionList } from "@/components/shared/content-section-list"
 import { PageHeader } from "@/components/shared/page-header"
 import { faqSections } from "@/content/faq"
@@ -15,7 +15,7 @@ export default function FaqRoute() {
             />
 
             <ContentSectionList sections={faqSections} />
-            <PublicCtaPanel />
+            <CtaPanel />
         </main>
     )
 }
