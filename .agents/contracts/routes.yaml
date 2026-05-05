@@ -1,13 +1,17 @@
 schema_version: "2.0.0"
 contract_name: "routes"
 product: "Vouch"
-source_of_truth_date: "2026-04-30"
+source_of_truth_date: "2026-05-04"
 
 route_placement:
   home:
     route: "/"
     file: "app/page.tsx"
     note: "The root marketing home page is intentionally implemented at app/page.tsx."
+  invite:
+    route: "/vouches/invite/[token]"
+    file: "app/(public)/vouches/invite/[token]/page.tsx"
+    note: "Invite landing is public so recipients can review token state before auth/setup."
 
 allowed_routes:
   public:
@@ -24,20 +28,41 @@ allowed_routes:
     - "/setup"
     - "/settings"
     - "/settings/payment"
+    - "/settings/payment/return"
     - "/settings/payout"
+    - "/settings/payout/return"
     - "/settings/verification"
     - "/vouches"
     - "/vouches/new"
     - "/vouches/[vouchId]"
     - "/vouches/[vouchId]/confirm"
+    - "/vouches/[vouchId]/share"
   admin:
     - "/admin"
     - "/admin/vouches"
     - "/admin/vouches/[vouchId]"
     - "/admin/users"
+    - "/admin/users/[userId]"
     - "/admin/payments"
+    - "/admin/payments/[paymentId]"
     - "/admin/audit"
+    - "/admin/audit/[eventId]"
     - "/admin/webhooks"
+    - "/admin/webhooks/[eventId]"
   api:
     - "/api/stripe/webhooks"
     - "/api/clerk/webhook-handler"
+
+forbidden_routes:
+  - "/browse"
+  - "/providers"
+  - "/clients"
+  - "/messages"
+  - "/reviews"
+  - "/ratings"
+  - "/categories"
+  - "/discover"
+  - "/search"
+  - "/book"
+  - "/disputes"
+  - "/claims"

@@ -165,6 +165,23 @@
         "Public consumer marketplace features remain prohibited.",
         "Stripe dashboard descriptions should use SaaS tool and payment coordination language."
       ]
+    },
+    {
+      "id": "DEC-010",
+      "status": "accepted",
+      "date": "2026-05-04",
+      "title": "Use sandbox Stripe accounts for implementation validation",
+      "decision": "All Stripe implementation and validation work must target the sandbox platform account acct_1TPa46GV5dKxUPtb and sandbox connected account acct_1TQHpNGV5d6axbAJ until full lifecycle validation passes. The live platform account acct_1TQHH2GuFcEUvSe9 is not an implementation validation target.",
+      "rationale": "The Stripe CLI and connector previously surfaced naming/account collisions between live, sandbox platform, and sandbox connected accounts. Recording the account map prevents accidental validation against the wrong platform.",
+      "source_refs": [
+        ".agents/docs/stripe-connect-integration.md",
+        ".agents/contracts/routes.yaml"
+      ],
+      "consequences": [
+        "Provider readiness tests must be run from a CLI profile scoped to the sandbox platform.",
+        "The sandbox connected account is confirmed ready with card_payments and transfers active.",
+        "The Stripe connector must not be used for sandbox connected-account inspection unless explicitly re-scoped to the sandbox platform."
+      ]
     }
   ],
   "pending_decisions": [
@@ -181,7 +198,7 @@
       "id": "PDEC-001",
       "status": "superseded",
       "title": "Select exact Stripe Connect flow",
-      "question": "Superseded by DEC-008 and DEC-009; sandbox/legal review remains required before production launch.",
+      "question": "Superseded by DEC-008, DEC-009, and DEC-010; sandbox lifecycle review remains required before production launch.",
       "required_before": ["payment_provider_sandbox", "production_candidate"],
       "owner": "human/legal/payment architecture review"
     },
