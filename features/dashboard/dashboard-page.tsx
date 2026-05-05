@@ -1,12 +1,25 @@
 import Link from "next/link"
-import { AlertCircle, CalendarDays, CheckCircle2, Clock, RotateCcw, UserRound } from "lucide-react"
-import type { ReactNode } from "react"
+import {
+  AlertCircle,
+  ArrowRight,
+  Bell,
+  CheckCircle2,
+  Clock,
+  Handshake,
+  ShieldCheck,
+  UserRound,
+} from "lucide-react"
 
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CalloutPanel } from "@/components/shared/callout-panel"
+import { CtaPanel } from "@/components/shared/cta-panel"
+import { MetricGrid, type MetricGridItem } from "@/components/shared/metric-grid"
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface, SurfaceHeader } from "@/components/shared/surface"
+import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
+import { cn } from "@/lib/utils"
 
-export type DashboardVouch = {
+type DashboardVouch = {
   id: string
   href: string
   title: string
@@ -17,21 +30,37 @@ export type DashboardVouch = {
   nextActionLabel?: string
 }
 
-export type DashboardSection = {
+type DashboardSection = {
   title: string
   description: string
   vouches: DashboardVouch[]
 }
 
-type DashboardPageProps = {
-  setupComplete: boolean
-  sections: DashboardSection[]
+const money = (cents: unknown, currency: unknown) =>
+  new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: String(currency ?? "usd").toUpperCase(),
+  }).format(Number(cents ?? 0) / 100)
+
+function toDashboardVouch(vouch: unknown): DashboardVouch {
+  const record = vouch as Record<string, unknown>
+
+  return {
+    id: String(record.id),
+    href: `/vouches/${record.id}`,
+    title: String(record.label ?? record.publicId ?? "Vouch"),
+    role: "payer",
+    amountLabel: money(record.amountCents, record.currency),
+    statusLabel: String(record.status ?? "active"),
+    deadlineLabel: String(record.confirmationExpiresAt ?? "No deadline"),
+    nextActionLabel: "Open",
+  }
 }
 
-const fallbackRows: DashboardVouch[] = [
+const fallbackActionRequired: DashboardVouch[] = [
   {
     id: "preview-1",
-    href: "/vouches/new",
+    href: "/setup",
     title: "Design consultation",
     role: "payer",
     amountLabel: "$200.00",
@@ -41,7 +70,7 @@ const fallbackRows: DashboardVouch[] = [
   },
   {
     id: "preview-2",
-    href: "/vouches/new",
+    href: "/setup",
     title: "Website review",
     role: "payer",
     amountLabel: "$150.00",
@@ -51,9 +80,9 @@ const fallbackRows: DashboardVouch[] = [
   },
 ]
 
-const pendingFallback: DashboardVouch = {
-  id: "pending",
-  href: "/vouches/new",
+const fallbackPending: DashboardVouch = {
+  id: "pending-preview",
+  href: "/setup",
   title: "Brand strategy call",
   role: "payer",
   amountLabel: "$200.00",
@@ -62,9 +91,9 @@ const pendingFallback: DashboardVouch = {
   nextActionLabel: "Resend invite",
 }
 
-const completedFallback: DashboardVouch = {
-  id: "done",
-  href: "/vouches/new",
+const fallbackCompleted: DashboardVouch = {
+  id: "completed-preview",
+  href: "/setup",
   title: "UX audit",
   role: "payee",
   amountLabel: "+$350.00",
@@ -72,124 +101,210 @@ const completedFallback: DashboardVouch = {
   deadlineLabel: "May 20, 3:00 PM",
 }
 
-export function DashboardPage({ setupComplete, sections }: DashboardPageProps) {
-  const actionRequired = sections[0]?.vouches.length ? sections[0].vouches : fallbackRows
-  const active = sections[1]?.vouches ?? []
-  const pending = sections[2]?.vouches ?? []
-  const completed = sections[3]?.vouches ?? []
+export async function DashboardPage() {
+  const state = await getDashboardPageState()
+  const sections = state.summary?.sections
+
+  const dashboardSections: DashboardSection[] = [
+    {
+      title: "Action required",
+      description: "Vouches that need your attention.",
+      vouches: (sections?.actionRequired ?? []).map(toDashboardVouch),
+    },
+    {
+      title: "Pending",
+      description: "Created Vouches awaiting acceptance.",
+      vouches: (sections?.pending ?? []).map(toDashboardVouch),
+    },
+    {
+      title: "Completed",
+      description: "Final Vouches where both parties confirmed.",
+      vouches: (sections?.completed ?? []).map(toDashboardVouch),
+    },
+  ]
+
+  const actionRequired = dashboardSections[0]?.vouches.length
+    ? dashboardSections[0].vouches
+    : fallbackActionRequired
+  const pending = dashboardSections[1]?.vouches.length
+    ? dashboardSections[1].vouches
+    : [fallbackPending]
+  const completed = dashboardSections[2]?.vouches.length
+    ? dashboardSections[2].vouches
+    : [fallbackCompleted]
+
+  const pendingCount = sections?.pending?.length ?? 0
+  const completedCount = sections?.completed?.length ?? 0
+  const actionRequiredCount = sections?.actionRequired?.length ?? actionRequired.length
+  const setupComplete = state.variant !== "empty"
+
+  const metrics: MetricGridItem[] = [
+    {
+      label: "Pending Vouches",
+      value: String(pendingCount || pending.length),
+      body: "Invites created or waiting on the other party.",
+    },
+    {
+      label: "Past Vouches",
+      value: String(completedCount),
+      body: "Completed, refunded, expired, or otherwise resolved.",
+    },
+    {
+      label: "Active Value",
+      value: money(
+        [...(sections?.active ?? []), ...(sections?.actionRequired ?? [])].reduce(
+          (sum, vouch) => sum + Number((vouch as Record<string, unknown>).amountCents ?? 0),
+          0,
+        ),
+        "usd",
+      ),
+      body: "Payment-coordination value currently in motion.",
+    },
+    {
+      label: "Needs Review",
+      value: String(actionRequiredCount),
+      body: "Items waiting on confirmation, setup, or attention.",
+    },
+  ]
 
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <h1 className="font-heading text-4xl text-white sm:text-5xl">Dashboard</h1>
-          <p className="mt-2 text-neutral-400">Here&apos;s what&apos;s happening with your Vouches.</p>
-        </div>
-        <Button className="hidden h-10 rounded-none bg-blue-700 px-5 md:inline-flex" render={<Link href="/vouches/new" />}>
-          Create Vouch
-        </Button>
-      </div>
+    <main className="mx-auto grid w-full max-w-7xl gap-6 px-6 pt-8 pb-12 sm:px-10 lg:px-12 lg:pt-10 lg:pb-14">
+      <SectionIntro
+        eyebrow="Participant ledger"
+        title="Dashboard"
+        body="Here&apos;s what&apos;s happening with your Vouches. Amount, status, deadline, and consequence stay visible."
+      />
 
       {!setupComplete ? (
-        <Card className="rounded-none border-amber-500/50 bg-amber-500/5">
-          <CardContent className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-neutral-300">Finish setup to create or accept commitment-backed payments.</p>
-            <Button variant="outline" className="rounded-none" render={<Link href="/setup" />}>
+        <CalloutPanel
+          title="Finish setup before creating or accepting Vouches."
+          body="Complete readiness checks so Vouch can coordinate payment state, confirmation windows, and deterministic outcomes."
+          icon={AlertCircle}
+          actions={
+            <Button variant="primary" size="cta" render={<Link href="/setup" />}>
               Complete setup
+              <ArrowRight className="size-5" strokeWidth={1.9} />
             </Button>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : null}
 
-      <DashboardPanel icon={<AlertCircle className="size-5 text-amber-500" />} title={`Action required (${actionRequired.length})`}>
-        {actionRequired.map((vouch) => (
-          <VouchRow key={vouch.id} vouch={vouch} primary />
-        ))}
-      </DashboardPanel>
+      <MetricGrid items={metrics} />
 
-      <DashboardPanel icon={<CalendarDays className="size-5 text-blue-500" />} title={`Active Vouches (${active.length || 3})`} linkLabel="View all">
-        {(active.length ? active : fallbackRows.slice(0, 1)).map((vouch) => (
-          <VouchRow key={vouch.id} vouch={{ ...vouch, nextActionLabel: "View details" }} />
-        ))}
-      </DashboardPanel>
+      <DashboardListPanel
+        title={`Action required (${actionRequired.length})`}
+        description="The next thing to handle. No ambiguity, no buried state."
+        icon={Bell}
+        rows={actionRequired}
+      />
 
-      <div className="grid gap-5 lg:grid-cols-2">
-        <DashboardPanel icon={<Clock className="size-5 text-amber-500" />} title={`Pending (${pending.length || 1})`} linkLabel="View all">
-          {(pending.length ? pending : [pendingFallback]).map((vouch) => (
-            <VouchRow key={vouch.id} vouch={vouch} />
-          ))}
-        </DashboardPanel>
-        <DashboardPanel icon={<CheckCircle2 className="size-5 text-green-500" />} title={`Completed (${completed.length || 5})`} linkLabel="View all">
-          {(completed.length ? completed : [completedFallback]).map((vouch) => (
-            <VouchRow key={vouch.id} vouch={vouch} />
-          ))}
-        </DashboardPanel>
-      </div>
+      <DashboardListPanel
+        title={`Pending (${pending.length})`}
+        description="Vouches waiting on acceptance or invite follow-up."
+        icon={Clock}
+        rows={pending}
+      />
 
-      <Card className="rounded-none border-neutral-800 bg-neutral-900/50">
-        <CardContent className="flex flex-col gap-4 py-5 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex gap-4">
-            <RotateCcw className="mt-1 size-8 text-blue-500" />
-            <div>
-              <h2 className="text-xl font-bold text-white">How Vouch works</h2>
-              <p className="text-sm text-neutral-400">Both parties confirm within the window. Otherwise, refund or non-capture.</p>
-            </div>
-          </div>
-          <Button variant="outline" className="rounded-none" render={<Link href="/how-it-works" />}>
-            See how it works
-          </Button>
-        </CardContent>
-      </Card>
+      <DashboardListPanel
+        title={`Completed (${completed.length})`}
+        description="Outcomes that followed system state."
+        icon={CheckCircle2}
+        rows={completed}
+      />
+
+      <CtaPanel
+        title="Create a Vouch"
+        body="Create the agreement, send the invite, and let dual confirmation determine release, refund, void, or non-capture."
+        cta="Create Vouch"
+        href="/vouches/new"
+        icon={Handshake}
+        className="mt-0"
+      />
     </main>
   )
 }
 
-function DashboardPanel({
+function DashboardListPanel({
   title,
-  icon,
-  children,
-  linkLabel,
+  description,
+  icon: Icon,
+  rows,
 }: {
   title: string
-  icon: ReactNode
-  children: ReactNode
-  linkLabel?: string
+  description: string
+  icon: typeof ShieldCheck
+  rows: DashboardVouch[]
 }) {
   return (
-    <Card className="rounded-none border-neutral-800 bg-neutral-900/55">
-      <CardHeader className="border-b border-neutral-800">
-        <CardTitle className="flex items-center justify-between text-base">
-          <span className="flex items-center gap-3">
-            {icon}
-            {title}
-          </span>
-          {linkLabel ? <Link href="/vouches" className="text-sm text-blue-500">{linkLabel}</Link> : null}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="grid gap-0 py-0">{children}</CardContent>
-    </Card>
+    <Surface>
+      <SurfaceHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <Icon className="mt-0.5 size-5 text-[#1D4ED8]" strokeWidth={1.9} />
+          <div>
+            <h2 className="font-(family-name:--font-display) text-[24px] leading-none tracking-[0.07em] text-white uppercase sm:text-[30px]">
+              {title}
+            </h2>
+            <p className="mt-2 text-[15px] leading-[1.3] font-semibold text-neutral-400">
+              {description}
+            </p>
+          </div>
+        </div>
+        <Button variant="link" render={<Link href="/vouches" />}>
+          View all
+        </Button>
+      </SurfaceHeader>
+
+      <div>
+        {rows.map((vouch) => (
+          <DashboardVouchRow key={vouch.id} vouch={vouch} />
+        ))}
+      </div>
+    </Surface>
   )
 }
 
-function VouchRow({ vouch, primary = false }: { vouch: DashboardVouch; primary?: boolean }) {
+function DashboardVouchRow({ vouch }: { vouch: DashboardVouch }) {
   return (
-    <div className="grid gap-4 border-b border-neutral-800 py-4 last:border-b-0 sm:grid-cols-[1fr_auto_auto] sm:items-center">
-      <div className="flex items-center gap-4">
-        <span className="grid size-11 place-items-center rounded-full bg-blue-950 text-blue-500">
-            <UserRound />
+    <article className="grid gap-5 border-b border-neutral-800 px-5 py-5 last:border-b-0 sm:grid-cols-[1fr_auto] sm:items-center sm:px-7 lg:min-h-31">
+      <div className="flex items-start gap-5">
+        <span className="grid size-11 shrink-0 place-items-center border border-[#1D4ED8] bg-[#1D4ED8]/15 text-[#1D4ED8]">
+          <UserRound className="size-5" strokeWidth={1.9} />
         </span>
-        <div>
-          <Link href={vouch.href} className="font-bold text-white">{vouch.title}</Link>
-          <p className="text-sm text-neutral-400">{vouch.role} · {vouch.amountLabel}</p>
+
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href={vouch.href}
+              className="font-(family-name:--font-display) text-[22px] leading-none tracking-[0.05em] text-white uppercase hover:text-[#1D4ED8]"
+            >
+              {vouch.title}
+            </Link>
+            <StatusPill label={vouch.statusLabel} />
+          </div>
+          <p className="mt-2 text-[15px] leading-tight font-semibold text-neutral-400">
+            {vouch.role} · {vouch.amountLabel}
+          </p>
         </div>
-        <Badge className="rounded-none border-blue-700 bg-blue-950 text-blue-400">{vouch.statusLabel}</Badge>
       </div>
-      <p className={primary ? "font-mono text-lg text-amber-400" : "font-mono text-sm text-neutral-200"}>{vouch.deadlineLabel}</p>
-      {vouch.nextActionLabel ? (
-        <Button size="sm" className="rounded-none bg-blue-700" render={<Link href={vouch.href} />}>
-          {vouch.nextActionLabel}
-        </Button>
-      ) : null}
-    </div>
+
+      <div className="grid gap-3 sm:justify-items-end">
+        <p className="font-mono text-sm font-black tracking-[0.02em] text-white uppercase tabular-nums">
+          {vouch.deadlineLabel}
+        </p>
+        {vouch.nextActionLabel ? (
+          <Button size="sm" variant="primary" render={<Link href={vouch.href} />}>
+            {vouch.nextActionLabel}
+          </Button>
+        ) : null}
+      </div>
+    </article>
+  )
+}
+
+function StatusPill({ label }: { label: string }) {
+  return (
+    <span className="border border-[#1D4ED8] bg-[#1D4ED8]/15 px-2.5 py-1 font-mono text-[11px] font-black tracking-[0.08em] text-blue-100 uppercase">
+      {label}
+    </span>
   )
 }
