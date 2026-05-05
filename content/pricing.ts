@@ -51,7 +51,7 @@ export const pricingStats = [
     {
         label: "Provider fee",
         value: "Stripe",
-        body: "Processing is handled through provider infrastructure.",
+        body: "Processing is handled through provider-backed infrastructure.",
     },
     {
         label: "Release rule",
@@ -67,13 +67,18 @@ export const pricingNotes = [
         body: "The payer sees the Vouch amount, platform fee, provider fee, and total before moving forward. Pricing is part of the commitment, not a surprise after it.",
     },
     {
-        eyebrow: "Provider-backed",
-        title: "Payment coordination, not custody.",
-        body: "Vouch coordinates the outcome through provider-backed payment infrastructure. Vouch stores participant-safe references, statuses, and lifecycle events — not raw card data, raw identity documents, or direct-custody balances.",
+        eyebrow: "Payment coordination, not custody",
+        title: "Providers handle money rails. Vouch handles workflow logic.",
+        body: "Vouch coordinates state. Payment providers handle payment infrastructure. Identity providers handle identity. Vouch stores participant-safe references, statuses, and lifecycle events — not raw card data, raw identity documents, or direct-custody balances.",
     },
     {
         eyebrow: "Deterministic outcome",
-        title: "The rule stays simple.",
-        body: "Payment does not release because someone argues better. Payment releases only when both parties confirm presence inside the window. If confirmation does not complete, funds do not release.",
+        title: "Vouch doesn’t ask who’s right. Vouch asks what happened.",
+        body: "No stories. No screenshots. No appeals. No mediation. No subjective judgment. Vouch converts mutual intent into explicit protocol, bounded rules, and economically meaningful confirmation. If conditions are met, funds move. If conditions fail, they don’t.",
+    },
+    {
+        eyebrow: "Automated finality",
+        title: "Fraud thrives in ambiguity, exceptions, and manual intervention.",
+        body: "Vouch removes all three. No unilateral action forces settlement. No human discretion surface exists to exploit. A Vouch gets created, paid, sent, accepted, confirmed, then released or refunded according to system state.",
     },
 ] as const

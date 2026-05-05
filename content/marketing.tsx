@@ -70,14 +70,14 @@ export const landingMetrics = [
         body: "If it falls through, you’re covered.",
     },
     {
-        label: "Clear and simple",
+        label: "Deterministic outcome",
         value: "4 steps",
-        body: "Create, accept, confirm, release. That’s it.",
+        body: "Created, paid, confirmed, then released or refunded by state.",
     },
     {
-        label: "Not an escrow",
+        label: "Not custody",
         value: "0%",
-        body: "Vouch coordinates. Providers process.",
+        body: "Vouch coordinates workflow state. Providers handle money rails.",
     },
 ] satisfies MetricGridItem[]
 
@@ -106,7 +106,7 @@ export const landingUseCases = [
 
 export const landingTrustPanelContent = {
     icon: ShieldCheck,
-    title: "Serious by design. Trusted by default.",
+    title: "At Vouch, we mind our business, not your data.",
     body:
-        "We’re not a marketplace. We don’t rate. We don’t arbitrate. We protect commitments so you can show up with confidence.",
+        "We don’t pry. We don’t meddle. We don’t overcomplicate trust. Vouch is a deterministic commitment layer for payment coordination, aligning intent, accountability, and outcome by design. Quietly private. Mutually explicit. Economically meaningful. Anyone can copy code. Copying trust infrastructure is harder.",
 } as const
