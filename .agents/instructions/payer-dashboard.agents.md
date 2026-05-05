@@ -127,19 +127,6 @@ Do not use:
 - find services
 - discover appointments
 
-## Forbidden Work
-
-Do not build:
-
-- marketplace inbox
-- chat inbox
-- message threads
-- provider recommendations
-- booking marketplace cards
-- review prompts
-- categories
-- service search
-
 ## Acceptance Criteria
 
 - User sees only participant-scoped Vouches.

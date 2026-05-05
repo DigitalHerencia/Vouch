@@ -155,18 +155,6 @@ Admin routes require admin capability:
 - `/admin/payments`
 - `/admin/audit`
 
-## Forbidden Work
-
-Do not create:
-
-- public profiles
-- marketplace roles
-- reputation roles
-- reviewer/moderator roles
-- dispute roles
-- “trusted provider” badges
-- client-side-only auth checks
-
 ## Acceptance Criteria
 
 - Unauthenticated users cannot create, accept, confirm, or view protected Vouches.

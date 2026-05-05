@@ -4,8 +4,8 @@
  * Public routes: marketing, legal, auth, invite landing, and signed provider webhooks.
  * Protected routes: dashboard, setup, settings, Vouch detail/create/confirm, admin.
  *
- * Admin capability and participant authorization must still be enforced server-side in
- * fetchers/actions. This proxy only handles authentication boundary routing.
+ * Admin capability and participant authorization are enforced server-side in fetchers/actions.
+ * This proxy only handles authentication boundary routing.
  */
 
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server"
@@ -13,7 +13,6 @@ import { NextResponse } from "next/server"
 
 const isPublicRoute = createRouteMatcher([
   "/",
-  "/how-it-works(.*)",
   "/pricing(.*)",
   "/faq(.*)",
   "/legal/terms(.*)",

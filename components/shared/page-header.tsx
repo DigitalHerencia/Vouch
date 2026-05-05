@@ -28,7 +28,7 @@ export function PageHeader({
         <header className={cn("max-w-170", className)}>
             {eyebrow ? (
                 <div className="flex items-center gap-3">
-                    <span className="size-3 bg-primary" />
+                    <span aria-hidden="true" className="size-2.5 shrink-0 bg-[#1D4ED8]" />
                     <p className="font-(family-name:--font-display) text-sm leading-none tracking-widest text-white uppercase sm:text-base lg:text-lg">
                         {eyebrow}
                     </p>

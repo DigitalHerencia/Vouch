@@ -179,20 +179,6 @@ Expiration cases:
 - payee never accepted
 - payment failed before resolution
 
-## Forbidden Work
-
-Do not build:
-
-- scheduling calendars
-- availability management
-- provider booking pages
-- marketplace booking flow
-- in-app chat
-- dispute resolution
-- manual fund awards
-- service categories
-- public appointment listings
-
 ## Acceptance Criteria
 
 - Eligible payer can create Pending Vouch.

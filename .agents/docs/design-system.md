@@ -4,32 +4,28 @@ Source of truth date: 2026-04-30
 
 Vouch UI should feel serious, precise, neutral, professional, secure, fast, and clear.
 
-## Language
+## Visual Foundation
 
-Use:
+- Dark neutral foundation.
+- High contrast typography.
+- Zero-radius operational panels.
+- Restrained blue accent.
+- Dense but intentional spacing.
+- Status and outcome information should be readable without relying on color alone.
 
-- merchant/provider
-- customer/client
-- commitment-backed payment
-- protected amount
-- Vouch service fee
-- processing fee offset
-- customer total
-- confirm presence
-- release funds
-- refund
+## Brand Accent
 
-Avoid:
+Primary brand blue:
 
-- escrow
-- marketplace
-- book now
-- dispute
-- claim
-- judge
-- rating
-- review
-- message
+- `#1D4ED8`
+
+Use this value through project tokens or the canonical UI primitives when possible.
+
+## Typography
+
+- Display typography uses the project display font.
+- Interface typography uses the project sans font.
+- Operational metadata uses the project mono font.
 
 ## Required Payment Display
 
@@ -47,7 +43,7 @@ Every Vouch screen should answer:
 
 - current status
 - protected amount and customer total where relevant
-- merchant/provider and customer/client roles
+- participant roles
 - required next action
 - deadline
 - what happens if no action occurs

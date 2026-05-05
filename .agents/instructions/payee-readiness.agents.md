@@ -117,20 +117,6 @@ If user arrives from invite:
 
 Return paths must be internal-only.
 
-## Forbidden Work
-
-Do not ask for:
-
-- public business profile
-- service category
-- portfolio
-- public bio
-- provider listing details
-- availability calendar
-- pricing menu
-- reviews
-- ratings
-
 ## Acceptance Criteria
 
 - Payee cannot accept Vouch until required setup passes.

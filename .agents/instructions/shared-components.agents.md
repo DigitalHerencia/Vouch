@@ -17,34 +17,22 @@ Reusable UI primitives, Vouch components, layout, forms, status indicators, skel
 
 ## Objective
 
-Build reusable components that express Vouch’s serious, neutral, deterministic product model without introducing marketplace, social, or arbitration patterns.
+Build reusable components that express Vouch’s serious, neutral, deterministic product model.
 
 ## Component Architecture
 
 Use:
 
-```txt
-components/ui/
-components/layout/
-components/vouches/
-components/payments/
-components/verification/
-components/setup/
-components/admin/
-components/forms/
-```
+- `components/ui/`
+- `components/layout/`
+- `components/vouches/`
+- `components/payments/`
+- `components/verification/`
+- `components/setup/`
+- `components/admin/`
+- `components/forms/`
 
-Components must be pure.
-
-Components must not:
-
-- call Prisma
-- call Stripe
-- call Clerk server APIs
-- enforce authorization
-- fetch protected data
-- mutate domain state
-- contain hidden business rules
+Components are pure presentation. Domain reads, writes, auth, authorization, provider SDK calls, and database access belong in the appropriate server modules.
 
 ## Required Shared Components
 
@@ -118,7 +106,7 @@ Use status text, not color alone.
 
 ## Vouch Screen Standard
 
-Every Vouch screen must make these obvious:
+Every Vouch screen should make these obvious:
 
 1. current status
 2. amount involved
@@ -128,53 +116,9 @@ Every Vouch screen must make these obvious:
 6. whether other party acted
 7. whether state is final
 
-## Copy Rules
-
-Use:
-
-- commitment-backed payment
-- confirm presence
-- release funds
-- refund
-- appointment
-- in-person agreement
-- no-show protection
-- both parties
-
-Avoid:
-
-- escrow
-- trusted provider
-- verified service
-- guaranteed appointment
-- safe meetup
-- dispute
-- claim
-- judge
-- marketplace
-- review
-- rating
-
-## Forbidden Components
-
-Do not create:
-
-- `ProviderCard`
-- `PublicProfileCard`
-- `ReviewCard`
-- `RatingStars`
-- `MessageThread`
-- `ChatBubble`
-- `CategoryFilter`
-- `FeaturedProvider`
-- `RecommendationCard`
-- `DisputeForm`
-- `EvidenceUploader`
-- `ReputationScore`
-
 ## Form Rules
 
-Forms must be:
+Forms should be:
 
 - accessible
 - labeled
@@ -182,7 +126,7 @@ Forms must be:
 - consequence-clear
 - server-action compatible
 
-Forms must support:
+Forms should support:
 
 - pending state
 - field errors
@@ -194,19 +138,11 @@ Client form validation is UX only. Server actions remain authoritative.
 
 ## Loading States
 
-Use skeletons for:
-
-- dashboard lists
-- Vouch cards
-- Vouch detail panels
-- admin tables
-- setup checklist
-
-Avoid generic spinners unless there is no stable layout.
+Use stable skeleton layouts for dashboard lists, Vouch cards, Vouch detail panels, admin tables, and setup checklists.
 
 ## Accessibility Requirements
 
-Components must support:
+Components should support:
 
 - keyboard navigation
 - visible focus states
@@ -220,11 +156,8 @@ Components must support:
 ## Acceptance Criteria
 
 - Components are pure and reusable.
-- No component fetches protected data.
-- No component enforces authz.
 - Status components include text labels.
 - Vouch panels satisfy the seven-question standard.
-- No forbidden marketplace/social/dispute components exist.
 - Forms are accessible and server-action compatible.
 - Design matches serious/neutral Vouch tone.
 
@@ -239,8 +172,6 @@ Components must support:
 
 ## Required Validation
 
-```bash
-pnpm lint
-pnpm typecheck
-pnpm test
-```
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test`

@@ -1,4 +1,4 @@
-# Public Marketing Instructions — Informational Pages Only
+# Public Marketing Instructions
 
 ## Issue Type
 
@@ -6,7 +6,7 @@ Implementation Instruction
 
 ## Domain
 
-Public marketing, education, legal-safe positioning, and explicit prevention of marketplace/discovery behavior.
+Public marketing, education, legal-safe positioning, and product explanation.
 
 ## Source Contracts
 
@@ -18,31 +18,38 @@ Public marketing, education, legal-safe positioning, and explicit prevention of 
 
 ## Objective
 
-Implement public pages that explain Vouch without creating discovery, search, marketplace, or provider browsing behavior.
+Implement public pages that clearly explain Vouch, the payment coordination model, the pricing model, and the confirmation outcome flow.
 
-## Allowed Routes
+## Route Placement
 
-Allowed public routes:
+The root marketing home page is intentionally implemented at:
 
-```txt
-/
- /how-it-works
- /pricing
- /faq
- /legal/terms
- /legal/privacy
-```
+- `app/page.tsx`
 
-## Required Public Features
+Do not move the home page into `app/(public)/page.tsx`.
 
-### Landing Page
+## Public Marketing Routes
 
-Must include:
+- `/`
+- `/pricing`
+- `/faq`
+- `/legal/terms`
+- `/legal/privacy`
+
+## Public Access Routes
+
+- `/sign-in`
+- `/sign-up`
+- `/vouches/invite/[token]`
+
+## Landing Page
+
+Should include:
 
 - hero
 - concise mechanism
 - use cases
-- how it works
+- embedded process explanation
 - pricing summary
 - legal-safe positioning
 - primary CTA
@@ -51,96 +58,28 @@ Approved positioning:
 
 > Commitment-backed payments for appointments and in-person agreements.
 
-### How It Works
+## Pricing
 
-Must explain:
-
-1. Create a Vouch
-2. Other party accepts
-3. Both confirm presence
-4. Funds release or refund
-
-### Pricing
-
-Must explain:
+Should explain:
 
 - platform fee model
 - minimum fee
 - percentage fee
 - fees shown before commitment
+- payment flow
+- both-confirm release rule
 
-### FAQ
+## FAQ
 
-Must answer:
+Should answer product, payment, confirmation, and account setup questions in plain language.
 
-- What is Vouch?
-- Is Vouch a marketplace?
-- Does Vouch hold money?
-- What happens if only one person confirms?
-- What happens if nobody confirms?
-- Does Vouch decide disputes?
-- Does Vouch guarantee someone shows up?
+## Legal Pages
 
-### Legal Pages
-
-Must include conservative language:
-
-- Vouch is payment coordination
-- Vouch is not marketplace
-- Vouch is not arbitration
-- provider handles payment processing
-- dual confirmation rule
-- refund/non-capture rule
-
-## Forbidden Work
-
-Do not implement:
-
-- `/browse`
-- `/providers`
-- `/categories`
-- `/search`
-- `/messages`
-- `/reviews`
-- `/disputes`
-- provider directory
-- user profile cards
-- featured providers
-- category chips for services
-- marketplace filters
-- recommendations
-- ratings
-- reviews
-- social proof implying provider endorsement
-- “book now” marketplace CTA
-
-## Copy Requirements
-
-Use:
-
-- commitment-backed payment
-- no-show protection
-- both parties confirm
-- release funds
-- refund
-- appointment
-- in-person agreement
-
-Avoid:
-
-- escrow
-- trusted provider
-- verified service
-- guaranteed appointment
-- safe meetup
-- dispute protection
-- scam-proof
-- marketplace
-- ratings/reviews
+Should include conservative product language, payment-provider references, confirmation rules, data handling, and user responsibilities.
 
 ## UI Requirements
 
-Design must be:
+Design should be:
 
 - serious
 - precise
@@ -150,40 +89,24 @@ Design must be:
 - high-contrast
 - status/rule oriented
 
-Public pages must not visually imply a marketplace. No grids of people, provider cards, ratings, or listing-style layouts.
-
 ## Analytics
 
-Allowed analytics:
+Allowed analytics events for public pages:
 
 - `marketing.page_viewed`
 - `marketing.cta_clicked`
 - `auth.sign_up_started`
 
-Forbidden analytics:
-
-- provider profile views
-- search queries
-- category selected
-- review submitted
-- message sent
-- dispute opened
-
 ## Acceptance Criteria
 
-- Public pages explain Vouch in under 10 seconds.
+- Public pages explain Vouch quickly.
 - Landing page uses approved positioning.
-- No forbidden discovery routes exist.
-- No marketplace navigation exists.
-- No profile/listing/review UI exists.
-- Legal-safe copy avoids escrow and guarantee claims.
-- CTAs point to auth/create flow, not provider discovery.
+- CTAs point to auth/create flow or pricing.
+- Public routes match `.agents/contracts/routes.yaml`.
 
 ## Required Validation
 
-```bash
-pnpm lint
-pnpm typecheck
-pnpm test
-pnpm validate:contracts
-```
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm test`
+- `pnpm validate:contracts`

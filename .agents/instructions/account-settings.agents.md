@@ -80,23 +80,6 @@ Do not create fields for:
 
 All fetchers must authenticate and scope to current user.
 
-## Copy Requirements
-
-Use:
-
-- Finish setup to continue.
-- Complete payout setup before accepting Vouches.
-- Add a payment method before creating Vouches.
-- Complete verification before using payment-backed flows.
-
-Avoid:
-
-- Complete your provider profile.
-- Get discovered.
-- Improve your ranking.
-- Add services.
-- Become a featured provider.
-
 ## Acceptance Criteria
 
 - Settings are private and authenticated.

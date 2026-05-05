@@ -102,21 +102,6 @@ Use copy that explains:
 
 > Funds release only after both parties confirm during the window.
 
-## Forbidden Work
-
-Do not build:
-
-- public provider pages
-- provider bio
-- provider gallery
-- provider services
-- provider categories
-- ratings/reviews
-- messaging
-- calendar availability
-- booking management
-- CRM tools
-
 ## Acceptance Criteria
 
 - Payee sees only Vouches accepted by them.

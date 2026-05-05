@@ -1,6 +1,7 @@
 import Link from "next/link"
+
 import { LogoLockup } from "@/components/brand/logo-lockup"
-import { Button } from "../ui/button"
+import { Button } from "@/components/ui/button"
 
 export function SiteHeader() {
   return (
@@ -10,14 +11,14 @@ export function SiteHeader() {
       </Link>
 
       <nav className="hidden items-center gap-10 text-[11px] font-black tracking-[0.12em] text-neutral-300 uppercase lg:flex">
-        <Link href="/how-it-works" className="transition hover:text-white">
-          How it works
-        </Link>
         <Link href="/pricing" className="transition hover:text-white">
           Pricing
         </Link>
         <Link href="/faq" className="transition hover:text-white">
           FAQ
+        </Link>
+        <Link href="/legal/terms" className="transition hover:text-white">
+          Terms
         </Link>
       </nav>
 
@@ -29,8 +30,12 @@ export function SiteHeader() {
           Sign in
         </Link>
 
-        <Button className="h-11 rounded-none border border-blue-500 bg-blue-700 px-7 text-[11px] font-black tracking-[0.08em] text-white uppercase shadow-none hover:bg-blue-600">
-          <Link href="/sign-up?return_to=/vouches/new">Get started</Link>
+        <Button
+          variant="primary"
+          size="lg"
+          render={<Link href="/sign-up?return_to=/vouches/new" />}
+        >
+          Get started
         </Button>
       </div>
     </header>

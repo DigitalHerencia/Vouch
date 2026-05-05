@@ -7,15 +7,23 @@ test.describe("public marketing routes", () => {
     await expect(page.getByText(/commitment-backed payments/i)).toBeVisible()
   })
 
-  test("how it works loads without auth", async ({ page }) => {
-    await page.goto("/how-it-works")
+  test("pricing loads without auth", async ({ page }) => {
+    await page.goto("/pricing")
 
-    await expect(page.getByText(/both confirm/i)).toBeVisible()
+    await expect(page.getByRole("heading", { name: /know the cost/i })).toBeVisible()
   })
 
-  test("faq states Vouch is not a marketplace", async ({ page }) => {
+  test("faq loads without auth", async ({ page }) => {
     await page.goto("/faq")
 
-    await expect(page.getByText(/not a marketplace/i)).toBeVisible()
+    await expect(page.getByRole("heading", { name: /precise answers/i })).toBeVisible()
+  })
+
+  test("legal pages load without auth", async ({ page }) => {
+    await page.goto("/legal/terms")
+    await expect(page.getByRole("heading", { name: /terms of service/i })).toBeVisible()
+
+    await page.goto("/legal/privacy")
+    await expect(page.getByRole("heading", { name: /privacy policy/i })).toBeVisible()
   })
 })
