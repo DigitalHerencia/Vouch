@@ -66,6 +66,14 @@ export async function captureStripePayment(input: {
   })
 }
 
+export async function retrieveStripePaymentIntent(input: {
+  providerPaymentId: string
+}): Promise<Stripe.PaymentIntent> {
+  return getStripeServerClient().paymentIntents.retrieve(input.providerPaymentId, {
+    expand: ["latest_charge"],
+  })
+}
+
 export async function voidStripeAuthorization(input: {
   providerPaymentId: string
   idempotencyKey: string

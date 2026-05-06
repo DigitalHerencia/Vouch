@@ -708,15 +708,6 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
       customerTotalCents: true,
       payer: {
         select: {
-          paymentCustomer: {
-            select: {
-              providerCustomerId: true,
-            },
-          },
-        },
-      },
-      payee: {
-        select: {
           connectedAccount: {
             select: {
               providerAccountId: true,
@@ -724,17 +715,26 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
           },
         },
       },
+      payee: {
+        select: {
+          paymentCustomer: {
+            select: {
+              providerCustomerId: true,
+            },
+          },
+        },
+      },
     },
   })
 
-  const providerCustomerId = paymentContext?.payer.paymentCustomer?.providerCustomerId
-  const connectedAccountId = paymentContext?.payee?.connectedAccount?.providerAccountId
+  const providerCustomerId = paymentContext?.payee?.paymentCustomer?.providerCustomerId
+  const connectedAccountId = paymentContext?.payer.connectedAccount?.providerAccountId
 
   if (!paymentContext || !providerCustomerId || !connectedAccountId) {
     await markVouchFailed({ vouchId: vouch.id })
     return actionFailure(
       "PAYMENT_SETUP_INCOMPLETE",
-      "Both payment setup and payout setup are required before acceptance can complete."
+      "Customer payment setup and merchant payout setup are required before acceptance can complete."
     )
   }
 
@@ -747,7 +747,7 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
     await markVouchFailed({ vouchId: vouch.id })
     return actionFailure(
       "PAYMENT_METHOD_REQUIRED",
-      "Payer payment method must be ready before acceptance can complete."
+      "Customer payment method must be ready before acceptance can complete."
     )
   }
 
@@ -1399,32 +1399,8 @@ export async function runExpireUnresolvedVouchesJob(input?: {
 
   for (const vouch of candidates) {
     try {
-      await prisma.$transaction(async (tx) => {
-        await tx.vouch.updateMany({
-          where: { id: vouch.id, status: { in: ["pending", "active"] } },
-          data: { status: "expired", expiredAt: input?.now ?? new Date() },
-        })
-        await tx.auditEvent.create({
-          data: {
-            eventName: "vouch.expired",
-            actorType: "system",
-            entityType: "Vouch",
-            entityId: vouch.id,
-            participantSafe: true,
-            metadata: { source: "expire_vouches_job" },
-          },
-        })
-      })
-
-      if (vouch.paymentRecord) {
-        const refund = await refundOrVoidStripePaymentForVouch({
-          paymentRecordId: vouch.paymentRecord.id,
-          reason: vouch.status === "pending" ? "not_accepted" : "confirmation_incomplete",
-          idempotencyKey: `vouch:${vouch.id}:expire_refund_or_void`,
-        })
-        if (!refund.ok) throw new Error(refund.code)
-      }
-
+      const result = await expireVouch({ vouchId: vouch.id })
+      if (!result.ok) throw new Error(result.code ?? "EXPIRE_VOUCH_FAILED")
       expiredCount += 1
     } catch {
       failedCount += 1

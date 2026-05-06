@@ -36,6 +36,10 @@ export function isStripeRefundEvent(event: Stripe.Event): boolean {
   return event.type.startsWith("charge.refund") || event.type.startsWith("refund.")
 }
 
+export function isStripeSetupIntentEvent(event: Stripe.Event): boolean {
+  return event.type.startsWith("setup_intent.")
+}
+
 export function isStripeAccountEvent(event: Stripe.Event): boolean {
   return event.type.startsWith("account.")
 }
