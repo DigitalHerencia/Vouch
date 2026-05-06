@@ -1,15 +1,37 @@
-schema_version: "2.0.0"
+schema_version: "2.1.0"
 contract_name: "features"
 product: "Vouch"
-source_of_truth_date: "2026-04-30"
+source_of_truth_date: "2026-05-06"
+
+participant_model:
+  merchant_provider:
+    description: "Creates and sends the Vouch, owns the connected payout account, receives funds when release conditions pass."
+    current_legacy_field: "Vouch.payerId"
+    readiness_gate: "create readiness requires connected account payout readiness"
+  customer_client:
+    description: "Accepts the Vouch, pays the customer total, receives non-capture/void/refund when release conditions fail."
+    current_legacy_field: "Vouch.payeeId"
+    readiness_gate: "accept-and-pay readiness requires payment customer/payment method readiness"
 
 legacy_mapping:
-  payer: "provider / merchant / creator"
-  payee: "customer / client / paying acceptor"
+  status: "active_migration"
+  rule: "Do not use payer/payee words to infer Stripe money roles. Prefer merchant/provider/customer/client language in product UI and new code."
+  current_legacy_fields:
+    payer: "merchant / provider / creator"
+    payee: "customer / client / acceptor"
+  stripe_mapping_for_current_schema:
+    payment_customer: "customer/client acceptor, currently Vouch.payeeId"
+    connected_account_destination: "merchant/provider creator, currently Vouch.payerId"
 
 mvp_features:
   - id: "merchant_create_vouch"
     description: "Merchant/provider creates a Vouch for a pre-arranged appointment or in-person agreement."
+    actor: "merchant_provider"
+    required_readiness:
+      - "authenticated active user"
+      - "identity/adult verification when required"
+      - "current terms acceptance"
+      - "Stripe connected account payout readiness"
     required_money_fields:
       - "protectedAmountCents"
       - "merchantReceivesCents"
@@ -17,16 +39,74 @@ mvp_features:
       - "processingFeeOffsetCents"
       - "applicationFeeAmountCents"
       - "customerTotalCents"
+    forbidden_behavior:
+      - "Do not charge the merchant/provider during creation."
+      - "Do not create marketplace, booking, listing, or scheduling behavior."
   - id: "customer_accept_and_pay"
-    description: "Customer/client accepts the Vouch and pays the customer total through Stripe."
+    description: "Customer/client accepts the Vouch and authorizes the customer total through Stripe."
+    actor: "customer_client"
+    required_readiness:
+      - "authenticated active user"
+      - "identity/adult verification when required"
+      - "current terms acceptance"
+      - "Stripe customer/payment method readiness"
+    required_provider_operation:
+      - "Create/confirm manual-capture PaymentIntent against the customer/client payment method."
+      - "Use merchant/provider connected account as transfer_data.destination."
+      - "Use applicationFeeAmountCents as application_fee_amount."
+    forbidden_behavior:
+      - "Do not use the merchant/provider as the payment customer."
+      - "Do not use the customer/client as the destination connected account."
   - id: "manual_presence_confirmation"
     description: "Both merchant/provider and customer/client can confirm presence during the confirmation window."
+    actors:
+      - "merchant_provider"
+      - "customer_client"
+    rules:
+      - "Each party can only confirm for themself."
+      - "Each party can confirm only once."
+      - "Confirmations must be inside the confirmation window."
+      - "A single confirmation never releases funds."
+      - "Late confirmation never releases funds."
+  - id: "deterministic_resolution"
+    description: "Resolution computes outcome from authenticated confirmations, bounded time windows, provider-backed payment state, and immutable pricing snapshot."
+    release_condition: "both valid confirmations inside the confirmation window and capturable authorized payment"
+    non_release_condition: "missing/invalid/late confirmation or non-capturable provider state"
+    forbidden_behavior:
+      - "No admin arbitration."
+      - "No evidence review."
+      - "No manual fund awards."
+      - "No subjective override."
   - id: "provider_backed_release_or_refund"
-    description: "Provider-backed payment records drive release, refund, void, or non-capture outcomes."
+    description: "Provider-backed payment records drive capture, refund, void, or non-capture outcomes."
+    provider: "stripe"
+    preferred_path: "authorize first, capture only after successful dual confirmation, cancel/void/non-capture when release conditions fail."
+    refund_path: "Use refund only when captured funds require reversal."
   - id: "stripe_connect_payout"
-    description: "Merchant/provider receives protectedAmountCents through their connected account."
+    description: "Merchant/provider receives protectedAmountCents through their connected account after successful release."
+    connected_account_owner: "merchant_provider"
+    current_legacy_owner_field: "Vouch.payerId"
+  - id: "stripe_webhook_reconciliation"
+    description: "Stripe webhooks reconcile provider truth into local payment, refund, connected-account, webhook, and audit state."
+    requirements:
+      - "signature verification"
+      - "provider event id dedupe"
+      - "idempotent processing"
+      - "safe metadata only"
+      - "duplicate delivery safety"
+      - "late delivery safety"
   - id: "admin_operational_visibility"
     description: "Admins inspect users, Vouches, payment records, webhook records, audit events, and technical failures without arbitration controls."
+    allowed_actions:
+      - "inspect operational state"
+      - "retry safe idempotent technical operations"
+      - "view redacted provider references"
+    forbidden_actions:
+      - "decide who deserves funds"
+      - "force release"
+      - "rewrite confirmations"
+      - "edit confirmation timestamps"
+      - "collect claims or evidence"
 
 forbidden_features:
   - "public provider profiles"
@@ -38,6 +118,7 @@ forbidden_features:
   - "featured providers"
   - "ratings"
   - "reviews"
+  - "reputation"
   - "messages"
   - "scheduler"
   - "booking marketplace"
@@ -46,6 +127,8 @@ forbidden_features:
   - "appeals"
   - "admin fund awards"
   - "manual confirmation overrides"
+  - "manual release overrides"
+  - "subjective adjudication"
 
 pricing_feature:
   formula_reference: ".agents/contracts/domain-model.yaml#money_model"
@@ -54,4 +137,18 @@ pricing_feature:
     - "Show Vouch service fee."
     - "Show processing fee offset."
     - "Show customer total before payment."
+    - "Show merchant/provider receives protected amount on successful release."
+    - "Show customer/client pays customer total."
     - "Do not imply Vouch is escrow."
+    - "Do not imply Vouch judges disputes."
+
+codex_first_stripe_repair:
+  summary: "Repair participant-role wiring before adding new Stripe features."
+  suspect_patterns:
+    - "vouch.payer.paymentCustomer"
+    - "vouch.payee.connectedAccount"
+    - "PaymentIntent customer derived from Vouch.payerId while payerId remains creator/merchant"
+    - "PaymentIntent destination derived from Vouch.payeeId while payeeId remains acceptor/customer"
+  expected_current_schema_mapping:
+    customer_payment_customer: "Vouch.payee.paymentCustomer"
+    merchant_connected_account: "Vouch.payer.connectedAccount"

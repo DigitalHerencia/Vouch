@@ -25,7 +25,7 @@ export function SectionIntro({
   bodyClassName,
 }: SectionIntroProps) {
   return (
-    <section className={cn("max-w-212.5", className)}>
+    <section className={cn("max-w-7xl.5", className)}>
       {eyebrow ? (
         <div className="flex items-center gap-3">
           <span aria-hidden="true" className="size-2.5 shrink-0 bg-[#1D4ED8]" />
@@ -37,9 +37,9 @@ export function SectionIntro({
 
       <h2
         className={cn(
-          "mt-6 max-w-212.5 font-(family-name:--font-display) text-[48px] leading-[0.92] tracking-[0.02em] text-white uppercase sm:text-[64px]",
+          "mt-6 max-w-7xl font-(family-name:--font-display) text-[48px] leading-[0.92] tracking-[0.02em] text-white uppercase sm:text-[64px]",
           !eyebrow ? "mt-0" : undefined,
-          titleClassName,
+          titleClassName
         )}
       >
         {title}
@@ -48,8 +48,8 @@ export function SectionIntro({
       {body ? (
         <p
           className={cn(
-            "mt-4 max-w-170 text-[17px] leading-[1.35] font-semibold text-neutral-400",
-            bodyClassName,
+            "mt-4 max-w-7xl text-[17px] leading-[1.35] font-semibold text-neutral-400",
+            bodyClassName
           )}
         >
           {body}

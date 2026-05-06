@@ -3,122 +3,115 @@
 import Link from "next/link"
 import { ArrowDown, ArrowRight } from "lucide-react"
 
+import { LandingCalloutPanel } from "@/components/landing/landing-callout-panel"
+import { LandingCardGrid } from "@/components/landing/landing-card-grid"
+import { LandingMetricGrid } from "@/components/landing/landing-metric-grid"
+import { LandingPageHeader } from "@/components/landing/landing-page-header"
+import { LandingProcessPanel } from "@/components/landing/landing-process-panel"
+import { LandingPublicFooter } from "@/components/landing/landing-public-footer"
+import { LandingPublicHeader } from "@/components/landing/landing-public-header"
+import { LandingSectionIntro } from "@/components/landing/landing-section-intro"
 import { Button } from "@/components/ui/button"
-import { PublicFooter } from "@/components/navigation/public-footer"
-import { PublicHeader } from "@/components/navigation/public-header"
-import { CalloutPanel } from "@/components/shared/callout-panel"
-import { CardGrid } from "@/components/shared/card-grid"
-import { MetricGrid } from "@/components/shared/metric-grid"
-import { PageHeader } from "@/components/shared/page-header"
-import { ProcessPanel } from "@/components/shared/process-panel"
-import { SectionIntro } from "@/components/shared/section-intro"
 import {
-    landingHeroContent,
-    landingMetrics,
-    landingProcessSteps,
-    landingTrustPanelContent,
-    landingUseCases,
+  landingFooterContent,
+  landingHeaderContent,
+  landingHeroActionsContent,
+  landingHeroContent,
+  landingMetrics,
+  landingProcessPanelContent,
+  landingProcessSteps,
+  landingSectionIntroContent,
+  landingTrustPanelContent,
+  landingUseCases,
 } from "@/content/marketing"
 
 export default function HomePage() {
-    const TrustIcon = landingTrustPanelContent.icon
+  const TrustIcon = landingTrustPanelContent.icon
 
-    return (
-        <main>
-            <PublicHeader />
+  return (
+    <main>
+      <LandingPublicHeader content={landingHeaderContent} />
 
-            <section className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
-                <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
-                    <div className="pt-2 lg:pt-8">
-                        <PageHeader
-                            title={landingHeroContent.title}
-                            body={landingHeroContent.body}
-                            actions={
-                                <>
-                                    <Button
-                                        variant="primary"
-                                        size="cta"
-                                        className="min-w-62.5"
-                                        render={<Link href="/sign-up?return_to=/vouches/new" />}
-                                    >
-                                        <span className="translate-y-px">Create a Vouch</span>
-                                        <ArrowRight
-                                            className="size-6"
-                                            strokeWidth={1.8}
-                                        />
-                                    </Button>
+      <section className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
+        <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+          <header className="pt-2 lg:pt-8">
+            <LandingPageHeader
+              title={landingHeroContent.title}
+              body={landingHeroContent.body}
+              actions={
+                <>
+                  <Button
+                    variant="primary"
+                    size="cta"
+                    className="min-w-62.5"
+                    render={<Link href={landingHeroActionsContent.primary.href} />}
+                  >
+                    <span className="translate-y-px">
+                      {landingHeroActionsContent.primary.label}
+                    </span>
+                    <ArrowRight className="size-6" strokeWidth={1.8} />
+                  </Button>
 
-                                    <Button
-                                        variant="secondary"
-                                        size="cta"
-                                        className="min-w-55"
-                                        render={<Link href="#process" />}
-                                    >
-                                        <span className="translate-y-px">How it works</span>
-                                        <ArrowDown
-                                            className="size-5"
-                                            strokeWidth={1.8}
-                                        />
-                                    </Button>
-                                </>
-                            }
-                        />
-                    </div>
+                  <Button
+                    variant="secondary"
+                    size="cta"
+                    className="min-w-55"
+                    render={<Link href={landingHeroActionsContent.secondary.href} />}
+                  >
+                    <span className="translate-y-px">
+                      {landingHeroActionsContent.secondary.label}
+                    </span>
+                    <ArrowDown className="size-5" strokeWidth={1.8} />
+                  </Button>
+                </>
+              }
+            />
+          </header>
 
-                    <div
-                        id="process"
-                        className="mx-auto w-full max-w-130 scroll-mt-28 lg:pt-6"
-                    >
-                        <ProcessPanel
-                            title="The Vouch Process"
-                            steps={landingProcessSteps}
-                            footer="No confirmation = refund / void"
-                        />
-                    </div>
-                </div>
+          <div id="process" className="mx-auto w-full max-w-130 scroll-mt-28 lg:pt-6">
+            <LandingProcessPanel
+              title={landingProcessPanelContent.title}
+              steps={landingProcessSteps}
+              footer={landingProcessPanelContent.footer}
+              className="blue"
+            />
+          </div>
+        </div>
 
-                <MetricGrid
-                    items={landingMetrics}
-                    className="mt-14"
-                />
+        <LandingMetricGrid items={landingMetrics} className="mt-14" />
 
-                <section className="mt-16">
-                    <SectionIntro
-                        eyebrow="Built for real life"
-                        title="Protect the moments that matter."
-                        body="Appointments, meetups, services, consultations, and more. Vouch keeps commitments real."
-                    />
+        <section className="mt-16">
+          <LandingSectionIntro
+            eyebrow={landingSectionIntroContent.eyebrow}
+            title={landingSectionIntroContent.title}
+            body={landingSectionIntroContent.body}
+          />
 
-                    <CardGrid
-                        items={landingUseCases}
-                        className="mt-9"
-                    />
+          <LandingCardGrid items={landingUseCases} className="mt-9" />
 
-                    <CalloutPanel
-                        className="mt-10"
-                        icon={TrustIcon}
-                        title={landingTrustPanelContent.title}
-                        body={landingTrustPanelContent.body}
-                        actions={
-                            <Button
-                                variant="primary"
-                                size="cta"
-                                className="min-w-72"
-                                render={<Link href="/sign-up?return_to=/vouches/new" />}
-                            >
-                                <span className="translate-y-px">Create a Vouch</span>
-                                <ArrowRight
-                                    className="size-5 sm:size-6"
-                                    strokeWidth={1.9}
-                                />
-                            </Button>
-                        }
-                    />
-                </section>
-            </section>
+          <LandingCalloutPanel
+            className="mt-10"
+            icon={TrustIcon}
+            title={landingTrustPanelContent.title}
+            body={landingTrustPanelContent.body}
+            actions={
+              <Button
+                variant="primary"
+                size="cta"
+                className="min-w-72"
+                render={<Link href={landingTrustPanelContent.action.href} />}
+              >
+                <span className="translate-y-px">
+                  {landingTrustPanelContent.action.label}
+                </span>
+                <ArrowRight className="size-5 sm:size-6" strokeWidth={1.9} />
+              </Button>
+            }
+          />
+        </section>
+      </section>
 
-            <PublicFooter />
-        </main>
-    )
+      <LandingPublicFooter content={landingFooterContent} />
+    </main>
+  )
 }
-
