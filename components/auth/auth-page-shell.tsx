@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, CreditCard, ShieldCheck } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { LogoLockup } from "@/components/brand/logo-lockup"
-import { CalloutPanel } from "@/components/landing/landing-callout-panel"
+import { LandingCalloutPanel } from "@/components/landing/landing-callout-panel"
 import { cn } from "@/lib/utils"
 
 export interface AuthPageShellProps {
@@ -68,12 +68,12 @@ export function AuthPageShell({
           </header>
 
           <div className="flex min-h-0 flex-1 items-center overflow-hidden py-3 sm:py-4 lg:py-5">
-            <div className="mx-auto flex w-full max-w-112 min-w-0 flex-col justify-center overflow-hidden xl:max-w-120">
+            <div className="mx-auto flex w-full max-w-md min-w-0 flex-col justify-center overflow-hidden xl:max-w-120">
               {children}
             </div>
           </div>
 
-          <footer className="shrink-0 overflow-hidden border-t border-neutral-900 pt-3 font-mono text-[10px] leading-4 break-words text-neutral-500 sm:pt-4 sm:text-[11px] lg:text-xs lg:leading-5">
+          <footer className="shrink-0 overflow-hidden border-t border-neutral-900 pt-3 font-mono text-[10px] leading-4 wrap-break-word text-neutral-500 sm:pt-4 sm:text-[11px] lg:text-xs lg:leading-5">
             <span className="text-primary font-bold">{eyebrow}</span>
             <span className="mx-2 text-neutral-700">/</span>
             {footnote}
@@ -102,12 +102,12 @@ export function AuthPageShell({
 
             <div className="mt-7 grid gap-3 xl:mt-8">
               {authPrinciples.map((principle) => (
-                <CalloutPanel
+                <LandingCalloutPanel
                   key={principle.title}
                   icon={principle.icon}
                   title={principle.title}
                   body={principle.body}
-                  className="mt-0 border-neutral-700 bg-black/70 p-4 shadow-[6px_6px_0_0_rgba(29,78,216,0.18)] [&_h3]:text-[24px] xl:[&_h3]:text-[28px] [&_p]:text-[14px] [&_p]:leading-[1.25] xl:[&_p]:text-[15px] [&_svg]:size-8 xl:[&_svg]:size-9"
+                  className="mt-0 border-neutral-700 bg-black/70 p-4 shadow-[6px_6px_0_0_rgba(29,78,216,0.18)] [&_h3]:text-[24px] xl:[&_h3]:text-[28px] [&_p]:text-[14px] [&_p]:leading-tight xl:[&_p]:text-[15px] [&_svg]:size-8 xl:[&_svg]:size-9"
                 />
               ))}
             </div>

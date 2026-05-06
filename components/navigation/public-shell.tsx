@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react"
 
-import { PublicFooter } from "@/components/landing/landing-public-footer"
-import { PublicHeader } from "@/components/landing/landing-public-header"
+import { LandingPublicFooter } from "@/components/landing/landing-public-footer"
+import { LandingPublicHeader } from "@/components/landing/landing-public-header"
 import { PublicMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"
 import { cn } from "@/lib/utils"
 
@@ -16,9 +16,9 @@ export interface PublicShellProps {
 export function PublicShell({ children, className, withMobileBottomNav = true }: PublicShellProps) {
   return (
     <div className={cn("min-h-dvh bg-transparent text-white", className)}>
-      <PublicHeader />
+      <LandingPublicHeader />
       <main className={cn(withMobileBottomNav ? "pb-24 md:pb-0" : undefined)}>{children}</main>
-      <PublicFooter />
+      <LandingPublicFooter />
       {withMobileBottomNav ? <PublicMobileBottomNav /> : null}
     </div>
   )

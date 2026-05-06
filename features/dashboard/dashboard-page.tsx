@@ -11,10 +11,10 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { CalloutPanel } from "@/components/landing/landing-callout-panel"
+import { LandingCalloutPanel } from "@/components/landing/landing-callout-panel"
 import { CtaPanel } from "@/components/shared/cta-panel"
-import { MetricGrid, type MetricGridItem } from "@/components/landing/landing-metric-grid"
-import { SectionIntro } from "@/components/landing/landing-section-intro"
+import { LandingMetricGrid, type MetricGridItem } from "@/components/landing/landing-metric-grid"
+import { LandingSectionIntro } from "@/components/landing/landing-section-intro"
 import { Surface, SurfaceHeader } from "@/components/shared/surface"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
 import { cn } from "@/lib/utils"
@@ -169,14 +169,14 @@ export async function DashboardPage() {
 
   return (
     <main className="mx-auto grid w-full max-w-7xl gap-6 px-6 pt-8 pb-12 sm:px-10 lg:px-12 lg:pt-10 lg:pb-14">
-      <SectionIntro
+      <LandingSectionIntro
         eyebrow="Participant ledger"
         title="Dashboard"
         body="Here's what's happening with your Vouches. Amount, status, deadline, and consequence stay visible."
       />
 
       {!setupComplete ? (
-        <CalloutPanel
+        <LandingCalloutPanel
           title="Finish setup before creating or accepting Vouches."
           body="Complete readiness checks so Vouch can coordinate payment state, confirmation windows, and deterministic outcomes."
           icon={AlertCircle}
@@ -189,7 +189,7 @@ export async function DashboardPage() {
         />
       ) : null}
 
-      <MetricGrid items={metrics} />
+      <LandingMetricGrid items={metrics} />
 
       <DashboardListPanel
         title={`Action required (${actionRequired.length})`}
@@ -275,7 +275,7 @@ function DashboardVouchRow({ vouch }: { vouch: DashboardVouch }) {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href={vouch.href}
-              className="font-(family-name:--font-display) text-[22px] leading-none tracking-[0.05em] text-white uppercase hover:text-[#1D4ED8]"
+              className="font-(family-name:--font-display) text-[22px] leading-none tracking-wider text-white uppercase hover:text-[#1D4ED8]"
             >
               {vouch.title}
             </Link>

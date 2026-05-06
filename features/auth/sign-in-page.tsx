@@ -45,7 +45,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
   const router = useRouter()
   const [awaitingSecondFactor, setAwaitingSecondFactor] = useState(false)
   const [secondFactorMethod, setSecondFactorMethod] = useState<"email_code" | "phone_code" | null>(
-    null,
+    null
   )
   const [notice, setNotice] = useState<string | null>(null)
   const [isResending, startResending] = useTransition()
@@ -96,7 +96,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
 
   async function sendSecondFactorCode(): Promise<boolean> {
     const supportsEmailCode = signIn.supportedSecondFactors.some(
-      (factor) => factor.strategy === "email_code",
+      (factor) => factor.strategy === "email_code"
     )
 
     if (supportsEmailCode) {
@@ -115,7 +115,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
     }
 
     const supportsPhoneCode = signIn.supportedSecondFactors.some(
-      (factor) => factor.strategy === "phone_code",
+      (factor) => factor.strategy === "phone_code"
     )
 
     if (supportsPhoneCode) {
@@ -240,28 +240,28 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
   return (
     <form
       className={cn(
-        "flex w-full min-w-0 max-w-full flex-col overflow-hidden bg-transparent text-white",
-        className,
+        "flex w-full max-w-full min-w-0 flex-col overflow-hidden bg-transparent text-white",
+        className
       )}
       onSubmit={handleSubmit}
       noValidate
       {...props}
     >
-      <UiFieldGroup className="min-w-0 max-w-full gap-3 overflow-hidden border-0 bg-transparent p-0 shadow-none sm:gap-4">
+      <UiFieldGroup className="max-w-full min-w-0 gap-3 overflow-hidden border-0 bg-transparent p-0 shadow-none sm:gap-4">
         {notice ? (
-          <div className="max-w-full overflow-hidden border border-primary/70 bg-primary/10 px-4 py-2.5 font-mono text-xs break-words text-blue-100 sm:text-sm">
+          <div className="border-primary/70 bg-primary/10 max-w-full overflow-hidden border px-4 py-2.5 font-mono text-xs wrap-break-word text-blue-100 sm:text-sm">
             {notice}
           </div>
         ) : null}
 
         {form.formState.errors.root?.message ? (
-          <div className="max-w-full overflow-hidden border border-red-900 bg-red-950/30 px-4 py-2.5 font-mono text-xs break-words text-red-100 sm:text-sm">
+          <div className="max-w-full overflow-hidden border border-red-900 bg-red-950/30 px-4 py-2.5 font-mono text-xs wrap-break-word text-red-100 sm:text-sm">
             {form.formState.errors.root.message}
           </div>
         ) : null}
 
         {awaitingSecondFactor ? (
-          <div className="min-w-0 max-w-full space-y-3 overflow-hidden sm:space-y-4">
+          <div className="max-w-full min-w-0 space-y-3 overflow-hidden sm:space-y-4">
             <Field>
               <FieldLabel className={labelClassName} htmlFor="verificationCode">
                 Verification code
@@ -354,7 +354,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
             </Button>
           </div>
         ) : (
-          <div className="min-w-0 max-w-full space-y-3 overflow-hidden sm:space-y-4">
+          <div className="max-w-full min-w-0 space-y-3 overflow-hidden sm:space-y-4">
             <FieldGroup id="email" label="Email" error={form.formState.errors.email?.message}>
               <Input
                 id="email"
@@ -408,7 +408,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                     ? `/sign-up?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-up"
                 }
-                className="font-mono text-primary underline-offset-4 transition-colors hover:text-white hover:underline"
+                className="text-primary font-mono underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Create one
               </Link>
