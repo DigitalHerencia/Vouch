@@ -15,7 +15,7 @@ export interface SectionIntroProps {
   bodyClassName?: string
 }
 
-export function SectionIntro({
+export function LandingSectionIntro({
   eyebrow,
   title,
   body,
@@ -60,5 +60,3 @@ export function SectionIntro({
     </section>
   )
 }
-
-export { SectionIntro as BrutalistSectionIntro }

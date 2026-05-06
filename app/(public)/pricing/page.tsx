@@ -5,11 +5,11 @@ import { ArrowDown, ArrowRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { CtaPanel } from "@/components/shared/cta-panel"
-import { MetricGrid } from "@/components/shared/metric-grid"
-import { PageHeader } from "@/components/shared/page-header"
-import { ProcessPanel } from "@/components/shared/process-panel"
-import { SectionIntro } from "@/components/shared/section-intro"
-import { pricingFlowSteps, pricingNotes, pricingStats, pricingHeroContent } from "@/content/pricing"
+import { LandingMetricGrid } from "@/components/landing/landing-metric-grid"
+import { LandingPageHeader } from "@/components/landing/landing-page-header"
+import { LandingProcessPanel } from "@/components/landing/landing-process-panel"
+import { LandingSectionIntro } from "@/components/landing/landing-section-intro"
+import { pricingFlowSteps, pricingNotes, pricingStats, PricingHeroContent } from "@/content/pricing"
 
 export default function PricingRoute() {
   return (
@@ -17,9 +17,9 @@ export default function PricingRoute() {
       <section className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
         <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-stretch">
           <header className="pt-2 lg:pt-8">
-            <PageHeader
-              title={pricingHeroContent.title}
-              body={pricingHeroContent.body}
+            <LandingPageHeader
+              title={PricingHeroContent.title}
+              body={PricingHeroContent.body}
               actions={
                 <>
                   <Button
@@ -47,7 +47,7 @@ export default function PricingRoute() {
           </header>
 
           <div className="mx-auto flex w-full max-w-130 scroll-mt-28 lg:pt-6">
-            <ProcessPanel
+            <LandingProcessPanel
               title="Payment flow"
               steps={pricingFlowSteps}
               footer="Both confirm = release"
@@ -58,7 +58,7 @@ export default function PricingRoute() {
 
         <div id="pricing-rule" className="scroll-mt-28">
           <section className="mt-14 grid gap-12">
-            <MetricGrid items={pricingStats} />
+            <LandingMetricGrid items={pricingStats} />
 
             <section className="grid divide-y divide-neutral-800 lg:grid-cols-3 lg:divide-x lg:divide-y-0">
               {pricingNotes.map((note) => (
@@ -66,7 +66,7 @@ export default function PricingRoute() {
                   key={note.title}
                   className="grid min-h-84 grid-rows-[auto_112px_1fr] py-8 first:pt-0 last:pb-0 lg:px-8 lg:py-0 lg:first:pl-0 lg:last:pr-0"
                 >
-                  <SectionIntro
+                  <LandingSectionIntro
                     eyebrow={note.eyebrow}
                     title={note.title}
                     body={note.body}

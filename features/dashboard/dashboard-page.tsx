@@ -11,10 +11,10 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { CalloutPanel } from "@/components/shared/callout-panel"
+import { CalloutPanel } from "@/components/landing/landing-callout-panel"
 import { CtaPanel } from "@/components/shared/cta-panel"
-import { MetricGrid, type MetricGridItem } from "@/components/shared/metric-grid"
-import { SectionIntro } from "@/components/shared/section-intro"
+import { MetricGrid, type MetricGridItem } from "@/components/landing/landing-metric-grid"
+import { SectionIntro } from "@/components/landing/landing-section-intro"
 import { Surface, SurfaceHeader } from "@/components/shared/surface"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
 import { cn } from "@/lib/utils"
@@ -154,9 +154,9 @@ export async function DashboardPage() {
       value: money(
         [...(sections?.active ?? []), ...(sections?.actionRequired ?? [])].reduce(
           (sum, vouch) => sum + Number((vouch as Record<string, unknown>).amountCents ?? 0),
-          0,
+          0
         ),
-        "usd",
+        "usd"
       ),
       body: "Payment-coordination value currently in motion.",
     },
@@ -172,7 +172,7 @@ export async function DashboardPage() {
       <SectionIntro
         eyebrow="Participant ledger"
         title="Dashboard"
-        body="Here&apos;s what&apos;s happening with your Vouches. Amount, status, deadline, and consequence stay visible."
+        body="Here's what's happening with your Vouches. Amount, status, deadline, and consequence stay visible."
       />
 
       {!setupComplete ? (

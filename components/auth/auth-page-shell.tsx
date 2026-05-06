@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, CreditCard, ShieldCheck } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { LogoLockup } from "@/components/brand/logo-lockup"
-import { CalloutPanel } from "@/components/shared/callout-panel"
+import { CalloutPanel } from "@/components/landing/landing-callout-panel"
 import { cn } from "@/lib/utils"
 
 export interface AuthPageShellProps {
@@ -51,7 +51,7 @@ export function AuthPageShell({
         <section
           className={cn(
             "flex h-dvh max-h-dvh min-h-0 min-w-0 flex-col overflow-hidden bg-black px-4 py-4 sm:px-6 sm:py-5 lg:px-9 lg:py-6 xl:px-12",
-            isSignup ? "lg:order-2" : "lg:order-1",
+            isSignup ? "lg:order-2" : "lg:order-1"
           )}
         >
           <header className="flex shrink-0 items-center justify-between gap-4 overflow-hidden">
@@ -61,7 +61,7 @@ export function AuthPageShell({
 
             <Link
               href="/"
-              className="shrink-0 font-(family-name:--font-display) text-xs leading-none tracking-widest text-neutral-500 uppercase underline-offset-4 transition-colors hover:text-primary hover:underline sm:text-sm"
+              className="hover:text-primary shrink-0 font-(family-name:--font-display) text-xs leading-none tracking-widest text-neutral-500 uppercase underline-offset-4 transition-colors hover:underline sm:text-sm"
             >
               Home
             </Link>
@@ -74,7 +74,7 @@ export function AuthPageShell({
           </div>
 
           <footer className="shrink-0 overflow-hidden border-t border-neutral-900 pt-3 font-mono text-[10px] leading-4 break-words text-neutral-500 sm:pt-4 sm:text-[11px] lg:text-xs lg:leading-5">
-            <span className="font-bold text-primary">{eyebrow}</span>
+            <span className="text-primary font-bold">{eyebrow}</span>
             <span className="mx-2 text-neutral-700">/</span>
             {footnote}
           </footer>
@@ -83,7 +83,7 @@ export function AuthPageShell({
         <aside
           className={cn(
             "relative hidden h-dvh max-h-dvh min-h-0 min-w-0 overflow-hidden border-neutral-900 px-7 py-7 lg:flex lg:flex-col lg:justify-center xl:px-10",
-            isSignup ? "lg:order-1 lg:border-r" : "lg:order-2 lg:border-l",
+            isSignup ? "lg:order-1 lg:border-r" : "lg:order-2 lg:border-l"
           )}
         >
           <div
@@ -107,16 +107,16 @@ export function AuthPageShell({
                   icon={principle.icon}
                   title={principle.title}
                   body={principle.body}
-                  className="mt-0 border-neutral-700 bg-black/70 p-4 shadow-[6px_6px_0_0_rgba(29,78,216,0.18)] [&_svg]:size-8 [&_h3]:text-[24px] [&_p]:text-[14px] [&_p]:leading-[1.25] xl:[&_svg]:size-9 xl:[&_h3]:text-[28px] xl:[&_p]:text-[15px]"
+                  className="mt-0 border-neutral-700 bg-black/70 p-4 shadow-[6px_6px_0_0_rgba(29,78,216,0.18)] [&_h3]:text-[24px] xl:[&_h3]:text-[28px] [&_p]:text-[14px] [&_p]:leading-[1.25] xl:[&_p]:text-[15px] [&_svg]:size-8 xl:[&_svg]:size-9"
                 />
               ))}
             </div>
 
             <div className="mt-6 flex flex-wrap items-center gap-3 font-(family-name:--font-display) text-sm leading-none tracking-widest text-neutral-500 uppercase xl:text-base">
               Commit
-              <ArrowRight className="size-4 text-primary" />
+              <ArrowRight className="text-primary size-4" />
               Confirm
-              <ArrowRight className="size-4 text-primary" />
+              <ArrowRight className="text-primary size-4" />
               Covered
             </div>
           </div>

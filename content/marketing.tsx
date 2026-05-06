@@ -11,9 +11,9 @@ import {
   Wrench,
 } from "lucide-react"
 
-import type { CardGridItem } from "@/components/shared/card-grid"
-import type { MetricGridItem } from "@/components/shared/metric-grid"
-import type { ProcessStep } from "@/components/shared/process-panel"
+import type { CardGridItem } from "@/components/landing/landing-card-grid"
+import type { MetricGridItem } from "@/components/landing/landing-metric-grid"
+import type { ProcessStep } from "@/components/landing/landing-process-panel"
 
 export const landingHeroContent = {
   title: (
@@ -28,6 +28,16 @@ export const landingHeroContent = {
     </>
   ),
   body: "Create explicit terms. Verify commitment. Release funds only when both parties confirm. Otherwise, payment never settles.",
+} as const
+
+export const landingHeroActionsContent = {
+  secondaryLabel: "Learn More",
+} as const
+
+export const landingSectionIntroContent = {
+  eyebrow: "BUILT FOR REAL LIFE",
+  title: "PROTECT THE MOMENTS THAT MATTER.",
+  body: "Appointments, meetups, services, consultations, and more. Vouch keeps commitments real.",
 } as const
 
 export const landingProcessSteps = [
@@ -56,6 +66,11 @@ export const landingProcessSteps = [
     icon: LockKeyhole,
   },
 ] satisfies ProcessStep[]
+
+export const landingProcessPanelContent = {
+  title: "The Vouch Process",
+  footer: "No Confirmation = Refund/Void",
+}
 
 export const landingMetrics = [
   {
@@ -104,6 +119,8 @@ export const landingUseCases = [
 ] satisfies CardGridItem[]
 
 export const landingTrustPanelContent = {
+  action: "app/(tenant)/vouches/new/page.tsx",
+  label: "Create A Vouch",
   icon: ShieldCheck,
   title: "Mutual confirmation unlocks settlement. No confirmation, no release.",
   body: "We don’t pry. We don’t meddle. We don’t overcomplicate trust. Vouch is a deterministic commitment layer for payment coordination, aligning intent, accountability, and outcome by design. Quietly private. Mutually explicit. Economically meaningful. Anyone can copy code. Copying trust infrastructure is harder.",

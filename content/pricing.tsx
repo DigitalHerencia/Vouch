@@ -2,8 +2,8 @@
 
 import { BadgeDollarSign, CheckCircle2, CreditCard, Landmark } from "lucide-react"
 
-import type { MetricGridItem } from "@/components/shared/metric-grid"
-import type { ProcessStep } from "@/components/shared/process-panel"
+import type { MetricGridItem } from "@/components/landing/landing-metric-grid"
+import type { ProcessStep } from "@/components/landing/landing-process-panel"
 
 export const PricingHeroContent = {
   title: (

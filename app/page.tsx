@@ -13,16 +13,14 @@ import { LandingPublicHeader } from "@/components/landing/landing-public-header"
 import { LandingSectionIntro } from "@/components/landing/landing-section-intro"
 import { Button } from "@/components/ui/button"
 import {
-  landingFooterContent,
-  landingHeaderContent,
-  landingHeroActionsContent,
   landingHeroContent,
   landingMetrics,
-  landingProcessPanelContent,
   landingProcessSteps,
-  landingSectionIntroContent,
+  landingProcessPanelContent,
   landingTrustPanelContent,
   landingUseCases,
+  landingSectionIntroContent,
+  landingHeroActionsContent,
 } from "@/content/marketing"
 
 export default function HomePage() {
@@ -30,7 +28,7 @@ export default function HomePage() {
 
   return (
     <main>
-      <LandingPublicHeader content={landingHeaderContent} />
+      <LandingPublicHeader />
 
       <section className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
         <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
@@ -44,11 +42,9 @@ export default function HomePage() {
                     variant="primary"
                     size="cta"
                     className="min-w-62.5"
-                    render={<Link href={landingHeroActionsContent.primary.href} />}
+                    render={<Link href="/sign-up?return_to=/vouches/new" />}
                   >
-                    <span className="translate-y-px">
-                      {landingHeroActionsContent.primary.label}
-                    </span>
+                    <span className="translate-y-px">Get Started</span>
                     <ArrowRight className="size-6" strokeWidth={1.8} />
                   </Button>
 
@@ -56,10 +52,10 @@ export default function HomePage() {
                     variant="secondary"
                     size="cta"
                     className="min-w-55"
-                    render={<Link href={landingHeroActionsContent.secondary.href} />}
+                    render={<Link href="#callout" />}
                   >
                     <span className="translate-y-px">
-                      {landingHeroActionsContent.secondary.label}
+                      {landingHeroActionsContent.secondaryLabel}
                     </span>
                     <ArrowDown className="size-5" strokeWidth={1.8} />
                   </Button>
@@ -99,11 +95,9 @@ export default function HomePage() {
                 variant="primary"
                 size="cta"
                 className="min-w-72"
-                render={<Link href={landingTrustPanelContent.action.href} />}
+                render={<Link href={landingTrustPanelContent.action} />}
               >
-                <span className="translate-y-px">
-                  {landingTrustPanelContent.action.label}
-                </span>
+                <span className="translate-y-px">{landingTrustPanelContent.label}</span>
                 <ArrowRight className="size-5 sm:size-6" strokeWidth={1.9} />
               </Button>
             }
@@ -111,7 +105,7 @@ export default function HomePage() {
         </section>
       </section>
 
-      <LandingPublicFooter content={landingFooterContent} />
+      <LandingPublicFooter />
     </main>
   )
 }
