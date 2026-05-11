@@ -1,8 +1,9 @@
 import { CheckCircle2, CreditCard, LockKeyhole, RotateCw, ShieldAlert } from "lucide-react"
 
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PaymentMethodSetupForm } from "./payment-method-setup-form"
 
 type PaymentSettingsPageProps = {
@@ -24,23 +25,21 @@ export function PaymentSettingsPage({
   const readiness = state?.readiness?.readiness ?? "not_started"
   const ready = readiness === "ready"
   return (
-    <section className="mx-auto grid w-full max-w-6xl gap-5">
-      <div>
-        <p className="vouch-label text-blue-500">Customer setup</p>
-        <h1 className="font-heading mt-3 text-5xl text-white sm:text-6xl">Payment method</h1>
-        <p className="mt-3 max-w-2xl text-neutral-400">
-          Add a provider-secure payment method for accepting and authorizing Vouches.
-        </p>
-      </div>
+    <section className="grid w-full gap-6">
+      <SectionIntro
+        eyebrow="Customer setup"
+        title="Payment method"
+        body="Add a provider-secure payment method for accepting and authorizing Vouches."
+      />
       <div className="grid gap-5 lg:grid-cols-[1fr_0.75fr]">
-        <Card className="rounded-none border-2 border-neutral-800 bg-black/55">
-          <CardHeader className="border-b border-neutral-800">
-            <CardTitle className="flex items-center gap-3">
+        <Surface>
+          <SurfaceHeader>
+            <h2 className="flex items-center gap-3 font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">
               <CreditCard className="text-blue-500" />
               Payment readiness
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-5 py-5">
+            </h2>
+          </SurfaceHeader>
+          <SurfaceBody className="grid gap-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <Badge className="rounded-none bg-blue-700 font-mono uppercase">
@@ -70,18 +69,18 @@ export function PaymentSettingsPage({
                 ) : null}
               </div>
             </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-none border-2 border-neutral-800 bg-neutral-950/65">
-          <CardContent className="grid gap-4 py-5">
+          </SurfaceBody>
+        </Surface>
+        <Surface variant="muted" padding="md">
+          <div className="grid gap-4">
             <CheckLine icon={LockKeyhole} text="No card numbers are collected in Vouch UI." />
             <CheckLine icon={ShieldAlert} text="Provider status is reconciled server-side." />
             <CheckLine
               icon={CheckCircle2}
               text="A ready payment method unlocks customer acceptance."
             />
-          </CardContent>
-        </Card>
+          </div>
+        </Surface>
       </div>
     </section>
   )

@@ -1,4 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
 
 type AdminVouchDetailPageProps = {
   vouchId: string
@@ -22,13 +23,18 @@ export function AdminVouchDetailPage({
   auditEvents,
 }: AdminVouchDetailPageProps) {
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-6 px-6 py-8 lg:grid-cols-[1fr_420px]">
+    <main className="grid w-full gap-6 lg:grid-cols-[1fr_420px]">
       <section className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Vouch operational detail</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-3 md:grid-cols-2">
+        <SectionIntro
+          eyebrow="Operations"
+          title="Vouch detail"
+          body="Inspect deterministic state only. No admin surface can award funds or rewrite confirmation truth."
+        />
+        <Surface>
+          <SurfaceHeader>
+            <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">Vouch operational detail</h2>
+          </SurfaceHeader>
+          <SurfaceBody className="grid gap-3 md:grid-cols-2">
             <Item label="Vouch ID" value={vouchId} />
             <Item label="Status" value={status} />
             <Item label="Payer ID" value={payerId} />
@@ -36,40 +42,40 @@ export function AdminVouchDetailPage({
             <Item label="Payment status" value={paymentStatus} />
             <Item label="Refund status" value={refundStatus} />
             <Item label="Confirmation status" value={confirmationStatus} />
-          </CardContent>
-        </Card>
-        <Card className="border-amber-500/30 bg-amber-500/5">
-          <CardHeader>
-            <CardTitle>No arbitration controls</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground text-sm">
+          </SurfaceBody>
+        </Surface>
+        <Surface className="border-amber-500/30 bg-amber-500/5">
+          <SurfaceHeader>
+            <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">No arbitration controls</h2>
+          </SurfaceHeader>
+          <SurfaceBody>
+            <p className="text-sm text-neutral-400">
               Admins may inspect operational state and retry safe technical operations. Admins must
               not award funds, rewrite confirmations, or decide who was right.
             </p>
-          </CardContent>
-        </Card>
+          </SurfaceBody>
+        </Surface>
       </section>
       <aside>
-        <Card>
-          <CardHeader>
-            <CardTitle>Audit timeline</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        <Surface>
+          <SurfaceHeader>
+            <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">Audit timeline</h2>
+          </SurfaceHeader>
+          <SurfaceBody className="space-y-4">
             {auditEvents.length === 0 ? (
-              <p className="text-muted-foreground text-sm">No audit events found.</p>
+              <p className="text-sm text-neutral-400">No audit events found.</p>
             ) : (
               auditEvents.map((event) => (
-                <div key={event.id} className="border-l pl-3">
+                <div key={event.id} className="border-l border-blue-800 pl-3">
                   <p className="text-sm font-medium">{event.eventName}</p>
-                  <p className="text-muted-foreground text-xs">
+                  <p className="text-xs text-neutral-400">
                     {event.actorType} · {event.createdAtLabel}
                   </p>
                 </div>
               ))
             )}
-          </CardContent>
-        </Card>
+          </SurfaceBody>
+        </Surface>
       </aside>
     </main>
   )
@@ -77,8 +83,8 @@ export function AdminVouchDetailPage({
 
 function Item({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-background rounded-lg border p-4">
-      <p className="text-muted-foreground text-xs tracking-wide uppercase">{label}</p>
+    <div className="border border-neutral-800 bg-black/45 p-4">
+      <p className="font-mono text-xs tracking-wide text-neutral-500 uppercase">{label}</p>
       <p className="mt-1 font-medium break-all">{value}</p>
     </div>
   )

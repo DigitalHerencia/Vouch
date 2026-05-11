@@ -2,9 +2,10 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { ArrowRight, Info, LockKeyhole, ShieldCheck } from "lucide-react"
 
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 type AcceptVouchPageProps = {
   tokenValid: boolean
@@ -32,19 +33,25 @@ export function AcceptVouchPage({
   if (!tokenValid) {
     return (
       <main className="mx-auto max-w-2xl py-16">
-        <Card className="rounded-none border-neutral-800 bg-neutral-900/50">
-          <CardHeader><CardTitle>This invite is no longer available.</CardTitle></CardHeader>
-        </Card>
+        <Surface variant="muted">
+          <SurfaceHeader>
+            <h1 className="font-(family-name:--font-display) text-[32px] leading-none tracking-[0.07em] text-white uppercase">This invite is no longer available.</h1>
+          </SurfaceHeader>
+        </Surface>
       </main>
     )
   }
 
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[0.9fr_1fr]">
+    <main className="grid w-full gap-8 lg:grid-cols-[0.9fr_1fr]">
       <section>
         <Link href="/dashboard" className="text-sm text-blue-500">← Back to inbox</Link>
-        <h1 className="mt-8 font-heading text-5xl text-white">You&apos;ve been invited</h1>
-        <p className="mt-4 max-w-md text-neutral-400">Review the Vouch details below. Finish setup and accept to lock in this commitment.</p>
+        <SectionIntro
+          className="mt-8"
+          eyebrow="Customer invite"
+          title="You've been invited"
+          body="Review the Vouch details below. Finish setup and accept to lock in this commitment."
+        />
         <Summary amountLabel={amountLabel} payerLabel={payerLabel} windowLabel={windowLabel} />
         <div className="mt-6 flex gap-4 border border-neutral-800 p-5">
           <LockKeyhole className="size-8 text-neutral-400" />
@@ -53,7 +60,7 @@ export function AcceptVouchPage({
       </section>
 
       <section className="border border-neutral-800 bg-neutral-950/70 p-5">
-        <h2 className="font-heading text-4xl text-white">Accept this Vouch</h2>
+        <h2 className="font-(family-name:--font-display) text-[40px] leading-none tracking-[0.04em] text-white uppercase">Accept this Vouch</h2>
         <div className="mt-7 grid grid-cols-3 items-center gap-3 text-center">
           {["Review", "Setup", "Accept"].map((label, index) => (
             <div key={label}>
@@ -77,12 +84,12 @@ export function AcceptVouchPage({
             </div>
           ))}
         </div>
-        <Card className="mt-5 rounded-none border-blue-800 bg-neutral-950">
-          <CardContent className="flex gap-4 py-4">
+        <Surface className="mt-5 border-blue-800 bg-neutral-950" padding="md">
+          <div className="flex gap-4">
             <Info className="size-5 text-blue-500" />
             <p className="text-sm text-neutral-400"><strong className="block text-white">What happens next?</strong>After you accept, both parties must confirm within the window. If both confirm, funds release. If not, the payment is refunded.</p>
-          </CardContent>
-        </Card>
+          </div>
+        </Surface>
         <div className="mt-5">
           {!signedIn ? (
             <div className="grid gap-3 sm:grid-cols-2"><Button className="rounded-none bg-blue-700" render={<Link href="/sign-up" />}>Sign up</Button><Button variant="outline" className="rounded-none" render={<Link href="/sign-in" />}>Sign in</Button></div>
@@ -99,17 +106,19 @@ export function AcceptVouchPage({
 
 function Summary({ amountLabel, payerLabel, windowLabel }: { amountLabel: string; payerLabel: string; windowLabel: string }) {
   return (
-    <Card className="mt-7 rounded-none border-neutral-800 bg-neutral-900/50">
-      <CardHeader><CardTitle>Vouch summary</CardTitle></CardHeader>
-      <CardContent className="space-y-4">
+    <Surface className="mt-7" variant="muted">
+      <SurfaceHeader>
+        <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">Vouch summary</h2>
+      </SurfaceHeader>
+      <SurfaceBody className="space-y-4">
         <p className="font-mono text-4xl text-white">{amountLabel} <span className="text-sm text-neutral-400">USD</span></p>
         <Line label="From" value={payerLabel} />
         <Line label="For" value="you" />
         <Line label="Label" value="Consulting call" />
         <Line label="Window" value={windowLabel} />
         <p className="border border-neutral-800 p-4 text-sm text-neutral-400"><ShieldCheck className="mr-2 inline size-4 text-blue-500" />Both parties must confirm before funds release.</p>
-      </CardContent>
-    </Card>
+      </SurfaceBody>
+    </Surface>
   )
 }
 

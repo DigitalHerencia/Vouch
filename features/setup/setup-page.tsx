@@ -1,8 +1,9 @@
 import { ArrowRight, Banknote, CreditCard, FileText, Shield, UserRound } from "lucide-react"
 
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface } from "@/components/shared/surface"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 
 export type SetupItem = {
@@ -34,26 +35,24 @@ export function SetupPage({
   const progress = displayItems.length ? Math.round((completeCount / displayItems.length) * 100) : 0
 
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[0.78fr_1fr] lg:items-start">
+    <main className="grid w-full gap-8 lg:grid-cols-[0.78fr_1fr] lg:items-start">
       <section className="lg:pt-14">
-        <p className="vouch-label text-sm text-blue-500">Onboarding</p>
-        <h1 className="mt-5 font-heading text-5xl text-white sm:text-6xl">{title}</h1>
-        <p className="mt-5 max-w-lg text-neutral-400">{subtitle}</p>
-        <Card className="mt-8 rounded-none border-neutral-800 bg-neutral-950/70">
-          <CardContent className="flex gap-4 py-5">
-            <span className="grid size-9 place-items-center rounded-full border border-blue-700 text-blue-500">i</span>
+        <SectionIntro eyebrow="Onboarding" title={title} body={subtitle} />
+        <Surface className="mt-8" padding="md" variant="muted">
+          <div className="flex gap-4">
+            <span className="grid size-9 place-items-center border border-blue-700 text-blue-500">i</span>
             <div>
               <h2 className="font-bold text-white">Why these steps?</h2>
               <p className="mt-2 text-sm text-neutral-400">Verification and payment setup protect both parties and keep every Vouch outcome predictable.</p>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </Surface>
         <Button className="mt-5 h-14 w-full rounded-none bg-blue-700" render={<a href={returnTo ?? "/dashboard"} />}>
           Continue <ArrowRight className="ml-auto size-5" />
         </Button>
       </section>
 
-      <section className="border border-neutral-800 bg-neutral-950/60 p-4 sm:p-6">
+      <Surface className="p-4 sm:p-6" variant="muted">
         <div className="mb-5 flex items-center justify-between">
           <p className="vouch-label text-neutral-200">{displayItems.length} steps</p>
           <p className="vouch-label text-neutral-200">{progress}% complete</p>
@@ -83,7 +82,7 @@ export function SetupPage({
             )
           })}
         </div>
-      </section>
+      </Surface>
     </main>
   )
 }

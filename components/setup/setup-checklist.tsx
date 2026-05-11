@@ -1,10 +1,10 @@
 import type { ReactNode } from "react"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   SetupChecklistItem,
   type SetupChecklistItemStatus,
 } from "@/components/setup/setup-checklist-item"
+import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
 import { cn } from "@/lib/utils"
 
 export type SetupChecklistItemModel = {
@@ -66,17 +66,19 @@ export function SetupChecklist({
   className?: string
 }) {
   return (
-    <Card className={cn(className)}>
-      <CardHeader>
-        <CardTitle>Finish setup to continue</CardTitle>
-      </CardHeader>
-      <CardContent className="grid gap-3">
+    <Surface className={cn(className)}>
+      <SurfaceHeader>
+        <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">
+          Finish setup to continue
+        </h2>
+      </SurfaceHeader>
+      <SurfaceBody className="grid gap-3">
         {items.map((item) => {
           const normalizedItem = normalizeSetupItem(item)
 
           return <SetupChecklistItem key={normalizedItem.id} {...normalizedItem} />
         })}
-      </CardContent>
-    </Card>
+      </SurfaceBody>
+    </Surface>
   )
 }

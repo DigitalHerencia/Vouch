@@ -1,8 +1,9 @@
 import Link from "next/link"
 import { ArrowUpRight, CreditCard, Landmark, LockKeyhole, ShieldCheck, UserRound } from "lucide-react"
 
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export function AccountSettingsPage() {
   const rows = [
@@ -13,20 +14,21 @@ export function AccountSettingsPage() {
   ]
 
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-5">
-      <div>
-        <p className="vouch-label text-blue-500">Private account</p>
-        <h1 className="mt-3 font-heading text-5xl text-white sm:text-6xl">Settings</h1>
-        <p className="mt-3 max-w-2xl text-neutral-400">Manage readiness for commitment-backed payments. These are private setup surfaces, not public profile fields.</p>
-      </div>
-      <Card className="rounded-none border-2 border-neutral-800 bg-black/55">
-        <CardHeader className="border-b border-neutral-800">
-          <CardTitle className="flex items-center gap-3">
+    <main className="grid w-full gap-6">
+      <SectionIntro
+        eyebrow="Private account"
+        title="Settings"
+        body="Manage readiness for commitment-backed payments. These are private setup surfaces, not public profile fields."
+      />
+
+      <Surface>
+        <SurfaceHeader>
+          <h2 className="flex items-center gap-3 font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">
             <UserRound className="text-blue-500" />
             Profile basics
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="grid gap-4 py-5 text-sm text-neutral-400 sm:grid-cols-2">
+          </h2>
+        </SurfaceHeader>
+        <SurfaceBody className="grid gap-4 text-sm text-neutral-400 sm:grid-cols-2">
           <div className="border border-neutral-800 bg-neutral-950/70 p-4">
             <strong className="block text-white">Account</strong>
             Managed by Clerk authentication.
@@ -35,14 +37,20 @@ export function AccountSettingsPage() {
             <strong className="block text-white">Security</strong>
             Use Clerk settings to manage sign-in methods.
           </div>
-        </CardContent>
-      </Card>
+        </SurfaceBody>
+      </Surface>
+
       <div className="grid gap-4 sm:grid-cols-2">
         {rows.map((row) => {
           const Icon = row.icon
           return (
-            <Card key={row.href} className="rounded-none border-2 border-neutral-800 bg-neutral-950/65 transition hover:border-blue-700/80 hover:bg-black/70">
-              <CardContent className="flex min-h-36 items-center justify-between gap-4 py-5">
+            <Surface
+              key={row.href}
+              className="transition hover:border-blue-700/80 hover:bg-black/70"
+              padding="md"
+              variant="muted"
+            >
+              <div className="flex min-h-28 items-center justify-between gap-4">
                 <div className="flex gap-4">
                   <span className="grid size-12 place-items-center border border-blue-900 bg-blue-950/30">
                     <Icon className="text-blue-500" />
@@ -56,8 +64,8 @@ export function AccountSettingsPage() {
                   <ArrowUpRight />
                   <span className="sr-only">Open {row.title}</span>
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </Surface>
           )
         })}
       </div>

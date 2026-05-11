@@ -2,8 +2,9 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { ArrowRight, CheckCircle2, Clock, Info, UserRound } from "lucide-react"
 
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 
 type ConfirmPresencePageProps = {
@@ -28,50 +29,60 @@ export function ConfirmPresencePage({
   confirmationAction,
 }: ConfirmPresencePageProps) {
   return (
-    <main className="mx-auto grid w-full max-w-6xl gap-5">
+    <main className="grid w-full gap-6">
       <div className="grid gap-4 lg:grid-cols-[1fr_470px]">
         <div>
           <Link href="/vouches" className="text-sm text-blue-500">← Back to Vouch</Link>
-          <h1 className="mt-5 font-heading text-5xl text-white">{title}</h1>
-          <p className="mt-2 text-neutral-400">Confirm that you were present. Both parties must confirm within the window for funds to release.</p>
+          <SectionIntro
+            className="mt-5"
+            eyebrow="Presence confirmation"
+            title={title}
+            body="Confirm that you were present. Both parties must confirm within the window for funds to release."
+          />
         </div>
-        <Card className="rounded-none border-neutral-800 bg-neutral-900/50">
-          <CardContent className="grid gap-4 py-5 sm:grid-cols-2">
+        <Surface variant="muted" padding="md">
+          <div className="grid gap-4 sm:grid-cols-2">
             <InfoRow label="Vouch status" value={statusLabel} />
             <InfoRow label="Created" value="May 24, 2025 at 1:45 PM" />
-          </CardContent>
-        </Card>
+          </div>
+        </Surface>
       </div>
 
       <div className="grid gap-5 lg:grid-cols-2">
-        <Card className="rounded-none border-neutral-800 bg-neutral-900/50">
-          <CardHeader><CardTitle className="flex gap-3"><Clock className="text-blue-500" />Confirmation window</CardTitle></CardHeader>
-          <CardContent>
+        <Surface variant="muted">
+          <SurfaceHeader>
+            <h2 className="flex gap-3 font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase"><Clock className="text-blue-500" />Confirmation window</h2>
+          </SurfaceHeader>
+          <SurfaceBody>
             <div className="grid gap-4 sm:grid-cols-2"><InfoRow label="Started" value={windowLabel} /><InfoRow label="Deadline" value={deadlineLabel} /></div>
             <p className="mt-8 font-mono text-4xl font-bold">01 : 23 : 47</p>
             <Progress value={45} className="mt-5 h-1 rounded-none bg-neutral-800" />
-          </CardContent>
-        </Card>
-        <Card className="rounded-none border-neutral-800 bg-neutral-900/50">
-          <CardHeader><CardTitle className="flex gap-3"><UserRound className="text-blue-500" />Confirmation status</CardTitle></CardHeader>
-          <CardContent className="space-y-4">
+          </SurfaceBody>
+        </Surface>
+        <Surface variant="muted">
+          <SurfaceHeader>
+            <h2 className="flex gap-3 font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase"><UserRound className="text-blue-500" />Confirmation status</h2>
+          </SurfaceHeader>
+          <SurfaceBody className="space-y-4">
             <Status label="Payer" value="Confirmed" ok />
             <Status label="Payee (You)" value={alreadyConfirmed ? "Confirmed" : "Not confirmed"} ok={alreadyConfirmed} />
             <p className="border border-neutral-800 p-3 text-sm text-neutral-400"><Info className="mr-2 inline size-4 text-blue-500" />If you don&apos;t confirm by the deadline, payment is refunded.</p>
-          </CardContent>
-        </Card>
+          </SurfaceBody>
+        </Surface>
       </div>
 
-      <Card className="rounded-none border-blue-800 bg-neutral-950">
-        <CardHeader><CardTitle>Your confirmation</CardTitle></CardHeader>
-        <CardContent>
+      <Surface className="border-blue-800 bg-neutral-950">
+        <SurfaceHeader>
+          <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">Your confirmation</h2>
+        </SurfaceHeader>
+        <SurfaceBody>
           <p className="text-sm text-neutral-400">{blockedReason ?? "By confirming, you state that you were present during the meeting window."}</p>
           {canConfirm && !alreadyConfirmed ? (
             <div className="mt-6">{confirmationAction ?? <Button className="h-12 w-full rounded-none bg-blue-700">Confirm I was present <ArrowRight className="ml-auto size-5" /></Button>}</div>
           ) : <p className="mt-4 text-sm text-neutral-400">Waiting for the other party if needed.</p>}
           <p className="mt-3 text-center text-xs text-neutral-500">This action cannot be undone</p>
-        </CardContent>
-      </Card>
+        </SurfaceBody>
+      </Surface>
     </main>
   )
 }

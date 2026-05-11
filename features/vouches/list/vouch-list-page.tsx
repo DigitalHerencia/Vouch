@@ -1,9 +1,11 @@
 import Link from "next/link"
 import { ArrowUpRight, FileCheck2, Plus, ShieldCheck } from "lucide-react"
 
+import { CalloutPanel } from "@/components/shared/callout-panel"
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 export type VouchListItem = {
   id: string
@@ -20,52 +22,47 @@ type VouchListPageProps = { title?: string; items: VouchListItem[] }
 
 export function VouchListPage({ title = "Vouches", items }: VouchListPageProps) {
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-5">
+    <main className="flex w-full flex-col gap-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="vouch-label text-blue-500">Participant ledger</p>
-          <h1 className="mt-3 font-heading text-5xl text-white sm:text-6xl">{title}</h1>
-          <p className="mt-3 text-neutral-400">Participant-scoped Vouches only.</p>
-        </div>
+        <SectionIntro
+          eyebrow="Participant ledger"
+          title={title}
+          body="Participant-scoped Vouches only."
+        />
         <Button className="h-11 rounded-none bg-blue-700 px-5" render={<Link href="/vouches/new" />}>
           <Plus />
           Create Vouch
         </Button>
       </div>
       {items.length === 0 ? (
-        <Card className="rounded-none border-2 border-neutral-800 bg-black/55">
-          <CardContent className="grid gap-6 py-7 md:grid-cols-[1fr_auto] md:items-center">
-            <div>
-              <div className="mb-5 inline-grid size-14 place-items-center border-2 border-blue-700 bg-blue-950/30">
-                <FileCheck2 className="text-blue-500" />
-              </div>
-              <h2 className="text-4xl">No Vouches yet.</h2>
-              <p className="mt-3 max-w-2xl text-neutral-400">
-                Create a Vouch to back an appointment or in-person agreement with a clear payment
-                commitment. Both parties confirm presence; otherwise refund, void, or non-capture.
-              </p>
-            </div>
+        <CalloutPanel
+          icon={FileCheck2}
+          title="No Vouches yet."
+          body="Create a Vouch to back an appointment or in-person agreement with a clear payment commitment. Both parties confirm presence; otherwise refund, void, or non-capture."
+          actions={
             <div className="grid gap-3 border border-neutral-800 bg-neutral-950/70 p-4">
               <Badge className="w-fit rounded-none bg-blue-700 font-mono uppercase">Next action</Badge>
-              <p className="text-sm text-neutral-300">Start with amount, meeting window, confirmation deadline, and recipient.</p>
+              <p className="max-w-80 text-sm text-neutral-300">
+                Start with amount, meeting window, confirmation deadline, and recipient.
+              </p>
               <Button className="rounded-none bg-blue-700" render={<Link href="/vouches/new" />}>
                 Create Vouch
                 <ArrowUpRight />
               </Button>
             </div>
-          </CardContent>
-        </Card>
+          }
+        />
       ) : (
         <div className="grid gap-3">
           {items.map((item) => (
-            <Card key={item.id} className="rounded-none border-2 border-neutral-800 bg-neutral-950/65">
-              <CardHeader className="border-b border-neutral-800">
-                <CardTitle className="flex items-center gap-3 text-base">
+            <Surface key={item.id} variant="muted">
+              <SurfaceHeader>
+                <h2 className="flex items-center gap-3 font-(family-name:--font-display) text-[18px] leading-none tracking-[0.08em] text-white uppercase">
                   <ShieldCheck className="text-blue-500" />
                   {item.statusLabel}
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="flex flex-col gap-4 py-4 sm:flex-row sm:items-center sm:justify-between">
+                </h2>
+              </SurfaceHeader>
+              <SurfaceBody className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div className="grid gap-1">
                   <Link href={item.href} className="font-medium hover:underline">
                     {item.title}
@@ -82,8 +79,8 @@ export function VouchListPage({ title = "Vouches", items }: VouchListPageProps) 
                     </Button>
                   ) : null}
                 </div>
-              </CardContent>
-            </Card>
+              </SurfaceBody>
+            </Surface>
           ))}
         </div>
       )}

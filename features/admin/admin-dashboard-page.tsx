@@ -1,6 +1,7 @@
 import Link from "next/link"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { MetricGrid, type MetricGridItem } from "@/components/shared/metric-grid"
+import { SectionIntro } from "@/components/shared/section-intro"
 
 export type AdminMetric = {
   label: string
@@ -12,37 +13,33 @@ export type AdminMetric = {
 type AdminDashboardPageProps = { metrics: AdminMetric[] }
 
 export function AdminDashboardPage({ metrics }: AdminDashboardPageProps) {
+  const metricItems: MetricGridItem[] = metrics.map((metric) => ({
+    label: metric.label,
+    value: String(metric.value),
+    body: metric.description ?? "Operational inspection record.",
+  }))
+
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-8">
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight">Admin</h1>
-        <p className="text-muted-foreground">
-          Operational inspection only. Admins do not arbitrate funds.
-        </p>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {metrics.map((metric) => (
-          <Card key={metric.label}>
-            <CardHeader>
-              <CardTitle className="text-muted-foreground text-sm">
-                {metric.href ? (
-                  <Link href={metric.href} className="hover:underline">
-                    {metric.label}
-                  </Link>
-                ) : (
-                  metric.label
-                )}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-semibold tabular-nums">{metric.value}</p>
-              {metric.description ? (
-                <p className="text-muted-foreground mt-2 text-sm">{metric.description}</p>
-              ) : null}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+    <main className="flex w-full flex-col gap-6">
+      <SectionIntro
+        eyebrow="Operations"
+        title="Admin"
+        body="Operational inspection only. Admins do not arbitrate funds."
+      />
+      <MetricGrid items={metricItems} />
+      <nav className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {metrics
+          .filter((metric) => metric.href)
+          .map((metric) => (
+            <Link
+              key={metric.label}
+              href={metric.href as string}
+              className="border border-neutral-800 bg-black/55 p-4 font-(family-name:--font-display) text-[18px] leading-none tracking-[0.08em] text-white uppercase transition hover:border-blue-700"
+            >
+              Open {metric.label}
+            </Link>
+          ))}
+      </nav>
     </main>
   )
 }

@@ -1,6 +1,7 @@
 import Link from "next/link"
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
 
 type AdminTableColumn<Row> = { key: keyof Row & string; label: string }
 
@@ -20,22 +21,21 @@ export function AdminTablePage<Row extends { id: string; href?: string }>({
   emptyLabel = "No records found.",
 }: AdminTablePageProps<Row>) {
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-col gap-6 px-6 py-8">
-      <div>
-        <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
-        <p className="text-muted-foreground">{description}</p>
-      </div>
-      <Card>
-        <CardHeader>
-          <CardTitle>Operational records</CardTitle>
-        </CardHeader>
-        <CardContent className="overflow-x-auto">
+    <main className="flex w-full flex-col gap-6">
+      <SectionIntro eyebrow="Operations" title={title} body={description} />
+      <Surface>
+        <SurfaceHeader>
+          <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">
+            Operational records
+          </h2>
+        </SurfaceHeader>
+        <SurfaceBody className="overflow-x-auto">
           {rows.length === 0 ? (
-            <p className="text-muted-foreground text-sm">{emptyLabel}</p>
+            <p className="text-sm text-neutral-400">{emptyLabel}</p>
           ) : (
             <table className="w-full min-w-180 text-left text-sm">
-              <thead className="text-muted-foreground">
-                <tr className="border-b">
+              <thead className="font-mono text-xs tracking-[0.08em] text-neutral-500 uppercase">
+                <tr className="border-b border-neutral-800">
                   {columns.map((column) => (
                     <th key={column.key} className="py-3 pr-4 font-medium">
                       {column.label}
@@ -45,7 +45,7 @@ export function AdminTablePage<Row extends { id: string; href?: string }>({
               </thead>
               <tbody>
                 {rows.map((row) => (
-                  <tr key={row.id} className="border-b last:border-0">
+                  <tr key={row.id} className="border-b border-neutral-800 last:border-0">
                     {columns.map((column, index) => {
                       const value = String(row[column.key] ?? "")
                       return (
@@ -65,8 +65,8 @@ export function AdminTablePage<Row extends { id: string; href?: string }>({
               </tbody>
             </table>
           )}
-        </CardContent>
-      </Card>
+        </SurfaceBody>
+      </Surface>
     </main>
   )
 }

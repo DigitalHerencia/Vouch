@@ -1,8 +1,9 @@
 import { CheckCircle2, Clock, IdCard, RotateCw, ShieldCheck } from "lucide-react"
 
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 
 type VerificationSettingsPageProps = {
@@ -21,16 +22,13 @@ export function VerificationSettingsPage({
   const verified = identity === "verified" && adult === "verified"
 
   return (
-    <section className="mx-auto grid w-full max-w-6xl gap-5">
+    <section className="grid w-full gap-6">
       <div className="grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
-        <div>
-          <p className="vouch-label text-blue-500">Account readiness</p>
-          <h1 className="mt-3 font-heading text-5xl text-white sm:text-6xl">Verification</h1>
-          <p className="mt-3 max-w-2xl text-neutral-400">
-            Confirm identity and adult eligibility before payment-backed flows. Verification uses a
-            provider-secure flow; Vouch does not store raw identity documents.
-          </p>
-        </div>
+        <SectionIntro
+          eyebrow="Account readiness"
+          title="Verification"
+          body="Confirm identity and adult eligibility before payment-backed flows. Verification uses a provider-secure flow; Vouch does not store raw identity documents."
+        />
         <ActionForms
           startIdentityAction={startIdentityAction}
           reconcileAction={reconcileAction}
@@ -38,8 +36,8 @@ export function VerificationSettingsPage({
         />
       </div>
 
-      <Card className="rounded-none border-2 border-neutral-800 bg-black/55">
-        <CardContent className="grid gap-4 py-5 md:grid-cols-3">
+      <Surface padding="md">
+        <div className="grid gap-4 md:grid-cols-3">
           <StatusTile icon={IdCard} title="Identity" status={identity} />
           <StatusTile icon={ShieldCheck} title="Adult eligibility" status={adult} />
           <StatusTile
@@ -47,15 +45,17 @@ export function VerificationSettingsPage({
             title="Create / accept gate"
             status={verified ? "ready" : "requires_action"}
           />
-        </CardContent>
-      </Card>
+        </div>
+      </Surface>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_0.8fr]">
-        <Card className="rounded-none border-2 border-neutral-800 bg-neutral-950/65">
-          <CardHeader className="border-b border-neutral-800">
-            <CardTitle>Requirements</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4 py-5">
+        <Surface variant="muted">
+          <SurfaceHeader>
+            <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">
+              Requirements
+            </h2>
+          </SurfaceHeader>
+          <SurfaceBody className="grid gap-4">
             {[
               "Use the provider-hosted identity check.",
               "Confirm adult eligibility for payment-bearing participation.",
@@ -66,13 +66,15 @@ export function VerificationSettingsPage({
                 <p className="text-sm text-neutral-300">{item}</p>
               </div>
             ))}
-          </CardContent>
-        </Card>
-        <Card className="rounded-none border-2 border-blue-900/70 bg-blue-950/20">
-          <CardHeader>
-            <CardTitle>Operational note</CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-4">
+          </SurfaceBody>
+        </Surface>
+        <Surface className="border-blue-900/70 bg-blue-950/20">
+          <SurfaceHeader>
+            <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">
+              Operational note
+            </h2>
+          </SurfaceHeader>
+          <SurfaceBody className="grid gap-4">
             <p className="text-sm text-neutral-300">
               Rejected, expired, or requires-action states do not release funds. Complete the
               secure provider flow and refresh before creating or accepting Vouches.
@@ -81,8 +83,8 @@ export function VerificationSettingsPage({
             <p className="font-mono text-xs text-neutral-500">
               Current state: identity={identity}; adult={adult}
             </p>
-          </CardContent>
-        </Card>
+          </SurfaceBody>
+        </Surface>
       </div>
     </section>
   )

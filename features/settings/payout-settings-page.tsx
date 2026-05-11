@@ -1,8 +1,9 @@
 import { Banknote, CheckCircle2, Landmark, LockKeyhole, RotateCw } from "lucide-react"
 
+import { SectionIntro } from "@/components/shared/section-intro"
+import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
 type PayoutSettingsPageProps = {
   state?: { variant?: string; readiness?: { readiness?: string | null } | null }
@@ -14,23 +15,21 @@ export function PayoutSettingsPage({ state, startAction, refreshAction }: Payout
   const readiness = state?.readiness?.readiness ?? "not_started"
   const ready = readiness === "ready"
   return (
-    <section className="mx-auto grid w-full max-w-6xl gap-5">
-      <div>
-        <p className="vouch-label text-blue-500">Merchant setup</p>
-        <h1 className="font-heading mt-3 text-5xl text-white sm:text-6xl">Payout account</h1>
-        <p className="mt-3 max-w-2xl text-neutral-400">
-          Complete Stripe Connect onboarding before creating Vouches that may release funds.
-        </p>
-      </div>
+    <section className="grid w-full gap-6">
+      <SectionIntro
+        eyebrow="Merchant setup"
+        title="Payout account"
+        body="Complete Stripe Connect onboarding before creating Vouches that may release funds."
+      />
       <div className="grid gap-5 lg:grid-cols-[1fr_0.75fr]">
-        <Card className="rounded-none border-2 border-neutral-800 bg-black/55">
-          <CardHeader className="border-b border-neutral-800">
-            <CardTitle className="flex items-center gap-3">
+        <Surface>
+          <SurfaceHeader>
+            <h2 className="flex items-center gap-3 font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">
               <Landmark className="text-blue-500" />
               Connect readiness
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="grid gap-5 py-5">
+            </h2>
+          </SurfaceHeader>
+          <SurfaceBody className="grid gap-5">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <Badge className="rounded-none bg-blue-700 font-mono uppercase">
@@ -61,15 +60,15 @@ export function PayoutSettingsPage({ state, startAction, refreshAction }: Payout
                 ) : null}
               </div>
             </div>
-          </CardContent>
-        </Card>
-        <Card className="rounded-none border-2 border-neutral-800 bg-neutral-950/65">
-          <CardContent className="grid gap-4 py-5">
+          </SurfaceBody>
+        </Surface>
+        <Surface variant="muted" padding="md">
+          <div className="grid gap-4">
             <CheckLine icon={LockKeyhole} text="Bank details are handled by Stripe Connect." />
             <CheckLine icon={CheckCircle2} text="Ready status is required for merchant creation." />
             <CheckLine icon={Landmark} text="Restricted accounts must finish hosted onboarding." />
-          </CardContent>
-        </Card>
+          </div>
+        </Surface>
       </div>
     </section>
   )
