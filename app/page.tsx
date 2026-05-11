@@ -3,14 +3,13 @@
 import Link from "next/link"
 import { ArrowDown, ArrowRight } from "lucide-react"
 
-import { LandingCalloutPanel } from "@/components/landing/landing-callout-panel"
-import { LandingCardGrid } from "@/components/landing/landing-card-grid"
-import { LandingMetricGrid } from "@/components/landing/landing-metric-grid"
-import { LandingPageHeader } from "@/components/landing/landing-page-header"
-import { LandingProcessPanel } from "@/components/landing/landing-process-panel"
-import { LandingPublicFooter } from "@/components/landing/landing-public-footer"
-import { LandingPublicHeader } from "@/components/landing/landing-public-header"
-import { LandingSectionIntro } from "@/components/landing/landing-section-intro"
+import { PublicShell } from "@/components/navigation/public-shell"
+import { CalloutPanel } from "@/components/shared/callout-panel"
+import { CardGrid } from "@/components/shared/card-grid"
+import { MetricGrid } from "@/components/shared/metric-grid"
+import { PageHero } from "@/components/shared/page-hero"
+import { ProcessPanel } from "@/components/shared/process-panel"
+import { SectionIntro } from "@/components/shared/section-intro"
 import { Button } from "@/components/ui/button"
 import {
   landingHeroContent,
@@ -27,13 +26,11 @@ export default function HomePage() {
   const TrustIcon = landingTrustPanelContent.icon
 
   return (
-    <main>
-      <LandingPublicHeader />
-
+    <PublicShell>
       <section className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
         <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
           <header className="pt-2 lg:pt-8">
-            <LandingPageHeader
+            <PageHero
               title={landingHeroContent.title}
               body={landingHeroContent.body}
               actions={
@@ -65,7 +62,7 @@ export default function HomePage() {
           </header>
 
           <div id="process" className="mx-auto w-full max-w-130 scroll-mt-28 lg:pt-6">
-            <LandingProcessPanel
+            <ProcessPanel
               title={landingProcessPanelContent.title}
               steps={landingProcessSteps}
               footer={landingProcessPanelContent.footer}
@@ -74,18 +71,18 @@ export default function HomePage() {
           </div>
         </div>
 
-        <LandingMetricGrid items={landingMetrics} className="mt-14" />
+        <MetricGrid items={landingMetrics} className="mt-14" />
 
         <section className="mt-16">
-          <LandingSectionIntro
+          <SectionIntro
             eyebrow={landingSectionIntroContent.eyebrow}
             title={landingSectionIntroContent.title}
             body={landingSectionIntroContent.body}
           />
 
-          <LandingCardGrid items={landingUseCases} className="mt-9" />
+          <CardGrid items={landingUseCases} className="mt-9" />
 
-          <LandingCalloutPanel
+          <CalloutPanel
             className="mt-10"
             icon={TrustIcon}
             title={landingTrustPanelContent.title}
@@ -104,8 +101,6 @@ export default function HomePage() {
           />
         </section>
       </section>
-
-      <LandingPublicFooter />
-    </main>
+    </PublicShell>
   )
 }

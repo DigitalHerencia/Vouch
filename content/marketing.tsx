@@ -11,9 +11,9 @@ import {
   Wrench,
 } from "lucide-react"
 
-import type { CardGridItem } from "@/components/landing/landing-card-grid"
-import type { MetricGridItem } from "@/components/landing/landing-metric-grid"
-import type { ProcessStep } from "@/components/landing/landing-process-panel"
+import type { CardGridItem } from "@/components/shared/card-grid"
+import type { MetricGridItem } from "@/components/shared/metric-grid"
+import type { ProcessStep } from "@/components/shared/process-panel"
 
 export const landingHeroContent = {
   title: (

@@ -11,13 +11,12 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { LandingCalloutPanel } from "@/components/landing/landing-callout-panel"
 import { CtaPanel } from "@/components/shared/cta-panel"
-import { LandingMetricGrid, type MetricGridItem } from "@/components/landing/landing-metric-grid"
-import { LandingSectionIntro } from "@/components/landing/landing-section-intro"
+import { CalloutPanel } from "@/components/shared/callout-panel"
+import { MetricGrid, type MetricGridItem } from "@/components/shared/metric-grid"
+import { SectionIntro } from "@/components/shared/section-intro"
 import { Surface, SurfaceHeader } from "@/components/shared/surface"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
-import { cn } from "@/lib/utils"
 
 type DashboardVouch = {
   id: string
@@ -169,14 +168,14 @@ export async function DashboardPage() {
 
   return (
     <main className="mx-auto grid w-full max-w-7xl gap-6 px-6 pt-8 pb-12 sm:px-10 lg:px-12 lg:pt-10 lg:pb-14">
-      <LandingSectionIntro
+      <SectionIntro
         eyebrow="Participant ledger"
         title="Dashboard"
         body="Here's what's happening with your Vouches. Amount, status, deadline, and consequence stay visible."
       />
 
       {!setupComplete ? (
-        <LandingCalloutPanel
+        <CalloutPanel
           title="Finish setup before creating or accepting Vouches."
           body="Complete readiness checks so Vouch can coordinate payment state, confirmation windows, and deterministic outcomes."
           icon={AlertCircle}
@@ -189,7 +188,7 @@ export async function DashboardPage() {
         />
       ) : null}
 
-      <LandingMetricGrid items={metrics} />
+      <MetricGrid items={metrics} />
 
       <DashboardListPanel
         title={`Action required (${actionRequired.length})`}

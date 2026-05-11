@@ -30,13 +30,15 @@ export interface MobileBottomNavProps {
     "aria-label"?: string | undefined
 }
 
-export const defaultAppMobileBottomNavItems = [
+export const defaultTenantMobileBottomNavItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home },
     { href: "/vouches", label: "Vouches", icon: CalendarDays },
     { href: "/vouches/new", label: "Create", icon: Plus, primary: true },
     { href: "/settings", label: "Settings", icon: Settings },
     { href: "/setup", label: "Setup", icon: ShieldCheck },
 ] satisfies readonly MobileBottomNavItem[]
+
+export const defaultAppMobileBottomNavItems = defaultTenantMobileBottomNavItems
 
 export const defaultPublicMobileBottomNavItems = [
     { href: "/", label: "Home", icon: Home },
@@ -47,7 +49,7 @@ export const defaultPublicMobileBottomNavItems = [
 ] satisfies readonly MobileBottomNavItem[]
 
 export function MobileBottomNav({
-    items = defaultAppMobileBottomNavItems,
+    items = defaultTenantMobileBottomNavItems,
     className,
     "aria-label": ariaLabel = "Mobile navigation",
 }: MobileBottomNavProps) {
@@ -96,7 +98,17 @@ export function MobileBottomNav({
 export function AppMobileBottomNav(props: Omit<MobileBottomNavProps, "items">) {
     return (
         <MobileBottomNav
-            items={defaultAppMobileBottomNavItems}
+            items={defaultTenantMobileBottomNavItems}
+            {...props}
+        />
+    )
+}
+
+export function TenantMobileBottomNav(props: Omit<MobileBottomNavProps, "items">) {
+    return (
+        <MobileBottomNav
+            items={defaultTenantMobileBottomNavItems}
+            aria-label="Tenant mobile navigation"
             {...props}
         />
     )

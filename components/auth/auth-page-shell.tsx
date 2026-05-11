@@ -5,7 +5,7 @@ import { ArrowRight, CheckCircle2, CreditCard, ShieldCheck } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { LogoLockup } from "@/components/brand/logo-lockup"
-import { LandingCalloutPanel } from "@/components/landing/landing-callout-panel"
+import { CalloutPanel } from "@/components/shared/callout-panel"
 import { cn } from "@/lib/utils"
 
 export interface AuthPageShellProps {
@@ -102,7 +102,7 @@ export function AuthPageShell({
 
             <div className="mt-7 grid gap-3 xl:mt-8">
               {authPrinciples.map((principle) => (
-                <LandingCalloutPanel
+                <CalloutPanel
                   key={principle.title}
                   icon={principle.icon}
                   title={principle.title}

@@ -1,6 +1,6 @@
 // app/(tenant)/layout.tsx
 
-import { AppShell } from "@/components/navigation/app-shell"
+import { TenantShell } from "@/components/navigation/tenant-shell"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 
 export default async function AppLayout({
@@ -10,5 +10,5 @@ export default async function AppLayout({
 }>) {
     await requireActiveUser()
 
-    return <AppShell>{children}</AppShell>
+    return <TenantShell>{children}</TenantShell>
 }

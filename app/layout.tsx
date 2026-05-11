@@ -8,7 +8,7 @@ import {
     JetBrains_Mono,
 } from "next/font/google"
 
-import { AppProvider } from "@/components/providers/app-provider"
+import { AppProvider } from "@/components/app/app-providers"
 
 import "./globals.css"
 

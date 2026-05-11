@@ -1,9 +1,9 @@
 // content/pricing.ts
 
-import { BadgeDollarSign, CheckCircle2, CreditCard, Landmark } from "lucide-react"
+import { BadgeDollarSign, CheckCircle2, CreditCard, Handshake, Landmark } from "lucide-react"
 
-import type { MetricGridItem } from "@/components/landing/landing-metric-grid"
-import type { ProcessStep } from "@/components/landing/landing-process-panel"
+import type { MetricGridItem } from "@/components/shared/metric-grid"
+import type { ProcessStep } from "@/components/shared/process-panel"
 
 export const PricingHeroContent = {
   title: (
@@ -69,6 +69,14 @@ export const pricingStats = [
     body: "Dual confirmation is required before release.",
   },
 ] satisfies MetricGridItem[]
+
+export const pricingCalloutContent = {
+  title: "Create with the total already visible.",
+  body: "Set the amount, show the fees, share the Vouch, and let the confirmation rule handle the outcome.",
+  label: "Create a Vouch",
+  action: "/sign-up?return_to=/vouches/new",
+  icon: Handshake,
+} as const
 
 export const pricingNotes = [
   {

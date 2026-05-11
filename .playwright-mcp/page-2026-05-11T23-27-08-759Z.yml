@@ -1,0 +1,65 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Vouch home" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic "Vouch" [ref=e7]:
+            - img [ref=e8]
+            - generic [ref=e13]: Vouch
+        - navigation [ref=e14]:
+          - button "Pricing" [ref=e15] [cursor=pointer]
+          - button "FAQ" [ref=e16] [cursor=pointer]
+          - button "Terms" [ref=e17] [cursor=pointer]
+          - button "Privacy" [ref=e18] [cursor=pointer]
+        - generic [ref=e19]:
+          - button "Sign in" [ref=e20] [cursor=pointer]
+          - button "Get started" [ref=e21] [cursor=pointer]
+    - main [ref=e22]:
+      - main [ref=e23]:
+        - generic [ref=e24]:
+          - paragraph [ref=e27]: FAQ
+          - heading "Precise answers" [level=1] [ref=e28]
+          - paragraph [ref=e29]: Vouch is the commitment layer, not a marketplace, scheduler, escrow provider, broker, or judge.
+        - generic [ref=e30]:
+          - generic [ref=e31]:
+            - heading "1. What is Vouch?" [level=2] [ref=e32]
+            - paragraph [ref=e34]: Vouch is a commitment-backed payment tool for appointments and in-person agreements. Funds release only when both parties confirm presence during the defined window.
+          - generic [ref=e35]:
+            - heading "2. Is Vouch a marketplace?" [level=2] [ref=e36]
+            - paragraph [ref=e38]: No. Vouch does not help users find each other, list services, message, review, rank, or book providers.
+          - generic [ref=e39]:
+            - heading "3. Does Vouch hold money?" [level=2] [ref=e40]
+            - paragraph [ref=e42]: No. Vouch uses payment-provider infrastructure to coordinate payment outcomes. Vouch does not directly custody funds.
+          - generic [ref=e43]:
+            - heading "4. What happens if only one person confirms?" [level=2] [ref=e44]
+            - paragraph [ref=e46]: Funds do not release. Both parties must confirm within the window.
+          - generic [ref=e47]:
+            - heading "5. What happens if nobody confirms?" [level=2] [ref=e48]
+            - paragraph [ref=e50]: The Vouch expires and the payment is refunded, voided, or not captured.
+          - generic [ref=e51]:
+            - heading "6. Does Vouch decide disputes?" [level=2] [ref=e52]
+            - paragraph [ref=e54]: No. Vouch outcomes are deterministic. The system does not judge who was right or wrong.
+          - generic [ref=e55]:
+            - heading "7. Does Vouch guarantee someone will show up?" [level=2] [ref=e56]
+            - paragraph [ref=e58]: No. Vouch does not guarantee behavior. It creates a financial commitment and deterministic payment outcome.
+        - generic [ref=e59]:
+          - generic [ref=e60]:
+            - img [ref=e62]
+            - generic [ref=e67]:
+              - heading "Back your next appointment with commitment." [level=2] [ref=e68]
+              - paragraph [ref=e69]: Create a Vouch, share the link, and let the confirmation rule handle the payment outcome.
+          - button "Create a Vouch" [ref=e71] [cursor=pointer]:
+            - generic [ref=e72]: Create a Vouch
+            - img
+    - contentinfo [ref=e73]:
+      - generic [ref=e74]:
+        - paragraph [ref=e75]: © 2026 Vouch. Payment coordination, not escrow.
+        - navigation [ref=e76]:
+          - button "Pricing" [ref=e77] [cursor=pointer]
+          - button "FAQ" [ref=e78] [cursor=pointer]
+          - button "Terms" [ref=e79] [cursor=pointer]
+          - button "Privacy" [ref=e80] [cursor=pointer]
+  - button "Open Next.js Dev Tools" [ref=e86] [cursor=pointer]:
+    - img [ref=e87]
+  - alert [ref=e90]

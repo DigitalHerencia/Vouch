@@ -4,7 +4,7 @@ import Link from "next/link"
 import { ArrowRight, Handshake, type LucideIcon } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { LandingCalloutPanel } from "@/components/landing/landing-callout-panel"
+import { CalloutPanel } from "@/components/shared/callout-panel"
 
 export interface CtaPanelProps {
   title?: string | undefined
@@ -24,7 +24,7 @@ export function CtaPanel({
   className,
 }: CtaPanelProps) {
   return (
-    <LandingCalloutPanel
+    <CalloutPanel
       className={className ?? "mt-12"}
       icon={icon}
       title={title}
