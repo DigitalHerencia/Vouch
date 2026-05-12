@@ -32,6 +32,10 @@ export function isStripePaymentIntentEvent(event: Stripe.Event): boolean {
   return event.type.startsWith("payment_intent.")
 }
 
+export function isStripeCheckoutSessionEvent(event: Stripe.Event): boolean {
+  return event.type.startsWith("checkout.session.")
+}
+
 export function isStripeRefundEvent(event: Stripe.Event): boolean {
   return event.type.startsWith("charge.refund") || event.type.startsWith("refund.")
 }

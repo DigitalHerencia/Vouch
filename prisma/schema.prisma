@@ -450,6 +450,7 @@ model PaymentRecord {
   provider PaymentProvider @default(stripe)
 
   providerPaymentId  String? @unique
+  providerCheckoutSessionId String? @unique
   providerChargeId   String?
   providerTransferId String?
 
@@ -479,6 +480,7 @@ model PaymentRecord {
 
   @@index([provider])
   @@index([providerPaymentId])
+  @@index([providerCheckoutSessionId])
   @@index([providerChargeId])
   @@index([providerTransferId])
   @@index([status])

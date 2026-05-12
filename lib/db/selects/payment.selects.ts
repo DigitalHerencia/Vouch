@@ -58,6 +58,7 @@ export const adminPaymentListItemSelect = {
   vouchId: true,
   provider: true,
   providerPaymentId: true,
+  providerCheckoutSessionId: true,
   providerChargeId: true,
   providerTransferId: true,
   status: true,

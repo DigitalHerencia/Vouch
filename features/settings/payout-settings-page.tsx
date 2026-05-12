@@ -6,20 +6,34 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 
 type PayoutSettingsPageProps = {
-  state?: { variant?: string; readiness?: { readiness?: string | null } | null }
+  state?: {
+    variant?: string
+    readiness?: {
+      readiness?: string | null
+      connectedAccount?: unknown
+    } | null
+  }
   startAction?: (formData: FormData) => void | Promise<void>
   refreshAction?: (formData: FormData) => void | Promise<void>
+  dashboardAction?: (formData: FormData) => void | Promise<void>
 }
 
-export function PayoutSettingsPage({ state, startAction, refreshAction }: PayoutSettingsPageProps) {
+export function PayoutSettingsPage({
+  state,
+  startAction,
+  refreshAction,
+  dashboardAction,
+}: PayoutSettingsPageProps) {
   const readiness = state?.readiness?.readiness ?? "not_started"
   const ready = readiness === "ready"
+  const hasConnectedAccount = Boolean(state?.readiness?.connectedAccount)
+
   return (
     <section className="grid w-full gap-6">
       <SectionIntro
         eyebrow="Merchant setup"
         title="Payout account"
-        body="Complete Stripe Connect onboarding before creating Vouches that may release funds."
+        body="Stripe hosts merchant onboarding and account management. Vouch only stores provider references and readiness state."
       />
       <div className="grid gap-5 lg:grid-cols-[1fr_0.75fr]">
         <Surface>
@@ -37,16 +51,28 @@ export function PayoutSettingsPage({ state, startAction, refreshAction }: Payout
                 </Badge>
                 <p className="mt-3 text-sm text-neutral-400">
                   {ready
-                    ? "Ready to receive released funds after both parties confirm."
-                    : "Hosted onboarding is required before merchant creation is ready."}
+                    ? "Ready to receive released funds after both parties confirm. Manage payout details in Stripe."
+                    : "Hosted Stripe onboarding is required before merchant creation is ready."}
                 </p>
               </div>
               <div className="flex gap-3">
+                {ready && dashboardAction ? (
+                  <form action={dashboardAction}>
+                    <Button type="submit" className="h-11 rounded-none bg-blue-700 px-5">
+                      <Landmark />
+                      Open Stripe dashboard
+                    </Button>
+                  </form>
+                ) : null}
                 {startAction ? (
                   <form action={startAction}>
-                    <Button type="submit" className="h-11 rounded-none bg-blue-700 px-5">
+                    <Button
+                      type="submit"
+                      variant={ready ? "outline" : "default"}
+                      className="h-11 rounded-none px-5"
+                    >
                       <Banknote />
-                      {ready ? "Open onboarding" : "Start onboarding"}
+                      {hasConnectedAccount ? "Resume onboarding" : "Start onboarding"}
                     </Button>
                   </form>
                 ) : null}
@@ -64,9 +90,9 @@ export function PayoutSettingsPage({ state, startAction, refreshAction }: Payout
         </Surface>
         <Surface variant="muted" padding="md">
           <div className="grid gap-4">
-            <CheckLine icon={LockKeyhole} text="Bank details are handled by Stripe Connect." />
-            <CheckLine icon={CheckCircle2} text="Ready status is required for merchant creation." />
-            <CheckLine icon={Landmark} text="Restricted accounts must finish hosted onboarding." />
+            <CheckLine icon={LockKeyhole} text="Bank details are collected by Stripe, not Vouch." />
+            <CheckLine icon={CheckCircle2} text="Ready status is reconciled from Stripe state." />
+            <CheckLine icon={Landmark} text="Payout account changes happen in Stripe-hosted flows." />
           </div>
         </Surface>
       </div>

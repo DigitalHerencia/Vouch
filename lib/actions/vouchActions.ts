@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import type Stripe from "stripe"
+import { redirect } from "next/navigation"
 
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import {
@@ -35,9 +35,8 @@ import {
   markVouchFailedTx,
 } from "@/lib/db/transactions/vouchTransactions"
 import { createInvitationToken, hashInvitationToken } from "@/lib/invitations/tokens"
-import { getStripeServerClient } from "@/lib/integrations/stripe/client"
 import {
-  initializeStripePaymentForVouch,
+  initializeStripeCheckoutSessionForVouch,
   refundOrVoidStripePaymentForVouch,
   releaseStripePaymentForCompletedVouch,
 } from "@/lib/actions/paymentActions"
@@ -122,14 +121,11 @@ function toFeePreview(amountCents: number, currency: "usd"): FeePreview {
   }
 }
 
-function getDefaultPaymentMethodId(
-  customer: Stripe.Response<Stripe.Customer | Stripe.DeletedCustomer>
-): string | null {
-  if ("deleted" in customer && customer.deleted) return null
-
-  const paymentMethod = customer.invoice_settings.default_payment_method
-  if (typeof paymentMethod === "string") return paymentMethod
-  return paymentMethod?.id ?? null
+function getAppUrl(): string {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+  )
 }
 
 async function getSetupBlockedFailure(
@@ -738,20 +734,8 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
     )
   }
 
-  const stripeCustomer = await getStripeServerClient().customers.retrieve(providerCustomerId, {
-    expand: ["invoice_settings.default_payment_method"],
-  })
-  const providerPaymentMethodId = getDefaultPaymentMethodId(stripeCustomer)
-
-  if (!providerPaymentMethodId) {
-    await markVouchFailed({ vouchId: vouch.id })
-    return actionFailure(
-      "PAYMENT_METHOD_REQUIRED",
-      "Customer payment method must be ready before acceptance can complete."
-    )
-  }
-
-  const payment = await initializeStripePaymentForVouch({
+  const appUrl = getAppUrl()
+  const payment = await initializeStripeCheckoutSessionForVouch({
     vouchId: paymentContext.id,
     pricing:
       paymentContext.customerTotalCents > 0
@@ -766,9 +750,9 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
         : calculatePricing(paymentContext.amountCents),
     currency: paymentContext.currency,
     providerCustomerId,
-    providerPaymentMethodId,
     connectedAccountId,
-    confirmOffSession: true,
+    successUrl: `${appUrl}/vouches/${paymentContext.id}?checkout=complete`,
+    cancelUrl: `${appUrl}/vouches/${paymentContext.id}?checkout=cancelled`,
   })
 
   if (!payment.ok) {
@@ -795,6 +779,7 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
   }
 
   await revalidateVouchSurfaces(vouch.id, [vouch.payerId, user.id])
+  if (payment.checkoutUrl) redirect(payment.checkoutUrl)
   return actionSuccess({ vouchId: vouch.id })
 }
 

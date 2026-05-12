@@ -1,7 +1,11 @@
 import { PayoutSettingsPage } from "@/features/settings/payout-settings-page"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { getPayoutSettingsPageState } from "@/lib/fetchers/paymentFetchers"
-import { refreshPayoutReadiness, startPayoutOnboarding } from "@/lib/actions/paymentActions"
+import {
+  openPayoutDashboard,
+  refreshPayoutReadiness,
+  startPayoutOnboarding,
+} from "@/lib/actions/paymentActions"
 
 export default async function Page() {
   const user = await requireActiveUser()
@@ -14,7 +18,16 @@ export default async function Page() {
     "use server"
     await refreshPayoutReadiness()
   }
+  async function dashboardAction() {
+    "use server"
+    await openPayoutDashboard()
+  }
   return (
-    <PayoutSettingsPage state={state} startAction={startAction} refreshAction={refreshAction} />
+    <PayoutSettingsPage
+      state={state}
+      startAction={startAction}
+      refreshAction={refreshAction}
+      dashboardAction={dashboardAction}
+    />
   )
 }

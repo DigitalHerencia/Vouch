@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import {
   isStripeAccountEvent,
+  isStripeCheckoutSessionEvent,
   isStripePaymentIntentEvent,
   isStripeRefundEvent,
   isStripeSetupIntentEvent,
@@ -13,6 +14,7 @@ function event(type: string) {
 
 describe("Stripe webhook event classifiers", () => {
   it("classifies required payment lifecycle events", () => {
+    expect(isStripeCheckoutSessionEvent(event("checkout.session.completed"))).toBe(true)
     expect(isStripePaymentIntentEvent(event("payment_intent.amount_capturable_updated"))).toBe(true)
     expect(isStripePaymentIntentEvent(event("payment_intent.succeeded"))).toBe(true)
     expect(isStripePaymentIntentEvent(event("payment_intent.canceled"))).toBe(true)

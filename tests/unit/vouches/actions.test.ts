@@ -23,6 +23,7 @@ vi.mock("@/lib/db/prisma", () => ({
 }))
 
 vi.mock("@/lib/actions/paymentActions", () => ({
+  initializeStripeCheckoutSessionForVouch: vi.fn(),
   initializeStripePaymentForVouch: vi.fn(),
   refundOrVoidStripePaymentForVouch: vi.fn(),
   releaseStripePaymentForCompletedVouch: vi.fn(),

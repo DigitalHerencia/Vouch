@@ -53,6 +53,7 @@ export type PaymentRecordMinAggregateOutputType = {
   vouchId: string | null
   provider: $Enums.PaymentProvider | null
   providerPaymentId: string | null
+  providerCheckoutSessionId: string | null
   providerChargeId: string | null
   providerTransferId: string | null
   status: $Enums.PaymentStatus | null
@@ -76,6 +77,7 @@ export type PaymentRecordMaxAggregateOutputType = {
   vouchId: string | null
   provider: $Enums.PaymentProvider | null
   providerPaymentId: string | null
+  providerCheckoutSessionId: string | null
   providerChargeId: string | null
   providerTransferId: string | null
   status: $Enums.PaymentStatus | null
@@ -99,6 +101,7 @@ export type PaymentRecordCountAggregateOutputType = {
   vouchId: number
   provider: number
   providerPaymentId: number
+  providerCheckoutSessionId: number
   providerChargeId: number
   providerTransferId: number
   status: number
@@ -146,6 +149,7 @@ export type PaymentRecordMinAggregateInputType = {
   vouchId?: true
   provider?: true
   providerPaymentId?: true
+  providerCheckoutSessionId?: true
   providerChargeId?: true
   providerTransferId?: true
   status?: true
@@ -169,6 +173,7 @@ export type PaymentRecordMaxAggregateInputType = {
   vouchId?: true
   provider?: true
   providerPaymentId?: true
+  providerCheckoutSessionId?: true
   providerChargeId?: true
   providerTransferId?: true
   status?: true
@@ -192,6 +197,7 @@ export type PaymentRecordCountAggregateInputType = {
   vouchId?: true
   provider?: true
   providerPaymentId?: true
+  providerCheckoutSessionId?: true
   providerChargeId?: true
   providerTransferId?: true
   status?: true
@@ -302,6 +308,7 @@ export type PaymentRecordGroupByOutputType = {
   vouchId: string
   provider: $Enums.PaymentProvider
   providerPaymentId: string | null
+  providerCheckoutSessionId: string | null
   providerChargeId: string | null
   providerTransferId: string | null
   status: $Enums.PaymentStatus
@@ -348,6 +355,7 @@ export type PaymentRecordWhereInput = {
   vouchId?: Prisma.StringFilter<"PaymentRecord"> | string
   provider?: Prisma.EnumPaymentProviderFilter<"PaymentRecord"> | $Enums.PaymentProvider
   providerPaymentId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
+  providerCheckoutSessionId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   providerChargeId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   providerTransferId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   status?: Prisma.EnumPaymentStatusFilter<"PaymentRecord"> | $Enums.PaymentStatus
@@ -374,6 +382,7 @@ export type PaymentRecordOrderByWithRelationInput = {
   vouchId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  providerCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerChargeId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerTransferId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -399,6 +408,7 @@ export type PaymentRecordWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   vouchId?: string
   providerPaymentId?: string
+  providerCheckoutSessionId?: string
   AND?: Prisma.PaymentRecordWhereInput | Prisma.PaymentRecordWhereInput[]
   OR?: Prisma.PaymentRecordWhereInput[]
   NOT?: Prisma.PaymentRecordWhereInput | Prisma.PaymentRecordWhereInput[]
@@ -422,13 +432,14 @@ export type PaymentRecordWhereUniqueInput = Prisma.AtLeast<{
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
   refundRecord?: Prisma.XOR<Prisma.RefundRecordNullableScalarRelationFilter, Prisma.RefundRecordWhereInput> | null
   webhookEvents?: Prisma.PaymentWebhookEventListRelationFilter
-}, "id" | "vouchId" | "providerPaymentId">
+}, "id" | "vouchId" | "providerPaymentId" | "providerCheckoutSessionId">
 
 export type PaymentRecordOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  providerCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerChargeId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerTransferId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -460,6 +471,7 @@ export type PaymentRecordScalarWhereWithAggregatesInput = {
   vouchId?: Prisma.StringWithAggregatesFilter<"PaymentRecord"> | string
   provider?: Prisma.EnumPaymentProviderWithAggregatesFilter<"PaymentRecord"> | $Enums.PaymentProvider
   providerPaymentId?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
+  providerCheckoutSessionId?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   providerChargeId?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   providerTransferId?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   status?: Prisma.EnumPaymentStatusWithAggregatesFilter<"PaymentRecord"> | $Enums.PaymentStatus
@@ -482,6 +494,7 @@ export type PaymentRecordCreateInput = {
   id?: string
   provider?: $Enums.PaymentProvider
   providerPaymentId?: string | null
+  providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
@@ -508,6 +521,7 @@ export type PaymentRecordUncheckedCreateInput = {
   vouchId: string
   provider?: $Enums.PaymentProvider
   providerPaymentId?: string | null
+  providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
@@ -532,6 +546,7 @@ export type PaymentRecordUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -558,6 +573,7 @@ export type PaymentRecordUncheckedUpdateInput = {
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -583,6 +599,7 @@ export type PaymentRecordCreateManyInput = {
   vouchId: string
   provider?: $Enums.PaymentProvider
   providerPaymentId?: string | null
+  providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
@@ -605,6 +622,7 @@ export type PaymentRecordUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -628,6 +646,7 @@ export type PaymentRecordUncheckedUpdateManyInput = {
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -656,6 +675,7 @@ export type PaymentRecordCountOrderByAggregateInput = {
   vouchId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerPaymentId?: Prisma.SortOrder
+  providerCheckoutSessionId?: Prisma.SortOrder
   providerChargeId?: Prisma.SortOrder
   providerTransferId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -690,6 +710,7 @@ export type PaymentRecordMaxOrderByAggregateInput = {
   vouchId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerPaymentId?: Prisma.SortOrder
+  providerCheckoutSessionId?: Prisma.SortOrder
   providerChargeId?: Prisma.SortOrder
   providerTransferId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -713,6 +734,7 @@ export type PaymentRecordMinOrderByAggregateInput = {
   vouchId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerPaymentId?: Prisma.SortOrder
+  providerCheckoutSessionId?: Prisma.SortOrder
   providerChargeId?: Prisma.SortOrder
   providerTransferId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -817,6 +839,7 @@ export type PaymentRecordCreateWithoutVouchInput = {
   id?: string
   provider?: $Enums.PaymentProvider
   providerPaymentId?: string | null
+  providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
@@ -841,6 +864,7 @@ export type PaymentRecordUncheckedCreateWithoutVouchInput = {
   id?: string
   provider?: $Enums.PaymentProvider
   providerPaymentId?: string | null
+  providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
@@ -881,6 +905,7 @@ export type PaymentRecordUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -905,6 +930,7 @@ export type PaymentRecordUncheckedUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -929,6 +955,7 @@ export type PaymentRecordCreateWithoutRefundRecordInput = {
   id?: string
   provider?: $Enums.PaymentProvider
   providerPaymentId?: string | null
+  providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
@@ -954,6 +981,7 @@ export type PaymentRecordUncheckedCreateWithoutRefundRecordInput = {
   vouchId: string
   provider?: $Enums.PaymentProvider
   providerPaymentId?: string | null
+  providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
@@ -993,6 +1021,7 @@ export type PaymentRecordUpdateWithoutRefundRecordInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -1018,6 +1047,7 @@ export type PaymentRecordUncheckedUpdateWithoutRefundRecordInput = {
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -1041,6 +1071,7 @@ export type PaymentRecordCreateWithoutWebhookEventsInput = {
   id?: string
   provider?: $Enums.PaymentProvider
   providerPaymentId?: string | null
+  providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
@@ -1066,6 +1097,7 @@ export type PaymentRecordUncheckedCreateWithoutWebhookEventsInput = {
   vouchId: string
   provider?: $Enums.PaymentProvider
   providerPaymentId?: string | null
+  providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
@@ -1105,6 +1137,7 @@ export type PaymentRecordUpdateWithoutWebhookEventsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -1130,6 +1163,7 @@ export type PaymentRecordUncheckedUpdateWithoutWebhookEventsInput = {
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
@@ -1185,6 +1219,7 @@ export type PaymentRecordSelect<ExtArgs extends runtime.Types.Extensions.Interna
   vouchId?: boolean
   provider?: boolean
   providerPaymentId?: boolean
+  providerCheckoutSessionId?: boolean
   providerChargeId?: boolean
   providerTransferId?: boolean
   status?: boolean
@@ -1212,6 +1247,7 @@ export type PaymentRecordSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   vouchId?: boolean
   provider?: boolean
   providerPaymentId?: boolean
+  providerCheckoutSessionId?: boolean
   providerChargeId?: boolean
   providerTransferId?: boolean
   status?: boolean
@@ -1236,6 +1272,7 @@ export type PaymentRecordSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   vouchId?: boolean
   provider?: boolean
   providerPaymentId?: boolean
+  providerCheckoutSessionId?: boolean
   providerChargeId?: boolean
   providerTransferId?: boolean
   status?: boolean
@@ -1260,6 +1297,7 @@ export type PaymentRecordSelectScalar = {
   vouchId?: boolean
   provider?: boolean
   providerPaymentId?: boolean
+  providerCheckoutSessionId?: boolean
   providerChargeId?: boolean
   providerTransferId?: boolean
   status?: boolean
@@ -1278,7 +1316,7 @@ export type PaymentRecordSelectScalar = {
   updatedAt?: boolean
 }
 
-export type PaymentRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "provider" | "providerPaymentId" | "providerChargeId" | "providerTransferId" | "status" | "amountCents" | "currency" | "platformFeeCents" | "protectedAmountCents" | "merchantReceivesCents" | "vouchServiceFeeCents" | "processingFeeOffsetCents" | "applicationFeeAmountCents" | "customerTotalCents" | "lastErrorCode" | "lastErrorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentRecord"]>
+export type PaymentRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "provider" | "providerPaymentId" | "providerCheckoutSessionId" | "providerChargeId" | "providerTransferId" | "status" | "amountCents" | "currency" | "platformFeeCents" | "protectedAmountCents" | "merchantReceivesCents" | "vouchServiceFeeCents" | "processingFeeOffsetCents" | "applicationFeeAmountCents" | "customerTotalCents" | "lastErrorCode" | "lastErrorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentRecord"]>
 export type PaymentRecordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
   refundRecord?: boolean | Prisma.PaymentRecord$refundRecordArgs<ExtArgs>
@@ -1304,6 +1342,7 @@ export type $PaymentRecordPayload<ExtArgs extends runtime.Types.Extensions.Inter
     vouchId: string
     provider: $Enums.PaymentProvider
     providerPaymentId: string | null
+    providerCheckoutSessionId: string | null
     providerChargeId: string | null
     providerTransferId: string | null
     status: $Enums.PaymentStatus
@@ -1750,6 +1789,7 @@ export interface PaymentRecordFieldRefs {
   readonly vouchId: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly provider: Prisma.FieldRef<"PaymentRecord", 'PaymentProvider'>
   readonly providerPaymentId: Prisma.FieldRef<"PaymentRecord", 'String'>
+  readonly providerCheckoutSessionId: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly providerChargeId: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly providerTransferId: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly status: Prisma.FieldRef<"PaymentRecord", 'PaymentStatus'>

@@ -73,6 +73,13 @@ export async function createStripeConnectAccount(input: {
       identity: {
         country: input.country ?? "US",
       },
+      include: [
+        "configuration.merchant",
+        "configuration.recipient",
+        "identity",
+        "defaults",
+        "configuration.customer",
+      ],
       metadata: {
         vouch_user_id: input.userId,
       },
@@ -96,7 +103,7 @@ export async function createStripeConnectOnboardingLink(input: {
       use_case: {
         type: "account_onboarding",
         account_onboarding: {
-          configurations: ["recipient"],
+          configurations: ["recipient", "merchant"],
           refresh_url: input.refreshUrl,
           return_url: input.returnUrl,
         },
@@ -104,6 +111,14 @@ export async function createStripeConnectOnboardingLink(input: {
     },
     { idempotencyKey: input.idempotencyKey ?? `account:${input.providerAccountId}:onboarding` }
   )
+
+  return { url: link.url }
+}
+
+export async function createStripeConnectDashboardLink(input: {
+  providerAccountId: string
+}): Promise<{ url: string }> {
+  const link = await getStripeServerClient().accounts.createLoginLink(input.providerAccountId)
 
   return { url: link.url }
 }
