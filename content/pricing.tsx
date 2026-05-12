@@ -71,8 +71,8 @@ export const pricingStats = [
 ] satisfies MetricGridItem[]
 
 export const pricingCalloutContent = {
-  title: "Create with the total already visible.",
-  body: "Set the amount, show the fees, share the Vouch, and let the confirmation rule handle the outcome.",
+  title: "Fraud thrives in ambiguity, exceptions, and manual intervention.",
+  body: "Vouch removes all three. No unilateral action forces settlement. No human discretion surface exists to exploit. A Vouch gets created, paid, sent, accepted, confirmed, then released or refunded according to system state.",
   label: "Create a Vouch",
   action: "/sign-up?return_to=/vouches/new",
   icon: Handshake,
@@ -93,10 +93,5 @@ export const pricingNotes = [
     eyebrow: "Deterministic outcome",
     title: "Vouch doesn’t ask who’s right. Vouch asks what happened.",
     body: "No stories. No screenshots. No appeals. No mediation. No subjective judgment. Vouch converts mutual intent into explicit protocol, bounded rules, and economically meaningful confirmation. If conditions are met, funds move. If conditions fail, they don’t.",
-  },
-  {
-    eyebrow: "Automated finality",
-    title: "Fraud thrives in ambiguity, exceptions, and manual intervention.",
-    body: "Vouch removes all three. No unilateral action forces settlement. No human discretion surface exists to exploit. A Vouch gets created, paid, sent, accepted, confirmed, then released or refunded according to system state.",
   },
 ] as const

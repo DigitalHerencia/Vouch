@@ -2,7 +2,6 @@
 
 import { Bell, Menu } from "lucide-react"
 import Link from "next/link"
-import { usePathname } from "next/navigation"
 
 import { LogoLockup } from "@/components/brand/logo-lockup"
 import { UserMenu } from "@/components/auth/user-menu"
@@ -27,45 +26,28 @@ export const defaultTenantNavItems = [
 ] satisfies readonly TenantHeaderNavItem[]
 
 export function TenantHeader({ navItems = defaultTenantNavItems, className }: TenantHeaderProps) {
-  const pathname = usePathname()
-
   return (
     <header
       className={cn(
-        "sticky top-0 z-40 h-19 border-b border-neutral-900 bg-black/90 backdrop-blur supports-backdrop-filter:bg-black/78",
+        "sticky top-0 z-50 h-21 w-full border-b border-neutral-900 bg-black",
         className,
       )}
     >
-      <div className="mx-auto hidden h-full w-full max-w-7xl items-center justify-between px-4 sm:px-6 md:flex lg:px-8">
-        <div className="flex items-center gap-7 lg:gap-10">
-          <Link href="/dashboard" aria-label="Vouch dashboard" className="inline-flex items-center text-neutral-50">
-            <LogoLockup />
-          </Link>
+      <div className="mx-auto hidden h-full w-full max-w-7xl items-center justify-between px-6 sm:px-10 md:flex lg:px-12">
+        <Link href="/dashboard" aria-label="Vouch dashboard" className="flex shrink-0 items-center">
+          <LogoLockup />
+        </Link>
 
-          <nav aria-label="Main navigation" className="flex items-center gap-2">
-            {navItems.map((item) => {
-              const active = pathname === item.href || pathname.startsWith(`${item.href}/`)
+        <nav aria-label="Main navigation" className="flex items-center gap-8 lg:gap-12">
+          {navItems.map((item) => (
+            <Button key={item.href} variant="nav" size="nav" render={<Link href={item.href} />}>
+              {item.label}
+            </Button>
+          ))}
+        </nav>
 
-              return (
-                <Button
-                  key={item.href}
-                  variant={active ? "secondary" : "ghost"}
-                  size="sm"
-                  render={<Link href={item.href} />}
-                >
-                  {item.label}
-                </Button>
-              )
-            })}
-          </nav>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Button variant="primary" size="lg" render={<Link href="/vouches/new" />}>
-            Create Vouch
-          </Button>
-
-          <Button type="button" variant="ghost" size="icon" aria-label="Notifications">
+        <div className="flex items-center gap-4 lg:gap-5">
+          <Button type="button" variant="secondary" size="icon" aria-label="Notifications">
             <Bell />
           </Button>
 

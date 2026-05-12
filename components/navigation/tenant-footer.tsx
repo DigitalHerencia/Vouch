@@ -22,13 +22,13 @@ export const defaultTenantFooterLinks = [
 
 export function TenantFooter({ links = defaultTenantFooterLinks, className }: TenantFooterProps) {
   return (
-    <footer className={cn("border-t border-neutral-900 bg-black/80", className)}>
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-6 pb-24 sm:px-6 md:pb-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
-        <p className="font-mono text-xs font-black tracking-[0.08em] text-neutral-600 uppercase">
-          Provider-backed state determines every outcome.
+    <footer className={cn("w-full border-t border-neutral-900 bg-black", className)}>
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-7 pb-24 sm:px-10 md:pb-7 lg:flex-row lg:items-center lg:justify-between lg:px-12">
+        <p className="font-mono text-sm leading-none text-neutral-600 sm:text-base lg:text-lg">
+          © {new Date().getFullYear()} Vouch. Payment coordination, not escrow.
         </p>
 
-        <nav className="flex flex-wrap gap-x-6 gap-y-3">
+        <nav className="flex flex-wrap gap-x-7 gap-y-4 sm:gap-x-9">
           {links.map((item) => (
             <Button key={item.href} variant="nav" size="nav" render={<Link href={item.href} />}>
               {item.label}
