@@ -5,9 +5,20 @@ import type Stripe from "stripe"
 import { getStripeClient } from "@/lib/integrations/stripe/client"
 import { getStripeRuntimeConfig } from "@/lib/integrations/stripe/config"
 
+export type StripeWebhookEvent = Stripe.Event | Stripe.V2.Core.EventNotification
+
 export type StripeWebhookVerificationResult =
-  | { ok: true; event: Stripe.Event }
+  | { ok: true; event: StripeWebhookEvent }
   | { ok: false; status: 400; message: string }
+
+function isStripeV2EventNotificationPayload(rawBody: string): boolean {
+  try {
+    const payload = JSON.parse(rawBody) as { object?: unknown }
+    return payload.object === "v2.core.event"
+  } catch {
+    return false
+  }
+}
 
 export async function verifyStripeWebhookEvent(
   rawBody: string,
@@ -21,33 +32,41 @@ export async function verifyStripeWebhookEvent(
   const stripe = getStripeClient()
 
   try {
-    const event = stripe.webhooks.constructEvent(rawBody, signatureHeader, webhookSecret)
+    const event = isStripeV2EventNotificationPayload(rawBody)
+      ? stripe.parseEventNotification(rawBody, signatureHeader, webhookSecret)
+      : stripe.webhooks.constructEvent(rawBody, signatureHeader, webhookSecret)
     return { ok: true, event }
   } catch {
     return { ok: false, status: 400, message: "Invalid Stripe webhook signature." }
   }
 }
 
-export function isStripePaymentIntentEvent(event: Stripe.Event): boolean {
+export function isStripeV2WebhookEvent(
+  event: StripeWebhookEvent
+): event is Stripe.V2.Core.EventNotification {
+  return event.object === "v2.core.event"
+}
+
+export function isStripePaymentIntentEvent(event: StripeWebhookEvent): boolean {
   return event.type.startsWith("payment_intent.")
 }
 
-export function isStripeCheckoutSessionEvent(event: Stripe.Event): boolean {
+export function isStripeCheckoutSessionEvent(event: StripeWebhookEvent): boolean {
   return event.type.startsWith("checkout.session.")
 }
 
-export function isStripeRefundEvent(event: Stripe.Event): boolean {
+export function isStripeRefundEvent(event: StripeWebhookEvent): boolean {
   return event.type.startsWith("charge.refund") || event.type.startsWith("refund.")
 }
 
-export function isStripeSetupIntentEvent(event: Stripe.Event): boolean {
+export function isStripeSetupIntentEvent(event: StripeWebhookEvent): boolean {
   return event.type.startsWith("setup_intent.")
 }
 
-export function isStripeAccountEvent(event: Stripe.Event): boolean {
-  return event.type.startsWith("account.")
+export function isStripeAccountEvent(event: StripeWebhookEvent): boolean {
+  return event.type.startsWith("account.") || event.type.startsWith("v2.core.account")
 }
 
-export function isStripeIdentityEvent(event: Stripe.Event): boolean {
+export function isStripeIdentityEvent(event: StripeWebhookEvent): boolean {
   return event.type.startsWith("identity.verification_session.")
 }

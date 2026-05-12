@@ -27,5 +27,10 @@ describe("Stripe webhook event classifiers", () => {
     expect(isStripeRefundEvent(event("charge.refunded"))).toBe(true)
     expect(isStripeRefundEvent(event("refund.updated"))).toBe(true)
     expect(isStripeAccountEvent(event("account.updated"))).toBe(true)
+    expect(
+      isStripeAccountEvent(
+        event("v2.core.account[configuration.recipient].capability_status_updated")
+      )
+    ).toBe(true)
   })
 })

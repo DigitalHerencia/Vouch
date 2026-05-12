@@ -36,6 +36,8 @@ import {
   isStripePaymentIntentEvent,
   isStripeRefundEvent,
   isStripeSetupIntentEvent,
+  isStripeV2WebhookEvent,
+  type StripeWebhookEvent,
 } from "@/lib/integrations/stripe/webhook-events"
 import {
   authorizeVouchPaymentInputSchema,
@@ -2054,7 +2056,7 @@ export type StripeWebhookProcessingResult =
   | { ok: false; status: 500; message: string }
 
 export async function processStripeWebhookEvent(
-  event: Stripe.Event
+  event: StripeWebhookEvent
 ): Promise<StripeWebhookProcessingResult> {
   const ledger = await recordProviderWebhookReceived({
     provider: "stripe",
@@ -2062,7 +2064,7 @@ export async function processStripeWebhookEvent(
     eventType: event.type,
     safeMetadata: {
       livemode: event.livemode,
-      api_version: event.api_version,
+      ...(!isStripeV2WebhookEvent(event) ? { api_version: event.api_version } : {}),
     },
   })
 
@@ -2086,6 +2088,17 @@ export async function processStripeWebhookEvent(
       await processAccountEvent(event, ledger.id)
       await markProviderWebhookProcessed(ledger.id)
       return { ok: true, status: 200, processed: true }
+    }
+
+    if (isStripeV2WebhookEvent(event)) {
+      await markProviderWebhookIgnored(ledger.id, "Unsupported Stripe v2 event type.")
+      return {
+        ok: true,
+        status: 200,
+        processed: false,
+        ignored: true,
+        reason: "Unsupported v2 event type.",
+      }
     }
 
     if (isStripeSetupIntentEvent(event)) {
@@ -2452,7 +2465,119 @@ async function processSetupIntentEvent(event: Stripe.Event, providerWebhookEvent
   })
 }
 
-async function processAccountEvent(event: Stripe.Event, providerWebhookEventId: string) {
+function getStripeV2AccountId(event: Stripe.V2.Core.EventNotification): string | null {
+  const relatedObject = "related_object" in event ? event.related_object : null
+  if (relatedObject?.type === "v2.core.account") {
+    return relatedObject.id
+  }
+
+  return null
+}
+
+async function processStripeV2AccountEvent(
+  event: Stripe.V2.Core.EventNotification,
+  providerWebhookEventId: string
+) {
+  const providerAccountId = getStripeV2AccountId(event)
+
+  if (!providerAccountId) {
+    await prisma.paymentWebhookEvent.create({
+      data: {
+        provider: "stripe",
+        providerEventId: event.id,
+        eventType: event.type,
+        providerWebhookEventId,
+        processed: true,
+        processedAt: new Date(),
+        safeMetadata: {
+          reason: "Accounts v2 event did not include a related account object.",
+        },
+      },
+    })
+    return
+  }
+
+  const connectedAccount = await prisma.connectedAccount.findUnique({
+    where: { providerAccountId },
+    select: { id: true, userId: true },
+  })
+
+  if (!connectedAccount) {
+    await prisma.paymentWebhookEvent.create({
+      data: {
+        provider: "stripe",
+        providerEventId: event.id,
+        eventType: event.type,
+        providerWebhookEventId,
+        processed: true,
+        processedAt: new Date(),
+        safeMetadata: {
+          account: providerAccountId,
+          reason: "No local connected account matched this provider account ID.",
+        },
+      },
+    })
+    return
+  }
+
+  const readiness = await refreshStripeConnectReadiness({ providerAccountId })
+
+  await prisma.$transaction(async (tx) => {
+    await tx.connectedAccount.update({
+      where: { id: connectedAccount.id },
+      data: {
+        readiness: readiness.readiness,
+        chargesEnabled: readiness.chargesEnabled,
+        payoutsEnabled: readiness.payoutsEnabled,
+        detailsSubmitted: readiness.detailsSubmitted,
+      },
+    })
+    await tx.verificationProfile.upsert({
+      where: { userId: connectedAccount.userId },
+      create: { userId: connectedAccount.userId, payoutReadiness: readiness.readiness },
+      update: { payoutReadiness: readiness.readiness },
+    })
+    await tx.paymentWebhookEvent.create({
+      data: {
+        provider: "stripe",
+        providerEventId: event.id,
+        eventType: event.type,
+        providerWebhookEventId,
+        processed: true,
+        processedAt: new Date(),
+        safeMetadata: {
+          account: providerAccountId,
+          readiness: readiness.readiness,
+          charges_enabled: readiness.chargesEnabled,
+          payouts_enabled: readiness.payoutsEnabled,
+          details_submitted: readiness.detailsSubmitted,
+        },
+      },
+    })
+    await tx.auditEvent.create({
+      data: {
+        eventName: "payout.account_webhook_processed",
+        actorType: "payment_provider",
+        entityType: "ConnectedAccount",
+        entityId: connectedAccount.id,
+        participantSafe: false,
+        metadata: {
+          provider_event_id: event.id,
+          event_type: event.type,
+          account: providerAccountId,
+          readiness: readiness.readiness,
+        },
+      },
+    })
+  })
+}
+
+async function processAccountEvent(event: StripeWebhookEvent, providerWebhookEventId: string) {
+  if (isStripeV2WebhookEvent(event)) {
+    await processStripeV2AccountEvent(event, providerWebhookEventId)
+    return
+  }
+
   const account = event.data.object as Stripe.Account
   const readiness =
     account.charges_enabled && account.payouts_enabled && account.details_submitted
