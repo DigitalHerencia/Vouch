@@ -1,321 +1,408 @@
-# Stripe Connect Integration
+# Vouch Stripe Connect Implementation
 
-Source of truth date: 2026-05-06
+Source of truth date: 2026-05-12
 
-This document is the canonical Stripe implementation guide for Vouch. It resolves the prior participant-model conflict by separating product roles from legacy `payer`/`payee` field names.
+This is the architecture-corrected Stripe Connect implementation source for Vouch. It replaces older Stripe blueprints, marketplace examples, role mappings, and implementation matrices.
 
-## Stripe Account Source of Truth
+## Product Frame
 
-Use these account identities when validating Vouch Stripe behavior:
+Implement Stripe-backed commitment payment coordination for Vouch using the existing Vouch architecture, contracts, terminology, and design system.
 
-- Sandbox platform: `acct_1TPa46GV5dKxUPtb`
-- Sandbox connected account: `acct_1TQHpNGV5d6axbAJ`
-- Live platform: `acct_1TQHH2GuFcEUvSe9`
+Vouch is not a marketplace, broker, scheduler, messaging app, review system, dispute system, escrow provider, public directory, or discovery platform.
 
-Implementation and validation work must use the sandbox platform and sandbox connected account until the full lifecycle is proven.
-
-Do not validate development flows against the live platform account.
-
-The ChatGPT Stripe connector has been observed scoped to the live platform account, so sandbox connected-account inspection must use Stripe CLI or a connector/session explicitly scoped to the sandbox platform.
-
-## Confirmed Sandbox Connected Account State
-
-Sandbox connected account `acct_1TQHpNGV5d6axbAJ` was retrieved through the sandbox platform using the Stripe CLI `--stripe-account` header flow.
-
-Confirmed state:
-
-- `card_payments`: `active`
-- `transfers`: `active`
-- `charges_enabled`: `true`
-- `payouts_enabled`: `true`
-- `details_submitted`: `true`
-- `requirements.currently_due`: `[]`
-- `requirements.past_due`: `[]`
-- `controller.fees.payer`: `application`
-- `controller.losses.payments`: `application`
-- `controller.requirement_collection`: `stripe`
-- `controller.stripe_dashboard.type`: `express`
-
-The sandbox account is ready for connected-account payout/release-path testing.
-
-## Stripe CLI Notes
-
-The active Stripe CLI profile must report the sandbox platform before sandbox testing:
+Core invariant:
 
 ```txt
-Profile: vouch-target
-Account: Vouch sandbox (acct_1TPa46GV5dKxUPtb)
-Live mode key: not available
-API version: 2026-04-22.dahlia
-Preview API version: 2026-04-22.preview
+both parties confirm presence within the confirmation window -> funds release
+otherwise -> refund, void, or non-capture
 ```
 
-Connected account retrieval through the current CLI shape uses the Stripe-Account header flag:
+Outcome follows system state. No unilateral action, late confirmation, admin arbitration, manual fund award, discretionary confirmation rewrite, dispute, evidence, or appeal surface can release funds.
 
-```powershell
-stripe accounts retrieve --stripe-account acct_1TQHpNGV5d6axbAJ --expand capabilities
-```
+## Stripe Account And Readiness Model
 
-A hosted onboarding account link was successfully created for the sandbox connected account using:
+Payer readiness is required for creating or funding a Vouch:
 
-```powershell
-stripe account_links create --account acct_1TQHpNGV5d6axbAJ --refresh-url http://localhost:3000/settings/payout --return-url http://localhost:3000/settings/payout --type account_onboarding
-```
+- authenticated user
+- active Vouch account
+- adult/identity readiness if required by current setup gate
+- accepted terms
+- valid Stripe customer/payment method setup
+- payment readiness stored in Vouch DB as provider-backed readiness state
 
-## Product Positioning
+Payee readiness is required for accepting or becoming bound as payee:
 
-Vouch uses Stripe Connect/platform infrastructure for connected accounts and payouts. This does not make Vouch a marketplace product in public positioning.
+- authenticated user
+- active Vouch account
+- adult/identity readiness if required by current setup gate
+- accepted terms
+- Stripe connected account exists
+- Stripe payout capability/readiness is active or sufficient for the Vouch flow
+- payout readiness stored in Vouch DB as provider-backed readiness state
 
-Use "SaaS tool", "payment coordination", "commitment-backed payment", or "deterministic trust infrastructure" language in product copy and Stripe description boxes.
+Do not treat payer payment setup and payee payout setup as the same thing.
 
-Do not describe Vouch as escrow.
+## Stripe Connect Onboarding
 
-Do not describe Vouch as a marketplace, broker, payment custodian, arbitrator, mediator, or dispute-resolution platform.
-
-## Canonical Participant Mapping
-
-Product role truth:
+Connect account creation/session logic belongs in:
 
 ```txt
-merchant/provider = creates and sends the Vouch, owns the connected payout account, receives funds when release conditions pass
-customer/client   = accepts the Vouch, pays the customer total, receives non-capture/refund when release conditions fail
+lib/actions/paymentActions.ts
+lib/integrations/stripe/connect.ts
+lib/db/transactions/setupTransactions.ts
+lib/fetchers/paymentFetchers.ts
+schemas/payment.ts
+types/payment.ts
 ```
 
-The merchant/provider creates the Vouch and owns the Stripe connected account destination.
+Do not place Connect business logic in `app/api/accounts/*`.
 
-The customer/client accepts the Vouch and pays through Stripe.
-
-The merchant/provider is the payout recipient.
-
-The customer/client is the paying party.
-
-### Legacy Database Mapping During Migration
-
-The current database may still use legacy `payer` and `payee` field names. Those names are semantically unsafe.
-
-Until an intentional rename is approved and completed, treat legacy fields this way:
+Expected action surface:
 
 ```txt
-Vouch.payerId = merchant/provider/creator user id
-Vouch.payeeId = customer/client/acceptor user id
+startPaymentMethodSetupAction
+refreshPaymentReadinessAction
+startPayoutSetupAction
+refreshPayoutReadinessAction
+createStripeConnectedAccountAction
+createStripeAccountSessionAction
 ```
 
-Therefore, Stripe implementation must not infer money roles from the words `payer` and `payee`.
-
-For the current legacy schema:
+Expected integration surface:
 
 ```txt
-merchant/provider connected account = vouch.payer.connectedAccount
-customer/client payment customer    = vouch.payee.paymentCustomer
+createConnectedAccount
+createConnectedAccountOnboardingSession
+createConnectedAccountManagementSession
+retrieveConnectedAccount
+mapConnectedAccountReadiness
 ```
 
-Any code that uses `vouch.payer.paymentCustomer` as the payment customer while `payerId` is still the creator/merchant is wrong.
+Embedded Stripe components are allowed only for account onboarding, account management for payout setup, and payout readiness visibility.
 
-Any code that uses `vouch.payee.connectedAccount` as the destination account while `payeeId` is still the accepting/customer user is wrong.
+Do not enable refund management, dispute management, evidence submission, capture controls, discretionary payment management, or manual fund movement.
 
-Prefer explicit aliases in Stripe-facing code:
+Connected account metadata must include safe internal references only. Do not store raw card data, raw bank data, raw identity documents, full provider payloads, or sensitive KYC details.
 
-- `merchantUserId`
-- `customerUserId`
-- `merchantConnectedAccountId`
-- `customerProviderCustomerId`
-- `customerProviderPaymentMethodId`
+## PaymentIntent Model
 
-## Readiness Gates
+Use Stripe PaymentIntents with manual capture.
 
-Merchant/provider create readiness requires:
+PaymentIntent creation belongs in `lib/integrations/stripe/payment-intents.ts`. Vouch action orchestration belongs in `lib/actions/vouchActions.ts` and `lib/actions/paymentActions.ts`. Database persistence belongs in `lib/db/transactions/vouchTransactions.ts`.
 
-- authenticated active user
-- identity/adult verification when required by policy
-- current terms acceptance
-- Stripe connected account payout readiness
-- no blocking account restriction
+Do not create a `/capture` route handler. Do not call internal `fetch('/api/...')` for settlement.
 
-Customer/client accept-and-pay readiness requires:
-
-- authenticated active user
-- identity/adult verification when required by policy
-- current terms acceptance
-- Stripe customer/payment method readiness
-- no blocking account restriction
-
-If existing setup fetchers currently enforce the opposite gates, they must be updated before the Stripe lifecycle can be considered correct.
-
-## PaymentIntent Pricing
-
-Manual-capture PaymentIntents must use:
-
-- `amount`: `customerTotalCents`
-- `capture_method`: `manual`
-- `application_fee_amount`: `applicationFeeAmountCents`
-- `transfer_data.destination`: merchant/provider connected account ID
-
-The application fee amount is:
+PaymentIntent creation requirements:
 
 ```txt
-applicationFeeAmountCents = vouchServiceFeeCents + processingFeeOffsetCents
+amount = customer total amount in cents
+currency = normalized supported currency
+capture_method = manual
+application_fee_amount = calculated Vouch fee
+transfer_data.destination = payee connected account id when destination charge is used
+metadata includes safe Vouch references
+idempotency key is generated per durable operation
 ```
 
-The connected-account transfer amount is the remaining charge amount after the application fee. This is intended to leave the merchant/provider with `protectedAmountCents`, subject to provider settlement behavior and required sandbox verification.
+Fee calculation belongs only in `lib/vouch/fees.ts`.
 
-Do not use `amountCents + platformFeeCents` as the authoritative customer charge amount.
+Fee policy:
 
-Do not compute pricing again during capture or refund. Use the frozen pricing snapshot persisted on the Vouch/payment record.
+```txt
+Vouch fee = max(5% of customer total, 500 cents)
+```
 
-## Required Local Pricing Snapshot
+Persist:
 
-Persist the full pricing snapshot on `Vouch` and `PaymentRecord`:
+- customer total cents
+- application fee amount cents
+- payee receivable amount cents
+- Stripe PaymentIntent id
+- Stripe status
+- Stripe capture/refund/void reconciliation state
+- safe provider references only
 
-- `protectedAmountCents`
-- `merchantReceivesCents`
-- `vouchServiceFeeCents`
-- `processingFeeOffsetCents`
-- `applicationFeeAmountCents`
-- `customerTotalCents`
+## Create Flow
 
-Keep provider IDs and statuses only. Do not store raw card data, bank data, identity documents, full Stripe payloads, or unnecessary payment secrets.
+Use `createVouchAction` in `lib/actions/vouchActions.ts`.
 
-## Canonical Stripe Lifecycle
+Required sequence:
 
-Vouch should use an authorization-first, deferred-capture model whenever possible.
+```txt
+authenticate
+authorize
+Zod validate
+load setup/payment readiness
+calculate fee
+create Stripe manual-capture PaymentIntent through integration module
+create Vouch + PaymentRecord + Invitation through transaction
+write audit event
+revalidate affected paths/tags
+return typed ActionResult
+```
 
-1. Merchant/provider creates a Vouch with an immutable pricing snapshot.
-2. Customer/client accepts the invite.
-3. Vouch verifies customer/client payment readiness and merchant/provider payout readiness.
-4. Vouch creates/confirms a manual-capture PaymentIntent on the platform account.
-5. The PaymentIntent charges `customerTotalCents` against the customer/client payment method.
-6. The PaymentIntent uses `application_fee_amount = applicationFeeAmountCents`.
-7. The PaymentIntent uses `transfer_data.destination = merchant/provider connected account`.
-8. Stripe-confirmed `requires_capture` means local payment state becomes authorized/reserved.
-9. Vouch remains uncaptured until deterministic confirmation resolution.
-10. Both valid confirmations inside the confirmation window cause capture/release.
-11. Failed release conditions cause cancellation/void/non-capture when uncaptured.
-12. If funds were already captured under an exceptional technical sequence, use refund orchestration.
-13. Stripe webhooks reconcile actual provider state.
-14. Every important transition writes an audit event.
+Rules:
 
-## PaymentIntent Metadata
+- client input is never authoritative
+- status is derived from server state
+- fee math is server-owned
+- payment provider state is reconciled server-side
+- invite token is generated server-side
+- Vouch cannot be created if required setup gates fail
+- no marketplace/provider discovery is introduced
 
-PaymentIntent metadata should bind Stripe state to Vouch state without storing sensitive payloads:
+## Accept Flow
 
-- `vouch_id`
-- `merchant_user_id` when safe
-- `customer_user_id` when safe
-- `payment_role=customer_commitment`
-- `protected_amount_cents`
-- `merchant_receives_cents`
-- `vouch_service_fee_cents`
-- `processing_fee_offset_cents`
-- `application_fee_amount_cents`
-- `customer_total_cents`
-- `environment`
+Use `acceptVouchAction` and `declineVouchAction` in `lib/actions/vouchActions.ts`.
 
-Metadata must not contain raw card data, identity documents, raw provider payloads, private notes, or unnecessary PII.
+Required sequence:
 
-## Stripe Status Mapping
+```txt
+authenticate
+authorize invitation access
+Zod validate
+verify invitation state
+verify self-acceptance is denied
+verify payee readiness
+bind payee
+transition Vouch state
+write audit event
+revalidate
+return typed ActionResult
+```
 
-Canonical local payment status mapping:
+Rules:
 
-- Stripe `requires_payment_method` → local `requires_payment_method`
-- Stripe `requires_confirmation` → local `requires_payment_method` or provider-action-needed state
-- Stripe `requires_action` → local `requires_payment_method` or provider-action-needed state
-- Stripe `processing` → local `requires_payment_method` or provider-processing state, depending on current schema
-- Stripe `requires_capture` → local `authorized`
-- Stripe `succeeded` → local `captured`, then Vouch-controlled release state may become `released`/`completed`
-- Stripe `canceled` → local `voided`
-- Stripe failure/error states → local `failed`
+- accept does not release funds
+- accept does not confirm presence
+- accept does not override readiness gates
+- payee payout readiness must be enforced before accept if required by current contract
+- decline does not create a dispute surface
 
-Do not treat browser redirects as payment truth. Stripe state is the payment source of truth.
+## Presence Confirmation Flow
 
-## Capture / Void / Refund Rules
+Use `confirmPresenceAction` in `lib/actions/vouchActions.ts`. Persistence belongs in `lib/db/transactions/confirmationTransactions.ts`. State derivation belongs in `lib/vouch/state.ts`, `lib/vouch/resolution.ts`, and `lib/vouch/time-windows.ts`.
 
-If both authenticated participants confirm presence inside the valid confirmation window and the PaymentIntent is authorized/capturable, capture the PaymentIntent.
+Required sequence:
 
-If confirmation conditions fail while the PaymentIntent is uncaptured/capturable, cancel/void the authorization or allow non-capture according to provider state and timing.
+```txt
+authenticate
+authorize active participant
+Zod validate
+load Vouch with minimal participant/payment/confirmation state
+verify Vouch is active
+verify confirmation window is open
+prevent duplicate confirmation
+write PresenceConfirmation transaction
+derive updated confirmation truth
+if both parties confirmed within window:
+  retrieve current Stripe PaymentIntent
+  capture with idempotency key
+  persist provider-backed capture status
+  transition Vouch to release-processing or completed according to provider result
+else:
+  transition/display waiting state
+write audit event
+revalidate
+return typed ActionResult
+```
 
-If confirmation conditions fail but the PaymentIntent has already been captured, create a refund path.
+Rules:
 
-Canceling an uncaptured PaymentIntent releases the hold and is not a refund.
+- payer and payee confirmations are separate facts
+- duplicate confirmation must be rejected
+- one-sided confirmation must not release funds
+- late confirmation must not release funds
+- client-side button state is not authoritative
+- status must be derived from persisted state
+- settlement must be idempotent
 
-Refunding reverses settled funds and is a different operational path.
+## Expiration And Resolution
 
-## Webhook Requirements
+Expired Vouches must be resolved by server-side deterministic resolution logic in:
 
-Stripe webhook processing must be:
+```txt
+lib/vouch/resolution.ts
+lib/actions/paymentActions.ts
+lib/actions/vouchActions.ts
+lib/db/transactions/systemTransactions.ts
+```
 
-- signature verified
-- idempotent by Stripe event id
-- recorded before processing
-- deduped
-- safe on duplicate delivery
-- safe on late delivery
-- mapped through narrow state transitions
-- reconciled without storing full provider payloads
+Resolution rule:
 
-Webhook processing should update:
+```txt
+both confirmed within window -> capture/release
+not both confirmed within window -> refund, void, or non-capture
+payment failed -> failed payment state
+capture failed -> failed release state
+refund failed -> failed refund state
+```
 
-- provider webhook ledger
-- payment webhook projection
-- payment record status
-- refund record status when relevant
-- connected account readiness when relevant
-- audit events
-- route/tag revalidation targets
+Provider operation selection must be based on current Stripe PaymentIntent state. Always retrieve current provider state before capture, cancel, refund, or void. Use idempotency keys for PaymentIntent creation, capture, cancel/void, refund, webhook reconciliation writes, and operational retry attempts.
 
-Minimum Stripe event coverage for the MVP lifecycle:
+## Webhook Handling
 
-- `payment_intent.created`
-- `payment_intent.amount_capturable_updated`
+Only external provider boundary route handler:
+
+```txt
+app/api/stripe/webhooks/route.ts
+```
+
+Route handler responsibilities:
+
+- read raw body
+- verify Stripe signature
+- delegate event classification
+- return provider-compatible response
+
+Business logic belongs in:
+
+```txt
+lib/integrations/stripe/webhook-events.ts
+lib/actions/paymentActions.ts
+lib/db/transactions/systemTransactions.ts
+```
+
+Handle at minimum:
+
+- `account.updated`
+- `setup_intent.succeeded`
+- `setup_intent.setup_failed`
+- `payment_intent.requires_capture`
 - `payment_intent.succeeded`
 - `payment_intent.canceled`
 - `payment_intent.payment_failed`
-- `charge.refunded`
 - `refund.created`
 - `refund.updated`
-- `account.updated`
+- `charge.refunded`
 
-Additional events may be recorded as ignored if they are not part of a current transition.
+Rules:
 
-## Required Front-End Return Surfaces
+- webhooks reconcile provider state
+- webhooks do not invent Vouch business truth
+- webhook event IDs must be idempotently stored
+- duplicate delivery must be safe
+- provider payload storage must be minimal and redacted
+- no raw sensitive provider data is stored
 
-The following route shells must exist so hosted provider flows return into Vouch-owned deterministic state reconciliation:
+## Fetchers
 
-```txt
-/settings/payment/return
-/settings/payout/return
-```
-
-Return pages must not blindly display success. They must refresh or reconcile provider-backed readiness, then redirect or render the current state.
-
-Outcomes follow state.
-
-## Open Verification Before Production Confidence
-
-Prove in Stripe sandbox:
-
-- create merchant/provider connected account
-- confirm merchant/provider connected account has active transfer and payout capability
-- create customer/client payment method
-- create/confirm manual-capture PaymentIntent for `customerTotalCents`
-- verify the customer/client is the charged Stripe customer
-- verify `application_fee_amount = applicationFeeAmountCents`
-- verify `transfer_data.destination = merchant/provider connected account`
-- verify authorized state maps to local `authorized`
-- capture on valid dual-confirmation completion path
-- cancel/void on non-release path before capture
-- refund only when captured state requires reversal
-- reconcile each relevant webhook idempotently
-- write audit events for each important transition
-
-## Codex Implementation Warning
-
-The first Stripe implementation task is not to add new product behavior. It is to correct participant-role wiring wherever legacy `payer`/`payee` names caused the payment customer and connected-account destination to be reversed.
-
-Search first for code that selects or uses:
+Every protected fetcher must follow:
 
 ```txt
-vouch.payer.paymentCustomer
-vouch.payee.connectedAccount
+authenticate
+authorize
+minimal select
+DTO mapping
+cache policy
+transport-safe return
 ```
 
-Under the current legacy schema, those are suspect in Stripe payment authorization code because the merchant/provider creator is `payerId` and the customer/client acceptor is `payeeId`.
+Relevant fetchers:
+
+```txt
+getPaymentReadiness
+getPayoutReadiness
+getSetupStatus
+getCreateVouchPageData
+getVouchDetail
+getConfirmPresencePageData
+getInviteAcceptanceData
+getDashboardData
+```
+
+Fetchers must not mutate state, call Stripe for mutation, leak provider secrets, return raw Prisma models, return sensitive provider payloads, or expose internal authorization details.
+
+## Schemas And DTOs
+
+Use Zod schemas for all server action inputs in `schemas/payment.ts`, `schemas/setup.ts`, and `schemas/vouch.ts`.
+
+Required schema coverage:
+
+- start payment setup
+- start payout setup
+- refresh readiness
+- create Vouch
+- accept Vouch
+- decline Vouch
+- confirm presence
+- resolve/refresh provider return state
+- webhook-safe event normalization where applicable
+
+Use transport-safe DTOs in `types/payment.ts`, `types/setup.ts`, `types/vouch.ts`, `types/action-result.ts`, and `types/webhooks.ts`.
+
+Do not return raw Prisma rows or full Stripe objects.
+
+DTOs must expose only UI-safe fields:
+
+```txt
+id
+displayId
+amount
+fee
+status
+deadline
+confirmationWindow
+participantRole
+payerConfirmationState
+payeeConfirmationState
+readinessState
+nextAction
+consequenceText
+safeProviderStatus
+```
+
+## UI Design Requirements
+
+All UI must use the Vouch dark brutalist operational SaaS design system.
+
+Required styling:
+
+- `rounded-none`
+- `border border-neutral-700`
+- `bg-black/55`
+- `backdrop-blur-[2px]`
+- `text-white`
+- `text-neutral-400`
+- `font-(family-name:--font-display)`
+- uppercase labels/buttons/headings
+- `bg-[#1D4ED8]` for primary action
+- restrained blue accents
+- dense but intentional spacing
+- mobile-first layout
+
+Do not use `rounded-lg`, soft SaaS cards, marketplace provider cards, rating stars, reviews, messaging UI, public profile cards, category filters, featured provider blocks, dispute/evidence UI, or decorative green/red-only status meaning.
+
+Every payment/Vouch screen must visibly show amount, status, required action, deadline/window, and consequence. Status must use text, not color alone.
+
+## Implementation Order
+
+Phase 1: normalize provider integration in `lib/integrations/stripe/*`.
+
+Phase 2: normalize actions in `lib/actions/paymentActions.ts` and `lib/actions/vouchActions.ts`.
+
+Phase 3: normalize transactions in `lib/db/transactions/setupTransactions.ts`, `lib/db/transactions/vouchTransactions.ts`, `lib/db/transactions/confirmationTransactions.ts`, and `lib/db/transactions/systemTransactions.ts`.
+
+Phase 4: normalize DTOs and schemas in `schemas/*` and `types/*`.
+
+Phase 5: normalize UI in existing feature/component files only.
+
+## Testing Requirements
+
+Add or update:
+
+```txt
+tests/unit/vouches/fees.test.ts
+tests/unit/vouches/confirmation.test.ts
+tests/unit/vouches/status.test.ts
+tests/unit/vouches/transactions.test.ts
+tests/unit/payments/payment-intents.test.ts
+tests/unit/payments/stripe-status-map.test.ts
+tests/unit/webhooks/idempotency.test.ts
+tests/unit/webhooks/stripe-webhook-events.test.ts
+tests/contract/no-forbidden-files.test.ts
+tests/e2e/no-forbidden-routes.spec.ts
+tests/e2e/app-route-smoke.spec.ts
+```
+
+Coverage must include fee math, payer/payee role wiring, manual capture PaymentIntent creation, idempotent capture, current PaymentIntent retrieval before settlement, confirmation window rejection cases, one-sided confirmation, both-confirmed release, expired incomplete resolution, webhook duplicate delivery safety, readiness mapping, PaymentIntent status mapping, and no forbidden marketplace/dispute routes/files.

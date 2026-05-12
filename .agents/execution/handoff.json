@@ -1,206 +1,50 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "3.0.0",
   "file": "handoff.json",
   "product": "Vouch",
-  "generated_at": "2026-04-24T00:00:00.000Z",
-  "purpose": "Provides current project handoff state, next actions, blockers, risks, and stop conditions for the next coding agent.",
-  "current_state": {
-    "phase": "clerk_auth_overhaul_complete",
-    "implementation_started": true,
-    "docs_created": true,
-    "contracts_created": true,
-    "instructions_created": true,
-    "execution_json_created": true,
-    "validation_run": true
+  "updated_at": "2026-05-12T00:00:00.000Z",
+  "current_paradigm": {
+    "summary": "Vouch is a narrow commitment-backed payment coordination system for pre-arranged appointments and in-person agreements.",
+    "core_invariant": "both parties confirm presence within the confirmation window -> funds release; otherwise -> refund, void, or non-capture",
+    "outcome_rule": "Outcome follows system state."
   },
-  "source_of_truth_order": [
-    ".agents/docs/*.md",
-    ".agents/contracts/*.yaml",
-    ".agents/instructions/*.instructions.md",
-    "existing code",
-    "agent judgment"
+  "must_preserve": [
+    "No unilateral action releases funds.",
+    "No late confirmation releases funds.",
+    "No admin arbitration releases funds.",
+    "No manual fund award exists.",
+    "No discretionary confirmation rewrite exists.",
+    "No dispute/evidence/appeal surface exists.",
+    "Payer payment setup and payee payout setup are separate readiness tracks.",
+    "Stripe SDK calls remain isolated in lib/integrations/stripe.",
+    "Current Stripe PaymentIntent state is retrieved before settlement.",
+    "Provider webhooks reconcile state idempotently."
   ],
-  "critical_context": [
-    "Vouch is a commitment-backed payment coordination system for appointments and in-person agreements.",
-    "Both parties must confirm presence within the confirmation window for funds to release.",
-    "If both confirmations do not occur, funds must refund, void, or remain uncaptured according to provider flow.",
-    "Vouch must not become a marketplace, scheduler, broker, social app, review system, messaging system, escrow provider, or dispute-resolution platform.",
-    "Admins inspect operational state only and must not decide who is right.",
-    "Payment state must be provider-backed through Stripe Connect or equivalent infrastructure.",
-    "Stripe platform/marketplace selection means Connect infrastructure for Vouch, not public marketplace product behavior.",
-    "Stripe account acct_1TQHH2GuFcEUvSe9 is the required account for CLI, MCP, local env, GitHub, and Vercel configuration."
+  "primary_sources": [
+    "AGENTS.md",
+    ".agents/docs/prd.md",
+    ".agents/docs/stripe-connect-integration.md",
+    ".agents/contracts/domain-model.yaml",
+    ".agents/contracts/routes.yaml",
+    ".agents/instructions/vouch-stripe-connect.agents.md"
   ],
-  "completed_artifacts": {
-    "docs": [
-      ".agents/docs/prd.md",
-      ".agents/docs/tech-requirements.md",
-      ".agents/docs/user-flows.md",
-      ".agents/docs/design-system.md",
-      ".agents/docs/launch-copy.md",
-      ".agents/docs/source-normalization.md"
-    ],
-    "contracts": [
-      ".agents/contracts/domain-model.yaml",
-      ".agents/contracts/roles.yaml",
-      ".agents/contracts/authz.yaml",
-      ".agents/contracts/routes.yaml",
-      ".agents/contracts/features.yaml",
-      ".agents/contracts/analytics.yaml",
-      ".agents/contracts/acceptance-gates.yaml"
-    ],
-    "instructions": [
-      ".agents/instructions/admin-moderation.instructions.md",
-      ".agents/instructions/auth.instructions.md",
-      ".agents/instructions/booking.instructions.md",
-      ".agents/instructions/database-prisma.instructions.md",
-      ".agents/instructions/discovery.instructions.md",
-      ".agents/instructions/guest-inbox.instructions.md",
-      ".agents/instructions/host-dashboard.instructions.md",
-      ".agents/instructions/host-onboarding.instructions.md",
-      ".agents/instructions/host-profile.instructions.md",
-      ".agents/instructions/shared-components.instructions.md"
-    ],
-    "execution": [
-      ".agents/execution/backlog.json",
-      ".agents/execution/decisions.json",
-      ".agents/execution/handoff.json",
-      ".agents/execution/progress.json",
-      ".agents/execution/validation.json"
-    ],
-    "repo_root": ["AGENTS.md"]
-  },
-  "next_actions": [
-    {
-      "id": "NEXT-001",
-      "priority": "P0",
-      "title": "Add generated .agents files to repo",
-      "details": "Create the full .agents directory structure and commit the generated docs, contracts, instructions, and execution seed files."
-    },
-    {
-      "id": "NEXT-002",
-      "priority": "P0",
-      "title": "Validate JSON and YAML syntax",
-      "details": "Run a parser/validator for all JSON and YAML files before code implementation."
-    },
-    {
-      "id": "NEXT-003",
-      "priority": "P0",
-      "title": "Implement Prisma schema",
-      "details": "Map domain-model.yaml to Prisma models, enums, relations, uniqueness constraints, and indexes."
-    },
-    {
-      "id": "NEXT-004",
-      "priority": "P0",
-      "title": "Implement auth and authz foundation",
-      "details": "Completed Clerk custom auth forms, current-user helpers, participant/admin authz helpers, tenant/admin route layout enforcement, Clerk webhook verification/idempotency, and normalized Clerk projection persistence."
-    },
-    {
-      "id": "NEXT-004A",
-      "priority": "P0",
-      "title": "Wire setup gates into payment-bearing Vouch actions",
-      "details": "Setup gate calculation and server helpers are implemented. Next Vouch action work should call create, accept, and confirmation gates before any payment-bearing mutation."
-    },
-    {
-      "id": "NEXT-005",
-      "priority": "P0",
-      "title": "Implement Vouch lifecycle",
-      "details": "Build create, invite, accept, decline, confirm, complete, expire, refund, and failed-state flows."
-    },
-    {
-      "id": "NEXT-006",
-      "priority": "P0",
-      "title": "Prove Stripe Connect destination-charge lifecycle in sandbox",
-      "details": "Run create, accept/off-session authorization, dual confirmation, manual capture, destination charge transfer/application fee, expiration void/refund, and webhook reconciliation on acct_1TQHH2GuFcEUvSe9."
-    },
-    {
-      "id": "NEXT-007",
-      "priority": "P1",
-      "title": "Implement UI surfaces",
-      "details": "Build public pages, dashboard, Vouch detail, setup, settings, and admin operational views using the shared component instructions."
-    },
-    {
-      "id": "NEXT-008",
-      "priority": "P1",
-      "title": "Implement tests and validation gates",
-      "details": "Add Vitest and Playwright coverage aligned to acceptance-gates.yaml."
-    }
+  "next_work": [
+    "VC-001",
+    "VC-002",
+    "VC-003",
+    "VC-004",
+    "VC-005"
   ],
-  "known_blockers": [
-    {
-      "id": "BLOCK-002",
-      "severity": "critical",
-      "title": "Legal/compliance review not completed",
-      "impact": "Blocks production launch and approved payment/escrow-adjacent language.",
-      "unblocks": ["legal_copy_review", "production_candidate"]
-    },
-    {
-      "id": "BLOCK-003",
-      "severity": "medium",
-      "title": "Generated mapper placeholders still need typed DTO hardening",
-      "impact": "Runtime scaffold throws have been removed and validation passes, but generated mapper functions currently pass through selected records and should be replaced with explicit transport-safe DTO mapping before production hardening.",
-      "unblocks": ["mvp_local", "security_review", "privacy_review"]
-    },
-    {
-      "id": "BLOCK-004",
-      "severity": "critical",
-      "title": "Stripe sandbox lifecycle proof not completed",
-      "impact": "Blocks production confidence for authorization, manual capture, destination charge transfer, application fee, void/refund, and webhook reconciliation.",
-      "unblocks": ["payment_provider_sandbox", "payment_flow_review", "production_candidate"]
-    },
-    {
-      "id": "BLOCK-005",
-      "severity": "medium",
-      "title": "Clerk webhook projection migration not applied",
-      "impact": "The Prisma schema includes Clerk projection tables, but no migration was generated in this pass because live migration history was not inspected through Neon.",
-      "unblocks": ["production_candidate", "migration_integrity"]
-    }
-  ],
-  "risks": [
+  "known_risks": [
     {
       "id": "RISK-001",
-      "severity": "critical",
-      "title": "Marketplace drift",
-      "description": "Adding profiles, listings, search, categories, messages, reviews, or recommendations would violate Vouch constraints.",
-      "mitigation": "Run no_marketplace_surface gate after route/component/entity changes."
+      "description": "Existing code may still reflect older role, fee, route, or readiness assumptions.",
+      "mitigation": "Use the updated contracts as source of truth and update implementation in the documented phase order."
     },
     {
       "id": "RISK-002",
-      "severity": "critical",
-      "title": "Arbitration drift",
-      "description": "Adding disputes, claims, evidence, admin awards, or confirmation rewrites would violate deterministic resolution.",
-      "mitigation": "Run no_arbitration_surface gate after admin or payment changes."
-    },
-    {
-      "id": "RISK-003",
-      "severity": "critical",
-      "title": "Payment custody ambiguity",
-      "description": "Incorrect Stripe architecture could make Vouch appear to custody funds or operate as escrow.",
-      "mitigation": "Complete payment_flow_review before production payment launch."
-    },
-    {
-      "id": "RISK-004",
-      "severity": "high",
-      "title": "Client-side authority leakage",
-      "description": "Letting client components decide authz, confirmation eligibility, payment status, or lifecycle state would violate server-authoritative requirements.",
-      "mitigation": "Keep protected logic in fetchers/actions and test authz boundaries."
-    },
-    {
-      "id": "RISK-005",
-      "severity": "high",
-      "title": "Inadequate audit trail",
-      "description": "Missing audit events would reduce traceability for payment and lifecycle actions.",
-      "mitigation": "Enforce audit_events gate for every domain mutation."
+      "description": "The fee policy is stated as max 5% of customer total or 500 cents and must be encoded precisely in lib/vouch/fees.ts tests.",
+      "mitigation": "Add focused fee tests before changing payment settlement behavior."
     }
-  ],
-  "stop_conditions": [
-    "Requested work creates marketplace behavior.",
-    "Requested work creates arbitration or dispute-resolution behavior.",
-    "Requested work requires direct custody of funds.",
-    "Requested payment implementation depends on unresolved Stripe/legal decision.",
-    "Code conflicts with YAML contracts.",
-    "YAML contracts conflict with docs.",
-    "Migration may destroy data without explicit approval.",
-    "Validation failure cannot be safely resolved in scope."
-  ],
-  "handoff_note": "The next agent should implement from contracts first, not from freeform interpretation. Clerk auth overhaul validation passed on 2026-04-30. Current lint, typecheck, targeted auth/webhook tests, Prisma validation, and Prisma generation pass; E2E, Stripe sandbox lifecycle proof, and the Clerk projection DB migration remain outstanding."
+  ]
 }

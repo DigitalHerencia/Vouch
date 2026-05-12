@@ -1,56 +1,58 @@
-schema_version: "2.0.0"
+schema_version: "3.0.0"
 contract_name: "roles"
 product: "Vouch"
-source_of_truth_date: "2026-04-30"
-
-legacy_mapping:
-  payer: "merchant / provider / creator"
-  payee: "customer / client / paying acceptor"
+source_of_truth_date: "2026-05-12"
 
 roles:
-  merchant_provider:
-    description: "Creates a Vouch and receives protectedAmountCents on successful release."
-    legacy_internal_role: "payer"
-    allowed_capabilities:
-      - "create_vouch"
-      - "send_invite"
-      - "read_created_vouch"
-      - "confirm_presence_as_merchant_provider"
-      - "cancel_pending_vouch_when_allowed"
-    denied_capabilities:
-      - "accept_own_vouch"
-      - "manual_award_funds"
-      - "override_confirmation"
-  customer_client:
-    description: "Accepts a Vouch and pays customerTotalCents."
-    legacy_internal_role: "payee"
-    allowed_capabilities:
-      - "accept_invited_vouch"
-      - "read_accepted_vouch"
-      - "confirm_presence_as_customer_client"
-    denied_capabilities:
-      - "change_merchant_destination"
-      - "set_pricing"
-      - "manual_release_funds"
-  invited_customer_candidate:
-    description: "May view token-limited Vouch summary before acceptance."
-    legacy_internal_role: "invited_payee_candidate"
-    allowed_capabilities:
-      - "read_invite_summary"
-      - "accept_vouch_if_eligible"
-      - "decline_vouch"
+  payer:
+    description: "Participant who creates or funds the Vouch and must be ready to authorize payment."
+    readiness: "payment"
+    stripe_track: "Stripe customer/payment method setup"
+    allowed_actions:
+      - "create Vouch when readiness gates pass"
+      - "fund Vouch when readiness gates pass"
+      - "confirm presence during confirmation window"
+    forbidden_actions:
+      - "release funds alone"
+      - "confirm outside window"
+      - "rewrite payee confirmation"
+  payee:
+    description: "Participant who accepts or becomes bound as payee and must be ready to receive funds through Stripe Connect."
+    readiness: "payout"
+    stripe_track: "Stripe connected account payout readiness"
+    allowed_actions:
+      - "accept valid invitation when readiness gates pass"
+      - "decline valid invitation"
+      - "confirm presence during confirmation window"
+    forbidden_actions:
+      - "release funds alone"
+      - "confirm outside window"
+      - "override payout readiness"
   admin:
-    description: "Operational inspection and safe idempotent retries only."
-    allowed_capabilities:
-      - "read_admin_operational_state"
-      - "read_users"
-      - "read_payments"
-      - "read_webhooks"
-      - "read_audit"
-      - "retry_safe_technical_operation"
-    denied_capabilities:
-      - "award_funds"
-      - "resolve_dispute"
-      - "decide_winner"
-      - "override_confirmation"
-      - "force_complete_without_required_provider_state"
+    description: "Operational observer and safe retry actor only."
+    allowed_actions:
+      - "inspect safe status"
+      - "inspect safe provider reference"
+      - "inspect audit trail"
+      - "inspect webhook status"
+      - "retry safe idempotent provider operations where contracts allow"
+    forbidden_actions:
+      - "arbitrate"
+      - "collect evidence"
+      - "manual award"
+      - "force release"
+      - "confirmation truth rewrite"
+      - "confirmation timestamp edit"
+
+participant_terms:
+  canonical:
+    - "payer"
+    - "payee"
+    - "participant"
+  forbidden_for_new_product_copy:
+    - "merchant marketplace"
+    - "provider listing"
+    - "customer/provider marketplace"
+    - "booking platform"
+    - "escrow"
+    - "broker"

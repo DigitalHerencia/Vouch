@@ -1,296 +1,75 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "3.0.0",
   "file": "backlog.json",
   "product": "Vouch",
-  "generated_at": "2026-04-24T00:00:00.000Z",
-  "purpose": "Tracks outstanding implementation work derived from Vouch docs, contracts, and instructions.",
-  "policy": {
-    "source_of_truth_order": [
-      ".agents/docs/*.md",
-      ".agents/contracts/*.yaml",
-      ".agents/instructions/*.instructions.md",
-      "existing code",
-      "agent judgment"
-    ],
-    "append_only_preferred": true,
-    "business_logic_allowed": false,
-    "status_values": ["todo", "in_progress", "blocked", "done", "deferred", "canceled"],
-    "priority_values": ["P0", "P1", "P2", "P3"]
-  },
+  "generated_at": "2026-05-12T00:00:00.000Z",
+  "purpose": "Tracks implementation work for the architecture-corrected Stripe Connect Vouch paradigm.",
   "items": [
     {
-      "id": "BL-001",
+      "id": "VC-001",
+      "title": "Normalize provider integration",
       "status": "todo",
       "priority": "P0",
-      "domain": "governance",
-      "title": "Add .agents governance files to repo",
-      "summary": "Create docs, contracts, instructions, and execution files in the expected .agents directory structure.",
-      "source_refs": [".agents/docs/prd.md", ".agents/contracts/acceptance-gates.yaml"],
-      "acceptance_gates": ["contract_integrity"],
-      "dependencies": []
-    },
-    {
-      "id": "BL-002",
-      "status": "todo",
-      "priority": "P0",
-      "domain": "database",
-      "title": "Implement Prisma schema from domain model",
-      "summary": "Add canonical Vouch entities, enums, relations, uniqueness constraints, and indexes.",
-      "source_refs": [
-        ".agents/contracts/domain-model.yaml",
-        ".agents/instructions/database-prisma.instructions.md"
+      "source_refs": [".agents/docs/stripe-connect-integration.md", ".agents/contracts/domain-model.yaml"],
+      "contract_refs": [".agents/contracts/acceptance-gates.yaml"],
+      "impacted_paths": [
+        "lib/integrations/stripe/client.ts",
+        "lib/integrations/stripe/config.ts",
+        "lib/integrations/stripe/connect.ts",
+        "lib/integrations/stripe/payment-intents.ts",
+        "lib/integrations/stripe/status-map.ts",
+        "lib/integrations/stripe/webhook-events.ts"
       ],
-      "acceptance_gates": ["domain_model_integrity", "migration_integrity"],
-      "dependencies": ["BL-001"]
+      "validation_expectations": ["pnpm validate:contracts", "pnpm prisma:validate", "pnpm lint", "pnpm typecheck", "pnpm test"]
     },
     {
-      "id": "BL-003",
+      "id": "VC-002",
+      "title": "Normalize payment and Vouch actions",
       "status": "todo",
       "priority": "P0",
-      "domain": "auth",
-      "title": "Implement Clerk-backed user sync and auth helpers",
-      "summary": "Create local User and VerificationProfile records from Clerk auth/webhook events.",
-      "source_refs": [
-        ".agents/contracts/authz.yaml",
-        ".agents/contracts/roles.yaml",
-        ".agents/instructions/auth.instructions.md"
+      "dependencies": ["VC-001"],
+      "source_refs": [".agents/docs/stripe-connect-integration.md"],
+      "contract_refs": [".agents/contracts/authz.yaml", ".agents/contracts/features.yaml"],
+      "impacted_paths": ["lib/actions/paymentActions.ts", "lib/actions/vouchActions.ts"],
+      "validation_expectations": ["pnpm validate:contracts", "pnpm prisma:validate", "pnpm lint", "pnpm typecheck", "pnpm test"]
+    },
+    {
+      "id": "VC-003",
+      "title": "Normalize transactions",
+      "status": "todo",
+      "priority": "P0",
+      "dependencies": ["VC-001", "VC-002"],
+      "source_refs": [".agents/docs/stripe-connect-integration.md"],
+      "contract_refs": [".agents/contracts/domain-model.yaml", ".agents/contracts/authz.yaml"],
+      "impacted_paths": [
+        "lib/db/transactions/setupTransactions.ts",
+        "lib/db/transactions/vouchTransactions.ts",
+        "lib/db/transactions/confirmationTransactions.ts",
+        "lib/db/transactions/systemTransactions.ts"
       ],
-      "acceptance_gates": ["auth_enforcement", "setup_gates"],
-      "dependencies": ["BL-002"]
+      "validation_expectations": ["pnpm validate:contracts", "pnpm prisma:validate", "pnpm lint", "pnpm typecheck", "pnpm test"]
     },
     {
-      "id": "BL-004",
+      "id": "VC-004",
+      "title": "Normalize DTOs and schemas",
       "status": "todo",
       "priority": "P0",
-      "domain": "authz",
-      "title": "Implement server-side authorization policy helpers",
-      "summary": "Enforce deny-by-default participant, invite-candidate, and admin policies in fetchers and actions.",
-      "source_refs": [".agents/contracts/authz.yaml", ".agents/contracts/roles.yaml"],
-      "acceptance_gates": ["auth_enforcement", "route_access_control"],
-      "dependencies": ["BL-003"]
+      "dependencies": ["VC-002", "VC-003"],
+      "source_refs": [".agents/docs/stripe-connect-integration.md"],
+      "contract_refs": [".agents/contracts/features.yaml"],
+      "impacted_paths": ["schemas/payment.ts", "schemas/setup.ts", "schemas/vouch.ts", "types/payment.ts", "types/setup.ts", "types/vouch.ts", "types/webhooks.ts", "types/action-result.ts"],
+      "validation_expectations": ["pnpm validate:contracts", "pnpm prisma:validate", "pnpm lint", "pnpm typecheck", "pnpm test"]
     },
     {
-      "id": "BL-005",
-      "status": "todo",
-      "priority": "P0",
-      "domain": "vouches",
-      "title": "Implement create Vouch flow",
-      "summary": "Build createVouch server action, schema, payment initialization placeholder/provider adapter, invitation creation, audit event, and dashboard revalidation.",
-      "source_refs": [
-        ".agents/contracts/features.yaml",
-        ".agents/contracts/domain-model.yaml",
-        ".agents/instructions/booking.instructions.md"
-      ],
-      "acceptance_gates": ["vouch_create_flow", "audit_events"],
-      "dependencies": ["BL-002", "BL-003", "BL-004"]
-    },
-    {
-      "id": "BL-006",
-      "status": "todo",
-      "priority": "P0",
-      "domain": "vouches",
-      "title": "Implement invite and accept Vouch flow",
-      "summary": "Implement hashed invitation token lookup, acceptVouch, declineVouch, self-acceptance denial, single-payee binding, and active-state transition.",
-      "source_refs": [
-        ".agents/contracts/features.yaml",
-        ".agents/contracts/authz.yaml",
-        ".agents/instructions/booking.instructions.md"
-      ],
-      "acceptance_gates": ["vouch_accept_flow", "auth_enforcement"],
-      "dependencies": ["BL-005"]
-    },
-    {
-      "id": "BL-007",
-      "status": "todo",
-      "priority": "P0",
-      "domain": "vouches",
-      "title": "Implement manual dual confirmation",
-      "summary": "Implement confirmPresence action with participant checks, confirmation window checks, duplicate prevention, audit events, waiting state, and completion trigger.",
-      "source_refs": [
-        ".agents/contracts/domain-model.yaml",
-        ".agents/contracts/features.yaml",
-        ".agents/instructions/booking.instructions.md"
-      ],
-      "acceptance_gates": ["manual_confirmation_flow", "deterministic_resolution"],
-      "dependencies": ["BL-006"]
-    },
-    {
-      "id": "BL-008",
-      "status": "todo",
-      "priority": "P0",
-      "domain": "payments",
-      "title": "Select and document Stripe Connect payment flow",
-      "summary": "Resolve exact no-custody payment architecture for authorization/capture/release/refund behavior.",
-      "source_refs": [
-        ".agents/docs/prd.md",
-        ".agents/docs/tech-requirements.md",
-        ".agents/contracts/acceptance-gates.yaml"
-      ],
-      "acceptance_gates": ["payment_flow_review", "no_platform_custody"],
-      "dependencies": [],
-      "blocked_by": ["legal/compliance review", "Stripe Connect architecture decision"]
-    },
-    {
-      "id": "BL-009",
-      "status": "todo",
-      "priority": "P0",
-      "domain": "payments",
-      "title": "Implement payment provider adapter and webhook reconciliation",
-      "summary": "Add Stripe provider adapter, signed webhook route, idempotent provider event storage, payment/refund status updates, and audit events.",
-      "source_refs": [
-        ".agents/contracts/domain-model.yaml",
-        ".agents/contracts/features.yaml",
-        ".agents/instructions/booking.instructions.md"
-      ],
-      "acceptance_gates": ["payment_provider_sandbox", "webhook_idempotency", "audit_events"],
-      "dependencies": ["BL-008"]
-    },
-    {
-      "id": "BL-010",
-      "status": "todo",
-      "priority": "P0",
-      "domain": "vouches",
-      "title": "Implement expiration and refund/non-capture resolution",
-      "summary": "Detect expired unresolved Vouches, verify missing dual confirmation, initiate refund/void/non-capture, transition state, audit, notify, and revalidate.",
-      "source_refs": [
-        ".agents/contracts/domain-model.yaml",
-        ".agents/contracts/features.yaml",
-        ".agents/instructions/booking.instructions.md"
-      ],
-      "acceptance_gates": ["deterministic_resolution", "audit_events"],
-      "dependencies": ["BL-007", "BL-009"]
-    },
-    {
-      "id": "BL-011",
+      "id": "VC-005",
+      "title": "Normalize UI",
       "status": "todo",
       "priority": "P1",
-      "domain": "setup",
-      "title": "Implement account setup checklist",
-      "summary": "Build setup UI and fetchers for identity, adult verification, payment readiness, payout readiness, and terms acceptance.",
-      "source_refs": [
-        ".agents/contracts/roles.yaml",
-        ".agents/instructions/host-onboarding.instructions.md"
-      ],
-      "acceptance_gates": ["setup_gates"],
-      "dependencies": ["BL-003"]
-    },
-    {
-      "id": "BL-012",
-      "status": "todo",
-      "priority": "P1",
-      "domain": "dashboard",
-      "title": "Implement participant-scoped dashboard and Vouch list",
-      "summary": "Build dashboard sections for action required, active, pending, completed, expired/refunded, with participant-scoped fetchers.",
-      "source_refs": [
-        ".agents/contracts/features.yaml",
-        ".agents/contracts/routes.yaml",
-        ".agents/instructions/guest-inbox.instructions.md"
-      ],
-      "acceptance_gates": ["route_access_control", "auth_enforcement"],
-      "dependencies": ["BL-004", "BL-005"]
-    },
-    {
-      "id": "BL-013",
-      "status": "todo",
-      "priority": "P1",
-      "domain": "ui",
-      "title": "Implement Vouch detail and confirmation UI",
-      "summary": "Create status-first Vouch detail screen with confirmation panel, payment summary, deadline, next action, and timeline.",
-      "source_refs": [
-        ".agents/docs/design-system.md",
-        ".agents/instructions/shared-components.instructions.md"
-      ],
-      "acceptance_gates": ["manual_confirmation_flow", "route_access_control"],
-      "dependencies": ["BL-007", "BL-012"]
-    },
-    {
-      "id": "BL-014",
-      "status": "todo",
-      "priority": "P1",
-      "domain": "admin",
-      "title": "Implement admin operational views",
-      "summary": "Build admin dashboard, Vouch detail, payments, users, audit, and webhook views without arbitration controls.",
-      "source_refs": [
-        ".agents/contracts/authz.yaml",
-        ".agents/instructions/admin-moderation.instructions.md"
-      ],
-      "acceptance_gates": ["admin_operational_visibility", "no_arbitration_surface"],
-      "dependencies": ["BL-004", "BL-009"]
-    },
-    {
-      "id": "BL-015",
-      "status": "todo",
-      "priority": "P1",
-      "domain": "notifications",
-      "title": "Implement lifecycle email notification events",
-      "summary": "Queue and send invite, accepted, confirmation, completed, expired/refunded, and failed notifications from domain events.",
-      "source_refs": [".agents/contracts/features.yaml", ".agents/contracts/analytics.yaml"],
-      "acceptance_gates": ["notification_lifecycle"],
-      "dependencies": ["BL-005", "BL-006", "BL-007", "BL-010"]
-    },
-    {
-      "id": "BL-016",
-      "status": "todo",
-      "priority": "P1",
-      "domain": "analytics",
-      "title": "Implement privacy-minimized analytics events",
-      "summary": "Track acquisition, setup, Vouch lifecycle, payment, notification, and admin operational analytics without marketplace or sensitive data.",
-      "source_refs": [".agents/contracts/analytics.yaml"],
-      "acceptance_gates": ["privacy_review", "observability_review"],
-      "dependencies": ["BL-005", "BL-006", "BL-007"]
-    },
-    {
-      "id": "BL-017",
-      "status": "todo",
-      "priority": "P1",
-      "domain": "public",
-      "title": "Implement public marketing and legal pages",
-      "summary": "Build landing, how-it-works, pricing, FAQ, terms, and privacy pages using legal-safe Vouch copy.",
-      "source_refs": [
-        ".agents/docs/launch-copy.md",
-        ".agents/instructions/discovery.instructions.md"
-      ],
-      "acceptance_gates": ["legal_copy_review", "no_marketplace_surface"],
-      "dependencies": []
-    },
-    {
-      "id": "BL-018",
-      "status": "todo",
-      "priority": "P1",
-      "domain": "components",
-      "title": "Build shared Vouch UI component library",
-      "summary": "Implement pure UI components for Vouch cards, badges, confirmation panels, setup checklist, payment summary, admin tables, and skeletons.",
-      "source_refs": [
-        ".agents/docs/design-system.md",
-        ".agents/instructions/shared-components.instructions.md"
-      ],
-      "acceptance_gates": ["no_marketplace_surface", "no_arbitration_surface"],
-      "dependencies": []
-    },
-    {
-      "id": "BL-019",
-      "status": "todo",
-      "priority": "P2",
-      "domain": "testing",
-      "title": "Add unit and integration tests for core domain",
-      "summary": "Test schemas, authz helpers, state transitions, fee calculation, DTO mappers, webhook idempotency, and Vouch actions.",
-      "source_refs": [
-        ".agents/contracts/acceptance-gates.yaml",
-        ".agents/docs/tech-requirements.md"
-      ],
-      "acceptance_gates": ["basic_tests"],
-      "dependencies": ["BL-002", "BL-004", "BL-005", "BL-006", "BL-007"]
-    },
-    {
-      "id": "BL-020",
-      "status": "todo",
-      "priority": "P2",
-      "domain": "testing",
-      "title": "Add Playwright E2E smoke coverage",
-      "summary": "Cover auth smoke, create Vouch, accept Vouch, dual confirmation, expiration/refund, unauthorized access, and admin access denial.",
-      "source_refs": [".agents/contracts/acceptance-gates.yaml"],
-      "acceptance_gates": ["e2e_smoke"],
-      "dependencies": ["BL-005", "BL-006", "BL-007", "BL-010", "BL-012", "BL-014"]
+      "dependencies": ["VC-002", "VC-004"],
+      "source_refs": [".agents/docs/prd.md", ".agents/docs/stripe-connect-integration.md"],
+      "contract_refs": [".agents/contracts/features.yaml", ".agents/contracts/acceptance-gates.yaml"],
+      "impacted_paths": ["features/settings", "features/payments", "features/vouches", "components/payments", "components/vouches"],
+      "validation_expectations": ["pnpm validate:contracts", "pnpm lint", "pnpm typecheck", "pnpm test", "pnpm test:e2e"]
     }
   ]
 }

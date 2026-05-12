@@ -1,324 +1,155 @@
-schema_version: "2.1.0"
+schema_version: "3.0.0"
 contract_name: "domain-model"
 product: "Vouch"
-source_of_truth_date: "2026-05-06"
+source_of_truth_date: "2026-05-12"
 
 summary:
-  description: "Canonical domain model for Vouch after resolving the merchant/customer and payer/payee migration conflict."
-  core_sentence: "Vouch is a commitment-backed payment coordination system for pre-arranged appointments and in-person agreements."
-  trust_sentence: "Vouch is deterministic trust infrastructure: the rule is known before money moves, and outcome follows provider-backed workflow state."
-  stripe_accounts:
-    sandbox_platform: "acct_1TPa46GV5dKxUPtb"
-    sandbox_connected_account: "acct_1TQHpNGV5d6axbAJ"
-    live_platform: "acct_1TQHH2GuFcEUvSe9"
-    display_name: "Vouch"
-    validation_rule: "Use sandbox platform and sandbox connected account for development lifecycle proof before live validation."
+  description: "Vouch is a narrow commitment-backed payment coordination system for pre-arranged appointments and in-person agreements."
+  core_invariant: "both parties confirm presence within the confirmation window -> funds release; otherwise -> refund, void, or non-capture"
+  outcome_rule: "Outcome follows system state."
+
+non_goals:
+  - "marketplace"
+  - "broker"
+  - "scheduler"
+  - "messaging app"
+  - "review system"
+  - "dispute system"
+  - "escrow provider"
+  - "public directory"
+  - "discovery platform"
 
 global_invariants:
-  - id: "no_product_marketplace"
-    description: "Vouch must not provide discovery, listings, public profiles, matching, booking, search, categories, recommendations, reviews, ratings, reputation, or messaging."
-  - id: "no_arbitration"
-    description: "Vouch must not decide disputes, collect evidence, adjudicate claims, assign blame, or let admins award funds based on human judgment."
-  - id: "no_escrow_claim"
-    description: "Vouch must not describe itself as escrow or claim direct custody of funds."
-  - id: "provider_backed_money"
-    description: "Payment state is represented by provider-backed references and statuses, not raw card data, identity documents, full provider payloads, or local custody."
-  - id: "merchant_customer_model"
-    description: "The merchant/provider creates the Vouch; the customer/client accepts and pays; the merchant/provider is the payout recipient."
-  - id: "dual_confirmation_release_only"
-    description: "Only both authenticated participants confirming presence inside the confirmation window can satisfy release conditions."
-  - id: "no_unilateral_settlement"
-    description: "No single participant action, single telemetry signal, or admin action can force settlement."
+  - id: "dual_confirmation_only"
+    rule: "Only both participants confirming presence within the confirmation window can satisfy release conditions."
+  - id: "no_unilateral_release"
+    rule: "No unilateral action releases funds."
+  - id: "no_late_release"
+    rule: "No late confirmation releases funds."
+  - id: "no_admin_arbitration"
+    rule: "Admin cannot arbitrate, manually award funds, force release, rewrite confirmation truth, or edit confirmation timestamps."
+  - id: "no_dispute_surface"
+    rule: "No dispute, claim, evidence, appeal, or adjudication surface exists."
+  - id: "provider_backed_settlement"
+    rule: "Payment readiness and settlement state are provider-backed and reconciled into Vouch DB."
   - id: "server_authoritative"
-    description: "Identity, authz, readiness, payment state, Vouch state, pricing, confirmation eligibility, and lifecycle resolution are server-authoritative."
+    rule: "Client state is never authoritative for readiness, fee math, confirmation, settlement, or lifecycle status."
 
-product_roles:
-  merchant_provider:
-    description: "The user who creates and sends the Vouch for a pre-arranged appointment or in-person agreement."
-    responsibilities:
-      - "Creates the Vouch."
-      - "Owns the connected payout account."
-      - "Confirms presence within the confirmation window."
-      - "Receives funds when release conditions pass."
-    stripe_role: "connected_account_destination"
-    readiness_required_for_create:
-      - "active authenticated user"
-      - "identity/adult verification when required"
-      - "current terms acceptance"
-      - "Stripe connected account payout readiness"
-      - "no blocking account restriction"
-  customer_client:
-    description: "The invited user who accepts the Vouch and pays the customer total."
-    responsibilities:
-      - "Accepts the Vouch invite."
-      - "Pays the customer total through Stripe."
-      - "Confirms presence within the confirmation window."
-      - "Receives non-capture, void, or refund when release conditions fail according to provider state."
-    stripe_role: "payment_customer"
-    readiness_required_for_accept_and_pay:
-      - "active authenticated user"
-      - "identity/adult verification when required"
-      - "current terms acceptance"
-      - "Stripe customer/payment method readiness"
-      - "no blocking account restriction"
+participants:
+  payer:
+    description: "Participant who creates or funds a Vouch and must be ready to authorize payment."
+    readiness_track: "payment"
+    confirms_presence: true
+  payee:
+    description: "Participant who accepts or becomes bound as payee and must be ready to receive funds through Stripe Connect."
+    readiness_track: "payout"
+    confirms_presence: true
 
-legacy_mapping:
-  status: "active_migration"
-  rule: "Prefer merchant/provider/customer/client language in product UI and new code. Existing payer/payee identifiers may remain temporarily where destructive renames are unsafe, but they must not be used to infer Stripe money roles."
-  current_legacy_fields:
-    Vouch.payerId: "merchant / provider / creator user id"
-    Vouch.payeeId: "customer / client / acceptor user id"
-    ParticipantRole.payer: "legacy role value for merchant/provider/creator until renamed"
-    ParticipantRole.payee: "legacy role value for customer/client/acceptor until renamed"
-  unsafe_inferences:
-    - "Do not infer that payerId is the Stripe payer."
-    - "Do not infer that payeeId is the Stripe payout recipient."
-    - "Do not use vouch.payer.paymentCustomer for customer payment unless the schema has been intentionally renamed."
-    - "Do not use vouch.payee.connectedAccount for merchant payout unless the schema has been intentionally renamed."
-  stripe_mapping_for_current_schema:
-    merchant_connected_account: "vouch.payer.connectedAccount"
-    customer_payment_customer: "vouch.payee.paymentCustomer"
-    payment_intent_customer: "customer/client acceptor Stripe customer"
-    payment_intent_destination: "merchant/provider creator connected account"
-  preferred_new_aliases:
-    payer: "merchant/provider/creator only when touching legacy field names"
-    payee: "customer/client/acceptor only when touching legacy field names"
-    merchantId: "preferred alias for Vouch.payerId until safe rename"
-    customerId: "preferred alias for Vouch.payeeId until safe rename"
-    amountCents: "legacy alias for protectedAmountCents"
-    platformFeeCents: "legacy alias for vouchServiceFeeCents during migration"
+readiness:
+  payer:
+    required_for:
+      - "creating a Vouch"
+      - "funding a Vouch"
+    gates:
+      - "authenticated user"
+      - "active Vouch account"
+      - "adult/identity readiness when required"
+      - "accepted terms"
+      - "valid Stripe customer/payment method setup"
+      - "payment readiness stored in Vouch DB as provider-backed readiness state"
+  payee:
+    required_for:
+      - "accepting a Vouch"
+      - "becoming bound as payee"
+    gates:
+      - "authenticated user"
+      - "active Vouch account"
+      - "adult/identity readiness when required"
+      - "accepted terms"
+      - "Stripe connected account exists"
+      - "Stripe payout capability/readiness active or sufficient for the Vouch flow"
+      - "payout readiness stored in Vouch DB as provider-backed readiness state"
+  separation_rule: "Do not treat payer payment setup and payee payout setup as the same thing."
 
-canonical_terms:
-  preferred:
-    - "merchant"
-    - "provider"
-    - "customer"
-    - "client"
-    - "commitment-backed payment"
-    - "payment coordination"
-    - "deterministic trust infrastructure"
-    - "appointment"
-    - "in-person agreement"
-    - "confirm presence"
-    - "release funds"
-    - "non-capture"
-    - "void"
-    - "refund"
-  prohibited_or_restricted:
-    - term: "escrow"
-      rule: "Do not use without legal approval."
-    - term: "marketplace"
-      rule: "Do not describe the product as a marketplace; Stripe Connect/platform taxonomy is infrastructure-only."
-    - term: "dispute"
-      rule: "Do not create dispute-resolution product flows."
-    - term: "review"
-      rule: "Do not add ratings, reviews, reputation, or social proof surfaces."
-    - term: "payer"
-      rule: "Use only when touching legacy code/schema names; do not use in product UI."
-    - term: "payee"
-      rule: "Use only when touching legacy code/schema names; do not use in product UI."
-
-money_model:
-  currency: "usd"
-  protectedAmountCents:
-    description: "Principal commitment amount; the amount the merchant/provider receives when the Vouch releases."
-  merchantReceivesCents:
-    formula: "protectedAmountCents"
-    description: "Amount intended for the merchant/provider on successful release."
-  vouchServiceFeeCents:
-    formula: "max(ceil(protectedAmountCents * 0.05), 500)"
-    description: "Vouch platform service fee, 5% or $5 minimum."
-  processingFeeOffsetCents:
-    formula: "ceil((protectedAmountCents + vouchServiceFeeCents + stripeFixedCents) / (1 - stripePercentBps / 10000) - (protectedAmountCents + vouchServiceFeeCents))"
-    description: "Estimated processing fee offset loaded into the customer total."
-    defaults:
-      stripePercentBps: 290
-      stripeFixedCents: 30
-  customerTotalCents:
-    formula: "protectedAmountCents + processingFeeOffsetCents + vouchServiceFeeCents"
-    description: "Gross amount authorized against the customer/client payment method."
-  applicationFeeAmountCents:
-    formula: "vouchServiceFeeCents + processingFeeOffsetCents"
-    description: "Stripe Connect application fee amount retained by the platform."
-  pricing_snapshot_rule: "Pricing is calculated server-side and frozen at Vouch creation. Later lifecycle transitions must use the stored snapshot, not recalculate from current pricing logic."
-  legacy_fields:
-    amountCents: "compatibility alias for protectedAmountCents"
-    platformFeeCents: "compatibility alias for vouchServiceFeeCents"
-  stripe_payment_intent:
-    amount: "customerTotalCents"
+money:
+  fee_module: "lib/vouch/fees.ts"
+  fee_policy: "Vouch fee = max(5% of customer total, 500 cents)"
+  payment_intent:
+    amount: "customer total amount in cents"
+    currency: "normalized supported currency"
     capture_method: "manual"
-    application_fee_amount: "applicationFeeAmountCents"
-    transfer_data_destination: "merchant/provider connected account"
-    customer: "customer/client Stripe customer"
+    application_fee_amount: "calculated Vouch fee"
+    transfer_data_destination: "payee connected account id when destination charge is used"
+    metadata: "safe Vouch references only"
+  persisted_fields:
+    - "customer total cents"
+    - "application fee amount cents"
+    - "payee receivable amount cents"
+    - "Stripe PaymentIntent id"
+    - "Stripe status"
+    - "Stripe capture/refund/void reconciliation state"
+    - "safe provider references only"
 
-stripe_lifecycle:
-  model: "authorization_first_deferred_capture"
-  source_of_truth: "Stripe is payment truth; Vouch workflow state gives Stripe payment facts product meaning."
-  steps:
-    - id: "create_vouch"
-      description: "Merchant/provider creates a Vouch with immutable pricing snapshot."
-      local_state: "Vouch.pending"
-      provider_side_effect: "none unless explicitly designed otherwise"
-    - id: "accept_and_authorize"
-      description: "Customer/client accepts invite and authorizes customerTotalCents through a manual-capture PaymentIntent."
-      provider_side_effect: "PaymentIntent create/confirm on platform account with application_fee_amount and transfer_data.destination."
-      required_provider_state: "requires_capture"
-      local_payment_state: "authorized"
-    - id: "dual_confirmation"
-      description: "Both authenticated participants confirm presence inside the confirmation window."
-      release_condition: "both confirmations valid and payment capturable"
-    - id: "capture_release"
-      description: "Vouch captures the authorized PaymentIntent after release conditions pass."
-      provider_side_effect: "PaymentIntent capture"
-      local_payment_state: "captured or released according to implementation state granularity"
-      vouch_state: "completed"
-    - id: "void_non_capture"
-      description: "Vouch cancels/voids uncaptured authorization when release conditions fail."
-      provider_side_effect: "PaymentIntent cancel or authorization expiration"
-      local_payment_state: "voided"
-      vouch_state: "expired, canceled, refunded, or failed according to cause"
-    - id: "refund_fallback"
-      description: "Vouch refunds only when funds were already captured under an exceptional technical sequence or provider-required reversal path."
-      provider_side_effect: "Refund create"
-      local_payment_state: "refund_pending, refunded, or failed"
+lifecycle_language:
+  - "Draft / Created"
+  - "Invite Sent"
+  - "Accepted"
+  - "Payment Authorized"
+  - "Window Pending"
+  - "Window Open"
+  - "Payer Confirmed"
+  - "Payee Confirmed"
+  - "Both Confirmed"
+  - "Release Processing"
+  - "Completed"
+  - "Expired"
+  - "Voided"
+  - "Refunded"
+  - "Payment Failed"
+  - "Release Failed"
+  - "Refund Failed"
+  - "Canceled"
 
-enums:
-  vouch_status: ["pending", "active", "completed", "expired", "refunded", "canceled", "failed"]
-  participant_role:
-    legacy_values: ["payer", "payee"]
-    current_legacy_meaning:
-      payer: "merchant / provider / creator"
-      payee: "customer / client / acceptor"
-    rename_goal:
-      payer: "merchant"
-      payee: "customer"
-  payment_status:
-    - "not_started"
-    - "requires_payment_method"
-    - "authorized"
-    - "captured"
-    - "release_pending"
-    - "released"
-    - "refund_pending"
-    - "refunded"
-    - "voided"
-    - "failed"
-  stripe_payment_status_mapping:
-    requires_payment_method: "requires_payment_method"
-    requires_confirmation: "requires_payment_method"
-    requires_action: "requires_payment_method"
-    processing: "requires_payment_method or provider-processing state if added"
-    requires_capture: "authorized"
-    succeeded: "captured"
-    canceled: "voided"
+language:
+  use:
+    - "payer"
+    - "payee"
+    - "participant"
+    - "Vouch"
+    - "commitment"
+    - "confirmation window"
+    - "presence confirmation"
+    - "funds release"
+    - "refund"
+    - "void"
+    - "non-capture"
+    - "provider-backed settlement"
+    - "deterministic resolution"
+  avoid:
+    - "marketplace"
+    - "booking platform"
+    - "escrow"
+    - "broker"
+    - "dispute"
+    - "claim"
+    - "appeal"
+    - "evidence"
+    - "review"
+    - "rating"
+    - "search"
+    - "discovery"
+    - "manual award"
+    - "force release"
 
-entities:
-  User:
-    description: "Authenticated account holder."
-  ConnectedAccount:
-    description: "Stripe connected account for the merchant/provider payout recipient."
-    owner_role: "merchant_provider"
-    readiness: "Required for merchant/provider create eligibility and destination charge release path."
-  PaymentCustomer:
-    description: "Stripe customer/payment-method reference for the customer/client who pays."
-    owner_role: "customer_client"
-    readiness: "Required for customer/client accept-and-pay eligibility."
-  Vouch:
-    description: "Merchant-created commitment-backed payment agreement accepted and paid by a customer."
-    required_money_fields:
-      - "protectedAmountCents"
-      - "merchantReceivesCents"
-      - "vouchServiceFeeCents"
-      - "processingFeeOffsetCents"
-      - "applicationFeeAmountCents"
-      - "customerTotalCents"
-    legacy_money_fields:
-      - "amountCents"
-      - "platformFeeCents"
-    current_legacy_participant_fields:
-      payerId: "merchant/provider/creator user id"
-      payeeId: "customer/client/acceptor user id"
-    constraints:
-      - "Merchant/provider creator is immutable after creation."
-      - "Customer/client acceptor is null until acceptance."
-      - "Merchant/provider must not accept their own Vouch."
-      - "Pricing must be calculated server-side."
-      - "Merchant/provider receives protectedAmountCents on successful release."
-      - "Customer/client is the only role charged by Stripe."
-  Invitation:
-    description: "Controlled access path for a customer/client to accept a merchant/provider-created Vouch."
-    constraints:
-      - "Invite token must be valid, unexpired, and not already accepted."
-      - "Invite acceptance must reject self-acceptance."
-      - "Acceptance must bind customer/client server-side."
-  PaymentRecord:
-    description: "Provider-backed payment state and pricing snapshot for a Vouch."
-    required_money_fields:
-      - "protectedAmountCents"
-      - "merchantReceivesCents"
-      - "vouchServiceFeeCents"
-      - "processingFeeOffsetCents"
-      - "applicationFeeAmountCents"
-      - "customerTotalCents"
-    provider_ids:
-      - "providerPaymentId"
-      - "providerChargeId"
-      - "providerTransferId"
-    constraints:
-      - "Do not store raw card data."
-      - "Do not store full provider payloads."
-      - "Provider state reconciles through webhooks."
-  RefundRecord:
-    description: "Provider-backed refund, void, or non-capture outcome."
-    constraints:
-      - "Refund is distinct from canceling/voiding an uncaptured authorization."
-      - "Prefer cancel/void/non-capture before settled refund whenever provider state allows."
-  PresenceConfirmation:
-    description: "Participant confirmation of presence. Existing legacy roles map to merchant/customer during migration."
-    constraints:
-      - "Each participant can only confirm for themself."
-      - "Each participant can confirm only once."
-      - "Confirmation must happen inside the confirmation window."
-      - "A single confirmation never releases funds."
-  ProviderWebhookEvent:
-    description: "Generic provider webhook idempotency ledger."
-    constraints:
-      - "Do not store full provider payloads."
-      - "Dedupe by provider and provider event id."
-  PaymentWebhookEvent:
-    description: "Stripe/payment-specific webhook projection for payment reconciliation and admin visibility."
-    constraints:
-      - "Must be idempotent."
-      - "Must tolerate duplicate and late webhook delivery."
-
-forbidden_entities:
-  - "PublicProfile"
-  - "Review"
-  - "Rating"
-  - "MessageThread"
-  - "ServiceListing"
-  - "MarketplaceCategory"
-  - "Recommendation"
-  - "DisputeCase"
-  - "EvidenceUpload"
-  - "ReputationScore"
-
-forbidden_admin_actions:
-  - "decide_dispute"
-  - "manually_award_funds"
-  - "force_release"
-  - "rewrite_confirmation_truth"
-  - "edit_confirmation_timestamp"
-  - "collect_claims"
-  - "assign_blame"
-
-codex_first_stripe_repair:
-  summary: "Before adding new Stripe behavior, repair role wiring wherever legacy payer/payee names caused payment customer and connected-account destination to be reversed."
-  suspect_patterns:
-    - "vouch.payer.paymentCustomer"
-    - "vouch.payee.connectedAccount"
-    - "providerCustomerId derived from merchant/provider creator"
-    - "connectedAccountId derived from customer/client acceptor"
-  expected_current_schema_mapping:
-    providerCustomerId: "vouch.payee.paymentCustomer.providerCustomerId"
-    connectedAccountId: "vouch.payer.connectedAccount.providerAccountId"
+storage_rules:
+  never_store:
+    - "raw card data"
+    - "raw bank data"
+    - "raw identity documents"
+    - "full provider payloads"
+    - "sensitive KYC details"
+  store_only:
+    - "safe internal references"
+    - "safe provider references"
+    - "provider statuses"
+    - "redacted/minimal webhook event records"

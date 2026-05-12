@@ -4,19 +4,19 @@
   <br />
   <br />
 
-  <h3>Commitment-backed payments for real-world agreements.</h3>
+  <h3>Commitment-backed payment coordination for real-world agreements.</h3>
 
   <p>
-    Create a Vouch. The other party accepts. Both confirm presence.<br />
-    Funds release. Otherwise, refund, void, or non-capture.
+    Create a Vouch. Accept the commitment. Confirm presence.<br />
+    Both confirm in time and funds release. Otherwise, refund, void, or non-capture.
   </p>
 
   <p>
+    <a href="#core-rule">Core rule</a>
+    ·
     <a href="#how-it-works">How it works</a>
     ·
-    <a href="#built-for-real-life">Built for real life</a>
-    ·
-    <a href="#the-rule">The rule</a>
+    <a href="#payment-coordination">Payment coordination</a>
     ·
     <a href="#what-vouch-is-not">Boundaries</a>
     ·
@@ -45,180 +45,175 @@
   </p>
 </div>
 
-
 # Vouch
 
-**Vouch is a commitment-backed payment coordination system for appointments and in-person agreements.**
+**Vouch is a commitment-backed payment coordination system for pre-arranged appointments and in-person agreements.**
 
-It is built around one simple rule:
+It is built around one deterministic rule:
 
-> **Both parties confirm presence within the confirmation window → funds release.**  
-> **Otherwise → refund, void, or non-capture.**
+> **Both parties confirm presence within the confirmation window -> funds release.**
+> **Otherwise -> refund, void, or non-capture.**
 
-No marketplace.  
-No ratings.  
-No dispute court.  
-No public provider directory.  
-No “who was right?” workflow.
+Outcome follows system state.
 
-Just commitment, confirmation, and a deterministic payment outcome.
+No unilateral action releases funds.
+No late confirmation releases funds.
+No admin arbitration releases funds.
+No manual fund award exists.
+No discretionary confirmation rewrite exists.
+No dispute, evidence, or appeal surface exists.
 
 ---
 
-## Commit. Confirm. Covered.
-
-Real-world agreements fall apart when commitment is cheap.
-
-People miss appointments.  
-Clients ghost service providers.  
-Meetups lose trust.  
-Time gets wasted.  
-Nobody wants to turn every agreement into a marketplace, arbitration case, or endless message thread.
-
-Vouch adds a clear payment-backed commitment layer around an agreement both people already made.
+## Core Rule
 
 ```txt
-CREATE → ACCEPT → CONFIRM → RELEASE
+both parties confirm presence within the confirmation window -> funds release
+otherwise -> refund, void, or non-capture
 ```
 
-If both people confirm presence, funds release.
+Vouch does not decide who was right. It checks authenticated state, provider-backed payment state, and the confirmation window.
 
-If confirmation does not complete, funds do not release.
-
----
-
-## How it works
-
-### 1. Create
-
-One party creates a Vouch, sets the amount, and defines the confirmation window.
-
-### 2. Accept
-
-The other party reviews and accepts the Vouch.
-
-### 3. Confirm
-
-Both parties confirm presence within the confirmation window.
-
-### 4. Release
-
-If both confirmations happen in time, funds release through the payment provider.
-
-If confirmation does not complete, the payment is refunded, voided, or not captured according to provider state.
-
----
-
-## Built for real life
-
-Vouch is designed for agreements that happen outside the app.
-
-| Use case              | Where Vouch fits                                                                   |
-| --------------------- | ---------------------------------------------------------------------------------- |
-| **Appointments**      | Medical, wellness, legal, financial, and other important appointments              |
-| **Meetups**           | In-person meetings where commitment and trust matter                               |
-| **Services**          | One-time services, specialized work, consultations, and local jobs                 |
-| **Custom agreements** | Any real-world arrangement where both parties benefit from a clear commitment rule |
-
----
-
-<img src="./public/Cash Flow.png" alt="Vouch" width="1920" />
-
----
-
-## The rule
-
-Vouch does not judge disputes.
-
-Vouch does not decide who was right.
-
-Vouch does not manually award funds.
-
-Vouch follows the confirmation rule.
-
-| Confirmation outcome         | Payment outcome              |
-| ---------------------------- | ---------------------------- |
-| Both parties confirm in time | Funds release                |
-| Only one party confirms      | Funds do not release         |
-| Neither party confirms       | Funds do not release         |
-| Confirmation window expires  | Refund, void, or non-capture |
+| Confirmation outcome         | Payment outcome                            |
+| ---------------------------- | ------------------------------------------ |
+| Both parties confirm in time | Funds release                              |
+| Only one party confirms      | Refund, void, or non-capture               |
+| Neither party confirms       | Refund, void, or non-capture               |
+| Confirmation window expires  | Refund, void, or non-capture               |
+| Payment provider fails       | Payment failed, release failed, or refund failed |
 
 One-sided confirmation never releases funds.
 
 ---
 
+## How It Works
+
+### 1. Create
+
+The payer creates or funds a Vouch with an amount and confirmation window.
+
+### 2. Accept
+
+The payee reviews the Vouch and accepts only when payout readiness requirements are satisfied.
+
+### 3. Confirm
+
+Both participants independently confirm presence inside the confirmation window.
+
+### 4. Resolve
+
+If both confirmations happen in time and the PaymentIntent is capturable, Vouch releases funds through provider-backed settlement.
+
+Anything else resolves to refund, void, or non-capture according to current provider state.
+
+---
+
+## Payment Coordination
+
+Vouch coordinates payment state through Stripe and Stripe Connect.
+
+Vouch uses manual-capture PaymentIntents:
+
+```txt
+amount = customer total amount in cents
+capture_method = manual
+application_fee_amount = calculated Vouch fee
+transfer_data.destination = payee connected account id when destination charge is used
+```
+
+Before settlement, Vouch retrieves current provider state. Capture, cancel/void, refund, webhook reconciliation, and operational retries are idempotent.
+
+Vouch does not directly custody funds and does not store raw card data, raw bank data, raw identity documents, full provider payloads, or sensitive KYC details.
+
+---
+
+## Readiness
+
+Payer readiness is required for creating or funding a Vouch:
+
+- authenticated user
+- active Vouch account
+- required identity/adult readiness
+- accepted terms
+- Stripe customer/payment method setup
+- provider-backed payment readiness stored in Vouch DB
+
+Payee readiness is required for accepting or becoming bound as payee:
+
+- authenticated user
+- active Vouch account
+- required identity/adult readiness
+- accepted terms
+- Stripe connected account exists
+- Stripe payout capability/readiness is active or sufficient
+- provider-backed payout readiness stored in Vouch DB
+
+Payer payment setup and payee payout setup are separate tracks.
+
+---
+
 ## Pricing
 
-Vouch is designed to be clear before commitment.
+Fee calculation is server-owned and belongs in `lib/vouch/fees.ts`.
 
-* **Platform fee:** 5%
-* **Minimum platform fee:** $5
-* **Payment processing:** provider fee
-* **Release rule:** both confirm
+```txt
+Vouch fee = max(5% of customer total, 500 cents)
+```
 
 Fees are shown before payment commitment.
 
 ---
 
-## Payment coordination, not custody
-
-Vouch coordinates payment state through provider-backed infrastructure such as Stripe and Stripe Connect.
-
-Vouch does not directly custody funds.
-
-Vouch does not store raw card data, raw bank data, raw identity documents, or unnecessary payment-provider payloads.
-
-Vouch stores operational records needed to coordinate the lifecycle:
-
-* statuses
-* provider references
-* timestamps
-* confirmation state
-* readiness state
-* audit-safe metadata
-
----
-
-## What Vouch is not
+## What Vouch Is Not
 
 Vouch is intentionally narrow.
 
 It is not:
 
-* a marketplace
-* a booking marketplace
-* a discovery platform
-* a scheduler
-* a messaging app
-* a social platform
-* a review system
-* a rating system
-* a reputation network
-* a dispute-resolution platform
-* an escrow provider
-* a broker
-* an arbitration service
+- a marketplace
+- a broker
+- a scheduler
+- a messaging app
+- a review system
+- a dispute system
+- an escrow provider
+- a public directory
+- a discovery platform
 
-Vouch does not provide public provider profiles, public client profiles, service listings, search, categories, recommendations, featured providers, ratings, reviews, reputation scores, or dispute workflows.
+Vouch does not provide public profiles, listings, search, categories, recommendations, featured blocks, ratings, reviews, reputation scores, messaging, dispute workflows, claims, evidence uploads, appeals, manual awards, or force-release controls.
 
 ---
 
-## Design language
+## Stack
 
-Vouch uses a brutalist product interface built around clarity and confidence.
+- Next.js App Router
+- React 19
+- TypeScript
+- Prisma + Neon Postgres
+- Clerk
+- Stripe + Stripe Connect
+- Zod
+- React Hook Form
+- Tailwind CSS v4
+- shadcn/Base UI
+- Vitest
+- Playwright
+- pnpm
 
-* black-first surfaces
-* Vouch blue: `#1D4ED8`
-* hard borders
-* condensed display typography
-* translucent black cards
-* deterministic copy
-* minimal distractions
-* consistent CTA behavior
+---
 
-The interface is designed to make the rule obvious:
+## Design Language
 
-> **Commit. Confirm. Covered.**
+Vouch uses a dark brutalist operational SaaS interface:
+
+- black-first surfaces
+- zero-radius panels
+- hard neutral borders
+- restrained Vouch blue: `#1D4ED8`
+- uppercase display typography
+- dense mobile-first layouts
+- amount, status, required action, deadline/window, and consequence visible on payment and Vouch screens
+- status expressed with text, not color alone
 
 ---
 
@@ -235,4 +230,3 @@ The public repository exists to build the product openly while preserving the pr
 MIT License.
 
 Made in Nuevo Mexico | 2026 Ivan P. Roman | Digital Herencia
-

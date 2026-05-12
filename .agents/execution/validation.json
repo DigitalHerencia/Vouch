@@ -1,383 +1,48 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "3.0.0",
   "file": "validation.json",
   "product": "Vouch",
-  "generated_at": "2026-04-24T00:00:00.000Z",
-  "purpose": "Records validation checks, gate status, command results, and evidence.",
-  "policy": {
-    "business_logic_allowed": false,
-    "truthfulness_required": true,
-    "status_values": ["pass", "fail", "not_run", "blocked", "not_applicable"],
-    "evidence_required_for_pass": true
-  },
-  "summary": {
-    "overall_status": "pass",
-    "reason": "Environment normalization and initial Prisma migration passed Prisma validation, production build, migration status, and contract validation. E2E and live sandbox payment proof remain outstanding.",
-    "latest_validation_at": "2026-04-30T17:40:00.000Z",
-    "latest_validator": "Codex"
-  },
-  "commands": [
+  "updated_at": "2026-05-12T00:00:00.000Z",
+  "required_commands": [
+    "pnpm validate:contracts",
+    "pnpm prisma:validate",
+    "pnpm lint",
+    "pnpm typecheck",
+    "pnpm test"
+  ],
+  "scope_appropriate_commands": [
+    "pnpm test:e2e",
+    "pnpm validate"
+  ],
+  "latest_results": [
     {
-      "id": "CMD-001",
-      "command": "pnpm lint",
-      "status": "pass",
-      "evidence": "Ran 2026-04-30. ESLint exited 0 with warnings only."
-    },
-    {
-      "id": "CMD-002",
-      "command": "pnpm typecheck",
-      "status": "pass",
-      "evidence": "Ran 2026-04-30. next typegen and tsc --noEmit passed."
-    },
-    {
-      "id": "CMD-003",
-      "command": "pnpm test",
-      "status": "pass",
-      "evidence": "Ran 2026-04-30. Vitest: 18 files passed, 61 tests passed."
-    },
-    {
-      "id": "CMD-004",
-      "command": "pnpm test:e2e",
-      "status": "not_run",
-      "evidence": null
-    },
-    {
-      "id": "CMD-005",
-      "command": "pnpm prisma:validate",
-      "status": "pass",
-      "evidence": "Ran 2026-04-30. Prisma schema is valid."
-    },
-    {
-      "id": "CMD-006",
       "command": "pnpm validate:contracts",
       "status": "pass",
-      "evidence": "Ran 2026-04-30. Contract validation passed: 7 contracts and 5 execution files."
+      "run_at": "2026-05-12T00:00:00.000Z",
+      "summary": "Contract validation passed: 7 contracts and 5 execution files."
     },
     {
-      "id": "CMD-009",
-      "command": "scaffold marker scan",
+      "command": "git diff --check",
       "status": "pass",
-      "evidence": "Ran 2026-04-30. PowerShell Select-String found no SCAFFOLD_NOT_IMPLEMENTED markers under app, features, lib, schemas, or types."
+      "run_at": "2026-05-12T00:00:00.000Z",
+      "summary": "No whitespace errors after README cleanup."
     },
     {
-      "id": "CMD-007",
-      "command": "pnpm build",
+      "command": "pnpm prisma:validate",
       "status": "pass",
-      "evidence": "Ran 2026-04-30. Next production build completed successfully."
-    },
-    {
-      "id": "CMD-008",
-      "command": "vercel deploy --prod --yes",
-      "status": "pass",
-      "evidence": "Ran 2026-04-30. Production deployment dpl_A8xvkimPibpFKEDDserNSTjNzDf3 is READY and aliased to https://usevouch.vercel.app. Added .vercelignore before the final deploy to exclude local env files from uploads."
-    },
-    {
-      "id": "CMD-010",
-      "command": "pnpm prisma:generate",
-      "status": "pass",
-      "evidence": "Ran 2026-04-30 after adding ClerkSession, ClerkEmail, ClerkSms, and ClerkInvitation projection models. Prisma Client 7.8.0 generated successfully."
-    },
-    {
-      "id": "CMD-011",
-      "command": "pnpm test -- auth",
-      "status": "pass",
-      "evidence": "Ran 2026-04-30. Vitest targeted auth run: 18 files passed, 61 tests passed."
-    },
-    {
-      "id": "CMD-012",
-      "command": "pnpm test -- webhook",
-      "status": "pass",
-      "evidence": "Ran 2026-04-30. Vitest targeted webhook run: 18 files passed, 61 tests passed."
+      "run_at": "2026-05-12T00:00:00.000Z",
+      "summary": "Prisma schema is valid."
     }
   ],
-  "milestones": {
-    "mvp_local": {
-      "status": "not_run",
-      "required_gates": [
-        "contract_integrity",
-        "domain_model_integrity",
-        "no_marketplace_surface",
-        "no_arbitration_surface",
-        "auth_enforcement",
-        "vouch_create_flow",
-        "vouch_accept_flow",
-        "manual_confirmation_flow",
-        "deterministic_resolution",
-        "audit_events",
-        "basic_tests"
-      ]
-    },
-    "mvp_preview": {
-      "status": "not_run",
-      "required_gates": [
-        "mvp_local",
-        "payment_provider_sandbox",
-        "webhook_idempotency",
-        "route_access_control",
-        "setup_gates",
-        "notification_lifecycle",
-        "admin_operational_visibility",
-        "e2e_smoke"
-      ]
-    },
-    "production_candidate": {
-      "status": "not_run",
-      "required_gates": [
-        "mvp_preview",
-        "legal_copy_review",
-        "payment_flow_review",
-        "security_review",
-        "privacy_review",
-        "observability_review",
-        "recovery_paths",
-        "migration_integrity"
-      ]
-    }
-  },
-  "gate_results": [
-    {
-      "id": "contract_integrity",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Checked during backend wiring and validation run on 2026-04-28.",
-      "notes": "Requires YAML parsing and contract validator execution."
-    },
-    {
-      "id": "domain_model_integrity",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Checked during backend wiring and validation run on 2026-04-28.",
-      "notes": "Requires Prisma schema and domain model comparison after implementation."
-    },
-    {
-      "id": "no_marketplace_surface",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Checked during backend wiring and validation run on 2026-04-28.",
-      "notes": "Requires route/component/entity scan for forbidden marketplace surfaces."
-    },
-    {
-      "id": "no_arbitration_surface",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Checked during backend wiring and validation run on 2026-04-28.",
-      "notes": "Requires scan for dispute, claim, evidence, award, and confirmation rewrite features."
-    },
-    {
-      "id": "no_platform_custody",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Code uses Stripe provider references, Connect destination charges, application fees, and manual capture; it does not store raw card data or raw identity documents.",
-      "notes": "Legal/compliance review remains required before production launch claims."
-    },
-    {
-      "id": "auth_enforcement",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Focused authz tests passed for unauthenticated denial, disabled user denial, unrelated Vouch denial, self-accept denial, participant confirmation, and admin requirement.",
-      "notes": "Route-level enforcement still needs broader integration once scaffolded routes/features compile."
-    },
-    {
-      "id": "setup_gates",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Focused setup gate tests passed for create readiness, accept readiness, verification/payment/payout blockers, confirmation participant/window/duplicate blockers, and internal return-path validation.",
-      "notes": "Route/action integration still needs broader coverage once the repo-wide scaffold compiles."
-    },
-    {
-      "id": "vouch_create_flow",
-      "severity": "critical",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires createVouch implementation and tests."
-    },
-    {
-      "id": "vouch_accept_flow",
-      "severity": "critical",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires acceptVouch implementation and tests."
-    },
-    {
-      "id": "manual_confirmation_flow",
-      "severity": "critical",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires confirmPresence implementation and tests."
-    },
-    {
-      "id": "deterministic_resolution",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Checked during backend wiring and validation run on 2026-04-28.",
-      "notes": "Requires completion and expiration/refund logic."
-    },
-    {
-      "id": "payment_provider_sandbox",
-      "severity": "critical",
-      "status": "blocked",
-      "evidence": "Stripe account, webhook, env vars, and deployment are configured. A real sandbox Vouch lifecycle transaction has not been run.",
-      "notes": "Run a live sandbox Vouch payment through create, accept, authorization, dual confirmation, capture, webhook, and expiration/refund cases."
-    },
-    {
-      "id": "webhook_idempotency",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Stripe webhook processor records provider events by unique provider/event ID and ignores already processed ledger records; refund success updates RefundRecord, PaymentRecord, and Vouch state.",
-      "notes": "Concurrency stress testing still not run."
-    },
-    {
-      "id": "route_access_control",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Checked during backend wiring and validation run on 2026-04-28.",
-      "notes": "Requires route implementation and auth/access tests."
-    },
-    {
-      "id": "notification_lifecycle",
-      "severity": "medium",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires notification event queue/send implementation."
-    },
-    {
-      "id": "admin_operational_visibility",
-      "severity": "high",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires admin routes and no-arbitration review."
-    },
-    {
-      "id": "audit_events",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Clerk user.created, user.updated, user.deleted, user.synced, and user.synced_from_session paths write safe audit events.",
-      "notes": "Other domain actions still require audit coverage when implemented."
-    },
-    {
-      "id": "basic_tests",
-      "severity": "high",
-      "status": "pass",
-      "evidence": "pnpm test passed on 2026-04-30: 18 files, 61 tests.",
-      "notes": "E2E remains not run."
-    },
-    {
-      "id": "e2e_smoke",
-      "severity": "high",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires Playwright coverage."
-    },
-    {
-      "id": "legal_copy_review",
-      "severity": "critical",
-      "status": "blocked",
-      "evidence": null,
-      "notes": "Requires qualified legal/compliance review before production."
-    },
-    {
-      "id": "payment_flow_review",
-      "severity": "critical",
-      "status": "pass",
-      "evidence": "Implementation selected Accounts v2 onboarding plus PaymentIntent destination charges with application_fee_amount and transfer_data.destination. Official Stripe docs checked for destination charges and Accounts v2 event guidance.",
-      "notes": "Sandbox transaction proof remains required."
-    },
-    {
-      "id": "security_review",
-      "severity": "critical",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires implemented code and security review."
-    },
-    {
-      "id": "privacy_review",
-      "severity": "critical",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires implemented data collection/storage review."
-    },
-    {
-      "id": "observability_review",
-      "severity": "high",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires logging, admin visibility, and failure diagnostics."
-    },
-    {
-      "id": "recovery_paths",
-      "severity": "high",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires safe retry and failed-state handling."
-    },
-    {
-      "id": "migration_integrity",
-      "severity": "high",
-      "status": "not_run",
-      "evidence": null,
-      "notes": "Requires Prisma schema/migration implementation."
-    }
+  "contract_gates": [
+    "product_boundary",
+    "architecture",
+    "settlement",
+    "ui",
+    "tests"
   ],
-  "latest_notes": [
-    {
-      "id": "VAL-NOTE-001",
-      "date": "2026-04-24",
-      "message": "No validation commands have been executed yet. Do not mark any gate as pass until command output or review evidence exists."
-    },
-    {
-      "id": "VAL-NOTE-002",
-      "date": "2026-04-25",
-      "message": "Auth-focused validation was executed: pnpm prisma:validate passed, focused authz/webhook Vitest files passed, pnpm typecheck and full pnpm test failed on existing scaffold gaps outside this task. pnpm validate:contracts failed because scripts/validate-contracts.mjs is missing."
-    },
-    {
-      "id": "VAL-NOTE-003",
-      "date": "2026-04-25",
-      "message": "Setup-gate focused validation was executed: pnpm test tests/unit/setup/status.test.ts tests/unit/schemas/setup.schemas.test.ts passed. pnpm typecheck and full pnpm test still fail on repo-wide scaffold gaps outside this task."
-    },
-    {
-      "id": "VAL-NOTE-004",
-      "date": "2026-04-28",
-      "message": "Phase 0 validation restoration completed: added scripts/validate-contracts.mjs, aligned PaymentRecord.lastErrorMessage, corrected Prisma client output/shadow DB config, fixed typecheck blockers, regenerated Prisma, and ran validation. pnpm lint still fails on existing scaffold/sample-code issues."
-    },
-    {
-      "id": "VAL-NOTE-005",
-      "date": "2026-04-28",
-      "message": "Phase 2-4 backend payment work: pnpm typecheck passed. Full lint/test/prisma/contracts were not re-run after these edits by instruction to conserve tokens and prioritize production code."
-    },
-    {
-      "id": "VAL-NOTE-006",
-      "date": "2026-04-28",
-      "message": "Backend gap pass completed: notification dispatch/provider/templates, admin retry persistence, env/cache helpers, route shell fetcher/action wiring. Stripe sandbox E2E was not run and remains required before production launch."
-    },
-    {
-      "id": "VAL-NOTE-007",
-      "date": "2026-04-30",
-      "message": "Stripe Connect correction: target account acct_1TQHH2GuFcEUvSe9 was confirmed through Stripe CLI/MCP, local/Vercel/GitHub env names were aligned to STRIPE_WEBHOOK_SECRET, a webhook destination was created, and code was changed toward Accounts v2 plus destination charges with application fees. New validation must be run."
-    },
-    {
-      "id": "VAL-NOTE-008",
-      "date": "2026-04-30",
-      "message": "Validation after Stripe Connect correction passed: typecheck, Prisma validate, contract validate, lint, unit tests, local production build, and Vercel production deployment dpl_A8xvkimPibpFKEDDserNSTjNzDf3. Stripe CLI confirmed acct_1TQHH2GuFcEUvSe9 and webhook endpoint we_1TRiYtGuFcEUvSe9y6ivVvLs at https://usevouch.vercel.app/api/webhooks/stripe."
-    },
-    {
-      "id": "VAL-NOTE-009",
-      "date": "2026-04-30",
-      "message": "Backend/route matrix follow-up removed remaining SCAFFOLD_NOT_IMPLEMENTED markers from app/features/lib/schemas/types surfaces. pnpm lint, pnpm typecheck, pnpm test, pnpm prisma:validate, and pnpm validate:contracts passed. E2E and Stripe sandbox lifecycle remain not run."
-    },
-    {
-      "id": "VAL-NOTE-010",
-      "date": "2026-04-30",
-      "message": "Clerk auth overhaul validation passed: pnpm prisma:validate, pnpm prisma:generate, pnpm typecheck, pnpm lint, pnpm test -- auth, and pnpm test -- webhook. Clerk webhook processing now uses svix-id as the ProviderWebhookEvent idempotency key and persists safe projections for required user/session/email/SMS/auth-provider invitation events."
-    },
-    {
-      "id": "VAL-NOTE-011",
-      "date": "2026-04-30",
-      "message": "Environment and migration cleanup passed: pnpm prisma:validate, pnpm build, pnpm prisma migrate dev --name init, pnpm prisma migrate status, and pnpm validate:contracts. Prisma now loads .env then .env.local with local override, Clerk webhook verification requires CLERK_WEBHOOK_SECRET, and the initial migration was applied."
-    },
-    {
-      "id": "VAL-NOTE-012",
-      "date": "2026-04-30",
-      "message": "Merchant/customer pricing governance migration completed. Neon MCP listed no shared Vouch project, so live schema inspection was unavailable; Prisma schema was used as the source for an additive migration. pnpm validate:contracts, pnpm prisma:validate, pnpm prisma:generate, pnpm typecheck, pnpm lint, and pnpm test passed. Lint passed with two existing auth-page-shell unused prop warnings."
-    }
+  "notes": [
+    "Do not mark commands passed unless actually run.",
+    "For this governance-only normalization, pnpm validate:contracts is the smallest useful check."
   ]
 }

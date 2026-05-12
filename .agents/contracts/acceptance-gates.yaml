@@ -1,71 +1,76 @@
-schema_version: "2.0.0"
+schema_version: "3.0.0"
 contract_name: "acceptance-gates"
 product: "Vouch"
-source_of_truth_date: "2026-04-30"
+source_of_truth_date: "2026-05-12"
 
 gates:
-  governance_migration:
-    severity: "critical"
-    checks:
-      - id: "merchant_customer_language"
-        assertion: "Contracts and durable docs identify merchant/provider as creator and payout recipient, and customer/client as acceptor and paying party."
-      - id: "legacy_mapping_documented"
-        assertion: "Legacy payer/payee identifiers are explicitly mapped during migration."
-      - id: "old_money_model_superseded"
-        assertion: "Governance no longer treats amountCents + platformFeeCents as the authoritative customer total."
-  pricing_model:
-    severity: "critical"
-    checks:
-      - id: "pricing_function_exists"
-        assertion: "Server code calculates protectedAmountCents, merchantReceivesCents, vouchServiceFeeCents, processingFeeOffsetCents, applicationFeeAmountCents, and customerTotalCents."
-      - id: "service_fee_formula"
-        assertion: "vouchServiceFeeCents is max(5% of protectedAmountCents rounded up, 500)."
-      - id: "processing_offset_formula"
-        assertion: "processingFeeOffsetCents uses the configured Stripe percentage and fixed fee formula."
-      - id: "customer_total_formula"
-        assertion: "customerTotalCents equals protectedAmountCents + vouchServiceFeeCents + processingFeeOffsetCents."
-      - id: "application_fee_formula"
-        assertion: "applicationFeeAmountCents equals vouchServiceFeeCents + processingFeeOffsetCents."
-  stripe_payment_intent:
-    severity: "critical"
-    checks:
-      - id: "manual_capture"
-        assertion: "Stripe PaymentIntents use manual capture where this flow is implemented."
-      - id: "amount_is_customer_total"
-        assertion: "PaymentIntent amount is customerTotalCents."
-      - id: "fee_is_application_fee_amount"
-        assertion: "application_fee_amount is applicationFeeAmountCents."
-      - id: "destination_is_merchant"
-        assertion: "transfer_data.destination is the merchant/provider connected account."
-  schema_integrity:
-    severity: "critical"
-    checks:
-      - id: "vouch_pricing_snapshot"
-        assertion: "Vouch persists the full pricing snapshot or an explicitly documented migration-safe equivalent."
-      - id: "payment_pricing_snapshot"
-        assertion: "PaymentRecord persists the full pricing snapshot used for the provider authorization."
-      - id: "legacy_fields_not_authoritative"
-        assertion: "amountCents and platformFeeCents are treated as legacy compatibility fields during migration."
-  no_marketplace_surface:
-    severity: "critical"
-    checks:
-      - id: "forbidden_routes_absent"
-        assertion: "No browse, providers, reviews, categories, messages, scheduler, or dispute routes exist."
-      - id: "forbidden_entities_absent"
-        assertion: "No public profiles, service listings, reviews, ratings, messages, recommendations, disputes, claims, evidence, or reputation entities exist."
-  no_arbitration_surface:
-    severity: "critical"
-    checks:
-      - id: "admin_no_award"
-        assertion: "Admin cannot award funds or decide who was right."
-      - id: "admin_no_confirmation_override"
-        assertion: "Admin cannot rewrite confirmation records."
-  validation:
-    severity: "high"
-    checks:
-      - id: "contracts_validate"
-        assertion: "pnpm validate:contracts passes."
-      - id: "prisma_validates"
-        assertion: "pnpm prisma:validate passes."
-      - id: "pricing_tests"
-        assertion: "Unit tests cover the new Vouch pricing formula."
+  product_boundary:
+    pass_when:
+      - "No marketplace framing exists."
+      - "No forbidden routes exist."
+      - "No public provider directory exists."
+      - "No messaging/reviews/ratings/disputes/evidence exist."
+  architecture:
+    pass_when:
+      - "No app page contains Prisma/payment/business logic."
+      - "No component contains protected fetching/domain mutation."
+      - "All protected reads go through fetchers."
+      - "All writes go through server actions/transactions/integrations."
+      - "Stripe SDK calls are isolated in lib/integrations/stripe."
+  settlement:
+    pass_when:
+      - "PaymentIntent capture is manual and idempotent."
+      - "Current provider state is retrieved before settlement."
+      - "Both confirmations within window release funds."
+      - "Anything else resolves to refund, void, or non-capture."
+      - "Provider webhooks reconcile state idempotently."
+  ui:
+    pass_when:
+      - "UI follows Vouch dark brutalist design system."
+      - "Amount, status, deadline, action, and consequence are visible on Vouch/payment screens."
+      - "Status uses text, not color alone."
+  tests:
+    required_files:
+      - "tests/unit/vouches/fees.test.ts"
+      - "tests/unit/vouches/confirmation.test.ts"
+      - "tests/unit/vouches/status.test.ts"
+      - "tests/unit/vouches/transactions.test.ts"
+      - "tests/unit/payments/payment-intents.test.ts"
+      - "tests/unit/payments/stripe-status-map.test.ts"
+      - "tests/unit/webhooks/idempotency.test.ts"
+      - "tests/unit/webhooks/stripe-webhook-events.test.ts"
+      - "tests/contract/no-forbidden-files.test.ts"
+      - "tests/e2e/no-forbidden-routes.spec.ts"
+      - "tests/e2e/app-route-smoke.spec.ts"
+    coverage:
+      - "fee math: max 5% or 500 cents"
+      - "payer/payee role wiring"
+      - "manual capture PaymentIntent creation"
+      - "idempotent capture"
+      - "current PaymentIntent retrieval before settlement"
+      - "duplicate confirmation rejection"
+      - "before-window confirmation rejection"
+      - "after-window confirmation rejection"
+      - "one-sided confirmation does not release funds"
+      - "both confirmations release funds"
+      - "expired incomplete Vouch voids/refunds/non-captures"
+      - "webhook duplicate delivery safety"
+      - "account.updated readiness mapping"
+      - "payment_intent status mapping"
+      - "no forbidden marketplace/dispute routes/files"
+
+validation_commands:
+  scope_appropriate:
+    - "pnpm validate:contracts"
+    - "pnpm prisma:validate"
+    - "pnpm lint"
+    - "pnpm typecheck"
+    - "pnpm test"
+    - "pnpm test:e2e"
+    - "pnpm validate"
+  payment_domain_minimum:
+    - "pnpm validate:contracts"
+    - "pnpm prisma:validate"
+    - "pnpm lint"
+    - "pnpm typecheck"
+    - "pnpm test"

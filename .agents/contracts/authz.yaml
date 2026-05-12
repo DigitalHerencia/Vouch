@@ -1,64 +1,90 @@
-schema_version: "2.0.0"
+schema_version: "3.0.0"
 contract_name: "authz"
 product: "Vouch"
-source_of_truth_date: "2026-04-30"
+source_of_truth_date: "2026-05-12"
 
 default_policy: "deny"
 
-legacy_mapping:
-  payer: "provider / merchant / creator"
-  payee: "customer / client / paying acceptor"
+protected_fetcher_sequence:
+  - "authenticate"
+  - "authorize"
+  - "minimal select"
+  - "DTO mapping"
+  - "cache policy"
+  - "transport-safe return"
 
-principles:
-  - id: "participant_scope"
-    rule: "A user may access a Vouch only when they are the merchant/provider creator, accepted customer/client, valid invite candidate, or admin."
-  - id: "self_acceptance_denied"
-    rule: "The merchant/provider creator may not accept their own Vouch as the customer/client."
-  - id: "server_authoritative"
-    rule: "Client-reported role, payment status, connected account, customer total, or confirmation eligibility is never trusted."
-  - id: "admin_no_arbitration"
-    rule: "Admins may inspect operational state and run safe idempotent retries only; they may not award funds, override confirmation truth, or decide disputes."
+server_action_sequence:
+  - "authenticate"
+  - "authorize"
+  - "Zod validate"
+  - "load server/provider-backed state"
+  - "perform transaction/integration work"
+  - "write audit event where relevant"
+  - "revalidate affected paths/tags"
+  - "return typed ActionResult"
 
-capabilities:
+policies:
   create_vouch:
-    actor: "merchant_provider"
-    requirements:
-      - "authenticated"
-      - "active user"
-      - "identity/adult requirements satisfied where enabled"
-      - "payout readiness satisfied for merchant/provider"
-      - "terms accepted"
-      - "pricing calculated server-side"
+    actor: "payer"
+    requires:
+      - "authenticated user"
+      - "payer readiness"
+      - "setup gates satisfied"
+    denies:
+      - "client-authoritative fee"
+      - "client-authoritative status"
+      - "marketplace discovery dependency"
   accept_vouch:
-    actor: "customer_client"
-    requirements:
-      - "authenticated"
-      - "active user"
-      - "valid invite token or recipient constraint"
-      - "Vouch.status == pending"
-      - "customer/client is not the merchant/provider creator"
-      - "payment readiness satisfied for customer/client"
-      - "terms accepted"
-  initialize_payment:
-    actor: "system"
-    requirements:
-      - "Vouch has merchant/provider connected account"
-      - "customer/client has provider customer/payment method when required"
-      - "PaymentIntent amount == customerTotalCents"
-      - "application_fee_amount == applicationFeeAmountCents"
-      - "transfer destination == merchant/provider connected account"
+    actor: "payee"
+    requires:
+      - "authenticated user"
+      - "valid invitation access"
+      - "self-acceptance denied"
+      - "payee readiness"
+    denies:
+      - "release funds"
+      - "confirm presence"
+      - "override readiness gates"
+      - "create dispute surface"
   confirm_presence:
-    actor: "participant"
-    requirements:
-      - "authenticated"
-      - "active user"
-      - "Vouch.status == active"
+    actor: "active participant"
+    requires:
+      - "authenticated user"
+      - "active Vouch participant"
+      - "Vouch is active"
       - "confirmation window is open"
-      - "user is merchant/provider creator or accepted customer/client"
-      - "participant has not already confirmed"
-  read_admin_operational_state:
+      - "no previous confirmation for same participant"
+    denies:
+      - "duplicate confirmation"
+      - "before-window confirmation"
+      - "after-window confirmation"
+      - "one-sided release"
+      - "client-authoritative settlement"
+  admin:
     actor: "admin"
-    requirements:
-      - "admin capability"
-      - "operational inspection only"
-      - "no arbitration controls"
+    allows:
+      - "observe safe status"
+      - "view safe provider reference"
+      - "view audit trail"
+      - "view webhook event status"
+      - "retry safe provider operations where contracts allow"
+    denies:
+      - "decide who is right"
+      - "collect stories"
+      - "collect screenshots"
+      - "collect evidence"
+      - "arbitrate disputes"
+      - "manually award funds"
+      - "force release funds"
+      - "rewrite confirmation truth"
+      - "edit confirmation timestamps"
+      - "override deterministic resolution"
+
+settlement_authz:
+  release_requires:
+    - "payer confirmation within window"
+    - "payee confirmation within window"
+    - "current Stripe PaymentIntent retrieved"
+    - "provider state allows capture"
+    - "idempotency key present"
+  failure_resolution: "If both valid confirmations are absent, resolve to refund, void, or non-capture according to current provider state."

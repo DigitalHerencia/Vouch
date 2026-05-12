@@ -1,40 +1,18 @@
 {
-  "schema_version": "1.0.0",
+  "schema_version": "3.0.0",
   "file": "progress.json",
   "product": "Vouch",
-  "generated_at": "2026-04-24T00:00:00.000Z",
-  "purpose": "Append-only progress log of planning and implementation work.",
-  "policy": {
-    "append_only_preferred": true,
-    "business_logic_allowed": false,
-    "status_values": ["completed", "in_progress", "blocked", "not_started"]
-  },
-  "current_phase": "repo_implementation",
-  "implementation_status": "in_progress",
-  "entries": [
+  "updated_at": "2026-05-12T00:00:00.000Z",
+  "current_source_of_truth": "Architecture-corrected Stripe Connect implementation paradigm",
+  "status": "governance_normalized",
+  "completed": [
     {
-      "id": "PRG-017",
-      "date": "2026-05-04",
-      "status": "completed",
-      "category": "stripe_context",
-      "title": "Resolved Stripe sandbox/live account source of truth",
-      "summary": "Verified the active Stripe CLI profile can be scoped to the sandbox platform account, confirmed the sandbox connected account is attached to that platform, and documented the account map required for implementation validation.",
-      "files": [
-        ".agents/docs/stripe-connect-integration.md",
-        ".agents/contracts/routes.yaml",
-        ".agents/execution/decisions.json",
-        ".agents/execution/progress.json"
-      ],
-      "validation_status": "manual_pass",
-      "notes": "Stripe CLI whoami confirmed sandbox platform acct_1TPa46GV5dKxUPtb. Connected account acct_1TQHpNGV5d6axbAJ was retrieved using --stripe-account and has card_payments/transfers active, charges_enabled true, payouts_enabled true, details_submitted true, and no currently_due or past_due requirements. Live platform acct_1TQHH2GuFcEUvSe9 is not an implementation validation target. The Stripe connector was observed scoped to the live platform account and should not be used for sandbox connected-account inspection until re-scoped."
+      "id": "GOV-001",
+      "title": "Replace root and .agents governance with payer/payee Stripe Connect paradigm",
+      "completed_at": "2026-05-12T00:00:00.000Z",
+      "paths": ["AGENTS.md", ".agents/docs/prd.md", ".agents/docs/stripe-connect-integration.md", ".agents/contracts", ".agents/instructions/vouch-stripe-connect.agents.md"]
     }
   ],
-  "next_expected_phase": "frontend_route_completion",
-  "next_expected_work": [
-    "Add thin route shell for /settings/payment/return and wire it to provider readiness refresh/reconciliation without claiming success blindly.",
-    "Add thin route shell for /settings/payout/return and wire it to provider readiness refresh/reconciliation without claiming success blindly.",
-    "Add thin route shell for /vouches/[vouchId]/share using existing features/vouches/share components.",
-    "Keep app route files thin and move DTO shaping/orchestration into feature/fetcher layers.",
-    "Use sandbox platform acct_1TPa46GV5dKxUPtb and sandbox connected acct_1TQHpNGV5d6axbAJ for Stripe validation."
-  ]
+  "in_progress": [],
+  "next": ["VC-001", "VC-002", "VC-003", "VC-004", "VC-005"]
 }
