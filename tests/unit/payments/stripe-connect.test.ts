@@ -4,6 +4,7 @@ vi.mock("server-only", () => ({}))
 
 const createAccount = vi.fn()
 const createAccountLink = vi.fn()
+const retrieveAccount = vi.fn()
 
 vi.mock("@/lib/integrations/stripe/client", () => ({
   getStripeServerClient: () => ({
@@ -11,7 +12,7 @@ vi.mock("@/lib/integrations/stripe/client", () => ({
       core: {
         accounts: {
           create: createAccount,
-          retrieve: vi.fn(),
+          retrieve: retrieveAccount,
         },
         accountLinks: {
           create: createAccountLink,
@@ -25,8 +26,22 @@ describe("Stripe Connect Accounts v2", () => {
   beforeEach(() => {
     createAccount.mockReset()
     createAccountLink.mockReset()
+    retrieveAccount.mockReset()
     createAccount.mockResolvedValue({ id: "acct_connected" })
     createAccountLink.mockResolvedValue({ url: "https://connect.stripe.test/onboard" })
+    retrieveAccount.mockResolvedValue({
+      configuration: {
+        recipient: {
+          capabilities: {
+            stripe_balance: {
+              stripe_transfers: {
+                status: "active",
+              },
+            },
+          },
+        },
+      },
+    })
   })
 
   it("creates recipient accounts with the blueprint include fields", async () => {
@@ -103,5 +118,49 @@ describe("Stripe Connect Accounts v2", () => {
       },
       { idempotencyKey: "idem_link" }
     )
+  })
+
+  it("maps nested recipient transfer capability status to payout readiness", async () => {
+    const { refreshStripeConnectReadiness } = await import("@/lib/integrations/stripe/connect")
+
+    await expect(
+      refreshStripeConnectReadiness({ providerAccountId: "acct_connected" })
+    ).resolves.toEqual({
+      readiness: "ready",
+      chargesEnabled: true,
+      payoutsEnabled: true,
+      detailsSubmitted: true,
+    })
+
+    expect(retrieveAccount).toHaveBeenCalledWith("acct_connected", {
+      include: ["configuration.recipient"],
+    })
+  })
+
+  it("maps restricted transfer capability status to restricted payout readiness", async () => {
+    const { refreshStripeConnectReadiness } = await import("@/lib/integrations/stripe/connect")
+
+    retrieveAccount.mockResolvedValueOnce({
+      configuration: {
+        recipient: {
+          capabilities: {
+            stripe_balance: {
+              stripe_transfers: {
+                status: "restricted",
+              },
+            },
+          },
+        },
+      },
+    })
+
+    await expect(
+      refreshStripeConnectReadiness({ providerAccountId: "acct_restricted" })
+    ).resolves.toMatchObject({
+      readiness: "restricted",
+      chargesEnabled: false,
+      payoutsEnabled: false,
+      detailsSubmitted: false,
+    })
   })
 })

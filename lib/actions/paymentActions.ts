@@ -16,11 +16,18 @@ import {
   refreshStripeConnectReadiness,
 } from "@/lib/integrations/stripe/connect"
 import { createStripeCheckoutAuthorization } from "@/lib/integrations/stripe/checkout-sessions"
-import { getStripeServerClient } from "@/lib/integrations/stripe/client"
+import {
+  createStripeCustomer,
+  createStripeSetupIntent,
+  getStripeCustomerPaymentReadiness,
+  retrieveStripeSetupIntent,
+  setStripeCustomerDefaultPaymentMethod,
+} from "@/lib/integrations/stripe/customers"
 import {
   captureStripePayment,
   createStripePaymentAuthorization,
   refundStripePayment,
+  retrieveStripeRefund,
   retrieveStripePaymentIntent,
   voidStripeAuthorization,
 } from "@/lib/integrations/stripe/payment-intents"
@@ -178,45 +185,6 @@ function getVouchPricingSnapshot(input: {
   return calculateVouchPricing({ protectedAmountCents: input.amountCents })
 }
 
-async function getStripeCustomerPaymentReadiness(providerCustomerId: string): Promise<{
-  readiness: "requires_action" | "ready" | "failed"
-  defaultPaymentMethodId: string | null
-}> {
-  const stripe = getStripeServerClient()
-  const customer = await stripe.customers.retrieve(providerCustomerId, {
-    expand: ["invoice_settings.default_payment_method"],
-  })
-
-  if ("deleted" in customer && customer.deleted) {
-    return { readiness: "failed", defaultPaymentMethodId: null }
-  }
-
-  const defaultPaymentMethod = customer.invoice_settings.default_payment_method
-  const defaultPaymentMethodId =
-    typeof defaultPaymentMethod === "string" ? defaultPaymentMethod : defaultPaymentMethod?.id
-
-  if (defaultPaymentMethodId) {
-    return { readiness: "ready", defaultPaymentMethodId }
-  }
-
-  const paymentMethods = await stripe.paymentMethods.list({
-    customer: providerCustomerId,
-    type: "card",
-    limit: 1,
-  })
-
-  const fallbackPaymentMethodId = paymentMethods.data[0]?.id ?? null
-
-  if (fallbackPaymentMethodId) {
-    await stripe.customers.update(providerCustomerId, {
-      invoice_settings: { default_payment_method: fallbackPaymentMethodId },
-    })
-    return { readiness: "ready", defaultPaymentMethodId: fallbackPaymentMethodId }
-  }
-
-  return { readiness: "requires_action", defaultPaymentMethodId: null }
-}
-
 function paymentResult(record: {
   id: string
   vouchId: string
@@ -311,7 +279,6 @@ export async function startPaymentMethodSetup(
     )
   }
 
-  const stripe = getStripeServerClient()
   const customer = await prisma.paymentCustomer.findUnique({
     where: { userId: user.id },
     select: { providerCustomerId: true },
@@ -319,23 +286,18 @@ export async function startPaymentMethodSetup(
   const providerCustomerId =
     customer?.providerCustomerId ??
     (
-      await stripe.customers.create(
-        {
-          ...(user.email ? { email: user.email } : {}),
-          ...(user.displayName ? { name: user.displayName } : {}),
-          metadata: { vouch_user_id: user.id },
-        },
-        { idempotencyKey: `user:${user.id}:stripe_customer` }
-      )
-    ).id
-  const setupIntent = await stripe.setupIntents.create(
-    {
-      customer: providerCustomerId,
-      usage: "off_session",
-      metadata: { vouch_user_id: user.id },
-    },
-    { idempotencyKey: `user:${user.id}:setup_intent` }
-  )
+      await createStripeCustomer({
+        userId: user.id,
+        email: user.email,
+        displayName: user.displayName,
+        idempotencyKey: `user:${user.id}:stripe_customer`,
+      })
+    ).providerCustomerId
+  const setupIntent = await createStripeSetupIntent({
+    providerCustomerId,
+    userId: user.id,
+    idempotencyKey: `user:${user.id}:setup_intent`,
+  })
 
   await prisma.$transaction(async (tx) => {
     await tx.paymentCustomer.upsert({
@@ -374,7 +336,7 @@ export async function startPaymentMethodSetup(
   const returnTo = normalizeInternalReturnTo(parsed.data.returnTo, "/settings/payment")
   return actionSuccess({
     redirectTo: `/settings/payment?returnTo=${encodeURIComponent(returnTo)}`,
-    clientSecret: setupIntent.client_secret ?? null,
+    clientSecret: setupIntent.clientSecret,
   })
 }
 
@@ -407,23 +369,24 @@ export async function handlePaymentMethodSetupReturn(
     return actionFailure("PROVIDER_REFERENCE_REQUIRED", "Stripe setup reference is required.")
   }
 
-  const setupIntent = await getStripeServerClient().setupIntents.retrieve(setupIntentId)
+  const setupIntent = await retrieveStripeSetupIntent({ setupIntentId })
   let readiness: "requires_action" | "ready" | "failed" =
     setupIntent.status === "succeeded" ? "ready" : "requires_action"
 
-  if (setupIntent.customer && typeof setupIntent.customer === "string") {
-    if (setupIntent.payment_method && typeof setupIntent.payment_method === "string") {
-      await getStripeServerClient().customers.update(setupIntent.customer, {
-        invoice_settings: { default_payment_method: setupIntent.payment_method },
+  if (setupIntent.providerCustomerId) {
+    if (setupIntent.providerPaymentMethodId) {
+      await setStripeCustomerDefaultPaymentMethod({
+        providerCustomerId: setupIntent.providerCustomerId,
+        providerPaymentMethodId: setupIntent.providerPaymentMethodId,
       })
     }
 
-    readiness = (await getStripeCustomerPaymentReadiness(setupIntent.customer)).readiness
+    readiness = (await getStripeCustomerPaymentReadiness(setupIntent.providerCustomerId)).readiness
 
     await prisma.paymentCustomer.upsert({
       where: { userId: user.id },
-      create: { userId: user.id, providerCustomerId: setupIntent.customer },
-      update: { providerCustomerId: setupIntent.customer },
+      create: { userId: user.id, providerCustomerId: setupIntent.providerCustomerId },
+      update: { providerCustomerId: setupIntent.providerCustomerId },
     })
   }
 
@@ -1154,6 +1117,12 @@ export async function captureOrReleaseVouchPayment(
   })
 
   if (!release.ok) return actionFailure(release.code, release.message)
+  if (release.status !== "released") {
+    return actionFailure(
+      "PAYMENT_RELEASE_PENDING",
+      "Payment release is still processing with the provider."
+    )
+  }
 
   const record = await prisma.$transaction(async (tx) => {
     await tx.vouch.update({
@@ -1890,9 +1859,30 @@ export type ReleaseStripePaymentInput = {
   idempotencyKey?: string
 }
 
+export type ReleaseStripePaymentResult =
+  | { ok: true; status: "released"; providerChargeId: string }
+  | { ok: true; status: "pending"; providerChargeId: string | null }
+  | { ok: false; code: string; message: string }
+
+function getPaymentIntentChargeId(paymentIntent: { latest_charge?: unknown }): string | null {
+  const latestCharge = paymentIntent.latest_charge
+
+  if (typeof latestCharge === "string") return latestCharge
+  if (
+    latestCharge &&
+    typeof latestCharge === "object" &&
+    "id" in latestCharge &&
+    typeof latestCharge.id === "string"
+  ) {
+    return latestCharge.id
+  }
+
+  return null
+}
+
 export async function releaseStripePaymentForCompletedVouch(
   input: ReleaseStripePaymentInput
-): Promise<{ ok: true } | { ok: false; code: string; message: string }> {
+): Promise<ReleaseStripePaymentResult> {
   const paymentRecord = await prisma.paymentRecord.findUnique({
     where: { id: input.paymentRecordId },
     select: {
@@ -1935,8 +1925,7 @@ export async function releaseStripePaymentForCompletedVouch(
           })
         : current
 
-    const providerChargeId =
-      typeof captured.latest_charge === "string" ? captured.latest_charge : null
+    const providerChargeId = getPaymentIntentChargeId(captured)
 
     if (captured.status === "canceled") {
       await prisma.paymentRecord.update({
@@ -1965,7 +1954,7 @@ export async function releaseStripePaymentForCompletedVouch(
           lastErrorMessage: null,
         },
       })
-      return { ok: true }
+      return { ok: true, status: "pending", providerChargeId }
     }
 
     await prisma.paymentRecord.update({
@@ -1978,7 +1967,7 @@ export async function releaseStripePaymentForCompletedVouch(
       },
     })
 
-    return { ok: true }
+    return { ok: true, status: "released", providerChargeId }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Stripe payment release failed."
     await prisma.paymentRecord.update({
@@ -2243,10 +2232,7 @@ async function processCheckoutSessionEvent(event: Stripe.Event, providerWebhookE
   const localStatus = paymentIntent
     ? mapStripePaymentIntentStatus(paymentIntent.status)
     : "requires_payment_method"
-  const providerChargeId =
-    paymentIntent && typeof paymentIntent.latest_charge === "string"
-      ? paymentIntent.latest_charge
-      : undefined
+  const providerChargeId = paymentIntent ? (getPaymentIntentChargeId(paymentIntent) ?? undefined) : undefined
 
   const paymentRecord = await prisma.paymentRecord.findFirst({
     where: {
@@ -2353,8 +2339,7 @@ async function processPaymentIntentEvent(event: Stripe.Event, providerWebhookEve
     return
   }
 
-  const providerChargeId =
-    typeof intent.latest_charge === "string" ? intent.latest_charge : undefined
+  const providerChargeId = getPaymentIntentChargeId(intent) ?? undefined
   const nextStatus =
     paymentRecord.status === "released" && localStatus === "captured" ? "released" : localStatus
 
@@ -2833,7 +2818,6 @@ async function processChargeRefundedEvent(event: Stripe.Event, providerWebhookEv
 export async function reconcileStuckPaymentRecords(input?: {
   limit?: number
 }): Promise<{ reconciledCount: number; failedCount: number }> {
-  const stripe = getStripeServerClient()
   const records = await prisma.paymentRecord.findMany({
     where: {
       provider: "stripe",
@@ -2853,7 +2837,9 @@ export async function reconcileStuckPaymentRecords(input?: {
   for (const record of records) {
     if (!record.providerPaymentId) continue
     try {
-      const intent = await stripe.paymentIntents.retrieve(record.providerPaymentId)
+      const intent = await retrieveStripePaymentIntent({
+        providerPaymentId: record.providerPaymentId,
+      })
       await prisma.paymentRecord.update({
         where: { id: record.id },
         data: {
@@ -2880,14 +2866,15 @@ export async function runPaymentReconciliationJob(input?: {
     take: input?.limit ?? 50,
     select: { id: true, paymentRecordId: true, providerRefundId: true },
   })
-  const stripe = getStripeServerClient()
   let refundReconciled = 0
   let refundFailed = 0
 
   for (const refundRecord of refunds) {
     if (!refundRecord.providerRefundId) continue
     try {
-      const refund = await stripe.refunds.retrieve(refundRecord.providerRefundId)
+      const refund = await retrieveStripeRefund({
+        providerRefundId: refundRecord.providerRefundId,
+      })
       const status = mapStripeRefundStatus(refund.status)
       await prisma.$transaction([
         prisma.refundRecord.update({ where: { id: refundRecord.id }, data: { status } }),

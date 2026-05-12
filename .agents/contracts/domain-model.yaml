@@ -90,7 +90,7 @@ money:
     - "Stripe capture/refund/void reconciliation state"
     - "safe provider references only"
 
-lifecycle_language:
+lifecycle_states:
   - "Draft / Created"
   - "Invite Sent"
   - "Accepted"
@@ -109,37 +109,6 @@ lifecycle_language:
   - "Release Failed"
   - "Refund Failed"
   - "Canceled"
-
-language:
-  use:
-    - "payer"
-    - "payee"
-    - "participant"
-    - "Vouch"
-    - "commitment"
-    - "confirmation window"
-    - "presence confirmation"
-    - "funds release"
-    - "refund"
-    - "void"
-    - "non-capture"
-    - "provider-backed settlement"
-    - "deterministic resolution"
-  avoid:
-    - "marketplace"
-    - "booking platform"
-    - "escrow"
-    - "broker"
-    - "dispute"
-    - "claim"
-    - "appeal"
-    - "evidence"
-    - "review"
-    - "rating"
-    - "search"
-    - "discovery"
-    - "manual award"
-    - "force release"
 
 storage_rules:
   never_store:

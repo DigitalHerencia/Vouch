@@ -4,78 +4,18 @@
 
 Source of truth date: 2026-05-12
 
-This is the root operating guide for agents working in the Vouch repository. The current paradigm below overrules older repository guidance, older `.agents` files, and implementation artifacts that conflict with it.
+This is the root operating guide for agents working in the Vouch repository. The current user task is the active source of truth for this revision: repository guidance must preserve architecture and payment invariants without regulating product vocabulary, naming, or word choice.
 
-Vouch is a narrow commitment-backed payment coordination system for pre-arranged appointments and in-person agreements.
+## Core Invariant
 
-Core invariant:
+Vouch coordinates commitment-backed payments for pre-arranged appointments and in-person agreements.
 
 ```txt
 both parties confirm presence within the confirmation window -> funds release
 otherwise -> refund, void, or non-capture
 ```
 
-Outcome follows system state.
-
-No unilateral action releases funds. No late confirmation releases funds. No admin arbitration releases funds. No manual fund award exists. No discretionary confirmation rewrite exists. No dispute, evidence, or appeal surface exists.
-
-## Product Boundaries
-
-Vouch is not:
-
-- a marketplace
-- a broker
-- a scheduler
-- a messaging app
-- a review system
-- a dispute system
-- an escrow provider
-- a public directory
-- a discovery platform
-
-Do not add:
-
-- marketplace-style route trees
-- public profile cards
-- provider listing or browse surfaces
-- rating stars, reviews, reputation, or social proof
-- messaging UI
-- category filters or featured provider blocks
-- dispute, claim, evidence, or appeal flows
-- manual award, force release, or admin settlement controls
-
-Use this product language:
-
-- payer
-- payee
-- participant
-- Vouch
-- commitment
-- confirmation window
-- presence confirmation
-- funds release
-- refund
-- void
-- non-capture
-- provider-backed settlement
-- deterministic resolution
-
-Avoid this language in product copy and new implementation naming:
-
-- marketplace
-- booking platform
-- escrow
-- broker
-- dispute
-- claim
-- appeal
-- evidence
-- review
-- rating
-- search
-- discovery
-- manual award
-- force release
+Outcome follows persisted system state. Client state is never authoritative for readiness, fee math, confirmation, settlement, or lifecycle status.
 
 ## Source Of Truth Order
 
@@ -90,7 +30,7 @@ When files conflict, use this order:
 7. Existing repository code.
 8. Agent judgment.
 
-Existing code is not authoritative when it conflicts with the current contracts. If implementation conflicts with contracts, fix implementation. If docs conflict with contracts, stop and report the conflict unless the current user task explicitly directs the governance update.
+If implementation conflicts with contracts, fix implementation. If docs conflict with contracts, report the conflict unless the current user task explicitly directs the governance update.
 
 ## Target Stack
 
@@ -108,35 +48,13 @@ Existing code is not authoritative when it conflicts with the current contracts.
 - Playwright
 - pnpm
 
-## Required Architecture
+## Architecture
 
 Use the existing Vouch architecture.
 
-`app/**` is route shell only.
+`app/**` is route shell only. Route shells may contain route segments, layouts, loading/error/not-found boundaries, thin `page.tsx` files, route handlers for external provider boundaries, params/searchParams handoff, redirects, and feature composition.
 
-Allowed in `app/**`:
-
-- route segments
-- layouts
-- loading/error/not-found boundaries
-- thin `page.tsx` files
-- route handlers for external provider boundaries
-- params/searchParams handoff
-- redirects
-- feature composition
-
-Forbidden in `app/**`:
-
-- Prisma queries
-- Stripe business logic
-- Clerk server business logic beyond route-level access handoff
-- authz enforcement
-- DTO shaping
-- domain mutation
-- payment settlement logic
-- complex form logic
-
-Boundary rules:
+Boundary map:
 
 ```txt
 app/**                         route shell only
@@ -153,86 +71,13 @@ schemas/*                      Zod schemas
 types/*                        transport-safe DTOs
 ```
 
-Do not create these files:
-
-```txt
-app/api/accounts/create/route.ts
-app/api/accounts/session/route.ts
-app/api/vouches/create/route.ts
-app/api/vouches/confirm/route.ts
-app/api/vouches/capture/route.ts
-lib/stripe.ts
-lib/db.ts
-lib/types.ts
-components/vouch-form.tsx
-components/stripe-connect.tsx
-components/confirmation-panel.tsx
-```
-
-Only this external provider boundary route handler is allowed for Stripe webhooks:
+The Stripe webhook route handler is the external provider boundary for Stripe events:
 
 ```txt
 app/api/stripe/webhooks/route.ts
 ```
 
-## Corrected Project Surface
-
-Use or update this architecture surface. Do not introduce parallel marketplace-style trees.
-
-```txt
-app/
-  api/stripe/webhooks/route.ts
-  (tenant)/dashboard/page.tsx
-  (tenant)/setup/page.tsx
-  (tenant)/settings/payment/page.tsx
-  (tenant)/settings/payout/page.tsx
-  (tenant)/settings/verification/page.tsx
-  (tenant)/vouches/page.tsx
-  (tenant)/vouches/new/page.tsx
-  (tenant)/vouches/[vouchId]/page.tsx
-  (tenant)/vouches/[vouchId]/confirm/page.tsx
-  (public)/vouches/invite/[token]/page.tsx
-
-features/
-  dashboard/*
-  setup/*
-  settings/*
-  payments/*
-  vouches/create/*
-  vouches/invite/*
-  vouches/detail/*
-  vouches/confirm/*
-
-components/
-  payments/*
-  vouches/*
-
-lib/
-  actions/paymentActions.ts
-  actions/setupActions.ts
-  actions/verificationActions.ts
-  actions/vouchActions.ts
-  fetchers/*
-  db/selects/*
-  db/transactions/*
-  integrations/stripe/*
-  vouch/*
-  security/*
-
-schemas/
-  payment.ts
-  setup.ts
-  verification.ts
-  vouch.ts
-
-types/
-  action-result.ts
-  payment.ts
-  setup.ts
-  verification.ts
-  vouch.ts
-  webhooks.ts
-```
+Route handlers should delegate business logic to integrations, actions, and transactions.
 
 ## Readiness Model
 
@@ -257,7 +102,7 @@ Payee readiness is required for accepting or becoming bound as payee:
 - Stripe payout capability/readiness is active or sufficient for the Vouch flow
 - payout readiness stored in Vouch DB as provider-backed readiness state
 
-Do not treat payer payment setup and payee payout setup as the same thing.
+Keep payer payment setup and payee payout setup separate.
 
 ## Stripe Connect
 
@@ -293,14 +138,6 @@ retrieveConnectedAccount
 mapConnectedAccountReadiness
 ```
 
-Embedded Stripe components are allowed only for setup and readiness:
-
-- account onboarding
-- account management for payout setup
-- payout readiness visibility
-
-Do not enable refund management, dispute management, evidence submission, capture controls, discretionary payment management, or manual fund movement.
-
 Connected account metadata must include safe internal references only. Never store raw card data, raw bank data, raw identity documents, full provider payloads, or sensitive KYC details.
 
 ## PaymentIntent Model
@@ -326,8 +163,6 @@ Database persistence belongs in:
 lib/db/transactions/vouchTransactions.ts
 ```
 
-Do not create a `/capture` route handler. Do not call internal `fetch('/api/...')` for settlement.
-
 Core PaymentIntent creation requirements:
 
 ```txt
@@ -352,15 +187,7 @@ Fee policy:
 Vouch fee = max(5% of customer total, 500 cents)
 ```
 
-Persist:
-
-- customer total cents
-- application fee amount cents
-- payee receivable amount cents
-- Stripe PaymentIntent id
-- Stripe status
-- Stripe capture/refund/void reconciliation state
-- safe provider references only
+Persist customer total cents, application fee amount cents, payee receivable amount cents, Stripe PaymentIntent id, Stripe status, Stripe capture/refund/void reconciliation state, and safe provider references only.
 
 ## Vouch Flows
 
@@ -379,16 +206,6 @@ revalidate affected paths/tags
 return typed ActionResult
 ```
 
-Rules:
-
-- client input is never authoritative
-- status is derived from server state
-- fee math is server-owned
-- payment provider state is reconciled server-side
-- invite token is generated server-side
-- Vouch cannot be created if required setup gates fail
-- no marketplace or discovery surface is introduced
-
 `acceptVouchAction` and `declineVouchAction` sequence:
 
 ```txt
@@ -404,14 +221,6 @@ write audit event
 revalidate
 return typed ActionResult
 ```
-
-Rules:
-
-- accept does not release funds
-- accept does not confirm presence
-- accept does not override readiness gates
-- payee payout readiness must be enforced before accept if required by current contract
-- decline does not create a dispute surface
 
 `confirmPresenceAction` sequence:
 
@@ -437,37 +246,13 @@ revalidate
 return typed ActionResult
 ```
 
-Rules:
-
-- payer and payee confirmations are separate facts
-- duplicate confirmation must be rejected
-- one-sided confirmation must not release funds
-- late confirmation must not release funds
-- client-side button state is not authoritative
-- status must be derived from persisted state
-- settlement must be idempotent
-
-## Deterministic Resolution
-
-Expired Vouches must be resolved by server-side deterministic resolution logic.
-
-Use or update:
+Expired Vouches resolve by server-side deterministic resolution logic in:
 
 ```txt
 lib/vouch/resolution.ts
 lib/actions/paymentActions.ts
 lib/actions/vouchActions.ts
 lib/db/transactions/systemTransactions.ts
-```
-
-Resolution rule:
-
-```txt
-both confirmed within window -> capture/release
-not both confirmed within window -> refund, void, or non-capture
-payment failed -> failed payment state
-capture failed -> failed release state
-refund failed -> failed refund state
 ```
 
 Always retrieve current Stripe PaymentIntent state before capture, cancel, void, or refund. Use idempotency keys for PaymentIntent creation, capture, cancel/void, refund, webhook reconciliation writes, and operational retry attempts.
@@ -489,31 +274,11 @@ lib/actions/paymentActions.ts
 lib/db/transactions/systemTransactions.ts
 ```
 
-Handle at minimum:
-
-- `account.updated`
-- `setup_intent.succeeded`
-- `setup_intent.setup_failed`
-- `payment_intent.requires_capture`
-- `payment_intent.succeeded`
-- `payment_intent.canceled`
-- `payment_intent.payment_failed`
-- `refund.created`
-- `refund.updated`
-- `charge.refunded`
-
-Webhook rules:
-
-- webhooks reconcile provider state
-- webhooks do not invent Vouch business truth
-- webhook event IDs must be idempotently stored
-- duplicate delivery must be safe
-- provider payload storage must be minimal and redacted
-- no raw sensitive provider data is stored
+Webhook event IDs must be idempotently stored. Provider payload storage must be minimal and redacted.
 
 ## Fetchers, Schemas, And DTOs
 
-Every protected fetcher must follow:
+Every protected fetcher should follow:
 
 ```txt
 authenticate
@@ -537,79 +302,11 @@ getInviteAcceptanceData
 getDashboardData
 ```
 
-Fetchers must not mutate state, call Stripe for mutation, leak provider secrets, return raw Prisma models, return sensitive provider payloads, or expose internal authorization details.
-
-Use Zod schemas for all server action inputs in:
-
-```txt
-schemas/payment.ts
-schemas/setup.ts
-schemas/vouch.ts
-```
-
-Use transport-safe DTOs in:
-
-```txt
-types/payment.ts
-types/setup.ts
-types/vouch.ts
-types/action-result.ts
-types/webhooks.ts
-```
-
-Do not return raw Prisma rows or full Stripe objects.
-
-DTOs expose only UI-safe fields such as:
-
-```txt
-id
-displayId
-amount
-fee
-status
-deadline
-confirmationWindow
-participantRole
-payerConfirmationState
-payeeConfirmationState
-readinessState
-nextAction
-consequenceText
-safeProviderStatus
-```
-
-## Lifecycle Language
-
-Use this lifecycle:
-
-```txt
-Draft / Created
-Invite Sent
-Accepted
-Payment Authorized
-Window Pending
-Window Open
-Payer Confirmed
-Payee Confirmed
-Both Confirmed
-Release Processing
-Completed
-Expired
-Voided
-Refunded
-Payment Failed
-Release Failed
-Refund Failed
-Canceled
-```
-
-Exact enum names must match existing Prisma, contracts, and types. Do not invent incompatible status unions.
+Use Zod schemas for server action inputs in `schemas/*`. Use transport-safe DTOs in `types/*`. Fetchers should return UI-safe data rather than raw Prisma rows or full Stripe objects.
 
 ## UI Design System
 
-All UI must use the Vouch dark brutalist operational SaaS design system.
-
-Required styling:
+All UI should use the Vouch dark brutalist operational SaaS design system:
 
 - `rounded-none`
 - `border border-neutral-700`
@@ -624,86 +321,11 @@ Required styling:
 - dense but intentional spacing
 - mobile-first layout
 
-Do not use:
+Every payment and Vouch screen must visibly show amount, status, required action, deadline/window, and consequence. Status must use text, not color alone.
 
-- `rounded-lg`
-- soft SaaS cards
-- marketplace provider cards
-- rating stars
-- reviews
-- messaging UI
-- public profile cards
-- category filters
-- featured provider blocks
-- dispute/evidence UI
-- decorative green/red-only status meaning
+## Testing And Validation
 
-Every payment and Vouch screen must visibly show:
-
-- amount
-- status
-- required action
-- deadline/window
-- consequence
-
-Status must use text, not color alone.
-
-## Admin Restrictions
-
-Admin may observe and retry safe provider operations only where contracts allow.
-
-Admin must not:
-
-- decide who is right
-- collect stories
-- collect screenshots
-- collect evidence
-- arbitrate disputes
-- manually award funds
-- force release funds
-- rewrite confirmation truth
-- edit confirmation timestamps
-- override deterministic resolution
-
-Admin views may show safe status, safe provider reference, audit trail, webhook event status, retry eligibility, and operational failure badges.
-
-## Testing Requirements
-
-Add or update tests for:
-
-```txt
-tests/unit/vouches/fees.test.ts
-tests/unit/vouches/confirmation.test.ts
-tests/unit/vouches/status.test.ts
-tests/unit/vouches/transactions.test.ts
-tests/unit/payments/payment-intents.test.ts
-tests/unit/payments/stripe-status-map.test.ts
-tests/unit/webhooks/idempotency.test.ts
-tests/unit/webhooks/stripe-webhook-events.test.ts
-tests/contract/no-forbidden-files.test.ts
-tests/e2e/no-forbidden-routes.spec.ts
-tests/e2e/app-route-smoke.spec.ts
-```
-
-Required coverage:
-
-- fee math: max 5% or 500 cents
-- payer/payee role wiring
-- manual capture PaymentIntent creation
-- idempotent capture
-- current PaymentIntent retrieval before settlement
-- duplicate confirmation rejection
-- before-window confirmation rejection
-- after-window confirmation rejection
-- one-sided confirmation does not release funds
-- both confirmations release funds
-- expired incomplete Vouch voids/refunds/non-captures
-- webhook duplicate delivery safety
-- `account.updated` readiness mapping
-- `payment_intent` status mapping
-- no forbidden marketplace/dispute routes/files
-
-## Validation
+Add or update tests that cover changed payment, confirmation, settlement, webhook, fetcher, schema, DTO, transaction, and route-shell behavior.
 
 Run scope-appropriate validation:
 
@@ -728,40 +350,6 @@ pnpm test
 ```
 
 Do not claim validation passed unless it was actually run.
-
-## Implementation Order
-
-1. Normalize provider integration in `lib/integrations/stripe/*`.
-2. Normalize actions in `lib/actions/paymentActions.ts` and `lib/actions/vouchActions.ts`.
-3. Normalize transactions in `lib/db/transactions/*`.
-4. Normalize DTOs and schemas in `types/*` and `schemas/*`.
-5. Normalize UI in existing feature/component files only.
-
-## Final Acceptance Criteria
-
-The implementation is acceptable only when:
-
-```txt
-No marketplace framing exists.
-No forbidden routes exist.
-No public provider directory exists.
-No messaging/reviews/ratings/disputes/evidence exist.
-No app page contains Prisma/payment/business logic.
-No component contains protected fetching/domain mutation.
-No client state is authoritative for confirmation or settlement.
-All protected reads go through fetchers.
-All writes go through server actions/transactions/integrations.
-Stripe SDK calls are isolated in lib/integrations/stripe.
-PaymentIntent capture is manual and idempotent.
-Current provider state is retrieved before settlement.
-Both confirmations within window release funds.
-Anything else resolves to refund, void, or non-capture.
-Provider webhooks reconcile state idempotently.
-UI follows Vouch dark brutalist design system.
-Amount, status, deadline, action, and consequence are visible on Vouch/payment screens.
-Tests cover payment, confirmation, settlement, webhook, and forbidden-route rules.
-Validation passes.
-```
 
 ## Reporting Format
 
@@ -792,15 +380,3 @@ When finished, report:
 
 - ...
 ```
-
-## Final Rule
-
-The product is Vouch.
-
-The product is not a marketplace.
-
-The product is not a judge.
-
-The product is not escrow.
-
-Outcome follows state.

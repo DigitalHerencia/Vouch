@@ -1063,7 +1063,7 @@ export async function evaluateAggregateConfirmation(
 
 export async function completeVouchIfBothConfirmed(
   input: unknown
-): Promise<ActionResult<{ vouchId: string }>> {
+): Promise<ActionResult<{ vouchId: string; completed: boolean }>> {
   const parsed = cancelPendingVouchInputSchema.safeParse(input)
 
   if (!parsed.success) {
@@ -1110,6 +1110,11 @@ export async function completeVouchIfBothConfirmed(
     return actionFailure(release.code, release.message)
   }
 
+  if (release.status !== "released") {
+    await revalidateVouchSurfaces(vouch.id, [vouch.payerId, vouch.payeeId])
+    return actionSuccess({ vouchId: vouch.id, completed: false })
+  }
+
   const completed = await prisma.$transaction(async (tx) => {
     const updated = await markVouchCompletedTx(tx, { vouchId: vouch.id })
 
@@ -1143,7 +1148,7 @@ export async function completeVouchIfBothConfirmed(
   })
 
   await revalidateVouchSurfaces(completed.id, [completed.payerId, completed.payeeId])
-  return actionSuccess({ vouchId: completed.id })
+  return actionSuccess({ vouchId: completed.id, completed: true })
 }
 
 export async function confirmPresence(
@@ -1170,7 +1175,10 @@ export async function confirmPresence(
     )
   }
 
-  return actionSuccess({ vouchId: parsed.vouchId, completed: completion.ok })
+  return actionSuccess({
+    vouchId: parsed.vouchId,
+    completed: completion.ok ? completion.data.completed : false,
+  })
 }
 
 export async function confirmPresenceAction(

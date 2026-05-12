@@ -7,8 +7,8 @@
     {
       "id": "DEC-001",
       "date": "2026-05-12",
-      "title": "Payer/payee paradigm replaces prior role framing",
-      "decision": "Use payer/payee/participant language as the canonical product and implementation vocabulary for new Vouch work.",
+      "title": "Remove word usage governance",
+      "decision": "Governance must preserve architecture, payment, privacy, and settlement invariants without regulating product vocabulary, copy terminology, or implementation naming.",
       "source_refs": ["AGENTS.md", ".agents/docs/prd.md"],
       "status": "accepted"
     },

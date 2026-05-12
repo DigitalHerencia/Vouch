@@ -56,50 +56,6 @@ function toDashboardVouch(vouch: unknown): DashboardVouch {
   }
 }
 
-const fallbackActionRequired: DashboardVouch[] = [
-  {
-    id: "preview-1",
-    href: "/setup",
-    title: "Design consultation",
-    role: "payer",
-    amountLabel: "$200.00",
-    statusLabel: "active",
-    deadlineLabel: "Closes in 01 : 23 : 47",
-    nextActionLabel: "Confirm presence",
-  },
-  {
-    id: "preview-2",
-    href: "/setup",
-    title: "Website review",
-    role: "payer",
-    amountLabel: "$150.00",
-    statusLabel: "active",
-    deadlineLabel: "Closes in 20 : 15 : 12",
-    nextActionLabel: "Confirm presence",
-  },
-]
-
-const fallbackPending: DashboardVouch = {
-  id: "pending-preview",
-  href: "/setup",
-  title: "Brand strategy call",
-  role: "payer",
-  amountLabel: "$200.00",
-  statusLabel: "pending",
-  deadlineLabel: "Expires in 2d : 18h : 32m",
-  nextActionLabel: "Resend invite",
-}
-
-const fallbackCompleted: DashboardVouch = {
-  id: "completed-preview",
-  href: "/setup",
-  title: "UX audit",
-  role: "payee",
-  amountLabel: "+$350.00",
-  statusLabel: "completed",
-  deadlineLabel: "May 20, 3:00 PM",
-}
-
 export async function DashboardPage() {
   const state = await getDashboardPageState()
   const sections = state.summary?.sections
@@ -122,19 +78,13 @@ export async function DashboardPage() {
     },
   ]
 
-  const actionRequired = dashboardSections[0]?.vouches.length
-    ? dashboardSections[0].vouches
-    : fallbackActionRequired
-  const pending = dashboardSections[1]?.vouches.length
-    ? dashboardSections[1].vouches
-    : [fallbackPending]
-  const completed = dashboardSections[2]?.vouches.length
-    ? dashboardSections[2].vouches
-    : [fallbackCompleted]
+  const actionRequired = dashboardSections[0]?.vouches ?? []
+  const pending = dashboardSections[1]?.vouches ?? []
+  const completed = dashboardSections[2]?.vouches ?? []
 
   const pendingCount = sections?.pending?.length ?? 0
   const completedCount = sections?.completed?.length ?? 0
-  const actionRequiredCount = sections?.actionRequired?.length ?? actionRequired.length
+  const actionRequiredCount = sections?.actionRequired?.length ?? 0
   const setupComplete = state.variant !== "empty"
 
   const metrics: MetricGridItem[] = [
@@ -193,6 +143,7 @@ export async function DashboardPage() {
       <DashboardListPanel
         title={`Action required (${actionRequired.length})`}
         description="The next thing to handle. No ambiguity, no buried state."
+        emptyText="No Vouches need action right now."
         icon={Bell}
         rows={actionRequired}
       />
@@ -200,6 +151,7 @@ export async function DashboardPage() {
       <DashboardListPanel
         title={`Pending (${pending.length})`}
         description="Vouches waiting on acceptance or invite follow-up."
+        emptyText="No pending Vouches."
         icon={Clock}
         rows={pending}
       />
@@ -207,6 +159,7 @@ export async function DashboardPage() {
       <DashboardListPanel
         title={`Completed (${completed.length})`}
         description="Outcomes that followed system state."
+        emptyText="No completed Vouches yet."
         icon={CheckCircle2}
         rows={completed}
       />
@@ -226,11 +179,13 @@ export async function DashboardPage() {
 function DashboardListPanel({
   title,
   description,
+  emptyText,
   icon: Icon,
   rows,
 }: {
   title: string
   description: string
+  emptyText: string
   icon: typeof ShieldCheck
   rows: DashboardVouch[]
 }) {
@@ -254,9 +209,13 @@ function DashboardListPanel({
       </SurfaceHeader>
 
       <div>
-        {rows.map((vouch) => (
-          <DashboardVouchRow key={vouch.id} vouch={vouch} />
-        ))}
+        {rows.length ? (
+          rows.map((vouch) => <DashboardVouchRow key={vouch.id} vouch={vouch} />)
+        ) : (
+          <p className="border-t border-neutral-800 px-5 py-6 text-[15px] font-semibold text-neutral-400 sm:px-7">
+            {emptyText}
+          </p>
+        )}
       </div>
     </Surface>
   )

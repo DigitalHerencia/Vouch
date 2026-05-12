@@ -6,10 +6,10 @@ source_of_truth_date: "2026-05-12"
 gates:
   product_boundary:
     pass_when:
-      - "No marketplace framing exists."
-      - "No forbidden routes exist."
       - "No public provider directory exists."
-      - "No messaging/reviews/ratings/disputes/evidence exist."
+      - "No user-to-user messaging surface exists."
+      - "No reputation scoring or adjudication workflow exists."
+      - "No evidence collection or appeal workflow exists."
   architecture:
     pass_when:
       - "No app page contains Prisma/payment/business logic."
@@ -39,8 +39,8 @@ gates:
       - "tests/unit/payments/stripe-status-map.test.ts"
       - "tests/unit/webhooks/idempotency.test.ts"
       - "tests/unit/webhooks/stripe-webhook-events.test.ts"
-      - "tests/contract/no-forbidden-files.test.ts"
-      - "tests/e2e/no-forbidden-routes.spec.ts"
+      - "tests/contract/architecture-surface.test.ts"
+      - "tests/e2e/route-surface.spec.ts"
       - "tests/e2e/app-route-smoke.spec.ts"
     coverage:
       - "fee math: max 5% or 500 cents"
@@ -57,7 +57,7 @@ gates:
       - "webhook duplicate delivery safety"
       - "account.updated readiness mapping"
       - "payment_intent status mapping"
-      - "no forbidden marketplace/dispute routes/files"
+      - "route and file surfaces remain within the contracted architecture"
 
 validation_commands:
   scope_appropriate:

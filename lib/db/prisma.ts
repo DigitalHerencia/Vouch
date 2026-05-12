@@ -14,4 +14,12 @@ if (!connectionString) {
 
 const adapter = new PrismaNeon({ connectionString })
 
-export const prisma = new PrismaClient({ adapter })
+const globalForPrisma = globalThis as typeof globalThis & {
+  prisma?: PrismaClient
+}
+
+export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter })
+
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma
+}

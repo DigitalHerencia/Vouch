@@ -400,8 +400,8 @@ tests/unit/payments/payment-intents.test.ts
 tests/unit/payments/stripe-status-map.test.ts
 tests/unit/webhooks/idempotency.test.ts
 tests/unit/webhooks/stripe-webhook-events.test.ts
-tests/contract/no-forbidden-files.test.ts
-tests/e2e/no-forbidden-routes.spec.ts
+tests/contract/architecture-surface.test.ts
+tests/e2e/route-surface.spec.ts
 tests/e2e/app-route-smoke.spec.ts
 ```
 

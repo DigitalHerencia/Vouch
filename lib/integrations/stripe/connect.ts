@@ -26,6 +26,16 @@ type StripeV2Client = {
   }
 }
 
+function readNestedRecord(record: Record<string, unknown> | undefined, key: string) {
+  const value = record?.[key]
+  return value && typeof value === "object" ? (value as Record<string, unknown>) : undefined
+}
+
+function readNestedString(record: Record<string, unknown> | undefined, key: string) {
+  const value = record?.[key]
+  return typeof value === "string" ? value : undefined
+}
+
 function getStripeV2Core() {
   const stripe = getStripeServerClient() as unknown as StripeV2Client
   const core = stripe.v2?.core
@@ -141,14 +151,24 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
   })) as Record<string, unknown>
 
   const configuration = account.configuration as Record<string, unknown> | undefined
-  const recipient = configuration?.recipient as Record<string, unknown> | undefined
-  const status = recipient?.status
-  const detailsSubmitted = status === "active" || status === "enabled"
+  const recipient = readNestedRecord(configuration, "recipient")
+  const capabilities = readNestedRecord(recipient, "capabilities")
+  const stripeBalance = readNestedRecord(capabilities, "stripe_balance")
+  const stripeTransfers = readNestedRecord(stripeBalance, "stripe_transfers")
+  const transferStatus =
+    readNestedString(stripeTransfers, "status") ?? readNestedString(recipient, "status")
+  const detailsSubmitted = transferStatus === "active" || transferStatus === "enabled"
+  const readiness: PayoutReadinessStatus =
+    transferStatus === "restricted" || transferStatus === "disabled"
+      ? "restricted"
+      : detailsSubmitted
+        ? "ready"
+        : "requires_action"
   const payoutsEnabled = detailsSubmitted
   const chargesEnabled = detailsSubmitted
 
   return {
-    readiness: detailsSubmitted ? "ready" : "requires_action",
+    readiness,
     chargesEnabled,
     payoutsEnabled,
     detailsSubmitted,

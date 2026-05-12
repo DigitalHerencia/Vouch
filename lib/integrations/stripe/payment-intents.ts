@@ -94,3 +94,7 @@ export async function refundStripePayment(input: {
     { idempotencyKey: input.idempotencyKey }
   )
 }
+
+export async function retrieveStripeRefund(input: { providerRefundId: string }): Promise<Stripe.Refund> {
+  return getStripeServerClient().refunds.retrieve(input.providerRefundId)
+}

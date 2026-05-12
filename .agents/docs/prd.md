@@ -2,7 +2,7 @@
 
 Source of truth date: 2026-05-12
 
-This document replaces prior Vouch PRD language. Older merchant/customer, marketplace-adjacent, arbitration, or escrow-adjacent framing is obsolete.
+This document describes the current Vouch product, architecture, and payment requirements.
 
 ## Product Definition
 
@@ -45,7 +45,7 @@ Do not treat payer payment setup and payee payout setup as the same thing.
 
 ## Lifecycle
 
-Use this lifecycle language:
+Lifecycle states must remain compatible with Prisma, contracts, and transport types:
 
 ```txt
 Draft / Created

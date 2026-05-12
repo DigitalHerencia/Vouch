@@ -24,10 +24,7 @@ feature_surface:
     files:
       - "features/payments/payment-setup-page.tsx"
       - "features/payments/payout-setup-page.tsx"
-      - "features/payments/payment-provider-redirect-state.tsx"
-      - "features/payments/payout-provider-redirect-state.tsx"
       - "features/payments/payment-method-ready-state.tsx"
-      - "features/payments/payment-method-failed-state.tsx"
       - "features/payments/payout-ready-state.tsx"
       - "features/payments/payout-restricted-state.tsx"
   vouch_create:
