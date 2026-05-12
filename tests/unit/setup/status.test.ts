@@ -18,26 +18,26 @@ const readyStatus = {
 }
 
 describe("setup status helpers", () => {
-  it("allows create when merchant readiness is complete", () => {
+  it("allows create when payer payment readiness is complete", () => {
     expect(getCreateReadiness(readyStatus).ok).toBe(true)
   })
 
-  it("allows accept when customer readiness is complete", () => {
+  it("allows accept when payee payout readiness is complete", () => {
     expect(getAcceptReadiness(readyStatus).ok).toBe(true)
   })
 
-  it("blocks create when payout setup is missing", () => {
-    const status = { ...readyStatus, payoutReady: false }
-
-    expect(getCreateReadiness(status).ok).toBe(false)
-    expect(getSetupBlockers(status)).toContain("payout_setup_required")
-  })
-
-  it("blocks accept when payment method is missing", () => {
+  it("blocks create when payment setup is missing", () => {
     const status = { ...readyStatus, paymentReady: false }
 
-    expect(getAcceptReadiness(status).ok).toBe(false)
+    expect(getCreateReadiness(status).ok).toBe(false)
     expect(getSetupBlockers(status)).toContain("payment_method_required")
+  })
+
+  it("blocks accept when payout setup is missing", () => {
+    const status = { ...readyStatus, payoutReady: false }
+
+    expect(getAcceptReadiness(status).ok).toBe(false)
+    expect(getSetupBlockers(status)).toContain("payout_setup_required")
   })
 
   it("reports verification-specific blocked state", () => {

@@ -378,6 +378,12 @@ export async function startPaymentMethodSetup(
   })
 }
 
+export async function startPaymentMethodSetupAction(
+  input?: unknown
+): Promise<ActionResult<ProviderRedirectResult>> {
+  return startPaymentMethodSetup(input)
+}
+
 export async function handlePaymentMethodSetupReturn(
   input: unknown
 ): Promise<ActionResult<ReadinessResult>> {
@@ -499,6 +505,12 @@ export async function refreshPaymentReadiness(
   })
 }
 
+export async function refreshPaymentReadinessAction(
+  input?: unknown
+): Promise<ActionResult<ReadinessResult>> {
+  return refreshPaymentReadiness(input)
+}
+
 export async function startPayoutOnboarding(
   input?: unknown
 ): Promise<ActionResult<ProviderRedirectResult>> {
@@ -571,6 +583,63 @@ export async function startPayoutOnboarding(
   redirect(link.url)
 }
 
+export async function startPayoutSetupAction(
+  input?: unknown
+): Promise<ActionResult<ProviderRedirectResult>> {
+  return startPayoutOnboarding(input)
+}
+
+export async function createStripeConnectedAccountAction(): Promise<
+  ActionResult<{ providerAccountId: string }>
+> {
+  const user = await requireActiveUser()
+  const existing = await prisma.connectedAccount.findUnique({
+    where: { userId: user.id },
+    select: { providerAccountId: true },
+  })
+
+  if (existing) {
+    return actionSuccess({ providerAccountId: existing.providerAccountId })
+  }
+
+  const account = await createStripeConnectAccount({
+    userId: user.id,
+    email: user.email,
+    displayName: user.displayName,
+    idempotencyKey: `user:${user.id}:connect_account`,
+  })
+
+  await prisma.$transaction(async (tx) => {
+    await tx.connectedAccount.create({
+      data: {
+        userId: user.id,
+        providerAccountId: account.providerAccountId,
+        readiness: "requires_action",
+      },
+    })
+    await tx.verificationProfile.upsert({
+      where: { userId: user.id },
+      create: { userId: user.id, payoutReadiness: "requires_action" },
+      update: { payoutReadiness: "requires_action" },
+    })
+    await tx.auditEvent.create({
+      data: {
+        eventName: "setup.payout_account_created",
+        actorType: "user",
+        actorUserId: user.id,
+        entityType: "ConnectedAccount",
+        entityId: user.id,
+        participantSafe: false,
+        metadata: { provider: "stripe" },
+      },
+    })
+  })
+
+  await revalidatePaymentSurfaces({ userId: user.id })
+
+  return actionSuccess({ providerAccountId: account.providerAccountId })
+}
+
 export async function openPayoutDashboard(): Promise<never> {
   const user = await requireActiveUser()
   const connectedAccount = await prisma.connectedAccount.findUnique({
@@ -587,6 +656,10 @@ export async function openPayoutDashboard(): Promise<never> {
   })
 
   redirect(link.url)
+}
+
+export async function createStripeAccountSessionAction(): Promise<never> {
+  return openPayoutDashboard()
 }
 
 export async function handlePayoutOnboardingReturn(
@@ -724,6 +797,12 @@ export async function refreshPayoutReadiness(
   })
 }
 
+export async function refreshPayoutReadinessAction(
+  input?: unknown
+): Promise<ActionResult<ReadinessResult>> {
+  return refreshPayoutReadiness(input)
+}
+
 export async function initializeVouchPayment(
   input: unknown
 ): Promise<ActionResult<PaymentActionResult & { clientSecret: string | null }>> {
@@ -761,18 +840,18 @@ export async function initializeVouchPayment(
       },
       payer: {
         select: {
-          connectedAccount: {
+          paymentCustomer: {
             select: {
-              providerAccountId: true,
+              providerCustomerId: true,
             },
           },
         },
       },
       payee: {
         select: {
-          paymentCustomer: {
+          connectedAccount: {
             select: {
-              providerCustomerId: true,
+              providerAccountId: true,
             },
           },
         },
@@ -781,22 +860,23 @@ export async function initializeVouchPayment(
   })
 
   if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (vouch.payeeId !== user.id) {
-    return actionFailure("AUTHZ_DENIED", "Customer access required.")
+  if (vouch.payerId !== user.id) {
+    return actionFailure("AUTHZ_DENIED", "Payer access required.")
   }
-  if (!vouch.payer.connectedAccount?.providerAccountId) {
-    return actionFailure("CONNECTED_ACCOUNT_REQUIRED", "Merchant payout account is required.")
+  if (!vouch.payee?.connectedAccount?.providerAccountId) {
+    return actionFailure("CONNECTED_ACCOUNT_REQUIRED", "Payee payout account is required.")
   }
-  if (!vouch.payee?.paymentCustomer?.providerCustomerId) {
-    return actionFailure("PAYMENT_CUSTOMER_REQUIRED", "Customer payment setup is required.")
+  if (!vouch.payer.paymentCustomer?.providerCustomerId) {
+    return actionFailure("PAYMENT_CUSTOMER_REQUIRED", "Payer payment setup is required.")
   }
 
   const initialized = await initializeStripePaymentForVouch({
     vouchId: vouch.id,
     pricing: getVouchPricingSnapshot(vouch),
     currency: vouch.currency,
-    providerCustomerId: vouch.payee.paymentCustomer.providerCustomerId,
-    connectedAccountId: vouch.payer.connectedAccount.providerAccountId,
+    providerCustomerId: vouch.payer.paymentCustomer.providerCustomerId,
+    connectedAccountId: vouch.payee.connectedAccount.providerAccountId,
+    confirmOffSession: true,
   })
 
   if (!initialized.ok) {
@@ -884,18 +964,18 @@ export async function startVouchCheckoutSession(
       customerTotalCents: true,
       payer: {
         select: {
-          connectedAccount: {
+          paymentCustomer: {
             select: {
-              providerAccountId: true,
+              providerCustomerId: true,
             },
           },
         },
       },
       payee: {
         select: {
-          paymentCustomer: {
+          connectedAccount: {
             select: {
-              providerCustomerId: true,
+              providerAccountId: true,
             },
           },
         },
@@ -904,11 +984,11 @@ export async function startVouchCheckoutSession(
   })
 
   if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (vouch.payeeId !== user.id) {
-    return actionFailure("AUTHZ_DENIED", "Customer access required.")
+  if (vouch.payerId !== user.id) {
+    return actionFailure("AUTHZ_DENIED", "Payer access required.")
   }
-  if (!vouch.payer.connectedAccount?.providerAccountId) {
-    return actionFailure("CONNECTED_ACCOUNT_REQUIRED", "Merchant payout account is required.")
+  if (!vouch.payee?.connectedAccount?.providerAccountId) {
+    return actionFailure("CONNECTED_ACCOUNT_REQUIRED", "Payee payout account is required.")
   }
 
   const appUrl = getAppUrl()
@@ -916,10 +996,10 @@ export async function startVouchCheckoutSession(
     vouchId: vouch.id,
     pricing: getVouchPricingSnapshot(vouch),
     currency: vouch.currency,
-    ...(vouch.payee?.paymentCustomer?.providerCustomerId
-      ? { providerCustomerId: vouch.payee.paymentCustomer.providerCustomerId }
+    ...(vouch.payer.paymentCustomer?.providerCustomerId
+      ? { providerCustomerId: vouch.payer.paymentCustomer.providerCustomerId }
       : {}),
-    connectedAccountId: vouch.payer.connectedAccount.providerAccountId,
+    connectedAccountId: vouch.payee.connectedAccount.providerAccountId,
     successUrl: `${appUrl}/vouches/${vouch.id}?checkout=complete`,
     cancelUrl: `${appUrl}/vouches/${vouch.id}?checkout=cancelled`,
     idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${vouch.id}:checkout_authorization`,
@@ -1707,6 +1787,21 @@ export async function initializeStripePaymentForVouch(
   }
 
   try {
+    const paymentReadiness =
+      input.confirmOffSession && input.providerCustomerId && !input.providerPaymentMethodId
+        ? await getStripeCustomerPaymentReadiness(input.providerCustomerId)
+        : null
+    const providerPaymentMethodId =
+      input.providerPaymentMethodId ?? paymentReadiness?.defaultPaymentMethodId ?? undefined
+
+    if (input.confirmOffSession && input.providerCustomerId && !providerPaymentMethodId) {
+      return {
+        ok: false,
+        code: "PAYMENT_METHOD_REQUIRED",
+        message: "Payer payment setup is not ready.",
+      }
+    }
+
     const paymentIntent = await createStripePaymentAuthorization({
       vouchId: input.vouchId,
       customerTotalCents: input.pricing.customerTotalCents,
@@ -1717,9 +1812,7 @@ export async function initializeStripePaymentForVouch(
       vouchServiceFeeCents: input.pricing.vouchServiceFeeCents,
       processingFeeOffsetCents: input.pricing.processingFeeOffsetCents,
       ...(input.providerCustomerId ? { providerCustomerId: input.providerCustomerId } : {}),
-      ...(input.providerPaymentMethodId
-        ? { providerPaymentMethodId: input.providerPaymentMethodId }
-        : {}),
+      ...(providerPaymentMethodId ? { providerPaymentMethodId } : {}),
       ...(input.connectedAccountId ? { connectedAccountId: input.connectedAccountId } : {}),
       ...(input.confirmOffSession ? { confirmOffSession: input.confirmOffSession } : {}),
       idempotencyKey: input.idempotencyKey ?? `vouch:${input.vouchId}:payment_authorization`,

@@ -2,7 +2,7 @@
   "schema_version": "3.0.0",
   "file": "validation.json",
   "product": "Vouch",
-  "updated_at": "2026-05-12T00:00:00.000Z",
+  "updated_at": "2026-05-12T06:57:20.8307145-06:00",
   "required_commands": [
     "pnpm validate:contracts",
     "pnpm prisma:validate",
@@ -32,6 +32,36 @@
       "status": "pass",
       "run_at": "2026-05-12T00:00:00.000Z",
       "summary": "Prisma schema is valid."
+    },
+    {
+      "command": "pnpm lint",
+      "status": "pass",
+      "run_at": "2026-05-12T06:56:00.0000000-06:00",
+      "summary": "ESLint completed with no reported errors."
+    },
+    {
+      "command": "pnpm typecheck",
+      "status": "pass",
+      "run_at": "2026-05-12T06:56:00.0000000-06:00",
+      "summary": "Next route type generation and TypeScript no-emit check passed."
+    },
+    {
+      "command": "pnpm validate:contracts",
+      "status": "pass",
+      "run_at": "2026-05-12T06:56:07.0000000-06:00",
+      "summary": "Contract validation passed: 7 contracts and 5 execution files."
+    },
+    {
+      "command": "pnpm prisma:validate",
+      "status": "pass",
+      "run_at": "2026-05-12T06:56:07.0000000-06:00",
+      "summary": "Prisma schema is valid."
+    },
+    {
+      "command": "pnpm test",
+      "status": "pass",
+      "run_at": "2026-05-12T07:01:35.0000000-06:00",
+      "summary": "Vitest passed: 22 files, 73 tests."
     }
   ],
   "contract_gates": [
@@ -43,6 +73,7 @@
   ],
   "notes": [
     "Do not mark commands passed unless actually run.",
-    "For this governance-only normalization, pnpm validate:contracts is the smallest useful check."
+    "For this governance-only normalization, pnpm validate:contracts is the smallest useful check.",
+    "Stripe Connect core normalization verified with required payment-domain validation commands."
   ]
 }

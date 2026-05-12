@@ -69,7 +69,7 @@ export function buildSetupStatus(input: BuildSetupStatusInput): SetupStatus {
       status: statusFromPaymentReadiness(normalized.paymentReadiness),
       reason: paymentReady
         ? "Payment setup is ready."
-        : "Add a payment method before accepting Vouches.",
+        : "Add a payment method before creating or funding Vouches.",
       actionHref: "/settings/payment",
       actionLabel: "Set up payment",
     },
@@ -79,7 +79,7 @@ export function buildSetupStatus(input: BuildSetupStatusInput): SetupStatus {
       status: statusFromPayoutReadiness(normalized.payoutReadiness),
       reason: payoutReady
         ? "Payout setup is ready."
-        : "Connect a payout account before creating Vouches.",
+        : "Connect a payout account before accepting Vouches.",
       actionHref: "/settings/payout",
       actionLabel: "Set up payout",
     },
@@ -98,9 +98,9 @@ export function buildSetupStatus(input: BuildSetupStatusInput): SetupStatus {
   return {
     ...normalized,
     canCreateVouch:
-      activeUser && identityVerified && adultVerified && payoutReady && input.termsAccepted,
-    canAcceptVouch:
       activeUser && identityVerified && adultVerified && paymentReady && input.termsAccepted,
+    canAcceptVouch:
+      activeUser && identityVerified && adultVerified && payoutReady && input.termsAccepted,
     checklist,
   }
 }
@@ -111,7 +111,7 @@ export function getCreateReadiness(input: BuildSetupStatusInput): SetupGateResul
     ["account_inactive", normalized.userStatus !== "active"],
     ["identity_verification_required", normalized.identityStatus !== "verified"],
     ["adult_verification_required", normalized.adultStatus !== "verified"],
-    ["payout_setup_required", normalized.payoutReadiness !== "ready"],
+    ["payment_method_required", normalized.paymentReadiness !== "ready"],
     ["terms_acceptance_required", !normalized.termsAccepted],
   ])
 }
@@ -122,7 +122,7 @@ export function getAcceptReadiness(input: BuildSetupStatusInput): SetupGateResul
     ["account_inactive", normalized.userStatus !== "active"],
     ["identity_verification_required", normalized.identityStatus !== "verified"],
     ["adult_verification_required", normalized.adultStatus !== "verified"],
-    ["payment_method_required", normalized.paymentReadiness !== "ready"],
+    ["payout_setup_required", normalized.payoutReadiness !== "ready"],
     ["terms_acceptance_required", !normalized.termsAccepted],
   ])
 }

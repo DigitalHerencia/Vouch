@@ -36,8 +36,8 @@ import {
 } from "@/lib/db/transactions/vouchTransactions"
 import { createInvitationToken, hashInvitationToken } from "@/lib/invitations/tokens"
 import {
-  initializeStripeCheckoutSessionForVouch,
   refundOrVoidStripePaymentForVouch,
+  initializeStripePaymentForVouch,
   releaseStripePaymentForCompletedVouch,
 } from "@/lib/actions/paymentActions"
 import { calculateVouchPricing, type VouchPricing } from "@/lib/vouch/fees"
@@ -119,13 +119,6 @@ function toFeePreview(amountCents: number, currency: "usd"): FeePreview {
     customerTotalCents: pricing?.customerTotalCents ?? amountCents,
     totalCents: pricing?.customerTotalCents ?? amountCents,
   }
-}
-
-function getAppUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
-  )
 }
 
 async function getSetupBlockedFailure(
@@ -348,6 +341,12 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
     invitePath: `/vouches/invite/${inviteToken}`,
     clientSecret: null,
   })
+}
+
+export async function createVouchAction(
+  input: unknown
+): Promise<ActionResult<CreatedVouchResult>> {
+  return createVouch(input)
 }
 
 export async function createVouchInvitation(
@@ -704,15 +703,6 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
       customerTotalCents: true,
       payer: {
         select: {
-          connectedAccount: {
-            select: {
-              providerAccountId: true,
-            },
-          },
-        },
-      },
-      payee: {
-        select: {
           paymentCustomer: {
             select: {
               providerCustomerId: true,
@@ -720,22 +710,30 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
           },
         },
       },
+      payee: {
+        select: {
+          connectedAccount: {
+            select: {
+              providerAccountId: true,
+            },
+          },
+        },
+      },
     },
   })
 
-  const providerCustomerId = paymentContext?.payee?.paymentCustomer?.providerCustomerId
-  const connectedAccountId = paymentContext?.payer.connectedAccount?.providerAccountId
+  const providerCustomerId = paymentContext?.payer.paymentCustomer?.providerCustomerId
+  const connectedAccountId = paymentContext?.payee?.connectedAccount?.providerAccountId
 
   if (!paymentContext || !providerCustomerId || !connectedAccountId) {
     await markVouchFailed({ vouchId: vouch.id })
     return actionFailure(
       "PAYMENT_SETUP_INCOMPLETE",
-      "Customer payment setup and merchant payout setup are required before acceptance can complete."
+      "Payer payment setup and payee payout setup are required before acceptance can complete."
     )
   }
 
-  const appUrl = getAppUrl()
-  const payment = await initializeStripeCheckoutSessionForVouch({
+  const payment = await initializeStripePaymentForVouch({
     vouchId: paymentContext.id,
     pricing:
       paymentContext.customerTotalCents > 0
@@ -751,8 +749,8 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
     currency: paymentContext.currency,
     providerCustomerId,
     connectedAccountId,
-    successUrl: `${appUrl}/vouches/${paymentContext.id}?checkout=complete`,
-    cancelUrl: `${appUrl}/vouches/${paymentContext.id}?checkout=cancelled`,
+    confirmOffSession: true,
+    idempotencyKey: `vouch:${paymentContext.id}:payment_authorization`,
   })
 
   if (!payment.ok) {
@@ -781,6 +779,10 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
   await revalidateVouchSurfaces(vouch.id, [vouch.payerId, user.id])
   if (payment.checkoutUrl) redirect(payment.checkoutUrl)
   return actionSuccess({ vouchId: vouch.id })
+}
+
+export async function acceptVouchAction(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
+  return acceptVouch(input)
 }
 
 export async function declineVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
@@ -833,6 +835,12 @@ export async function declineVouch(input: unknown): Promise<ActionResult<{ vouch
 
   await revalidateVouchSurfaces(invitation.vouch.id, [invitation.vouch.payerId, user.id])
   return actionSuccess({ vouchId: invitation.vouch.id })
+}
+
+export async function declineVouchAction(
+  input: unknown
+): Promise<ActionResult<{ vouchId: string }>> {
+  return declineVouch(input)
 }
 
 export async function cancelPendingVouch(
@@ -1163,6 +1171,12 @@ export async function confirmPresence(
   }
 
   return actionSuccess({ vouchId: parsed.vouchId, completed: completion.ok })
+}
+
+export async function confirmPresenceAction(
+  input: unknown
+): Promise<ActionResult<{ vouchId: string; completed: boolean }>> {
+  return confirmPresence(input)
 }
 
 export async function expireVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {

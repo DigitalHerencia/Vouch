@@ -70,6 +70,10 @@ export async function getPaymentMethodReadiness(userId: string) {
   }
 }
 
+export async function getPaymentReadiness(userId: string) {
+  return getPaymentMethodReadiness(userId)
+}
+
 export async function getPaymentSettingsPageState(userId: string) {
   const readiness = await getPaymentMethodReadiness(userId)
   return {

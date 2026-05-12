@@ -38,13 +38,13 @@ function normalizeSetup(record: SetupChecklistRecord | null) {
       state.userStatus === "active" &&
       state.identityStatus === "verified" &&
       state.adultStatus === "verified" &&
-      state.payoutReadiness === "ready" &&
+      state.paymentReadiness === "ready" &&
       state.termsAccepted,
     acceptReady:
       state.userStatus === "active" &&
       state.identityStatus === "verified" &&
       state.adultStatus === "verified" &&
-      state.paymentReadiness === "ready" &&
+      state.payoutReadiness === "ready" &&
       state.termsAccepted,
     confirmReady: state.userStatus === "active",
   }
@@ -66,18 +66,18 @@ function blockersFor(
 ) {
   const blockers: string[] = []
 
-  if (setup.userStatus !== "active") blockers.push("account_disabled")
+  if (setup.userStatus !== "active") blockers.push("account_inactive")
 
   if (kind !== "confirm") {
     if (setup.identityStatus !== "verified") blockers.push("identity_verification_required")
     if (setup.adultStatus !== "verified") blockers.push("adult_verification_required")
-    if (!setup.termsAccepted) blockers.push("terms_required")
+    if (!setup.termsAccepted) blockers.push("terms_acceptance_required")
   }
 
-  if (kind === "create" && setup.payoutReadiness !== "ready")
-    blockers.push("payout_account_required")
-  if (kind === "accept" && setup.paymentReadiness !== "ready")
+  if (kind === "create" && setup.paymentReadiness !== "ready")
     blockers.push("payment_method_required")
+  if (kind === "accept" && setup.payoutReadiness !== "ready")
+    blockers.push("payout_setup_required")
 
   return blockers
 }

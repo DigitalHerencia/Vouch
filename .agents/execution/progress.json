@@ -2,17 +2,23 @@
   "schema_version": "3.0.0",
   "file": "progress.json",
   "product": "Vouch",
-  "updated_at": "2026-05-12T00:00:00.000Z",
+  "updated_at": "2026-05-12T06:57:20.8307145-06:00",
   "current_source_of_truth": "Architecture-corrected Stripe Connect implementation paradigm",
-  "status": "governance_normalized",
+  "status": "stripe_connect_core_normalized",
   "completed": [
     {
       "id": "GOV-001",
       "title": "Replace root and .agents governance with payer/payee Stripe Connect paradigm",
       "completed_at": "2026-05-12T00:00:00.000Z",
       "paths": ["AGENTS.md", ".agents/docs/prd.md", ".agents/docs/stripe-connect-integration.md", ".agents/contracts", ".agents/instructions/vouch-stripe-connect.agents.md"]
+    },
+    {
+      "id": "VC-001",
+      "title": "Normalize payer/payee readiness gates and Stripe payment authorization roles",
+      "completed_at": "2026-05-12T06:57:20.8307145-06:00",
+      "paths": ["lib/setup/status.ts", "lib/fetchers/setupFetchers.ts", "lib/actions/paymentActions.ts", "lib/actions/vouchActions.ts", "lib/integrations/stripe/connect.ts", "lib/fetchers/paymentFetchers.ts", "tests/unit/setup/status.test.ts"]
     }
   ],
   "in_progress": [],
-  "next": ["VC-001", "VC-002", "VC-003", "VC-004", "VC-005"]
+  "next": ["VC-002", "VC-003", "VC-004", "VC-005"]
 }

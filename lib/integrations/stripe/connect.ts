@@ -90,6 +90,8 @@ export async function createStripeConnectAccount(input: {
   return { providerAccountId: account.id }
 }
 
+export const createConnectedAccount = createStripeConnectAccount
+
 export async function createStripeConnectOnboardingLink(input: {
   providerAccountId: string
   refreshUrl: string
@@ -115,6 +117,8 @@ export async function createStripeConnectOnboardingLink(input: {
   return { url: link.url }
 }
 
+export const createConnectedAccountOnboardingSession = createStripeConnectOnboardingLink
+
 export async function createStripeConnectDashboardLink(input: {
   providerAccountId: string
 }): Promise<{ url: string }> {
@@ -122,6 +126,8 @@ export async function createStripeConnectDashboardLink(input: {
 
   return { url: link.url }
 }
+
+export const createConnectedAccountManagementSession = createStripeConnectDashboardLink
 
 export async function refreshStripeConnectReadiness(input: { providerAccountId: string }): Promise<{
   readiness: PayoutReadinessStatus
@@ -148,3 +154,6 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
     detailsSubmitted,
   }
 }
+
+export const retrieveConnectedAccount = refreshStripeConnectReadiness
+export const mapConnectedAccountReadiness = refreshStripeConnectReadiness
