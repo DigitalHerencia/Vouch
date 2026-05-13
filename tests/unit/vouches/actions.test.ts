@@ -8,7 +8,7 @@ vi.mock("@/lib/fetchers/authFetchers", () => ({
   requireActiveUser: vi.fn().mockResolvedValue({ id: "user_1", status: "active" }),
 }))
 
-vi.mock("@/lib/fetchers/setupFetchers", () => ({
+vi.mock("@/lib/fetchers/readinessFetchers", () => ({
   assertCreateVouchReadinessReady: vi.fn(),
   assertAcceptVouchReadinessReady: vi.fn(),
 }))
@@ -46,17 +46,13 @@ vi.mock("@/lib/actions/transactions/invitationTransactions", async (importOrigin
   }
 })
 
-vi.mock("@/lib/actions/transactions/notificationTransactions", () => ({
-  queueNotificationTx: vi.fn(),
-}))
-
 describe("vouch actions", () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it("returns an ActionResult when create setup is blocked", async () => {
-    const { assertCreateVouchReadinessReady } = await import("@/lib/fetchers/setupFetchers")
+  it("returns an ActionResult when create readiness is blocked", async () => {
+    const { assertCreateVouchReadinessReady } = await import("@/lib/fetchers/readinessFetchers")
     const { createVouch } = await import("@/lib/actions/vouchActions")
 
     vi.mocked(assertCreateVouchReadinessReady).mockRejectedValueOnce(
@@ -79,8 +75,8 @@ describe("vouch actions", () => {
     })
   })
 
-  it("returns an ActionResult when accept setup is blocked", async () => {
-    const { assertAcceptVouchReadinessReady } = await import("@/lib/fetchers/setupFetchers")
+  it("returns an ActionResult when accept readiness is blocked", async () => {
+    const { assertAcceptVouchReadinessReady } = await import("@/lib/fetchers/readinessFetchers")
     const { acceptVouch } = await import("@/lib/actions/vouchActions")
 
     vi.mocked(assertAcceptVouchReadinessReady).mockRejectedValueOnce(

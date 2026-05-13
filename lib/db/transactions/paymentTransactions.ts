@@ -3,10 +3,12 @@ import "server-only"
 import type {
   PaymentProvider,
   PaymentStatus,
+  Prisma,
   PrismaClient,
   RefundReason,
   RefundStatus,
   SettlementStatus,
+  WebhookProvider,
 } from "@/prisma/generated/prisma/client"
 
 type Tx = Omit<
@@ -70,6 +72,30 @@ export type CreateRefundRecordTxInput = {
 
 export async function upsertPaymentRecordTx(tx: Tx, input: UpsertPaymentRecordTxInput) {
   const lastProviderSyncAt = input.lastProviderSyncAt ?? new Date()
+  const update: Prisma.PaymentRecordUpdateInput = {
+    status: input.status,
+    settlementStatus: input.settlementStatus,
+    lastProviderSyncAt,
+    lastErrorCode: input.lastErrorCode ?? null,
+    lastErrorMessage: input.lastErrorMessage ?? null,
+  }
+
+  if (input.providerPaymentIntentId !== undefined) {
+    update.providerPaymentIntentId = input.providerPaymentIntentId
+  }
+  if (input.providerCheckoutSessionId !== undefined) {
+    update.providerCheckoutSessionId = input.providerCheckoutSessionId
+  }
+  if (input.providerChargeId !== undefined) update.providerChargeId = input.providerChargeId
+  if (input.providerTransferId !== undefined) update.providerTransferId = input.providerTransferId
+  if (input.amountCapturableCents !== undefined) {
+    update.amountCapturableCents = input.amountCapturableCents
+  }
+  if (input.captureBefore !== undefined) update.captureBefore = input.captureBefore
+  if (input.authorizedAt !== undefined) update.authorizedAt = input.authorizedAt
+  if (input.capturedAt !== undefined) update.capturedAt = input.capturedAt
+  if (input.canceledAt !== undefined) update.canceledAt = input.canceledAt
+  if (input.failedAt !== undefined) update.failedAt = input.failedAt
 
   return tx.paymentRecord.upsert({
     where: { vouchId: input.vouchId },
@@ -100,23 +126,7 @@ export async function upsertPaymentRecordTx(tx: Tx, input: UpsertPaymentRecordTx
       lastErrorCode: input.lastErrorCode ?? null,
       lastErrorMessage: input.lastErrorMessage ?? null,
     },
-    update: {
-      providerPaymentIntentId: input.providerPaymentIntentId ?? undefined,
-      providerCheckoutSessionId: input.providerCheckoutSessionId ?? undefined,
-      providerChargeId: input.providerChargeId ?? undefined,
-      providerTransferId: input.providerTransferId ?? undefined,
-      status: input.status,
-      settlementStatus: input.settlementStatus,
-      amountCapturableCents: input.amountCapturableCents ?? undefined,
-      captureBefore: input.captureBefore ?? undefined,
-      authorizedAt: input.authorizedAt ?? undefined,
-      capturedAt: input.capturedAt ?? undefined,
-      canceledAt: input.canceledAt ?? undefined,
-      failedAt: input.failedAt ?? undefined,
-      lastProviderSyncAt,
-      lastErrorCode: input.lastErrorCode ?? null,
-      lastErrorMessage: input.lastErrorMessage ?? null,
-    },
+    update,
     select: {
       id: true,
       vouchId: true,
@@ -131,24 +141,31 @@ export async function updatePaymentProviderStateTx(
   tx: Tx,
   input: UpdatePaymentProviderStateTxInput
 ) {
+  const data: Prisma.PaymentRecordUpdateInput = {
+    status: input.status,
+    settlementStatus: input.settlementStatus,
+    lastProviderSyncAt: new Date(),
+    lastErrorCode: input.lastErrorCode ?? null,
+    lastErrorMessage: input.lastErrorMessage ?? null,
+  }
+
+  if (input.providerPaymentIntentId !== undefined) {
+    data.providerPaymentIntentId = input.providerPaymentIntentId
+  }
+  if (input.providerChargeId !== undefined) data.providerChargeId = input.providerChargeId
+  if (input.providerTransferId !== undefined) data.providerTransferId = input.providerTransferId
+  if (input.amountCapturableCents !== undefined) {
+    data.amountCapturableCents = input.amountCapturableCents
+  }
+  if (input.captureBefore !== undefined) data.captureBefore = input.captureBefore
+  if (input.authorizedAt !== undefined) data.authorizedAt = input.authorizedAt
+  if (input.capturedAt !== undefined) data.capturedAt = input.capturedAt
+  if (input.canceledAt !== undefined) data.canceledAt = input.canceledAt
+  if (input.failedAt !== undefined) data.failedAt = input.failedAt
+
   return tx.paymentRecord.update({
     where: { id: input.paymentRecordId },
-    data: {
-      providerPaymentIntentId: input.providerPaymentIntentId ?? undefined,
-      providerChargeId: input.providerChargeId ?? undefined,
-      providerTransferId: input.providerTransferId ?? undefined,
-      status: input.status,
-      settlementStatus: input.settlementStatus,
-      amountCapturableCents: input.amountCapturableCents ?? undefined,
-      captureBefore: input.captureBefore ?? undefined,
-      authorizedAt: input.authorizedAt ?? undefined,
-      capturedAt: input.capturedAt ?? undefined,
-      canceledAt: input.canceledAt ?? undefined,
-      failedAt: input.failedAt ?? undefined,
-      lastProviderSyncAt: new Date(),
-      lastErrorCode: input.lastErrorCode ?? null,
-      lastErrorMessage: input.lastErrorMessage ?? null,
-    },
+    data,
     select: {
       id: true,
       vouchId: true,
@@ -184,21 +201,26 @@ export async function createRefundRecordTx(tx: Tx, input: CreateRefundRecordTxIn
 export async function recordProviderWebhookReceivedTx(
   tx: Tx,
   input: {
+    provider?: WebhookProvider
     providerEventId: string
     eventType: string
     safeMetadata?: Record<string, unknown>
   }
 ) {
+  const data: Prisma.ProviderWebhookEventCreateInput = {
+    provider: input.provider ?? "stripe",
+    providerEventId: input.providerEventId,
+    eventType: input.eventType,
+    status: "received",
+    processed: false,
+  }
+  if (input.safeMetadata !== undefined) {
+    data.safeMetadata = input.safeMetadata as Prisma.InputJsonObject
+  }
+
   try {
     const event = await tx.providerWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: input.providerEventId,
-        eventType: input.eventType,
-        status: "received",
-        processed: false,
-        safeMetadata: input.safeMetadata,
-      },
+      data,
       select: { id: true, providerEventId: true, eventType: true, processed: true },
     })
 
@@ -207,7 +229,7 @@ export async function recordProviderWebhookReceivedTx(
     const existing = await tx.providerWebhookEvent.findUnique({
       where: {
         provider_providerEventId: {
-          provider: "stripe",
+          provider: input.provider ?? "stripe",
           providerEventId: input.providerEventId,
         },
       },

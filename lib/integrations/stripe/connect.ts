@@ -1,6 +1,6 @@
 import "server-only"
 
-import type { PayoutReadinessStatus } from "@/types/setup"
+import type { PayoutReadinessStatus } from "@/types/payment"
 
 import { getStripeServerClient } from "./client"
 

@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
   const processed = await processStripeWebhookEvent(verified.event)
 
   if (!processed.ok) {
-    return NextResponse.json({ ok: false, error: processed.message }, { status: 200 })
+    return NextResponse.json({ ok: false, error: processed.formError }, { status: 200 })
   }
 
   return NextResponse.json({

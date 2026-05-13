@@ -34,7 +34,10 @@ import {
 } from "@/lib/vouch/fees"
 import { prisma } from "@/lib/db/prisma"
 import { hashInvitationToken } from "@/lib/invitations/tokens"
-import { getAcceptVouchSetupGate, getCreateVouchSetupGate } from "@/lib/fetchers/setupFetchers"
+import {
+  getAcceptVouchReadinessGate,
+  getCreateVouchReadinessGate,
+} from "@/lib/fetchers/readinessFetchers"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import {
   vouchCardSelect,
@@ -160,7 +163,7 @@ async function getInvitationByToken(token: string) {
 export async function getCreateVouchPageState(input?: { userId?: string }) {
   const user = await requireActiveUser()
   const userId = input?.userId ?? user.id
-  const gate = await getCreateVouchSetupGate(userId)
+  const gate = await getCreateVouchReadinessGate(userId)
 
   return {
     variant: gate.allowed ? "ready" : "blocked",
@@ -170,7 +173,7 @@ export async function getCreateVouchPageState(input?: { userId?: string }) {
 }
 
 export async function getCreateVouchBlockedState(userId: string) {
-  const gate = await getCreateVouchSetupGate(userId)
+  const gate = await getCreateVouchReadinessGate(userId)
 
   return {
     variant: "blocked",
@@ -211,7 +214,7 @@ export async function getCreateVouchReviewState(input: {
   label?: string | null
 }) {
   const user = await requireActiveUser()
-  const gate = await getCreateVouchSetupGate(user.id)
+  const gate = await getCreateVouchReadinessGate(user.id)
   const fee = await getCreateVouchFeePreview(input)
 
   return {
@@ -298,7 +301,7 @@ export async function getInviteLandingAuthenticatedState(input: {
   }
 
   const gate = input.userId
-    ? await getAcceptVouchSetupGate({ userId: input.userId })
+    ? await getAcceptVouchReadinessGate({ userId: input.userId })
     : { allowed: false, blockers: ["unauthorized"] }
 
   return {
@@ -343,7 +346,7 @@ export async function getAcceptVouchPageState(input: { token: string; userId?: s
 }
 
 export async function getAcceptVouchSetupBlockedState(input: { token: string; userId: string }) {
-  const gate = await getAcceptVouchSetupGate({ userId: input.userId })
+  const gate = await getAcceptVouchReadinessGate({ userId: input.userId })
 
   return {
     variant: "setup_blocked",
@@ -353,7 +356,7 @@ export async function getAcceptVouchSetupBlockedState(input: { token: string; us
 }
 
 export async function getAcceptVouchPayoutRequiredState(input: { token: string; userId: string }) {
-  const gate = await getAcceptVouchSetupGate({ userId: input.userId })
+  const gate = await getAcceptVouchReadinessGate({ userId: input.userId })
 
   return {
     variant: "payout_required",
@@ -363,7 +366,7 @@ export async function getAcceptVouchPayoutRequiredState(input: { token: string; 
 }
 
 export async function getAcceptVouchTermsRequiredState(input: { token: string; userId: string }) {
-  const gate = await getAcceptVouchSetupGate({ userId: input.userId })
+  const gate = await getAcceptVouchReadinessGate({ userId: input.userId })
 
   return {
     variant: "terms_required",

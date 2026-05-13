@@ -5,20 +5,11 @@ import type Stripe from "stripe"
 import { getStripeClient } from "@/lib/integrations/stripe/client"
 import { getStripeRuntimeConfig } from "@/lib/integrations/stripe/config"
 
-export type StripeWebhookEvent = Stripe.Event | Stripe.V2.Core.EventNotification
+export type StripeWebhookEvent = Stripe.Event
 
 export type StripeWebhookVerificationResult =
   | { ok: true; event: StripeWebhookEvent }
   | { ok: false; status: 400; message: string }
-
-function isStripeV2EventNotificationPayload(rawBody: string): boolean {
-  try {
-    const payload = JSON.parse(rawBody) as { object?: unknown }
-    return payload.object === "v2.core.event"
-  } catch {
-    return false
-  }
-}
 
 export async function verifyStripeWebhookEvent(
   rawBody: string,
@@ -32,19 +23,11 @@ export async function verifyStripeWebhookEvent(
   const stripe = getStripeClient()
 
   try {
-    const event = isStripeV2EventNotificationPayload(rawBody)
-      ? stripe.parseEventNotification(rawBody, signatureHeader, webhookSecret)
-      : stripe.webhooks.constructEvent(rawBody, signatureHeader, webhookSecret)
+    const event = stripe.webhooks.constructEvent(rawBody, signatureHeader, webhookSecret)
     return { ok: true, event }
   } catch {
     return { ok: false, status: 400, message: "Invalid Stripe webhook signature." }
   }
-}
-
-export function isStripeV2WebhookEvent(
-  event: StripeWebhookEvent
-): event is Stripe.V2.Core.EventNotification {
-  return event.object === "v2.core.event"
 }
 
 export function isStripePaymentIntentEvent(event: StripeWebhookEvent): boolean {

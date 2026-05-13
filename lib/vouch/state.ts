@@ -3,22 +3,23 @@ import type { AggregateConfirmationStatus, ParticipantRole, VouchStatus } from "
 import { isConfirmationWindowClosed, isConfirmationWindowOpen, type DateLike } from "./time-windows"
 
 export type ConfirmationStateInput = {
-  payerConfirmed: boolean
-  payeeConfirmed: boolean
+  merchantConfirmed: boolean
+  customerConfirmed: boolean
 }
 
 export type VouchDetailVariant =
-  | "pending"
-  | "active_before_window"
-  | "active_window_open"
-  | "payer_confirmed"
-  | "payee_confirmed"
-  | "processing_release"
+  | "draft"
+  | "committed"
+  | "sent"
+  | "accepted"
+  | "authorized"
+  | "confirmable_before_window"
+  | "confirmable_window_open"
+  | "merchant_confirmed_waiting_for_customer"
+  | "customer_confirmed_waiting_for_merchant"
+  | "both_confirmed_processing_capture"
   | "completed"
   | "expired"
-  | "refunded"
-  | "canceled"
-  | "failed"
 
 export type VouchTransition = {
   from: VouchStatus
@@ -26,11 +27,12 @@ export type VouchTransition = {
 }
 
 export type NextVouchActionKind =
+  | "commit"
   | "accept"
-  | "cancel"
+  | "authorize"
   | "confirm_presence"
   | "waiting"
-  | "setup_required"
+  | "readiness_required"
   | "view_outcome"
   | "none"
 
@@ -45,7 +47,7 @@ export type DeriveDetailVariantInput = ConfirmationStateInput & {
   now?: DateLike
   confirmationOpensAt?: DateLike
   confirmationExpiresAt?: DateLike
-  paymentReleasePending?: boolean
+  paymentCapturePending?: boolean
 }
 
 export type DeriveNextVouchActionInput = ConfirmationStateInput & {
@@ -55,17 +57,18 @@ export type DeriveNextVouchActionInput = ConfirmationStateInput & {
   now?: DateLike
   confirmationOpensAt?: DateLike
   confirmationExpiresAt?: DateLike
-  setupBlocked?: boolean
+  readinessBlocked?: boolean
 }
 
 const ALLOWED_TRANSITIONS: ReadonlyMap<VouchStatus, readonly VouchStatus[]> = new Map([
-  ["pending", ["active", "canceled", "expired", "refunded", "failed"]],
-  ["active", ["completed", "expired", "failed"]],
-  ["expired", ["refunded", "failed"]],
+  ["draft", ["committed", "sent", "expired"]],
+  ["committed", ["sent", "accepted", "expired"]],
+  ["sent", ["accepted", "expired"]],
+  ["accepted", ["authorized", "expired"]],
+  ["authorized", ["confirmable", "completed", "expired"]],
+  ["confirmable", ["completed", "expired"]],
   ["completed", []],
-  ["refunded", []],
-  ["canceled", []],
-  ["failed", []],
+  ["expired", []],
 ])
 
 function withOptionalHref(action: Omit<NextVouchAction, "href">, href?: string): NextVouchAction {
@@ -82,20 +85,15 @@ function buildWindowInput(input: {
     confirmationExpiresAt: input.confirmationExpiresAt,
   }
 
-  return input.now === undefined
-    ? windowInput
-    : {
-        ...windowInput,
-        now: input.now,
-      }
+  return input.now === undefined ? windowInput : { ...windowInput, now: input.now }
 }
 
 export function deriveAggregateConfirmationStatus(
   input: ConfirmationStateInput
 ): AggregateConfirmationStatus {
-  if (input.payerConfirmed && input.payeeConfirmed) return "both_confirmed"
-  if (input.payerConfirmed) return "payer_confirmed"
-  if (input.payeeConfirmed) return "payee_confirmed"
+  if (input.merchantConfirmed && input.customerConfirmed) return "both_confirmed"
+  if (input.merchantConfirmed) return "merchant_confirmed"
+  if (input.customerConfirmed) return "customer_confirmed"
   return "none_confirmed"
 }
 
@@ -110,79 +108,67 @@ export function assertValidVouchTransition({ from, to }: VouchTransition): void 
 }
 
 export function deriveVouchDetailVariant(input: DeriveDetailVariantInput): VouchDetailVariant {
-  switch (input.status) {
-    case "pending":
-    case "completed":
-    case "expired":
-    case "refunded":
-    case "canceled":
-    case "failed":
-      return input.status
-    case "active": {
-      if (input.paymentReleasePending) return "processing_release"
+  if (input.status === "completed" || input.status === "expired") return input.status
 
-      const aggregateStatus = deriveAggregateConfirmationStatus(input)
+  if (input.status === "confirmable") {
+    if (input.paymentCapturePending) return "both_confirmed_processing_capture"
 
-      if (aggregateStatus === "both_confirmed") return "processing_release"
-      if (aggregateStatus === "payer_confirmed") return "payer_confirmed"
-      if (aggregateStatus === "payee_confirmed") return "payee_confirmed"
+    const aggregateStatus = deriveAggregateConfirmationStatus(input)
 
-      if (
-        input.confirmationOpensAt !== undefined &&
-        input.confirmationExpiresAt !== undefined &&
-        isConfirmationWindowOpen(
-          buildWindowInput({
-            now: input.now ?? new Date(),
-            confirmationOpensAt: input.confirmationOpensAt,
-            confirmationExpiresAt: input.confirmationExpiresAt,
-          })
-        )
-      ) {
-        return "active_window_open"
-      }
+    if (aggregateStatus === "both_confirmed") return "both_confirmed_processing_capture"
+    if (aggregateStatus === "merchant_confirmed") return "merchant_confirmed_waiting_for_customer"
+    if (aggregateStatus === "customer_confirmed") return "customer_confirmed_waiting_for_merchant"
+
+    if (
+      input.confirmationOpensAt !== undefined &&
+      input.confirmationExpiresAt !== undefined &&
+      isConfirmationWindowOpen(
+        buildWindowInput({
+          now: input.now ?? new Date(),
+          confirmationOpensAt: input.confirmationOpensAt,
+          confirmationExpiresAt: input.confirmationExpiresAt,
+        })
+      )
+    ) {
+      return "confirmable_window_open"
     }
+
+    return "confirmable_before_window"
   }
-  return "active_before_window"
+
+  return input.status
 }
 
 export function deriveNextVouchAction(input: DeriveNextVouchActionInput): NextVouchAction {
-  if (input.setupBlocked) {
+  if (input.readinessBlocked) {
     return {
-      kind: "setup_required",
-      label: "Finish setup",
-      href: "/setup",
+      kind: "readiness_required",
+      label: "Complete readiness",
+      href: "/dashboard",
     }
   }
 
-  if (input.status === "pending") {
-    if (input.role === "payer") {
+  if (input.status === "sent" || input.status === "committed") {
+    if (input.role === "customer") {
       return withOptionalHref(
-        {
-          kind: "cancel",
-          label: "Cancel pending Vouch",
-        },
+        { kind: "accept", label: "Review and accept Vouch" },
         input.vouchId ? `/vouches/${input.vouchId}` : undefined
       )
     }
 
-    return withOptionalHref(
-      {
-        kind: "accept",
-        label: "Review and accept Vouch",
-      },
-      input.vouchId ? `/vouches/${input.vouchId}` : undefined
-    )
+    return { kind: "waiting", label: "Waiting for customer authorization" }
   }
 
-  if (input.status === "active") {
+  if (input.status === "accepted" || input.status === "authorized") {
+    return { kind: "waiting", label: "Waiting for confirmation window" }
+  }
+
+  if (input.status === "confirmable") {
     const currentUserConfirmed =
-      input.role === "payer" ? input.payerConfirmed : input.payeeConfirmed
+      input.role === "merchant" ? input.merchantConfirmed : input.customerConfirmed
 
     if (currentUserConfirmed) {
-      return {
-        kind: "waiting",
-        label: "Waiting for the other party",
-      }
+      return { kind: "waiting", label: "Waiting for the other participant" }
     }
 
     if (
@@ -197,11 +183,8 @@ export function deriveNextVouchAction(input: DeriveNextVouchActionInput): NextVo
       )
     ) {
       return withOptionalHref(
-        {
-          kind: "confirm_presence",
-          label: "Confirm presence",
-        },
-        input.vouchId ? `/vouches/${input.vouchId}/confirm` : undefined
+        { kind: "confirm_presence", label: "Confirm presence" },
+        input.vouchId ? `/vouches/${input.vouchId}` : undefined
       )
     }
 
@@ -217,25 +200,16 @@ export function deriveNextVouchAction(input: DeriveNextVouchActionInput): NextVo
       )
     ) {
       return withOptionalHref(
-        {
-          kind: "view_outcome",
-          label: "View expiration outcome",
-        },
+        { kind: "view_outcome", label: "View expiration outcome" },
         input.vouchId ? `/vouches/${input.vouchId}` : undefined
       )
     }
 
-    return {
-      kind: "waiting",
-      label: "Waiting for confirmation window",
-    }
+    return { kind: "waiting", label: "Waiting for confirmation window" }
   }
 
   return withOptionalHref(
-    {
-      kind: "view_outcome",
-      label: "View final outcome",
-    },
+    { kind: "view_outcome", label: "View final outcome" },
     input.vouchId ? `/vouches/${input.vouchId}` : undefined
   )
 }

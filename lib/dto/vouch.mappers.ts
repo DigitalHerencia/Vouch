@@ -54,21 +54,21 @@ type InvitationRecord = {
 
 type VouchBaseRecord = {
   id: string
-  publicId: string
-  merchantId: string
-  customerId: string | null
+  publicId?: string
+  merchantId?: string
+  customerId?: string | null
   status: VouchStatus
   archiveStatus?: string
   recoveryStatus?: string
-  currency: string
-  protectedAmountCents: number
+  currency?: string
+  protectedAmountCents?: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
   processingFeeOffsetCents?: number
   applicationFeeAmountCents?: number
-  customerTotalCents: number
+  customerTotalCents?: number
   label?: string | null
-  appointmentStartsAt: DateLike
+  appointmentStartsAt?: DateLike
   confirmationOpensAt: DateLike
   confirmationExpiresAt: DateLike
   committedAt?: DateLike
@@ -78,8 +78,8 @@ type VouchBaseRecord = {
   confirmableAt?: DateLike
   completedAt?: DateLike
   expiredAt?: DateLike
-  createdAt: DateLike
-  updatedAt: DateLike
+  createdAt?: DateLike
+  updatedAt?: DateLike
   merchant?: SafeUserRecord
   customer?: SafeUserRecord | null
   invitation?: InvitationRecord | null
@@ -271,14 +271,14 @@ export function mapVouchCardDTO(record: VouchBaseRecord): VouchCardDTO {
 
   return {
     id: record.id,
-    publicId: record.publicId,
-    merchantId: record.merchantId,
-    customerId: record.customerId,
+    publicId: record.publicId ?? record.id,
+    merchantId: record.merchantId ?? "",
+    customerId: record.customerId ?? null,
     status: record.status,
     archiveStatus: record.archiveStatus ?? "active",
-    currency: record.currency,
-    protectedAmountCents: record.protectedAmountCents,
-    customerTotalCents: record.customerTotalCents,
+    currency: record.currency ?? "usd",
+    protectedAmountCents: record.protectedAmountCents ?? 0,
+    customerTotalCents: record.customerTotalCents ?? record.protectedAmountCents ?? 0,
     appointmentStartsAt: toIso(record.appointmentStartsAt),
     confirmationOpensAt: toIso(record.confirmationOpensAt),
     confirmationExpiresAt: toIso(record.confirmationExpiresAt),
@@ -298,7 +298,7 @@ export function mapVouchDetailDTO(record: VouchBaseRecord): VouchDetailDTO {
   return {
     ...card,
     recoveryStatus: record.recoveryStatus ?? "normal",
-    merchantReceivesCents: record.merchantReceivesCents ?? record.protectedAmountCents,
+    merchantReceivesCents: record.merchantReceivesCents ?? record.protectedAmountCents ?? 0,
     vouchServiceFeeCents: record.vouchServiceFeeCents ?? 0,
     processingFeeOffsetCents: record.processingFeeOffsetCents ?? 0,
     applicationFeeAmountCents: record.applicationFeeAmountCents ?? 0,
@@ -339,8 +339,8 @@ export function mapVouchConfirmationStateDTO(record: VouchBaseRecord): VouchConf
 
   return {
     id: record.id,
-    merchantId: record.merchantId,
-    customerId: record.customerId,
+    merchantId: record.merchantId ?? "",
+    customerId: record.customerId ?? null,
     status: record.status,
     confirmationOpensAt: toIso(record.confirmationOpensAt),
     confirmationExpiresAt: toIso(record.confirmationExpiresAt),

@@ -33,7 +33,7 @@ export type PaymentRecordParticipantDTO = {
   canceledAt: ISODateTime | null
   failedAt: ISODateTime | null
   lastProviderSyncAt: ISODateTime | null
-  lastErrorCode: string | null
+  lastErrorCode?: string | null
   lastErrorMessage: string | null
   createdAt: ISODateTime
   updatedAt: ISODateTime
@@ -53,31 +53,31 @@ export type RefundRecordParticipantDTO = {
 
 type PaymentRecordRecord = {
   id: string
-  vouchId: string
-  provider: string
-  providerPaymentIntentId: string | null
-  providerCheckoutSessionId: string | null
+  vouchId?: string
+  provider?: string
+  providerPaymentIntentId?: string | null
+  providerCheckoutSessionId?: string | null
   status: string
   settlementStatus: string
-  amountCents: number
-  currency: string
-  protectedAmountCents: number
-  merchantReceivesCents: number
-  vouchServiceFeeCents: number
-  processingFeeOffsetCents: number
-  applicationFeeAmountCents: number
-  customerTotalCents: number
-  amountCapturableCents: number
-  captureBefore: DateLike
-  authorizedAt: DateLike
-  capturedAt: DateLike
-  canceledAt: DateLike
-  failedAt: DateLike
-  lastProviderSyncAt: DateLike
-  lastErrorCode: string | null
-  lastErrorMessage: string | null
-  createdAt: Date | string
-  updatedAt: Date | string
+  amountCents?: number
+  currency?: string
+  protectedAmountCents?: number
+  merchantReceivesCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  applicationFeeAmountCents?: number
+  customerTotalCents?: number
+  amountCapturableCents?: number
+  captureBefore?: DateLike
+  authorizedAt?: DateLike
+  capturedAt?: DateLike
+  canceledAt?: DateLike
+  failedAt?: DateLike
+  lastProviderSyncAt?: DateLike
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 type RefundRecordRecord = {
@@ -99,29 +99,29 @@ export function mapPaymentRecordParticipantDTO(
 
   return {
     id: record.id,
-    vouchId: record.vouchId,
-    provider: record.provider,
-    providerPaymentIntentId: record.providerPaymentIntentId,
-    providerCheckoutSessionId: record.providerCheckoutSessionId,
+    vouchId: record.vouchId ?? "",
+    provider: record.provider ?? "stripe",
+    providerPaymentIntentId: record.providerPaymentIntentId ?? null,
+    providerCheckoutSessionId: record.providerCheckoutSessionId ?? null,
     status: record.status,
     settlementStatus: record.settlementStatus,
-    amountCents: record.amountCents,
-    currency: record.currency,
-    protectedAmountCents: record.protectedAmountCents,
-    merchantReceivesCents: record.merchantReceivesCents,
-    vouchServiceFeeCents: record.vouchServiceFeeCents,
-    processingFeeOffsetCents: record.processingFeeOffsetCents,
-    applicationFeeAmountCents: record.applicationFeeAmountCents,
-    customerTotalCents: record.customerTotalCents,
-    amountCapturableCents: record.amountCapturableCents,
+    amountCents: record.amountCents ?? 0,
+    currency: record.currency ?? "usd",
+    protectedAmountCents: record.protectedAmountCents ?? record.amountCents ?? 0,
+    merchantReceivesCents: record.merchantReceivesCents ?? record.amountCents ?? 0,
+    vouchServiceFeeCents: record.vouchServiceFeeCents ?? 0,
+    processingFeeOffsetCents: record.processingFeeOffsetCents ?? 0,
+    applicationFeeAmountCents: record.applicationFeeAmountCents ?? 0,
+    customerTotalCents: record.customerTotalCents ?? record.amountCents ?? 0,
+    amountCapturableCents: record.amountCapturableCents ?? 0,
     captureBefore: toIso(record.captureBefore),
     authorizedAt: toIso(record.authorizedAt),
     capturedAt: toIso(record.capturedAt),
     canceledAt: toIso(record.canceledAt),
     failedAt: toIso(record.failedAt),
     lastProviderSyncAt: toIso(record.lastProviderSyncAt),
-    lastErrorCode: record.lastErrorCode,
-    lastErrorMessage: record.lastErrorMessage,
+    lastErrorCode: record.lastErrorCode ?? null,
+    lastErrorMessage: record.lastErrorMessage ?? null,
     createdAt: toIso(record.createdAt) ?? "",
     updatedAt: toIso(record.updatedAt) ?? "",
   }

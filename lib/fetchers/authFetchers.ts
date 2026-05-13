@@ -23,9 +23,9 @@ type CurrentUserAuthRecord = {
   verificationProfile: {
     identityStatus: string
     adultStatus: string
-    paymentReadiness: string
-    payoutReadiness: string
   } | null
+  paymentCustomer: { readiness: string } | null
+  connectedAccount: { readiness: string } | null
   termsAcceptances: Array<{
     termsVersion: string
     acceptedAt: Date
@@ -95,8 +95,8 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
     readiness: {
       identityStatus: record.verificationProfile?.identityStatus ?? "unstarted",
       adultStatus: record.verificationProfile?.adultStatus ?? "unstarted",
-      paymentReadiness: record.verificationProfile?.paymentReadiness ?? "not_started",
-      payoutReadiness: record.verificationProfile?.payoutReadiness ?? "not_started",
+      paymentReadiness: record.paymentCustomer?.readiness ?? "not_started",
+      payoutReadiness: record.connectedAccount?.readiness ?? "not_started",
       termsAccepted: Boolean(terms),
       termsVersion: terms?.termsVersion ?? null,
       termsAcceptedAt: toIso(terms?.acceptedAt),
@@ -138,7 +138,7 @@ export async function requireUser() {
 
 export async function requireActiveUser() {
   const user = await requireUser()
-  if (!isActive(user)) redirect("/setup?blocked=account_disabled")
+  if (!isActive(user)) redirect("/dashboard?blocked=account_disabled")
   return user
 }
 
@@ -251,8 +251,8 @@ export async function getContextualParticipantRole(input: { vouchId: string; use
 
   if (!vouch) return { role: null, authorized: false }
 
-  if (vouch.payerId === userId) return { role: "payer" as const, authorized: true }
-  if (vouch.payeeId === userId) return { role: "payee" as const, authorized: true }
+  if (vouch.merchantId === userId) return { role: "merchant" as const, authorized: true }
+  if (vouch.customerId === userId) return { role: "customer" as const, authorized: true }
 
   return { role: null, authorized: false }
 }

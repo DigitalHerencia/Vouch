@@ -27,15 +27,15 @@ describe("confirmation helpers", () => {
   it("reports aggregate confirmation status", () => {
     expect(
       deriveAggregateConfirmationStatus({
-        payerConfirmed: true,
-        payeeConfirmed: false,
+        merchantConfirmed: true,
+        customerConfirmed: false,
       })
-    ).toBe("payer_confirmed")
+    ).toBe("merchant_confirmed")
 
     expect(
       deriveAggregateConfirmationStatus({
-        payerConfirmed: true,
-        payeeConfirmed: true,
+        merchantConfirmed: true,
+        customerConfirmed: true,
       })
     ).toBe("both_confirmed")
   })

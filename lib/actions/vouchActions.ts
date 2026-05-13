@@ -6,7 +6,7 @@ import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import {
   assertCreateVouchReadinessReady,
   assertAcceptVouchReadinessReady,
-} from "@/lib/fetchers/setupFetchers"
+} from "@/lib/fetchers/readinessFetchers"
 import { getParticipantRoleForVouch } from "@/lib/authz/participants"
 import { VOUCH_LIMITS } from "@/lib/constants/limits"
 import { prisma } from "@/lib/db/prisma"
@@ -23,7 +23,6 @@ import {
   markInvitationSentTx,
   rotateInvitationTokenHashTx,
 } from "@/lib/db/transactions/invitationTransactions"
-import { queueNotificationTx } from "@/lib/db/transactions/notificationTransactions"
 import {
   bindCustomerToVouchTx,
   createVouchTx,
@@ -364,13 +363,6 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
       },
     })
 
-    await queueNotificationTx(tx, {
-      type: "vouch_accepted",
-      channel: "email",
-      recipientUserId: vouch.merchantId,
-      vouchId: vouch.id,
-    })
-
     return vouch
   })
 
@@ -400,7 +392,10 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
     })
 
     await revalidateVouchSurfaces(accepted.id, [accepted.merchantId, user.id])
-    return actionFailure(payment.code, payment.message)
+    return actionFailure(
+      payment.code ?? "PAYMENT_AUTHORIZATION_FAILED",
+      payment.formError ?? "Payment authorization failed."
+    )
   }
 
   await prisma.$transaction(async (tx) => {
@@ -456,12 +451,6 @@ export async function declineVouch(input: unknown): Promise<ActionResult<{ vouch
       },
     })
 
-    await queueNotificationTx(tx, {
-      type: "vouch_expired",
-      channel: "email",
-      recipientUserId: invitation.vouch.merchantId,
-      vouchId: invitation.vouch.id,
-    })
   })
 
   await revalidateVouchSurfaces(invitation.vouch.id, [invitation.vouch.merchantId, user.id])

@@ -67,9 +67,9 @@ export async function DashboardPage() {
       vouches: (sections?.actionRequired ?? []).map(toDashboardVouch),
     },
     {
-      title: "Pending",
-      description: "Created Vouches awaiting acceptance.",
-      vouches: (sections?.pending ?? []).map(toDashboardVouch),
+      title: "Active",
+      description: "Vouches awaiting acceptance, authorization, or confirmation.",
+      vouches: (sections?.active ?? []).map(toDashboardVouch),
     },
     {
       title: "Completed",
@@ -79,18 +79,18 @@ export async function DashboardPage() {
   ]
 
   const actionRequired = dashboardSections[0]?.vouches ?? []
-  const pending = dashboardSections[1]?.vouches ?? []
+  const active = dashboardSections[1]?.vouches ?? []
   const completed = dashboardSections[2]?.vouches ?? []
 
-  const pendingCount = sections?.pending?.length ?? 0
+  const activeCount = sections?.active?.length ?? 0
   const completedCount = sections?.completed?.length ?? 0
   const actionRequiredCount = sections?.actionRequired?.length ?? 0
-  const setupComplete = state.variant !== "empty"
+  const readinessComplete = state.variant !== "empty"
 
   const metrics: MetricGridItem[] = [
     {
-      label: "Pending Vouches",
-      value: String(pendingCount || pending.length),
+      label: "Active Vouches",
+      value: String(activeCount || active.length),
       body: "Invites created or waiting on the other party.",
     },
     {
@@ -112,7 +112,7 @@ export async function DashboardPage() {
     {
       label: "Needs Review",
       value: String(actionRequiredCount),
-      body: "Items waiting on confirmation, setup, or attention.",
+      body: "Items waiting on confirmation, provider readiness, or attention.",
     },
   ]
 
@@ -124,9 +124,9 @@ export async function DashboardPage() {
         body="Here's what's happening with your Vouches. Amount, status, deadline, and consequence stay visible."
       />
 
-      {!setupComplete ? (
+      {!readinessComplete ? (
         <CalloutPanel
-          title="Finish setup before creating or accepting Vouches."
+          title="Complete readiness before creating or accepting Vouches."
           body="Complete readiness checks so Vouch can coordinate payment state, confirmation windows, and deterministic outcomes."
           icon={AlertCircle}
           actions={
@@ -149,11 +149,11 @@ export async function DashboardPage() {
       />
 
       <DashboardListPanel
-        title={`Pending (${pending.length})`}
-        description="Vouches waiting on acceptance or invite follow-up."
-        emptyText="No pending Vouches."
+        title={`Active (${active.length})`}
+        description="Vouches waiting on acceptance, authorization, or confirmation."
+        emptyText="No active Vouches."
         icon={Clock}
-        rows={pending}
+        rows={active}
       />
 
       <DashboardListPanel

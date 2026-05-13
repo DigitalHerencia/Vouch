@@ -1,6 +1,6 @@
 import "server-only"
 
-import type { VerificationStatus } from "@/types/setup"
+import type { VerificationStatus } from "@/types/verification"
 
 import { getStripeServerClient } from "./client"
 

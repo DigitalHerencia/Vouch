@@ -1,8 +1,8 @@
 import "server-only"
 
 import type { PrismaClient } from "@/prisma/generated/prisma/client"
+import type { PaymentReadinessStatus, PayoutReadinessStatus } from "@/types/payment"
 import type { VerificationStatus } from "@/types/verification"
-import type { PaymentReadinessStatus, PayoutReadinessStatus } from "@/types/setup"
 
 type Tx = Omit<
   PrismaClient,

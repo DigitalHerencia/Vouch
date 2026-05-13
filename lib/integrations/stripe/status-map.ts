@@ -50,7 +50,7 @@ export function mapStripePaymentIntentSettlementStatus(
   }
 }
 
-export function mapStripeRefundStatus(status: Stripe.Refund.Status | null): RefundStatus {
+export function mapStripeRefundStatus(status: Stripe.Refund["status"] | null): RefundStatus {
   switch (status) {
     case "succeeded":
       return "succeeded"

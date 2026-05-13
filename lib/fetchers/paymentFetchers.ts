@@ -41,31 +41,18 @@ async function assertSelf(userId: string) {
   return current.id === userId
 }
 
-async function getVerification(userId: string) {
-  return prisma.verificationProfile.findUnique({
-    where: { userId },
-    select: {
-      paymentReadiness: true,
-      payoutReadiness: true,
-    },
-  })
-}
-
 export async function getPaymentMethodReadiness(userId: string) {
   noStore()
   if (!(await assertSelf(userId))) return null
 
-  const [verification, customer] = await Promise.all([
-    getVerification(userId),
-    prisma.paymentCustomer.findUnique({
-      where: { userId },
-      select: paymentCustomerReadinessSelect,
-    }),
-  ])
+  const customer = await prisma.paymentCustomer.findUnique({
+    where: { userId },
+    select: paymentCustomerReadinessSelect,
+  })
 
   return {
     userId,
-    readiness: verification?.paymentReadiness ?? "not_started",
+    readiness: customer?.readiness ?? "not_started",
     customer: mapRecord(customer),
   }
 }
@@ -93,7 +80,7 @@ export async function getPaymentMethodProviderRedirectState(input: {
 }) {
   return {
     variant: "provider_redirect",
-    returnUrl: input.returnUrl ?? "/settings",
+    returnUrl: input.returnUrl ?? "/dashboard",
     readiness: await getPaymentMethodReadiness(input.userId),
   }
 }
@@ -110,17 +97,14 @@ export async function getPayoutReadiness(userId: string) {
   noStore()
   if (!(await assertSelf(userId))) return null
 
-  const [verification, account] = await Promise.all([
-    getVerification(userId),
-    prisma.connectedAccount.findUnique({
-      where: { userId },
-      select: connectedAccountReadinessSelect,
-    }),
-  ])
+  const account = await prisma.connectedAccount.findUnique({
+    where: { userId },
+    select: connectedAccountReadinessSelect,
+  })
 
   return {
     userId,
-    readiness: verification?.payoutReadiness ?? "not_started",
+    readiness: account?.readiness ?? "not_started",
     connectedAccount: mapRecord(account),
   }
 }
@@ -143,7 +127,7 @@ export async function getPayoutProviderRedirectState(input: {
 }) {
   return {
     variant: "provider_redirect",
-    returnUrl: input.returnUrl ?? "/settings",
+    returnUrl: input.returnUrl ?? "/dashboard",
     readiness: await getPayoutReadiness(input.userId),
   }
 }
@@ -166,7 +150,7 @@ async function assertParticipantForVouch(vouchId: string) {
   const vouch = await prisma.vouch.findFirst({
     where: {
       id: vouchId,
-      OR: [{ payerId: current.id }, { payeeId: current.id }],
+      OR: [{ merchantId: current.id }, { customerId: current.id }],
     },
     select: { id: true },
   })
@@ -191,7 +175,7 @@ export async function getParticipantSafeRefundSummary(vouchId: string) {
   if (!(await assertParticipantForVouch(vouchId))) return null
 
   return mapRecord(
-    await prisma.refundRecord.findUnique({
+    await prisma.refundRecord.findFirst({
       where: { vouchId },
       select: refundRecordParticipantSummarySelect,
     })

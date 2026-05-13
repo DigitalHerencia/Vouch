@@ -826,6 +826,36 @@ export async function processStripeWebhookEvent(
   }
 }
 
+export async function recordProviderWebhookReceived(input: {
+  provider: "clerk" | "stripe" | "stripe_identity"
+  providerEventId: string
+  eventType: string
+  safeMetadata?: Record<string, unknown>
+}) {
+  const eventInput: Parameters<typeof recordProviderWebhookReceivedTx>[1] = {
+    provider: input.provider,
+    providerEventId: input.providerEventId,
+    eventType: input.eventType,
+  }
+  if (input.safeMetadata !== undefined) eventInput.safeMetadata = input.safeMetadata
+
+  return prisma.$transaction((tx) =>
+    recordProviderWebhookReceivedTx(tx, eventInput)
+  )
+}
+
+export async function markProviderWebhookProcessed(id: string) {
+  return prisma.$transaction((tx) => markProviderWebhookProcessedTx(tx, { id }))
+}
+
+export async function markProviderWebhookIgnored(id: string, _reason?: string) {
+  return prisma.$transaction((tx) => markProviderWebhookIgnoredTx(tx, { id }))
+}
+
+export async function markProviderWebhookFailed(id: string, error: string) {
+  return prisma.$transaction((tx) => markProviderWebhookFailedTx(tx, { id, error }))
+}
+
 async function reconcileStripePaymentIntentEvent(
   providerWebhookEventId: string,
   event: StripeWebhookEvent

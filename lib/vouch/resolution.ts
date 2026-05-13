@@ -8,11 +8,11 @@ export type ResolutionPaymentStatus =
   | "requires_payment_method"
   | "authorized"
   | "captured"
-  | "release_pending"
-  | "released"
+  | "capture_pending"
+  | "captured_settlement"
   | "refund_pending"
   | "refunded"
-  | "voided"
+  | "canceled"
   | "failed"
 
 export type ReleaseResolutionInput = ConfirmationStateInput & {
@@ -33,10 +33,10 @@ export type RefundOrVoidResolutionInput = ConfirmationStateInput & {
   confirmationExpiresAt?: DateLike
 }
 
-const REFUND_OR_VOID_PAYMENT_STATUSES = new Set<ResolutionPaymentStatus>([
+const REFUND_OR_CANCEL_PAYMENT_STATUSES = new Set<ResolutionPaymentStatus>([
   "authorized",
   "captured",
-  "release_pending",
+  "capture_pending",
   "failed",
 ])
 
@@ -49,49 +49,45 @@ function buildExpirationWindowInput(input: {
     confirmationExpiresAt: input.confirmationExpiresAt,
   }
 
-  return input.now === undefined
-    ? windowInput
-    : {
-        ...windowInput,
-        now: input.now,
-      }
+  return input.now === undefined ? windowInput : { ...windowInput, now: input.now }
 }
 
 function buildExpirationResolutionInput(input: {
   vouchStatus: VouchStatus
-  payerConfirmed: boolean
-  payeeConfirmed: boolean
+  merchantConfirmed: boolean
+  customerConfirmed: boolean
   now?: DateLike | undefined
   confirmationExpiresAt: DateLike
 }): ExpirationResolutionInput {
   const baseInput = {
     vouchStatus: input.vouchStatus,
-    payerConfirmed: input.payerConfirmed,
-    payeeConfirmed: input.payeeConfirmed,
+    merchantConfirmed: input.merchantConfirmed,
+    customerConfirmed: input.customerConfirmed,
     confirmationExpiresAt: input.confirmationExpiresAt,
   }
 
-  return input.now === undefined
-    ? baseInput
-    : {
-        ...baseInput,
-        now: input.now,
-      }
+  return input.now === undefined ? baseInput : { ...baseInput, now: input.now }
 }
 
 export function shouldReleaseFunds(input: ReleaseResolutionInput): boolean {
   return (
-    input.vouchStatus === "active" &&
+    input.vouchStatus === "confirmable" &&
     deriveAggregateConfirmationStatus(input) === "both_confirmed" &&
-    input.paymentStatus !== "released" &&
+    input.paymentStatus !== "captured_settlement" &&
     input.paymentStatus !== "refunded" &&
-    input.paymentStatus !== "voided" &&
+    input.paymentStatus !== "canceled" &&
     input.paymentStatus !== "failed"
   )
 }
 
 export function shouldExpireVouch(input: ExpirationResolutionInput): boolean {
-  if (input.vouchStatus !== "pending" && input.vouchStatus !== "active") return false
+  if (
+    input.vouchStatus === "draft" ||
+    input.vouchStatus === "completed" ||
+    input.vouchStatus === "expired"
+  ) {
+    return false
+  }
 
   const aggregateStatus: AggregateConfirmationStatus = deriveAggregateConfirmationStatus(input)
 
@@ -108,18 +104,18 @@ export function shouldExpireVouch(input: ExpirationResolutionInput): boolean {
 
 export function shouldRefundOrVoid(input: RefundOrVoidResolutionInput): boolean {
   if (input.vouchStatus === "completed") return false
-  if (input.paymentStatus === "refunded" || input.paymentStatus === "voided") return false
-  if (!REFUND_OR_VOID_PAYMENT_STATUSES.has(input.paymentStatus)) return false
+  if (input.paymentStatus === "refunded" || input.paymentStatus === "canceled") return false
+  if (!REFUND_OR_CANCEL_PAYMENT_STATUSES.has(input.paymentStatus)) return false
 
-  if (input.vouchStatus === "canceled" || input.vouchStatus === "expired") return true
+  if (input.vouchStatus === "expired") return true
 
   if (input.confirmationExpiresAt === undefined) return false
 
   return shouldExpireVouch(
     buildExpirationResolutionInput({
       vouchStatus: input.vouchStatus,
-      payerConfirmed: input.payerConfirmed,
-      payeeConfirmed: input.payeeConfirmed,
+      merchantConfirmed: input.merchantConfirmed,
+      customerConfirmed: input.customerConfirmed,
       now: input.now,
       confirmationExpiresAt: input.confirmationExpiresAt,
     })

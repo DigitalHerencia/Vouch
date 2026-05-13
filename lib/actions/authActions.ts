@@ -32,7 +32,7 @@ export async function syncClerkUser(input: LocalUserSyncInput) {
     await tx.auditEvent.create({
       data: {
         eventName: "user.synced",
-        actorType: "auth_provider",
+        actorType: "clerk",
         entityType: "user",
         entityId: syncedUser.id,
         metadata: { clerk_user_id: syncedUser.clerkUserId },
@@ -42,7 +42,6 @@ export async function syncClerkUser(input: LocalUserSyncInput) {
   })
 
   revalidatePath("/dashboard")
-  revalidatePath("/setup")
   return { ok: true as const, data: { userId: user.id } }
 }
 
@@ -95,7 +94,7 @@ async function upsertLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
     await tx.auditEvent.create({
       data: {
         eventName: event.type,
-        actorType: "auth_provider",
+        actorType: "clerk",
         entityType: "user",
         entityId: user.id,
         metadata: {
@@ -121,7 +120,7 @@ async function disableLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
     await tx.auditEvent.create({
       data: {
         eventName: "user.deleted",
-        actorType: "auth_provider",
+        actorType: "clerk",
         entityType: "user",
         entityId: user?.id ?? event.data.id,
         metadata: {
@@ -276,14 +275,14 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
     safeMetadata: safeClerkMetadata(parsed),
   })
 
-  if (ledger.processed) {
+  if (ledger.duplicate || ledger.event.processed) {
     return { ok: true as const, status: "duplicate" as const, ignored: true as const }
   }
 
   try {
     const supported = supportedClerkWebhookEventTypeSchema.safeParse(parsed.type)
     if (!supported.success) {
-      await markProviderWebhookIgnored(ledger.id, "Unsupported Clerk event type.")
+      await markProviderWebhookIgnored(ledger.event.id, "Unsupported Clerk event type.")
       return {
         ok: true as const,
         status: "ignored" as const,
@@ -293,11 +292,11 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
     }
 
     await processSupportedClerkEvent(parsed, svixId)
-    await markProviderWebhookProcessed(ledger.id)
+    await markProviderWebhookProcessed(ledger.event.id)
     return { ok: true as const, status: "processed" as const, ignored: false as const }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Clerk webhook processing failed."
-    await markProviderWebhookFailed(ledger.id, message)
+    await markProviderWebhookFailed(ledger.event.id, message)
     return { ok: false as const, status: "failed" as const, message }
   }
 }

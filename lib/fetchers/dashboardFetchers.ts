@@ -15,7 +15,7 @@ import {
   type DashboardSummaryDTO,
 } from "@/lib/dto/dashboard.mappers"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
-import { getCreateVouchSetupGate } from "@/lib/fetchers/setupFetchers"
+import { getCreateVouchReadinessGate } from "@/lib/fetchers/readinessFetchers"
 import { prisma } from "@/lib/db/prisma"
 import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
 
@@ -101,7 +101,7 @@ export async function getDashboardPageState(input?: {
 export async function getDashboardSetupBanner(
   userId: string
 ): Promise<DashboardReadinessCalloutDTO> {
-  const gate = await getCreateVouchSetupGate(userId)
+  const gate = await getCreateVouchReadinessGate(userId)
 
   const blockers = Array.isArray(gate.blockers) ? gate.blockers.map(String) : []
 
