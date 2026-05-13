@@ -390,6 +390,7 @@ export const ModelName = {
   ConnectedAccount: 'ConnectedAccount',
   TermsAcceptance: 'TermsAcceptance',
   Vouch: 'Vouch',
+  VouchRecoverySnapshot: 'VouchRecoverySnapshot',
   Invitation: 'Invitation',
   PresenceConfirmation: 'PresenceConfirmation',
   PaymentRecord: 'PaymentRecord',
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "verificationProfile" | "paymentCustomer" | "connectedAccount" | "termsAcceptance" | "vouch" | "invitation" | "presenceConfirmation" | "paymentRecord" | "refundRecord" | "providerWebhookEvent" | "clerkSession" | "clerkEmail" | "clerkSms" | "clerkInvitation" | "paymentWebhookEvent" | "auditEvent" | "notificationEvent" | "analyticsEvent" | "operationalRetry"
+    modelProps: "user" | "verificationProfile" | "paymentCustomer" | "connectedAccount" | "termsAcceptance" | "vouch" | "vouchRecoverySnapshot" | "invitation" | "presenceConfirmation" | "paymentRecord" | "refundRecord" | "providerWebhookEvent" | "clerkSession" | "clerkEmail" | "clerkSms" | "clerkInvitation" | "paymentWebhookEvent" | "auditEvent" | "notificationEvent" | "analyticsEvent" | "operationalRetry"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -864,6 +865,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.VouchCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.VouchCountAggregateOutputType> | number
+        }
+      }
+    }
+    VouchRecoverySnapshot: {
+      payload: Prisma.$VouchRecoverySnapshotPayload<ExtArgs>
+      fields: Prisma.VouchRecoverySnapshotFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.VouchRecoverySnapshotFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.VouchRecoverySnapshotFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload>
+        }
+        findFirst: {
+          args: Prisma.VouchRecoverySnapshotFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.VouchRecoverySnapshotFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload>
+        }
+        findMany: {
+          args: Prisma.VouchRecoverySnapshotFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload>[]
+        }
+        create: {
+          args: Prisma.VouchRecoverySnapshotCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload>
+        }
+        createMany: {
+          args: Prisma.VouchRecoverySnapshotCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.VouchRecoverySnapshotCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload>[]
+        }
+        delete: {
+          args: Prisma.VouchRecoverySnapshotDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload>
+        }
+        update: {
+          args: Prisma.VouchRecoverySnapshotUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload>
+        }
+        deleteMany: {
+          args: Prisma.VouchRecoverySnapshotDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.VouchRecoverySnapshotUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.VouchRecoverySnapshotUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload>[]
+        }
+        upsert: {
+          args: Prisma.VouchRecoverySnapshotUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchRecoverySnapshotPayload>
+        }
+        aggregate: {
+          args: Prisma.VouchRecoverySnapshotAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateVouchRecoverySnapshot>
+        }
+        groupBy: {
+          args: Prisma.VouchRecoverySnapshotGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VouchRecoverySnapshotGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.VouchRecoverySnapshotCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.VouchRecoverySnapshotCountAggregateOutputType> | number
         }
       }
     }
@@ -1961,8 +2036,6 @@ export const VerificationProfileScalarFieldEnum = {
   userId: 'userId',
   identityStatus: 'identityStatus',
   adultStatus: 'adultStatus',
-  paymentReadiness: 'paymentReadiness',
-  payoutReadiness: 'payoutReadiness',
   provider: 'provider',
   providerReference: 'providerReference',
   createdAt: 'createdAt',
@@ -1977,6 +2050,10 @@ export const PaymentCustomerScalarFieldEnum = {
   userId: 'userId',
   provider: 'provider',
   providerCustomerId: 'providerCustomerId',
+  readiness: 'readiness',
+  lastProviderSyncAt: 'lastProviderSyncAt',
+  lastErrorCode: 'lastErrorCode',
+  lastErrorMessage: 'lastErrorMessage',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1993,6 +2070,9 @@ export const ConnectedAccountScalarFieldEnum = {
   chargesEnabled: 'chargesEnabled',
   payoutsEnabled: 'payoutsEnabled',
   detailsSubmitted: 'detailsSubmitted',
+  lastProviderSyncAt: 'lastProviderSyncAt',
+  lastErrorCode: 'lastErrorCode',
+  lastErrorMessage: 'lastErrorMessage',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -2015,32 +2095,48 @@ export type TermsAcceptanceScalarFieldEnum = (typeof TermsAcceptanceScalarFieldE
 export const VouchScalarFieldEnum = {
   id: 'id',
   publicId: 'publicId',
-  payerId: 'payerId',
-  payeeId: 'payeeId',
-  amountCents: 'amountCents',
+  merchantId: 'merchantId',
+  customerId: 'customerId',
+  status: 'status',
+  archiveStatus: 'archiveStatus',
+  recoveryStatus: 'recoveryStatus',
   currency: 'currency',
-  platformFeeCents: 'platformFeeCents',
   protectedAmountCents: 'protectedAmountCents',
   merchantReceivesCents: 'merchantReceivesCents',
   vouchServiceFeeCents: 'vouchServiceFeeCents',
   processingFeeOffsetCents: 'processingFeeOffsetCents',
   applicationFeeAmountCents: 'applicationFeeAmountCents',
   customerTotalCents: 'customerTotalCents',
-  status: 'status',
   label: 'label',
-  meetingStartsAt: 'meetingStartsAt',
+  appointmentStartsAt: 'appointmentStartsAt',
   confirmationOpensAt: 'confirmationOpensAt',
   confirmationExpiresAt: 'confirmationExpiresAt',
+  committedAt: 'committedAt',
+  sentAt: 'sentAt',
   acceptedAt: 'acceptedAt',
+  authorizedAt: 'authorizedAt',
+  confirmableAt: 'confirmableAt',
   completedAt: 'completedAt',
   expiredAt: 'expiredAt',
-  canceledAt: 'canceledAt',
-  failedAt: 'failedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type VouchScalarFieldEnum = (typeof VouchScalarFieldEnum)[keyof typeof VouchScalarFieldEnum]
+
+
+export const VouchRecoverySnapshotScalarFieldEnum = {
+  id: 'id',
+  vouchId: 'vouchId',
+  snapshotVersion: 'snapshotVersion',
+  originalTermsJson: 'originalTermsJson',
+  pricingSnapshotJson: 'pricingSnapshotJson',
+  providerReferencesJson: 'providerReferencesJson',
+  settlementRulesJson: 'settlementRulesJson',
+  createdAt: 'createdAt'
+} as const
+
+export type VouchRecoverySnapshotScalarFieldEnum = (typeof VouchRecoverySnapshotScalarFieldEnum)[keyof typeof VouchRecoverySnapshotScalarFieldEnum]
 
 
 export const InvitationScalarFieldEnum = {
@@ -2068,6 +2164,10 @@ export const PresenceConfirmationScalarFieldEnum = {
   status: 'status',
   method: 'method',
   confirmedAt: 'confirmedAt',
+  serverReceivedAt: 'serverReceivedAt',
+  timeBucket: 'timeBucket',
+  clockSkewAccepted: 'clockSkewAccepted',
+  offlinePayloadHash: 'offlinePayloadHash',
   createdAt: 'createdAt'
 } as const
 
@@ -2078,20 +2178,27 @@ export const PaymentRecordScalarFieldEnum = {
   id: 'id',
   vouchId: 'vouchId',
   provider: 'provider',
-  providerPaymentId: 'providerPaymentId',
+  providerPaymentIntentId: 'providerPaymentIntentId',
   providerCheckoutSessionId: 'providerCheckoutSessionId',
   providerChargeId: 'providerChargeId',
   providerTransferId: 'providerTransferId',
   status: 'status',
+  settlementStatus: 'settlementStatus',
   amountCents: 'amountCents',
   currency: 'currency',
-  platformFeeCents: 'platformFeeCents',
   protectedAmountCents: 'protectedAmountCents',
   merchantReceivesCents: 'merchantReceivesCents',
   vouchServiceFeeCents: 'vouchServiceFeeCents',
   processingFeeOffsetCents: 'processingFeeOffsetCents',
   applicationFeeAmountCents: 'applicationFeeAmountCents',
   customerTotalCents: 'customerTotalCents',
+  amountCapturableCents: 'amountCapturableCents',
+  captureBefore: 'captureBefore',
+  authorizedAt: 'authorizedAt',
+  capturedAt: 'capturedAt',
+  canceledAt: 'canceledAt',
+  failedAt: 'failedAt',
+  lastProviderSyncAt: 'lastProviderSyncAt',
   lastErrorCode: 'lastErrorCode',
   lastErrorMessage: 'lastErrorMessage',
   createdAt: 'createdAt',
@@ -2266,7 +2373,7 @@ export const OperationalRetryScalarFieldEnum = {
   status: 'status',
   entityType: 'entityType',
   entityId: 'entityId',
-  adminUserId: 'adminUserId',
+  userId: 'userId',
   reason: 'reason',
   errorCode: 'errorCode',
   startedAt: 'startedAt',
@@ -2284,6 +2391,13 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const NullableJsonNullValueInput = {
@@ -2382,34 +2496,6 @@ export type ListEnumVerificationStatusFieldRefInput<$PrismaModel> = FieldRefInpu
 
 
 /**
- * Reference to a field of type 'PaymentReadinessStatus'
- */
-export type EnumPaymentReadinessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentReadinessStatus'>
-    
-
-
-/**
- * Reference to a field of type 'PaymentReadinessStatus[]'
- */
-export type ListEnumPaymentReadinessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentReadinessStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'PayoutReadinessStatus'
- */
-export type EnumPayoutReadinessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PayoutReadinessStatus'>
-    
-
-
-/**
- * Reference to a field of type 'PayoutReadinessStatus[]'
- */
-export type ListEnumPayoutReadinessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PayoutReadinessStatus[]'>
-    
-
-
-/**
  * Reference to a field of type 'VerificationProvider'
  */
 export type EnumVerificationProviderFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VerificationProvider'>
@@ -2438,9 +2524,79 @@ export type ListEnumPaymentProviderFieldRefInput<$PrismaModel> = FieldRefInputTy
 
 
 /**
+ * Reference to a field of type 'PaymentReadinessStatus'
+ */
+export type EnumPaymentReadinessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentReadinessStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentReadinessStatus[]'
+ */
+export type ListEnumPaymentReadinessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentReadinessStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PayoutReadinessStatus'
+ */
+export type EnumPayoutReadinessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PayoutReadinessStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'PayoutReadinessStatus[]'
+ */
+export type ListEnumPayoutReadinessStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PayoutReadinessStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'VouchStatus'
+ */
+export type EnumVouchStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VouchStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'VouchStatus[]'
+ */
+export type ListEnumVouchStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VouchStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'ArchiveStatus'
+ */
+export type EnumArchiveStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ArchiveStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'ArchiveStatus[]'
+ */
+export type ListEnumArchiveStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ArchiveStatus[]'>
+    
+
+
+/**
+ * Reference to a field of type 'RecoveryStatus'
+ */
+export type EnumRecoveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecoveryStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'RecoveryStatus[]'
+ */
+export type ListEnumRecoveryStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RecoveryStatus[]'>
     
 
 
@@ -2459,16 +2615,16 @@ export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel,
 
 
 /**
- * Reference to a field of type 'VouchStatus'
+ * Reference to a field of type 'Json'
  */
-export type EnumVouchStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VouchStatus'>
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
     
 
 
 /**
- * Reference to a field of type 'VouchStatus[]'
+ * Reference to a field of type 'QueryMode'
  */
-export type ListEnumVouchStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VouchStatus[]'>
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -2543,6 +2699,20 @@ export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
+ * Reference to a field of type 'SettlementStatus'
+ */
+export type EnumSettlementStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SettlementStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'SettlementStatus[]'
+ */
+export type ListEnumSettlementStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SettlementStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'RefundStatus'
  */
 export type EnumRefundStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'RefundStatus'>
@@ -2595,20 +2765,6 @@ export type EnumProviderWebhookStatusFieldRefInput<$PrismaModel> = FieldRefInput
  * Reference to a field of type 'ProviderWebhookStatus[]'
  */
 export type ListEnumProviderWebhookStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ProviderWebhookStatus[]'>
-    
-
-
-/**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
     
 
 
@@ -2683,16 +2839,16 @@ export type ListEnumEnvironmentFieldRefInput<$PrismaModel> = FieldRefInputType<$
 
 
 /**
- * Reference to a field of type 'AdminSafeRetryOperation'
+ * Reference to a field of type 'OperationalRetryOperation'
  */
-export type EnumAdminSafeRetryOperationFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdminSafeRetryOperation'>
+export type EnumOperationalRetryOperationFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OperationalRetryOperation'>
     
 
 
 /**
- * Reference to a field of type 'AdminSafeRetryOperation[]'
+ * Reference to a field of type 'OperationalRetryOperation[]'
  */
-export type ListEnumAdminSafeRetryOperationFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdminSafeRetryOperation[]'>
+export type ListEnumOperationalRetryOperationFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OperationalRetryOperation[]'>
     
 
 
@@ -2839,6 +2995,7 @@ export type GlobalOmitConfig = {
   connectedAccount?: Prisma.ConnectedAccountOmit
   termsAcceptance?: Prisma.TermsAcceptanceOmit
   vouch?: Prisma.VouchOmit
+  vouchRecoverySnapshot?: Prisma.VouchRecoverySnapshotOmit
   invitation?: Prisma.InvitationOmit
   presenceConfirmation?: Prisma.PresenceConfirmationOmit
   paymentRecord?: Prisma.PaymentRecordOmit

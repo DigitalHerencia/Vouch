@@ -16,8 +16,12 @@ export async function POST(request: NextRequest) {
   const processed = await processStripeWebhookEvent(verified.event)
 
   if (!processed.ok) {
-    return NextResponse.json({ ok: false, error: processed.message }, { status: processed.status })
+    return NextResponse.json({ ok: false, error: processed.message }, { status: 200 })
   }
 
-  return NextResponse.json({ ok: true, processed: processed.processed })
+  return NextResponse.json({
+    ok: true,
+    processed: processed.data?.processed ?? false,
+    duplicate: processed.data?.duplicate ?? false,
+  })
 }

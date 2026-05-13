@@ -28,44 +28,51 @@ export type AggregatePaymentRecord = {
 
 export type PaymentRecordAvgAggregateOutputType = {
   amountCents: number | null
-  platformFeeCents: number | null
   protectedAmountCents: number | null
   merchantReceivesCents: number | null
   vouchServiceFeeCents: number | null
   processingFeeOffsetCents: number | null
   applicationFeeAmountCents: number | null
   customerTotalCents: number | null
+  amountCapturableCents: number | null
 }
 
 export type PaymentRecordSumAggregateOutputType = {
   amountCents: number | null
-  platformFeeCents: number | null
   protectedAmountCents: number | null
   merchantReceivesCents: number | null
   vouchServiceFeeCents: number | null
   processingFeeOffsetCents: number | null
   applicationFeeAmountCents: number | null
   customerTotalCents: number | null
+  amountCapturableCents: number | null
 }
 
 export type PaymentRecordMinAggregateOutputType = {
   id: string | null
   vouchId: string | null
   provider: $Enums.PaymentProvider | null
-  providerPaymentId: string | null
+  providerPaymentIntentId: string | null
   providerCheckoutSessionId: string | null
   providerChargeId: string | null
   providerTransferId: string | null
   status: $Enums.PaymentStatus | null
+  settlementStatus: $Enums.SettlementStatus | null
   amountCents: number | null
   currency: string | null
-  platformFeeCents: number | null
   protectedAmountCents: number | null
   merchantReceivesCents: number | null
   vouchServiceFeeCents: number | null
   processingFeeOffsetCents: number | null
   applicationFeeAmountCents: number | null
   customerTotalCents: number | null
+  amountCapturableCents: number | null
+  captureBefore: Date | null
+  authorizedAt: Date | null
+  capturedAt: Date | null
+  canceledAt: Date | null
+  failedAt: Date | null
+  lastProviderSyncAt: Date | null
   lastErrorCode: string | null
   lastErrorMessage: string | null
   createdAt: Date | null
@@ -76,20 +83,27 @@ export type PaymentRecordMaxAggregateOutputType = {
   id: string | null
   vouchId: string | null
   provider: $Enums.PaymentProvider | null
-  providerPaymentId: string | null
+  providerPaymentIntentId: string | null
   providerCheckoutSessionId: string | null
   providerChargeId: string | null
   providerTransferId: string | null
   status: $Enums.PaymentStatus | null
+  settlementStatus: $Enums.SettlementStatus | null
   amountCents: number | null
   currency: string | null
-  platformFeeCents: number | null
   protectedAmountCents: number | null
   merchantReceivesCents: number | null
   vouchServiceFeeCents: number | null
   processingFeeOffsetCents: number | null
   applicationFeeAmountCents: number | null
   customerTotalCents: number | null
+  amountCapturableCents: number | null
+  captureBefore: Date | null
+  authorizedAt: Date | null
+  capturedAt: Date | null
+  canceledAt: Date | null
+  failedAt: Date | null
+  lastProviderSyncAt: Date | null
   lastErrorCode: string | null
   lastErrorMessage: string | null
   createdAt: Date | null
@@ -100,20 +114,27 @@ export type PaymentRecordCountAggregateOutputType = {
   id: number
   vouchId: number
   provider: number
-  providerPaymentId: number
+  providerPaymentIntentId: number
   providerCheckoutSessionId: number
   providerChargeId: number
   providerTransferId: number
   status: number
+  settlementStatus: number
   amountCents: number
   currency: number
-  platformFeeCents: number
   protectedAmountCents: number
   merchantReceivesCents: number
   vouchServiceFeeCents: number
   processingFeeOffsetCents: number
   applicationFeeAmountCents: number
   customerTotalCents: number
+  amountCapturableCents: number
+  captureBefore: number
+  authorizedAt: number
+  capturedAt: number
+  canceledAt: number
+  failedAt: number
+  lastProviderSyncAt: number
   lastErrorCode: number
   lastErrorMessage: number
   createdAt: number
@@ -124,44 +145,51 @@ export type PaymentRecordCountAggregateOutputType = {
 
 export type PaymentRecordAvgAggregateInputType = {
   amountCents?: true
-  platformFeeCents?: true
   protectedAmountCents?: true
   merchantReceivesCents?: true
   vouchServiceFeeCents?: true
   processingFeeOffsetCents?: true
   applicationFeeAmountCents?: true
   customerTotalCents?: true
+  amountCapturableCents?: true
 }
 
 export type PaymentRecordSumAggregateInputType = {
   amountCents?: true
-  platformFeeCents?: true
   protectedAmountCents?: true
   merchantReceivesCents?: true
   vouchServiceFeeCents?: true
   processingFeeOffsetCents?: true
   applicationFeeAmountCents?: true
   customerTotalCents?: true
+  amountCapturableCents?: true
 }
 
 export type PaymentRecordMinAggregateInputType = {
   id?: true
   vouchId?: true
   provider?: true
-  providerPaymentId?: true
+  providerPaymentIntentId?: true
   providerCheckoutSessionId?: true
   providerChargeId?: true
   providerTransferId?: true
   status?: true
+  settlementStatus?: true
   amountCents?: true
   currency?: true
-  platformFeeCents?: true
   protectedAmountCents?: true
   merchantReceivesCents?: true
   vouchServiceFeeCents?: true
   processingFeeOffsetCents?: true
   applicationFeeAmountCents?: true
   customerTotalCents?: true
+  amountCapturableCents?: true
+  captureBefore?: true
+  authorizedAt?: true
+  capturedAt?: true
+  canceledAt?: true
+  failedAt?: true
+  lastProviderSyncAt?: true
   lastErrorCode?: true
   lastErrorMessage?: true
   createdAt?: true
@@ -172,20 +200,27 @@ export type PaymentRecordMaxAggregateInputType = {
   id?: true
   vouchId?: true
   provider?: true
-  providerPaymentId?: true
+  providerPaymentIntentId?: true
   providerCheckoutSessionId?: true
   providerChargeId?: true
   providerTransferId?: true
   status?: true
+  settlementStatus?: true
   amountCents?: true
   currency?: true
-  platformFeeCents?: true
   protectedAmountCents?: true
   merchantReceivesCents?: true
   vouchServiceFeeCents?: true
   processingFeeOffsetCents?: true
   applicationFeeAmountCents?: true
   customerTotalCents?: true
+  amountCapturableCents?: true
+  captureBefore?: true
+  authorizedAt?: true
+  capturedAt?: true
+  canceledAt?: true
+  failedAt?: true
+  lastProviderSyncAt?: true
   lastErrorCode?: true
   lastErrorMessage?: true
   createdAt?: true
@@ -196,20 +231,27 @@ export type PaymentRecordCountAggregateInputType = {
   id?: true
   vouchId?: true
   provider?: true
-  providerPaymentId?: true
+  providerPaymentIntentId?: true
   providerCheckoutSessionId?: true
   providerChargeId?: true
   providerTransferId?: true
   status?: true
+  settlementStatus?: true
   amountCents?: true
   currency?: true
-  platformFeeCents?: true
   protectedAmountCents?: true
   merchantReceivesCents?: true
   vouchServiceFeeCents?: true
   processingFeeOffsetCents?: true
   applicationFeeAmountCents?: true
   customerTotalCents?: true
+  amountCapturableCents?: true
+  captureBefore?: true
+  authorizedAt?: true
+  capturedAt?: true
+  canceledAt?: true
+  failedAt?: true
+  lastProviderSyncAt?: true
   lastErrorCode?: true
   lastErrorMessage?: true
   createdAt?: true
@@ -307,20 +349,27 @@ export type PaymentRecordGroupByOutputType = {
   id: string
   vouchId: string
   provider: $Enums.PaymentProvider
-  providerPaymentId: string | null
+  providerPaymentIntentId: string | null
   providerCheckoutSessionId: string | null
   providerChargeId: string | null
   providerTransferId: string | null
   status: $Enums.PaymentStatus
+  settlementStatus: $Enums.SettlementStatus
   amountCents: number
   currency: string
-  platformFeeCents: number
   protectedAmountCents: number
   merchantReceivesCents: number
   vouchServiceFeeCents: number
   processingFeeOffsetCents: number
   applicationFeeAmountCents: number
   customerTotalCents: number
+  amountCapturableCents: number
+  captureBefore: Date | null
+  authorizedAt: Date | null
+  capturedAt: Date | null
+  canceledAt: Date | null
+  failedAt: Date | null
+  lastProviderSyncAt: Date | null
   lastErrorCode: string | null
   lastErrorMessage: string | null
   createdAt: Date
@@ -354,26 +403,33 @@ export type PaymentRecordWhereInput = {
   id?: Prisma.StringFilter<"PaymentRecord"> | string
   vouchId?: Prisma.StringFilter<"PaymentRecord"> | string
   provider?: Prisma.EnumPaymentProviderFilter<"PaymentRecord"> | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
+  providerPaymentIntentId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   providerCheckoutSessionId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   providerChargeId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   providerTransferId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   status?: Prisma.EnumPaymentStatusFilter<"PaymentRecord"> | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFilter<"PaymentRecord"> | $Enums.SettlementStatus
   amountCents?: Prisma.IntFilter<"PaymentRecord"> | number
   currency?: Prisma.StringFilter<"PaymentRecord"> | string
-  platformFeeCents?: Prisma.IntFilter<"PaymentRecord"> | number
   protectedAmountCents?: Prisma.IntFilter<"PaymentRecord"> | number
   merchantReceivesCents?: Prisma.IntFilter<"PaymentRecord"> | number
   vouchServiceFeeCents?: Prisma.IntFilter<"PaymentRecord"> | number
   processingFeeOffsetCents?: Prisma.IntFilter<"PaymentRecord"> | number
   applicationFeeAmountCents?: Prisma.IntFilter<"PaymentRecord"> | number
   customerTotalCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  amountCapturableCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  captureBefore?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
+  authorizedAt?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
+  capturedAt?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
+  canceledAt?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
+  failedAt?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
+  lastProviderSyncAt?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
   lastErrorCode?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   lastErrorMessage?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PaymentRecord"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PaymentRecord"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
-  refundRecord?: Prisma.XOR<Prisma.RefundRecordNullableScalarRelationFilter, Prisma.RefundRecordWhereInput> | null
+  refundRecords?: Prisma.RefundRecordListRelationFilter
   webhookEvents?: Prisma.PaymentWebhookEventListRelationFilter
 }
 
@@ -381,33 +437,40 @@ export type PaymentRecordOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
-  providerPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  providerPaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerChargeId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerTransferId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  settlementStatus?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
-  platformFeeCents?: Prisma.SortOrder
   protectedAmountCents?: Prisma.SortOrder
   merchantReceivesCents?: Prisma.SortOrder
   vouchServiceFeeCents?: Prisma.SortOrder
   processingFeeOffsetCents?: Prisma.SortOrder
   applicationFeeAmountCents?: Prisma.SortOrder
   customerTotalCents?: Prisma.SortOrder
+  amountCapturableCents?: Prisma.SortOrder
+  captureBefore?: Prisma.SortOrderInput | Prisma.SortOrder
+  authorizedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  capturedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  canceledAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
   lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   vouch?: Prisma.VouchOrderByWithRelationInput
-  refundRecord?: Prisma.RefundRecordOrderByWithRelationInput
+  refundRecords?: Prisma.RefundRecordOrderByRelationAggregateInput
   webhookEvents?: Prisma.PaymentWebhookEventOrderByRelationAggregateInput
 }
 
 export type PaymentRecordWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   vouchId?: string
-  providerPaymentId?: string
+  providerPaymentIntentId?: string
   providerCheckoutSessionId?: string
   AND?: Prisma.PaymentRecordWhereInput | Prisma.PaymentRecordWhereInput[]
   OR?: Prisma.PaymentRecordWhereInput[]
@@ -416,42 +479,56 @@ export type PaymentRecordWhereUniqueInput = Prisma.AtLeast<{
   providerChargeId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   providerTransferId?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   status?: Prisma.EnumPaymentStatusFilter<"PaymentRecord"> | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFilter<"PaymentRecord"> | $Enums.SettlementStatus
   amountCents?: Prisma.IntFilter<"PaymentRecord"> | number
   currency?: Prisma.StringFilter<"PaymentRecord"> | string
-  platformFeeCents?: Prisma.IntFilter<"PaymentRecord"> | number
   protectedAmountCents?: Prisma.IntFilter<"PaymentRecord"> | number
   merchantReceivesCents?: Prisma.IntFilter<"PaymentRecord"> | number
   vouchServiceFeeCents?: Prisma.IntFilter<"PaymentRecord"> | number
   processingFeeOffsetCents?: Prisma.IntFilter<"PaymentRecord"> | number
   applicationFeeAmountCents?: Prisma.IntFilter<"PaymentRecord"> | number
   customerTotalCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  amountCapturableCents?: Prisma.IntFilter<"PaymentRecord"> | number
+  captureBefore?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
+  authorizedAt?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
+  capturedAt?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
+  canceledAt?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
+  failedAt?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
+  lastProviderSyncAt?: Prisma.DateTimeNullableFilter<"PaymentRecord"> | Date | string | null
   lastErrorCode?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   lastErrorMessage?: Prisma.StringNullableFilter<"PaymentRecord"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PaymentRecord"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PaymentRecord"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
-  refundRecord?: Prisma.XOR<Prisma.RefundRecordNullableScalarRelationFilter, Prisma.RefundRecordWhereInput> | null
+  refundRecords?: Prisma.RefundRecordListRelationFilter
   webhookEvents?: Prisma.PaymentWebhookEventListRelationFilter
-}, "id" | "vouchId" | "providerPaymentId" | "providerCheckoutSessionId">
+}, "id" | "vouchId" | "providerPaymentIntentId" | "providerCheckoutSessionId">
 
 export type PaymentRecordOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
-  providerPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  providerPaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerChargeId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerTransferId?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  settlementStatus?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
-  platformFeeCents?: Prisma.SortOrder
   protectedAmountCents?: Prisma.SortOrder
   merchantReceivesCents?: Prisma.SortOrder
   vouchServiceFeeCents?: Prisma.SortOrder
   processingFeeOffsetCents?: Prisma.SortOrder
   applicationFeeAmountCents?: Prisma.SortOrder
   customerTotalCents?: Prisma.SortOrder
+  amountCapturableCents?: Prisma.SortOrder
+  captureBefore?: Prisma.SortOrderInput | Prisma.SortOrder
+  authorizedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  capturedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  canceledAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
   lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -470,20 +547,27 @@ export type PaymentRecordScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"PaymentRecord"> | string
   vouchId?: Prisma.StringWithAggregatesFilter<"PaymentRecord"> | string
   provider?: Prisma.EnumPaymentProviderWithAggregatesFilter<"PaymentRecord"> | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
+  providerPaymentIntentId?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   providerCheckoutSessionId?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   providerChargeId?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   providerTransferId?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   status?: Prisma.EnumPaymentStatusWithAggregatesFilter<"PaymentRecord"> | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusWithAggregatesFilter<"PaymentRecord"> | $Enums.SettlementStatus
   amountCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
   currency?: Prisma.StringWithAggregatesFilter<"PaymentRecord"> | string
-  platformFeeCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
   protectedAmountCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
   merchantReceivesCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
   vouchServiceFeeCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
   processingFeeOffsetCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
   applicationFeeAmountCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
   customerTotalCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
+  amountCapturableCents?: Prisma.IntWithAggregatesFilter<"PaymentRecord"> | number
+  captureBefore?: Prisma.DateTimeNullableWithAggregatesFilter<"PaymentRecord"> | Date | string | null
+  authorizedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PaymentRecord"> | Date | string | null
+  capturedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PaymentRecord"> | Date | string | null
+  canceledAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PaymentRecord"> | Date | string | null
+  failedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PaymentRecord"> | Date | string | null
+  lastProviderSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PaymentRecord"> | Date | string | null
   lastErrorCode?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   lastErrorMessage?: Prisma.StringNullableWithAggregatesFilter<"PaymentRecord"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PaymentRecord"> | Date | string
@@ -493,26 +577,33 @@ export type PaymentRecordScalarWhereWithAggregatesInput = {
 export type PaymentRecordCreateInput = {
   id?: string
   provider?: $Enums.PaymentProvider
-  providerPaymentId?: string | null
+  providerPaymentIntentId?: string | null
   providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
+  settlementStatus?: $Enums.SettlementStatus
   amountCents: number
   currency?: string
-  platformFeeCents?: number
   protectedAmountCents?: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
   processingFeeOffsetCents?: number
   applicationFeeAmountCents?: number
   customerTotalCents?: number
+  amountCapturableCents?: number
+  captureBefore?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  canceledAt?: Date | string | null
+  failedAt?: Date | string | null
+  lastProviderSyncAt?: Date | string | null
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   vouch: Prisma.VouchCreateNestedOneWithoutPaymentRecordInput
-  refundRecord?: Prisma.RefundRecordCreateNestedOneWithoutPaymentRecordInput
+  refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutPaymentRecordInput
   webhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutPaymentRecordInput
 }
 
@@ -520,51 +611,65 @@ export type PaymentRecordUncheckedCreateInput = {
   id?: string
   vouchId: string
   provider?: $Enums.PaymentProvider
-  providerPaymentId?: string | null
+  providerPaymentIntentId?: string | null
   providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
+  settlementStatus?: $Enums.SettlementStatus
   amountCents: number
   currency?: string
-  platformFeeCents?: number
   protectedAmountCents?: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
   processingFeeOffsetCents?: number
   applicationFeeAmountCents?: number
   customerTotalCents?: number
+  amountCapturableCents?: number
+  captureBefore?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  canceledAt?: Date | string | null
+  failedAt?: Date | string | null
+  lastProviderSyncAt?: Date | string | null
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  refundRecord?: Prisma.RefundRecordUncheckedCreateNestedOneWithoutPaymentRecordInput
+  refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutPaymentRecordInput
   webhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentRecordInput
 }
 
 export type PaymentRecordUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFieldUpdateOperationsInput | $Enums.SettlementStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
-  platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
   vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
   applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
+  amountCapturableCents?: Prisma.IntFieldUpdateOperationsInput | number
+  captureBefore?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canceledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vouch?: Prisma.VouchUpdateOneRequiredWithoutPaymentRecordNestedInput
-  refundRecord?: Prisma.RefundRecordUpdateOneWithoutPaymentRecordNestedInput
+  refundRecords?: Prisma.RefundRecordUpdateManyWithoutPaymentRecordNestedInput
   webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutPaymentRecordNestedInput
 }
 
@@ -572,25 +677,32 @@ export type PaymentRecordUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFieldUpdateOperationsInput | $Enums.SettlementStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
-  platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
   vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
   applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
+  amountCapturableCents?: Prisma.IntFieldUpdateOperationsInput | number
+  captureBefore?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canceledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  refundRecord?: Prisma.RefundRecordUncheckedUpdateOneWithoutPaymentRecordNestedInput
+  refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutPaymentRecordNestedInput
   webhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutPaymentRecordNestedInput
 }
 
@@ -598,20 +710,27 @@ export type PaymentRecordCreateManyInput = {
   id?: string
   vouchId: string
   provider?: $Enums.PaymentProvider
-  providerPaymentId?: string | null
+  providerPaymentIntentId?: string | null
   providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
+  settlementStatus?: $Enums.SettlementStatus
   amountCents: number
   currency?: string
-  platformFeeCents?: number
   protectedAmountCents?: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
   processingFeeOffsetCents?: number
   applicationFeeAmountCents?: number
   customerTotalCents?: number
+  amountCapturableCents?: number
+  captureBefore?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  canceledAt?: Date | string | null
+  failedAt?: Date | string | null
+  lastProviderSyncAt?: Date | string | null
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -621,20 +740,27 @@ export type PaymentRecordCreateManyInput = {
 export type PaymentRecordUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFieldUpdateOperationsInput | $Enums.SettlementStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
-  platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
   vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
   applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
+  amountCapturableCents?: Prisma.IntFieldUpdateOperationsInput | number
+  captureBefore?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canceledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -645,20 +771,27 @@ export type PaymentRecordUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFieldUpdateOperationsInput | $Enums.SettlementStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
-  platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
   vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
   applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
+  amountCapturableCents?: Prisma.IntFieldUpdateOperationsInput | number
+  captureBefore?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canceledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -674,20 +807,27 @@ export type PaymentRecordCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
-  providerPaymentId?: Prisma.SortOrder
+  providerPaymentIntentId?: Prisma.SortOrder
   providerCheckoutSessionId?: Prisma.SortOrder
   providerChargeId?: Prisma.SortOrder
   providerTransferId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  settlementStatus?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
-  platformFeeCents?: Prisma.SortOrder
   protectedAmountCents?: Prisma.SortOrder
   merchantReceivesCents?: Prisma.SortOrder
   vouchServiceFeeCents?: Prisma.SortOrder
   processingFeeOffsetCents?: Prisma.SortOrder
   applicationFeeAmountCents?: Prisma.SortOrder
   customerTotalCents?: Prisma.SortOrder
+  amountCapturableCents?: Prisma.SortOrder
+  captureBefore?: Prisma.SortOrder
+  authorizedAt?: Prisma.SortOrder
+  capturedAt?: Prisma.SortOrder
+  canceledAt?: Prisma.SortOrder
+  failedAt?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
   lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -696,33 +836,40 @@ export type PaymentRecordCountOrderByAggregateInput = {
 
 export type PaymentRecordAvgOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
-  platformFeeCents?: Prisma.SortOrder
   protectedAmountCents?: Prisma.SortOrder
   merchantReceivesCents?: Prisma.SortOrder
   vouchServiceFeeCents?: Prisma.SortOrder
   processingFeeOffsetCents?: Prisma.SortOrder
   applicationFeeAmountCents?: Prisma.SortOrder
   customerTotalCents?: Prisma.SortOrder
+  amountCapturableCents?: Prisma.SortOrder
 }
 
 export type PaymentRecordMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
-  providerPaymentId?: Prisma.SortOrder
+  providerPaymentIntentId?: Prisma.SortOrder
   providerCheckoutSessionId?: Prisma.SortOrder
   providerChargeId?: Prisma.SortOrder
   providerTransferId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  settlementStatus?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
-  platformFeeCents?: Prisma.SortOrder
   protectedAmountCents?: Prisma.SortOrder
   merchantReceivesCents?: Prisma.SortOrder
   vouchServiceFeeCents?: Prisma.SortOrder
   processingFeeOffsetCents?: Prisma.SortOrder
   applicationFeeAmountCents?: Prisma.SortOrder
   customerTotalCents?: Prisma.SortOrder
+  amountCapturableCents?: Prisma.SortOrder
+  captureBefore?: Prisma.SortOrder
+  authorizedAt?: Prisma.SortOrder
+  capturedAt?: Prisma.SortOrder
+  canceledAt?: Prisma.SortOrder
+  failedAt?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
   lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -733,20 +880,27 @@ export type PaymentRecordMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
-  providerPaymentId?: Prisma.SortOrder
+  providerPaymentIntentId?: Prisma.SortOrder
   providerCheckoutSessionId?: Prisma.SortOrder
   providerChargeId?: Prisma.SortOrder
   providerTransferId?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  settlementStatus?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
   currency?: Prisma.SortOrder
-  platformFeeCents?: Prisma.SortOrder
   protectedAmountCents?: Prisma.SortOrder
   merchantReceivesCents?: Prisma.SortOrder
   vouchServiceFeeCents?: Prisma.SortOrder
   processingFeeOffsetCents?: Prisma.SortOrder
   applicationFeeAmountCents?: Prisma.SortOrder
   customerTotalCents?: Prisma.SortOrder
+  amountCapturableCents?: Prisma.SortOrder
+  captureBefore?: Prisma.SortOrder
+  authorizedAt?: Prisma.SortOrder
+  capturedAt?: Prisma.SortOrder
+  canceledAt?: Prisma.SortOrder
+  failedAt?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrder
   lastErrorCode?: Prisma.SortOrder
   lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -755,13 +909,13 @@ export type PaymentRecordMinOrderByAggregateInput = {
 
 export type PaymentRecordSumOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
-  platformFeeCents?: Prisma.SortOrder
   protectedAmountCents?: Prisma.SortOrder
   merchantReceivesCents?: Prisma.SortOrder
   vouchServiceFeeCents?: Prisma.SortOrder
   processingFeeOffsetCents?: Prisma.SortOrder
   applicationFeeAmountCents?: Prisma.SortOrder
   customerTotalCents?: Prisma.SortOrder
+  amountCapturableCents?: Prisma.SortOrder
 }
 
 export type PaymentRecordScalarRelationFilter = {
@@ -805,18 +959,22 @@ export type EnumPaymentStatusFieldUpdateOperationsInput = {
   set?: $Enums.PaymentStatus
 }
 
-export type PaymentRecordCreateNestedOneWithoutRefundRecordInput = {
-  create?: Prisma.XOR<Prisma.PaymentRecordCreateWithoutRefundRecordInput, Prisma.PaymentRecordUncheckedCreateWithoutRefundRecordInput>
-  connectOrCreate?: Prisma.PaymentRecordCreateOrConnectWithoutRefundRecordInput
+export type EnumSettlementStatusFieldUpdateOperationsInput = {
+  set?: $Enums.SettlementStatus
+}
+
+export type PaymentRecordCreateNestedOneWithoutRefundRecordsInput = {
+  create?: Prisma.XOR<Prisma.PaymentRecordCreateWithoutRefundRecordsInput, Prisma.PaymentRecordUncheckedCreateWithoutRefundRecordsInput>
+  connectOrCreate?: Prisma.PaymentRecordCreateOrConnectWithoutRefundRecordsInput
   connect?: Prisma.PaymentRecordWhereUniqueInput
 }
 
-export type PaymentRecordUpdateOneRequiredWithoutRefundRecordNestedInput = {
-  create?: Prisma.XOR<Prisma.PaymentRecordCreateWithoutRefundRecordInput, Prisma.PaymentRecordUncheckedCreateWithoutRefundRecordInput>
-  connectOrCreate?: Prisma.PaymentRecordCreateOrConnectWithoutRefundRecordInput
-  upsert?: Prisma.PaymentRecordUpsertWithoutRefundRecordInput
+export type PaymentRecordUpdateOneRequiredWithoutRefundRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.PaymentRecordCreateWithoutRefundRecordsInput, Prisma.PaymentRecordUncheckedCreateWithoutRefundRecordsInput>
+  connectOrCreate?: Prisma.PaymentRecordCreateOrConnectWithoutRefundRecordsInput
+  upsert?: Prisma.PaymentRecordUpsertWithoutRefundRecordsInput
   connect?: Prisma.PaymentRecordWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.PaymentRecordUpdateToOneWithWhereWithoutRefundRecordInput, Prisma.PaymentRecordUpdateWithoutRefundRecordInput>, Prisma.PaymentRecordUncheckedUpdateWithoutRefundRecordInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PaymentRecordUpdateToOneWithWhereWithoutRefundRecordsInput, Prisma.PaymentRecordUpdateWithoutRefundRecordsInput>, Prisma.PaymentRecordUncheckedUpdateWithoutRefundRecordsInput>
 }
 
 export type PaymentRecordCreateNestedOneWithoutWebhookEventsInput = {
@@ -838,50 +996,64 @@ export type PaymentRecordUpdateOneWithoutWebhookEventsNestedInput = {
 export type PaymentRecordCreateWithoutVouchInput = {
   id?: string
   provider?: $Enums.PaymentProvider
-  providerPaymentId?: string | null
+  providerPaymentIntentId?: string | null
   providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
+  settlementStatus?: $Enums.SettlementStatus
   amountCents: number
   currency?: string
-  platformFeeCents?: number
   protectedAmountCents?: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
   processingFeeOffsetCents?: number
   applicationFeeAmountCents?: number
   customerTotalCents?: number
+  amountCapturableCents?: number
+  captureBefore?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  canceledAt?: Date | string | null
+  failedAt?: Date | string | null
+  lastProviderSyncAt?: Date | string | null
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  refundRecord?: Prisma.RefundRecordCreateNestedOneWithoutPaymentRecordInput
+  refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutPaymentRecordInput
   webhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutPaymentRecordInput
 }
 
 export type PaymentRecordUncheckedCreateWithoutVouchInput = {
   id?: string
   provider?: $Enums.PaymentProvider
-  providerPaymentId?: string | null
+  providerPaymentIntentId?: string | null
   providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
+  settlementStatus?: $Enums.SettlementStatus
   amountCents: number
   currency?: string
-  platformFeeCents?: number
   protectedAmountCents?: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
   processingFeeOffsetCents?: number
   applicationFeeAmountCents?: number
   customerTotalCents?: number
+  amountCapturableCents?: number
+  captureBefore?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  canceledAt?: Date | string | null
+  failedAt?: Date | string | null
+  lastProviderSyncAt?: Date | string | null
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  refundRecord?: Prisma.RefundRecordUncheckedCreateNestedOneWithoutPaymentRecordInput
+  refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutPaymentRecordInput
   webhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentRecordInput
 }
 
@@ -904,70 +1076,91 @@ export type PaymentRecordUpdateToOneWithWhereWithoutVouchInput = {
 export type PaymentRecordUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFieldUpdateOperationsInput | $Enums.SettlementStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
-  platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
   vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
   applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
+  amountCapturableCents?: Prisma.IntFieldUpdateOperationsInput | number
+  captureBefore?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canceledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  refundRecord?: Prisma.RefundRecordUpdateOneWithoutPaymentRecordNestedInput
+  refundRecords?: Prisma.RefundRecordUpdateManyWithoutPaymentRecordNestedInput
   webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutPaymentRecordNestedInput
 }
 
 export type PaymentRecordUncheckedUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFieldUpdateOperationsInput | $Enums.SettlementStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
-  platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
   vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
   applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
+  amountCapturableCents?: Prisma.IntFieldUpdateOperationsInput | number
+  captureBefore?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canceledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  refundRecord?: Prisma.RefundRecordUncheckedUpdateOneWithoutPaymentRecordNestedInput
+  refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutPaymentRecordNestedInput
   webhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutPaymentRecordNestedInput
 }
 
-export type PaymentRecordCreateWithoutRefundRecordInput = {
+export type PaymentRecordCreateWithoutRefundRecordsInput = {
   id?: string
   provider?: $Enums.PaymentProvider
-  providerPaymentId?: string | null
+  providerPaymentIntentId?: string | null
   providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
+  settlementStatus?: $Enums.SettlementStatus
   amountCents: number
   currency?: string
-  platformFeeCents?: number
   protectedAmountCents?: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
   processingFeeOffsetCents?: number
   applicationFeeAmountCents?: number
   customerTotalCents?: number
+  amountCapturableCents?: number
+  captureBefore?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  canceledAt?: Date | string | null
+  failedAt?: Date | string | null
+  lastProviderSyncAt?: Date | string | null
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -976,24 +1169,31 @@ export type PaymentRecordCreateWithoutRefundRecordInput = {
   webhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutPaymentRecordInput
 }
 
-export type PaymentRecordUncheckedCreateWithoutRefundRecordInput = {
+export type PaymentRecordUncheckedCreateWithoutRefundRecordsInput = {
   id?: string
   vouchId: string
   provider?: $Enums.PaymentProvider
-  providerPaymentId?: string | null
+  providerPaymentIntentId?: string | null
   providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
+  settlementStatus?: $Enums.SettlementStatus
   amountCents: number
   currency?: string
-  platformFeeCents?: number
   protectedAmountCents?: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
   processingFeeOffsetCents?: number
   applicationFeeAmountCents?: number
   customerTotalCents?: number
+  amountCapturableCents?: number
+  captureBefore?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  canceledAt?: Date | string | null
+  failedAt?: Date | string | null
+  lastProviderSyncAt?: Date | string | null
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
@@ -1001,39 +1201,46 @@ export type PaymentRecordUncheckedCreateWithoutRefundRecordInput = {
   webhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutPaymentRecordInput
 }
 
-export type PaymentRecordCreateOrConnectWithoutRefundRecordInput = {
+export type PaymentRecordCreateOrConnectWithoutRefundRecordsInput = {
   where: Prisma.PaymentRecordWhereUniqueInput
-  create: Prisma.XOR<Prisma.PaymentRecordCreateWithoutRefundRecordInput, Prisma.PaymentRecordUncheckedCreateWithoutRefundRecordInput>
+  create: Prisma.XOR<Prisma.PaymentRecordCreateWithoutRefundRecordsInput, Prisma.PaymentRecordUncheckedCreateWithoutRefundRecordsInput>
 }
 
-export type PaymentRecordUpsertWithoutRefundRecordInput = {
-  update: Prisma.XOR<Prisma.PaymentRecordUpdateWithoutRefundRecordInput, Prisma.PaymentRecordUncheckedUpdateWithoutRefundRecordInput>
-  create: Prisma.XOR<Prisma.PaymentRecordCreateWithoutRefundRecordInput, Prisma.PaymentRecordUncheckedCreateWithoutRefundRecordInput>
+export type PaymentRecordUpsertWithoutRefundRecordsInput = {
+  update: Prisma.XOR<Prisma.PaymentRecordUpdateWithoutRefundRecordsInput, Prisma.PaymentRecordUncheckedUpdateWithoutRefundRecordsInput>
+  create: Prisma.XOR<Prisma.PaymentRecordCreateWithoutRefundRecordsInput, Prisma.PaymentRecordUncheckedCreateWithoutRefundRecordsInput>
   where?: Prisma.PaymentRecordWhereInput
 }
 
-export type PaymentRecordUpdateToOneWithWhereWithoutRefundRecordInput = {
+export type PaymentRecordUpdateToOneWithWhereWithoutRefundRecordsInput = {
   where?: Prisma.PaymentRecordWhereInput
-  data: Prisma.XOR<Prisma.PaymentRecordUpdateWithoutRefundRecordInput, Prisma.PaymentRecordUncheckedUpdateWithoutRefundRecordInput>
+  data: Prisma.XOR<Prisma.PaymentRecordUpdateWithoutRefundRecordsInput, Prisma.PaymentRecordUncheckedUpdateWithoutRefundRecordsInput>
 }
 
-export type PaymentRecordUpdateWithoutRefundRecordInput = {
+export type PaymentRecordUpdateWithoutRefundRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFieldUpdateOperationsInput | $Enums.SettlementStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
-  platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
   vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
   applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
+  amountCapturableCents?: Prisma.IntFieldUpdateOperationsInput | number
+  captureBefore?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canceledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1042,24 +1249,31 @@ export type PaymentRecordUpdateWithoutRefundRecordInput = {
   webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutPaymentRecordNestedInput
 }
 
-export type PaymentRecordUncheckedUpdateWithoutRefundRecordInput = {
+export type PaymentRecordUncheckedUpdateWithoutRefundRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFieldUpdateOperationsInput | $Enums.SettlementStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
-  platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
   vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
   applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
+  amountCapturableCents?: Prisma.IntFieldUpdateOperationsInput | number
+  captureBefore?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canceledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1070,51 +1284,65 @@ export type PaymentRecordUncheckedUpdateWithoutRefundRecordInput = {
 export type PaymentRecordCreateWithoutWebhookEventsInput = {
   id?: string
   provider?: $Enums.PaymentProvider
-  providerPaymentId?: string | null
+  providerPaymentIntentId?: string | null
   providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
+  settlementStatus?: $Enums.SettlementStatus
   amountCents: number
   currency?: string
-  platformFeeCents?: number
   protectedAmountCents?: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
   processingFeeOffsetCents?: number
   applicationFeeAmountCents?: number
   customerTotalCents?: number
+  amountCapturableCents?: number
+  captureBefore?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  canceledAt?: Date | string | null
+  failedAt?: Date | string | null
+  lastProviderSyncAt?: Date | string | null
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   vouch: Prisma.VouchCreateNestedOneWithoutPaymentRecordInput
-  refundRecord?: Prisma.RefundRecordCreateNestedOneWithoutPaymentRecordInput
+  refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutPaymentRecordInput
 }
 
 export type PaymentRecordUncheckedCreateWithoutWebhookEventsInput = {
   id?: string
   vouchId: string
   provider?: $Enums.PaymentProvider
-  providerPaymentId?: string | null
+  providerPaymentIntentId?: string | null
   providerCheckoutSessionId?: string | null
   providerChargeId?: string | null
   providerTransferId?: string | null
   status?: $Enums.PaymentStatus
+  settlementStatus?: $Enums.SettlementStatus
   amountCents: number
   currency?: string
-  platformFeeCents?: number
   protectedAmountCents?: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
   processingFeeOffsetCents?: number
   applicationFeeAmountCents?: number
   customerTotalCents?: number
+  amountCapturableCents?: number
+  captureBefore?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  canceledAt?: Date | string | null
+  failedAt?: Date | string | null
+  lastProviderSyncAt?: Date | string | null
   lastErrorCode?: string | null
   lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  refundRecord?: Prisma.RefundRecordUncheckedCreateNestedOneWithoutPaymentRecordInput
+  refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutPaymentRecordInput
 }
 
 export type PaymentRecordCreateOrConnectWithoutWebhookEventsInput = {
@@ -1136,51 +1364,65 @@ export type PaymentRecordUpdateToOneWithWhereWithoutWebhookEventsInput = {
 export type PaymentRecordUpdateWithoutWebhookEventsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFieldUpdateOperationsInput | $Enums.SettlementStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
-  platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
   vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
   applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
+  amountCapturableCents?: Prisma.IntFieldUpdateOperationsInput | number
+  captureBefore?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canceledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vouch?: Prisma.VouchUpdateOneRequiredWithoutPaymentRecordNestedInput
-  refundRecord?: Prisma.RefundRecordUpdateOneWithoutPaymentRecordNestedInput
+  refundRecords?: Prisma.RefundRecordUpdateManyWithoutPaymentRecordNestedInput
 }
 
 export type PaymentRecordUncheckedUpdateWithoutWebhookEventsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerTransferId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  settlementStatus?: Prisma.EnumSettlementStatusFieldUpdateOperationsInput | $Enums.SettlementStatus
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   currency?: Prisma.StringFieldUpdateOperationsInput | string
-  platformFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   protectedAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   merchantReceivesCents?: Prisma.IntFieldUpdateOperationsInput | number
   vouchServiceFeeCents?: Prisma.IntFieldUpdateOperationsInput | number
   processingFeeOffsetCents?: Prisma.IntFieldUpdateOperationsInput | number
   applicationFeeAmountCents?: Prisma.IntFieldUpdateOperationsInput | number
   customerTotalCents?: Prisma.IntFieldUpdateOperationsInput | number
+  amountCapturableCents?: Prisma.IntFieldUpdateOperationsInput | number
+  captureBefore?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canceledAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  refundRecord?: Prisma.RefundRecordUncheckedUpdateOneWithoutPaymentRecordNestedInput
+  refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutPaymentRecordNestedInput
 }
 
 
@@ -1189,10 +1431,12 @@ export type PaymentRecordUncheckedUpdateWithoutWebhookEventsInput = {
  */
 
 export type PaymentRecordCountOutputType = {
+  refundRecords: number
   webhookEvents: number
 }
 
 export type PaymentRecordCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  refundRecords?: boolean | PaymentRecordCountOutputTypeCountRefundRecordsArgs
   webhookEvents?: boolean | PaymentRecordCountOutputTypeCountWebhookEventsArgs
 }
 
@@ -1209,6 +1453,13 @@ export type PaymentRecordCountOutputTypeDefaultArgs<ExtArgs extends runtime.Type
 /**
  * PaymentRecordCountOutputType without action
  */
+export type PaymentRecordCountOutputTypeCountRefundRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RefundRecordWhereInput
+}
+
+/**
+ * PaymentRecordCountOutputType without action
+ */
 export type PaymentRecordCountOutputTypeCountWebhookEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PaymentWebhookEventWhereInput
 }
@@ -1218,26 +1469,33 @@ export type PaymentRecordSelect<ExtArgs extends runtime.Types.Extensions.Interna
   id?: boolean
   vouchId?: boolean
   provider?: boolean
-  providerPaymentId?: boolean
+  providerPaymentIntentId?: boolean
   providerCheckoutSessionId?: boolean
   providerChargeId?: boolean
   providerTransferId?: boolean
   status?: boolean
+  settlementStatus?: boolean
   amountCents?: boolean
   currency?: boolean
-  platformFeeCents?: boolean
   protectedAmountCents?: boolean
   merchantReceivesCents?: boolean
   vouchServiceFeeCents?: boolean
   processingFeeOffsetCents?: boolean
   applicationFeeAmountCents?: boolean
   customerTotalCents?: boolean
+  amountCapturableCents?: boolean
+  captureBefore?: boolean
+  authorizedAt?: boolean
+  capturedAt?: boolean
+  canceledAt?: boolean
+  failedAt?: boolean
+  lastProviderSyncAt?: boolean
   lastErrorCode?: boolean
   lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  refundRecord?: boolean | Prisma.PaymentRecord$refundRecordArgs<ExtArgs>
+  refundRecords?: boolean | Prisma.PaymentRecord$refundRecordsArgs<ExtArgs>
   webhookEvents?: boolean | Prisma.PaymentRecord$webhookEventsArgs<ExtArgs>
   _count?: boolean | Prisma.PaymentRecordCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["paymentRecord"]>
@@ -1246,20 +1504,27 @@ export type PaymentRecordSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   id?: boolean
   vouchId?: boolean
   provider?: boolean
-  providerPaymentId?: boolean
+  providerPaymentIntentId?: boolean
   providerCheckoutSessionId?: boolean
   providerChargeId?: boolean
   providerTransferId?: boolean
   status?: boolean
+  settlementStatus?: boolean
   amountCents?: boolean
   currency?: boolean
-  platformFeeCents?: boolean
   protectedAmountCents?: boolean
   merchantReceivesCents?: boolean
   vouchServiceFeeCents?: boolean
   processingFeeOffsetCents?: boolean
   applicationFeeAmountCents?: boolean
   customerTotalCents?: boolean
+  amountCapturableCents?: boolean
+  captureBefore?: boolean
+  authorizedAt?: boolean
+  capturedAt?: boolean
+  canceledAt?: boolean
+  failedAt?: boolean
+  lastProviderSyncAt?: boolean
   lastErrorCode?: boolean
   lastErrorMessage?: boolean
   createdAt?: boolean
@@ -1271,20 +1536,27 @@ export type PaymentRecordSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   id?: boolean
   vouchId?: boolean
   provider?: boolean
-  providerPaymentId?: boolean
+  providerPaymentIntentId?: boolean
   providerCheckoutSessionId?: boolean
   providerChargeId?: boolean
   providerTransferId?: boolean
   status?: boolean
+  settlementStatus?: boolean
   amountCents?: boolean
   currency?: boolean
-  platformFeeCents?: boolean
   protectedAmountCents?: boolean
   merchantReceivesCents?: boolean
   vouchServiceFeeCents?: boolean
   processingFeeOffsetCents?: boolean
   applicationFeeAmountCents?: boolean
   customerTotalCents?: boolean
+  amountCapturableCents?: boolean
+  captureBefore?: boolean
+  authorizedAt?: boolean
+  capturedAt?: boolean
+  canceledAt?: boolean
+  failedAt?: boolean
+  lastProviderSyncAt?: boolean
   lastErrorCode?: boolean
   lastErrorMessage?: boolean
   createdAt?: boolean
@@ -1296,30 +1568,37 @@ export type PaymentRecordSelectScalar = {
   id?: boolean
   vouchId?: boolean
   provider?: boolean
-  providerPaymentId?: boolean
+  providerPaymentIntentId?: boolean
   providerCheckoutSessionId?: boolean
   providerChargeId?: boolean
   providerTransferId?: boolean
   status?: boolean
+  settlementStatus?: boolean
   amountCents?: boolean
   currency?: boolean
-  platformFeeCents?: boolean
   protectedAmountCents?: boolean
   merchantReceivesCents?: boolean
   vouchServiceFeeCents?: boolean
   processingFeeOffsetCents?: boolean
   applicationFeeAmountCents?: boolean
   customerTotalCents?: boolean
+  amountCapturableCents?: boolean
+  captureBefore?: boolean
+  authorizedAt?: boolean
+  capturedAt?: boolean
+  canceledAt?: boolean
+  failedAt?: boolean
+  lastProviderSyncAt?: boolean
   lastErrorCode?: boolean
   lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PaymentRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "provider" | "providerPaymentId" | "providerCheckoutSessionId" | "providerChargeId" | "providerTransferId" | "status" | "amountCents" | "currency" | "platformFeeCents" | "protectedAmountCents" | "merchantReceivesCents" | "vouchServiceFeeCents" | "processingFeeOffsetCents" | "applicationFeeAmountCents" | "customerTotalCents" | "lastErrorCode" | "lastErrorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentRecord"]>
+export type PaymentRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "provider" | "providerPaymentIntentId" | "providerCheckoutSessionId" | "providerChargeId" | "providerTransferId" | "status" | "settlementStatus" | "amountCents" | "currency" | "protectedAmountCents" | "merchantReceivesCents" | "vouchServiceFeeCents" | "processingFeeOffsetCents" | "applicationFeeAmountCents" | "customerTotalCents" | "amountCapturableCents" | "captureBefore" | "authorizedAt" | "capturedAt" | "canceledAt" | "failedAt" | "lastProviderSyncAt" | "lastErrorCode" | "lastErrorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentRecord"]>
 export type PaymentRecordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  refundRecord?: boolean | Prisma.PaymentRecord$refundRecordArgs<ExtArgs>
+  refundRecords?: boolean | Prisma.PaymentRecord$refundRecordsArgs<ExtArgs>
   webhookEvents?: boolean | Prisma.PaymentRecord$webhookEventsArgs<ExtArgs>
   _count?: boolean | Prisma.PaymentRecordCountOutputTypeDefaultArgs<ExtArgs>
 }
@@ -1334,27 +1613,34 @@ export type $PaymentRecordPayload<ExtArgs extends runtime.Types.Extensions.Inter
   name: "PaymentRecord"
   objects: {
     vouch: Prisma.$VouchPayload<ExtArgs>
-    refundRecord: Prisma.$RefundRecordPayload<ExtArgs> | null
+    refundRecords: Prisma.$RefundRecordPayload<ExtArgs>[]
     webhookEvents: Prisma.$PaymentWebhookEventPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     vouchId: string
     provider: $Enums.PaymentProvider
-    providerPaymentId: string | null
+    providerPaymentIntentId: string | null
     providerCheckoutSessionId: string | null
     providerChargeId: string | null
     providerTransferId: string | null
     status: $Enums.PaymentStatus
+    settlementStatus: $Enums.SettlementStatus
     amountCents: number
     currency: string
-    platformFeeCents: number
     protectedAmountCents: number
     merchantReceivesCents: number
     vouchServiceFeeCents: number
     processingFeeOffsetCents: number
     applicationFeeAmountCents: number
     customerTotalCents: number
+    amountCapturableCents: number
+    captureBefore: Date | null
+    authorizedAt: Date | null
+    capturedAt: Date | null
+    canceledAt: Date | null
+    failedAt: Date | null
+    lastProviderSyncAt: Date | null
     lastErrorCode: string | null
     lastErrorMessage: string | null
     createdAt: Date
@@ -1754,7 +2040,7 @@ readonly fields: PaymentRecordFieldRefs;
 export interface Prisma__PaymentRecordClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   vouch<T extends Prisma.VouchDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VouchDefaultArgs<ExtArgs>>): Prisma.Prisma__VouchClient<runtime.Types.Result.GetResult<Prisma.$VouchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  refundRecord<T extends Prisma.PaymentRecord$refundRecordArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentRecord$refundRecordArgs<ExtArgs>>): Prisma.Prisma__RefundRecordClient<runtime.Types.Result.GetResult<Prisma.$RefundRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  refundRecords<T extends Prisma.PaymentRecord$refundRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentRecord$refundRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefundRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webhookEvents<T extends Prisma.PaymentRecord$webhookEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentRecord$webhookEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1788,20 +2074,27 @@ export interface PaymentRecordFieldRefs {
   readonly id: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly vouchId: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly provider: Prisma.FieldRef<"PaymentRecord", 'PaymentProvider'>
-  readonly providerPaymentId: Prisma.FieldRef<"PaymentRecord", 'String'>
+  readonly providerPaymentIntentId: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly providerCheckoutSessionId: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly providerChargeId: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly providerTransferId: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly status: Prisma.FieldRef<"PaymentRecord", 'PaymentStatus'>
+  readonly settlementStatus: Prisma.FieldRef<"PaymentRecord", 'SettlementStatus'>
   readonly amountCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
   readonly currency: Prisma.FieldRef<"PaymentRecord", 'String'>
-  readonly platformFeeCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
   readonly protectedAmountCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
   readonly merchantReceivesCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
   readonly vouchServiceFeeCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
   readonly processingFeeOffsetCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
   readonly applicationFeeAmountCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
   readonly customerTotalCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
+  readonly amountCapturableCents: Prisma.FieldRef<"PaymentRecord", 'Int'>
+  readonly captureBefore: Prisma.FieldRef<"PaymentRecord", 'DateTime'>
+  readonly authorizedAt: Prisma.FieldRef<"PaymentRecord", 'DateTime'>
+  readonly capturedAt: Prisma.FieldRef<"PaymentRecord", 'DateTime'>
+  readonly canceledAt: Prisma.FieldRef<"PaymentRecord", 'DateTime'>
+  readonly failedAt: Prisma.FieldRef<"PaymentRecord", 'DateTime'>
+  readonly lastProviderSyncAt: Prisma.FieldRef<"PaymentRecord", 'DateTime'>
   readonly lastErrorCode: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly lastErrorMessage: Prisma.FieldRef<"PaymentRecord", 'String'>
   readonly createdAt: Prisma.FieldRef<"PaymentRecord", 'DateTime'>
@@ -2207,9 +2500,9 @@ export type PaymentRecordDeleteManyArgs<ExtArgs extends runtime.Types.Extensions
 }
 
 /**
- * PaymentRecord.refundRecord
+ * PaymentRecord.refundRecords
  */
-export type PaymentRecord$refundRecordArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type PaymentRecord$refundRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the RefundRecord
    */
@@ -2223,6 +2516,11 @@ export type PaymentRecord$refundRecordArgs<ExtArgs extends runtime.Types.Extensi
    */
   include?: Prisma.RefundRecordInclude<ExtArgs> | null
   where?: Prisma.RefundRecordWhereInput
+  orderBy?: Prisma.RefundRecordOrderByWithRelationInput | Prisma.RefundRecordOrderByWithRelationInput[]
+  cursor?: Prisma.RefundRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RefundRecordScalarFieldEnum | Prisma.RefundRecordScalarFieldEnum[]
 }
 
 /**

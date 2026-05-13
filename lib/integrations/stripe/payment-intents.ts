@@ -15,7 +15,7 @@ export type CreateStripePaymentAuthorizationInput = {
   processingFeeOffsetCents: number
   providerCustomerId?: string
   providerPaymentMethodId?: string
-  connectedAccountId?: string
+  connectedAccountId: string
   confirmOffSession?: boolean
   idempotencyKey: string
 }
@@ -36,12 +36,8 @@ export async function createStripePaymentAuthorization(
       ...(input.confirmOffSession && input.providerPaymentMethodId
         ? { confirm: true, off_session: true }
         : {}),
-      ...(input.connectedAccountId
-        ? {
-            application_fee_amount: input.applicationFeeAmountCents,
-            transfer_data: { destination: input.connectedAccountId },
-          }
-        : {}),
+      application_fee_amount: input.applicationFeeAmountCents,
+      transfer_data: { destination: input.connectedAccountId },
       metadata: {
         vouch_id: input.vouchId,
         payment_role: "customer_commitment",
@@ -57,44 +53,77 @@ export async function createStripePaymentAuthorization(
   )
 }
 
-export async function captureStripePayment(input: {
-  providerPaymentId: string
-  idempotencyKey: string
-}): Promise<Stripe.PaymentIntent> {
-  return getStripeServerClient().paymentIntents.capture(input.providerPaymentId, undefined, {
-    idempotencyKey: input.idempotencyKey,
-  })
-}
-
 export async function retrieveStripePaymentIntent(input: {
-  providerPaymentId: string
+  providerPaymentIntentId: string
 }): Promise<Stripe.PaymentIntent> {
-  return getStripeServerClient().paymentIntents.retrieve(input.providerPaymentId, {
+  return getStripeServerClient().paymentIntents.retrieve(input.providerPaymentIntentId, {
     expand: ["latest_charge"],
   })
 }
 
-export async function voidStripeAuthorization(input: {
-  providerPaymentId: string
+export async function captureStripePayment(input: {
+  providerPaymentIntentId: string
   idempotencyKey: string
 }): Promise<Stripe.PaymentIntent> {
-  return getStripeServerClient().paymentIntents.cancel(
-    input.providerPaymentId,
+  const stripe = getStripeServerClient()
+  const current = await retrieveStripePaymentIntent({
+    providerPaymentIntentId: input.providerPaymentIntentId,
+  })
+
+  if (current.status !== "requires_capture") {
+    return current
+  }
+
+  return stripe.paymentIntents.capture(input.providerPaymentIntentId, undefined, {
+    idempotencyKey: input.idempotencyKey,
+  })
+}
+
+export async function cancelStripeAuthorization(input: {
+  providerPaymentIntentId: string
+  idempotencyKey: string
+}): Promise<Stripe.PaymentIntent> {
+  const stripe = getStripeServerClient()
+  const current = await retrieveStripePaymentIntent({
+    providerPaymentIntentId: input.providerPaymentIntentId,
+  })
+
+  if (current.status === "canceled" || current.status === "succeeded") {
+    return current
+  }
+
+  return stripe.paymentIntents.cancel(
+    input.providerPaymentIntentId,
     {},
     { idempotencyKey: input.idempotencyKey }
   )
 }
 
 export async function refundStripePayment(input: {
-  providerPaymentId: string
+  providerPaymentIntentId: string
   idempotencyKey: string
 }): Promise<Stripe.Refund> {
+  const current = await retrieveStripePaymentIntent({
+    providerPaymentIntentId: input.providerPaymentIntentId,
+  })
+
+  if (current.status !== "succeeded") {
+    throw new Error("PAYMENT_INTENT_NOT_CAPTURED")
+  }
+
   return getStripeServerClient().refunds.create(
-    { payment_intent: input.providerPaymentId },
+    { payment_intent: input.providerPaymentIntentId },
     { idempotencyKey: input.idempotencyKey }
   )
 }
 
-export async function retrieveStripeRefund(input: { providerRefundId: string }): Promise<Stripe.Refund> {
+export async function retrieveStripeRefund(input: {
+  providerRefundId: string
+}): Promise<Stripe.Refund> {
   return getStripeServerClient().refunds.retrieve(input.providerRefundId)
 }
+
+/**
+ * Compatibility alias retained for older imports.
+ */
+export const voidStripeAuthorization = cancelStripeAuthorization

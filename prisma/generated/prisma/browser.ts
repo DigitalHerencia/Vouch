@@ -48,6 +48,11 @@ export type TermsAcceptance = Prisma.TermsAcceptanceModel
  */
 export type Vouch = Prisma.VouchModel
 /**
+ * Model VouchRecoverySnapshot
+ * 
+ */
+export type VouchRecoverySnapshot = Prisma.VouchRecoverySnapshotModel
+/**
  * Model Invitation
  * 
  */
@@ -101,8 +106,8 @@ export type ClerkInvitation = Prisma.ClerkInvitationModel
  * *
  *  * Stripe/payment-specific webhook projection.
  *  *
- *  * This satisfies the payment webhook operational/admin views while
  *  * ProviderWebhookEvent handles generic idempotency across Clerk/Stripe.
+ *  * PaymentWebhookEvent is the Stripe/payment projection only.
  */
 export type PaymentWebhookEvent = Prisma.PaymentWebhookEventModel
 /**

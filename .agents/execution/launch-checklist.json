@@ -1,0 +1,140 @@
+{
+  "version": 1,
+  "project": "Vouch",
+  "status": "pending_validation",
+  "source_of_truth": [
+    "Vouch Source of Truth",
+    ".agents/docs/*.md",
+    ".agents/contracts/*.yaml",
+    ".agents/instructions/*.md"
+  ],
+  "product_invariants": [
+    {
+      "id": "product-scope",
+      "status": "required",
+      "description": "Vouch is a narrow commitment-backed payment coordination system for appointments and in-person agreements."
+    },
+    {
+      "id": "release-rule",
+      "status": "required",
+      "description": "Both participants confirm presence inside the confirmation window before funds release."
+    },
+    {
+      "id": "non-release-rule",
+      "status": "required",
+      "description": "If confirmation conditions fail, funds do not release; provider state determines non-capture, cancellation, or refund."
+    },
+    {
+      "id": "no-discretion",
+      "status": "required",
+      "description": "No disputes, evidence, appeals, mediation, arbitration, manual awards, support overrides, or manual confirmation rewrites."
+    },
+    {
+      "id": "provider-truth",
+      "status": "required",
+      "description": "Stripe owns payment truth; Vouch mirrors provider state and applies workflow truth."
+    }
+  ],
+  "launch_gates": [
+    {
+      "id": "routes",
+      "status": "pending",
+      "command": "pnpm test -- tests/contract/architecture-surface.test.ts",
+      "required_result": "pass"
+    },
+    {
+      "id": "source-conformance",
+      "status": "pending",
+      "command": "pnpm test -- tests/contract/source-conformance.test.ts",
+      "required_result": "pass"
+    },
+    {
+      "id": "contracts",
+      "status": "pending",
+      "command": "pnpm validate:contracts",
+      "required_result": "pass"
+    },
+    {
+      "id": "schema",
+      "status": "pending",
+      "command": "pnpm prisma:validate",
+      "required_result": "pass"
+    },
+    {
+      "id": "lint",
+      "status": "pending",
+      "command": "pnpm lint",
+      "required_result": "pass"
+    },
+    {
+      "id": "typecheck",
+      "status": "pending",
+      "command": "pnpm typecheck",
+      "required_result": "pass"
+    },
+    {
+      "id": "unit-tests",
+      "status": "pending",
+      "command": "pnpm test",
+      "required_result": "pass"
+    },
+    {
+      "id": "e2e-tests",
+      "status": "pending",
+      "command": "pnpm test:e2e",
+      "required_result": "pass"
+    },
+    {
+      "id": "full-validation",
+      "status": "pending",
+      "command": "pnpm validate:all",
+      "required_result": "pass"
+    }
+  ],
+  "manual_runtime_checks": [
+    {
+      "id": "merchant-connect",
+      "status": "pending",
+      "description": "Merchant can start Stripe Connect onboarding from canonical dashboard/new-vouch flow without visiting settings pages."
+    },
+    {
+      "id": "customer-payment",
+      "status": "pending",
+      "description": "Customer can start Stripe payment management from canonical flow without visiting settings pages."
+    },
+    {
+      "id": "create-vouch",
+      "status": "pending",
+      "description": "Merchant can create a committed/sent Vouch with immutable pricing and appointment window."
+    },
+    {
+      "id": "accept-authorize",
+      "status": "pending",
+      "description": "Customer can accept and Stripe creates a manual-capture PaymentIntent with destination transfer and app fee."
+    },
+    {
+      "id": "dual-confirm-capture",
+      "status": "pending",
+      "description": "Both participants confirm inside the window and settlement captures only after Stripe retrieve confirms capturable state."
+    },
+    {
+      "id": "missed-confirmation-noncapture",
+      "status": "pending",
+      "description": "Missing or late confirmation causes non-capture/cancel/refund according to Stripe provider state."
+    },
+    {
+      "id": "webhook-idempotency",
+      "status": "pending",
+      "description": "Duplicate Stripe webhook event ID is acknowledged and does not re-run state transition."
+    },
+    {
+      "id": "forbidden-surface",
+      "status": "pending",
+      "description": "No setup/settings/admin/dispute/marketplace/messaging/review/search/browse/provider-directory surfaces render."
+    }
+  ],
+  "final_decision": {
+    "status": "not_ready_until_validation_passes",
+    "notes": []
+  }
+}

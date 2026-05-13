@@ -29,6 +29,10 @@ export type PaymentCustomerMinAggregateOutputType = {
   userId: string | null
   provider: $Enums.PaymentProvider | null
   providerCustomerId: string | null
+  readiness: $Enums.PaymentReadinessStatus | null
+  lastProviderSyncAt: Date | null
+  lastErrorCode: string | null
+  lastErrorMessage: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -38,6 +42,10 @@ export type PaymentCustomerMaxAggregateOutputType = {
   userId: string | null
   provider: $Enums.PaymentProvider | null
   providerCustomerId: string | null
+  readiness: $Enums.PaymentReadinessStatus | null
+  lastProviderSyncAt: Date | null
+  lastErrorCode: string | null
+  lastErrorMessage: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -47,6 +55,10 @@ export type PaymentCustomerCountAggregateOutputType = {
   userId: number
   provider: number
   providerCustomerId: number
+  readiness: number
+  lastProviderSyncAt: number
+  lastErrorCode: number
+  lastErrorMessage: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -58,6 +70,10 @@ export type PaymentCustomerMinAggregateInputType = {
   userId?: true
   provider?: true
   providerCustomerId?: true
+  readiness?: true
+  lastProviderSyncAt?: true
+  lastErrorCode?: true
+  lastErrorMessage?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -67,6 +83,10 @@ export type PaymentCustomerMaxAggregateInputType = {
   userId?: true
   provider?: true
   providerCustomerId?: true
+  readiness?: true
+  lastProviderSyncAt?: true
+  lastErrorCode?: true
+  lastErrorMessage?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -76,6 +96,10 @@ export type PaymentCustomerCountAggregateInputType = {
   userId?: true
   provider?: true
   providerCustomerId?: true
+  readiness?: true
+  lastProviderSyncAt?: true
+  lastErrorCode?: true
+  lastErrorMessage?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -158,6 +182,10 @@ export type PaymentCustomerGroupByOutputType = {
   userId: string
   provider: $Enums.PaymentProvider
   providerCustomerId: string
+  readiness: $Enums.PaymentReadinessStatus
+  lastProviderSyncAt: Date | null
+  lastErrorCode: string | null
+  lastErrorMessage: string | null
   createdAt: Date
   updatedAt: Date
   _count: PaymentCustomerCountAggregateOutputType | null
@@ -188,6 +216,10 @@ export type PaymentCustomerWhereInput = {
   userId?: Prisma.StringFilter<"PaymentCustomer"> | string
   provider?: Prisma.EnumPaymentProviderFilter<"PaymentCustomer"> | $Enums.PaymentProvider
   providerCustomerId?: Prisma.StringFilter<"PaymentCustomer"> | string
+  readiness?: Prisma.EnumPaymentReadinessStatusFilter<"PaymentCustomer"> | $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Prisma.DateTimeNullableFilter<"PaymentCustomer"> | Date | string | null
+  lastErrorCode?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
+  lastErrorMessage?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PaymentCustomer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PaymentCustomer"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -198,6 +230,10 @@ export type PaymentCustomerOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerCustomerId?: Prisma.SortOrder
+  readiness?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -211,6 +247,10 @@ export type PaymentCustomerWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.PaymentCustomerWhereInput[]
   NOT?: Prisma.PaymentCustomerWhereInput | Prisma.PaymentCustomerWhereInput[]
   provider?: Prisma.EnumPaymentProviderFilter<"PaymentCustomer"> | $Enums.PaymentProvider
+  readiness?: Prisma.EnumPaymentReadinessStatusFilter<"PaymentCustomer"> | $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Prisma.DateTimeNullableFilter<"PaymentCustomer"> | Date | string | null
+  lastErrorCode?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
+  lastErrorMessage?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PaymentCustomer"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PaymentCustomer"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -221,6 +261,10 @@ export type PaymentCustomerOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerCustomerId?: Prisma.SortOrder
+  readiness?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PaymentCustomerCountOrderByAggregateInput
@@ -236,6 +280,10 @@ export type PaymentCustomerScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"PaymentCustomer"> | string
   provider?: Prisma.EnumPaymentProviderWithAggregatesFilter<"PaymentCustomer"> | $Enums.PaymentProvider
   providerCustomerId?: Prisma.StringWithAggregatesFilter<"PaymentCustomer"> | string
+  readiness?: Prisma.EnumPaymentReadinessStatusWithAggregatesFilter<"PaymentCustomer"> | $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PaymentCustomer"> | Date | string | null
+  lastErrorCode?: Prisma.StringNullableWithAggregatesFilter<"PaymentCustomer"> | string | null
+  lastErrorMessage?: Prisma.StringNullableWithAggregatesFilter<"PaymentCustomer"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PaymentCustomer"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PaymentCustomer"> | Date | string
 }
@@ -244,6 +292,10 @@ export type PaymentCustomerCreateInput = {
   id?: string
   provider?: $Enums.PaymentProvider
   providerCustomerId: string
+  readiness?: $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Date | string | null
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutPaymentCustomerInput
@@ -254,6 +306,10 @@ export type PaymentCustomerUncheckedCreateInput = {
   userId: string
   provider?: $Enums.PaymentProvider
   providerCustomerId: string
+  readiness?: $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Date | string | null
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -262,6 +318,10 @@ export type PaymentCustomerUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  readiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutPaymentCustomerNestedInput
@@ -272,6 +332,10 @@ export type PaymentCustomerUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  readiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -281,6 +345,10 @@ export type PaymentCustomerCreateManyInput = {
   userId: string
   provider?: $Enums.PaymentProvider
   providerCustomerId: string
+  readiness?: $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Date | string | null
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -289,6 +357,10 @@ export type PaymentCustomerUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  readiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -298,6 +370,10 @@ export type PaymentCustomerUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  readiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -312,6 +388,10 @@ export type PaymentCustomerCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerCustomerId?: Prisma.SortOrder
+  readiness?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -321,6 +401,10 @@ export type PaymentCustomerMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerCustomerId?: Prisma.SortOrder
+  readiness?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -330,6 +414,10 @@ export type PaymentCustomerMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerCustomerId?: Prisma.SortOrder
+  readiness?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -370,10 +458,22 @@ export type EnumPaymentProviderFieldUpdateOperationsInput = {
   set?: $Enums.PaymentProvider
 }
 
+export type EnumPaymentReadinessStatusFieldUpdateOperationsInput = {
+  set?: $Enums.PaymentReadinessStatus
+}
+
+export type NullableDateTimeFieldUpdateOperationsInput = {
+  set?: Date | string | null
+}
+
 export type PaymentCustomerCreateWithoutUserInput = {
   id?: string
   provider?: $Enums.PaymentProvider
   providerCustomerId: string
+  readiness?: $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Date | string | null
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -382,6 +482,10 @@ export type PaymentCustomerUncheckedCreateWithoutUserInput = {
   id?: string
   provider?: $Enums.PaymentProvider
   providerCustomerId: string
+  readiness?: $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Date | string | null
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -406,6 +510,10 @@ export type PaymentCustomerUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  readiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -414,6 +522,10 @@ export type PaymentCustomerUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
+  readiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -425,6 +537,10 @@ export type PaymentCustomerSelect<ExtArgs extends runtime.Types.Extensions.Inter
   userId?: boolean
   provider?: boolean
   providerCustomerId?: boolean
+  readiness?: boolean
+  lastProviderSyncAt?: boolean
+  lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -435,6 +551,10 @@ export type PaymentCustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   userId?: boolean
   provider?: boolean
   providerCustomerId?: boolean
+  readiness?: boolean
+  lastProviderSyncAt?: boolean
+  lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -445,6 +565,10 @@ export type PaymentCustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   userId?: boolean
   provider?: boolean
   providerCustomerId?: boolean
+  readiness?: boolean
+  lastProviderSyncAt?: boolean
+  lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -455,11 +579,15 @@ export type PaymentCustomerSelectScalar = {
   userId?: boolean
   provider?: boolean
   providerCustomerId?: boolean
+  readiness?: boolean
+  lastProviderSyncAt?: boolean
+  lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PaymentCustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "provider" | "providerCustomerId" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentCustomer"]>
+export type PaymentCustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "provider" | "providerCustomerId" | "readiness" | "lastProviderSyncAt" | "lastErrorCode" | "lastErrorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentCustomer"]>
 export type PaymentCustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -480,6 +608,10 @@ export type $PaymentCustomerPayload<ExtArgs extends runtime.Types.Extensions.Int
     userId: string
     provider: $Enums.PaymentProvider
     providerCustomerId: string
+    readiness: $Enums.PaymentReadinessStatus
+    lastProviderSyncAt: Date | null
+    lastErrorCode: string | null
+    lastErrorMessage: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["paymentCustomer"]>
@@ -910,6 +1042,10 @@ export interface PaymentCustomerFieldRefs {
   readonly userId: Prisma.FieldRef<"PaymentCustomer", 'String'>
   readonly provider: Prisma.FieldRef<"PaymentCustomer", 'PaymentProvider'>
   readonly providerCustomerId: Prisma.FieldRef<"PaymentCustomer", 'String'>
+  readonly readiness: Prisma.FieldRef<"PaymentCustomer", 'PaymentReadinessStatus'>
+  readonly lastProviderSyncAt: Prisma.FieldRef<"PaymentCustomer", 'DateTime'>
+  readonly lastErrorCode: Prisma.FieldRef<"PaymentCustomer", 'String'>
+  readonly lastErrorMessage: Prisma.FieldRef<"PaymentCustomer", 'String'>
   readonly createdAt: Prisma.FieldRef<"PaymentCustomer", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PaymentCustomer", 'DateTime'>
 }

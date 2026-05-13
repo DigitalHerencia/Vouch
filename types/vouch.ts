@@ -1,53 +1,46 @@
-import type { CurrencyCode, InvitationToken, ISODateTime, MoneyCents, VouchID } from "./common"
+import type {
+  AGGREGATE_CONFIRMATION_STATUS_VALUES,
+  ARCHIVE_STATUS_VALUES,
+  CONFIRMATION_METHOD_VALUES,
+  CONFIRMATION_STATUS_VALUES,
+  CONFIRM_PRESENCE_VARIANT_VALUES,
+  INVITATION_STATUS_VALUES,
+  PARTICIPANT_ROLE_VALUES,
+  PAYMENT_ROLE_MAP,
+  RECOVERY_STATUS_VALUES,
+  VOUCH_DETAIL_VARIANT_VALUES,
+  VOUCH_LIST_SORT_VALUES,
+  VOUCH_LIST_STATUS_FILTER_VALUES,
+  VOUCH_STATUS_VALUES,
+} from "@/lib/vouch/constants"
 
-export type VouchStatus =
-  | "pending"
-  | "active"
-  | "completed"
-  | "expired"
-  | "refunded"
-  | "canceled"
-  | "failed"
+import type { CurrencyCode, ISODateTime, MoneyCents, VouchID } from "./common"
 
-export type InvitationStatus =
-  | "created"
-  | "sent"
-  | "opened"
-  | "accepted"
-  | "declined"
-  | "expired"
-  | "invalidated"
+export type VouchStatus = (typeof VOUCH_STATUS_VALUES)[number]
+export type InvitationStatus = (typeof INVITATION_STATUS_VALUES)[number]
+export type ParticipantRole = (typeof PARTICIPANT_ROLE_VALUES)[number]
+export type PaymentRoleAlias = (typeof PAYMENT_ROLE_MAP)[ParticipantRole]
+export type ConfirmationStatus = (typeof CONFIRMATION_STATUS_VALUES)[number]
+export type AggregateConfirmationStatus = (typeof AGGREGATE_CONFIRMATION_STATUS_VALUES)[number]
+export type ConfirmationMethod = (typeof CONFIRMATION_METHOD_VALUES)[number]
+export type ArchiveStatus = (typeof ARCHIVE_STATUS_VALUES)[number]
+export type RecoveryStatus = (typeof RECOVERY_STATUS_VALUES)[number]
 
-export type ParticipantRole = "payer" | "payee"
+export type VouchListStatusFilter = (typeof VOUCH_LIST_STATUS_FILTER_VALUES)[number]
+export type VouchListSort = (typeof VOUCH_LIST_SORT_VALUES)[number]
+export type VouchDetailVariant = (typeof VOUCH_DETAIL_VARIANT_VALUES)[number]
+export type ConfirmPresenceVariant = (typeof CONFIRM_PRESENCE_VARIANT_VALUES)[number]
 
-export type ConfirmationStatus =
-  | "not_confirmed"
-  | "confirmed"
-  | "ineligible"
-  | "window_not_open"
-  | "window_closed"
-
-export type AggregateConfirmationStatus =
-  | "none_confirmed"
-  | "payer_confirmed"
-  | "payee_confirmed"
-  | "both_confirmed"
-
-export type ConfirmationMethod = "manual" | "gps" | "system"
-
-export type RecipientMethod = "email" | "share_link"
-
-export interface CreateVouchInput {
+export interface CreateVouchDraftInput {
   amountCents: MoneyCents
   currency: CurrencyCode
-  meetingStartsAt: ISODateTime
+  appointmentStartsAt: ISODateTime
   confirmationOpensAt: ISODateTime
   confirmationExpiresAt: ISODateTime
-  recipientMethod: RecipientMethod
-  recipientEmail?: string
-  label?: string
-  privateNote?: string
-  acceptedTerms: boolean
+}
+
+export interface ConfirmCreateVouchInput extends CreateVouchDraftInput {
+  disclaimerAccepted: true
 }
 
 export interface FeePreviewInput {
@@ -55,38 +48,14 @@ export interface FeePreviewInput {
   currency: CurrencyCode
 }
 
-export interface SendVouchInvitationInput {
-  vouchId: VouchID
-  recipientEmail: string
-}
-
-export interface ResendVouchInvitationInput {
-  vouchId: VouchID
-}
-
-export interface InviteTokenInput {
-  token: InvitationToken
-}
-
-export interface AcceptVouchInput {
-  token: InvitationToken
-  acceptedTerms: boolean
-}
-
-export interface DeclineVouchInput {
-  token: InvitationToken
-  reason?: string
-}
-
-export interface CancelPendingVouchInput {
-  vouchId: VouchID
-  reason?: string
-}
-
 export interface ConfirmPresenceInput {
   vouchId: VouchID
-  participantRole: ParticipantRole
+  submittedCode: string
   method: ConfirmationMethod
+}
+
+export interface ArchiveVouchInput {
+  vouchId: VouchID
 }
 
 export interface VouchListQuery {
@@ -95,43 +64,47 @@ export interface VouchListQuery {
   sort?: VouchListSort
 }
 
-export type VouchListStatusFilter =
-  | "pending"
-  | "active"
-  | "completed"
-  | "expired"
-  | "refunded"
-  | "action_required"
-  | "all"
+export interface VouchAppointmentDTO {
+  appointmentStartsAt: ISODateTime
+  confirmationOpensAt: ISODateTime
+  confirmationExpiresAt: ISODateTime
+  appointmentLabel: string
+  confirmationWindowLabel: string
+}
 
-export type VouchListSort = "newest" | "oldest" | "deadline"
+export interface VouchConfirmationDTO {
+  aggregateStatus: AggregateConfirmationStatus
+  merchantConfirmed: boolean
+  customerConfirmed: boolean
+  windowState: "before_window" | "open" | "closed"
+  confirmationOpensAt: ISODateTime
+  confirmationExpiresAt: ISODateTime
+  canCurrentUserConfirm: boolean
+  consequenceText: string
+}
 
-export type VouchDetailVariant =
-  | "pending_payer"
-  | "pending_invite_sent"
-  | "active_before_window"
-  | "active_window_open"
-  | "payer_confirmed_waiting_for_payee"
-  | "payee_confirmed_waiting_for_payer"
-  | "both_confirmed_processing_release"
-  | "completed"
-  | "expired"
-  | "refunded"
-  | "failed_payment"
-  | "failed_release"
-  | "failed_refund"
-  | "unauthorized_or_not_found"
-  | "loading"
+export interface VouchActionDTO {
+  id: string
+  label: string
+  description?: string
+  disabled?: boolean
+  reason?: string
+}
 
-export type ConfirmPresenceVariant =
-  | "payer"
-  | "payee"
-  | "before_window"
-  | "window_open"
-  | "already_confirmed"
-  | "waiting_for_other_party"
-  | "both_confirmed_success"
-  | "window_closed"
-  | "duplicate_confirmation_error"
-  | "unauthorized_participant"
-  | "provider_payment_failure"
+export interface VouchTimelineItemDTO {
+  id: string
+  label: string
+  body: string
+  occurredAt: ISODateTime
+  participantSafe: boolean
+}
+
+/**
+ * Backward-compatible aliases retained only to keep Pass 4 isolated.
+ * Later passes should migrate call sites to CreateVouchDraftInput / ConfirmCreateVouchInput.
+ */
+export type CreateVouchInput = ConfirmCreateVouchInput
+export type AcceptVouchInput = {
+  vouchId: VouchID
+  disclaimerAccepted: true
+}

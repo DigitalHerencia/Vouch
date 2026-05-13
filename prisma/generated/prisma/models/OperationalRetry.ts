@@ -26,11 +26,11 @@ export type AggregateOperationalRetry = {
 
 export type OperationalRetryMinAggregateOutputType = {
   id: string | null
-  operation: $Enums.AdminSafeRetryOperation | null
+  operation: $Enums.OperationalRetryOperation | null
   status: $Enums.OperationalRetryStatus | null
   entityType: string | null
   entityId: string | null
-  adminUserId: string | null
+  userId: string | null
   reason: string | null
   errorCode: string | null
   startedAt: Date | null
@@ -41,11 +41,11 @@ export type OperationalRetryMinAggregateOutputType = {
 
 export type OperationalRetryMaxAggregateOutputType = {
   id: string | null
-  operation: $Enums.AdminSafeRetryOperation | null
+  operation: $Enums.OperationalRetryOperation | null
   status: $Enums.OperationalRetryStatus | null
   entityType: string | null
   entityId: string | null
-  adminUserId: string | null
+  userId: string | null
   reason: string | null
   errorCode: string | null
   startedAt: Date | null
@@ -60,7 +60,7 @@ export type OperationalRetryCountAggregateOutputType = {
   status: number
   entityType: number
   entityId: number
-  adminUserId: number
+  userId: number
   reason: number
   errorCode: number
   startedAt: number
@@ -77,7 +77,7 @@ export type OperationalRetryMinAggregateInputType = {
   status?: true
   entityType?: true
   entityId?: true
-  adminUserId?: true
+  userId?: true
   reason?: true
   errorCode?: true
   startedAt?: true
@@ -92,7 +92,7 @@ export type OperationalRetryMaxAggregateInputType = {
   status?: true
   entityType?: true
   entityId?: true
-  adminUserId?: true
+  userId?: true
   reason?: true
   errorCode?: true
   startedAt?: true
@@ -107,7 +107,7 @@ export type OperationalRetryCountAggregateInputType = {
   status?: true
   entityType?: true
   entityId?: true
-  adminUserId?: true
+  userId?: true
   reason?: true
   errorCode?: true
   startedAt?: true
@@ -191,11 +191,11 @@ export type OperationalRetryGroupByArgs<ExtArgs extends runtime.Types.Extensions
 
 export type OperationalRetryGroupByOutputType = {
   id: string
-  operation: $Enums.AdminSafeRetryOperation
+  operation: $Enums.OperationalRetryOperation
   status: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
-  adminUserId: string | null
+  userId: string | null
   reason: string | null
   errorCode: string | null
   startedAt: Date
@@ -227,18 +227,18 @@ export type OperationalRetryWhereInput = {
   OR?: Prisma.OperationalRetryWhereInput[]
   NOT?: Prisma.OperationalRetryWhereInput | Prisma.OperationalRetryWhereInput[]
   id?: Prisma.StringFilter<"OperationalRetry"> | string
-  operation?: Prisma.EnumAdminSafeRetryOperationFilter<"OperationalRetry"> | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationFilter<"OperationalRetry"> | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFilter<"OperationalRetry"> | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFilter<"OperationalRetry"> | string
   entityId?: Prisma.StringFilter<"OperationalRetry"> | string
-  adminUserId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
+  userId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   reason?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   errorCode?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   startedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
-  adminUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type OperationalRetryOrderByWithRelationInput = {
@@ -247,14 +247,14 @@ export type OperationalRetryOrderByWithRelationInput = {
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
-  adminUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   errorCode?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  adminUser?: Prisma.UserOrderByWithRelationInput
+  user?: Prisma.UserOrderByWithRelationInput
 }
 
 export type OperationalRetryWhereUniqueInput = Prisma.AtLeast<{
@@ -262,18 +262,18 @@ export type OperationalRetryWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.OperationalRetryWhereInput | Prisma.OperationalRetryWhereInput[]
   OR?: Prisma.OperationalRetryWhereInput[]
   NOT?: Prisma.OperationalRetryWhereInput | Prisma.OperationalRetryWhereInput[]
-  operation?: Prisma.EnumAdminSafeRetryOperationFilter<"OperationalRetry"> | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationFilter<"OperationalRetry"> | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFilter<"OperationalRetry"> | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFilter<"OperationalRetry"> | string
   entityId?: Prisma.StringFilter<"OperationalRetry"> | string
-  adminUserId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
+  userId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   reason?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   errorCode?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   startedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
   completedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
-  adminUser?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
 
 export type OperationalRetryOrderByWithAggregationInput = {
@@ -282,7 +282,7 @@ export type OperationalRetryOrderByWithAggregationInput = {
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
-  adminUserId?: Prisma.SortOrderInput | Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   reason?: Prisma.SortOrderInput | Prisma.SortOrder
   errorCode?: Prisma.SortOrderInput | Prisma.SortOrder
   startedAt?: Prisma.SortOrder
@@ -299,11 +299,11 @@ export type OperationalRetryScalarWhereWithAggregatesInput = {
   OR?: Prisma.OperationalRetryScalarWhereWithAggregatesInput[]
   NOT?: Prisma.OperationalRetryScalarWhereWithAggregatesInput | Prisma.OperationalRetryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"OperationalRetry"> | string
-  operation?: Prisma.EnumAdminSafeRetryOperationWithAggregatesFilter<"OperationalRetry"> | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationWithAggregatesFilter<"OperationalRetry"> | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusWithAggregatesFilter<"OperationalRetry"> | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringWithAggregatesFilter<"OperationalRetry"> | string
   entityId?: Prisma.StringWithAggregatesFilter<"OperationalRetry"> | string
-  adminUserId?: Prisma.StringNullableWithAggregatesFilter<"OperationalRetry"> | string | null
+  userId?: Prisma.StringNullableWithAggregatesFilter<"OperationalRetry"> | string | null
   reason?: Prisma.StringNullableWithAggregatesFilter<"OperationalRetry"> | string | null
   errorCode?: Prisma.StringNullableWithAggregatesFilter<"OperationalRetry"> | string | null
   startedAt?: Prisma.DateTimeWithAggregatesFilter<"OperationalRetry"> | Date | string
@@ -314,7 +314,7 @@ export type OperationalRetryScalarWhereWithAggregatesInput = {
 
 export type OperationalRetryCreateInput = {
   id?: string
-  operation: $Enums.AdminSafeRetryOperation
+  operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
@@ -324,16 +324,16 @@ export type OperationalRetryCreateInput = {
   completedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  adminUser?: Prisma.UserCreateNestedOneWithoutOperationalRetriesInput
+  user?: Prisma.UserCreateNestedOneWithoutOperationalRetriesInput
 }
 
 export type OperationalRetryUncheckedCreateInput = {
   id?: string
-  operation: $Enums.AdminSafeRetryOperation
+  operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
-  adminUserId?: string | null
+  userId?: string | null
   reason?: string | null
   errorCode?: string | null
   startedAt?: Date | string
@@ -344,7 +344,7 @@ export type OperationalRetryUncheckedCreateInput = {
 
 export type OperationalRetryUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.EnumAdminSafeRetryOperationFieldUpdateOperationsInput | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -354,16 +354,16 @@ export type OperationalRetryUpdateInput = {
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  adminUser?: Prisma.UserUpdateOneWithoutOperationalRetriesNestedInput
+  user?: Prisma.UserUpdateOneWithoutOperationalRetriesNestedInput
 }
 
 export type OperationalRetryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.EnumAdminSafeRetryOperationFieldUpdateOperationsInput | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
-  adminUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -374,11 +374,11 @@ export type OperationalRetryUncheckedUpdateInput = {
 
 export type OperationalRetryCreateManyInput = {
   id?: string
-  operation: $Enums.AdminSafeRetryOperation
+  operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
-  adminUserId?: string | null
+  userId?: string | null
   reason?: string | null
   errorCode?: string | null
   startedAt?: Date | string
@@ -389,7 +389,7 @@ export type OperationalRetryCreateManyInput = {
 
 export type OperationalRetryUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.EnumAdminSafeRetryOperationFieldUpdateOperationsInput | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -403,11 +403,11 @@ export type OperationalRetryUpdateManyMutationInput = {
 
 export type OperationalRetryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.EnumAdminSafeRetryOperationFieldUpdateOperationsInput | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
-  adminUserId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -432,7 +432,7 @@ export type OperationalRetryCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
-  adminUserId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   errorCode?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
@@ -447,7 +447,7 @@ export type OperationalRetryMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
-  adminUserId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   errorCode?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
@@ -462,7 +462,7 @@ export type OperationalRetryMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
-  adminUserId?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   reason?: Prisma.SortOrder
   errorCode?: Prisma.SortOrder
   startedAt?: Prisma.SortOrder
@@ -471,59 +471,59 @@ export type OperationalRetryMinOrderByAggregateInput = {
   updatedAt?: Prisma.SortOrder
 }
 
-export type OperationalRetryCreateNestedManyWithoutAdminUserInput = {
-  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutAdminUserInput, Prisma.OperationalRetryUncheckedCreateWithoutAdminUserInput> | Prisma.OperationalRetryCreateWithoutAdminUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutAdminUserInput[]
-  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutAdminUserInput | Prisma.OperationalRetryCreateOrConnectWithoutAdminUserInput[]
-  createMany?: Prisma.OperationalRetryCreateManyAdminUserInputEnvelope
+export type OperationalRetryCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput> | Prisma.OperationalRetryCreateWithoutUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutUserInput | Prisma.OperationalRetryCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.OperationalRetryCreateManyUserInputEnvelope
   connect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
 }
 
-export type OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput = {
-  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutAdminUserInput, Prisma.OperationalRetryUncheckedCreateWithoutAdminUserInput> | Prisma.OperationalRetryCreateWithoutAdminUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutAdminUserInput[]
-  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutAdminUserInput | Prisma.OperationalRetryCreateOrConnectWithoutAdminUserInput[]
-  createMany?: Prisma.OperationalRetryCreateManyAdminUserInputEnvelope
+export type OperationalRetryUncheckedCreateNestedManyWithoutUserInput = {
+  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput> | Prisma.OperationalRetryCreateWithoutUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutUserInput | Prisma.OperationalRetryCreateOrConnectWithoutUserInput[]
+  createMany?: Prisma.OperationalRetryCreateManyUserInputEnvelope
   connect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
 }
 
-export type OperationalRetryUpdateManyWithoutAdminUserNestedInput = {
-  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutAdminUserInput, Prisma.OperationalRetryUncheckedCreateWithoutAdminUserInput> | Prisma.OperationalRetryCreateWithoutAdminUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutAdminUserInput[]
-  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutAdminUserInput | Prisma.OperationalRetryCreateOrConnectWithoutAdminUserInput[]
-  upsert?: Prisma.OperationalRetryUpsertWithWhereUniqueWithoutAdminUserInput | Prisma.OperationalRetryUpsertWithWhereUniqueWithoutAdminUserInput[]
-  createMany?: Prisma.OperationalRetryCreateManyAdminUserInputEnvelope
+export type OperationalRetryUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput> | Prisma.OperationalRetryCreateWithoutUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutUserInput | Prisma.OperationalRetryCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.OperationalRetryUpsertWithWhereUniqueWithoutUserInput | Prisma.OperationalRetryUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.OperationalRetryCreateManyUserInputEnvelope
   set?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   disconnect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   delete?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   connect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
-  update?: Prisma.OperationalRetryUpdateWithWhereUniqueWithoutAdminUserInput | Prisma.OperationalRetryUpdateWithWhereUniqueWithoutAdminUserInput[]
-  updateMany?: Prisma.OperationalRetryUpdateManyWithWhereWithoutAdminUserInput | Prisma.OperationalRetryUpdateManyWithWhereWithoutAdminUserInput[]
+  update?: Prisma.OperationalRetryUpdateWithWhereUniqueWithoutUserInput | Prisma.OperationalRetryUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.OperationalRetryUpdateManyWithWhereWithoutUserInput | Prisma.OperationalRetryUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.OperationalRetryScalarWhereInput | Prisma.OperationalRetryScalarWhereInput[]
 }
 
-export type OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput = {
-  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutAdminUserInput, Prisma.OperationalRetryUncheckedCreateWithoutAdminUserInput> | Prisma.OperationalRetryCreateWithoutAdminUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutAdminUserInput[]
-  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutAdminUserInput | Prisma.OperationalRetryCreateOrConnectWithoutAdminUserInput[]
-  upsert?: Prisma.OperationalRetryUpsertWithWhereUniqueWithoutAdminUserInput | Prisma.OperationalRetryUpsertWithWhereUniqueWithoutAdminUserInput[]
-  createMany?: Prisma.OperationalRetryCreateManyAdminUserInputEnvelope
+export type OperationalRetryUncheckedUpdateManyWithoutUserNestedInput = {
+  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput> | Prisma.OperationalRetryCreateWithoutUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutUserInput[]
+  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutUserInput | Prisma.OperationalRetryCreateOrConnectWithoutUserInput[]
+  upsert?: Prisma.OperationalRetryUpsertWithWhereUniqueWithoutUserInput | Prisma.OperationalRetryUpsertWithWhereUniqueWithoutUserInput[]
+  createMany?: Prisma.OperationalRetryCreateManyUserInputEnvelope
   set?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   disconnect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   delete?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   connect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
-  update?: Prisma.OperationalRetryUpdateWithWhereUniqueWithoutAdminUserInput | Prisma.OperationalRetryUpdateWithWhereUniqueWithoutAdminUserInput[]
-  updateMany?: Prisma.OperationalRetryUpdateManyWithWhereWithoutAdminUserInput | Prisma.OperationalRetryUpdateManyWithWhereWithoutAdminUserInput[]
+  update?: Prisma.OperationalRetryUpdateWithWhereUniqueWithoutUserInput | Prisma.OperationalRetryUpdateWithWhereUniqueWithoutUserInput[]
+  updateMany?: Prisma.OperationalRetryUpdateManyWithWhereWithoutUserInput | Prisma.OperationalRetryUpdateManyWithWhereWithoutUserInput[]
   deleteMany?: Prisma.OperationalRetryScalarWhereInput | Prisma.OperationalRetryScalarWhereInput[]
 }
 
-export type EnumAdminSafeRetryOperationFieldUpdateOperationsInput = {
-  set?: $Enums.AdminSafeRetryOperation
+export type EnumOperationalRetryOperationFieldUpdateOperationsInput = {
+  set?: $Enums.OperationalRetryOperation
 }
 
 export type EnumOperationalRetryStatusFieldUpdateOperationsInput = {
   set?: $Enums.OperationalRetryStatus
 }
 
-export type OperationalRetryCreateWithoutAdminUserInput = {
+export type OperationalRetryCreateWithoutUserInput = {
   id?: string
-  operation: $Enums.AdminSafeRetryOperation
+  operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
@@ -535,9 +535,9 @@ export type OperationalRetryCreateWithoutAdminUserInput = {
   updatedAt?: Date | string
 }
 
-export type OperationalRetryUncheckedCreateWithoutAdminUserInput = {
+export type OperationalRetryUncheckedCreateWithoutUserInput = {
   id?: string
-  operation: $Enums.AdminSafeRetryOperation
+  operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
@@ -549,30 +549,30 @@ export type OperationalRetryUncheckedCreateWithoutAdminUserInput = {
   updatedAt?: Date | string
 }
 
-export type OperationalRetryCreateOrConnectWithoutAdminUserInput = {
+export type OperationalRetryCreateOrConnectWithoutUserInput = {
   where: Prisma.OperationalRetryWhereUniqueInput
-  create: Prisma.XOR<Prisma.OperationalRetryCreateWithoutAdminUserInput, Prisma.OperationalRetryUncheckedCreateWithoutAdminUserInput>
+  create: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput>
 }
 
-export type OperationalRetryCreateManyAdminUserInputEnvelope = {
-  data: Prisma.OperationalRetryCreateManyAdminUserInput | Prisma.OperationalRetryCreateManyAdminUserInput[]
+export type OperationalRetryCreateManyUserInputEnvelope = {
+  data: Prisma.OperationalRetryCreateManyUserInput | Prisma.OperationalRetryCreateManyUserInput[]
   skipDuplicates?: boolean
 }
 
-export type OperationalRetryUpsertWithWhereUniqueWithoutAdminUserInput = {
+export type OperationalRetryUpsertWithWhereUniqueWithoutUserInput = {
   where: Prisma.OperationalRetryWhereUniqueInput
-  update: Prisma.XOR<Prisma.OperationalRetryUpdateWithoutAdminUserInput, Prisma.OperationalRetryUncheckedUpdateWithoutAdminUserInput>
-  create: Prisma.XOR<Prisma.OperationalRetryCreateWithoutAdminUserInput, Prisma.OperationalRetryUncheckedCreateWithoutAdminUserInput>
+  update: Prisma.XOR<Prisma.OperationalRetryUpdateWithoutUserInput, Prisma.OperationalRetryUncheckedUpdateWithoutUserInput>
+  create: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput>
 }
 
-export type OperationalRetryUpdateWithWhereUniqueWithoutAdminUserInput = {
+export type OperationalRetryUpdateWithWhereUniqueWithoutUserInput = {
   where: Prisma.OperationalRetryWhereUniqueInput
-  data: Prisma.XOR<Prisma.OperationalRetryUpdateWithoutAdminUserInput, Prisma.OperationalRetryUncheckedUpdateWithoutAdminUserInput>
+  data: Prisma.XOR<Prisma.OperationalRetryUpdateWithoutUserInput, Prisma.OperationalRetryUncheckedUpdateWithoutUserInput>
 }
 
-export type OperationalRetryUpdateManyWithWhereWithoutAdminUserInput = {
+export type OperationalRetryUpdateManyWithWhereWithoutUserInput = {
   where: Prisma.OperationalRetryScalarWhereInput
-  data: Prisma.XOR<Prisma.OperationalRetryUpdateManyMutationInput, Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserInput>
+  data: Prisma.XOR<Prisma.OperationalRetryUpdateManyMutationInput, Prisma.OperationalRetryUncheckedUpdateManyWithoutUserInput>
 }
 
 export type OperationalRetryScalarWhereInput = {
@@ -580,11 +580,11 @@ export type OperationalRetryScalarWhereInput = {
   OR?: Prisma.OperationalRetryScalarWhereInput[]
   NOT?: Prisma.OperationalRetryScalarWhereInput | Prisma.OperationalRetryScalarWhereInput[]
   id?: Prisma.StringFilter<"OperationalRetry"> | string
-  operation?: Prisma.EnumAdminSafeRetryOperationFilter<"OperationalRetry"> | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationFilter<"OperationalRetry"> | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFilter<"OperationalRetry"> | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFilter<"OperationalRetry"> | string
   entityId?: Prisma.StringFilter<"OperationalRetry"> | string
-  adminUserId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
+  userId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   reason?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   errorCode?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   startedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
@@ -593,9 +593,9 @@ export type OperationalRetryScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
 }
 
-export type OperationalRetryCreateManyAdminUserInput = {
+export type OperationalRetryCreateManyUserInput = {
   id?: string
-  operation: $Enums.AdminSafeRetryOperation
+  operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
@@ -607,9 +607,9 @@ export type OperationalRetryCreateManyAdminUserInput = {
   updatedAt?: Date | string
 }
 
-export type OperationalRetryUpdateWithoutAdminUserInput = {
+export type OperationalRetryUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.EnumAdminSafeRetryOperationFieldUpdateOperationsInput | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -621,9 +621,9 @@ export type OperationalRetryUpdateWithoutAdminUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type OperationalRetryUncheckedUpdateWithoutAdminUserInput = {
+export type OperationalRetryUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.EnumAdminSafeRetryOperationFieldUpdateOperationsInput | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -635,9 +635,9 @@ export type OperationalRetryUncheckedUpdateWithoutAdminUserInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type OperationalRetryUncheckedUpdateManyWithoutAdminUserInput = {
+export type OperationalRetryUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  operation?: Prisma.EnumAdminSafeRetryOperationFieldUpdateOperationsInput | $Enums.AdminSafeRetryOperation
+  operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -657,14 +657,14 @@ export type OperationalRetrySelect<ExtArgs extends runtime.Types.Extensions.Inte
   status?: boolean
   entityType?: boolean
   entityId?: boolean
-  adminUserId?: boolean
+  userId?: boolean
   reason?: boolean
   errorCode?: boolean
   startedAt?: boolean
   completedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  adminUser?: boolean | Prisma.OperationalRetry$adminUserArgs<ExtArgs>
+  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
 }, ExtArgs["result"]["operationalRetry"]>
 
 export type OperationalRetrySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -673,14 +673,14 @@ export type OperationalRetrySelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   status?: boolean
   entityType?: boolean
   entityId?: boolean
-  adminUserId?: boolean
+  userId?: boolean
   reason?: boolean
   errorCode?: boolean
   startedAt?: boolean
   completedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  adminUser?: boolean | Prisma.OperationalRetry$adminUserArgs<ExtArgs>
+  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
 }, ExtArgs["result"]["operationalRetry"]>
 
 export type OperationalRetrySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -689,14 +689,14 @@ export type OperationalRetrySelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   status?: boolean
   entityType?: boolean
   entityId?: boolean
-  adminUserId?: boolean
+  userId?: boolean
   reason?: boolean
   errorCode?: boolean
   startedAt?: boolean
   completedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  adminUser?: boolean | Prisma.OperationalRetry$adminUserArgs<ExtArgs>
+  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
 }, ExtArgs["result"]["operationalRetry"]>
 
 export type OperationalRetrySelectScalar = {
@@ -705,7 +705,7 @@ export type OperationalRetrySelectScalar = {
   status?: boolean
   entityType?: boolean
   entityId?: boolean
-  adminUserId?: boolean
+  userId?: boolean
   reason?: boolean
   errorCode?: boolean
   startedAt?: boolean
@@ -714,29 +714,29 @@ export type OperationalRetrySelectScalar = {
   updatedAt?: boolean
 }
 
-export type OperationalRetryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "operation" | "status" | "entityType" | "entityId" | "adminUserId" | "reason" | "errorCode" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["operationalRetry"]>
+export type OperationalRetryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "operation" | "status" | "entityType" | "entityId" | "userId" | "reason" | "errorCode" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["operationalRetry"]>
 export type OperationalRetryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  adminUser?: boolean | Prisma.OperationalRetry$adminUserArgs<ExtArgs>
+  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
 }
 export type OperationalRetryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  adminUser?: boolean | Prisma.OperationalRetry$adminUserArgs<ExtArgs>
+  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
 }
 export type OperationalRetryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  adminUser?: boolean | Prisma.OperationalRetry$adminUserArgs<ExtArgs>
+  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
 }
 
 export type $OperationalRetryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "OperationalRetry"
   objects: {
-    adminUser: Prisma.$UserPayload<ExtArgs> | null
+    user: Prisma.$UserPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    operation: $Enums.AdminSafeRetryOperation
+    operation: $Enums.OperationalRetryOperation
     status: $Enums.OperationalRetryStatus
     entityType: string
     entityId: string
-    adminUserId: string | null
+    userId: string | null
     reason: string | null
     errorCode: string | null
     startedAt: Date
@@ -1137,7 +1137,7 @@ readonly fields: OperationalRetryFieldRefs;
  */
 export interface Prisma__OperationalRetryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  adminUser<T extends Prisma.OperationalRetry$adminUserArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OperationalRetry$adminUserArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  user<T extends Prisma.OperationalRetry$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OperationalRetry$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1168,11 +1168,11 @@ export interface Prisma__OperationalRetryClient<T, Null = never, ExtArgs extends
  */
 export interface OperationalRetryFieldRefs {
   readonly id: Prisma.FieldRef<"OperationalRetry", 'String'>
-  readonly operation: Prisma.FieldRef<"OperationalRetry", 'AdminSafeRetryOperation'>
+  readonly operation: Prisma.FieldRef<"OperationalRetry", 'OperationalRetryOperation'>
   readonly status: Prisma.FieldRef<"OperationalRetry", 'OperationalRetryStatus'>
   readonly entityType: Prisma.FieldRef<"OperationalRetry", 'String'>
   readonly entityId: Prisma.FieldRef<"OperationalRetry", 'String'>
-  readonly adminUserId: Prisma.FieldRef<"OperationalRetry", 'String'>
+  readonly userId: Prisma.FieldRef<"OperationalRetry", 'String'>
   readonly reason: Prisma.FieldRef<"OperationalRetry", 'String'>
   readonly errorCode: Prisma.FieldRef<"OperationalRetry", 'String'>
   readonly startedAt: Prisma.FieldRef<"OperationalRetry", 'DateTime'>
@@ -1580,9 +1580,9 @@ export type OperationalRetryDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
 }
 
 /**
- * OperationalRetry.adminUser
+ * OperationalRetry.user
  */
-export type OperationalRetry$adminUserArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type OperationalRetry$userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the User
    */

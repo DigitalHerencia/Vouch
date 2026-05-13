@@ -1,48 +1,41 @@
 import "server-only"
 
-import { assertAllowed } from "@/lib/authz/assertions"
+import type { ParticipantRole } from "@/prisma/generated/prisma/client"
 
-export type VouchParticipantInput = {
+export type ParticipantAuthzInput = {
   userId: string
-  payerId: string
-  payeeId?: string | null
+  merchantId?: string | null
+  customerId?: string | null
 }
 
-export type ParticipantRole = "payer" | "payee"
-
-export function getParticipantRoleForVouch(input: VouchParticipantInput): ParticipantRole | null {
-  if (input.userId === input.payerId) {
-    return "payer"
-  }
-  if (input.payeeId && input.userId === input.payeeId) {
-    return "payee"
-  }
+export function getParticipantRoleForVouch(input: ParticipantAuthzInput): ParticipantRole | null {
+  if (input.merchantId && input.userId === input.merchantId) return "merchant"
+  if (input.customerId && input.userId === input.customerId) return "customer"
   return null
 }
 
-export function assertVouchParticipant(input: VouchParticipantInput): ParticipantRole {
+export function assertParticipantRoleForVouch(input: ParticipantAuthzInput): ParticipantRole {
   const role = getParticipantRoleForVouch(input)
+
   if (!role) {
-    assertAllowed(false, "User is not a Vouch participant")
+    throw new Error("AUTHZ_DENIED: participant access required")
   }
+
   return role
 }
 
-export function assertPayer(input: VouchParticipantInput): void {
-  assertAllowed(getParticipantRoleForVouch(input) === "payer", "Payer access required")
+export function assertMerchantForVouch(input: ParticipantAuthzInput): void {
+  if (!input.merchantId || input.userId !== input.merchantId) {
+    throw new Error("AUTHZ_DENIED: merchant access required")
+  }
 }
 
-export function assertPayee(input: VouchParticipantInput): void {
-  assertAllowed(getParticipantRoleForVouch(input) === "payee", "Accepted payee access required")
+export function assertCustomerForVouch(input: ParticipantAuthzInput): void {
+  if (!input.customerId || input.userId !== input.customerId) {
+    throw new Error("AUTHZ_DENIED: customer access required")
+  }
 }
 
-export function assertInviteCandidate(input: {
-  userId: string
-  payerId: string
-  vouchStatus: string
-  inviteValid: boolean
-}): void {
-  assertAllowed(input.vouchStatus === "pending", "Vouch is not pending")
-  assertAllowed(input.userId !== input.payerId, "Payer may not accept their own Vouch")
-  assertAllowed(input.inviteValid, "Valid invitation required")
+export function isParticipantRole(value: string): value is ParticipantRole {
+  return value === "merchant" || value === "customer"
 }

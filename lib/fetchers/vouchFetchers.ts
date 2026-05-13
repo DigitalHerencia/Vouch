@@ -3,13 +3,28 @@ import "server-only"
 import { auth } from "@clerk/nextjs/server"
 import { unstable_noStore as noStore } from "next/cache"
 
-import type {
-  ConfirmationStatus,
-  ParticipantRole,
-  Prisma,
-  VouchStatus,
-} from "@/prisma/generated/prisma/client"
+import type { Prisma, VouchStatus } from "@/prisma/generated/prisma/client"
 
+import {
+  mapParticipantSafeAuditTimelineDTO,
+  type ParticipantSafeAuditTimelineItemDTO,
+} from "@/lib/dto/audit.mappers"
+import {
+  mapPaymentRecordParticipantDTO,
+  type PaymentRecordParticipantDTO,
+} from "@/lib/dto/payment.mappers"
+import {
+  getAggregateConfirmationStatus,
+  getWindowState,
+  mapVouchCardDTO,
+  mapVouchConfirmationStateDTO,
+  mapVouchDetailDTO,
+  mapVouchWindowSummaryDTO,
+  type VouchCardDTO,
+  type VouchConfirmationStateDTO,
+  type VouchDetailDTO,
+  type VouchWindowSummaryDTO,
+} from "@/lib/dto/vouch.mappers"
 import {
   calculateVouchPricing,
   DEFAULT_MINIMUM_VOUCH_SERVICE_FEE_CENTS,
@@ -24,15 +39,15 @@ import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import {
   vouchCardSelect,
   vouchConfirmationStateSelect,
-  vouchDetailActiveBeforeWindowSelect,
-  vouchDetailActiveWindowOpenSelect,
+  vouchDetailAcceptedSelect,
+  vouchDetailAuthorizedSelect,
   vouchDetailBaseSelect,
+  vouchDetailCommittedSelect,
   vouchDetailCompletedSelect,
+  vouchDetailConfirmableSelect,
   vouchDetailExpiredSelect,
-  vouchDetailFailedSelect,
-  vouchDetailPendingInviteSentSelect,
-  vouchDetailPendingPayerSelect,
-  vouchDetailRefundedSelect,
+  vouchDetailProviderFailureSelect,
+  vouchDetailSentSelect,
   vouchPaymentSummarySelect,
   vouchTimelineSelect,
   vouchWindowSummarySelect,
@@ -43,37 +58,30 @@ import { participantSafeAuditTimelineItemSelect } from "@/lib/db/selects/audit.s
 
 const DEFAULT_PAGE_SIZE = 20
 
-const iso = (value: Date | null | undefined) => (value ? value.toISOString() : null)
+type VouchCardRecord = Prisma.VouchGetPayload<{ select: typeof vouchCardSelect }>
+type VouchDetailRecord = Prisma.VouchGetPayload<{ select: typeof vouchDetailBaseSelect }>
+type VouchConfirmationRecord = Prisma.VouchGetPayload<{
+  select: typeof vouchConfirmationStateSelect
+}>
+type VouchWindowRecord = Prisma.VouchGetPayload<{ select: typeof vouchWindowSummarySelect }>
+type VouchPaymentRecord = Prisma.VouchGetPayload<{ select: typeof vouchPaymentSummarySelect }>
+type VouchTimelineRecord = Prisma.VouchGetPayload<{ select: typeof vouchTimelineSelect }>
 
 type VouchDetailSelect =
   | typeof vouchDetailBaseSelect
-  | typeof vouchDetailPendingInviteSentSelect
-  | typeof vouchDetailPendingPayerSelect
-  | typeof vouchDetailActiveBeforeWindowSelect
-  | typeof vouchDetailActiveWindowOpenSelect
+  | typeof vouchDetailCommittedSelect
+  | typeof vouchDetailSentSelect
+  | typeof vouchDetailAcceptedSelect
+  | typeof vouchDetailAuthorizedSelect
+  | typeof vouchDetailConfirmableSelect
   | typeof vouchDetailCompletedSelect
   | typeof vouchDetailExpiredSelect
-  | typeof vouchDetailRefundedSelect
-  | typeof vouchDetailFailedSelect
+  | typeof vouchDetailProviderFailureSelect
   | typeof vouchPaymentSummarySelect
   | typeof vouchTimelineSelect
   | typeof vouchWindowSummarySelect
   | typeof vouchConfirmationStateSelect
   | typeof whatHappensNextSelect
-
-type ParticipantConfirmation = {
-  participantRole: ParticipantRole
-  status: ConfirmationStatus
-  userId: string
-}
-
-type ConfirmableVouch = {
-  payerId?: string | null
-  payeeId?: string | null
-  confirmationOpensAt?: string | Date | null
-  confirmationExpiresAt?: string | Date | null
-  presenceConfirmations?: ParticipantConfirmation[]
-}
 
 type StatusFilterInput = {
   userId?: string
@@ -82,20 +90,16 @@ type StatusFilterInput = {
   pageSize?: number
 }
 
-function mapDates<T>(value: T): T {
-  if (!value || typeof value !== "object") return value
+function pageArgs(input?: { page?: number; pageSize?: number }) {
+  const page = Math.max(input?.page ?? 1, 1)
+  const pageSize = Math.min(Math.max(input?.pageSize ?? DEFAULT_PAGE_SIZE, 1), 100)
 
-  if (value instanceof Date) return iso(value) as T
-
-  if (Array.isArray(value)) return value.map(mapDates) as T
-
-  const out: Record<string, unknown> = {}
-
-  for (const [key, child] of Object.entries(value)) {
-    out[key] = mapDates(child)
+  return {
+    page,
+    pageSize,
+    skip: (page - 1) * pageSize,
+    take: pageSize,
   }
-
-  return out as T
 }
 
 function calculateFee(amountCents: number) {
@@ -122,15 +126,13 @@ async function requireParticipantVouch(
 
   const user = await requireActiveUser()
 
-  const vouch = await prisma.vouch.findFirst({
+  return prisma.vouch.findFirst({
     where: {
       id: vouchId,
-      OR: [{ payerId: user.id }, { payeeId: user.id }],
+      OR: [{ merchantId: user.id }, { customerId: user.id }],
     },
     select,
   })
-
-  return vouch ? mapDates(vouch) : null
 }
 
 async function readParticipantVouchByState(
@@ -142,7 +144,7 @@ async function readParticipantVouchByState(
 
   return {
     variant: vouch ? variant : "unauthorized_or_not_found",
-    vouch,
+    vouch: vouch ? mapVouchDetailDTO(vouch as VouchDetailRecord) : null,
   }
 }
 
@@ -154,54 +156,6 @@ async function getInvitationByToken(token: string) {
     select: invitationTokenLookupSelect,
   })
 }
-
-function getConfirmationFacts(vouch: ConfirmableVouch | null, currentUserId?: string | null) {
-  const confirmations = vouch?.presenceConfirmations ?? []
-  const payerConfirmation = confirmations.find((c) => c.participantRole === "payer")
-  const payeeConfirmation = confirmations.find((c) => c.participantRole === "payee")
-  const currentUserConfirmation = currentUserId
-    ? confirmations.find((c) => c.userId === currentUserId)
-    : null
-
-  return {
-    payerConfirmed: payerConfirmation?.status === "confirmed",
-    payeeConfirmed: payeeConfirmation?.status === "confirmed",
-    bothConfirmed:
-      payerConfirmation?.status === "confirmed" && payeeConfirmation?.status === "confirmed",
-    currentUserConfirmed: currentUserConfirmation?.status === "confirmed",
-    payerConfirmation,
-    payeeConfirmation,
-    currentUserConfirmation,
-  }
-}
-
-function getWindowState(
-  vouch: Pick<ConfirmableVouch, "confirmationOpensAt" | "confirmationExpiresAt"> | null
-) {
-  const now = Date.now()
-  const opensAt = vouch?.confirmationOpensAt ? new Date(vouch.confirmationOpensAt).getTime() : 0
-  const expiresAt = vouch?.confirmationExpiresAt
-    ? new Date(vouch.confirmationExpiresAt).getTime()
-    : 0
-
-  if (opensAt && now < opensAt) return "before_window"
-  if (expiresAt && now > expiresAt) return "window_closed"
-  return "window_open"
-}
-
-function pageArgs(input?: { page?: number; pageSize?: number }) {
-  const page = Math.max(input?.page ?? 1, 1)
-  const pageSize = Math.min(Math.max(input?.pageSize ?? DEFAULT_PAGE_SIZE, 1), 100)
-
-  return {
-    page,
-    pageSize,
-    skip: (page - 1) * pageSize,
-    take: pageSize,
-  }
-}
-
-// Create flow
 
 export async function getCreateVouchPageState(input?: { userId?: string }) {
   const user = await requireActiveUser()
@@ -233,7 +187,6 @@ export async function getCreateVouchFeePreview(input: { amountCents: number; cur
     amountCents,
     protectedAmountCents: pricing.protectedAmountCents,
     currency: input.currency ?? "usd",
-    platformFeeCents: pricing.vouchServiceFeeCents,
     merchantReceivesCents: pricing.merchantReceivesCents,
     vouchServiceFeeCents: pricing.vouchServiceFeeCents,
     processingFeeOffsetCents: pricing.processingFeeOffsetCents,
@@ -252,10 +205,9 @@ export async function getCreateVouchFeePreview(input: { amountCents: number; cur
 export async function getCreateVouchReviewState(input: {
   amountCents: number
   currency?: string
-  meetingStartsAt?: string | Date | null
+  appointmentStartsAt?: string | Date | null
   confirmationOpensAt?: string | Date | null
   confirmationExpiresAt?: string | Date | null
-  recipientEmail?: string | null
   label?: string | null
 }) {
   const user = await requireActiveUser()
@@ -270,28 +222,28 @@ export async function getCreateVouchReviewState(input: {
       amountCents: fee.amountCents,
       protectedAmountCents: fee.protectedAmountCents,
       currency: fee.currency,
-      platformFeeCents: fee.platformFeeCents,
       merchantReceivesCents: fee.merchantReceivesCents,
       vouchServiceFeeCents: fee.vouchServiceFeeCents,
       processingFeeOffsetCents: fee.processingFeeOffsetCents,
       applicationFeeAmountCents: fee.applicationFeeAmountCents,
       customerTotalCents: fee.customerTotalCents,
       totalCents: fee.totalCents,
-      meetingStartsAt: input.meetingStartsAt ? new Date(input.meetingStartsAt).toISOString() : null,
+      appointmentStartsAt: input.appointmentStartsAt
+        ? new Date(input.appointmentStartsAt).toISOString()
+        : null,
       confirmationOpensAt: input.confirmationOpensAt
         ? new Date(input.confirmationOpensAt).toISOString()
         : null,
       confirmationExpiresAt: input.confirmationExpiresAt
         ? new Date(input.confirmationExpiresAt).toISOString()
         : null,
-      recipientEmail: input.recipientEmail ?? null,
       label: input.label ?? null,
     },
   }
 }
 
 export async function getCreateVouchSuccessState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "created", vouchDetailPendingInviteSentSelect)
+  return readParticipantVouchByState(vouchId, "created", vouchDetailSentSelect)
 }
 
 export async function getCreateVouchPaymentProcessingState(vouchId: string) {
@@ -299,10 +251,8 @@ export async function getCreateVouchPaymentProcessingState(vouchId: string) {
 }
 
 export async function getCreateVouchPaymentFailedState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "payment_failed", vouchDetailFailedSelect)
+  return readParticipantVouchByState(vouchId, "payment_failed", vouchDetailProviderFailureSelect)
 }
-
-// Invite / accept flow
 
 export async function getInviteLandingState(token: string) {
   const userId = await getOptionalCurrentUserId()
@@ -324,9 +274,9 @@ export async function getInviteLandingUnauthenticatedState(token: string) {
   return {
     variant: "unauthenticated",
     token,
-    invitation: mapDates(invitation),
-    signInHref: `/sign-in?return_to=${encodeURIComponent(`/vouches/invite/${token}`)}`,
-    signUpHref: `/sign-up?return_to=${encodeURIComponent(`/vouches/invite/${token}`)}`,
+    invitation,
+    signInHref: `/sign-in?return_to=${encodeURIComponent(`/vouches/${invitation.vouchId}`)}`,
+    signUpHref: `/sign-up?return_to=${encodeURIComponent(`/vouches/${invitation.vouchId}`)}`,
   }
 }
 
@@ -340,7 +290,7 @@ export async function getInviteLandingAuthenticatedState(input: {
   if (invitation.expiresAt <= new Date()) return getInviteExpiredState(input.token)
   if (invitation.status === "accepted") return getInviteAlreadyAcceptedState(input.token)
 
-  if (invitation.vouch.payerId === input.userId) {
+  if (invitation.vouch.merchantId === input.userId) {
     return getSelfAcceptanceDeniedState({
       token: input.token,
       vouchId: invitation.vouchId,
@@ -354,7 +304,7 @@ export async function getInviteLandingAuthenticatedState(input: {
   return {
     variant: gate.allowed ? "authenticated_ready" : "setup_blocked",
     token: input.token,
-    invitation: mapDates(invitation),
+    invitation,
     gate,
   }
 }
@@ -384,10 +334,7 @@ export async function getInviteAlreadyAcceptedState(token: string) {
 }
 
 export async function getInvitedVouchSummary(token: string) {
-  const invitation = await getInvitationByToken(token)
-  if (!invitation) return null
-
-  return mapDates(invitation)
+  return getInvitationByToken(token)
 }
 
 export async function getAcceptVouchPageState(input: { token: string; userId?: string }) {
@@ -434,9 +381,7 @@ export async function getSelfAcceptanceDeniedState(input: { token?: string; vouc
   }
 }
 
-// Vouch list/detail
-
-export async function listUserVouches(input?: StatusFilterInput) {
+export async function listUserVouches(input?: StatusFilterInput): Promise<VouchCardDTO[]> {
   noStore()
 
   const user = await requireActiveUser()
@@ -447,7 +392,7 @@ export async function listUserVouches(input?: StatusFilterInput) {
   const page = pageArgs(input)
 
   const where: Prisma.VouchWhereInput = {
-    OR: [{ payerId: userId }, { payeeId: userId }],
+    OR: [{ merchantId: userId }, { customerId: userId }],
     ...(input?.status ? { status: input.status } : {}),
   }
 
@@ -459,10 +404,10 @@ export async function listUserVouches(input?: StatusFilterInput) {
     select: vouchCardSelect,
   })
 
-  return rows.map(mapDates)
+  return rows.map((row) => mapVouchCardDTO(row))
 }
 
-export async function listPayerVouches(input?: StatusFilterInput) {
+export async function listMerchantVouches(input?: StatusFilterInput): Promise<VouchCardDTO[]> {
   noStore()
 
   const user = await requireActiveUser()
@@ -472,23 +417,21 @@ export async function listPayerVouches(input?: StatusFilterInput) {
 
   const page = pageArgs(input)
 
-  const where: Prisma.VouchWhereInput = {
-    payerId: userId,
-    ...(input?.status ? { status: input.status } : {}),
-  }
-
   const rows = await prisma.vouch.findMany({
-    where,
+    where: {
+      merchantId: userId,
+      ...(input?.status ? { status: input.status } : {}),
+    },
     orderBy: { updatedAt: "desc" },
     skip: page.skip,
     take: page.take,
     select: vouchCardSelect,
   })
 
-  return rows.map(mapDates)
+  return rows.map((row) => mapVouchCardDTO(row))
 }
 
-export async function listPayeeVouches(input?: StatusFilterInput) {
+export async function listCustomerVouches(input?: StatusFilterInput): Promise<VouchCardDTO[]> {
   noStore()
 
   const user = await requireActiveUser()
@@ -498,71 +441,69 @@ export async function listPayeeVouches(input?: StatusFilterInput) {
 
   const page = pageArgs(input)
 
-  const where: Prisma.VouchWhereInput = {
-    payeeId: userId,
-    ...(input?.status ? { status: input.status } : {}),
-  }
-
   const rows = await prisma.vouch.findMany({
-    where,
+    where: {
+      customerId: userId,
+      ...(input?.status ? { status: input.status } : {}),
+    },
     orderBy: { updatedAt: "desc" },
     skip: page.skip,
     take: page.take,
     select: vouchCardSelect,
   })
 
-  return rows.map(mapDates)
+  return rows.map((row) => mapVouchCardDTO(row))
 }
 
-export async function getVouchDetailForParticipant(input: { vouchId: string }) {
-  const vouch = await requireParticipantVouch(input.vouchId, vouchDetailBaseSelect)
+export async function getVouchDetailForParticipant(input: {
+  vouchId: string
+}): Promise<
+  | { variant: string; vouch: VouchDetailDTO | null }
+  | { variant: string; vouchId: string; title: string }
+> {
+  const vouch = (await requireParticipantVouch(
+    input.vouchId,
+    vouchDetailBaseSelect
+  )) as VouchDetailRecord | null
 
   if (!vouch) return getVouchDetailUnauthorizedOrNotFoundState(input.vouchId)
 
   return {
     variant: "detail",
-    vouch,
+    vouch: mapVouchDetailDTO(vouch),
   }
 }
 
-export async function getVouchDetailPendingPayerState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "pending_payer", vouchDetailPendingPayerSelect)
+export async function getVouchDetailCommittedState(vouchId: string) {
+  return readParticipantVouchByState(vouchId, "committed", vouchDetailCommittedSelect)
 }
 
-export async function getVouchDetailPendingInviteSentState(vouchId: string) {
-  return readParticipantVouchByState(
-    vouchId,
-    "pending_invite_sent",
-    vouchDetailPendingInviteSentSelect
-  )
+export async function getVouchDetailSentState(vouchId: string) {
+  return readParticipantVouchByState(vouchId, "sent", vouchDetailSentSelect)
 }
 
-export async function getVouchDetailActiveBeforeWindowState(vouchId: string) {
-  return readParticipantVouchByState(
-    vouchId,
-    "active_before_window",
-    vouchDetailActiveBeforeWindowSelect
-  )
+export async function getVouchDetailAcceptedState(vouchId: string) {
+  return readParticipantVouchByState(vouchId, "accepted", vouchDetailAcceptedSelect)
 }
 
-export async function getVouchDetailActiveWindowOpenState(vouchId: string) {
-  return readParticipantVouchByState(
-    vouchId,
-    "active_window_open",
-    vouchDetailActiveWindowOpenSelect
-  )
+export async function getVouchDetailAuthorizedState(vouchId: string) {
+  return readParticipantVouchByState(vouchId, "authorized", vouchDetailAuthorizedSelect)
 }
 
-export async function getVouchDetailPayerConfirmedState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "payer_confirmed", vouchDetailActiveWindowOpenSelect)
+export async function getVouchDetailConfirmableState(vouchId: string) {
+  return readParticipantVouchByState(vouchId, "confirmable", vouchDetailConfirmableSelect)
 }
 
-export async function getVouchDetailPayeeConfirmedState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "payee_confirmed", vouchDetailActiveWindowOpenSelect)
+export async function getVouchDetailMerchantConfirmedState(vouchId: string) {
+  return readParticipantVouchByState(vouchId, "merchant_confirmed", vouchDetailConfirmableSelect)
 }
 
-export async function getVouchDetailProcessingReleaseState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "processing_release", vouchPaymentSummarySelect)
+export async function getVouchDetailCustomerConfirmedState(vouchId: string) {
+  return readParticipantVouchByState(vouchId, "customer_confirmed", vouchDetailConfirmableSelect)
+}
+
+export async function getVouchDetailProcessingCaptureState(vouchId: string) {
+  return readParticipantVouchByState(vouchId, "processing_capture", vouchPaymentSummarySelect)
 }
 
 export async function getVouchDetailCompletedState(vouchId: string) {
@@ -573,20 +514,28 @@ export async function getVouchDetailExpiredState(vouchId: string) {
   return readParticipantVouchByState(vouchId, "expired", vouchDetailExpiredSelect)
 }
 
-export async function getVouchDetailRefundedState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "refunded", vouchDetailRefundedSelect)
-}
-
 export async function getVouchDetailFailedPaymentState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "failed_payment", vouchDetailFailedSelect)
+  return readParticipantVouchByState(
+    vouchId,
+    "provider_payment_failure",
+    vouchDetailProviderFailureSelect
+  )
 }
 
 export async function getVouchDetailFailedReleaseState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "failed_release", vouchDetailFailedSelect)
+  return readParticipantVouchByState(
+    vouchId,
+    "provider_capture_failure",
+    vouchDetailProviderFailureSelect
+  )
 }
 
 export async function getVouchDetailFailedRefundState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "failed_refund", vouchDetailFailedSelect)
+  return readParticipantVouchByState(
+    vouchId,
+    "provider_refund_failure",
+    vouchDetailProviderFailureSelect
+  )
 }
 
 export async function getVouchDetailUnauthorizedOrNotFoundState(vouchId: string) {
@@ -597,8 +546,6 @@ export async function getVouchDetailUnauthorizedOrNotFoundState(vouchId: string)
   }
 }
 
-// Confirmation
-
 export async function getConfirmPresencePageState(input: { vouchId: string }) {
   noStore()
 
@@ -606,34 +553,46 @@ export async function getConfirmPresencePageState(input: { vouchId: string }) {
   const vouch = (await requireParticipantVouch(
     input.vouchId,
     vouchConfirmationStateSelect
-  )) as ConfirmableVouch | null
+  )) as VouchConfirmationRecord | null
 
   if (!vouch) return getConfirmUnauthorizedState(input.vouchId)
 
-  const facts = getConfirmationFacts(vouch, user.id)
-  const windowState = getWindowState(vouch)
+  const dto = mapVouchConfirmationStateDTO(vouch)
+  const currentUserConfirmed = dto.presenceConfirmations.some(
+    (confirmation) => confirmation.userId === user.id && confirmation.status === "confirmed"
+  )
 
-  if (windowState === "before_window") return getConfirmBeforeWindowState(input.vouchId)
-  if (windowState === "window_closed") return getConfirmWindowClosedState(input.vouchId)
-  if (facts.currentUserConfirmed) return getConfirmAlreadyConfirmedState(input.vouchId)
-  if (facts.bothConfirmed) return getConfirmBothConfirmedSuccessState(input.vouchId)
+  if (dto.windowState === "before_window") return getConfirmBeforeWindowState(input.vouchId)
+  if (dto.windowState === "closed") return getConfirmWindowClosedState(input.vouchId)
+  if (currentUserConfirmed) return getConfirmAlreadyConfirmedState(input.vouchId)
+  if (dto.aggregateConfirmationStatus === "both_confirmed") {
+    return getConfirmBothConfirmedSuccessState(input.vouchId)
+  }
 
-  if (vouch.payerId === user.id) return getConfirmPresencePayerState(input.vouchId)
-  if (vouch.payeeId === user.id) return getConfirmPresencePayeeState(input.vouchId)
+  if (vouch.merchantId === user.id) return getConfirmPresenceMerchantState(input.vouchId)
+  if (vouch.customerId === user.id) return getConfirmPresenceCustomerState(input.vouchId)
 
   return getConfirmUnauthorizedState(input.vouchId)
 }
 
-export async function getConfirmPresencePayerState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "confirm_as_payer", vouchConfirmationStateSelect)
+export async function getConfirmPresenceMerchantState(vouchId: string) {
+  return readParticipantVouchByState(vouchId, "confirm_as_merchant", vouchConfirmationStateSelect)
 }
 
-export async function getConfirmPresencePayeeState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "confirm_as_payee", vouchConfirmationStateSelect)
+export async function getConfirmPresenceCustomerState(vouchId: string) {
+  return readParticipantVouchByState(vouchId, "confirm_as_customer", vouchConfirmationStateSelect)
 }
 
 export async function getConfirmBeforeWindowState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "before_window", vouchWindowSummarySelect)
+  const vouch = (await requireParticipantVouch(
+    vouchId,
+    vouchWindowSummarySelect
+  )) as VouchWindowRecord | null
+
+  return {
+    variant: vouch ? "before_window" : "unauthorized_or_not_found",
+    vouch: vouch ? mapVouchWindowSummaryDTO(vouch) : null,
+  }
 }
 
 export async function getConfirmWindowOpenState(vouchId: string) {
@@ -657,7 +616,15 @@ export async function getConfirmBothConfirmedSuccessState(vouchId: string) {
 }
 
 export async function getConfirmWindowClosedState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "window_closed", vouchWindowSummarySelect)
+  const vouch = (await requireParticipantVouch(
+    vouchId,
+    vouchWindowSummarySelect
+  )) as VouchWindowRecord | null
+
+  return {
+    variant: vouch ? "window_closed" : "unauthorized_or_not_found",
+    vouch: vouch ? mapVouchWindowSummaryDTO(vouch) : null,
+  }
 }
 
 export async function getConfirmDuplicateErrorState(vouchId: string) {
@@ -677,10 +644,8 @@ export async function getConfirmUnauthorizedState(vouchId: string) {
 }
 
 export async function getConfirmProviderFailureState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "provider_failure", vouchDetailFailedSelect)
+  return readParticipantVouchByState(vouchId, "provider_failure", vouchDetailProviderFailureSelect)
 }
-
-// Share
 
 export async function getShareVouchState(vouchId: string) {
   const user = await requireActiveUser()
@@ -688,15 +653,15 @@ export async function getShareVouchState(vouchId: string) {
   const vouch = await prisma.vouch.findFirst({
     where: {
       id: vouchId,
-      payerId: user.id,
-      status: "pending",
+      merchantId: user.id,
+      status: { in: ["committed", "sent"] },
     },
-    select: vouchDetailPendingInviteSentSelect,
+    select: vouchDetailSentSelect,
   })
 
   return {
     variant: vouch ? "share" : "unavailable",
-    vouch: mapDates(vouch),
+    vouch: vouch ? mapVouchDetailDTO(vouch) : null,
   }
 }
 
@@ -721,46 +686,51 @@ export async function getSendInvitationState(vouchId: string) {
   }
 }
 
-// Timeline / summaries
-
-export async function getVouchConfirmationState(vouchId: string) {
+export async function getVouchConfirmationState(
+  vouchId: string
+): Promise<VouchConfirmationStateDTO | null> {
   const vouch = (await requireParticipantVouch(
     vouchId,
     vouchConfirmationStateSelect
-  )) as ConfirmableVouch | null
+  )) as VouchConfirmationRecord | null
 
-  if (!vouch) return null
-
-  return {
-    vouch,
-    facts: getConfirmationFacts(vouch),
-    windowState: getWindowState(vouch),
-  }
+  return vouch ? mapVouchConfirmationStateDTO(vouch) : null
 }
 
-export async function getVouchWindowSummary(vouchId: string) {
+export async function getVouchWindowSummary(
+  vouchId: string
+): Promise<VouchWindowSummaryDTO | null> {
   const vouch = (await requireParticipantVouch(
     vouchId,
     vouchWindowSummarySelect
-  )) as ConfirmableVouch | null
+  )) as VouchWindowRecord | null
 
-  if (!vouch) return null
-
-  return {
-    vouch,
-    windowState: getWindowState(vouch),
-  }
+  return vouch ? mapVouchWindowSummaryDTO(vouch) : null
 }
 
-export async function getVouchPaymentSummary(vouchId: string) {
-  return requireParticipantVouch(vouchId, vouchPaymentSummarySelect)
+export async function getVouchPaymentSummary(
+  vouchId: string
+): Promise<PaymentRecordParticipantDTO | null> {
+  const vouch = (await requireParticipantVouch(
+    vouchId,
+    vouchPaymentSummarySelect
+  )) as VouchPaymentRecord | null
+
+  return mapPaymentRecordParticipantDTO(vouch?.paymentRecord)
 }
 
-export async function getVouchTimeline(vouchId: string) {
-  return requireParticipantVouch(vouchId, vouchTimelineSelect)
+export async function getVouchTimeline(vouchId: string): Promise<VouchDetailDTO | null> {
+  const vouch = (await requireParticipantVouch(
+    vouchId,
+    vouchTimelineSelect
+  )) as VouchTimelineRecord | null
+
+  return vouch ? mapVouchDetailDTO(vouch) : null
 }
 
-export async function getParticipantSafeAuditTimeline(vouchId: string) {
+export async function getParticipantSafeAuditTimeline(
+  vouchId: string
+): Promise<ParticipantSafeAuditTimelineItemDTO[]> {
   noStore()
 
   const user = await requireActiveUser()
@@ -768,7 +738,7 @@ export async function getParticipantSafeAuditTimeline(vouchId: string) {
   const vouch = await prisma.vouch.findFirst({
     where: {
       id: vouchId,
-      OR: [{ payerId: user.id }, { payeeId: user.id }],
+      OR: [{ merchantId: user.id }, { customerId: user.id }],
     },
     select: { id: true },
   })
@@ -785,13 +755,14 @@ export async function getParticipantSafeAuditTimeline(vouchId: string) {
     select: participantSafeAuditTimelineItemSelect,
   })
 
-  return rows.map(mapDates)
+  return mapParticipantSafeAuditTimelineDTO(rows)
 }
 
 export async function getWhatHappensNextState(vouchId: string) {
-  const vouch = (await requireParticipantVouch(vouchId, whatHappensNextSelect)) as
-    | (ConfirmableVouch & { status?: VouchStatus })
-    | null
+  const vouch = (await requireParticipantVouch(
+    vouchId,
+    whatHappensNextSelect
+  )) as VouchDetailRecord | null
 
   if (!vouch) {
     return {
@@ -800,60 +771,92 @@ export async function getWhatHappensNextState(vouchId: string) {
     }
   }
 
-  const facts = getConfirmationFacts(vouch)
-  const windowState = getWindowState(vouch)
+  const dto = mapVouchDetailDTO(vouch)
+  const aggregateStatus = getAggregateConfirmationStatus(dto.presenceConfirmations)
+  const windowState = getWindowState({
+    confirmationOpensAt: dto.confirmationOpensAt,
+    confirmationExpiresAt: dto.confirmationExpiresAt,
+  })
 
-  if (vouch.status === "pending") {
+  if (dto.status === "committed" || dto.status === "sent") {
     return {
       variant: "waiting_for_acceptance",
-      vouch,
-      message: "The invited party must accept before confirmation can happen.",
+      vouch: dto,
+      message: "The customer must accept before authorization can happen.",
     }
   }
 
-  if (vouch.status === "active" && windowState === "before_window") {
+  if (dto.status === "accepted") {
+    return {
+      variant: "waiting_for_authorization",
+      vouch: dto,
+      message: "Payment authorization must complete before confirmation.",
+    }
+  }
+
+  if (dto.status === "authorized" && windowState === "before_window") {
     return {
       variant: "waiting_for_window",
-      vouch,
+      vouch: dto,
       message: "Confirmation opens at the scheduled window.",
     }
   }
 
-  if (vouch.status === "active" && windowState === "window_open" && !facts.bothConfirmed) {
+  if (
+    (dto.status === "authorized" || dto.status === "confirmable") &&
+    windowState === "open" &&
+    aggregateStatus !== "both_confirmed"
+  ) {
     return {
       variant: "confirmation_required",
-      vouch,
-      message: "Both parties must confirm before the window closes.",
+      vouch: dto,
+      message: "Both participants must confirm before the window closes.",
     }
   }
 
-  if (vouch.status === "completed") {
+  if (aggregateStatus === "both_confirmed" && dto.status !== "completed") {
+    return {
+      variant: "capture_pending",
+      vouch: dto,
+      message: "Both participants confirmed. Settlement follows provider state.",
+    }
+  }
+
+  if (dto.status === "completed") {
     return {
       variant: "completed",
-      vouch,
-      message: "Both parties confirmed and funds were released.",
+      vouch: dto,
+      message: "Both participants confirmed and funds released.",
     }
   }
 
-  if (vouch.status === "refunded" || vouch.status === "expired") {
+  if (dto.status === "expired") {
     return {
-      variant: "refund_or_non_capture",
-      vouch,
+      variant: "non_capture",
+      vouch: dto,
       message: "Both confirmations were not completed in time, so funds did not release.",
-    }
-  }
-
-  if (vouch.status === "failed") {
-    return {
-      variant: "technical_failure",
-      vouch,
-      message: "A technical payment or provider failure needs operational review.",
     }
   }
 
   return {
     variant: "status",
-    vouch,
+    vouch: dto,
     message: "Review the current Vouch status.",
   }
 }
+
+/**
+ * Compatibility aliases retained only for older imports during migration.
+ */
+export const listPayerVouches = listMerchantVouches
+export const listPayeeVouches = listCustomerVouches
+export const getVouchDetailPendingPayerState = getVouchDetailCommittedState
+export const getVouchDetailPendingInviteSentState = getVouchDetailSentState
+export const getVouchDetailActiveBeforeWindowState = getVouchDetailAuthorizedState
+export const getVouchDetailActiveWindowOpenState = getVouchDetailConfirmableState
+export const getVouchDetailPayerConfirmedState = getVouchDetailMerchantConfirmedState
+export const getVouchDetailPayeeConfirmedState = getVouchDetailCustomerConfirmedState
+export const getVouchDetailProcessingReleaseState = getVouchDetailProcessingCaptureState
+export const getVouchDetailRefundedState = getVouchDetailExpiredState
+export const getConfirmPresencePayerState = getConfirmPresenceMerchantState
+export const getConfirmPresencePayeeState = getConfirmPresenceCustomerState

@@ -14,16 +14,20 @@ type Tx = Omit<
 
 type AggregateConfirmationStatus =
   | "none_confirmed"
-  | "payer_confirmed"
-  | "payee_confirmed"
+  | "merchant_confirmed"
+  | "customer_confirmed"
   | "both_confirmed"
 
 type CreatePresenceConfirmationTxInput = {
   vouchId: string
   userId: string
   participantRole: ParticipantRole
-  method?: ConfirmationMethod
+  method: ConfirmationMethod
   confirmedAt?: Date
+  serverReceivedAt?: Date
+  timeBucket?: number | null
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: string | null
 }
 
 type AssertNoDuplicateConfirmationTxInput = {
@@ -43,7 +47,11 @@ type PresenceConfirmationResult = {
   participantRole: ParticipantRole
   status: ConfirmationStatus
   method: ConfirmationMethod
-  confirmedAt: Date
+  confirmedAt: Date | null
+  serverReceivedAt: Date
+  timeBucket: number | null
+  clockSkewAccepted: boolean
+  offlinePayloadHash: string | null
   createdAt: Date
 }
 
@@ -55,6 +63,10 @@ const PRESENCE_CONFIRMATION_SELECT = {
   status: true,
   method: true,
   confirmedAt: true,
+  serverReceivedAt: true,
+  timeBucket: true,
+  clockSkewAccepted: true,
+  offlinePayloadHash: true,
   createdAt: true,
 } as const
 
@@ -66,6 +78,12 @@ function assertNonEmptyString(value: string, fieldName: string): string {
   }
 
   return trimmed
+}
+
+function assertCanonicalConfirmationMethod(method: ConfirmationMethod): void {
+  if (method !== "code_exchange" && method !== "offline_code_exchange") {
+    throw new Error("INVALID_CONFIRMATION_METHOD")
+  }
 }
 
 export async function assertNoDuplicateConfirmationTx(
@@ -80,9 +98,7 @@ export async function assertNoDuplicateConfirmationTx(
       vouchId,
       OR: [{ userId }, { participantRole: input.participantRole }],
     },
-    select: {
-      id: true,
-    },
+    select: { id: true },
   })
 
   if (existing) {
@@ -96,7 +112,10 @@ export async function createPresenceConfirmationTx(
 ): Promise<PresenceConfirmationResult> {
   const vouchId = assertNonEmptyString(input.vouchId, "vouchId")
   const userId = assertNonEmptyString(input.userId, "userId")
-  const confirmedAt = input.confirmedAt ?? new Date()
+  const serverReceivedAt = input.serverReceivedAt ?? new Date()
+  const confirmedAt = input.confirmedAt ?? serverReceivedAt
+
+  assertCanonicalConfirmationMethod(input.method)
 
   await assertNoDuplicateConfirmationTx(tx, {
     vouchId,
@@ -105,31 +124,32 @@ export async function createPresenceConfirmationTx(
   })
 
   const vouch = await tx.vouch.findUnique({
-    where: {
-      id: vouchId,
-    },
+    where: { id: vouchId },
     select: {
       id: true,
-      payerId: true,
-      payeeId: true,
+      merchantId: true,
+      customerId: true,
+      status: true,
       confirmationOpensAt: true,
       confirmationExpiresAt: true,
     },
   })
 
-  if (!vouch) {
-    throw new Error("VOUCH_NOT_FOUND")
+  if (!vouch) throw new Error("VOUCH_NOT_FOUND")
+
+  if (vouch.status !== "confirmable" && vouch.status !== "authorized") {
+    throw new Error("VOUCH_NOT_CONFIRMABLE")
   }
 
-  if (confirmedAt < vouch.confirmationOpensAt) {
+  if (serverReceivedAt < vouch.confirmationOpensAt) {
     throw new Error("CONFIRMATION_WINDOW_NOT_OPEN")
   }
 
-  if (confirmedAt > vouch.confirmationExpiresAt) {
+  if (serverReceivedAt > vouch.confirmationExpiresAt) {
     throw new Error("CONFIRMATION_WINDOW_CLOSED")
   }
 
-  const expectedUserId = input.participantRole === "payer" ? vouch.payerId : vouch.payeeId
+  const expectedUserId = input.participantRole === "merchant" ? vouch.merchantId : vouch.customerId
 
   if (!expectedUserId || expectedUserId !== userId) {
     throw new Error("UNAUTHORIZED_CONFIRMATION_PARTICIPANT")
@@ -141,8 +161,12 @@ export async function createPresenceConfirmationTx(
       userId,
       participantRole: input.participantRole,
       status: "confirmed",
-      method: input.method ?? "manual",
+      method: input.method,
       confirmedAt,
+      serverReceivedAt,
+      timeBucket: input.timeBucket ?? null,
+      clockSkewAccepted: input.clockSkewAccepted ?? false,
+      offlinePayloadHash: input.offlinePayloadHash ?? null,
     },
     select: PRESENCE_CONFIRMATION_SELECT,
   })
@@ -159,22 +183,19 @@ export async function getAggregateConfirmationStatusTx(
       vouchId,
       status: "confirmed",
     },
-    select: {
-      participantRole: true,
-    },
+    select: { participantRole: true },
   })
 
-  const payerConfirmed = confirmations.some(
-    (confirmation) => confirmation.participantRole === "payer"
+  const merchantConfirmed = confirmations.some(
+    (confirmation) => confirmation.participantRole === "merchant"
+  )
+  const customerConfirmed = confirmations.some(
+    (confirmation) => confirmation.participantRole === "customer"
   )
 
-  const payeeConfirmed = confirmations.some(
-    (confirmation) => confirmation.participantRole === "payee"
-  )
-
-  if (payerConfirmed && payeeConfirmed) return "both_confirmed"
-  if (payerConfirmed) return "payer_confirmed"
-  if (payeeConfirmed) return "payee_confirmed"
+  if (merchantConfirmed && customerConfirmed) return "both_confirmed"
+  if (merchantConfirmed) return "merchant_confirmed"
+  if (customerConfirmed) return "customer_confirmed"
 
   return "none_confirmed"
 }
@@ -182,12 +203,16 @@ export async function getAggregateConfirmationStatusTx(
 export async function markConfirmationWindowOpenedTx(tx: Tx, input: VouchIdTxInput): Promise<void> {
   const vouchId = assertNonEmptyString(input.vouchId, "vouchId")
 
-  await tx.vouch.findUniqueOrThrow({
+  await tx.vouch.updateMany({
     where: {
       id: vouchId,
+      status: "authorized",
+      confirmationOpensAt: { lte: new Date() },
+      confirmationExpiresAt: { gt: new Date() },
     },
-    select: {
-      id: true,
+    data: {
+      status: "confirmable",
+      confirmableAt: new Date(),
     },
   })
 }

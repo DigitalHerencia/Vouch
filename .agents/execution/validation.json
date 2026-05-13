@@ -1,152 +1,53 @@
 {
-  "schema_version": "3.0.0",
-  "file": "validation.json",
-  "product": "Vouch",
-  "updated_at": "2026-05-12T07:44:30.0000000-06:00",
-  "required_commands": [
-    "pnpm validate:contracts",
-    "pnpm prisma:validate",
-    "pnpm lint",
-    "pnpm typecheck",
-    "pnpm test"
-  ],
-  "scope_appropriate_commands": [
-    "pnpm test:e2e",
-    "pnpm validate"
-  ],
-  "latest_results": [
-    {
-      "command": "pnpm validate:contracts",
-      "status": "pass",
-      "run_at": "2026-05-12T00:00:00.000Z",
-      "summary": "Contract validation passed: 7 contracts and 5 execution files."
-    },
-    {
-      "command": "git diff --check",
-      "status": "pass",
-      "run_at": "2026-05-12T00:00:00.000Z",
-      "summary": "No whitespace errors after README cleanup."
-    },
+  "version": 1,
+  "project": "Vouch",
+  "last_pass": "pass-9-tests-validation-launch",
+  "status": "pending",
+  "commands": [
     {
       "command": "pnpm prisma:validate",
-      "status": "pass",
-      "run_at": "2026-05-12T00:00:00.000Z",
-      "summary": "Prisma schema is valid."
+      "status": "pending",
+      "required": true
+    },
+    {
+      "command": "pnpm validate:contracts",
+      "status": "pending",
+      "required": true
     },
     {
       "command": "pnpm lint",
-      "status": "pass",
-      "run_at": "2026-05-12T06:56:00.0000000-06:00",
-      "summary": "ESLint completed with no reported errors."
+      "status": "pending",
+      "required": true
     },
     {
       "command": "pnpm typecheck",
-      "status": "pass",
-      "run_at": "2026-05-12T06:56:00.0000000-06:00",
-      "summary": "Next route type generation and TypeScript no-emit check passed."
-    },
-    {
-      "command": "pnpm validate:contracts",
-      "status": "pass",
-      "run_at": "2026-05-12T06:56:07.0000000-06:00",
-      "summary": "Contract validation passed: 7 contracts and 5 execution files."
-    },
-    {
-      "command": "pnpm prisma:validate",
-      "status": "pass",
-      "run_at": "2026-05-12T06:56:07.0000000-06:00",
-      "summary": "Prisma schema is valid."
+      "status": "pending",
+      "required": true
     },
     {
       "command": "pnpm test",
-      "status": "pass",
-      "run_at": "2026-05-12T07:01:35.0000000-06:00",
-      "summary": "Vitest passed: 22 files, 73 tests."
+      "status": "pending",
+      "required": true
     },
     {
-      "command": "pnpm test -- tests/unit/payments/stripe-connect.test.ts tests/contract/architecture-surface.test.ts tests/unit/vouches/actions.test.ts",
-      "status": "pass",
-      "run_at": "2026-05-12T07:42:53.0000000-06:00",
-      "summary": "Focused Vitest run passed: 22 files, 76 tests."
+      "command": "pnpm test:e2e",
+      "status": "pending",
+      "required": true
     },
     {
-      "command": "pnpm validate:contracts",
-      "status": "pass",
-      "run_at": "2026-05-12T07:43:30.0000000-06:00",
-      "summary": "Contract validation passed: 7 contracts and 5 execution files."
+      "command": "pnpm validate",
+      "status": "pending",
+      "required": true
     },
     {
-      "command": "pnpm prisma:validate",
-      "status": "pass",
-      "run_at": "2026-05-12T07:43:30.0000000-06:00",
-      "summary": "Prisma schema is valid using the updated Prisma config."
-    },
-    {
-      "command": "pnpm lint",
-      "status": "pass",
-      "run_at": "2026-05-12T07:43:30.0000000-06:00",
-      "summary": "ESLint completed with no reported errors."
-    },
-    {
-      "command": "pnpm typecheck",
-      "status": "pass",
-      "run_at": "2026-05-12T07:43:55.0000000-06:00",
-      "summary": "Next route type generation and TypeScript no-emit check passed."
-    },
-    {
-      "command": "pnpm test",
-      "status": "pass",
-      "run_at": "2026-05-12T07:44:04.0000000-06:00",
-      "summary": "Vitest passed: 22 files, 76 tests."
-    },
-    {
-      "command": "pnpm exec tsc --noEmit --incremental false --pretty false",
-      "status": "pass",
-      "run_at": "2026-05-12T07:52:20.0000000-06:00",
-      "summary": "TypeScript no-emit check passed without generated metadata churn."
-    },
-    {
-      "command": "pnpm validate:contracts",
-      "status": "pass",
-      "run_at": "2026-05-12T07:52:20.0000000-06:00",
-      "summary": "Contract validation passed: 7 contracts and 5 execution files."
-    },
-    {
-      "command": "pnpm prisma:validate",
-      "status": "pass",
-      "run_at": "2026-05-12T07:52:20.0000000-06:00",
-      "summary": "Prisma schema is valid using the updated Prisma config."
-    },
-    {
-      "command": "pnpm test",
-      "status": "pass",
-      "run_at": "2026-05-12T07:53:03.0000000-06:00",
-      "summary": "Vitest passed: 22 files, 76 tests."
-    },
-    {
-      "command": "pnpm lint",
-      "status": "pass",
-      "run_at": "2026-05-12T07:53:20.0000000-06:00",
-      "summary": "ESLint completed with no reported errors."
-    },
-    {
-      "command": "git diff --check",
-      "status": "pass",
-      "run_at": "2026-05-12T07:44:20.0000000-06:00",
-      "summary": "No whitespace errors."
+      "command": "pnpm validate:all",
+      "status": "pending",
+      "required": true
     }
   ],
-  "contract_gates": [
-    "product_boundary",
-    "architecture",
-    "settlement",
-    "ui",
-    "tests"
-  ],
+  "known_blockers": [],
   "notes": [
-    "Do not mark commands passed unless actually run.",
-    "For this governance-only normalization, pnpm validate:contracts is the smallest useful check.",
-    "Stripe Connect core normalization verified with required payment-domain validation commands.",
-    "Audit cleanup verified after removing word usage governance and placeholder UI files."
+    "Validation status must be updated only after local commands are run.",
+    "Do not mark launch-ready until validate:all passes."
   ]
 }

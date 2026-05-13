@@ -1,4 +1,17 @@
 import { z } from "zod"
+
+import {
+  PAYMENT_FAILURE_STAGE_VALUES,
+  PAYMENT_PROVIDER_VALUES,
+  PAYMENT_READINESS_STATUS_VALUES,
+  PAYMENT_STATUS_VALUES,
+  PAYOUT_READINESS_STATUS_VALUES,
+  REFUND_REASON_VALUES,
+  REFUND_STATUS_VALUES,
+  SETTLEMENT_STATUS_VALUES,
+  VERIFICATION_PROVIDER_VALUES,
+} from "@/lib/vouch/constants"
+
 import {
   idSchema,
   internalReturnToPathSchema,
@@ -6,56 +19,15 @@ import {
   vouchIdSchema,
 } from "./common"
 
-export const paymentProviderSchema = z.enum(["stripe"])
-export const verificationProviderSchema = z.enum(["stripe_identity"])
-
-export const paymentReadinessStatusSchema = z.enum([
-  "not_started",
-  "requires_action",
-  "ready",
-  "failed",
-])
-
-export const payoutReadinessStatusSchema = z.enum([
-  "not_started",
-  "requires_action",
-  "ready",
-  "restricted",
-  "failed",
-])
-
-export const paymentStatusSchema = z.enum([
-  "not_started",
-  "requires_payment_method",
-  "authorized",
-  "captured",
-  "release_pending",
-  "released",
-  "refund_pending",
-  "refunded",
-  "voided",
-  "failed",
-])
-
-export const refundStatusSchema = z.enum(["not_required", "pending", "succeeded", "failed"])
-
-export const refundReasonSchema = z.enum([
-  "not_accepted",
-  "confirmation_incomplete",
-  "canceled_before_acceptance",
-  "payment_failure",
-  "provider_required",
-])
-
-export const paymentFailureStageSchema = z.enum([
-  "create",
-  "accept",
-  "confirm",
-  "release",
-  "refund",
-  "webhook",
-  "unknown",
-])
+export const paymentProviderSchema = z.enum(PAYMENT_PROVIDER_VALUES)
+export const verificationProviderSchema = z.enum(VERIFICATION_PROVIDER_VALUES)
+export const paymentReadinessStatusSchema = z.enum(PAYMENT_READINESS_STATUS_VALUES)
+export const payoutReadinessStatusSchema = z.enum(PAYOUT_READINESS_STATUS_VALUES)
+export const paymentStatusSchema = z.enum(PAYMENT_STATUS_VALUES)
+export const settlementStatusSchema = z.enum(SETTLEMENT_STATUS_VALUES)
+export const refundStatusSchema = z.enum(REFUND_STATUS_VALUES)
+export const refundReasonSchema = z.enum(REFUND_REASON_VALUES)
+export const paymentFailureStageSchema = z.enum(PAYMENT_FAILURE_STAGE_VALUES)
 
 export const sanitizedProviderReferenceSchema = optionalTrimmedStringSchema
 export const sanitizedPaymentFailureCodeSchema = optionalTrimmedStringSchema
@@ -68,11 +40,11 @@ export const idempotencyKeySchema = z
   .max(128)
   .regex(/^[a-zA-Z0-9:_-]+$/)
 
-export const startPaymentMethodSetupInputSchema = z.object({
+export const startStripePaymentManagementInputSchema = z.object({
   returnTo: internalReturnToPathSchema.optional(),
 })
 
-export const startPayoutOnboardingInputSchema = z.object({
+export const startStripeConnectInputSchema = z.object({
   returnTo: internalReturnToPathSchema.optional(),
 })
 
@@ -89,8 +61,9 @@ export const paymentOperationInputSchema = z.object({
 
 export const initializeVouchPaymentInputSchema = paymentOperationInputSchema
 export const authorizeVouchPaymentInputSchema = paymentOperationInputSchema
-export const captureOrReleaseVouchPaymentInputSchema = paymentOperationInputSchema
-export const refundOrVoidVouchPaymentInputSchema = paymentOperationInputSchema
+export const captureConfirmedVouchPaymentInputSchema = paymentOperationInputSchema
+export const cancelUnconfirmedVouchPaymentInputSchema = paymentOperationInputSchema
+export const refundCapturedVouchPaymentInputSchema = paymentOperationInputSchema
 
 export const paymentFailureInputSchema = z.object({
   vouchId: vouchIdSchema.optional(),
@@ -119,3 +92,12 @@ export const paymentWebhookProcessInputSchema = z.object({
 export const paymentReadinessInputSchema = z.object({
   userId: z.string().trim().min(1).optional(),
 })
+
+/**
+ * Backward-compatible aliases retained only to keep Pass 4 isolated.
+ * Later passes should migrate action names away from setup/release/void wording.
+ */
+export const startPaymentMethodSetupInputSchema = startStripePaymentManagementInputSchema
+export const startPayoutOnboardingInputSchema = startStripeConnectInputSchema
+export const captureOrReleaseVouchPaymentInputSchema = captureConfirmedVouchPaymentInputSchema
+export const refundOrVoidVouchPaymentInputSchema = cancelUnconfirmedVouchPaymentInputSchema

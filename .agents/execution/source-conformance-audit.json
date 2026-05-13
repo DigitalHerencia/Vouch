@@ -1,0 +1,492 @@
+{
+  "version": 1,
+  "audit_pass": "pass-2-static-inventory-forbidden-surface-map",
+  "repo": "DigitalHerencia/Vouch",
+  "branch": "main",
+  "assumptions": [
+    "Pass 1 contract and route-surface edits are treated as already applied.",
+    "This pass does not modify implementation code.",
+    "This artifact is a planning and reconciliation map for later targeted Codex write packages."
+  ],
+  "source_authority": [
+    "Vouch Source of Truth",
+    ".agents/contracts/routes.yaml",
+    "Audit Repo for Conformance",
+    "Vouch legal and product source documents"
+  ],
+  "status_legend": [
+    "aligned",
+    "partially_aligned",
+    "conflicting",
+    "missing",
+    "obsolete_remove",
+    "rename_reframe",
+    "needs_deeper_audit"
+  ],
+  "action_legend": ["keep", "remove", "rename_reframe", "conform", "defer_to_later_pass"],
+  "summary": {
+    "p0_count": 0,
+    "p1_count": 5,
+    "p2_count": 8,
+    "p3_count": 4,
+    "notes": [
+      "Pass 2 intentionally records drift instead of fixing it.",
+      "Route-level forbidden surfaces are assumed handled by Pass 1.",
+      "The largest remaining drift appears to be non-route settings/setup/admin implementation surfaces and legacy state vocabulary."
+    ]
+  },
+  "findings": [
+    {
+      "id": "P2-001",
+      "severity": "P1",
+      "section": "Pages and Route Map",
+      "status": "rename_reframe",
+      "recommended_action": "rename_reframe",
+      "files": [
+        "features/settings/account-settings-page.tsx",
+        "features/settings/payment-settings-page.tsx",
+        "features/settings/payout-settings-page.tsx",
+        "features/settings/verification-settings-page.tsx",
+        "features/settings/payment-method-setup-form.tsx",
+        "features/settings/sections/account-security-section.tsx",
+        "features/settings/sections/profile-basics-section.tsx",
+        "features/settings/sections/payment-readiness-section.tsx",
+        "features/settings/sections/payout-readiness-section.tsx",
+        "features/settings/sections/terms-status-section.tsx",
+        "features/settings/sections/verification-status-section.tsx",
+        "lib/actions/settingsActions.ts",
+        "lib/fetchers/settingsFetchers.ts",
+        "lib/db/selects/settings.selects.ts",
+        "schemas/settings.ts",
+        "types/settings.ts"
+      ],
+      "source_rule": "Vouch does not expose internal setup/settings pages. Connect and Payment are external Stripe flows, not internal Vouch pages.",
+      "repo_evidence": "Settings-oriented modules remain outside the route layer.",
+      "risk": "Future implementation work may accidentally preserve settings as a product surface instead of folding readiness and provider redirects into canonical dashboard/create/detail flows.",
+      "reconciliation_plan": [
+        "Do not delete blindly in Pass 2.",
+        "Inventory all imports of settings modules in Pass 5 and Pass 8.",
+        "Move reusable readiness display into canonical flow components only if still needed.",
+        "Rename payment/payout setup actions to Stripe redirect/readiness actions where retained.",
+        "Remove settings page features once their useful logic is migrated."
+      ],
+      "target_pass": "Pass 5 and Pass 8",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-002",
+      "severity": "P1",
+      "section": "Feature Modules",
+      "status": "rename_reframe",
+      "recommended_action": "rename_reframe",
+      "files": [
+        "types/setup.ts",
+        "lib/setup/status.ts",
+        "lib/actions/setupActions.ts",
+        "tests/unit/setup/status.test.ts"
+      ],
+      "source_rule": "Setup/readiness logic is allowed as internal gating, but setup must not become a standalone product route or dashboard surface.",
+      "repo_evidence": "Setup-named types, library logic, actions, and tests remain.",
+      "risk": "Useful readiness logic may be coupled to obsolete setup-page assumptions.",
+      "reconciliation_plan": [
+        "Retain readiness gate logic only if it supports create, accept, payment redirect, payout redirect, or confirmation flows.",
+        "Rename setup-facing concepts to readiness or account-gate concepts where appropriate.",
+        "Remove user-facing setup page assumptions.",
+        "Update tests to validate readiness as embedded flow gating, not a setup page."
+      ],
+      "target_pass": "Pass 4, Pass 5, and Pass 6",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-003",
+      "severity": "P1",
+      "section": "Route Surface / Operational Surface",
+      "status": "needs_deeper_audit",
+      "recommended_action": "defer_to_later_pass",
+      "files": [
+        "features/admin/admin-dashboard-page.tsx",
+        "features/admin/admin-table-page.tsx",
+        "features/admin/users/admin-users-page.tsx",
+        "features/admin/audit/admin-audit-log-page.tsx",
+        "features/admin/audit/admin-audit-event-detail-page.tsx",
+        "features/admin/payments/admin-payments-page.tsx",
+        "features/admin/payments/admin-payment-detail-page.tsx",
+        "features/admin/vouches/admin-vouch-detail-page.tsx",
+        "features/admin/vouches/admin-vouch-failure-heavy-state.tsx",
+        "features/admin/vouches/admin-vouch-safe-retry-dialog.client.tsx",
+        "features/admin/vouches/admin-vouch-safe-retry-result-state.tsx",
+        "features/admin/webhooks/admin-webhook-event-detail-page.tsx",
+        "components/navigation/admin-shell.tsx",
+        "lib/actions/adminActions.ts",
+        "lib/fetchers/adminFetchers.ts",
+        "lib/authz/admin.ts",
+        "schemas/admin.ts",
+        "types/admin.ts"
+      ],
+      "source_rule": "Vouch has no admin arbitration, manual settlement, dispute, appeal, evidence, or user-facing admin settlement surface. Internal safe retry/inspection may exist only if non-discretionary.",
+      "repo_evidence": "Admin feature, action, fetcher, schema, type, authz, and navigation surfaces remain.",
+      "risk": "Admin modules may encode support override, manual settlement, or arbitration-style behavior if not constrained.",
+      "reconciliation_plan": [
+        "Audit admin modules for manual payout, force release, manual refund decision, confirmation rewrite, settlement override, evidence, dispute, and appeal semantics.",
+        "Delete user-facing admin feature pages and navigation if Pass 1 did not remove them.",
+        "Retain only server-only operational retry/inspection primitives that are deterministic and provider-aware.",
+        "Move retained internal operational logic under system/recovery naming rather than admin product naming."
+      ],
+      "target_pass": "Pass 6, Pass 7, and Pass 9",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-004",
+      "severity": "P1",
+      "section": "Lifecycle States",
+      "status": "needs_deeper_audit",
+      "recommended_action": "conform",
+      "files": [
+        "prisma/schema.prisma",
+        "types/vouch.ts",
+        "schemas/vouch.ts",
+        "lib/vouch/status.ts",
+        "lib/vouch/state.ts",
+        "lib/vouch/resolution.ts",
+        "lib/db/transactions/vouchTransactions.ts",
+        "lib/fetchers/vouchFetchers.ts",
+        "components/vouches/vouch-status-badge.tsx",
+        "tests/unit/vouches/status.test.ts",
+        "tests/unit/components/vouch-status-badge.test.tsx"
+      ],
+      "source_rule": "Canonical Vouch lifecycle is draft, committed, sent, accepted, authorized, confirmable, completed, expired. Payment/provider/settlement/archive/recovery states are separate axes.",
+      "repo_evidence": "VouchStatus and status-related code are spread across Prisma, types, schemas, state helpers, resolution logic, transactions, fetchers, components, and tests.",
+      "risk": "Old statuses such as pending, active, refunded, canceled, failed, voided, provider_restricted, capture_failed, or refund_failed may still pollute VouchStatus.",
+      "reconciliation_plan": [
+        "Pass 3 must inspect schema enum values directly.",
+        "Pass 4 must normalize constants, TypeScript unions, and Zod schemas.",
+        "Pass 6 must update transactions/actions to use canonical lifecycle transitions.",
+        "Pass 8 must update status badge display after canonical state normalization."
+      ],
+      "target_pass": "Pass 3, Pass 4, Pass 6, and Pass 8",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-005",
+      "severity": "P1",
+      "section": "Confirmation Method",
+      "status": "needs_deeper_audit",
+      "recommended_action": "conform",
+      "files": [
+        "prisma/schema.prisma",
+        "types/vouch.ts",
+        "schemas/vouch.ts",
+        "lib/vouch/state.ts",
+        "lib/vouch/resolution.ts",
+        "lib/db/transactions/confirmationTransactions.ts",
+        "lib/fetchers/vouchFetchers.ts",
+        "tests/unit/vouches/status.test.ts"
+      ],
+      "source_rule": "Canonical confirmation methods are code_exchange and offline_code_exchange. GPS, manual, system, screenshots, evidence, and support confirmation are forbidden.",
+      "repo_evidence": "Confirmation method/state code requires deeper inspection across schema, types, schemas, transactions, and resolution.",
+      "risk": "Old manual/gps/system confirmation methods may allow noncanonical settlement paths.",
+      "reconciliation_plan": [
+        "Pass 3 must inspect Prisma ConfirmationMethod.",
+        "Pass 4 must normalize ConfirmationMethod constants/types/schemas.",
+        "Pass 6 must ensure transactions reject duplicate, early, late, manual, GPS, and support confirmations.",
+        "Pass 7 must ensure settlement only follows bilateral verified confirmation."
+      ],
+      "target_pass": "Pass 3, Pass 4, Pass 6, and Pass 7",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-006",
+      "severity": "P2",
+      "section": "Roles",
+      "status": "needs_deeper_audit",
+      "recommended_action": "rename_reframe",
+      "files": [
+        "types/vouch.ts",
+        "lib/authz/participants.ts",
+        "lib/db/selects/vouch.selects.ts",
+        "lib/db/transactions/vouchTransactions.ts",
+        "lib/fetchers/dashboardFetchers.ts",
+        "lib/fetchers/vouchFetchers.ts",
+        "prisma/schema.prisma"
+      ],
+      "source_rule": "Canonical roles are merchant and customer. Payer/payee may exist only as documented payment aliases.",
+      "repo_evidence": "Role-related code exists across Vouch types, authz, selects, transactions, fetchers, and Prisma.",
+      "risk": "Independent payer/payee and merchant/customer naming may cause role confusion in authorization and settlement.",
+      "reconciliation_plan": [
+        "Map merchant to payee and customer to payer only inside payment-specific code if needed.",
+        "Use merchant/customer in product-facing DTOs, schemas, UI, and authorization.",
+        "Document aliases centrally if retained."
+      ],
+      "target_pass": "Pass 3, Pass 4, Pass 5, and Pass 6",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-007",
+      "severity": "P2",
+      "section": "Actions / Fetchers",
+      "status": "partially_aligned",
+      "recommended_action": "defer_to_later_pass",
+      "files": [
+        "lib/actions/paymentActions.ts",
+        "lib/fetchers/paymentFetchers.ts",
+        "lib/actions/userActions.ts",
+        "lib/actions/verificationActions.ts",
+        "lib/actions/notificationActions.ts",
+        "lib/actions/analyticsActions.ts",
+        "lib/fetchers/authFetchers.ts",
+        "lib/fetchers/auditFetchers.ts",
+        "lib/fetchers/analyticsFetchers.ts"
+      ],
+      "source_rule": "All protected reads go through fetchers. All writes go through server actions. Actions must authenticate, authorize, validate, mutate/provider-call, audit, and revalidate.",
+      "repo_evidence": "Action and fetcher surfaces exist, but Pass 2 does not inspect internal sequence correctness.",
+      "risk": "Actions may skip authz, Zod validation, audit, or provider-state retrieval if not audited function-by-function.",
+      "reconciliation_plan": [
+        "Pass 6 must inspect server action sequencing.",
+        "Pass 5 must inspect fetcher authentication, authorization, select, DTO mapping, and cache policy.",
+        "Retain notification and analytics only if they remain system-generated and non-messaging/non-dispute."
+      ],
+      "target_pass": "Pass 5 and Pass 6",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-008",
+      "severity": "P2",
+      "section": "Database Selects",
+      "status": "needs_deeper_audit",
+      "recommended_action": "defer_to_later_pass",
+      "files": [
+        "lib/db/selects/settings.selects.ts",
+        "lib/db/selects/vouch.selects.ts",
+        "lib/db/selects/payment.selects.ts",
+        "lib/db/selects/audit.selects.ts",
+        "lib/db/selects/user.selects.ts",
+        "lib/db/selects/auth.selects.ts"
+      ],
+      "source_rule": "Selects must be minimal, DTO-oriented, transport-safe, and must not be driven by removed setup/settings/admin surfaces.",
+      "repo_evidence": "Selects exist for settings and core domains.",
+      "risk": "Settings/admin select shapes may overfetch or preserve obsolete product assumptions.",
+      "reconciliation_plan": [
+        "Pass 5 must remove or reframe settings selects.",
+        "Pass 5 must ensure dashboard card select is smaller than detail select.",
+        "Pass 5 must ensure participant DTOs do not receive admin/system-only data."
+      ],
+      "target_pass": "Pass 5",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-009",
+      "severity": "P2",
+      "section": "Stripe / Clerk / Webhooks",
+      "status": "partially_aligned",
+      "recommended_action": "defer_to_later_pass",
+      "files": [
+        "lib/integrations/stripe/customers.ts",
+        "lib/integrations/stripe",
+        "lib/actions/paymentActions.ts",
+        "lib/fetchers/paymentFetchers.ts",
+        "app/api/stripe/webhooks/route.ts",
+        "app/api/clerk/webhooks/route.ts",
+        "lib/env.ts"
+      ],
+      "source_rule": "Stripe owns payment truth, Vouch owns workflow truth, and webhooks reconcile provider truth idempotently.",
+      "repo_evidence": "Stripe and provider surfaces exist, but Pass 2 does not inspect retrieve-before-settlement or webhook idempotency internals.",
+      "risk": "Payment readiness and payout readiness may still be coupled to settings/setup screens or browser return truth.",
+      "reconciliation_plan": [
+        "Pass 7 must inspect manual-capture PaymentIntent creation.",
+        "Pass 7 must verify retrieve-before-capture/cancel/refund.",
+        "Pass 7 must verify webhook event ID dedupe and late-event reconciliation.",
+        "Pass 7 must ensure Stripe return pages do not finalize provider truth."
+      ],
+      "target_pass": "Pass 7",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-010",
+      "severity": "P2",
+      "section": "Navigation",
+      "status": "needs_deeper_audit",
+      "recommended_action": "conform",
+      "files": [
+        "components/navigation/mobile-bottom-nav.tsx",
+        "components/navigation/tenant-header.tsx",
+        "components/navigation/tenant-footer.tsx",
+        "components/navigation/admin-shell.tsx",
+        "proxy.ts"
+      ],
+      "source_rule": "Tenant navigation contains only Dashboard, Vouches, Connect, and Payment. Connect and Payment trigger server actions to Stripe-hosted flows.",
+      "repo_evidence": "Navigation components and route protection proxy exist.",
+      "risk": "Navigation may still expose settings/setup/admin or internal payment/payout pages.",
+      "reconciliation_plan": [
+        "Pass 8 must inspect all navigation components.",
+        "Pass 6 must ensure Connect and Payment navigation invokes server actions rather than internal pages.",
+        "Pass 9 must include route-surface e2e checks."
+      ],
+      "target_pass": "Pass 6, Pass 8, and Pass 9",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-011",
+      "severity": "P3",
+      "section": "Analytics / Notifications",
+      "status": "needs_deeper_audit",
+      "recommended_action": "defer_to_later_pass",
+      "files": [
+        "types/analytics.ts",
+        "schemas/analytics.ts",
+        "lib/actions/analyticsActions.ts",
+        "lib/fetchers/analyticsFetchers.ts",
+        "lib/actions/notificationActions.ts"
+      ],
+      "source_rule": "Analytics and notifications are allowed only as operational/product instrumentation and system-generated notices, not messaging, negotiation, dispute, or evidence channels.",
+      "repo_evidence": "Analytics and notification modules exist.",
+      "risk": "Notifications could drift into messaging or negotiation if not constrained.",
+      "reconciliation_plan": [
+        "Pass 6 and Pass 8 must verify notification events are system-generated only.",
+        "Pass 5 must ensure analytics DTOs do not expose sensitive provider, identity, dispute, or meeting-purpose data."
+      ],
+      "target_pass": "Pass 5, Pass 6, and Pass 8",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-012",
+      "severity": "P3",
+      "section": "Generated Prisma Artifacts",
+      "status": "partially_aligned",
+      "recommended_action": "defer_to_later_pass",
+      "files": [
+        "prisma/generated/prisma/enums.ts",
+        "prisma/generated/prisma/models/Vouch.ts",
+        "prisma/generated/prisma/models/PaymentWebhookEvent.ts",
+        "prisma/generated/prisma/commonInputTypes.ts",
+        "prisma/generated/prisma/internal/prismaNamespace.ts"
+      ],
+      "source_rule": "Generated Prisma artifacts should not be manually edited. They should change only through schema normalization and Prisma generate.",
+      "repo_evidence": "Generated Prisma files appear in search results for state and admin terms.",
+      "risk": "Codex may attempt to edit generated files directly.",
+      "reconciliation_plan": [
+        "Never edit prisma/generated files by hand.",
+        "Pass 3 should edit prisma/schema.prisma only.",
+        "Run pnpm prisma:generate after schema changes if required."
+      ],
+      "target_pass": "Pass 3",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-013",
+      "severity": "P2",
+      "section": "Tests",
+      "status": "partially_aligned",
+      "recommended_action": "conform",
+      "files": [
+        "tests/e2e/route-surface.spec.ts",
+        "tests/contract/architecture-surface.test.ts",
+        "tests/unit/setup/status.test.ts",
+        "tests/unit/vouches/status.test.ts",
+        "tests/unit/components/vouch-status-badge.test.tsx",
+        "tests/unit/payments/stripe-connect.test.ts"
+      ],
+      "source_rule": "Tests must enforce source-of-truth constraints instead of preserving obsolete setup/settings/admin/lifecycle behavior.",
+      "repo_evidence": "Route surface, setup, status, status badge, and Stripe tests exist.",
+      "risk": "Tests may keep obsolete concepts alive after implementation is corrected.",
+      "reconciliation_plan": [
+        "Pass 9 must update tests after state, action, Stripe, and UI corrections.",
+        "Do not weaken tests to pass old behavior.",
+        "Convert setup tests into readiness-gate tests if the logic remains valid."
+      ],
+      "target_pass": "Pass 9",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-014",
+      "severity": "P3",
+      "section": "Documentation / Agents",
+      "status": "partially_aligned",
+      "recommended_action": "conform",
+      "files": [
+        "AGENTS.md",
+        ".agents/docs/design-system.md",
+        ".agents/instructions/audit.agents.md",
+        ".agents/contracts/routes.yaml",
+        ".agents/execution/backlog.json",
+        ".agents/execution/handoff.json"
+      ],
+      "source_rule": "Agent instructions, docs, contracts, and execution artifacts must reinforce the current source of truth.",
+      "repo_evidence": "Agent docs and execution files exist and should remain synchronized with the audit program.",
+      "risk": "Execution artifacts may point Codex back toward obsolete setup/settings/admin work.",
+      "reconciliation_plan": [
+        "Pass 9 must reconcile execution JSON after implementation corrections pass validation.",
+        "Do not edit broad docs in Pass 2 except this audit artifact."
+      ],
+      "target_pass": "Pass 9",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-015",
+      "severity": "P2",
+      "section": "Missing Inventory Script",
+      "status": "missing",
+      "recommended_action": "defer_to_later_pass",
+      "files": ["scripts/validate-contracts.mjs"],
+      "source_rule": "Validation should catch contract drift and forbidden surface reintroduction.",
+      "repo_evidence": "validate-contracts.mjs validates parseability and required file presence but does not enforce semantic route/source conformance.",
+      "risk": "Future drift can re-enter unless semantic checks live in tests or validation scripts.",
+      "reconciliation_plan": [
+        "Pass 9 should decide whether to add a dedicated source-conformance validation script.",
+        "For now, keep semantic enforcement in tests/contract/architecture-surface.test.ts and future contract tests."
+      ],
+      "target_pass": "Pass 9",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-016",
+      "severity": "P2",
+      "section": "Forbidden Product Categories",
+      "status": "partially_aligned",
+      "recommended_action": "keep",
+      "files": [],
+      "source_rule": "Vouch must not include disputes, mediation, arbitration, appeals, evidence review, screenshots, marketplace, messaging, reviews, ratings, browse, search, providers, public profiles, or service listings.",
+      "repo_evidence": "Initial broad search did not surface obvious dispute/evidence/marketplace/review/messaging files, but targeted searches should be repeated locally with rg.",
+      "risk": "Terms may exist inside copy or comments that GitHub search did not surface.",
+      "reconciliation_plan": [
+        "Run local ripgrep during each implementation pass.",
+        "Treat any surfaced forbidden term as remove, rename/reframe, or internal-only with justification."
+      ],
+      "target_pass": "All remaining passes",
+      "codex_write_required_now": false
+    },
+    {
+      "id": "P2-017",
+      "severity": "P2",
+      "section": "Pass Sequencing",
+      "status": "aligned",
+      "recommended_action": "keep",
+      "files": [],
+      "source_rule": "Contracts and route surface first; then schema/state; then constants/types/schemas; then reads/writes; then integrations; then UI/tests.",
+      "repo_evidence": "Pass 2 findings confirm later passes should not start with UI.",
+      "risk": "Starting with UI would preserve wrong state, role, readiness, and admin assumptions.",
+      "reconciliation_plan": [
+        "Proceed to Pass 3: Prisma schema and state-axis normalization.",
+        "Do not use Codex for broad UI edits before schema/state contracts are normalized."
+      ],
+      "target_pass": "Pass 3",
+      "codex_write_required_now": false
+    }
+  ],
+  "next_pass": {
+    "pass": "Pass 3",
+    "name": "Prisma schema and state-axis normalization",
+    "primary_targets": [
+      "prisma/schema.prisma",
+      "prisma migrations if required",
+      "generated Prisma files only through prisma generate",
+      "state-axis impact notes for later constants/types/schemas"
+    ],
+    "must_not_edit": [
+      "prisma/generated/** manually",
+      "UI components",
+      "features",
+      "Stripe integration",
+      "Clerk integration"
+    ]
+  }
+}

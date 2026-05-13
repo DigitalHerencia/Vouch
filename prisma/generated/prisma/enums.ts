@@ -51,13 +51,14 @@ export type PayoutReadinessStatus = (typeof PayoutReadinessStatus)[keyof typeof 
 
 
 export const VouchStatus = {
-  pending: 'pending',
-  active: 'active',
+  draft: 'draft',
+  committed: 'committed',
+  sent: 'sent',
+  accepted: 'accepted',
+  authorized: 'authorized',
+  confirmable: 'confirmable',
   completed: 'completed',
-  expired: 'expired',
-  refunded: 'refunded',
-  canceled: 'canceled',
-  failed: 'failed'
+  expired: 'expired'
 } as const
 
 export type VouchStatus = (typeof VouchStatus)[keyof typeof VouchStatus]
@@ -77,19 +78,17 @@ export type InvitationStatus = (typeof InvitationStatus)[keyof typeof Invitation
 
 
 export const ParticipantRole = {
-  payer: 'payer',
-  payee: 'payee'
+  merchant: 'merchant',
+  customer: 'customer'
 } as const
 
 export type ParticipantRole = (typeof ParticipantRole)[keyof typeof ParticipantRole]
 
 
 export const ConfirmationStatus = {
-  not_confirmed: 'not_confirmed',
+  pending: 'pending',
   confirmed: 'confirmed',
-  ineligible: 'ineligible',
-  window_not_open: 'window_not_open',
-  window_closed: 'window_closed'
+  rejected: 'rejected'
 } as const
 
 export type ConfirmationStatus = (typeof ConfirmationStatus)[keyof typeof ConfirmationStatus]
@@ -97,8 +96,8 @@ export type ConfirmationStatus = (typeof ConfirmationStatus)[keyof typeof Confir
 
 export const AggregateConfirmationStatus = {
   none_confirmed: 'none_confirmed',
-  payer_confirmed: 'payer_confirmed',
-  payee_confirmed: 'payee_confirmed',
+  merchant_confirmed: 'merchant_confirmed',
+  customer_confirmed: 'customer_confirmed',
   both_confirmed: 'both_confirmed'
 } as const
 
@@ -106,9 +105,8 @@ export type AggregateConfirmationStatus = (typeof AggregateConfirmationStatus)[k
 
 
 export const ConfirmationMethod = {
-  manual: 'manual',
-  gps: 'gps',
-  system: 'system'
+  code_exchange: 'code_exchange',
+  offline_code_exchange: 'offline_code_exchange'
 } as const
 
 export type ConfirmationMethod = (typeof ConfirmationMethod)[keyof typeof ConfirmationMethod]
@@ -149,18 +147,36 @@ export type ProviderWebhookStatus = (typeof ProviderWebhookStatus)[keyof typeof 
 
 export const PaymentStatus = {
   not_started: 'not_started',
+  checkout_created: 'checkout_created',
   requires_payment_method: 'requires_payment_method',
+  requires_confirmation: 'requires_confirmation',
+  requires_action: 'requires_action',
+  requires_capture: 'requires_capture',
   authorized: 'authorized',
+  processing: 'processing',
+  capture_processing: 'capture_processing',
   captured: 'captured',
-  release_pending: 'release_pending',
-  released: 'released',
-  refund_pending: 'refund_pending',
-  refunded: 'refunded',
-  voided: 'voided',
+  canceled: 'canceled',
+  expired: 'expired',
   failed: 'failed'
 } as const
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const SettlementStatus = {
+  pending: 'pending',
+  non_capture_pending: 'non_capture_pending',
+  non_captured: 'non_captured',
+  capture_pending: 'capture_pending',
+  captured: 'captured',
+  refund_pending: 'refund_pending',
+  refunded: 'refunded',
+  provider_blocked: 'provider_blocked',
+  failed: 'failed'
+} as const
+
+export type SettlementStatus = (typeof SettlementStatus)[keyof typeof SettlementStatus]
 
 
 export const RefundStatus = {
@@ -174,23 +190,39 @@ export type RefundStatus = (typeof RefundStatus)[keyof typeof RefundStatus]
 
 
 export const RefundReason = {
-  not_accepted: 'not_accepted',
   confirmation_incomplete: 'confirmation_incomplete',
-  canceled_before_acceptance: 'canceled_before_acceptance',
-  payment_failure: 'payment_failure',
-  provider_required: 'provider_required'
+  provider_required: 'provider_required',
+  captured_reversal_required: 'captured_reversal_required',
+  payment_failure: 'payment_failure'
 } as const
 
 export type RefundReason = (typeof RefundReason)[keyof typeof RefundReason]
 
 
+export const ArchiveStatus = {
+  active: 'active',
+  archived: 'archived'
+} as const
+
+export type ArchiveStatus = (typeof ArchiveStatus)[keyof typeof ArchiveStatus]
+
+
+export const RecoveryStatus = {
+  normal: 'normal',
+  recovery_required: 'recovery_required',
+  recovery_in_progress: 'recovery_in_progress',
+  recovered: 'recovered',
+  recovery_failed: 'recovery_failed'
+} as const
+
+export type RecoveryStatus = (typeof RecoveryStatus)[keyof typeof RecoveryStatus]
+
+
 export const AuditActorType = {
   user: 'user',
   system: 'system',
-  admin: 'admin',
-  payment_provider: 'payment_provider',
-  auth_provider: 'auth_provider',
-  verification_provider: 'verification_provider'
+  stripe: 'stripe',
+  clerk: 'clerk'
 } as const
 
 export type AuditActorType = (typeof AuditActorType)[keyof typeof AuditActorType]
@@ -215,11 +247,10 @@ export type NotificationStatus = (typeof NotificationStatus)[keyof typeof Notifi
 
 export const AnalyticsEventGroup = {
   acquisition: 'acquisition',
-  setup: 'setup',
   vouch: 'vouch',
   payment: 'payment',
   notification: 'notification',
-  admin: 'admin'
+  system: 'system'
 } as const
 
 export type AnalyticsEventGroup = (typeof AnalyticsEventGroup)[keyof typeof AnalyticsEventGroup]
@@ -234,14 +265,15 @@ export const Environment = {
 export type Environment = (typeof Environment)[keyof typeof Environment]
 
 
-export const AdminSafeRetryOperation = {
+export const OperationalRetryOperation = {
   retry_notification_send: 'retry_notification_send',
   retry_provider_reconciliation: 'retry_provider_reconciliation',
   retry_webhook_processing: 'retry_webhook_processing',
-  retry_refund_status_sync: 'retry_refund_status_sync'
+  retry_refund_status_sync: 'retry_refund_status_sync',
+  retry_capture_status_sync: 'retry_capture_status_sync'
 } as const
 
-export type AdminSafeRetryOperation = (typeof AdminSafeRetryOperation)[keyof typeof AdminSafeRetryOperation]
+export type OperationalRetryOperation = (typeof OperationalRetryOperation)[keyof typeof OperationalRetryOperation]
 
 
 export const OperationalRetryStatus = {

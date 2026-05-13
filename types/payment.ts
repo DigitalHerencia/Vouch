@@ -1,43 +1,32 @@
-import type { VouchID, ID } from "./common"
+import type {
+  PAYMENT_FAILURE_STAGE_VALUES,
+  PAYMENT_PROVIDER_VALUES,
+  PAYMENT_READINESS_STATUS_VALUES,
+  PAYMENT_STATUS_VALUES,
+  PAYOUT_READINESS_STATUS_VALUES,
+  REFUND_REASON_VALUES,
+  REFUND_STATUS_VALUES,
+  SETTLEMENT_STATUS_VALUES,
+  VERIFICATION_PROVIDER_VALUES,
+} from "@/lib/vouch/constants"
 
-export type PaymentProvider = "stripe"
-export type VerificationProvider = "stripe_identity"
+import type { ID, VouchID } from "./common"
 
-export type PaymentReadinessStatus = "not_started" | "requires_action" | "ready" | "failed"
+export type PaymentProvider = (typeof PAYMENT_PROVIDER_VALUES)[number]
+export type VerificationProvider = (typeof VERIFICATION_PROVIDER_VALUES)[number]
+export type PaymentReadinessStatus = (typeof PAYMENT_READINESS_STATUS_VALUES)[number]
+export type PayoutReadinessStatus = (typeof PAYOUT_READINESS_STATUS_VALUES)[number]
+export type PaymentStatus = (typeof PAYMENT_STATUS_VALUES)[number]
+export type SettlementStatus = (typeof SETTLEMENT_STATUS_VALUES)[number]
+export type RefundStatus = (typeof REFUND_STATUS_VALUES)[number]
+export type RefundReason = (typeof REFUND_REASON_VALUES)[number]
+export type PaymentFailureStage = (typeof PAYMENT_FAILURE_STAGE_VALUES)[number]
 
-export type PayoutReadinessStatus =
-  | "not_started"
-  | "requires_action"
-  | "ready"
-  | "restricted"
-  | "failed"
-
-export type PaymentStatus =
-  | "not_started"
-  | "requires_payment_method"
-  | "authorized"
-  | "captured"
-  | "release_pending"
-  | "released"
-  | "refund_pending"
-  | "refunded"
-  | "voided"
-  | "failed"
-
-export type RefundStatus = "not_required" | "pending" | "succeeded" | "failed"
-
-export type RefundReason =
-  | "not_accepted"
-  | "confirmation_incomplete"
-  | "canceled_before_acceptance"
-  | "payment_failure"
-  | "provider_required"
-
-export interface StartPaymentMethodSetupInput {
+export interface StartStripePaymentManagementInput {
   returnTo?: string
 }
 
-export interface StartPayoutOnboardingInput {
+export interface StartStripeConnectInput {
   returnTo?: string
 }
 
@@ -60,11 +49,20 @@ export interface PaymentFailureInput {
   safeMessage?: string
 }
 
-export type PaymentFailureStage =
-  | "create"
-  | "accept"
-  | "confirm"
-  | "release"
-  | "refund"
-  | "webhook"
-  | "unknown"
+export interface VouchPaymentSummaryDTO {
+  provider: PaymentProvider
+  safeProviderStatus: string
+  paymentStatus: PaymentStatus
+  settlementStatus: SettlementStatus
+  checkoutUrl?: string
+  paymentIntentReference?: string
+  captureBefore?: string
+  consequenceText: string
+}
+
+/**
+ * Backward-compatible aliases retained only to keep Pass 4 isolated.
+ * Later passes should rename action call sites to the Stripe-hosted flow names.
+ */
+export type StartPaymentMethodSetupInput = StartStripePaymentManagementInput
+export type StartPayoutOnboardingInput = StartStripeConnectInput

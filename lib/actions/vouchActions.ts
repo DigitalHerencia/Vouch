@@ -1,18 +1,16 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { redirect } from "next/navigation"
 
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import {
-  assertAcceptVouchSetupReady,
-  assertCreateVouchSetupReady,
+  assertCreateVouchReadinessReady,
+  assertAcceptVouchReadinessReady,
 } from "@/lib/fetchers/setupFetchers"
 import { getParticipantRoleForVouch } from "@/lib/authz/participants"
 import { VOUCH_LIMITS } from "@/lib/constants/limits"
 import { prisma } from "@/lib/db/prisma"
 import {
-  assertNoDuplicateConfirmationTx,
   createPresenceConfirmationTx,
   getAggregateConfirmationStatusTx,
 } from "@/lib/db/transactions/confirmationTransactions"
@@ -27,30 +25,26 @@ import {
 } from "@/lib/db/transactions/invitationTransactions"
 import { queueNotificationTx } from "@/lib/db/transactions/notificationTransactions"
 import {
-  bindPayeeToVouchTx,
-  cancelPendingVouchTx,
+  bindCustomerToVouchTx,
   createVouchTx,
-  markVouchCompletedTx,
-  markVouchExpiredTx,
-  markVouchFailedTx,
+  expireVouchWithoutCaptureTx,
+  markVouchAuthorizedTx,
+  markVouchSentTx,
+  updateVouchArchiveStatusTx,
 } from "@/lib/db/transactions/vouchTransactions"
 import { createInvitationToken, hashInvitationToken } from "@/lib/invitations/tokens"
 import {
-  refundOrVoidStripePaymentForVouch,
-  initializeStripePaymentForVouch,
-  releaseStripePaymentForCompletedVouch,
+  authorizeVouchPayment,
+  startStripeConnectOnboarding,
+  startStripePaymentManagement,
 } from "@/lib/actions/paymentActions"
 import { calculateVouchPricing, type VouchPricing } from "@/lib/vouch/fees"
 import {
-  acceptVouchInputSchema,
-  cancelPendingVouchInputSchema,
+  archiveVouchSchema,
+  confirmCreateVouchInputSchema,
   confirmPresenceInputSchema,
   createVouchDraftInputSchema,
-  createVouchInputSchema,
-  declineVouchInputSchema,
   feePreviewInputSchema,
-  resendVouchInvitationInputSchema,
-  sendVouchInvitationInputSchema,
 } from "@/schemas/vouch"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
 
@@ -63,7 +57,6 @@ type FieldErrorsSource = {
 type FeePreview = {
   amountCents: number
   currency: "usd"
-  platformFeeCents: number
   protectedAmountCents: number
   merchantReceivesCents: number
   vouchServiceFeeCents: number
@@ -76,19 +69,8 @@ type FeePreview = {
 type CreatedVouchResult = {
   vouchId: string
   invitationId: string
-  inviteToken: string
-  invitePath: string
-  clientSecret: string | null
+  detailPath: string
 }
-
-type AggregateConfirmationStatus =
-  | "none_confirmed"
-  | "payer_confirmed"
-  | "payee_confirmed"
-  | "both_confirmed"
-
-type InvitationByToken = Awaited<ReturnType<typeof getInvitationByToken>>
-type UsableInvitation = NonNullable<InvitationByToken>
 
 function invitationExpiresAt(): Date {
   const expiresAt = new Date()
@@ -110,7 +92,6 @@ function toFeePreview(amountCents: number, currency: "usd"): FeePreview {
   return {
     amountCents,
     currency,
-    platformFeeCents: pricing?.vouchServiceFeeCents ?? 0,
     protectedAmountCents: pricing?.protectedAmountCents ?? amountCents,
     merchantReceivesCents: pricing?.merchantReceivesCents ?? amountCents,
     vouchServiceFeeCents: pricing?.vouchServiceFeeCents ?? 0,
@@ -121,7 +102,7 @@ function toFeePreview(amountCents: number, currency: "usd"): FeePreview {
   }
 }
 
-async function getSetupBlockedFailure(
+async function mapReadinessFailure(
   assertion: Promise<unknown>
 ): Promise<ActionResult<never> | null> {
   try {
@@ -130,17 +111,15 @@ async function getSetupBlockedFailure(
   } catch (error) {
     if (!(error instanceof Error)) throw error
 
-    if (error.message.startsWith("SETUP_BLOCKED:")) {
-      return actionFailure("SETUP_BLOCKED", "Finish setup before continuing.")
+    if (
+      error.message.startsWith("READINESS_BLOCKED:") ||
+      error.message.startsWith("SETUP_BLOCKED:")
+    ) {
+      return actionFailure("READINESS_BLOCKED", "Required account readiness is incomplete.")
     }
 
     throw error
   }
-}
-
-function isConfirmationWindowOpen(input: { opensAt: Date; expiresAt: Date; now?: Date }): boolean {
-  const now = input.now ?? new Date()
-  return now >= input.opensAt && now <= input.expiresAt
 }
 
 async function revalidateVouchSurfaces(
@@ -148,9 +127,9 @@ async function revalidateVouchSurfaces(
   userIds: Array<string | null | undefined> = []
 ): Promise<void> {
   revalidatePath("/dashboard")
-  revalidatePath("/vouches")
+  revalidatePath("/vouches/new")
+  revalidatePath("/vouches/new/confirm")
   revalidatePath(`/vouches/${vouchId}`)
-  revalidatePath(`/vouches/${vouchId}/confirm`)
 
   for (const userId of userIds) {
     if (userId) revalidatePath(`/dashboard?user=${userId}`)
@@ -169,13 +148,11 @@ async function getInvitationByToken(token: string) {
       vouch: {
         select: {
           id: true,
-          payerId: true,
-          payeeId: true,
+          merchantId: true,
+          customerId: true,
           status: true,
-          amountCents: true,
-          currency: true,
-          platformFeeCents: true,
           protectedAmountCents: true,
+          currency: true,
           merchantReceivesCents: true,
           vouchServiceFeeCents: true,
           processingFeeOffsetCents: true,
@@ -185,6 +162,7 @@ async function getInvitationByToken(token: string) {
             select: {
               id: true,
               status: true,
+              settlementStatus: true,
             },
           },
         },
@@ -193,23 +171,19 @@ async function getInvitationByToken(token: string) {
   })
 }
 
+type InvitationByToken = Awaited<ReturnType<typeof getInvitationByToken>>
+type UsableInvitation = NonNullable<InvitationByToken>
+
 function assertInvitationUsable(
   invitation: InvitationByToken
 ): asserts invitation is UsableInvitation {
-  if (!invitation) {
-    throw new Error("INVITATION_NOT_FOUND")
-  }
-
-  if (invitation.expiresAt <= new Date()) {
-    throw new Error("INVITATION_EXPIRED")
-  }
-
+  if (!invitation) throw new Error("INVITATION_NOT_FOUND")
+  if (invitation.expiresAt <= new Date()) throw new Error("INVITATION_EXPIRED")
   if (!["created", "sent", "opened"].includes(invitation.status)) {
     throw new Error("INVITATION_NOT_USABLE")
   }
-
-  if (invitation.vouch.status !== "pending") {
-    throw new Error("VOUCH_NOT_PENDING")
+  if (invitation.vouch.status !== "sent" && invitation.vouch.status !== "committed") {
+    throw new Error("VOUCH_NOT_ACCEPTABLE")
   }
 }
 
@@ -223,8 +197,8 @@ function mapInvitationError(error: unknown): ActionResult<never> | null {
       return actionFailure("INVITATION_EXPIRED", "Invitation expired.")
     case "INVITATION_NOT_USABLE":
       return actionFailure("INVITATION_NOT_USABLE", "Invitation is no longer usable.")
-    case "VOUCH_NOT_PENDING":
-      return actionFailure("INVALID_VOUCH_STATE", "Vouch is not pending.")
+    case "VOUCH_NOT_ACCEPTABLE":
+      return actionFailure("INVALID_VOUCH_STATE", "Vouch is not available to accept.")
     default:
       return null
   }
@@ -251,16 +225,15 @@ export async function validateCreateVouchDraft(input: unknown): Promise<ActionRe
     )
   }
 
-  const amountCents = parsed.data.amountCents ?? 0
-  return actionSuccess(toFeePreview(amountCents, parsed.data.currency))
+  return actionSuccess(toFeePreview(parsed.data.amountCents, parsed.data.currency))
 }
 
 export async function createVouch(input: unknown): Promise<ActionResult<CreatedVouchResult>> {
   const user = await requireActiveUser()
-  const setupFailure = await getSetupBlockedFailure(assertCreateVouchSetupReady(user.id))
-  if (setupFailure) return setupFailure
+  const readinessFailure = await mapReadinessFailure(assertCreateVouchReadinessReady(user.id))
+  if (readinessFailure) return readinessFailure
 
-  const parsed = createVouchInputSchema.safeParse(input)
+  const parsed = confirmCreateVouchInputSchema.safeParse(input)
 
   if (!parsed.success) {
     return actionFailure(
@@ -285,28 +258,28 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
 
   const created = await prisma.$transaction(async (tx) => {
     const vouch = await createVouchTx(tx, {
-      payerId: user.id,
-      amountCents,
+      merchantId: user.id,
       currency: parsed.data.currency,
-      platformFeeCents: pricing.vouchServiceFeeCents,
       protectedAmountCents: pricing.protectedAmountCents,
       merchantReceivesCents: pricing.merchantReceivesCents,
       vouchServiceFeeCents: pricing.vouchServiceFeeCents,
       processingFeeOffsetCents: pricing.processingFeeOffsetCents,
       applicationFeeAmountCents: pricing.applicationFeeAmountCents,
       customerTotalCents: pricing.customerTotalCents,
-      label: parsed.data.label ?? null,
-      meetingStartsAt: parsed.data.meetingStartsAt,
+      appointmentStartsAt: parsed.data.appointmentStartsAt,
       confirmationOpensAt: parsed.data.confirmationOpensAt,
       confirmationExpiresAt: parsed.data.confirmationExpiresAt,
+      createAsSent: true,
     })
 
     const invitation = await createInvitationTx(tx, {
       vouchId: vouch.id,
-      recipientEmail: parsed.data.recipientEmail ?? null,
+      recipientEmail: null,
       tokenHash,
       expiresAt: invitationExpiresAt(),
     })
+
+    await markInvitationSentTx(tx, { invitationId: invitation.id })
 
     await tx.auditEvent.create({
       data: {
@@ -317,8 +290,6 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
         entityId: vouch.id,
         participantSafe: true,
         metadata: {
-          amount_cents: amountCents,
-          currency: parsed.data.currency,
           protected_amount_cents: pricing.protectedAmountCents,
           merchant_receives_cents: pricing.merchantReceivesCents,
           vouch_service_fee_cents: pricing.vouchServiceFeeCents,
@@ -337,255 +308,174 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
   return actionSuccess({
     vouchId: created.vouch.id,
     invitationId: created.invitation.id,
-    inviteToken,
-    invitePath: `/vouches/invite/${inviteToken}`,
-    clientSecret: null,
+    detailPath: `/vouches/${created.vouch.id}`,
   })
 }
 
-export async function createVouchAction(
-  input: unknown
-): Promise<ActionResult<CreatedVouchResult>> {
-  return createVouch(input)
-}
-
-export async function createVouchInvitation(
-  input: unknown
-): Promise<ActionResult<{ invitationId: string; inviteToken: string; invitePath: string }>> {
+export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
   const user = await requireActiveUser()
-  const parsed = sendVouchInvitationInputSchema.safeParse(input)
+  const readinessFailure = await mapReadinessFailure(assertAcceptVouchReadinessReady(user.id))
+  if (readinessFailure) return readinessFailure
 
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the invitation fields.",
-      getFieldErrors(parsed.error)
+  const token = typeof input === "object" && input && "token" in input ? String(input.token) : ""
+  const disclaimerAccepted =
+    typeof input === "object" && input && "disclaimerAccepted" in input
+      ? input.disclaimerAccepted === true
+      : false
+
+  if (!token || !disclaimerAccepted) {
+    return actionFailure("VALIDATION_FAILED", "Accepting a Vouch requires valid terms acceptance.")
+  }
+
+  const invitation = await getInvitationByToken(token)
+
+  try {
+    assertInvitationUsable(invitation)
+  } catch (error) {
+    return (
+      mapInvitationError(error) ?? actionFailure("INVALID_INVITATION", "Invitation is not usable.")
     )
   }
 
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: { id: true, payerId: true, status: true },
-  })
-
-  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (vouch.payerId !== user.id) return actionFailure("AUTHZ_DENIED", "Payer access required.")
-  if (vouch.status !== "pending") {
-    return actionFailure("INVALID_VOUCH_STATE", "Only pending Vouches can be invited.")
+  if (invitation.vouch.merchantId === user.id) {
+    return actionFailure("SELF_ACCEPT_BLOCKED", "Merchant cannot accept their own Vouch.")
   }
 
-  const inviteToken = await createInvitationToken(VOUCH_LIMITS.inviteTokenBytes)
-  const tokenHash = await hashInvitationToken(inviteToken)
+  if (invitation.vouch.customerId) {
+    return actionFailure("VOUCH_ALREADY_ACCEPTED", "Vouch already has a customer.")
+  }
 
-  const invitation = await prisma.$transaction(async (tx) => {
-    const created = await createInvitationTx(tx, {
+  const accepted = await prisma.$transaction(async (tx) => {
+    const vouch = await bindCustomerToVouchTx(tx, {
+      vouchId: invitation.vouch.id,
+      customerId: user.id,
+    })
+
+    await markInvitationAcceptedTx(tx, { invitationId: invitation.id })
+
+    await tx.auditEvent.create({
+      data: {
+        eventName: "vouch.accepted",
+        actorType: "user",
+        actorUserId: user.id,
+        entityType: "Vouch",
+        entityId: vouch.id,
+        participantSafe: true,
+      },
+    })
+
+    await queueNotificationTx(tx, {
+      type: "vouch_accepted",
+      channel: "email",
+      recipientUserId: vouch.merchantId,
       vouchId: vouch.id,
-      recipientEmail: parsed.data.recipientEmail ?? null,
-      tokenHash,
-      expiresAt: invitationExpiresAt(),
     })
 
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.invite.sent",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "Invitation",
-        entityId: created.id,
-        participantSafe: true,
-      },
+    return vouch
+  })
+
+  const payment = await authorizeVouchPayment({
+    vouchId: accepted.id,
+    idempotencyKey: `vouch:${accepted.id}:payment_authorization`,
+  })
+
+  if (!payment.ok) {
+    await prisma.$transaction(async (tx) => {
+      await tx.vouch.update({
+        where: { id: accepted.id },
+        data: { recoveryStatus: "recovery_required" },
+        select: { id: true },
+      })
+
+      await tx.auditEvent.create({
+        data: {
+          eventName: "payment.authorization_failed",
+          actorType: "system",
+          entityType: "Vouch",
+          entityId: accepted.id,
+          participantSafe: true,
+          metadata: { code: payment.code },
+        },
+      })
     })
 
-    return created
-  })
-
-  await revalidateVouchSurfaces(vouch.id, [user.id])
-
-  return actionSuccess({
-    invitationId: invitation.id,
-    inviteToken,
-    invitePath: `/vouches/invite/${inviteToken}`,
-  })
-}
-
-export async function sendVouchInvitation(
-  input: unknown
-): Promise<ActionResult<{ invitationId: string }>> {
-  const user = await requireActiveUser()
-  const parsed = sendVouchInvitationInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the invitation fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const invitation = await prisma.invitation.findFirst({
-    where: { vouchId: parsed.data.vouchId },
-    select: {
-      id: true,
-      vouch: { select: { id: true, payerId: true, status: true } },
-    },
-  })
-
-  if (!invitation) return actionFailure("NOT_FOUND", "Invitation not found.")
-  if (invitation.vouch.payerId !== user.id)
-    return actionFailure("AUTHZ_DENIED", "Payer access required.")
-  if (invitation.vouch.status !== "pending") {
-    return actionFailure("INVALID_VOUCH_STATE", "Only pending Vouches can be sent.")
+    await revalidateVouchSurfaces(accepted.id, [accepted.merchantId, user.id])
+    return actionFailure(payment.code, payment.message)
   }
 
   await prisma.$transaction(async (tx) => {
-    await markInvitationSentTx(tx, { invitationId: invitation.id })
+    await markVouchAuthorizedTx(tx, { vouchId: accepted.id })
 
     await tx.auditEvent.create({
       data: {
-        eventName: "vouch.invite.sent",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "Invitation",
-        entityId: invitation.id,
+        eventName: "vouch.authorized",
+        actorType: "system",
+        entityType: "Vouch",
+        entityId: accepted.id,
         participantSafe: true,
       },
     })
   })
 
-  await revalidateVouchSurfaces(parsed.data.vouchId, [user.id])
-  return actionSuccess({ invitationId: invitation.id })
+  await revalidateVouchSurfaces(accepted.id, [accepted.merchantId, user.id])
+  return actionSuccess({ vouchId: accepted.id })
 }
 
-export async function resendVouchInvitation(
-  input: unknown
-): Promise<ActionResult<{ invitationId: string; inviteToken: string; invitePath: string }>> {
+export async function declineVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
   const user = await requireActiveUser()
-  const parsed = resendVouchInvitationInputSchema.safeParse(input)
+  const token = typeof input === "object" && input && "token" in input ? String(input.token) : ""
 
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the invitation fields.",
-      getFieldErrors(parsed.error)
+  if (!token) return actionFailure("VALIDATION_FAILED", "Invite token is required.")
+
+  const invitation = await getInvitationByToken(token)
+
+  try {
+    assertInvitationUsable(invitation)
+  } catch (error) {
+    return (
+      mapInvitationError(error) ?? actionFailure("INVALID_INVITATION", "Invitation is not usable.")
     )
   }
 
-  const invitation = await prisma.invitation.findUnique({
-    where: { id: parsed.data.invitationId },
-    select: {
-      id: true,
-      vouchId: true,
-      recipientEmail: true,
-      vouch: { select: { payerId: true, status: true } },
-    },
-  })
-
-  if (!invitation) return actionFailure("NOT_FOUND", "Invitation not found.")
-  if (invitation.vouch.payerId !== user.id)
-    return actionFailure("AUTHZ_DENIED", "Payer access required.")
-  if (invitation.vouch.status !== "pending") {
-    return actionFailure("INVALID_VOUCH_STATE", "Only pending Vouches can be resent.")
-  }
-
-  const inviteToken = await createInvitationToken(VOUCH_LIMITS.inviteTokenBytes)
-  const tokenHash = await hashInvitationToken(inviteToken)
-
-  await prisma.$transaction(async (tx) => {
-    await rotateInvitationTokenHashTx(tx, {
-      invitationId: invitation.id,
-      tokenHash,
-      expiresAt: invitationExpiresAt(),
-    })
-
-    await markInvitationSentTx(tx, { invitationId: invitation.id })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.invite.sent",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "Invitation",
-        entityId: invitation.id,
-        participantSafe: true,
-      },
-    })
-  })
-
-  await revalidateVouchSurfaces(invitation.vouchId, [user.id])
-
-  return actionSuccess({
-    invitationId: invitation.id,
-    inviteToken,
-    invitePath: `/vouches/invite/${inviteToken}`,
-  })
-}
-
-export async function invalidateVouchInvitation(
-  input: unknown
-): Promise<ActionResult<{ invitationId: string }>> {
-  const user = await requireActiveUser()
-  const parsed = resendVouchInvitationInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the invitation fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const invitation = await prisma.invitation.findUnique({
-    where: { id: parsed.data.invitationId },
-    select: {
-      id: true,
-      vouchId: true,
-      vouch: { select: { payerId: true, status: true } },
-    },
-  })
-
-  if (!invitation) return actionFailure("NOT_FOUND", "Invitation not found.")
-  if (invitation.vouch.payerId !== user.id)
-    return actionFailure("AUTHZ_DENIED", "Payer access required.")
-  if (invitation.vouch.status !== "pending") {
-    return actionFailure(
-      "INVALID_VOUCH_STATE",
-      "Only pending Vouch invitations can be invalidated."
-    )
+  if (invitation.vouch.merchantId === user.id) {
+    return actionFailure("SELF_DECLINE_BLOCKED", "Merchant cannot decline their own Vouch invite.")
   }
 
   await prisma.$transaction(async (tx) => {
-    await invalidateInvitationTx(tx, { invitationId: invitation.id })
+    await markInvitationDeclinedTx(tx, { invitationId: invitation.id })
+    await expireVouchWithoutCaptureTx(tx, { vouchId: invitation.vouch.id })
 
     await tx.auditEvent.create({
       data: {
-        eventName: "vouch.canceled",
+        eventName: "vouch.declined",
         actorType: "user",
         actorUserId: user.id,
-        entityType: "Invitation",
-        entityId: invitation.id,
+        entityType: "Vouch",
+        entityId: invitation.vouch.id,
         participantSafe: true,
       },
     })
+
+    await queueNotificationTx(tx, {
+      type: "vouch_expired",
+      channel: "email",
+      recipientUserId: invitation.vouch.merchantId,
+      vouchId: invitation.vouch.id,
+    })
   })
 
-  await revalidateVouchSurfaces(invitation.vouchId, [user.id])
-  return actionSuccess({ invitationId: invitation.id })
+  await revalidateVouchSurfaces(invitation.vouch.id, [invitation.vouch.merchantId, user.id])
+  return actionSuccess({ vouchId: invitation.vouch.id })
 }
 
 export async function markInviteOpened(
   input: unknown
 ): Promise<ActionResult<{ invitationId: string }>> {
-  const parsed = acceptVouchInputSchema.pick({ token: true }).safeParse(input)
+  const token = typeof input === "object" && input && "token" in input ? String(input.token) : ""
 
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the invite token.",
-      getFieldErrors(parsed.error)
-    )
-  }
+  if (!token) return actionFailure("VALIDATION_FAILED", "Invite token is required.")
 
-  const invitation = await getInvitationByToken(parsed.data.token)
+  const invitation = await getInvitationByToken(token)
 
   try {
     assertInvitationUsable(invitation)
@@ -609,352 +499,11 @@ export async function markInviteOpened(
     })
   })
 
-  await revalidateVouchSurfaces(invitation.vouchId, [invitation.vouch.payerId])
+  await revalidateVouchSurfaces(invitation.vouchId, [invitation.vouch.merchantId])
   return actionSuccess({ invitationId: invitation.id })
 }
 
-export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
-  const user = await requireActiveUser()
-  const setupFailure = await getSetupBlockedFailure(assertAcceptVouchSetupReady(user.id))
-  if (setupFailure) return setupFailure
-
-  const parsed = acceptVouchInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the acceptance fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const invitation = await getInvitationByToken(parsed.data.token)
-
-  try {
-    assertInvitationUsable(invitation)
-  } catch (error) {
-    return (
-      mapInvitationError(error) ?? actionFailure("INVALID_INVITATION", "Invitation is not usable.")
-    )
-  }
-
-  if (invitation.vouch.payerId === user.id) {
-    return actionFailure("SELF_ACCEPT_BLOCKED", "Payer cannot accept their own Vouch.")
-  }
-
-  if (invitation.vouch.payeeId) {
-    return actionFailure("VOUCH_ALREADY_ACCEPTED", "Vouch already has a payee.")
-  }
-
-  let vouch: Awaited<ReturnType<typeof bindPayeeToVouchTx>>
-
-  try {
-    vouch = await prisma.$transaction(async (tx) => {
-      const accepted = await bindPayeeToVouchTx(tx, {
-        vouchId: invitation.vouch.id,
-        payeeId: user.id,
-      })
-
-      await markInvitationAcceptedTx(tx, { invitationId: invitation.id })
-
-      await tx.auditEvent.create({
-        data: {
-          eventName: "vouch.accepted",
-          actorType: "user",
-          actorUserId: user.id,
-          entityType: "Vouch",
-          entityId: accepted.id,
-          participantSafe: true,
-        },
-      })
-
-      await queueNotificationTx(tx, {
-        type: "vouch_accepted",
-        channel: "email",
-        recipientUserId: accepted.payerId,
-        vouchId: accepted.id,
-      })
-
-      return accepted
-    })
-  } catch (error) {
-    if (error instanceof Error && error.message === "VOUCH_ACCEPTANCE_CONFLICT") {
-      return actionFailure(
-        "VOUCH_ACCEPTANCE_CONFLICT",
-        "This Vouch is no longer available to accept."
-      )
-    }
-
-    throw error
-  }
-
-  const paymentContext = await prisma.vouch.findUnique({
-    where: { id: vouch.id },
-    select: {
-      id: true,
-      amountCents: true,
-      currency: true,
-      platformFeeCents: true,
-      protectedAmountCents: true,
-      merchantReceivesCents: true,
-      vouchServiceFeeCents: true,
-      processingFeeOffsetCents: true,
-      applicationFeeAmountCents: true,
-      customerTotalCents: true,
-      payer: {
-        select: {
-          paymentCustomer: {
-            select: {
-              providerCustomerId: true,
-            },
-          },
-        },
-      },
-      payee: {
-        select: {
-          connectedAccount: {
-            select: {
-              providerAccountId: true,
-            },
-          },
-        },
-      },
-    },
-  })
-
-  const providerCustomerId = paymentContext?.payer.paymentCustomer?.providerCustomerId
-  const connectedAccountId = paymentContext?.payee?.connectedAccount?.providerAccountId
-
-  if (!paymentContext || !providerCustomerId || !connectedAccountId) {
-    await markVouchFailed({ vouchId: vouch.id })
-    return actionFailure(
-      "PAYMENT_SETUP_INCOMPLETE",
-      "Payer payment setup and payee payout setup are required before acceptance can complete."
-    )
-  }
-
-  const payment = await initializeStripePaymentForVouch({
-    vouchId: paymentContext.id,
-    pricing:
-      paymentContext.customerTotalCents > 0
-        ? {
-            protectedAmountCents: paymentContext.protectedAmountCents,
-            merchantReceivesCents: paymentContext.merchantReceivesCents,
-            vouchServiceFeeCents: paymentContext.vouchServiceFeeCents,
-            processingFeeOffsetCents: paymentContext.processingFeeOffsetCents,
-            applicationFeeAmountCents: paymentContext.applicationFeeAmountCents,
-            customerTotalCents: paymentContext.customerTotalCents,
-          }
-        : calculatePricing(paymentContext.amountCents),
-    currency: paymentContext.currency,
-    providerCustomerId,
-    connectedAccountId,
-    confirmOffSession: true,
-    idempotencyKey: `vouch:${paymentContext.id}:payment_authorization`,
-  })
-
-  if (!payment.ok) {
-    await prisma.$transaction(async (tx) => {
-      await markVouchFailedTx(tx, { vouchId: vouch.id })
-
-      await tx.auditEvent.create({
-        data: {
-          eventName: "payment.failed",
-          actorType: "system",
-          entityType: "PaymentRecord",
-          entityId: vouch.id,
-          participantSafe: true,
-          metadata: {
-            code: payment.code,
-            stage: "accept",
-          },
-        },
-      })
-    })
-
-    await revalidateVouchSurfaces(vouch.id, [vouch.payerId, user.id])
-    return actionFailure(payment.code, payment.message)
-  }
-
-  await revalidateVouchSurfaces(vouch.id, [vouch.payerId, user.id])
-  if (payment.checkoutUrl) redirect(payment.checkoutUrl)
-  return actionSuccess({ vouchId: vouch.id })
-}
-
-export async function acceptVouchAction(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
-  return acceptVouch(input)
-}
-
-export async function declineVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
-  const user = await requireActiveUser()
-  const parsed = declineVouchInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the decline fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const invitation = await getInvitationByToken(parsed.data.token)
-
-  try {
-    assertInvitationUsable(invitation)
-  } catch (error) {
-    return (
-      mapInvitationError(error) ?? actionFailure("INVALID_INVITATION", "Invitation is not usable.")
-    )
-  }
-
-  if (invitation.vouch.payerId === user.id) {
-    return actionFailure("SELF_DECLINE_BLOCKED", "Payer cannot decline their own Vouch invite.")
-  }
-
-  await prisma.$transaction(async (tx) => {
-    await markInvitationDeclinedTx(tx, { invitationId: invitation.id })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.declined",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "Vouch",
-        entityId: invitation.vouch.id,
-        participantSafe: true,
-      },
-    })
-
-    await queueNotificationTx(tx, {
-      type: "vouch_expired_refunded",
-      channel: "email",
-      recipientUserId: invitation.vouch.payerId,
-      vouchId: invitation.vouch.id,
-    })
-  })
-
-  await revalidateVouchSurfaces(invitation.vouch.id, [invitation.vouch.payerId, user.id])
-  return actionSuccess({ vouchId: invitation.vouch.id })
-}
-
-export async function declineVouchAction(
-  input: unknown
-): Promise<ActionResult<{ vouchId: string }>> {
-  return declineVouch(input)
-}
-
-export async function cancelPendingVouch(
-  input: unknown
-): Promise<ActionResult<{ vouchId: string }>> {
-  const user = await requireActiveUser()
-  const parsed = cancelPendingVouchInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the cancellation fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: {
-      id: true,
-      payerId: true,
-      payeeId: true,
-      status: true,
-      paymentRecord: { select: { id: true } },
-    },
-  })
-
-  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (vouch.payerId !== user.id) return actionFailure("AUTHZ_DENIED", "Payer access required.")
-  if (vouch.status !== "pending") {
-    return actionFailure("INVALID_VOUCH_STATE", "Only pending Vouches can be canceled.")
-  }
-
-  const refundResult = vouch.paymentRecord
-    ? await refundOrVoidStripePaymentForVouch({
-        paymentRecordId: vouch.paymentRecord.id,
-        reason: "canceled_before_acceptance",
-      })
-    : { ok: true as const }
-
-  if (!refundResult.ok) {
-    return actionFailure(refundResult.code, refundResult.message)
-  }
-
-  await prisma.$transaction(async (tx) => {
-    await cancelPendingVouchTx(tx, { vouchId: vouch.id })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.canceled",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "Vouch",
-        entityId: vouch.id,
-        participantSafe: true,
-      },
-    })
-  })
-
-  await revalidateVouchSurfaces(vouch.id, [vouch.payerId, vouch.payeeId])
-  return actionSuccess({ vouchId: vouch.id })
-}
-
-export async function preventDuplicateConfirmation(
-  input: unknown
-): Promise<ActionResult<{ ok: true }>> {
-  const user = await requireActiveUser()
-  const parsed = confirmPresenceInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the confirmation fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: { payerId: true, payeeId: true },
-  })
-
-  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-
-  const participantRole = getParticipantRoleForVouch({
-    userId: user.id,
-    payerId: vouch.payerId,
-    payeeId: vouch.payeeId,
-  })
-
-  if (!participantRole) return actionFailure("AUTHZ_DENIED", "Participant access required.")
-
-  try {
-    await prisma.$transaction((tx) =>
-      assertNoDuplicateConfirmationTx(tx, {
-        vouchId: parsed.data.vouchId,
-        userId: user.id,
-        participantRole,
-      })
-    )
-  } catch (error) {
-    if (error instanceof Error && error.message === "DUPLICATE_PRESENCE_CONFIRMATION") {
-      return actionFailure("DUPLICATE_CONFIRMATION", "Presence has already been confirmed.")
-    }
-
-    throw error
-  }
-
-  return actionSuccess({ ok: true })
-}
-
-export async function recordPresenceConfirmation(
-  input: unknown
-): Promise<ActionResult<{ confirmationId: string }>> {
+export async function confirmPresence(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
   const user = await requireActiveUser()
   const parsed = confirmPresenceInputSchema.safeParse(input)
 
@@ -970,8 +519,8 @@ export async function recordPresenceConfirmation(
     where: { id: parsed.data.vouchId },
     select: {
       id: true,
-      payerId: true,
-      payeeId: true,
+      merchantId: true,
+      customerId: true,
       status: true,
       confirmationOpensAt: true,
       confirmationExpiresAt: true,
@@ -979,444 +528,143 @@ export async function recordPresenceConfirmation(
   })
 
   if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (vouch.status !== "active") return actionFailure("INVALID_VOUCH_STATE", "Vouch is not active.")
 
   const participantRole = getParticipantRoleForVouch({
     userId: user.id,
-    payerId: vouch.payerId,
-    payeeId: vouch.payeeId,
+    merchantId: vouch.merchantId,
+    customerId: vouch.customerId,
   })
 
   if (!participantRole) return actionFailure("AUTHZ_DENIED", "Participant access required.")
 
-  if (
-    !isConfirmationWindowOpen({
-      opensAt: vouch.confirmationOpensAt,
-      expiresAt: vouch.confirmationExpiresAt,
-    })
-  ) {
-    return actionFailure("CONFIRMATION_WINDOW_CLOSED", "Confirmation window is not open.")
-  }
-
   try {
-    const confirmation = await prisma.$transaction(async (tx) => {
-      const created = await createPresenceConfirmationTx(tx, {
-        vouchId: vouch.id,
+    await prisma.$transaction(async (tx) => {
+      await createPresenceConfirmationTx(tx, {
+        vouchId: parsed.data.vouchId,
         userId: user.id,
         participantRole,
         method: parsed.data.method,
+        serverReceivedAt: new Date(),
+      })
+
+      const aggregateStatus = await getAggregateConfirmationStatusTx(tx, {
+        vouchId: parsed.data.vouchId,
       })
 
       await tx.auditEvent.create({
         data: {
-          eventName:
-            participantRole === "payer" ? "vouch.payer_confirmed" : "vouch.payee_confirmed",
+          eventName: "vouch.presence_confirmed",
           actorType: "user",
           actorUserId: user.id,
-          entityType: "PresenceConfirmation",
-          entityId: created.id,
+          entityType: "Vouch",
+          entityId: parsed.data.vouchId,
           participantSafe: true,
+          metadata: {
+            participant_role: participantRole,
+            aggregate_status: aggregateStatus,
+          },
         },
       })
 
-      return created
+      if (aggregateStatus === "both_confirmed") {
+        await tx.auditEvent.create({
+          data: {
+            eventName: "vouch.confirmation_complete",
+            actorType: "system",
+            entityType: "Vouch",
+            entityId: parsed.data.vouchId,
+            participantSafe: true,
+          },
+        })
+      }
     })
-
-    await revalidateVouchSurfaces(vouch.id, [vouch.payerId, vouch.payeeId])
-    return actionSuccess({ confirmationId: confirmation.id })
   } catch (error) {
-    if (error instanceof Error && error.message === "DUPLICATE_PRESENCE_CONFIRMATION") {
-      return actionFailure("DUPLICATE_CONFIRMATION", "Presence has already been confirmed.")
-    }
-
-    if (error instanceof Error && error.message === "CONFIRMATION_WINDOW_NOT_OPEN") {
-      return actionFailure("CONFIRMATION_WINDOW_NOT_OPEN", "Confirmation window is not open yet.")
-    }
-
-    if (error instanceof Error && error.message === "CONFIRMATION_WINDOW_CLOSED") {
-      return actionFailure("CONFIRMATION_WINDOW_CLOSED", "Confirmation window is closed.")
+    if (error instanceof Error) {
+      switch (error.message) {
+        case "DUPLICATE_PRESENCE_CONFIRMATION":
+          return actionFailure("DUPLICATE_CONFIRMATION", "This participant already confirmed.")
+        case "CONFIRMATION_WINDOW_NOT_OPEN":
+          return actionFailure("CONFIRMATION_WINDOW_NOT_OPEN", "Confirmation is not open yet.")
+        case "CONFIRMATION_WINDOW_CLOSED":
+          return actionFailure("CONFIRMATION_WINDOW_CLOSED", "Confirmation window has closed.")
+        case "UNAUTHORIZED_CONFIRMATION_PARTICIPANT":
+          return actionFailure("AUTHZ_DENIED", "Participant access required.")
+        case "INVALID_CONFIRMATION_METHOD":
+          return actionFailure("INVALID_CONFIRMATION_METHOD", "Confirmation method is not valid.")
+        case "VOUCH_NOT_CONFIRMABLE":
+          return actionFailure("INVALID_VOUCH_STATE", "This Vouch is not confirmable.")
+      }
     }
 
     throw error
   }
+
+  await revalidateVouchSurfaces(parsed.data.vouchId, [vouch.merchantId, vouch.customerId])
+  return actionSuccess({ vouchId: parsed.data.vouchId })
 }
 
-export async function evaluateAggregateConfirmation(
-  input: unknown
-): Promise<ActionResult<{ vouchId: string; aggregateStatus: AggregateConfirmationStatus }>> {
-  const parsed = cancelPendingVouchInputSchema.safeParse(input)
+export async function archiveVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
+  const user = await requireActiveUser()
+  const parsed = archiveVouchSchema.safeParse(input)
 
   if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the Vouch fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const aggregateStatus = await prisma.$transaction((tx) =>
-    getAggregateConfirmationStatusTx(tx, { vouchId: parsed.data.vouchId })
-  )
-
-  return actionSuccess({ vouchId: parsed.data.vouchId, aggregateStatus })
-}
-
-export async function completeVouchIfBothConfirmed(
-  input: unknown
-): Promise<ActionResult<{ vouchId: string; completed: boolean }>> {
-  const parsed = cancelPendingVouchInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the Vouch fields.",
-      getFieldErrors(parsed.error)
-    )
+    return actionFailure("VALIDATION_FAILED", "Check the Vouch ID.", getFieldErrors(parsed.error))
   }
 
   const vouch = await prisma.vouch.findUnique({
     where: { id: parsed.data.vouchId },
     select: {
       id: true,
-      payerId: true,
-      payeeId: true,
-      status: true,
-      paymentRecord: { select: { id: true } },
-    },
-  })
-
-  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (vouch.status !== "active") return actionFailure("INVALID_VOUCH_STATE", "Vouch is not active.")
-  if (!vouch.paymentRecord)
-    return actionFailure("PAYMENT_RECORD_NOT_READY", "Payment record is not ready.")
-
-  const aggregateStatus = await prisma.$transaction((tx) =>
-    getAggregateConfirmationStatusTx(tx, { vouchId: vouch.id })
-  )
-
-  if (aggregateStatus !== "both_confirmed") {
-    return actionFailure(
-      "DUAL_CONFIRMATION_REQUIRED",
-      "Both parties must confirm before funds release."
-    )
-  }
-
-  const release = await releaseStripePaymentForCompletedVouch({
-    paymentRecordId: vouch.paymentRecord.id,
-  })
-
-  if (!release.ok) {
-    await markVouchFailed({ vouchId: vouch.id })
-    return actionFailure(release.code, release.message)
-  }
-
-  if (release.status !== "released") {
-    await revalidateVouchSurfaces(vouch.id, [vouch.payerId, vouch.payeeId])
-    return actionSuccess({ vouchId: vouch.id, completed: false })
-  }
-
-  const completed = await prisma.$transaction(async (tx) => {
-    const updated = await markVouchCompletedTx(tx, { vouchId: vouch.id })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.completed",
-        actorType: "system",
-        entityType: "Vouch",
-        entityId: vouch.id,
-        participantSafe: true,
-      },
-    })
-
-    await queueNotificationTx(tx, {
-      type: "vouch_completed",
-      channel: "email",
-      recipientUserId: vouch.payerId,
-      vouchId: vouch.id,
-    })
-
-    if (vouch.payeeId) {
-      await queueNotificationTx(tx, {
-        type: "vouch_completed",
-        channel: "email",
-        recipientUserId: vouch.payeeId,
-        vouchId: vouch.id,
-      })
-    }
-
-    return updated
-  })
-
-  await revalidateVouchSurfaces(completed.id, [completed.payerId, completed.payeeId])
-  return actionSuccess({ vouchId: completed.id, completed: true })
-}
-
-export async function confirmPresence(
-  input: unknown
-): Promise<ActionResult<{ vouchId: string; completed: boolean }>> {
-  const confirmation = await recordPresenceConfirmation(input)
-
-  if (!confirmation.ok) {
-    return actionFailure(
-      confirmation.code ?? "CONFIRMATION_FAILED",
-      confirmation.formError ?? "Presence confirmation failed.",
-      confirmation.fieldErrors
-    )
-  }
-
-  const parsed = confirmPresenceInputSchema.parse(input)
-  const completion = await completeVouchIfBothConfirmed({ vouchId: parsed.vouchId })
-
-  if (!completion.ok && completion.code !== "DUAL_CONFIRMATION_REQUIRED") {
-    return actionFailure(
-      completion.code ?? "CONFIRMATION_RECORDED_RESOLUTION_FAILED",
-      completion.formError ?? "Confirmation was recorded, but resolution failed.",
-      completion.fieldErrors
-    )
-  }
-
-  return actionSuccess({
-    vouchId: parsed.vouchId,
-    completed: completion.ok ? completion.data.completed : false,
-  })
-}
-
-export async function confirmPresenceAction(
-  input: unknown
-): Promise<ActionResult<{ vouchId: string; completed: boolean }>> {
-  return confirmPresence(input)
-}
-
-export async function expireVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
-  const parsed = cancelPendingVouchInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the Vouch fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: {
-      id: true,
-      payerId: true,
-      payeeId: true,
-      status: true,
-      confirmationExpiresAt: true,
-      paymentRecord: { select: { id: true } },
+      merchantId: true,
+      customerId: true,
     },
   })
 
   if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
 
-  if (!["pending", "active"].includes(vouch.status)) {
-    return actionFailure("INVALID_VOUCH_STATE", "Only unresolved Vouches can expire.")
-  }
+  const participantRole = getParticipantRoleForVouch({
+    userId: user.id,
+    merchantId: vouch.merchantId,
+    customerId: vouch.customerId,
+  })
 
-  if (vouch.confirmationExpiresAt > new Date()) {
-    return actionFailure("CONFIRMATION_WINDOW_OPEN", "Vouch has not reached expiration.")
-  }
+  if (!participantRole) return actionFailure("AUTHZ_DENIED", "Participant access required.")
 
-  const aggregateStatus = await prisma.$transaction((tx) =>
-    getAggregateConfirmationStatusTx(tx, { vouchId: vouch.id })
-  )
-
-  if (aggregateStatus === "both_confirmed") {
-    return completeVouchIfBothConfirmed({ vouchId: vouch.id })
-  }
-
-  if (vouch.paymentRecord) {
-    const refund = await refundOrVoidStripePaymentForVouch({
-      paymentRecordId: vouch.paymentRecord.id,
-      reason: vouch.status === "pending" ? "not_accepted" : "confirmation_incomplete",
-    })
-
-    if (!refund.ok) {
-      await markVouchFailed({ vouchId: vouch.id })
-      return actionFailure(refund.code, refund.message)
-    }
-  }
-
-  const expired = await prisma.$transaction(async (tx) => {
-    const updated = await markVouchExpiredTx(tx, { vouchId: vouch.id })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.expired",
-        actorType: "system",
-        entityType: "Vouch",
-        entityId: vouch.id,
-        participantSafe: true,
-        metadata: { aggregate_confirmation_status: aggregateStatus },
-      },
+  await prisma.$transaction(async (tx) => {
+    await updateVouchArchiveStatusTx(tx, {
+      vouchId: parsed.data.vouchId,
+      archiveStatus: "archived",
     })
 
     await tx.auditEvent.create({
       data: {
-        eventName: "vouch.refunded",
-        actorType: "system",
+        eventName: "vouch.archived",
+        actorType: "user",
+        actorUserId: user.id,
         entityType: "Vouch",
-        entityId: vouch.id,
-        participantSafe: true,
+        entityId: parsed.data.vouchId,
+        participantSafe: false,
       },
     })
-
-    await queueNotificationTx(tx, {
-      type: "vouch_expired_refunded",
-      channel: "email",
-      recipientUserId: vouch.payerId,
-      vouchId: vouch.id,
-    })
-
-    if (vouch.payeeId) {
-      await queueNotificationTx(tx, {
-        type: "vouch_expired_refunded",
-        channel: "email",
-        recipientUserId: vouch.payeeId,
-        vouchId: vouch.id,
-      })
-    }
-
-    return updated
   })
 
-  await revalidateVouchSurfaces(expired.id, [expired.payerId, expired.payeeId])
-  return actionSuccess({ vouchId: expired.id })
+  await revalidateVouchSurfaces(parsed.data.vouchId, [vouch.merchantId, vouch.customerId])
+  return actionSuccess({ vouchId: parsed.data.vouchId })
 }
 
-export async function expireUnresolvedVouches(): Promise<ActionResult<{ expiredCount: number }>> {
-  const candidates = await prisma.vouch.findMany({
-    where: {
-      status: { in: ["pending", "active"] },
-      confirmationExpiresAt: { lte: new Date() },
-    },
-    select: { id: true },
-    take: 50,
-    orderBy: { confirmationExpiresAt: "asc" },
-  })
-
-  let expiredCount = 0
-
-  for (const candidate of candidates) {
-    const result = await expireVouch({ vouchId: candidate.id })
-    if (result.ok) expiredCount += 1
-  }
-
-  return actionSuccess({ expiredCount })
+export async function startConnectRedirect(input?: unknown) {
+  return startStripeConnectOnboarding(input)
 }
 
-export async function refundExpiredVouch(
-  input: unknown
-): Promise<ActionResult<{ vouchId: string }>> {
-  return expireVouch(input)
+export async function startPaymentRedirect(input?: unknown) {
+  return startStripePaymentManagement(input)
 }
 
-export async function markVouchFailed(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
-  const parsed = cancelPendingVouchInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the Vouch fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const failed = await prisma.$transaction(async (tx) => {
-    const updated = await markVouchFailedTx(tx, { vouchId: parsed.data.vouchId })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.failed",
-        actorType: "system",
-        entityType: "Vouch",
-        entityId: updated.id,
-        participantSafe: true,
-      },
-    })
-
-    return updated
-  })
-
-  await revalidateVouchSurfaces(failed.id, [failed.payerId, failed.payeeId])
-  return actionSuccess({ vouchId: failed.id })
-}
-
-export async function retryFailedVouchResolution(
-  input: unknown
-): Promise<ActionResult<{ vouchId: string }>> {
-  const parsed = cancelPendingVouchInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the Vouch fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: {
-      id: true,
-      status: true,
-      confirmationExpiresAt: true,
-    },
-  })
-
-  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (vouch.status !== "failed")
-    return actionFailure("INVALID_VOUCH_STATE", "Only failed Vouches can be retried.")
-
-  if (vouch.confirmationExpiresAt <= new Date()) {
-    return expireVouch({ vouchId: vouch.id })
-  }
-
-  return completeVouchIfBothConfirmed({ vouchId: vouch.id })
-}
-
-export async function findExpiredUnresolvedVouches(input?: { now?: Date; limit?: number }) {
-  return prisma.vouch.findMany({
-    where: {
-      status: { in: ["pending", "active"] },
-      confirmationExpiresAt: { lte: input?.now ?? new Date() },
-    },
-    take: input?.limit ?? 50,
-    orderBy: { confirmationExpiresAt: "asc" },
-    select: {
-      id: true,
-      status: true,
-      paymentRecord: {
-        select: { id: true },
-      },
-    },
-  })
-}
-
-export async function runExpireUnresolvedVouchesJob(input?: {
-  now?: Date
-  limit?: number
-}): Promise<{ expiredCount: number; failedCount: number }> {
-  const candidates = await findExpiredUnresolvedVouches(input)
-  let expiredCount = 0
-  let failedCount = 0
-
-  for (const vouch of candidates) {
-    try {
-      const result = await expireVouch({ vouchId: vouch.id })
-      if (!result.ok) throw new Error(result.code ?? "EXPIRE_VOUCH_FAILED")
-      expiredCount += 1
-    } catch {
-      failedCount += 1
-      await prisma.vouch.update({
-        where: { id: vouch.id },
-        data: { status: "failed", failedAt: new Date() },
-      })
-    }
-  }
-
-  return { expiredCount, failedCount }
-}
+/**
+ * Compatibility aliases retained temporarily for old imports.
+ */
+export const createVouchAction = createVouch
+export const acceptVouchAction = acceptVouch
+export const declineVouchAction = declineVouch
+export const cancelPendingVouch = archiveVouch
+export const preventDuplicateConfirmation = async () => actionSuccess({ ok: true as const })

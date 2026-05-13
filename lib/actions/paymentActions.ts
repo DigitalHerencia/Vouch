@@ -2,20 +2,31 @@
 
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
-import type { Prisma } from "@/prisma/generated/prisma/client"
 import type Stripe from "stripe"
 
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
-import { assertCapability } from "@/lib/authz/capabilities"
 import { prisma } from "@/lib/db/prisma"
 import { getAggregateConfirmationStatusTx } from "@/lib/db/transactions/confirmationTransactions"
+import {
+  createRefundRecordTx,
+  markProviderWebhookFailedTx,
+  markProviderWebhookIgnoredTx,
+  markProviderWebhookProcessedTx,
+  recordProviderWebhookReceivedTx,
+  updatePaymentProviderStateTx,
+  upsertPaymentRecordTx,
+} from "@/lib/db/transactions/paymentTransactions"
+import {
+  markVouchAuthorizedTx,
+  markVouchCompletedTx,
+  markVouchExpiredTx,
+} from "@/lib/db/transactions/vouchTransactions"
 import {
   createStripeConnectAccount,
   createStripeConnectDashboardLink,
   createStripeConnectOnboardingLink,
   refreshStripeConnectReadiness,
 } from "@/lib/integrations/stripe/connect"
-import { createStripeCheckoutAuthorization } from "@/lib/integrations/stripe/checkout-sessions"
 import {
   createStripeCustomer,
   createStripeSetupIntent,
@@ -24,66 +35,41 @@ import {
   setStripeCustomerDefaultPaymentMethod,
 } from "@/lib/integrations/stripe/customers"
 import {
+  cancelStripeAuthorization,
   captureStripePayment,
   createStripePaymentAuthorization,
   refundStripePayment,
-  retrieveStripeRefund,
   retrieveStripePaymentIntent,
-  voidStripeAuthorization,
 } from "@/lib/integrations/stripe/payment-intents"
-import { calculateVouchPricing, type VouchPricing } from "@/lib/vouch/fees"
 import {
+  getPaymentIntentCaptureBefore,
+  getPaymentIntentLatestChargeId,
+  isPaymentIntentCapturable,
+  mapStripePaymentIntentSettlementStatus,
   mapStripePaymentIntentStatus,
   mapStripeRefundStatus,
 } from "@/lib/integrations/stripe/status-map"
 import {
   isStripeAccountEvent,
-  isStripeCheckoutSessionEvent,
-  isStripeIdentityEvent,
   isStripePaymentIntentEvent,
   isStripeRefundEvent,
   isStripeSetupIntentEvent,
-  isStripeV2WebhookEvent,
   type StripeWebhookEvent,
 } from "@/lib/integrations/stripe/webhook-events"
 import {
   authorizeVouchPaymentInputSchema,
-  captureOrReleaseVouchPaymentInputSchema,
-  initializeVouchPaymentInputSchema,
-  paymentFailureInputSchema,
-  paymentReadinessInputSchema,
+  cancelUnconfirmedVouchPaymentInputSchema,
+  captureConfirmedVouchPaymentInputSchema,
   paymentProviderReturnInputSchema,
-  paymentWebhookEnvelopeSchema,
-  paymentWebhookProcessInputSchema,
-  refundOrVoidVouchPaymentInputSchema,
-  startPaymentMethodSetupInputSchema,
-  startPayoutOnboardingInputSchema,
+  refundCapturedVouchPaymentInputSchema,
+  startStripeConnectInputSchema,
+  startStripePaymentManagementInputSchema,
 } from "@/schemas/payment"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
-import type { ProviderWebhookLedgerInput } from "@/types/webhooks"
 
-type FieldErrors = Record<string, string[]>
-
-type PaymentActionResult = {
-  paymentRecordId: string
-  vouchId: string
-  status:
-    | "not_started"
-    | "requires_payment_method"
-    | "authorized"
-    | "captured"
-    | "release_pending"
-    | "released"
-    | "refund_pending"
-    | "refunded"
-    | "voided"
-    | "failed"
-}
-
-type RefundActionResult = {
-  refundRecordId: string
-  vouchId: string
-  status: "not_required" | "pending" | "succeeded" | "failed"
+type ProviderRedirectResult = {
+  redirectTo: string
+  clientSecret?: string | null
 }
 
 type ReadinessResult = {
@@ -91,31 +77,26 @@ type ReadinessResult = {
   readiness: "not_started" | "requires_action" | "ready" | "restricted" | "failed"
 }
 
-type ProviderRedirectResult = {
-  redirectTo: string
-  clientSecret?: string | null
+type PaymentActionResult = {
+  paymentRecordId: string
+  vouchId: string
+  status: string
+  settlementStatus: string
 }
 
-type WebhookRecordResult = {
+type WebhookProcessResult = {
   providerWebhookEventId: string
-  paymentWebhookEventId: string
   providerEventId: string
   eventType: string
   processed: boolean
+  duplicate?: boolean
 }
 
-function getFieldErrors(error: {
-  issues: Array<{ path: PropertyKey[]; message: string }>
-}): FieldErrors {
-  const fieldErrors: FieldErrors = {}
-
-  for (const issue of error.issues) {
-    const field = String(issue.path[0] ?? "form")
-    fieldErrors[field] ??= []
-    fieldErrors[field].push(issue.message)
-  }
-
-  return fieldErrors
+function getAppUrl(): string {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+  )
 }
 
 function normalizeInternalReturnTo(value: string | undefined, fallback: string): string {
@@ -126,165 +107,53 @@ function normalizeInternalReturnTo(value: string | undefined, fallback: string):
   return value
 }
 
-function getAppUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
-  )
-}
-
 async function revalidatePaymentSurfaces(input: {
   userId?: string | null
   vouchId?: string | null
-  paymentRecordId?: string | null
 }): Promise<void> {
-  revalidatePath("/settings")
-  revalidatePath("/settings/payment")
-  revalidatePath("/settings/payout")
-  revalidatePath("/setup")
   revalidatePath("/dashboard")
-  revalidatePath("/vouches")
+  revalidatePath("/vouches/new")
+  revalidatePath("/vouches/new/confirm")
 
   if (input.vouchId) {
     revalidatePath(`/vouches/${input.vouchId}`)
-    revalidatePath(`/vouches/${input.vouchId}/confirm`)
-  }
-
-  if (input.paymentRecordId) {
-    revalidatePath("/admin/payments")
   }
 }
 
-function getVouchPricingSnapshot(input: {
-  amountCents: number
-  protectedAmountCents?: number
-  merchantReceivesCents?: number
-  vouchServiceFeeCents?: number
-  processingFeeOffsetCents?: number
-  applicationFeeAmountCents?: number
-  customerTotalCents?: number
-}): VouchPricing {
-  if (
-    input.protectedAmountCents &&
-    input.merchantReceivesCents &&
-    input.customerTotalCents &&
-    input.applicationFeeAmountCents !== undefined &&
-    input.vouchServiceFeeCents !== undefined &&
-    input.processingFeeOffsetCents !== undefined
-  ) {
-    return {
-      protectedAmountCents: input.protectedAmountCents,
-      merchantReceivesCents: input.merchantReceivesCents,
-      vouchServiceFeeCents: input.vouchServiceFeeCents,
-      processingFeeOffsetCents: input.processingFeeOffsetCents,
-      applicationFeeAmountCents: input.applicationFeeAmountCents,
-      customerTotalCents: input.customerTotalCents,
-    }
-  }
+function mapIntentTiming(intent: Stripe.PaymentIntent) {
+  const status = mapStripePaymentIntentStatus(intent.status)
+  const settlementStatus = mapStripePaymentIntentSettlementStatus(intent.status)
+  const now = new Date()
 
-  return calculateVouchPricing({ protectedAmountCents: input.amountCents })
-}
-
-function paymentResult(record: {
-  id: string
-  vouchId: string
-  status:
-    | "not_started"
-    | "requires_payment_method"
-    | "authorized"
-    | "captured"
-    | "release_pending"
-    | "released"
-    | "refund_pending"
-    | "refunded"
-    | "voided"
-    | "failed"
-}): PaymentActionResult {
   return {
-    paymentRecordId: record.id,
-    vouchId: record.vouchId,
-    status: record.status,
+    status,
+    settlementStatus,
+    amountCapturableCents: intent.amount_capturable,
+    captureBefore: getPaymentIntentCaptureBefore(intent),
+    authorizedAt: intent.status === "requires_capture" ? now : null,
+    capturedAt: intent.status === "succeeded" ? now : null,
+    canceledAt: intent.status === "canceled" ? now : null,
+    failedAt: status === "failed" ? now : null,
   }
 }
 
-function refundResult(record: {
-  id: string
-  vouchId: string
-  status: "not_required" | "pending" | "succeeded" | "failed"
-}): RefundActionResult {
-  return {
-    refundRecordId: record.id,
-    vouchId: record.vouchId,
-    status: record.status,
-  }
-}
-
-async function getParticipantPaymentRecord(input: { vouchId: string; userId: string }) {
-  return prisma.paymentRecord.findUnique({
-    where: { vouchId: input.vouchId },
-    select: {
-      id: true,
-      vouchId: true,
-      status: true,
-      amountCents: true,
-      currency: true,
-      platformFeeCents: true,
-      protectedAmountCents: true,
-      merchantReceivesCents: true,
-      vouchServiceFeeCents: true,
-      processingFeeOffsetCents: true,
-      applicationFeeAmountCents: true,
-      customerTotalCents: true,
-      providerPaymentId: true,
-      vouch: {
-        select: {
-          id: true,
-          payerId: true,
-          payeeId: true,
-          amountCents: true,
-          currency: true,
-          platformFeeCents: true,
-          protectedAmountCents: true,
-          merchantReceivesCents: true,
-          vouchServiceFeeCents: true,
-          processingFeeOffsetCents: true,
-          applicationFeeAmountCents: true,
-          customerTotalCents: true,
-          status: true,
-        },
-      },
-    },
-  })
-}
-
-function canAccessPaymentRecord(
-  record: Awaited<ReturnType<typeof getParticipantPaymentRecord>>,
-  userId: string
-) {
-  if (!record) return false
-  return record.vouch.payerId === userId || record.vouch.payeeId === userId
-}
-
-export async function startPaymentMethodSetup(
+export async function startStripePaymentManagement(
   input?: unknown
 ): Promise<ActionResult<ProviderRedirectResult>> {
   const user = await requireActiveUser()
-  const parsed = startPaymentMethodSetupInputSchema.safeParse(input ?? {})
+  const parsed = startStripePaymentManagementInputSchema.safeParse(input ?? {})
 
   if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payment setup fields.",
-      getFieldErrors(parsed.error)
-    )
+    return actionFailure("VALIDATION_FAILED", "Check the payment setup fields.")
   }
 
-  const customer = await prisma.paymentCustomer.findUnique({
+  const existing = await prisma.paymentCustomer.findUnique({
     where: { userId: user.id },
     select: { providerCustomerId: true },
   })
+
   const providerCustomerId =
-    customer?.providerCustomerId ??
+    existing?.providerCustomerId ??
     (
       await createStripeCustomer({
         userId: user.id,
@@ -293,6 +162,7 @@ export async function startPaymentMethodSetup(
         idempotencyKey: `user:${user.id}:stripe_customer`,
       })
     ).providerCustomerId
+
   const setupIntent = await createStripeSetupIntent({
     providerCustomerId,
     userId: user.id,
@@ -302,48 +172,38 @@ export async function startPaymentMethodSetup(
   await prisma.$transaction(async (tx) => {
     await tx.paymentCustomer.upsert({
       where: { userId: user.id },
-      create: { userId: user.id, providerCustomerId },
-      update: { providerCustomerId },
-    })
-    await tx.verificationProfile.upsert({
-      where: { userId: user.id },
       create: {
         userId: user.id,
-        paymentReadiness: "requires_action",
+        providerCustomerId,
+        readiness: "requires_action",
+        lastProviderSyncAt: new Date(),
       },
       update: {
-        paymentReadiness: "requires_action",
+        providerCustomerId,
+        readiness: "requires_action",
+        lastProviderSyncAt: new Date(),
       },
     })
 
     await tx.auditEvent.create({
       data: {
-        eventName: "setup.payment_started",
+        eventName: "payment.customer_setup_started",
         actorType: "user",
         actorUserId: user.id,
         entityType: "PaymentCustomer",
         entityId: user.id,
         participantSafe: false,
-        metadata: {
-          provider: "stripe",
-        },
+        metadata: { provider: "stripe" },
       },
     })
   })
 
   await revalidatePaymentSurfaces({ userId: user.id })
 
-  const returnTo = normalizeInternalReturnTo(parsed.data.returnTo, "/settings/payment")
   return actionSuccess({
-    redirectTo: `/settings/payment?returnTo=${encodeURIComponent(returnTo)}`,
+    redirectTo: normalizeInternalReturnTo(parsed.data.returnTo, "/dashboard"),
     clientSecret: setupIntent.clientSecret,
   })
-}
-
-export async function startPaymentMethodSetupAction(
-  input?: unknown
-): Promise<ActionResult<ProviderRedirectResult>> {
-  return startPaymentMethodSetup(input)
 }
 
 export async function handlePaymentMethodSetupReturn(
@@ -353,145 +213,81 @@ export async function handlePaymentMethodSetupReturn(
   const parsed = paymentProviderReturnInputSchema.safeParse(input)
 
   if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payment provider return fields.",
-      getFieldErrors(parsed.error)
-    )
+    return actionFailure("VALIDATION_FAILED", "Check the payment provider return fields.")
   }
 
   if (parsed.data.provider !== "stripe") {
     return actionFailure("UNSUPPORTED_PROVIDER", "Unsupported payment provider.")
   }
 
-  const setupIntentId = parsed.data.setupSessionId
-  if (!setupIntentId) {
+  if (!parsed.data.setupSessionId) {
     return actionFailure("PROVIDER_REFERENCE_REQUIRED", "Stripe setup reference is required.")
   }
 
-  const setupIntent = await retrieveStripeSetupIntent({ setupIntentId })
-  let readiness: "requires_action" | "ready" | "failed" =
-    setupIntent.status === "succeeded" ? "ready" : "requires_action"
+  const setupIntent = await retrieveStripeSetupIntent({ setupIntentId: parsed.data.setupSessionId })
 
-  if (setupIntent.providerCustomerId) {
-    if (setupIntent.providerPaymentMethodId) {
-      await setStripeCustomerDefaultPaymentMethod({
-        providerCustomerId: setupIntent.providerCustomerId,
-        providerPaymentMethodId: setupIntent.providerPaymentMethodId,
-      })
-    }
-
-    readiness = (await getStripeCustomerPaymentReadiness(setupIntent.providerCustomerId)).readiness
-
-    await prisma.paymentCustomer.upsert({
-      where: { userId: user.id },
-      create: { userId: user.id, providerCustomerId: setupIntent.providerCustomerId },
-      update: { providerCustomerId: setupIntent.providerCustomerId },
+  if (setupIntent.providerCustomerId && setupIntent.providerPaymentMethodId) {
+    await setStripeCustomerDefaultPaymentMethod({
+      providerCustomerId: setupIntent.providerCustomerId,
+      providerPaymentMethodId: setupIntent.providerPaymentMethodId,
     })
   }
 
+  const readiness =
+    setupIntent.providerCustomerId && setupIntent.status === "succeeded"
+      ? (await getStripeCustomerPaymentReadiness(setupIntent.providerCustomerId)).readiness
+      : "requires_action"
+
   await prisma.$transaction(async (tx) => {
-    await tx.verificationProfile.upsert({
-      where: { userId: user.id },
-      create: {
-        userId: user.id,
-        paymentReadiness: readiness,
-      },
-      update: {
-        paymentReadiness: readiness,
-      },
-    })
+    if (setupIntent.providerCustomerId) {
+      await tx.paymentCustomer.upsert({
+        where: { userId: user.id },
+        create: {
+          userId: user.id,
+          providerCustomerId: setupIntent.providerCustomerId,
+          readiness,
+          lastProviderSyncAt: new Date(),
+        },
+        update: {
+          providerCustomerId: setupIntent.providerCustomerId,
+          readiness,
+          lastProviderSyncAt: new Date(),
+        },
+      })
+    }
 
     await tx.auditEvent.create({
       data: {
-        eventName: "user.payment_method.added",
+        eventName: "payment.customer_setup_reconciled",
         actorType: "user",
         actorUserId: user.id,
         entityType: "PaymentCustomer",
         entityId: user.id,
         participantSafe: false,
-        metadata: {
-          provider: parsed.data.provider,
-          ...(parsed.data.setupSessionId ? { setup_session_id: parsed.data.setupSessionId } : {}),
-        },
+        metadata: { provider: "stripe", setup_intent_status: setupIntent.status },
       },
     })
   })
 
   await revalidatePaymentSurfaces({ userId: user.id })
-
-  return actionSuccess({
-    userId: user.id,
-    readiness,
-  })
+  return actionSuccess({ userId: user.id, readiness })
 }
 
-export async function refreshPaymentReadiness(
-  input?: unknown
-): Promise<ActionResult<ReadinessResult>> {
-  const user = await requireActiveUser()
-  const parsed = paymentReadinessInputSchema.safeParse(input ?? {})
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payment readiness fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const targetUserId = parsed.data.userId ?? user.id
-
-  if (targetUserId !== user.id && !user.isAdmin) {
-    return actionFailure("AUTHZ_DENIED", "You cannot refresh another user's payment readiness.")
-  }
-
-  const customer = await prisma.paymentCustomer.findUnique({
-    where: { userId: targetUserId },
-    select: { providerCustomerId: true },
-  })
-  const readiness = customer
-    ? (await getStripeCustomerPaymentReadiness(customer.providerCustomerId)).readiness
-    : "not_started"
-  const profile = await prisma.verificationProfile.upsert({
-    where: { userId: targetUserId },
-    create: { userId: targetUserId, paymentReadiness: readiness },
-    update: { paymentReadiness: readiness },
-    select: { paymentReadiness: true },
-  })
-
-  await revalidatePaymentSurfaces({ userId: targetUserId })
-
-  return actionSuccess({
-    userId: targetUserId,
-    readiness: profile.paymentReadiness,
-  })
-}
-
-export async function refreshPaymentReadinessAction(
-  input?: unknown
-): Promise<ActionResult<ReadinessResult>> {
-  return refreshPaymentReadiness(input)
-}
-
-export async function startPayoutOnboarding(
+export async function startStripeConnectOnboarding(
   input?: unknown
 ): Promise<ActionResult<ProviderRedirectResult>> {
   const user = await requireActiveUser()
-  const parsed = startPayoutOnboardingInputSchema.safeParse(input ?? {})
+  const parsed = startStripeConnectInputSchema.safeParse(input ?? {})
 
   if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payout setup fields.",
-      getFieldErrors(parsed.error)
-    )
+    return actionFailure("VALIDATION_FAILED", "Check the Connect onboarding fields.")
   }
 
   const existing = await prisma.connectedAccount.findUnique({
     where: { userId: user.id },
     select: { providerAccountId: true },
   })
+
   const providerAccountId =
     existing?.providerAccountId ??
     (
@@ -499,95 +295,37 @@ export async function startPayoutOnboarding(
         userId: user.id,
         email: user.email,
         displayName: user.displayName,
+        idempotencyKey: `user:${user.id}:connect_account`,
       })
     ).providerAccountId
+
   const appUrl = getAppUrl()
-  const returnTo = normalizeInternalReturnTo(parsed.data.returnTo, "/settings/payout")
+  const returnTo = normalizeInternalReturnTo(parsed.data.returnTo, "/dashboard")
   const link = await createStripeConnectOnboardingLink({
     providerAccountId,
-    refreshUrl: `${appUrl}/settings/payout?returnTo=${encodeURIComponent(returnTo)}`,
-    returnUrl: `${appUrl}/settings/payout/return?provider=stripe&setupSessionId=${encodeURIComponent(providerAccountId)}&returnTo=${encodeURIComponent(returnTo)}`,
+    refreshUrl: `${appUrl}/dashboard`,
+    returnUrl: `${appUrl}/dashboard?stripe_connect_return=1&returnTo=${encodeURIComponent(returnTo)}`,
   })
 
   await prisma.$transaction(async (tx) => {
     await tx.connectedAccount.upsert({
       where: { userId: user.id },
-      create: { userId: user.id, providerAccountId, readiness: "requires_action" },
-      update: { providerAccountId, readiness: "requires_action" },
-    })
-    await tx.verificationProfile.upsert({
-      where: { userId: user.id },
       create: {
         userId: user.id,
-        payoutReadiness: "requires_action",
+        providerAccountId,
+        readiness: "requires_action",
+        lastProviderSyncAt: new Date(),
       },
       update: {
-        payoutReadiness: "requires_action",
-      },
-    })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "setup.payout_started",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "ConnectedAccount",
-        entityId: user.id,
-        participantSafe: false,
-        metadata: {
-          provider: "stripe",
-        },
-      },
-    })
-  })
-
-  await revalidatePaymentSurfaces({ userId: user.id })
-
-  redirect(link.url)
-}
-
-export async function startPayoutSetupAction(
-  input?: unknown
-): Promise<ActionResult<ProviderRedirectResult>> {
-  return startPayoutOnboarding(input)
-}
-
-export async function createStripeConnectedAccountAction(): Promise<
-  ActionResult<{ providerAccountId: string }>
-> {
-  const user = await requireActiveUser()
-  const existing = await prisma.connectedAccount.findUnique({
-    where: { userId: user.id },
-    select: { providerAccountId: true },
-  })
-
-  if (existing) {
-    return actionSuccess({ providerAccountId: existing.providerAccountId })
-  }
-
-  const account = await createStripeConnectAccount({
-    userId: user.id,
-    email: user.email,
-    displayName: user.displayName,
-    idempotencyKey: `user:${user.id}:connect_account`,
-  })
-
-  await prisma.$transaction(async (tx) => {
-    await tx.connectedAccount.create({
-      data: {
-        userId: user.id,
-        providerAccountId: account.providerAccountId,
+        providerAccountId,
         readiness: "requires_action",
+        lastProviderSyncAt: new Date(),
       },
     })
-    await tx.verificationProfile.upsert({
-      where: { userId: user.id },
-      create: { userId: user.id, payoutReadiness: "requires_action" },
-      update: { payoutReadiness: "requires_action" },
-    })
+
     await tx.auditEvent.create({
       data: {
-        eventName: "setup.payout_account_created",
+        eventName: "payment.connect_onboarding_started",
         actorType: "user",
         actorUserId: user.id,
         entityType: "ConnectedAccount",
@@ -599,11 +337,10 @@ export async function createStripeConnectedAccountAction(): Promise<
   })
 
   await revalidatePaymentSurfaces({ userId: user.id })
-
-  return actionSuccess({ providerAccountId: account.providerAccountId })
+  redirect(link.url)
 }
 
-export async function openPayoutDashboard(): Promise<never> {
+export async function openStripeConnectDashboard(): Promise<never> {
   const user = await requireActiveUser()
   const connectedAccount = await prisma.connectedAccount.findUnique({
     where: { userId: user.id },
@@ -611,7 +348,8 @@ export async function openPayoutDashboard(): Promise<never> {
   })
 
   if (!connectedAccount?.providerAccountId) {
-    redirect("/settings/payout")
+    await startStripeConnectOnboarding()
+    redirect("/dashboard")
   }
 
   const link = await createStripeConnectDashboardLink({
@@ -621,102 +359,12 @@ export async function openPayoutDashboard(): Promise<never> {
   redirect(link.url)
 }
 
-export async function createStripeAccountSessionAction(): Promise<never> {
-  return openPayoutDashboard()
-}
-
-export async function handlePayoutOnboardingReturn(
-  input: unknown
-): Promise<ActionResult<ReadinessResult>> {
-  const user = await requireActiveUser()
-  const parsed = paymentProviderReturnInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payout provider return fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  if (parsed.data.provider !== "stripe") {
-    return actionFailure("UNSUPPORTED_PROVIDER", "Unsupported payout provider.")
-  }
-
-  const accountId = parsed.data.setupSessionId
-  if (!accountId) {
-    return actionFailure("PROVIDER_REFERENCE_REQUIRED", "Stripe account reference is required.")
-  }
-  const readiness = await refreshStripeConnectReadiness({ providerAccountId: accountId })
-
-  await prisma.$transaction(async (tx) => {
-    await tx.connectedAccount.upsert({
-      where: { userId: user.id },
-      create: {
-        userId: user.id,
-        providerAccountId: accountId,
-        readiness: readiness.readiness,
-        chargesEnabled: readiness.chargesEnabled,
-        payoutsEnabled: readiness.payoutsEnabled,
-        detailsSubmitted: readiness.detailsSubmitted,
-      },
-      update: {
-        readiness: readiness.readiness,
-        chargesEnabled: readiness.chargesEnabled,
-        payoutsEnabled: readiness.payoutsEnabled,
-        detailsSubmitted: readiness.detailsSubmitted,
-      },
-    })
-    await tx.verificationProfile.upsert({
-      where: { userId: user.id },
-      create: {
-        userId: user.id,
-        payoutReadiness: readiness.readiness,
-      },
-      update: {
-        payoutReadiness: readiness.readiness,
-      },
-    })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "user.connected_account.ready",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "ConnectedAccount",
-        entityId: user.id,
-        participantSafe: false,
-        metadata: {
-          provider: parsed.data.provider,
-          ...(parsed.data.setupSessionId ? { setup_session_id: parsed.data.setupSessionId } : {}),
-        },
-      },
-    })
-  })
-
-  await revalidatePaymentSurfaces({ userId: user.id })
-
-  return actionSuccess({
-    userId: user.id,
-    readiness: readiness.readiness,
-  })
-}
-
 export async function refreshPayoutReadiness(
   input?: unknown
 ): Promise<ActionResult<ReadinessResult>> {
   const user = await requireActiveUser()
-  const parsed = paymentReadinessInputSchema.safeParse(input ?? {})
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payout readiness fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const targetUserId = parsed.data.userId ?? user.id
+  const targetUserId =
+    typeof input === "object" && input && "userId" in input ? String(input.userId) : user.id
 
   if (targetUserId !== user.id && !user.isAdmin) {
     return actionFailure("AUTHZ_DENIED", "You cannot refresh another user's payout readiness.")
@@ -726,6 +374,7 @@ export async function refreshPayoutReadiness(
     where: { userId: targetUserId },
     select: { providerAccountId: true },
   })
+
   const readiness = account
     ? await refreshStripeConnectReadiness({ providerAccountId: account.providerAccountId })
     : {
@@ -742,1542 +391,478 @@ export async function refreshPayoutReadiness(
       chargesEnabled: readiness.chargesEnabled,
       payoutsEnabled: readiness.payoutsEnabled,
       detailsSubmitted: readiness.detailsSubmitted,
+      lastProviderSyncAt: new Date(),
     },
-  })
-
-  const profile = await prisma.verificationProfile.upsert({
-    where: { userId: targetUserId },
-    create: { userId: targetUserId, payoutReadiness: readiness.readiness },
-    update: { payoutReadiness: readiness.readiness },
-    select: { payoutReadiness: true },
   })
 
   await revalidatePaymentSurfaces({ userId: targetUserId })
-
-  return actionSuccess({
-    userId: targetUserId,
-    readiness: profile.payoutReadiness,
-  })
-}
-
-export async function refreshPayoutReadinessAction(
-  input?: unknown
-): Promise<ActionResult<ReadinessResult>> {
-  return refreshPayoutReadiness(input)
-}
-
-export async function initializeVouchPayment(
-  input: unknown
-): Promise<ActionResult<PaymentActionResult & { clientSecret: string | null }>> {
-  const user = await requireActiveUser()
-  const parsed = initializeVouchPaymentInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payment initialization fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: {
-      id: true,
-      payerId: true,
-      payeeId: true,
-      amountCents: true,
-      currency: true,
-      platformFeeCents: true,
-      protectedAmountCents: true,
-      merchantReceivesCents: true,
-      vouchServiceFeeCents: true,
-      processingFeeOffsetCents: true,
-      applicationFeeAmountCents: true,
-      customerTotalCents: true,
-      paymentRecord: {
-        select: {
-          id: true,
-          status: true,
-        },
-      },
-      payer: {
-        select: {
-          paymentCustomer: {
-            select: {
-              providerCustomerId: true,
-            },
-          },
-        },
-      },
-      payee: {
-        select: {
-          connectedAccount: {
-            select: {
-              providerAccountId: true,
-            },
-          },
-        },
-      },
-    },
-  })
-
-  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (vouch.payerId !== user.id) {
-    return actionFailure("AUTHZ_DENIED", "Payer access required.")
-  }
-  if (!vouch.payee?.connectedAccount?.providerAccountId) {
-    return actionFailure("CONNECTED_ACCOUNT_REQUIRED", "Payee payout account is required.")
-  }
-  if (!vouch.payer.paymentCustomer?.providerCustomerId) {
-    return actionFailure("PAYMENT_CUSTOMER_REQUIRED", "Payer payment setup is required.")
-  }
-
-  const initialized = await initializeStripePaymentForVouch({
-    vouchId: vouch.id,
-    pricing: getVouchPricingSnapshot(vouch),
-    currency: vouch.currency,
-    providerCustomerId: vouch.payer.paymentCustomer.providerCustomerId,
-    connectedAccountId: vouch.payee.connectedAccount.providerAccountId,
-    confirmOffSession: true,
-  })
-
-  if (!initialized.ok) {
-    await markPaymentFailed({
-      vouchId: vouch.id,
-      failureStage: "create",
-      failureCode: initialized.code,
-      safeMessage: initialized.message,
-    })
-
-    return actionFailure(initialized.code, initialized.message)
-  }
-
-  const record = await prisma.paymentRecord.findUnique({
-    where: { vouchId: vouch.id },
-    select: {
-      id: true,
-      vouchId: true,
-      status: true,
-    },
-  })
-
-  if (!record) return actionFailure("PAYMENT_RECORD_NOT_READY", "Payment record was not created.")
-
-  await prisma.auditEvent.create({
-    data: {
-      eventName: "payment.initialized",
-      actorType: "system",
-      entityType: "PaymentRecord",
-      entityId: record.id,
-      participantSafe: true,
-      metadata: {
-        vouch_id: vouch.id,
-        provider: "stripe",
-        protected_amount_cents: getVouchPricingSnapshot(vouch).protectedAmountCents,
-        merchant_receives_cents: getVouchPricingSnapshot(vouch).merchantReceivesCents,
-        vouch_service_fee_cents: getVouchPricingSnapshot(vouch).vouchServiceFeeCents,
-        processing_fee_offset_cents: getVouchPricingSnapshot(vouch).processingFeeOffsetCents,
-        customer_total_cents: getVouchPricingSnapshot(vouch).customerTotalCents,
-        application_fee_amount_cents: getVouchPricingSnapshot(vouch).applicationFeeAmountCents,
-      },
-    },
-  })
-
-  await revalidatePaymentSurfaces({
-    userId: user.id,
-    vouchId: vouch.id,
-    paymentRecordId: record.id,
-  })
-
-  return actionSuccess({
-    ...paymentResult(record),
-    clientSecret: initialized.clientSecret ?? null,
-  })
-}
-
-export async function startVouchCheckoutSession(
-  input: unknown
-): Promise<ActionResult<PaymentActionResult & { redirectTo: string }>> {
-  const user = await requireActiveUser()
-  const parsed = initializeVouchPaymentInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payment checkout fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: {
-      id: true,
-      payerId: true,
-      payeeId: true,
-      amountCents: true,
-      currency: true,
-      platformFeeCents: true,
-      protectedAmountCents: true,
-      merchantReceivesCents: true,
-      vouchServiceFeeCents: true,
-      processingFeeOffsetCents: true,
-      applicationFeeAmountCents: true,
-      customerTotalCents: true,
-      payer: {
-        select: {
-          paymentCustomer: {
-            select: {
-              providerCustomerId: true,
-            },
-          },
-        },
-      },
-      payee: {
-        select: {
-          connectedAccount: {
-            select: {
-              providerAccountId: true,
-            },
-          },
-        },
-      },
-    },
-  })
-
-  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (vouch.payerId !== user.id) {
-    return actionFailure("AUTHZ_DENIED", "Payer access required.")
-  }
-  if (!vouch.payee?.connectedAccount?.providerAccountId) {
-    return actionFailure("CONNECTED_ACCOUNT_REQUIRED", "Payee payout account is required.")
-  }
-
-  const appUrl = getAppUrl()
-  const initialized = await initializeStripeCheckoutSessionForVouch({
-    vouchId: vouch.id,
-    pricing: getVouchPricingSnapshot(vouch),
-    currency: vouch.currency,
-    ...(vouch.payer.paymentCustomer?.providerCustomerId
-      ? { providerCustomerId: vouch.payer.paymentCustomer.providerCustomerId }
-      : {}),
-    connectedAccountId: vouch.payee.connectedAccount.providerAccountId,
-    successUrl: `${appUrl}/vouches/${vouch.id}?checkout=complete`,
-    cancelUrl: `${appUrl}/vouches/${vouch.id}?checkout=cancelled`,
-    idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${vouch.id}:checkout_authorization`,
-  })
-
-  if (!initialized.ok || !initialized.providerCheckoutSessionId) {
-    await markPaymentFailed({
-      vouchId: vouch.id,
-      failureStage: "create",
-      failureCode: initialized.ok ? "STRIPE_CHECKOUT_URL_MISSING" : initialized.code,
-      safeMessage: initialized.ok
-        ? "Stripe did not return a checkout session reference."
-        : initialized.message,
-    })
-
-    return actionFailure(
-      initialized.ok ? "STRIPE_CHECKOUT_URL_MISSING" : initialized.code,
-      initialized.ok ? "Stripe checkout session was not created." : initialized.message
-    )
-  }
-
-  const record = await prisma.paymentRecord.findUnique({
-    where: { vouchId: vouch.id },
-    select: {
-      id: true,
-      vouchId: true,
-      status: true,
-    },
-  })
-
-  if (!record) return actionFailure("PAYMENT_RECORD_NOT_READY", "Payment record was not created.")
-
-  await revalidatePaymentSurfaces({
-    userId: user.id,
-    vouchId: vouch.id,
-    paymentRecordId: record.id,
-  })
-
-  return actionSuccess({
-    ...paymentResult(record),
-    redirectTo: initialized.checkoutUrl ?? `/vouches/${vouch.id}`,
-  })
+  return actionSuccess({ userId: targetUserId, readiness: readiness.readiness })
 }
 
 export async function authorizeVouchPayment(
   input: unknown
 ): Promise<ActionResult<PaymentActionResult>> {
-  const user = await requireActiveUser()
   const parsed = authorizeVouchPaymentInputSchema.safeParse(input)
 
   if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payment authorization fields.",
-      getFieldErrors(parsed.error)
-    )
+    return actionFailure("VALIDATION_FAILED", "Check the payment authorization fields.")
   }
 
-  const record = await getParticipantPaymentRecord({
-    vouchId: parsed.data.vouchId,
-    userId: user.id,
+  const vouch = await prisma.vouch.findUnique({
+    where: { id: parsed.data.vouchId },
+    select: {
+      id: true,
+      merchantId: true,
+      customerId: true,
+      currency: true,
+      protectedAmountCents: true,
+      merchantReceivesCents: true,
+      vouchServiceFeeCents: true,
+      processingFeeOffsetCents: true,
+      applicationFeeAmountCents: true,
+      customerTotalCents: true,
+      merchant: {
+        select: {
+          connectedAccount: {
+            select: { providerAccountId: true, readiness: true, chargesEnabled: true },
+          },
+        },
+      },
+      customer: {
+        select: {
+          paymentCustomer: {
+            select: { providerCustomerId: true, readiness: true },
+          },
+        },
+      },
+    },
   })
 
-  if (!record) return actionFailure("NOT_FOUND", "Payment record not found.")
-  if (!canAccessPaymentRecord(record, user.id))
-    return actionFailure("AUTHZ_DENIED", "Participant access required.")
+  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
+  if (!vouch.customerId) return actionFailure("CUSTOMER_REQUIRED", "Customer is required.")
+  if (!vouch.customer?.paymentCustomer?.providerCustomerId) {
+    return actionFailure("PAYMENT_CUSTOMER_REQUIRED", "Customer payment setup is required.")
+  }
+  if (!vouch.merchant.connectedAccount?.providerAccountId) {
+    return actionFailure("CONNECTED_ACCOUNT_REQUIRED", "Merchant connected account is required.")
+  }
 
-  const updated = await prisma.$transaction(async (tx) => {
-    const payment = await tx.paymentRecord.update({
-      where: { id: record.id },
-      data: {
-        status: "authorized",
-        lastErrorCode: null,
-      },
-      select: {
-        id: true,
-        vouchId: true,
-        status: true,
-      },
+  const intent = await createStripePaymentAuthorization({
+    vouchId: vouch.id,
+    customerTotalCents: vouch.customerTotalCents,
+    currency: vouch.currency,
+    applicationFeeAmountCents: vouch.applicationFeeAmountCents,
+    protectedAmountCents: vouch.protectedAmountCents,
+    merchantReceivesCents: vouch.merchantReceivesCents,
+    vouchServiceFeeCents: vouch.vouchServiceFeeCents,
+    processingFeeOffsetCents: vouch.processingFeeOffsetCents,
+    providerCustomerId: vouch.customer.paymentCustomer.providerCustomerId,
+    connectedAccountId: vouch.merchant.connectedAccount.providerAccountId,
+    confirmOffSession: true,
+    idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${vouch.id}:authorize`,
+  })
+
+  const timing = mapIntentTiming(intent)
+
+  const paymentRecord = await prisma.$transaction(async (tx) => {
+    const record = await upsertPaymentRecordTx(tx, {
+      vouchId: vouch.id,
+      providerPaymentIntentId: intent.id,
+      providerChargeId: getPaymentIntentLatestChargeId(intent),
+      status: timing.status,
+      settlementStatus: timing.settlementStatus,
+      amountCents: vouch.customerTotalCents,
+      currency: vouch.currency,
+      protectedAmountCents: vouch.protectedAmountCents,
+      merchantReceivesCents: vouch.merchantReceivesCents,
+      vouchServiceFeeCents: vouch.vouchServiceFeeCents,
+      processingFeeOffsetCents: vouch.processingFeeOffsetCents,
+      applicationFeeAmountCents: vouch.applicationFeeAmountCents,
+      customerTotalCents: vouch.customerTotalCents,
+      amountCapturableCents: timing.amountCapturableCents,
+      captureBefore: timing.captureBefore,
+      authorizedAt: timing.authorizedAt,
+      capturedAt: timing.capturedAt,
+      canceledAt: timing.canceledAt,
+      failedAt: timing.failedAt,
     })
 
     await tx.auditEvent.create({
       data: {
         eventName: "payment.authorized",
-        actorType: "system",
+        actorType: "stripe",
         entityType: "PaymentRecord",
-        entityId: payment.id,
+        entityId: record.id,
         participantSafe: true,
         metadata: {
-          vouch_id: payment.vouchId,
-          provider: "stripe",
+          provider_payment_intent_id: intent.id,
+          stripe_status: intent.status,
         },
       },
     })
 
-    return payment
-  })
-
-  await revalidatePaymentSurfaces({
-    userId: user.id,
-    vouchId: updated.vouchId,
-    paymentRecordId: updated.id,
-  })
-
-  return actionSuccess(paymentResult(updated))
-}
-
-export async function captureOrReleaseVouchPayment(
-  input: unknown
-): Promise<ActionResult<PaymentActionResult>> {
-  const user = await requireActiveUser()
-  assertCapability(user, "retry_safe_technical_operation")
-  const parsed = captureOrReleaseVouchPaymentInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payment release fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: {
-      id: true,
-      payerId: true,
-      payeeId: true,
-      status: true,
-      paymentRecord: { select: { id: true } },
-    },
-  })
-
-  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (vouch.status !== "active") return actionFailure("INVALID_VOUCH_STATE", "Vouch is not active.")
-  if (!vouch.paymentRecord) {
-    return actionFailure("PAYMENT_RECORD_NOT_READY", "Payment record is not ready.")
-  }
-  const paymentRecordId = vouch.paymentRecord.id
-
-  const aggregateStatus = await prisma.$transaction((tx) =>
-    getAggregateConfirmationStatusTx(tx, { vouchId: vouch.id })
-  )
-
-  if (aggregateStatus !== "both_confirmed") {
-    return actionFailure("DUAL_CONFIRMATION_REQUIRED", "Both parties must confirm before capture.")
-  }
-
-  const release = await releaseStripePaymentForCompletedVouch({
-    paymentRecordId,
-    idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${vouch.id}:admin_capture_retry`,
-  })
-
-  if (!release.ok) return actionFailure(release.code, release.message)
-  if (release.status !== "released") {
-    return actionFailure(
-      "PAYMENT_RELEASE_PENDING",
-      "Payment release is still processing with the provider."
-    )
-  }
-
-  const record = await prisma.$transaction(async (tx) => {
-    await tx.vouch.update({
-      where: { id: vouch.id },
-      data: { status: "completed", completedAt: new Date() },
-    })
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payment.capture_retry_completed",
-        actorType: "admin",
-        actorUserId: user.id,
-        entityType: "Vouch",
-        entityId: vouch.id,
-        participantSafe: false,
-      },
-    })
-    return tx.paymentRecord.findUniqueOrThrow({
-      where: { id: paymentRecordId },
-      select: { id: true, vouchId: true, status: true },
-    })
-  })
-
-  await revalidatePaymentSurfaces({
-    userId: user.id,
-    vouchId: record.vouchId,
-    paymentRecordId: record.id,
-  })
-
-  return actionSuccess(paymentResult(record))
-}
-
-export async function refundOrVoidVouchPayment(
-  input: unknown
-): Promise<ActionResult<PaymentActionResult>> {
-  const user = await requireActiveUser()
-  assertCapability(user, "retry_safe_technical_operation")
-  const parsed = refundOrVoidVouchPaymentInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the refund fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: {
-      id: true,
-      status: true,
-      confirmationExpiresAt: true,
-      paymentRecord: { select: { id: true } },
-    },
-  })
-
-  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
-  if (!["pending", "active", "failed"].includes(vouch.status)) {
-    return actionFailure("INVALID_VOUCH_STATE", "Only unresolved Vouches can be voided/refunded.")
-  }
-  if (vouch.confirmationExpiresAt > new Date()) {
-    return actionFailure("CONFIRMATION_WINDOW_OPEN", "Vouch has not reached expiration.")
-  }
-  if (!vouch.paymentRecord) {
-    return actionFailure("PAYMENT_RECORD_NOT_READY", "Payment record is not ready.")
-  }
-  const paymentRecordId = vouch.paymentRecord.id
-
-  const aggregateStatus = await prisma.$transaction((tx) =>
-    getAggregateConfirmationStatusTx(tx, { vouchId: vouch.id })
-  )
-
-  if (aggregateStatus === "both_confirmed") {
-    return actionFailure(
-      "DUAL_CONFIRMATION_SATISFIED",
-      "Both confirmations exist; capture resolution is required instead."
-    )
-  }
-
-  const reversed = await refundOrVoidStripePaymentForVouch({
-    paymentRecordId,
-    reason: vouch.status === "pending" ? "not_accepted" : "confirmation_incomplete",
-    idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${vouch.id}:admin_refund_or_void_retry`,
-  })
-
-  if (!reversed.ok) return actionFailure(reversed.code, reversed.message)
-
-  const record = await prisma.$transaction(async (tx) => {
-    await tx.vouch.update({
-      where: { id: vouch.id },
-      data: { status: "expired", expiredAt: new Date() },
-    })
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payment.refund_or_void_retry_completed",
-        actorType: "admin",
-        actorUserId: user.id,
-        entityType: "Vouch",
-        entityId: vouch.id,
-        participantSafe: false,
-        metadata: { aggregate_confirmation_status: aggregateStatus },
-      },
-    })
-    return tx.paymentRecord.findUniqueOrThrow({
-      where: { id: paymentRecordId },
-      select: { id: true, vouchId: true, status: true },
-    })
-  })
-
-  await revalidatePaymentSurfaces({
-    userId: user.id,
-    vouchId: record.vouchId,
-    paymentRecordId: record.id,
-  })
-
-  return actionSuccess(paymentResult(record))
-}
-
-export async function handleStripeWebhook(
-  input: unknown
-): Promise<ActionResult<WebhookRecordResult>> {
-  const recorded = await recordPaymentWebhookEvent(input)
-
-  if (!recorded.ok) {
-    return recorded
-  }
-
-  return processPaymentWebhookEvent({
-    providerEventId: recorded.data.providerEventId,
-    eventType: recorded.data.eventType,
-  })
-}
-
-export async function recordPaymentWebhookEvent(
-  input: unknown
-): Promise<ActionResult<WebhookRecordResult>> {
-  const parsed = paymentWebhookEnvelopeSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the Stripe webhook event envelope.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const recorded = await prisma.$transaction(async (tx) => {
-    const provider = await tx.providerWebhookEvent.upsert({
-      where: {
-        provider_providerEventId: {
-          provider: "stripe",
-          providerEventId: parsed.data.id,
-        },
-      },
-      create: {
-        provider: "stripe",
-        providerEventId: parsed.data.id,
-        eventType: parsed.data.type,
-        status: "received",
-        processed: false,
-        safeMetadata: {
-          event_type: parsed.data.type,
-        },
-      },
-      update: {},
-      select: {
-        id: true,
-        providerEventId: true,
-        eventType: true,
-        processed: true,
-      },
-    })
-
-    const payment = await tx.paymentWebhookEvent.upsert({
-      where: {
-        providerEventId: parsed.data.id,
-      },
-      create: {
-        provider: "stripe",
-        providerEventId: parsed.data.id,
-        eventType: parsed.data.type,
-        providerWebhookEventId: provider.id,
-        processed: false,
-        safeMetadata: {
-          event_type: parsed.data.type,
-        },
-      },
-      update: {},
-      select: {
-        id: true,
-        providerEventId: true,
-        eventType: true,
-        processed: true,
-      },
-    })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payment.webhook_received",
-        actorType: "payment_provider",
-        entityType: "PaymentWebhookEvent",
-        entityId: payment.id,
-        participantSafe: false,
-        metadata: {
-          provider_event_id: parsed.data.id,
-          event_type: parsed.data.type,
-        },
-      },
-    })
-
-    return { provider, payment }
-  })
-
-  return actionSuccess({
-    providerWebhookEventId: recorded.provider.id,
-    paymentWebhookEventId: recorded.payment.id,
-    providerEventId: recorded.payment.providerEventId,
-    eventType: recorded.payment.eventType,
-    processed: recorded.payment.processed,
-  })
-}
-
-export async function processPaymentWebhookEvent(
-  input: unknown
-): Promise<ActionResult<WebhookRecordResult>> {
-  const parsed = paymentWebhookProcessInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the Stripe webhook process fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const webhook = await prisma.paymentWebhookEvent.findUnique({
-    where: { providerEventId: parsed.data.providerEventId },
-    select: {
-      id: true,
-      providerWebhookEventId: true,
-      providerEventId: true,
-      eventType: true,
-      processed: true,
-    },
-  })
-
-  if (!webhook) return actionFailure("NOT_FOUND", "Payment webhook event not found.")
-
-  if (webhook.processed) {
-    return actionSuccess({
-      providerWebhookEventId: webhook.providerWebhookEventId ?? webhook.id,
-      paymentWebhookEventId: webhook.id,
-      providerEventId: webhook.providerEventId,
-      eventType: webhook.eventType,
-      processed: true,
-    })
-  }
-
-  const processed = await prisma.$transaction(async (tx) => {
-    const payment = await tx.paymentWebhookEvent.update({
-      where: { id: webhook.id },
-      data: {
-        processed: true,
-        processedAt: new Date(),
-        processingError: null,
-      },
-      select: {
-        id: true,
-        providerWebhookEventId: true,
-        providerEventId: true,
-        eventType: true,
-        processed: true,
-      },
-    })
-
-    if (webhook.providerWebhookEventId) {
-      await tx.providerWebhookEvent.update({
-        where: { id: webhook.providerWebhookEventId },
-        data: {
-          status: "processed",
-          processed: true,
-          processedAt: new Date(),
-          processingError: null,
-        },
-      })
+    if (intent.status === "requires_capture") {
+      await markVouchAuthorizedTx(tx, { vouchId: vouch.id })
     }
 
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payment.webhook_processed",
-        actorType: "system",
-        entityType: "PaymentWebhookEvent",
-        entityId: payment.id,
-        participantSafe: false,
-        metadata: {
-          provider_event_id: payment.providerEventId,
-          event_type: payment.eventType,
-        },
-      },
-    })
-
-    return payment
+    return record
   })
 
-  revalidatePath("/admin")
-  revalidatePath("/admin/payments")
-
+  await revalidatePaymentSurfaces({ vouchId: vouch.id })
   return actionSuccess({
-    providerWebhookEventId: processed.providerWebhookEventId ?? processed.id,
-    paymentWebhookEventId: processed.id,
-    providerEventId: processed.providerEventId,
-    eventType: processed.eventType,
-    processed: processed.processed,
+    paymentRecordId: paymentRecord.id,
+    vouchId: paymentRecord.vouchId,
+    status: paymentRecord.status,
+    settlementStatus: paymentRecord.settlementStatus,
   })
 }
 
-export async function reconcilePaymentStatus(
+export async function captureConfirmedVouchPayment(
   input: unknown
 ): Promise<ActionResult<PaymentActionResult>> {
-  const user = await requireActiveUser()
-  assertCapability(user, "retry_safe_technical_operation")
-
-  const parsed = initializeVouchPaymentInputSchema.safeParse(input)
+  const parsed = captureConfirmedVouchPaymentInputSchema.safeParse(input)
 
   if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payment reconciliation fields.",
-      getFieldErrors(parsed.error)
-    )
+    return actionFailure("VALIDATION_FAILED", "Check the capture fields.")
   }
 
-  const record = await prisma.paymentRecord.findUnique({
+  const paymentRecord = await prisma.paymentRecord.findUnique({
     where: { vouchId: parsed.data.vouchId },
     select: {
       id: true,
       vouchId: true,
+      providerPaymentIntentId: true,
       status: true,
-    },
-  })
-
-  if (!record) return actionFailure("NOT_FOUND", "Payment record not found.")
-
-  await prisma.auditEvent.create({
-    data: {
-      eventName: "payment.reconciliation_requested",
-      actorType: "admin",
-      actorUserId: user.id,
-      entityType: "PaymentRecord",
-      entityId: record.id,
-      participantSafe: false,
-      metadata: {
-        vouch_id: record.vouchId,
-      },
-    },
-  })
-
-  await revalidatePaymentSurfaces({
-    userId: user.id,
-    vouchId: record.vouchId,
-    paymentRecordId: record.id,
-  })
-
-  return actionSuccess(paymentResult(record))
-}
-
-export async function reconcileRefundStatus(
-  input: unknown
-): Promise<ActionResult<RefundActionResult>> {
-  const user = await requireActiveUser()
-  assertCapability(user, "retry_safe_technical_operation")
-
-  const parsed = initializeVouchPaymentInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the refund reconciliation fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  const record = await prisma.refundRecord.findUnique({
-    where: { vouchId: parsed.data.vouchId },
-    select: {
-      id: true,
-      vouchId: true,
-      status: true,
-    },
-  })
-
-  if (!record) return actionFailure("NOT_FOUND", "Refund record not found.")
-
-  await prisma.auditEvent.create({
-    data: {
-      eventName: "payment.refund_reconciliation_requested",
-      actorType: "admin",
-      actorUserId: user.id,
-      entityType: "RefundRecord",
-      entityId: record.id,
-      participantSafe: false,
-      metadata: {
-        vouch_id: record.vouchId,
-      },
-    },
-  })
-
-  await revalidatePaymentSurfaces({ userId: user.id, vouchId: record.vouchId })
-
-  return actionSuccess(refundResult(record))
-}
-
-export async function markPaymentFailed(
-  input: unknown
-): Promise<ActionResult<PaymentActionResult>> {
-  const parsed = paymentFailureInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure(
-      "VALIDATION_FAILED",
-      "Check the payment failure fields.",
-      getFieldErrors(parsed.error)
-    )
-  }
-
-  if (!parsed.data.vouchId && !parsed.data.paymentRecordId) {
-    return actionFailure("VALIDATION_FAILED", "Payment failure requires a Vouch or payment record.")
-  }
-
-  // Replace the existing `existing = ...` block in markPaymentFailed with this:
-  let existing: { id: string; vouchId: string } | null = null
-
-  if (parsed.data.paymentRecordId) {
-    existing = await prisma.paymentRecord.findUnique({
-      where: { id: parsed.data.paymentRecordId },
-      select: { id: true, vouchId: true },
-    })
-  } else if (parsed.data.vouchId) {
-    existing = await prisma.paymentRecord.findUnique({
-      where: { vouchId: parsed.data.vouchId },
-      select: { id: true, vouchId: true },
-    })
-  }
-
-  if (!existing) return actionFailure("NOT_FOUND", "Payment record not found.")
-
-  const failed = await prisma.$transaction(async (tx) => {
-    const payment = await tx.paymentRecord.update({
-      where: { id: existing.id },
-      data: {
-        status: "failed",
-        ...(parsed.data.failureCode ? { lastErrorCode: parsed.data.failureCode } : {}),
-      },
-      select: {
-        id: true,
-        vouchId: true,
-        status: true,
-      },
-    })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payment.failed",
-        actorType: "system",
-        entityType: "PaymentRecord",
-        entityId: payment.id,
-        participantSafe: true,
-        metadata: {
-          vouch_id: payment.vouchId,
-          failure_stage: parsed.data.failureStage,
-          ...(parsed.data.failureCode ? { failure_code: parsed.data.failureCode } : {}),
-          ...(parsed.data.safeMessage ? { safe_message: parsed.data.safeMessage } : {}),
-        },
-      },
-    })
-
-    return payment
-  })
-
-  await revalidatePaymentSurfaces({
-    vouchId: failed.vouchId,
-    paymentRecordId: failed.id,
-  })
-
-  return actionSuccess(paymentResult(failed))
-}
-
-export type StripePaymentAdapterResult =
-  | {
-      ok: true
-      providerPaymentId?: string | null
-      providerCheckoutSessionId?: string | null
-      checkoutUrl?: string | null
-      clientSecret?: string | null
-    }
-  | { ok: false; code: string; message: string }
-
-export type InitializeStripePaymentInput = {
-  vouchId: string
-  pricing: VouchPricing
-  currency: string
-  providerCustomerId?: string
-  providerPaymentMethodId?: string
-  connectedAccountId?: string
-  confirmOffSession?: boolean
-  idempotencyKey?: string
-}
-
-function getCheckoutSessionPaymentIntentId(session: Stripe.Checkout.Session): string | null {
-  if (!session.payment_intent) return null
-  return typeof session.payment_intent === "string"
-    ? session.payment_intent
-    : session.payment_intent.id
-}
-
-export async function initializeStripeCheckoutSessionForVouch(
-  input: Omit<
-    InitializeStripePaymentInput,
-    "providerPaymentMethodId" | "confirmOffSession" | "connectedAccountId"
-  > & {
-    connectedAccountId: string
-    successUrl: string
-    cancelUrl?: string
-  }
-): Promise<StripePaymentAdapterResult> {
-  const existing = await prisma.paymentRecord.findUnique({
-    where: { vouchId: input.vouchId },
-    select: {
-      id: true,
-      status: true,
-    },
-  })
-
-  if (
-    existing &&
-    existing.status !== "not_started" &&
-    existing.status !== "requires_payment_method"
-  ) {
-    return {
-      ok: false,
-      code: "PAYMENT_ALREADY_IN_PROGRESS",
-      message: "Payment already has provider state.",
-    }
-  }
-
-  try {
-    const session = await createStripeCheckoutAuthorization({
-      vouchId: input.vouchId,
-      pricing: input.pricing,
-      currency: input.currency,
-      connectedAccountId: input.connectedAccountId,
-      ...(input.providerCustomerId ? { providerCustomerId: input.providerCustomerId } : {}),
-      successUrl: input.successUrl,
-      ...(input.cancelUrl ? { cancelUrl: input.cancelUrl } : {}),
-      idempotencyKey: input.idempotencyKey ?? `vouch:${input.vouchId}:checkout_authorization`,
-    })
-    const providerPaymentId = getCheckoutSessionPaymentIntentId(session)
-
-    await prisma.paymentRecord.upsert({
-      where: { vouchId: input.vouchId },
-      create: {
-        vouchId: input.vouchId,
-        provider: "stripe",
-        providerPaymentId,
-        providerCheckoutSessionId: session.id,
-        status: "requires_payment_method",
-        amountCents: input.pricing.protectedAmountCents,
-        currency: input.currency,
-        platformFeeCents: input.pricing.vouchServiceFeeCents,
-        protectedAmountCents: input.pricing.protectedAmountCents,
-        merchantReceivesCents: input.pricing.merchantReceivesCents,
-        vouchServiceFeeCents: input.pricing.vouchServiceFeeCents,
-        processingFeeOffsetCents: input.pricing.processingFeeOffsetCents,
-        applicationFeeAmountCents: input.pricing.applicationFeeAmountCents,
-        customerTotalCents: input.pricing.customerTotalCents,
-      },
-      update: {
-        providerPaymentId,
-        providerCheckoutSessionId: session.id,
-        status: "requires_payment_method",
-        amountCents: input.pricing.protectedAmountCents,
-        currency: input.currency,
-        platformFeeCents: input.pricing.vouchServiceFeeCents,
-        protectedAmountCents: input.pricing.protectedAmountCents,
-        merchantReceivesCents: input.pricing.merchantReceivesCents,
-        vouchServiceFeeCents: input.pricing.vouchServiceFeeCents,
-        processingFeeOffsetCents: input.pricing.processingFeeOffsetCents,
-        applicationFeeAmountCents: input.pricing.applicationFeeAmountCents,
-        customerTotalCents: input.pricing.customerTotalCents,
-        lastErrorCode: null,
-        lastErrorMessage: null,
-      },
-    })
-
-    return {
-      ok: true,
-      providerPaymentId,
-      providerCheckoutSessionId: session.id,
-      checkoutUrl: session.url,
-      clientSecret: session.client_secret,
-    }
-  } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Stripe checkout initialization failed."
-    return { ok: false, code: "STRIPE_CHECKOUT_INITIALIZATION_FAILED", message }
-  }
-}
-
-export async function initializeStripePaymentForVouch(
-  input: InitializeStripePaymentInput
-): Promise<StripePaymentAdapterResult> {
-  const existing = await prisma.paymentRecord.findUnique({
-    where: { vouchId: input.vouchId },
-    select: { id: true, providerPaymentId: true, status: true },
-  })
-
-  if (existing?.providerPaymentId && existing.status === "authorized") {
-    return { ok: true, providerPaymentId: existing.providerPaymentId, clientSecret: null }
-  }
-
-  if (
-    existing &&
-    existing.status !== "not_started" &&
-    existing.status !== "requires_payment_method"
-  ) {
-    return {
-      ok: false,
-      code: "PAYMENT_ALREADY_IN_PROGRESS",
-      message: "Payment already has provider state.",
-    }
-  }
-
-  try {
-    const paymentReadiness =
-      input.confirmOffSession && input.providerCustomerId && !input.providerPaymentMethodId
-        ? await getStripeCustomerPaymentReadiness(input.providerCustomerId)
-        : null
-    const providerPaymentMethodId =
-      input.providerPaymentMethodId ?? paymentReadiness?.defaultPaymentMethodId ?? undefined
-
-    if (input.confirmOffSession && input.providerCustomerId && !providerPaymentMethodId) {
-      return {
-        ok: false,
-        code: "PAYMENT_METHOD_REQUIRED",
-        message: "Payer payment setup is not ready.",
-      }
-    }
-
-    const paymentIntent = await createStripePaymentAuthorization({
-      vouchId: input.vouchId,
-      customerTotalCents: input.pricing.customerTotalCents,
-      currency: input.currency,
-      applicationFeeAmountCents: input.pricing.applicationFeeAmountCents,
-      protectedAmountCents: input.pricing.protectedAmountCents,
-      merchantReceivesCents: input.pricing.merchantReceivesCents,
-      vouchServiceFeeCents: input.pricing.vouchServiceFeeCents,
-      processingFeeOffsetCents: input.pricing.processingFeeOffsetCents,
-      ...(input.providerCustomerId ? { providerCustomerId: input.providerCustomerId } : {}),
-      ...(providerPaymentMethodId ? { providerPaymentMethodId } : {}),
-      ...(input.connectedAccountId ? { connectedAccountId: input.connectedAccountId } : {}),
-      ...(input.confirmOffSession ? { confirmOffSession: input.confirmOffSession } : {}),
-      idempotencyKey: input.idempotencyKey ?? `vouch:${input.vouchId}:payment_authorization`,
-    })
-    const localStatus = mapStripePaymentIntentStatus(paymentIntent.status)
-
-    await prisma.paymentRecord.upsert({
-      where: { vouchId: input.vouchId },
-      create: {
-        vouchId: input.vouchId,
-        provider: "stripe",
-        providerPaymentId: paymentIntent.id,
-        status: localStatus,
-        amountCents: input.pricing.protectedAmountCents,
-        currency: input.currency,
-        platformFeeCents: input.pricing.vouchServiceFeeCents,
-        protectedAmountCents: input.pricing.protectedAmountCents,
-        merchantReceivesCents: input.pricing.merchantReceivesCents,
-        vouchServiceFeeCents: input.pricing.vouchServiceFeeCents,
-        processingFeeOffsetCents: input.pricing.processingFeeOffsetCents,
-        applicationFeeAmountCents: input.pricing.applicationFeeAmountCents,
-        customerTotalCents: input.pricing.customerTotalCents,
-      },
-      update: {
-        providerPaymentId: paymentIntent.id,
-        status: localStatus,
-        amountCents: input.pricing.protectedAmountCents,
-        currency: input.currency,
-        platformFeeCents: input.pricing.vouchServiceFeeCents,
-        protectedAmountCents: input.pricing.protectedAmountCents,
-        merchantReceivesCents: input.pricing.merchantReceivesCents,
-        vouchServiceFeeCents: input.pricing.vouchServiceFeeCents,
-        processingFeeOffsetCents: input.pricing.processingFeeOffsetCents,
-        applicationFeeAmountCents: input.pricing.applicationFeeAmountCents,
-        customerTotalCents: input.pricing.customerTotalCents,
-        lastErrorCode: null,
-        lastErrorMessage: null,
-      },
-    })
-
-    if (
-      ![
-        "requires_capture",
-        "requires_payment_method",
-        "requires_confirmation",
-        "requires_action",
-        "processing",
-      ].includes(paymentIntent.status)
-    ) {
-      return {
-        ok: false,
-        code: "STRIPE_AUTHORIZATION_NOT_CONFIRMED",
-        message: "Stripe has not confirmed payment authorization yet.",
-      }
-    }
-
-    return {
-      ok: true,
-      providerPaymentId: paymentIntent.id,
-      clientSecret: paymentIntent.client_secret,
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Stripe payment initialization failed."
-    return { ok: false, code: "STRIPE_PAYMENT_INITIALIZATION_FAILED", message }
-  }
-}
-
-export type ReleaseStripePaymentInput = {
-  paymentRecordId: string
-  /**
-   * Deprecated for destination charges. The connected account is fixed on the
-   * PaymentIntent through transfer_data.destination at authorization time.
-   */
-  connectedAccountId?: string
-  idempotencyKey?: string
-}
-
-export type ReleaseStripePaymentResult =
-  | { ok: true; status: "released"; providerChargeId: string }
-  | { ok: true; status: "pending"; providerChargeId: string | null }
-  | { ok: false; code: string; message: string }
-
-function getPaymentIntentChargeId(paymentIntent: { latest_charge?: unknown }): string | null {
-  const latestCharge = paymentIntent.latest_charge
-
-  if (typeof latestCharge === "string") return latestCharge
-  if (
-    latestCharge &&
-    typeof latestCharge === "object" &&
-    "id" in latestCharge &&
-    typeof latestCharge.id === "string"
-  ) {
-    return latestCharge.id
-  }
-
-  return null
-}
-
-export async function releaseStripePaymentForCompletedVouch(
-  input: ReleaseStripePaymentInput
-): Promise<ReleaseStripePaymentResult> {
-  const paymentRecord = await prisma.paymentRecord.findUnique({
-    where: { id: input.paymentRecordId },
-    select: {
-      id: true,
-      providerPaymentId: true,
-      amountCents: true,
-      platformFeeCents: true,
-      currency: true,
-      status: true,
-      providerChargeId: true,
-    },
-  })
-
-  if (!paymentRecord?.providerPaymentId) {
-    return {
-      ok: false,
-      code: "PAYMENT_RECORD_NOT_READY",
-      message: "No provider payment ID exists.",
-    }
-  }
-
-  if (paymentRecord.status !== "authorized") {
-    return {
-      ok: false,
-      code: "PAYMENT_NOT_AUTHORIZED",
-      message: "Payment must be provider-authorized before release.",
-    }
-  }
-
-  try {
-    const current = await retrieveStripePaymentIntent({
-      providerPaymentId: paymentRecord.providerPaymentId,
-    })
-
-    const captured =
-      current.status === "requires_capture"
-        ? await captureStripePayment({
-            providerPaymentId: paymentRecord.providerPaymentId,
-            idempotencyKey: input.idempotencyKey ?? `payment:${paymentRecord.id}:capture`,
-          })
-        : current
-
-    const providerChargeId = getPaymentIntentChargeId(captured)
-
-    if (captured.status === "canceled") {
-      await prisma.paymentRecord.update({
-        where: { id: paymentRecord.id },
-        data: {
-          status: "voided",
-          providerChargeId,
-          lastErrorCode: null,
-          lastErrorMessage: null,
-        },
-      })
-      return {
-        ok: false,
-        code: "PAYMENT_AUTHORIZATION_VOIDED",
-        message: "Stripe authorization is no longer capturable.",
-      }
-    }
-
-    if (captured.status !== "succeeded" || !providerChargeId) {
-      await prisma.paymentRecord.update({
-        where: { id: paymentRecord.id },
-        data: {
-          status: "release_pending",
-          providerChargeId,
-          lastErrorCode: null,
-          lastErrorMessage: null,
-        },
-      })
-      return { ok: true, status: "pending", providerChargeId }
-    }
-
-    await prisma.paymentRecord.update({
-      where: { id: paymentRecord.id },
-      data: {
-        status: "released",
-        providerChargeId,
-        lastErrorCode: null,
-        lastErrorMessage: null,
-      },
-    })
-
-    return { ok: true, status: "released", providerChargeId }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Stripe payment release failed."
-    await prisma.paymentRecord.update({
-      where: { id: paymentRecord.id },
-      data: {
-        status: "failed",
-        lastErrorCode: "STRIPE_RELEASE_FAILED",
-        lastErrorMessage: message,
-      },
-    })
-    return { ok: false, code: "STRIPE_RELEASE_FAILED", message }
-  }
-}
-
-export async function refundOrVoidStripePaymentForVouch(input: {
-  paymentRecordId: string
-  idempotencyKey?: string
-  reason:
-    | "not_accepted"
-    | "confirmation_incomplete"
-    | "canceled_before_acceptance"
-    | "payment_failure"
-    | "provider_required"
-}): Promise<{ ok: true } | { ok: false; code: string; message: string }> {
-  const paymentRecord = await prisma.paymentRecord.findUnique({
-    where: { id: input.paymentRecordId },
-    select: {
-      id: true,
-      vouchId: true,
-      providerPaymentId: true,
-      amountCents: true,
-      customerTotalCents: true,
-      status: true,
-      refundRecord: {
+      settlementStatus: true,
+      vouch: {
         select: {
           id: true,
-          providerRefundId: true,
+          merchantId: true,
+          customerId: true,
           status: true,
+          presenceConfirmations: {
+            select: { participantRole: true, status: true },
+          },
         },
-      },
-      vouch: {
-        select: { status: true },
       },
     },
   })
 
-  if (!paymentRecord?.providerPaymentId) {
-    return {
-      ok: false,
-      code: "PAYMENT_RECORD_NOT_READY",
-      message: "No provider payment ID exists.",
-    }
+  if (!paymentRecord?.providerPaymentIntentId) {
+    return actionFailure("PAYMENT_RECORD_NOT_FOUND", "Payment record is missing.")
   }
 
-  try {
-    if (
-      paymentRecord.refundRecord &&
-      ["pending", "succeeded"].includes(paymentRecord.refundRecord.status)
-    ) {
-      return { ok: true }
-    }
+  const aggregate = await prisma.$transaction((tx) =>
+    getAggregateConfirmationStatusTx(tx, { vouchId: paymentRecord.vouchId })
+  )
 
-    const current = await retrieveStripePaymentIntent({
-      providerPaymentId: paymentRecord.providerPaymentId,
-    })
-    const currentStatus = mapStripePaymentIntentStatus(current.status)
+  if (aggregate !== "both_confirmed") {
+    return actionFailure(
+      "CONFIRMATION_INCOMPLETE",
+      "Both participants must confirm before capture."
+    )
+  }
 
-    if (current.status === "requires_capture") {
-      await voidStripeAuthorization({
-        providerPaymentId: paymentRecord.providerPaymentId,
-        idempotencyKey: input.idempotencyKey ?? `payment:${paymentRecord.id}:void`,
+  const current = await retrieveStripePaymentIntent({
+    providerPaymentIntentId: paymentRecord.providerPaymentIntentId,
+  })
+
+  if (!isPaymentIntentCapturable(current)) {
+    const timing = mapIntentTiming(current)
+
+    const updated = await prisma.$transaction((tx) =>
+      updatePaymentProviderStateTx(tx, {
+        paymentRecordId: paymentRecord.id,
+        providerPaymentIntentId: current.id,
+        providerChargeId: getPaymentIntentLatestChargeId(current),
+        status: timing.status,
+        settlementStatus: timing.settlementStatus,
+        amountCapturableCents: timing.amountCapturableCents,
+        captureBefore: timing.captureBefore,
+        authorizedAt: timing.authorizedAt,
+        capturedAt: timing.capturedAt,
+        canceledAt: timing.canceledAt,
+        failedAt: timing.failedAt,
       })
-      await prisma.$transaction([
-        prisma.paymentRecord.update({
-          where: { id: paymentRecord.id },
-          data: { status: "voided", lastErrorCode: null, lastErrorMessage: null },
-        }),
-        prisma.refundRecord.upsert({
-          where: { vouchId: paymentRecord.vouchId },
-          create: {
-            vouchId: paymentRecord.vouchId,
-            paymentRecordId: paymentRecord.id,
-            status: "succeeded",
-            reason: input.reason,
-            amountCents: paymentRecord.customerTotalCents || paymentRecord.amountCents,
-          },
-          update: { status: "succeeded", reason: input.reason },
-        }),
-      ])
-      return { ok: true }
-    }
+    )
 
-    if (current.status === "canceled") {
-      await prisma.$transaction([
-        prisma.paymentRecord.update({
-          where: { id: paymentRecord.id },
-          data: { status: "voided", lastErrorCode: null, lastErrorMessage: null },
-        }),
-        prisma.refundRecord.upsert({
-          where: { vouchId: paymentRecord.vouchId },
-          create: {
-            vouchId: paymentRecord.vouchId,
-            paymentRecordId: paymentRecord.id,
-            status: "succeeded",
-            reason: input.reason,
-            amountCents: paymentRecord.customerTotalCents || paymentRecord.amountCents,
-          },
-          update: { status: "succeeded", reason: input.reason },
-        }),
-      ])
-      return { ok: true }
-    }
+    return actionFailure(
+      "PAYMENT_NOT_CAPTURABLE",
+      `PaymentIntent is not capturable. Stripe status: ${current.status}.`,
+      { paymentRecordId: [updated.id] }
+    )
+  }
 
-    if (current.status !== "succeeded") {
-      await prisma.paymentRecord.update({
-        where: { id: paymentRecord.id },
-        data: { status: currentStatus, lastErrorCode: null, lastErrorMessage: null },
-      })
-      return { ok: true }
-    }
+  const captured = await captureStripePayment({
+    providerPaymentIntentId: paymentRecord.providerPaymentIntentId,
+    idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${paymentRecord.vouchId}:capture`,
+  })
 
-    const refund = await refundStripePayment({
-      providerPaymentId: paymentRecord.providerPaymentId,
-      idempotencyKey: input.idempotencyKey ?? `payment:${paymentRecord.id}:refund`,
+  const timing = mapIntentTiming(captured)
+
+  const updated = await prisma.$transaction(async (tx) => {
+    const record = await updatePaymentProviderStateTx(tx, {
+      paymentRecordId: paymentRecord.id,
+      providerPaymentIntentId: captured.id,
+      providerChargeId: getPaymentIntentLatestChargeId(captured),
+      status: timing.status,
+      settlementStatus: timing.settlementStatus,
+      amountCapturableCents: timing.amountCapturableCents,
+      captureBefore: timing.captureBefore,
+      authorizedAt: timing.authorizedAt,
+      capturedAt: timing.capturedAt,
+      canceledAt: timing.canceledAt,
+      failedAt: timing.failedAt,
     })
 
-    await prisma.$transaction([
-      prisma.paymentRecord.update({
-        where: { id: paymentRecord.id },
-        data: { status: "refund_pending", lastErrorCode: null, lastErrorMessage: null },
-      }),
-      prisma.refundRecord.upsert({
-        where: { vouchId: paymentRecord.vouchId },
-        create: {
-          vouchId: paymentRecord.vouchId,
-          paymentRecordId: paymentRecord.id,
-          providerRefundId: refund.id,
-          status: "pending",
-          reason: input.reason,
-          amountCents: paymentRecord.customerTotalCents || paymentRecord.amountCents,
-        },
-        update: {
-          providerRefundId: refund.id,
-          status: "pending",
-          reason: input.reason,
-        },
-      }),
-    ])
+    if (captured.status === "succeeded") {
+      await markVouchCompletedTx(tx, { vouchId: paymentRecord.vouchId })
+    }
 
-    return { ok: true }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Stripe refund/void failed."
-    await prisma.paymentRecord.update({
-      where: { id: paymentRecord.id },
+    await tx.auditEvent.create({
       data: {
-        status: "failed",
-        lastErrorCode: "STRIPE_REFUND_OR_VOID_FAILED",
-        lastErrorMessage: message,
+        eventName: "payment.captured",
+        actorType: "stripe",
+        entityType: "PaymentRecord",
+        entityId: paymentRecord.id,
+        participantSafe: true,
+        metadata: { stripe_status: captured.status },
       },
     })
-    return { ok: false, code: "STRIPE_REFUND_OR_VOID_FAILED", message }
-  }
+
+    return record
+  })
+
+  await revalidatePaymentSurfaces({ vouchId: paymentRecord.vouchId })
+  return actionSuccess({
+    paymentRecordId: updated.id,
+    vouchId: updated.vouchId,
+    status: updated.status,
+    settlementStatus: updated.settlementStatus,
+  })
 }
 
-export type StripeWebhookProcessingResult =
-  | { ok: true; status: 200; processed: true; ignored?: false }
-  | { ok: true; status: 200; processed: false; ignored: true; reason: string }
-  | { ok: false; status: 500; message: string }
+export async function cancelUnconfirmedVouchPayment(
+  input: unknown
+): Promise<ActionResult<PaymentActionResult>> {
+  const parsed = cancelUnconfirmedVouchPaymentInputSchema.safeParse(input)
+
+  if (!parsed.success) {
+    return actionFailure("VALIDATION_FAILED", "Check the cancel fields.")
+  }
+
+  const paymentRecord = await prisma.paymentRecord.findUnique({
+    where: { vouchId: parsed.data.vouchId },
+    select: {
+      id: true,
+      vouchId: true,
+      providerPaymentIntentId: true,
+    },
+  })
+
+  if (!paymentRecord?.providerPaymentIntentId) {
+    return actionFailure("PAYMENT_RECORD_NOT_FOUND", "Payment record is missing.")
+  }
+
+  const canceled = await cancelStripeAuthorization({
+    providerPaymentIntentId: paymentRecord.providerPaymentIntentId,
+    idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${paymentRecord.vouchId}:cancel`,
+  })
+
+  const timing = mapIntentTiming(canceled)
+
+  const updated = await prisma.$transaction(async (tx) => {
+    const record = await updatePaymentProviderStateTx(tx, {
+      paymentRecordId: paymentRecord.id,
+      providerPaymentIntentId: canceled.id,
+      providerChargeId: getPaymentIntentLatestChargeId(canceled),
+      status: timing.status,
+      settlementStatus: "non_captured",
+      amountCapturableCents: timing.amountCapturableCents,
+      captureBefore: timing.captureBefore,
+      canceledAt: timing.canceledAt ?? new Date(),
+    })
+
+    await markVouchExpiredTx(tx, { vouchId: paymentRecord.vouchId })
+
+    await tx.auditEvent.create({
+      data: {
+        eventName: "payment.non_captured",
+        actorType: "stripe",
+        entityType: "PaymentRecord",
+        entityId: paymentRecord.id,
+        participantSafe: true,
+        metadata: { stripe_status: canceled.status },
+      },
+    })
+
+    return record
+  })
+
+  await revalidatePaymentSurfaces({ vouchId: paymentRecord.vouchId })
+  return actionSuccess({
+    paymentRecordId: updated.id,
+    vouchId: updated.vouchId,
+    status: updated.status,
+    settlementStatus: updated.settlementStatus,
+  })
+}
+
+export async function refundCapturedVouchPayment(
+  input: unknown
+): Promise<ActionResult<{ refundRecordId: string; vouchId: string; status: string }>> {
+  const parsed = refundCapturedVouchPaymentInputSchema.safeParse(input)
+
+  if (!parsed.success) {
+    return actionFailure("VALIDATION_FAILED", "Check the refund fields.")
+  }
+
+  const paymentRecord = await prisma.paymentRecord.findUnique({
+    where: { vouchId: parsed.data.vouchId },
+    select: {
+      id: true,
+      vouchId: true,
+      providerPaymentIntentId: true,
+      amountCents: true,
+    },
+  })
+
+  if (!paymentRecord?.providerPaymentIntentId) {
+    return actionFailure("PAYMENT_RECORD_NOT_FOUND", "Payment record is missing.")
+  }
+
+  const refund = await refundStripePayment({
+    providerPaymentIntentId: paymentRecord.providerPaymentIntentId,
+    idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${paymentRecord.vouchId}:refund`,
+  })
+
+  const record = await prisma.$transaction(async (tx) => {
+    await updatePaymentProviderStateTx(tx, {
+      paymentRecordId: paymentRecord.id,
+      status: "captured",
+      settlementStatus: "refund_pending",
+    })
+
+    const refundRecord = await createRefundRecordTx(tx, {
+      vouchId: paymentRecord.vouchId,
+      paymentRecordId: paymentRecord.id,
+      providerRefundId: refund.id,
+      status: mapStripeRefundStatus(refund.status),
+      reason: "captured_reversal_required",
+      amountCents: refund.amount ?? paymentRecord.amountCents,
+    })
+
+    await tx.auditEvent.create({
+      data: {
+        eventName: "payment.refund_created",
+        actorType: "stripe",
+        entityType: "RefundRecord",
+        entityId: refundRecord.id,
+        participantSafe: true,
+        metadata: { stripe_status: refund.status },
+      },
+    })
+
+    return refundRecord
+  })
+
+  await revalidatePaymentSurfaces({ vouchId: paymentRecord.vouchId })
+  return actionSuccess({
+    refundRecordId: record.id,
+    vouchId: record.vouchId,
+    status: record.status,
+  })
+}
 
 export async function processStripeWebhookEvent(
   event: StripeWebhookEvent
-): Promise<StripeWebhookProcessingResult> {
-  const ledger = await recordProviderWebhookReceived({
-    provider: "stripe",
-    providerEventId: event.id,
-    eventType: event.type,
-    safeMetadata: {
-      livemode: event.livemode,
-      ...(!isStripeV2WebhookEvent(event) ? { api_version: event.api_version } : {}),
-    },
-  })
+): Promise<ActionResult<WebhookProcessResult>> {
+  const ledger = await prisma.$transaction((tx) =>
+    recordProviderWebhookReceivedTx(tx, {
+      providerEventId: event.id,
+      eventType: event.type,
+      safeMetadata: { livemode: "livemode" in event ? event.livemode : undefined },
+    })
+  )
 
-  if (ledger.processed) {
-    return { ok: true, status: 200, processed: false, ignored: true, reason: "Already processed." }
+  if (ledger.duplicate) {
+    return actionSuccess({
+      providerWebhookEventId: ledger.event.id,
+      providerEventId: ledger.event.providerEventId,
+      eventType: ledger.event.eventType,
+      processed: false,
+      duplicate: true,
+    })
   }
 
   try {
-    if (isStripeIdentityEvent(event)) {
-      await markProviderWebhookIgnored(ledger.id, "Handled by verification webhook processor.")
-      return {
-        ok: true,
-        status: 200,
-        processed: false,
-        ignored: true,
-        reason: "Delegated event type.",
-      }
-    }
-
-    if (isStripeAccountEvent(event)) {
-      await processAccountEvent(event, ledger.id)
-      await markProviderWebhookProcessed(ledger.id)
-      return { ok: true, status: 200, processed: true }
-    }
-
-    if (isStripeV2WebhookEvent(event)) {
-      await markProviderWebhookIgnored(ledger.id, "Unsupported Stripe v2 event type.")
-      return {
-        ok: true,
-        status: 200,
-        processed: false,
-        ignored: true,
-        reason: "Unsupported v2 event type.",
-      }
-    }
-
-    if (isStripeSetupIntentEvent(event)) {
-      await processSetupIntentEvent(event, ledger.id)
-      await markProviderWebhookProcessed(ledger.id)
-      return { ok: true, status: 200, processed: true }
-    }
-
-    if (isStripeCheckoutSessionEvent(event)) {
-      await processCheckoutSessionEvent(event, ledger.id)
-      await markProviderWebhookProcessed(ledger.id)
-      return { ok: true, status: 200, processed: true }
-    }
-
     if (isStripePaymentIntentEvent(event)) {
-      await processPaymentIntentEvent(event, ledger.id)
-      await markProviderWebhookProcessed(ledger.id)
-      return { ok: true, status: 200, processed: true }
+      await reconcileStripePaymentIntentEvent(ledger.event.id, event)
+    } else if (isStripeRefundEvent(event)) {
+      await reconcileStripeRefundEvent(ledger.event.id, event)
+    } else if (isStripeSetupIntentEvent(event)) {
+      await reconcileStripeSetupIntentEvent(ledger.event.id, event)
+    } else if (isStripeAccountEvent(event)) {
+      await reconcileStripeAccountEvent(ledger.event.id, event)
+    } else {
+      await prisma.$transaction((tx) => markProviderWebhookIgnoredTx(tx, { id: ledger.event.id }))
     }
 
-    if (isStripeRefundEvent(event)) {
-      await processRefundEvent(event, ledger.id)
-      await markProviderWebhookProcessed(ledger.id)
-      return { ok: true, status: 200, processed: true }
-    }
-
-    await markProviderWebhookIgnored(ledger.id, "Unsupported Stripe event type.")
-    return {
-      ok: true,
-      status: 200,
-      processed: false,
-      ignored: true,
-      reason: "Unsupported event type.",
-    }
+    return actionSuccess({
+      providerWebhookEventId: ledger.event.id,
+      providerEventId: ledger.event.providerEventId,
+      eventType: ledger.event.eventType,
+      processed: true,
+    })
   } catch (error) {
-    const message =
-      error instanceof Error ? error.message : "Unknown Stripe webhook processing error."
-    await markProviderWebhookFailed(ledger.id, message)
-    return { ok: false, status: 500, message }
+    await prisma.$transaction((tx) =>
+      markProviderWebhookFailedTx(tx, {
+        id: ledger.event.id,
+        error: error instanceof Error ? error.message : String(error),
+      })
+    )
+
+    return actionFailure("WEBHOOK_PROCESSING_FAILED", "Stripe webhook processing failed.")
   }
 }
 
-async function processCheckoutSessionEvent(event: Stripe.Event, providerWebhookEventId: string) {
-  const session = event.data.object as Stripe.Checkout.Session
-  const providerPaymentId = getCheckoutSessionPaymentIntentId(session)
-  const paymentIntent = providerPaymentId
-    ? await retrieveStripePaymentIntent({ providerPaymentId })
-    : null
-  const localStatus = paymentIntent
-    ? mapStripePaymentIntentStatus(paymentIntent.status)
-    : "requires_payment_method"
-  const providerChargeId = paymentIntent ? (getPaymentIntentChargeId(paymentIntent) ?? undefined) : undefined
+async function reconcileStripePaymentIntentEvent(
+  providerWebhookEventId: string,
+  event: StripeWebhookEvent
+) {
+  const intent = event.data.object as Stripe.PaymentIntent
+  const current = await retrieveStripePaymentIntent({ providerPaymentIntentId: intent.id })
+  const timing = mapIntentTiming(current)
 
-  const paymentRecord = await prisma.paymentRecord.findFirst({
-    where: {
-      OR: [
-        { providerCheckoutSessionId: session.id },
-        ...(providerPaymentId ? [{ providerPaymentId }] : []),
-      ],
-    },
+  const paymentRecord = await prisma.paymentRecord.findUnique({
+    where: { providerPaymentIntentId: current.id },
     select: { id: true, vouchId: true },
   })
 
   if (!paymentRecord) {
-    await prisma.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          checkout_session: session.id,
-          payment_intent: providerPaymentId,
-          reason: "No local payment record matched this Checkout Session.",
-        },
-      },
-    })
+    await prisma.$transaction((tx) =>
+      markProviderWebhookIgnoredTx(tx, { id: providerWebhookEventId })
+    )
     return
   }
 
-  await prisma.$transaction([
-    prisma.paymentRecord.update({
-      where: { id: paymentRecord.id },
+  await prisma.$transaction(async (tx) => {
+    await updatePaymentProviderStateTx(tx, {
+      paymentRecordId: paymentRecord.id,
+      providerPaymentIntentId: current.id,
+      providerChargeId: getPaymentIntentLatestChargeId(current),
+      status: timing.status,
+      settlementStatus: timing.settlementStatus,
+      amountCapturableCents: timing.amountCapturableCents,
+      captureBefore: timing.captureBefore,
+      authorizedAt: timing.authorizedAt,
+      capturedAt: timing.capturedAt,
+      canceledAt: timing.canceledAt,
+      failedAt: timing.failedAt,
+    })
+
+    await tx.paymentWebhookEvent.create({
       data: {
-        providerCheckoutSessionId: session.id,
-        ...(providerPaymentId ? { providerPaymentId } : {}),
-        ...(providerChargeId ? { providerChargeId } : {}),
-        status: localStatus,
-        lastErrorCode: null,
-        lastErrorMessage: null,
-      },
-    }),
-    prisma.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
         providerEventId: event.id,
         eventType: event.type,
         providerWebhookEventId,
@@ -2285,667 +870,132 @@ async function processCheckoutSessionEvent(event: Stripe.Event, providerWebhookE
         paymentRecordId: paymentRecord.id,
         processed: true,
         processedAt: new Date(),
-        safeMetadata: {
-          checkout_session: session.id,
-          payment_intent: providerPaymentId,
-          payment_status: session.payment_status,
-          status: paymentIntent?.status,
-        },
+        safeMetadata: { payment_intent_status: current.status },
       },
-    }),
-    prisma.auditEvent.create({
-      data: {
-        eventName: "payment.checkout_webhook_processed",
-        actorType: "payment_provider",
-        entityType: "PaymentWebhookEvent",
-        entityId: event.id,
-        participantSafe: false,
-        metadata: {
-          provider_event_id: event.id,
-          event_type: event.type,
-          checkout_session: session.id,
-          payment_intent: providerPaymentId,
-          status: paymentIntent?.status,
-        },
-      },
-    }),
-  ])
-}
+    })
 
-async function processPaymentIntentEvent(event: Stripe.Event, providerWebhookEventId: string) {
-  const intent = event.data.object as Stripe.PaymentIntent
-  const localStatus = mapStripePaymentIntentStatus(intent.status)
-
-  const paymentRecord = await prisma.paymentRecord.findFirst({
-    where: { providerPaymentId: intent.id },
-    select: { id: true, vouchId: true, status: true },
+    await markProviderWebhookProcessedTx(tx, { id: providerWebhookEventId })
   })
 
-  if (!paymentRecord) {
-    await prisma.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          payment_intent: intent.id,
-          reason: "No local payment record matched this provider payment ID.",
-        },
-      },
-    })
-    return
-  }
-
-  const providerChargeId = getPaymentIntentChargeId(intent) ?? undefined
-  const nextStatus =
-    paymentRecord.status === "released" && localStatus === "captured" ? "released" : localStatus
-
-  await prisma.$transaction([
-    prisma.paymentRecord.update({
-      where: { id: paymentRecord.id },
-      data: {
-        status: nextStatus,
-        ...(providerChargeId ? { providerChargeId } : {}),
-        lastErrorCode: intent.last_payment_error?.code ?? null,
-        lastErrorMessage: intent.last_payment_error?.message ?? null,
-      },
-    }),
-    prisma.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        vouchId: paymentRecord.vouchId,
-        paymentRecordId: paymentRecord.id,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          payment_intent: intent.id,
-          status: intent.status,
-        },
-      },
-    }),
-    prisma.auditEvent.create({
-      data: {
-        eventName: "payment.webhook_processed",
-        actorType: "payment_provider",
-        entityType: "PaymentWebhookEvent",
-        entityId: event.id,
-        participantSafe: false,
-        metadata: {
-          provider_event_id: event.id,
-          event_type: event.type,
-          payment_intent: intent.id,
-          status: intent.status,
-        },
-      },
-    }),
-  ])
+  await revalidatePaymentSurfaces({ vouchId: paymentRecord.vouchId })
 }
 
-async function processRefundEvent(event: Stripe.Event, providerWebhookEventId: string) {
-  if (event.type === "charge.refunded") {
-    await processChargeRefundedEvent(event, providerWebhookEventId)
-    return
-  }
-
+async function reconcileStripeRefundEvent(
+  providerWebhookEventId: string,
+  event: StripeWebhookEvent
+) {
   const refund = event.data.object as Stripe.Refund
-  const localStatus = mapStripeRefundStatus(refund.status)
+  const status = mapStripeRefundStatus(refund.status)
 
-  const refundRecord = await prisma.refundRecord.findFirst({
+  const refundRecord = await prisma.refundRecord.findUnique({
     where: { providerRefundId: refund.id },
     select: { id: true, vouchId: true, paymentRecordId: true },
   })
 
   if (!refundRecord) {
-    await prisma.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          refund: refund.id,
-          reason: "No local refund record matched this provider refund ID.",
-        },
-      },
-    })
+    await prisma.$transaction((tx) =>
+      markProviderWebhookIgnoredTx(tx, { id: providerWebhookEventId })
+    )
     return
   }
 
   await prisma.$transaction(async (tx) => {
     await tx.refundRecord.update({
       where: { id: refundRecord.id },
-      data: { status: localStatus },
+      data: { status },
     })
-    await tx.paymentRecord.update({
-      where: { id: refundRecord.paymentRecordId },
-      data: { status: localStatus === "succeeded" ? "refunded" : "refund_pending" },
-    })
+
+    if (status === "succeeded") {
+      await tx.paymentRecord.update({
+        where: { id: refundRecord.paymentRecordId },
+        data: { settlementStatus: "refunded" },
+      })
+    }
+
     await tx.paymentWebhookEvent.create({
       data: {
-        provider: "stripe",
         providerEventId: event.id,
         eventType: event.type,
         providerWebhookEventId,
         vouchId: refundRecord.vouchId,
-        paymentRecordId: refundRecord.paymentRecordId,
         refundRecordId: refundRecord.id,
         processed: true,
         processedAt: new Date(),
-        safeMetadata: {
-          refund: refund.id,
-          status: refund.status,
-        },
+        safeMetadata: { refund_status: refund.status },
       },
     })
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payment.webhook_processed",
-        actorType: "payment_provider",
-        entityType: "PaymentWebhookEvent",
-        entityId: event.id,
-        participantSafe: false,
-        metadata: {
-          provider_event_id: event.id,
-          event_type: event.type,
-          refund: refund.id,
-          status: refund.status,
-        },
-      },
-    })
-    if (localStatus === "succeeded") {
-      await tx.vouch.update({
-        where: { id: refundRecord.vouchId },
-        data: { status: "refunded" },
-      })
-    }
+
+    await markProviderWebhookProcessedTx(tx, { id: providerWebhookEventId })
   })
+
+  await revalidatePaymentSurfaces({ vouchId: refundRecord.vouchId })
 }
 
-async function processSetupIntentEvent(event: Stripe.Event, providerWebhookEventId: string) {
+async function reconcileStripeSetupIntentEvent(
+  providerWebhookEventId: string,
+  event: StripeWebhookEvent
+) {
   const setupIntent = event.data.object as Stripe.SetupIntent
-  const userId = setupIntent.metadata?.vouch_user_id
-  const providerCustomerId =
+  const customerId =
     typeof setupIntent.customer === "string" ? setupIntent.customer : setupIntent.customer?.id
 
-  if (!userId || !providerCustomerId) {
-    await prisma.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          setup_intent: setupIntent.id,
-          reason: "SetupIntent did not include Vouch user metadata and customer reference.",
-        },
-      },
-    })
+  if (!customerId) {
+    await prisma.$transaction((tx) =>
+      markProviderWebhookIgnoredTx(tx, { id: providerWebhookEventId })
+    )
     return
   }
 
-  const readiness =
-    setupIntent.status === "succeeded"
-      ? (await getStripeCustomerPaymentReadiness(providerCustomerId)).readiness
-      : setupIntent.status === "requires_payment_method"
-        ? "requires_action"
-        : "failed"
+  const readiness = await getStripeCustomerPaymentReadiness(customerId)
 
   await prisma.$transaction(async (tx) => {
-    await tx.paymentCustomer.upsert({
-      where: { userId },
-      create: { userId, providerCustomerId },
-      update: { providerCustomerId },
-    })
-    await tx.verificationProfile.upsert({
-      where: { userId },
-      create: { userId, paymentReadiness: readiness },
-      update: { paymentReadiness: readiness },
-    })
-    await tx.paymentWebhookEvent.create({
+    await tx.paymentCustomer.updateMany({
+      where: { providerCustomerId: customerId },
       data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          setup_intent: setupIntent.id,
-          status: setupIntent.status,
-          customer: providerCustomerId,
-        },
+        readiness: readiness.readiness,
+        lastProviderSyncAt: new Date(),
       },
     })
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payment.setup_webhook_processed",
-        actorType: "payment_provider",
-        entityType: "PaymentCustomer",
-        entityId: userId,
-        participantSafe: false,
-        metadata: {
-          provider_event_id: event.id,
-          event_type: event.type,
-          status: setupIntent.status,
-        },
-      },
-    })
+
+    await markProviderWebhookProcessedTx(tx, { id: providerWebhookEventId })
   })
 }
 
-function getStripeV2AccountId(event: Stripe.V2.Core.EventNotification): string | null {
-  const relatedObject = "related_object" in event ? event.related_object : null
-  if (relatedObject?.type === "v2.core.account") {
-    return relatedObject.id
-  }
-
-  return null
-}
-
-async function processStripeV2AccountEvent(
-  event: Stripe.V2.Core.EventNotification,
-  providerWebhookEventId: string
+async function reconcileStripeAccountEvent(
+  providerWebhookEventId: string,
+  event: StripeWebhookEvent
 ) {
-  const providerAccountId = getStripeV2AccountId(event)
-
-  if (!providerAccountId) {
-    await prisma.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          reason: "Accounts v2 event did not include a related account object.",
-        },
-      },
-    })
-    return
-  }
-
-  const connectedAccount = await prisma.connectedAccount.findUnique({
-    where: { providerAccountId },
-    select: { id: true, userId: true },
-  })
-
-  if (!connectedAccount) {
-    await prisma.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          account: providerAccountId,
-          reason: "No local connected account matched this provider account ID.",
-        },
-      },
-    })
-    return
-  }
-
-  const readiness = await refreshStripeConnectReadiness({ providerAccountId })
+  const account = event.data.object as Stripe.Account
+  const readiness = await refreshStripeConnectReadiness({ providerAccountId: account.id })
 
   await prisma.$transaction(async (tx) => {
-    await tx.connectedAccount.update({
-      where: { id: connectedAccount.id },
+    await tx.connectedAccount.updateMany({
+      where: { providerAccountId: account.id },
       data: {
         readiness: readiness.readiness,
         chargesEnabled: readiness.chargesEnabled,
         payoutsEnabled: readiness.payoutsEnabled,
         detailsSubmitted: readiness.detailsSubmitted,
+        lastProviderSyncAt: new Date(),
       },
     })
-    await tx.verificationProfile.upsert({
-      where: { userId: connectedAccount.userId },
-      create: { userId: connectedAccount.userId, payoutReadiness: readiness.readiness },
-      update: { payoutReadiness: readiness.readiness },
-    })
-    await tx.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          account: providerAccountId,
-          readiness: readiness.readiness,
-          charges_enabled: readiness.chargesEnabled,
-          payouts_enabled: readiness.payoutsEnabled,
-          details_submitted: readiness.detailsSubmitted,
-        },
-      },
-    })
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payout.account_webhook_processed",
-        actorType: "payment_provider",
-        entityType: "ConnectedAccount",
-        entityId: connectedAccount.id,
-        participantSafe: false,
-        metadata: {
-          provider_event_id: event.id,
-          event_type: event.type,
-          account: providerAccountId,
-          readiness: readiness.readiness,
-        },
-      },
-    })
+
+    await markProviderWebhookProcessedTx(tx, { id: providerWebhookEventId })
   })
 }
 
-async function processAccountEvent(event: StripeWebhookEvent, providerWebhookEventId: string) {
-  if (isStripeV2WebhookEvent(event)) {
-    await processStripeV2AccountEvent(event, providerWebhookEventId)
-    return
-  }
-
-  const account = event.data.object as Stripe.Account
-  const readiness =
-    account.charges_enabled && account.payouts_enabled && account.details_submitted
-      ? "ready"
-      : account.requirements?.disabled_reason
-        ? "restricted"
-        : "requires_action"
-
-  const connectedAccount = await prisma.connectedAccount.findUnique({
-    where: { providerAccountId: account.id },
-    select: { id: true, userId: true },
-  })
-
-  if (!connectedAccount) {
-    await prisma.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          account: account.id,
-          reason: "No local connected account matched this provider account ID.",
-        },
-      },
-    })
-    return
-  }
-
-  await prisma.$transaction(async (tx) => {
-    await tx.connectedAccount.update({
-      where: { id: connectedAccount.id },
-      data: {
-        readiness,
-        chargesEnabled: Boolean(account.charges_enabled),
-        payoutsEnabled: Boolean(account.payouts_enabled),
-        detailsSubmitted: Boolean(account.details_submitted),
-      },
-    })
-    await tx.verificationProfile.upsert({
-      where: { userId: connectedAccount.userId },
-      create: { userId: connectedAccount.userId, payoutReadiness: readiness },
-      update: { payoutReadiness: readiness },
-    })
-    await tx.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          account: account.id,
-          readiness,
-          charges_enabled: Boolean(account.charges_enabled),
-          payouts_enabled: Boolean(account.payouts_enabled),
-          details_submitted: Boolean(account.details_submitted),
-        },
-      },
-    })
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payout.account_webhook_processed",
-        actorType: "payment_provider",
-        entityType: "ConnectedAccount",
-        entityId: connectedAccount.id,
-        participantSafe: false,
-        metadata: {
-          provider_event_id: event.id,
-          event_type: event.type,
-          account: account.id,
-          readiness,
-        },
-      },
-    })
-  })
-}
-
-async function processChargeRefundedEvent(event: Stripe.Event, providerWebhookEventId: string) {
-  const charge = event.data.object as Stripe.Charge
-  const providerPaymentId =
-    typeof charge.payment_intent === "string" ? charge.payment_intent : charge.payment_intent?.id
-
-  const paymentRecord = await prisma.paymentRecord.findFirst({
-    where: {
-      OR: [{ providerChargeId: charge.id }, ...(providerPaymentId ? [{ providerPaymentId }] : [])],
-    },
-    select: { id: true, vouchId: true, customerTotalCents: true, amountCents: true },
-  })
-
-  if (!paymentRecord) {
-    await prisma.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          charge: charge.id,
-          payment_intent: providerPaymentId,
-          reason: "No local payment record matched this refunded charge.",
-        },
-      },
-    })
-    return
-  }
-
-  await prisma.$transaction(async (tx) => {
-    const refundRecord = await tx.refundRecord.upsert({
-      where: { vouchId: paymentRecord.vouchId },
-      create: {
-        vouchId: paymentRecord.vouchId,
-        paymentRecordId: paymentRecord.id,
-        status: "succeeded",
-        reason: "provider_required",
-        amountCents:
-          charge.amount_refunded || paymentRecord.customerTotalCents || paymentRecord.amountCents,
-      },
-      update: {
-        status: "succeeded",
-        reason: "provider_required",
-        amountCents:
-          charge.amount_refunded || paymentRecord.customerTotalCents || paymentRecord.amountCents,
-      },
-    })
-    await tx.paymentRecord.update({
-      where: { id: paymentRecord.id },
-      data: { status: "refunded", providerChargeId: charge.id },
-    })
-    await tx.vouch.update({
-      where: { id: paymentRecord.vouchId },
-      data: { status: "refunded" },
-    })
-    await tx.paymentWebhookEvent.create({
-      data: {
-        provider: "stripe",
-        providerEventId: event.id,
-        eventType: event.type,
-        providerWebhookEventId,
-        vouchId: paymentRecord.vouchId,
-        paymentRecordId: paymentRecord.id,
-        refundRecordId: refundRecord.id,
-        processed: true,
-        processedAt: new Date(),
-        safeMetadata: {
-          charge: charge.id,
-          payment_intent: providerPaymentId,
-          amount_refunded: charge.amount_refunded,
-        },
-      },
-    })
-  })
-}
-
-export async function reconcileStuckPaymentRecords(input?: {
-  limit?: number
-}): Promise<{ reconciledCount: number; failedCount: number }> {
-  const records = await prisma.paymentRecord.findMany({
-    where: {
-      provider: "stripe",
-      providerPaymentId: { not: null },
-      status: {
-        in: ["requires_payment_method", "authorized", "release_pending", "refund_pending"],
-      },
-    },
-    take: input?.limit ?? 50,
-    orderBy: { updatedAt: "asc" },
-    select: { id: true, providerPaymentId: true },
-  })
-
-  let reconciledCount = 0
-  let failedCount = 0
-
-  for (const record of records) {
-    if (!record.providerPaymentId) continue
-    try {
-      const intent = await retrieveStripePaymentIntent({
-        providerPaymentId: record.providerPaymentId,
-      })
-      await prisma.paymentRecord.update({
-        where: { id: record.id },
-        data: {
-          status: mapStripePaymentIntentStatus(intent.status),
-          lastErrorCode: intent.last_payment_error?.code ?? null,
-          lastErrorMessage: intent.last_payment_error?.message ?? null,
-        },
-      })
-      reconciledCount += 1
-    } catch {
-      failedCount += 1
-    }
-  }
-
-  return { reconciledCount, failedCount }
-}
-
-export async function runPaymentReconciliationJob(input?: {
-  limit?: number
-}): Promise<{ reconciledCount: number; failedCount: number }> {
-  const payments = await reconcileStuckPaymentRecords(input)
-  const refunds = await prisma.refundRecord.findMany({
-    where: { providerRefundId: { not: null }, status: { in: ["pending", "failed"] } },
-    take: input?.limit ?? 50,
-    select: { id: true, paymentRecordId: true, providerRefundId: true },
-  })
-  let refundReconciled = 0
-  let refundFailed = 0
-
-  for (const refundRecord of refunds) {
-    if (!refundRecord.providerRefundId) continue
-    try {
-      const refund = await retrieveStripeRefund({
-        providerRefundId: refundRecord.providerRefundId,
-      })
-      const status = mapStripeRefundStatus(refund.status)
-      await prisma.$transaction([
-        prisma.refundRecord.update({ where: { id: refundRecord.id }, data: { status } }),
-        prisma.paymentRecord.update({
-          where: { id: refundRecord.paymentRecordId },
-          data: { status: status === "succeeded" ? "refunded" : "refund_pending" },
-        }),
-      ])
-      refundReconciled += 1
-    } catch {
-      refundFailed += 1
-    }
-  }
-
-  return {
-    reconciledCount: payments.reconciledCount + refundReconciled,
-    failedCount: payments.failedCount + refundFailed,
-  }
-}
-
-export async function recordProviderWebhookReceived(input: ProviderWebhookLedgerInput) {
-  return prisma.providerWebhookEvent.upsert({
-    where: {
-      provider_providerEventId: {
-        provider: input.provider,
-        providerEventId: input.providerEventId,
-      },
-    },
-    create: {
-      provider: input.provider,
-      providerEventId: input.providerEventId,
-      eventType: input.eventType,
-      status: "received",
-      processed: false,
-      safeMetadata: (input.safeMetadata ?? {}) as Prisma.InputJsonValue,
-    },
-    update: {},
-  })
-}
-
-export async function markProviderWebhookProcessed(id: string) {
-  return prisma.providerWebhookEvent.update({
-    where: { id },
-    data: {
-      status: "processed",
-      processed: true,
-      processedAt: new Date(),
-      processingError: null,
-    },
-  })
-}
-
-export async function markProviderWebhookIgnored(id: string, reason: string) {
-  return prisma.providerWebhookEvent.update({
-    where: { id },
-    data: {
-      status: "ignored",
-      processed: true,
-      processedAt: new Date(),
-      processingError: reason,
-    },
-  })
-}
-
-export async function markProviderWebhookFailed(id: string, error: string) {
-  return prisma.providerWebhookEvent.update({
-    where: { id },
-    data: {
-      status: "failed",
-      processed: false,
-      processingError: error,
-    },
-  })
-}
+/**
+ * Compatibility aliases retained temporarily.
+ */
+export const startPaymentMethodSetup = startStripePaymentManagement
+export const startPaymentMethodSetupAction = startStripePaymentManagement
+export const startPayoutOnboarding = startStripeConnectOnboarding
+export const startPayoutSetupAction = startStripeConnectOnboarding
+export const openPayoutDashboard = openStripeConnectDashboard
+export const createStripeAccountSessionAction = openStripeConnectDashboard
+export const initializeVouchPayment = authorizeVouchPayment
+export const initializeStripePaymentForVouch = authorizeVouchPayment
+export const releaseStripePaymentForCompletedVouch = captureConfirmedVouchPayment
+export const refundOrVoidStripePaymentForVouch = cancelUnconfirmedVouchPayment
+export const captureOrReleaseVouchPayment = captureConfirmedVouchPayment
+export const refundOrVoidVouchPayment = cancelUnconfirmedVouchPayment

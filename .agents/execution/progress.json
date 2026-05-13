@@ -1,42 +1,65 @@
 {
-  "schema_version": "3.0.0",
-  "file": "progress.json",
-  "product": "Vouch",
-  "updated_at": "2026-05-12T07:44:30.0000000-06:00",
-  "current_source_of_truth": "Architecture and payment invariant cleanup without word usage governance",
-  "status": "audit_cleanup_validated",
-  "completed": [
-    {
-      "id": "GOV-001",
-      "title": "Replace root and .agents governance with payer/payee Stripe Connect paradigm",
-      "completed_at": "2026-05-12T00:00:00.000Z",
-      "paths": ["AGENTS.md", ".agents/docs/prd.md", ".agents/docs/stripe-connect-integration.md", ".agents/contracts", ".agents/instructions/vouch-stripe-connect.agents.md"]
-    },
-    {
-      "id": "VC-001",
-      "title": "Normalize payer/payee readiness gates and Stripe payment authorization roles",
-      "completed_at": "2026-05-12T06:57:20.8307145-06:00",
-      "paths": ["lib/setup/status.ts", "lib/fetchers/setupFetchers.ts", "lib/actions/paymentActions.ts", "lib/actions/vouchActions.ts", "lib/integrations/stripe/connect.ts", "lib/fetchers/paymentFetchers.ts", "tests/unit/setup/status.test.ts"]
-    },
-    {
-      "id": "AUDIT-001",
-      "title": "Remove word usage governance while preserving architecture and payment invariants",
-      "completed_at": "2026-05-12T07:44:30.0000000-06:00",
-      "paths": ["AGENTS.md", ".agents/docs/prd.md", ".agents/contracts/domain-model.yaml", ".agents/contracts/roles.yaml", ".agents/contracts/acceptance-gates.yaml", ".agents/execution/decisions.json"]
-    },
-    {
-      "id": "AUDIT-002",
-      "title": "Remove dashboard sample fallbacks and unused placeholder UI files",
-      "completed_at": "2026-05-12T07:44:30.0000000-06:00",
-      "paths": ["features/dashboard/dashboard-page.tsx", "features/payments", "features/system", "features/vouches/create"]
-    },
-    {
-      "id": "AUDIT-003",
-      "title": "Fix Stripe release completion, Connect readiness mapping, and Prisma Neon configuration",
-      "completed_at": "2026-05-12T07:44:30.0000000-06:00",
-      "paths": ["lib/actions/paymentActions.ts", "lib/actions/vouchActions.ts", "lib/integrations/stripe/connect.ts", "lib/integrations/stripe/customers.ts", "lib/integrations/stripe/payment-intents.ts", "lib/db/prisma.ts", "prisma.config.ts", "tests/unit/payments/stripe-connect.test.ts"]
-    }
-  ],
-  "in_progress": [],
-  "next": ["Move app-route GET mutations into feature/action-driven flows", "Normalize raw fetcher payloads into explicit DTOs"]
+  "version": 1,
+  "project": "Vouch",
+  "audit_program": {
+    "status": "implementation_assumed_pending_local_validation",
+    "passes": [
+      {
+        "pass": 1,
+        "name": "Contract + route surface",
+        "status": "assumed_complete"
+      },
+      {
+        "pass": 2,
+        "name": "Static inventory + forbidden surface map",
+        "status": "assumed_complete"
+      },
+      {
+        "pass": 3,
+        "name": "Prisma schema + state-axis normalization",
+        "status": "assumed_complete"
+      },
+      {
+        "pass": 4,
+        "name": "Constants, TypeScript types, and Zod schemas",
+        "status": "assumed_complete"
+      },
+      {
+        "pass": 5,
+        "name": "Database selects, DTO mappers, and fetchers",
+        "status": "assumed_complete"
+      },
+      {
+        "pass": 6,
+        "name": "Server actions, transactions, auth/authz boundaries",
+        "status": "assumed_complete"
+      },
+      {
+        "pass": 7,
+        "name": "Stripe, Clerk, and webhook reconciliation",
+        "status": "assumed_complete"
+      },
+      {
+        "pass": 8,
+        "name": "Feature modules, components, UI, content, legal copy",
+        "status": "assumed_complete"
+      },
+      {
+        "pass": 9,
+        "name": "Tests, validation spine, launch checklist, final reconciliation",
+        "status": "pending_local_validation"
+      }
+    ]
+  },
+  "next_action": "Run the validation spine and update validation.json with actual command results.",
+  "required_commands": [
+    "pnpm prisma:validate",
+    "pnpm validate:contracts",
+    "pnpm lint",
+    "pnpm typecheck",
+    "pnpm test",
+    "pnpm test:e2e",
+    "pnpm validate",
+    "pnpm validate:all"
+  ]
 }

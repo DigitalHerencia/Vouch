@@ -29,8 +29,6 @@ export type VerificationProfileMinAggregateOutputType = {
   userId: string | null
   identityStatus: $Enums.VerificationStatus | null
   adultStatus: $Enums.VerificationStatus | null
-  paymentReadiness: $Enums.PaymentReadinessStatus | null
-  payoutReadiness: $Enums.PayoutReadinessStatus | null
   provider: $Enums.VerificationProvider | null
   providerReference: string | null
   createdAt: Date | null
@@ -42,8 +40,6 @@ export type VerificationProfileMaxAggregateOutputType = {
   userId: string | null
   identityStatus: $Enums.VerificationStatus | null
   adultStatus: $Enums.VerificationStatus | null
-  paymentReadiness: $Enums.PaymentReadinessStatus | null
-  payoutReadiness: $Enums.PayoutReadinessStatus | null
   provider: $Enums.VerificationProvider | null
   providerReference: string | null
   createdAt: Date | null
@@ -55,8 +51,6 @@ export type VerificationProfileCountAggregateOutputType = {
   userId: number
   identityStatus: number
   adultStatus: number
-  paymentReadiness: number
-  payoutReadiness: number
   provider: number
   providerReference: number
   createdAt: number
@@ -70,8 +64,6 @@ export type VerificationProfileMinAggregateInputType = {
   userId?: true
   identityStatus?: true
   adultStatus?: true
-  paymentReadiness?: true
-  payoutReadiness?: true
   provider?: true
   providerReference?: true
   createdAt?: true
@@ -83,8 +75,6 @@ export type VerificationProfileMaxAggregateInputType = {
   userId?: true
   identityStatus?: true
   adultStatus?: true
-  paymentReadiness?: true
-  payoutReadiness?: true
   provider?: true
   providerReference?: true
   createdAt?: true
@@ -96,8 +86,6 @@ export type VerificationProfileCountAggregateInputType = {
   userId?: true
   identityStatus?: true
   adultStatus?: true
-  paymentReadiness?: true
-  payoutReadiness?: true
   provider?: true
   providerReference?: true
   createdAt?: true
@@ -182,8 +170,6 @@ export type VerificationProfileGroupByOutputType = {
   userId: string
   identityStatus: $Enums.VerificationStatus
   adultStatus: $Enums.VerificationStatus
-  paymentReadiness: $Enums.PaymentReadinessStatus
-  payoutReadiness: $Enums.PayoutReadinessStatus
   provider: $Enums.VerificationProvider | null
   providerReference: string | null
   createdAt: Date
@@ -216,8 +202,6 @@ export type VerificationProfileWhereInput = {
   userId?: Prisma.StringFilter<"VerificationProfile"> | string
   identityStatus?: Prisma.EnumVerificationStatusFilter<"VerificationProfile"> | $Enums.VerificationStatus
   adultStatus?: Prisma.EnumVerificationStatusFilter<"VerificationProfile"> | $Enums.VerificationStatus
-  paymentReadiness?: Prisma.EnumPaymentReadinessStatusFilter<"VerificationProfile"> | $Enums.PaymentReadinessStatus
-  payoutReadiness?: Prisma.EnumPayoutReadinessStatusFilter<"VerificationProfile"> | $Enums.PayoutReadinessStatus
   provider?: Prisma.EnumVerificationProviderNullableFilter<"VerificationProfile"> | $Enums.VerificationProvider | null
   providerReference?: Prisma.StringNullableFilter<"VerificationProfile"> | string | null
   createdAt?: Prisma.DateTimeFilter<"VerificationProfile"> | Date | string
@@ -230,8 +214,6 @@ export type VerificationProfileOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   identityStatus?: Prisma.SortOrder
   adultStatus?: Prisma.SortOrder
-  paymentReadiness?: Prisma.SortOrder
-  payoutReadiness?: Prisma.SortOrder
   provider?: Prisma.SortOrderInput | Prisma.SortOrder
   providerReference?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -247,8 +229,6 @@ export type VerificationProfileWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.VerificationProfileWhereInput | Prisma.VerificationProfileWhereInput[]
   identityStatus?: Prisma.EnumVerificationStatusFilter<"VerificationProfile"> | $Enums.VerificationStatus
   adultStatus?: Prisma.EnumVerificationStatusFilter<"VerificationProfile"> | $Enums.VerificationStatus
-  paymentReadiness?: Prisma.EnumPaymentReadinessStatusFilter<"VerificationProfile"> | $Enums.PaymentReadinessStatus
-  payoutReadiness?: Prisma.EnumPayoutReadinessStatusFilter<"VerificationProfile"> | $Enums.PayoutReadinessStatus
   provider?: Prisma.EnumVerificationProviderNullableFilter<"VerificationProfile"> | $Enums.VerificationProvider | null
   providerReference?: Prisma.StringNullableFilter<"VerificationProfile"> | string | null
   createdAt?: Prisma.DateTimeFilter<"VerificationProfile"> | Date | string
@@ -261,8 +241,6 @@ export type VerificationProfileOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   identityStatus?: Prisma.SortOrder
   adultStatus?: Prisma.SortOrder
-  paymentReadiness?: Prisma.SortOrder
-  payoutReadiness?: Prisma.SortOrder
   provider?: Prisma.SortOrderInput | Prisma.SortOrder
   providerReference?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -280,8 +258,6 @@ export type VerificationProfileScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"VerificationProfile"> | string
   identityStatus?: Prisma.EnumVerificationStatusWithAggregatesFilter<"VerificationProfile"> | $Enums.VerificationStatus
   adultStatus?: Prisma.EnumVerificationStatusWithAggregatesFilter<"VerificationProfile"> | $Enums.VerificationStatus
-  paymentReadiness?: Prisma.EnumPaymentReadinessStatusWithAggregatesFilter<"VerificationProfile"> | $Enums.PaymentReadinessStatus
-  payoutReadiness?: Prisma.EnumPayoutReadinessStatusWithAggregatesFilter<"VerificationProfile"> | $Enums.PayoutReadinessStatus
   provider?: Prisma.EnumVerificationProviderNullableWithAggregatesFilter<"VerificationProfile"> | $Enums.VerificationProvider | null
   providerReference?: Prisma.StringNullableWithAggregatesFilter<"VerificationProfile"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"VerificationProfile"> | Date | string
@@ -292,8 +268,6 @@ export type VerificationProfileCreateInput = {
   id?: string
   identityStatus?: $Enums.VerificationStatus
   adultStatus?: $Enums.VerificationStatus
-  paymentReadiness?: $Enums.PaymentReadinessStatus
-  payoutReadiness?: $Enums.PayoutReadinessStatus
   provider?: $Enums.VerificationProvider | null
   providerReference?: string | null
   createdAt?: Date | string
@@ -306,8 +280,6 @@ export type VerificationProfileUncheckedCreateInput = {
   userId: string
   identityStatus?: $Enums.VerificationStatus
   adultStatus?: $Enums.VerificationStatus
-  paymentReadiness?: $Enums.PaymentReadinessStatus
-  payoutReadiness?: $Enums.PayoutReadinessStatus
   provider?: $Enums.VerificationProvider | null
   providerReference?: string | null
   createdAt?: Date | string
@@ -318,8 +290,6 @@ export type VerificationProfileUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   identityStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
   adultStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
-  paymentReadiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
-  payoutReadiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
   provider?: Prisma.NullableEnumVerificationProviderFieldUpdateOperationsInput | $Enums.VerificationProvider | null
   providerReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -332,8 +302,6 @@ export type VerificationProfileUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   identityStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
   adultStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
-  paymentReadiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
-  payoutReadiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
   provider?: Prisma.NullableEnumVerificationProviderFieldUpdateOperationsInput | $Enums.VerificationProvider | null
   providerReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -345,8 +313,6 @@ export type VerificationProfileCreateManyInput = {
   userId: string
   identityStatus?: $Enums.VerificationStatus
   adultStatus?: $Enums.VerificationStatus
-  paymentReadiness?: $Enums.PaymentReadinessStatus
-  payoutReadiness?: $Enums.PayoutReadinessStatus
   provider?: $Enums.VerificationProvider | null
   providerReference?: string | null
   createdAt?: Date | string
@@ -357,8 +323,6 @@ export type VerificationProfileUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   identityStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
   adultStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
-  paymentReadiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
-  payoutReadiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
   provider?: Prisma.NullableEnumVerificationProviderFieldUpdateOperationsInput | $Enums.VerificationProvider | null
   providerReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -370,8 +334,6 @@ export type VerificationProfileUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   identityStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
   adultStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
-  paymentReadiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
-  payoutReadiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
   provider?: Prisma.NullableEnumVerificationProviderFieldUpdateOperationsInput | $Enums.VerificationProvider | null
   providerReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -388,8 +350,6 @@ export type VerificationProfileCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   identityStatus?: Prisma.SortOrder
   adultStatus?: Prisma.SortOrder
-  paymentReadiness?: Prisma.SortOrder
-  payoutReadiness?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerReference?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -401,8 +361,6 @@ export type VerificationProfileMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   identityStatus?: Prisma.SortOrder
   adultStatus?: Prisma.SortOrder
-  paymentReadiness?: Prisma.SortOrder
-  payoutReadiness?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerReference?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -414,8 +372,6 @@ export type VerificationProfileMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   identityStatus?: Prisma.SortOrder
   adultStatus?: Prisma.SortOrder
-  paymentReadiness?: Prisma.SortOrder
-  payoutReadiness?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerReference?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
@@ -458,14 +414,6 @@ export type EnumVerificationStatusFieldUpdateOperationsInput = {
   set?: $Enums.VerificationStatus
 }
 
-export type EnumPaymentReadinessStatusFieldUpdateOperationsInput = {
-  set?: $Enums.PaymentReadinessStatus
-}
-
-export type EnumPayoutReadinessStatusFieldUpdateOperationsInput = {
-  set?: $Enums.PayoutReadinessStatus
-}
-
 export type NullableEnumVerificationProviderFieldUpdateOperationsInput = {
   set?: $Enums.VerificationProvider | null
 }
@@ -474,8 +422,6 @@ export type VerificationProfileCreateWithoutUserInput = {
   id?: string
   identityStatus?: $Enums.VerificationStatus
   adultStatus?: $Enums.VerificationStatus
-  paymentReadiness?: $Enums.PaymentReadinessStatus
-  payoutReadiness?: $Enums.PayoutReadinessStatus
   provider?: $Enums.VerificationProvider | null
   providerReference?: string | null
   createdAt?: Date | string
@@ -486,8 +432,6 @@ export type VerificationProfileUncheckedCreateWithoutUserInput = {
   id?: string
   identityStatus?: $Enums.VerificationStatus
   adultStatus?: $Enums.VerificationStatus
-  paymentReadiness?: $Enums.PaymentReadinessStatus
-  payoutReadiness?: $Enums.PayoutReadinessStatus
   provider?: $Enums.VerificationProvider | null
   providerReference?: string | null
   createdAt?: Date | string
@@ -514,8 +458,6 @@ export type VerificationProfileUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   identityStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
   adultStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
-  paymentReadiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
-  payoutReadiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
   provider?: Prisma.NullableEnumVerificationProviderFieldUpdateOperationsInput | $Enums.VerificationProvider | null
   providerReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -526,8 +468,6 @@ export type VerificationProfileUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   identityStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
   adultStatus?: Prisma.EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
-  paymentReadiness?: Prisma.EnumPaymentReadinessStatusFieldUpdateOperationsInput | $Enums.PaymentReadinessStatus
-  payoutReadiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
   provider?: Prisma.NullableEnumVerificationProviderFieldUpdateOperationsInput | $Enums.VerificationProvider | null
   providerReference?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -541,8 +481,6 @@ export type VerificationProfileSelect<ExtArgs extends runtime.Types.Extensions.I
   userId?: boolean
   identityStatus?: boolean
   adultStatus?: boolean
-  paymentReadiness?: boolean
-  payoutReadiness?: boolean
   provider?: boolean
   providerReference?: boolean
   createdAt?: boolean
@@ -555,8 +493,6 @@ export type VerificationProfileSelectCreateManyAndReturn<ExtArgs extends runtime
   userId?: boolean
   identityStatus?: boolean
   adultStatus?: boolean
-  paymentReadiness?: boolean
-  payoutReadiness?: boolean
   provider?: boolean
   providerReference?: boolean
   createdAt?: boolean
@@ -569,8 +505,6 @@ export type VerificationProfileSelectUpdateManyAndReturn<ExtArgs extends runtime
   userId?: boolean
   identityStatus?: boolean
   adultStatus?: boolean
-  paymentReadiness?: boolean
-  payoutReadiness?: boolean
   provider?: boolean
   providerReference?: boolean
   createdAt?: boolean
@@ -583,15 +517,13 @@ export type VerificationProfileSelectScalar = {
   userId?: boolean
   identityStatus?: boolean
   adultStatus?: boolean
-  paymentReadiness?: boolean
-  payoutReadiness?: boolean
   provider?: boolean
   providerReference?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type VerificationProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "identityStatus" | "adultStatus" | "paymentReadiness" | "payoutReadiness" | "provider" | "providerReference" | "createdAt" | "updatedAt", ExtArgs["result"]["verificationProfile"]>
+export type VerificationProfileOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "identityStatus" | "adultStatus" | "provider" | "providerReference" | "createdAt" | "updatedAt", ExtArgs["result"]["verificationProfile"]>
 export type VerificationProfileInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -612,8 +544,6 @@ export type $VerificationProfilePayload<ExtArgs extends runtime.Types.Extensions
     userId: string
     identityStatus: $Enums.VerificationStatus
     adultStatus: $Enums.VerificationStatus
-    paymentReadiness: $Enums.PaymentReadinessStatus
-    payoutReadiness: $Enums.PayoutReadinessStatus
     provider: $Enums.VerificationProvider | null
     providerReference: string | null
     createdAt: Date
@@ -1046,8 +976,6 @@ export interface VerificationProfileFieldRefs {
   readonly userId: Prisma.FieldRef<"VerificationProfile", 'String'>
   readonly identityStatus: Prisma.FieldRef<"VerificationProfile", 'VerificationStatus'>
   readonly adultStatus: Prisma.FieldRef<"VerificationProfile", 'VerificationStatus'>
-  readonly paymentReadiness: Prisma.FieldRef<"VerificationProfile", 'PaymentReadinessStatus'>
-  readonly payoutReadiness: Prisma.FieldRef<"VerificationProfile", 'PayoutReadinessStatus'>
   readonly provider: Prisma.FieldRef<"VerificationProfile", 'VerificationProvider'>
   readonly providerReference: Prisma.FieldRef<"VerificationProfile", 'String'>
   readonly createdAt: Prisma.FieldRef<"VerificationProfile", 'DateTime'>

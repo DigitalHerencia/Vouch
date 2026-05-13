@@ -17,8 +17,8 @@ import type * as Prisma from "../internal/prismaNamespace"
  * *
  *  * Stripe/payment-specific webhook projection.
  *  *
- *  * This satisfies the payment webhook operational/admin views while
  *  * ProviderWebhookEvent handles generic idempotency across Clerk/Stripe.
+ *  * PaymentWebhookEvent is the Stripe/payment projection only.
  */
 export type PaymentWebhookEventModel = runtime.Types.Result.DefaultSelection<Prisma.$PaymentWebhookEventPayload>
 

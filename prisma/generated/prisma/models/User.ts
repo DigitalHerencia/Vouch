@@ -210,8 +210,8 @@ export type UserWhereInput = {
   paymentCustomer?: Prisma.XOR<Prisma.PaymentCustomerNullableScalarRelationFilter, Prisma.PaymentCustomerWhereInput> | null
   connectedAccount?: Prisma.XOR<Prisma.ConnectedAccountNullableScalarRelationFilter, Prisma.ConnectedAccountWhereInput> | null
   termsAcceptances?: Prisma.TermsAcceptanceListRelationFilter
-  payerVouches?: Prisma.VouchListRelationFilter
-  payeeVouches?: Prisma.VouchListRelationFilter
+  merchantVouches?: Prisma.VouchListRelationFilter
+  customerVouches?: Prisma.VouchListRelationFilter
   presenceConfirmations?: Prisma.PresenceConfirmationListRelationFilter
   auditEvents?: Prisma.AuditEventListRelationFilter
   notificationEvents?: Prisma.NotificationEventListRelationFilter
@@ -232,8 +232,8 @@ export type UserOrderByWithRelationInput = {
   paymentCustomer?: Prisma.PaymentCustomerOrderByWithRelationInput
   connectedAccount?: Prisma.ConnectedAccountOrderByWithRelationInput
   termsAcceptances?: Prisma.TermsAcceptanceOrderByRelationAggregateInput
-  payerVouches?: Prisma.VouchOrderByRelationAggregateInput
-  payeeVouches?: Prisma.VouchOrderByRelationAggregateInput
+  merchantVouches?: Prisma.VouchOrderByRelationAggregateInput
+  customerVouches?: Prisma.VouchOrderByRelationAggregateInput
   presenceConfirmations?: Prisma.PresenceConfirmationOrderByRelationAggregateInput
   auditEvents?: Prisma.AuditEventOrderByRelationAggregateInput
   notificationEvents?: Prisma.NotificationEventOrderByRelationAggregateInput
@@ -257,8 +257,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   paymentCustomer?: Prisma.XOR<Prisma.PaymentCustomerNullableScalarRelationFilter, Prisma.PaymentCustomerWhereInput> | null
   connectedAccount?: Prisma.XOR<Prisma.ConnectedAccountNullableScalarRelationFilter, Prisma.ConnectedAccountWhereInput> | null
   termsAcceptances?: Prisma.TermsAcceptanceListRelationFilter
-  payerVouches?: Prisma.VouchListRelationFilter
-  payeeVouches?: Prisma.VouchListRelationFilter
+  merchantVouches?: Prisma.VouchListRelationFilter
+  customerVouches?: Prisma.VouchListRelationFilter
   presenceConfirmations?: Prisma.PresenceConfirmationListRelationFilter
   auditEvents?: Prisma.AuditEventListRelationFilter
   notificationEvents?: Prisma.NotificationEventListRelationFilter
@@ -307,13 +307,13 @@ export type UserCreateInput = {
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -329,13 +329,13 @@ export type UserUncheckedCreateInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -351,13 +351,13 @@ export type UserUpdateInput = {
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -373,13 +373,13 @@ export type UserUncheckedUpdateInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -530,34 +530,34 @@ export type UserUpdateOneRequiredWithoutTermsAcceptancesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTermsAcceptancesInput, Prisma.UserUpdateWithoutTermsAcceptancesInput>, Prisma.UserUncheckedUpdateWithoutTermsAcceptancesInput>
 }
 
-export type UserCreateNestedOneWithoutPayerVouchesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPayerVouchesInput, Prisma.UserUncheckedCreateWithoutPayerVouchesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPayerVouchesInput
+export type UserCreateNestedOneWithoutMerchantVouchesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMerchantVouchesInput, Prisma.UserUncheckedCreateWithoutMerchantVouchesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMerchantVouchesInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserCreateNestedOneWithoutPayeeVouchesInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPayeeVouchesInput, Prisma.UserUncheckedCreateWithoutPayeeVouchesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPayeeVouchesInput
+export type UserCreateNestedOneWithoutCustomerVouchesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomerVouchesInput, Prisma.UserUncheckedCreateWithoutCustomerVouchesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomerVouchesInput
   connect?: Prisma.UserWhereUniqueInput
 }
 
-export type UserUpdateOneRequiredWithoutPayerVouchesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPayerVouchesInput, Prisma.UserUncheckedCreateWithoutPayerVouchesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPayerVouchesInput
-  upsert?: Prisma.UserUpsertWithoutPayerVouchesInput
+export type UserUpdateOneRequiredWithoutMerchantVouchesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMerchantVouchesInput, Prisma.UserUncheckedCreateWithoutMerchantVouchesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMerchantVouchesInput
+  upsert?: Prisma.UserUpsertWithoutMerchantVouchesInput
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPayerVouchesInput, Prisma.UserUpdateWithoutPayerVouchesInput>, Prisma.UserUncheckedUpdateWithoutPayerVouchesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMerchantVouchesInput, Prisma.UserUpdateWithoutMerchantVouchesInput>, Prisma.UserUncheckedUpdateWithoutMerchantVouchesInput>
 }
 
-export type UserUpdateOneWithoutPayeeVouchesNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutPayeeVouchesInput, Prisma.UserUncheckedCreateWithoutPayeeVouchesInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPayeeVouchesInput
-  upsert?: Prisma.UserUpsertWithoutPayeeVouchesInput
+export type UserUpdateOneWithoutCustomerVouchesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomerVouchesInput, Prisma.UserUncheckedCreateWithoutCustomerVouchesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomerVouchesInput
+  upsert?: Prisma.UserUpsertWithoutCustomerVouchesInput
   disconnect?: Prisma.UserWhereInput | boolean
   delete?: Prisma.UserWhereInput | boolean
   connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPayeeVouchesInput, Prisma.UserUpdateWithoutPayeeVouchesInput>, Prisma.UserUncheckedUpdateWithoutPayeeVouchesInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCustomerVouchesInput, Prisma.UserUpdateWithoutCustomerVouchesInput>, Prisma.UserUncheckedUpdateWithoutCustomerVouchesInput>
 }
 
 export type UserCreateNestedOneWithoutPresenceConfirmationsInput = {
@@ -648,13 +648,13 @@ export type UserCreateWithoutVerificationProfileInput = {
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutVerificationProfileInput = {
@@ -669,13 +669,13 @@ export type UserUncheckedCreateWithoutVerificationProfileInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutVerificationProfileInput = {
@@ -706,13 +706,13 @@ export type UserUpdateWithoutVerificationProfileInput = {
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVerificationProfileInput = {
@@ -727,13 +727,13 @@ export type UserUncheckedUpdateWithoutVerificationProfileInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPaymentCustomerInput = {
@@ -748,13 +748,13 @@ export type UserCreateWithoutPaymentCustomerInput = {
   verificationProfile?: Prisma.VerificationProfileCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPaymentCustomerInput = {
@@ -769,13 +769,13 @@ export type UserUncheckedCreateWithoutPaymentCustomerInput = {
   verificationProfile?: Prisma.VerificationProfileUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPaymentCustomerInput = {
@@ -806,13 +806,13 @@ export type UserUpdateWithoutPaymentCustomerInput = {
   verificationProfile?: Prisma.VerificationProfileUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPaymentCustomerInput = {
@@ -827,13 +827,13 @@ export type UserUncheckedUpdateWithoutPaymentCustomerInput = {
   verificationProfile?: Prisma.VerificationProfileUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutConnectedAccountInput = {
@@ -848,13 +848,13 @@ export type UserCreateWithoutConnectedAccountInput = {
   verificationProfile?: Prisma.VerificationProfileCreateNestedOneWithoutUserInput
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutConnectedAccountInput = {
@@ -869,13 +869,13 @@ export type UserUncheckedCreateWithoutConnectedAccountInput = {
   verificationProfile?: Prisma.VerificationProfileUncheckedCreateNestedOneWithoutUserInput
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutConnectedAccountInput = {
@@ -906,13 +906,13 @@ export type UserUpdateWithoutConnectedAccountInput = {
   verificationProfile?: Prisma.VerificationProfileUpdateOneWithoutUserNestedInput
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutConnectedAccountInput = {
@@ -927,13 +927,13 @@ export type UserUncheckedUpdateWithoutConnectedAccountInput = {
   verificationProfile?: Prisma.VerificationProfileUncheckedUpdateOneWithoutUserNestedInput
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTermsAcceptancesInput = {
@@ -948,13 +948,13 @@ export type UserCreateWithoutTermsAcceptancesInput = {
   verificationProfile?: Prisma.VerificationProfileCreateNestedOneWithoutUserInput
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTermsAcceptancesInput = {
@@ -969,13 +969,13 @@ export type UserUncheckedCreateWithoutTermsAcceptancesInput = {
   verificationProfile?: Prisma.VerificationProfileUncheckedCreateNestedOneWithoutUserInput
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTermsAcceptancesInput = {
@@ -1006,13 +1006,13 @@ export type UserUpdateWithoutTermsAcceptancesInput = {
   verificationProfile?: Prisma.VerificationProfileUpdateOneWithoutUserNestedInput
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTermsAcceptancesInput = {
@@ -1027,16 +1027,16 @@ export type UserUncheckedUpdateWithoutTermsAcceptancesInput = {
   verificationProfile?: Prisma.VerificationProfileUncheckedUpdateOneWithoutUserNestedInput
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserCreateWithoutPayerVouchesInput = {
+export type UserCreateWithoutMerchantVouchesInput = {
   id?: string
   clerkUserId: string
   email?: string | null
@@ -1049,15 +1049,15 @@ export type UserCreateWithoutPayerVouchesInput = {
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutPayerVouchesInput = {
+export type UserUncheckedCreateWithoutMerchantVouchesInput = {
   id?: string
   clerkUserId: string
   email?: string | null
@@ -1070,20 +1070,20 @@ export type UserUncheckedCreateWithoutPayerVouchesInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutPayerVouchesInput = {
+export type UserCreateOrConnectWithoutMerchantVouchesInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutPayerVouchesInput, Prisma.UserUncheckedCreateWithoutPayerVouchesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutMerchantVouchesInput, Prisma.UserUncheckedCreateWithoutMerchantVouchesInput>
 }
 
-export type UserCreateWithoutPayeeVouchesInput = {
+export type UserCreateWithoutCustomerVouchesInput = {
   id?: string
   clerkUserId: string
   email?: string | null
@@ -1096,15 +1096,15 @@ export type UserCreateWithoutPayeeVouchesInput = {
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutPayeeVouchesInput = {
+export type UserUncheckedCreateWithoutCustomerVouchesInput = {
   id?: string
   clerkUserId: string
   email?: string | null
@@ -1117,31 +1117,31 @@ export type UserUncheckedCreateWithoutPayeeVouchesInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
-export type UserCreateOrConnectWithoutPayeeVouchesInput = {
+export type UserCreateOrConnectWithoutCustomerVouchesInput = {
   where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutPayeeVouchesInput, Prisma.UserUncheckedCreateWithoutPayeeVouchesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomerVouchesInput, Prisma.UserUncheckedCreateWithoutCustomerVouchesInput>
 }
 
-export type UserUpsertWithoutPayerVouchesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutPayerVouchesInput, Prisma.UserUncheckedUpdateWithoutPayerVouchesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutPayerVouchesInput, Prisma.UserUncheckedCreateWithoutPayerVouchesInput>
+export type UserUpsertWithoutMerchantVouchesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutMerchantVouchesInput, Prisma.UserUncheckedUpdateWithoutMerchantVouchesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutMerchantVouchesInput, Prisma.UserUncheckedCreateWithoutMerchantVouchesInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutPayerVouchesInput = {
+export type UserUpdateToOneWithWhereWithoutMerchantVouchesInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutPayerVouchesInput, Prisma.UserUncheckedUpdateWithoutPayerVouchesInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutMerchantVouchesInput, Prisma.UserUncheckedUpdateWithoutMerchantVouchesInput>
 }
 
-export type UserUpdateWithoutPayerVouchesInput = {
+export type UserUpdateWithoutMerchantVouchesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1154,15 +1154,15 @@ export type UserUpdateWithoutPayerVouchesInput = {
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutPayerVouchesInput = {
+export type UserUncheckedUpdateWithoutMerchantVouchesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1175,26 +1175,26 @@ export type UserUncheckedUpdateWithoutPayerVouchesInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
-export type UserUpsertWithoutPayeeVouchesInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutPayeeVouchesInput, Prisma.UserUncheckedUpdateWithoutPayeeVouchesInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutPayeeVouchesInput, Prisma.UserUncheckedCreateWithoutPayeeVouchesInput>
+export type UserUpsertWithoutCustomerVouchesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCustomerVouchesInput, Prisma.UserUncheckedUpdateWithoutCustomerVouchesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomerVouchesInput, Prisma.UserUncheckedCreateWithoutCustomerVouchesInput>
   where?: Prisma.UserWhereInput
 }
 
-export type UserUpdateToOneWithWhereWithoutPayeeVouchesInput = {
+export type UserUpdateToOneWithWhereWithoutCustomerVouchesInput = {
   where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutPayeeVouchesInput, Prisma.UserUncheckedUpdateWithoutPayeeVouchesInput>
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCustomerVouchesInput, Prisma.UserUncheckedUpdateWithoutCustomerVouchesInput>
 }
 
-export type UserUpdateWithoutPayeeVouchesInput = {
+export type UserUpdateWithoutCustomerVouchesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1207,15 +1207,15 @@ export type UserUpdateWithoutPayeeVouchesInput = {
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
-export type UserUncheckedUpdateWithoutPayeeVouchesInput = {
+export type UserUncheckedUpdateWithoutCustomerVouchesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   clerkUserId?: Prisma.StringFieldUpdateOperationsInput | string
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1228,12 +1228,12 @@ export type UserUncheckedUpdateWithoutPayeeVouchesInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPresenceConfirmationsInput = {
@@ -1249,12 +1249,12 @@ export type UserCreateWithoutPresenceConfirmationsInput = {
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPresenceConfirmationsInput = {
@@ -1270,12 +1270,12 @@ export type UserUncheckedCreateWithoutPresenceConfirmationsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPresenceConfirmationsInput = {
@@ -1307,12 +1307,12 @@ export type UserUpdateWithoutPresenceConfirmationsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPresenceConfirmationsInput = {
@@ -1328,12 +1328,12 @@ export type UserUncheckedUpdateWithoutPresenceConfirmationsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAuditEventsInput = {
@@ -1349,12 +1349,12 @@ export type UserCreateWithoutAuditEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAuditEventsInput = {
@@ -1370,12 +1370,12 @@ export type UserUncheckedCreateWithoutAuditEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAuditEventsInput = {
@@ -1407,12 +1407,12 @@ export type UserUpdateWithoutAuditEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAuditEventsInput = {
@@ -1428,12 +1428,12 @@ export type UserUncheckedUpdateWithoutAuditEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationEventsInput = {
@@ -1449,12 +1449,12 @@ export type UserCreateWithoutNotificationEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   analyticsEvents?: Prisma.AnalyticsEventCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationEventsInput = {
@@ -1470,12 +1470,12 @@ export type UserUncheckedCreateWithoutNotificationEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedCreateNestedManyWithoutUserInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationEventsInput = {
@@ -1507,12 +1507,12 @@ export type UserUpdateWithoutNotificationEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationEventsInput = {
@@ -1528,12 +1528,12 @@ export type UserUncheckedUpdateWithoutNotificationEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   analyticsEvents?: Prisma.AnalyticsEventUncheckedUpdateManyWithoutUserNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAnalyticsEventsInput = {
@@ -1549,12 +1549,12 @@ export type UserCreateWithoutAnalyticsEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
-  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAnalyticsEventsInput = {
@@ -1570,12 +1570,12 @@ export type UserUncheckedCreateWithoutAnalyticsEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutAdminUserInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAnalyticsEventsInput = {
@@ -1607,12 +1607,12 @@ export type UserUpdateWithoutAnalyticsEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
-  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAnalyticsEventsInput = {
@@ -1628,12 +1628,12 @@ export type UserUncheckedUpdateWithoutAnalyticsEventsInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
-  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutAdminUserNestedInput
+  operationalRetries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOperationalRetriesInput = {
@@ -1649,8 +1649,8 @@ export type UserCreateWithoutOperationalRetriesInput = {
   paymentCustomer?: Prisma.PaymentCustomerCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutRecipientInput
@@ -1670,8 +1670,8 @@ export type UserUncheckedCreateWithoutOperationalRetriesInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedCreateNestedOneWithoutUserInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedCreateNestedOneWithoutUserInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedCreateNestedManyWithoutUserInput
-  payerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayerInput
-  payeeVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutPayeeInput
+  merchantVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutMerchantInput
+  customerVouches?: Prisma.VouchUncheckedCreateNestedManyWithoutCustomerInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput
   auditEvents?: Prisma.AuditEventUncheckedCreateNestedManyWithoutActorUserInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutRecipientInput
@@ -1707,8 +1707,8 @@ export type UserUpdateWithoutOperationalRetriesInput = {
   paymentCustomer?: Prisma.PaymentCustomerUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutRecipientNestedInput
@@ -1728,8 +1728,8 @@ export type UserUncheckedUpdateWithoutOperationalRetriesInput = {
   paymentCustomer?: Prisma.PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput
   connectedAccount?: Prisma.ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput
   termsAcceptances?: Prisma.TermsAcceptanceUncheckedUpdateManyWithoutUserNestedInput
-  payerVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayerNestedInput
-  payeeVouches?: Prisma.VouchUncheckedUpdateManyWithoutPayeeNestedInput
+  merchantVouches?: Prisma.VouchUncheckedUpdateManyWithoutMerchantNestedInput
+  customerVouches?: Prisma.VouchUncheckedUpdateManyWithoutCustomerNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput
   auditEvents?: Prisma.AuditEventUncheckedUpdateManyWithoutActorUserNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutRecipientNestedInput
@@ -1743,8 +1743,8 @@ export type UserUncheckedUpdateWithoutOperationalRetriesInput = {
 
 export type UserCountOutputType = {
   termsAcceptances: number
-  payerVouches: number
-  payeeVouches: number
+  merchantVouches: number
+  customerVouches: number
   presenceConfirmations: number
   auditEvents: number
   notificationEvents: number
@@ -1754,8 +1754,8 @@ export type UserCountOutputType = {
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   termsAcceptances?: boolean | UserCountOutputTypeCountTermsAcceptancesArgs
-  payerVouches?: boolean | UserCountOutputTypeCountPayerVouchesArgs
-  payeeVouches?: boolean | UserCountOutputTypeCountPayeeVouchesArgs
+  merchantVouches?: boolean | UserCountOutputTypeCountMerchantVouchesArgs
+  customerVouches?: boolean | UserCountOutputTypeCountCustomerVouchesArgs
   presenceConfirmations?: boolean | UserCountOutputTypeCountPresenceConfirmationsArgs
   auditEvents?: boolean | UserCountOutputTypeCountAuditEventsArgs
   notificationEvents?: boolean | UserCountOutputTypeCountNotificationEventsArgs
@@ -1783,14 +1783,14 @@ export type UserCountOutputTypeCountTermsAcceptancesArgs<ExtArgs extends runtime
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountPayerVouchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UserCountOutputTypeCountMerchantVouchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.VouchWhereInput
 }
 
 /**
  * UserCountOutputType without action
  */
-export type UserCountOutputTypeCountPayeeVouchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UserCountOutputTypeCountCustomerVouchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.VouchWhereInput
 }
 
@@ -1843,8 +1843,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   paymentCustomer?: boolean | Prisma.User$paymentCustomerArgs<ExtArgs>
   connectedAccount?: boolean | Prisma.User$connectedAccountArgs<ExtArgs>
   termsAcceptances?: boolean | Prisma.User$termsAcceptancesArgs<ExtArgs>
-  payerVouches?: boolean | Prisma.User$payerVouchesArgs<ExtArgs>
-  payeeVouches?: boolean | Prisma.User$payeeVouchesArgs<ExtArgs>
+  merchantVouches?: boolean | Prisma.User$merchantVouchesArgs<ExtArgs>
+  customerVouches?: boolean | Prisma.User$customerVouchesArgs<ExtArgs>
   presenceConfirmations?: boolean | Prisma.User$presenceConfirmationsArgs<ExtArgs>
   auditEvents?: boolean | Prisma.User$auditEventsArgs<ExtArgs>
   notificationEvents?: boolean | Prisma.User$notificationEventsArgs<ExtArgs>
@@ -1892,8 +1892,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   paymentCustomer?: boolean | Prisma.User$paymentCustomerArgs<ExtArgs>
   connectedAccount?: boolean | Prisma.User$connectedAccountArgs<ExtArgs>
   termsAcceptances?: boolean | Prisma.User$termsAcceptancesArgs<ExtArgs>
-  payerVouches?: boolean | Prisma.User$payerVouchesArgs<ExtArgs>
-  payeeVouches?: boolean | Prisma.User$payeeVouchesArgs<ExtArgs>
+  merchantVouches?: boolean | Prisma.User$merchantVouchesArgs<ExtArgs>
+  customerVouches?: boolean | Prisma.User$customerVouchesArgs<ExtArgs>
   presenceConfirmations?: boolean | Prisma.User$presenceConfirmationsArgs<ExtArgs>
   auditEvents?: boolean | Prisma.User$auditEventsArgs<ExtArgs>
   notificationEvents?: boolean | Prisma.User$notificationEventsArgs<ExtArgs>
@@ -1911,8 +1911,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     paymentCustomer: Prisma.$PaymentCustomerPayload<ExtArgs> | null
     connectedAccount: Prisma.$ConnectedAccountPayload<ExtArgs> | null
     termsAcceptances: Prisma.$TermsAcceptancePayload<ExtArgs>[]
-    payerVouches: Prisma.$VouchPayload<ExtArgs>[]
-    payeeVouches: Prisma.$VouchPayload<ExtArgs>[]
+    merchantVouches: Prisma.$VouchPayload<ExtArgs>[]
+    customerVouches: Prisma.$VouchPayload<ExtArgs>[]
     presenceConfirmations: Prisma.$PresenceConfirmationPayload<ExtArgs>[]
     auditEvents: Prisma.$AuditEventPayload<ExtArgs>[]
     notificationEvents: Prisma.$NotificationEventPayload<ExtArgs>[]
@@ -2326,8 +2326,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   paymentCustomer<T extends Prisma.User$paymentCustomerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$paymentCustomerArgs<ExtArgs>>): Prisma.Prisma__PaymentCustomerClient<runtime.Types.Result.GetResult<Prisma.$PaymentCustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   connectedAccount<T extends Prisma.User$connectedAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$connectedAccountArgs<ExtArgs>>): Prisma.Prisma__ConnectedAccountClient<runtime.Types.Result.GetResult<Prisma.$ConnectedAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   termsAcceptances<T extends Prisma.User$termsAcceptancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$termsAcceptancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TermsAcceptancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  payerVouches<T extends Prisma.User$payerVouchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$payerVouchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VouchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  payeeVouches<T extends Prisma.User$payeeVouchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$payeeVouchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VouchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  merchantVouches<T extends Prisma.User$merchantVouchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$merchantVouchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VouchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  customerVouches<T extends Prisma.User$customerVouchesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customerVouchesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VouchPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   presenceConfirmations<T extends Prisma.User$presenceConfirmationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$presenceConfirmationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PresenceConfirmationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   auditEvents<T extends Prisma.User$auditEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificationEvents<T extends Prisma.User$notificationEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2844,9 +2844,9 @@ export type User$termsAcceptancesArgs<ExtArgs extends runtime.Types.Extensions.I
 }
 
 /**
- * User.payerVouches
+ * User.merchantVouches
  */
-export type User$payerVouchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$merchantVouchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Vouch
    */
@@ -2868,9 +2868,9 @@ export type User$payerVouchesArgs<ExtArgs extends runtime.Types.Extensions.Inter
 }
 
 /**
- * User.payeeVouches
+ * User.customerVouches
  */
-export type User$payeeVouchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type User$customerVouchesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the Vouch
    */

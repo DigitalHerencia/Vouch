@@ -2,7 +2,12 @@ import "server-only"
 
 import { randomUUID } from "node:crypto"
 
-import type { PrismaClient, VouchStatus } from "@/prisma/generated/prisma/client"
+import type {
+  ArchiveStatus,
+  PrismaClient,
+  RecoveryStatus,
+  VouchStatus,
+} from "@/prisma/generated/prisma/client"
 
 type Tx = Omit<
   PrismaClient,
@@ -12,48 +17,49 @@ type Tx = Omit<
 type VouchResult = {
   id: string
   publicId: string
-  payerId: string
-  payeeId: string | null
-  amountCents: number
+  merchantId: string
+  customerId: string | null
+  status: VouchStatus
+  archiveStatus: ArchiveStatus
+  recoveryStatus: RecoveryStatus
   currency: string
-  platformFeeCents: number
   protectedAmountCents: number
   merchantReceivesCents: number
   vouchServiceFeeCents: number
   processingFeeOffsetCents: number
   applicationFeeAmountCents: number
   customerTotalCents: number
-  status: VouchStatus
   label: string | null
-  meetingStartsAt: Date
+  appointmentStartsAt: Date
   confirmationOpensAt: Date
   confirmationExpiresAt: Date
+  committedAt: Date | null
+  sentAt: Date | null
   acceptedAt: Date | null
+  authorizedAt: Date | null
+  confirmableAt: Date | null
   completedAt: Date | null
   expiredAt: Date | null
-  canceledAt: Date | null
-  failedAt: Date | null
   createdAt: Date
   updatedAt: Date
 }
 
 type CreateVouchTxInput = {
-  payerId: string
-  payeeId?: string | null
+  merchantId: string
+  customerId?: string | null
   publicId?: string
-  amountCents: number
   currency?: string
-  platformFeeCents?: number
-  protectedAmountCents?: number
-  merchantReceivesCents?: number
-  vouchServiceFeeCents?: number
-  processingFeeOffsetCents?: number
-  applicationFeeAmountCents?: number
-  customerTotalCents?: number
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
+  applicationFeeAmountCents: number
+  customerTotalCents: number
   label?: string | null
-  meetingStartsAt: Date
+  appointmentStartsAt: Date
   confirmationOpensAt: Date
   confirmationExpiresAt: Date
+  createAsSent?: boolean
 }
 
 type VouchIdTxInput = {
@@ -65,39 +71,47 @@ type VouchStatusTxInput = {
   status: VouchStatus
 }
 
-type BindPayeeToVouchTxInput = {
+type BindCustomerToVouchTxInput = {
   vouchId: string
-  payeeId: string
+  customerId: string
 }
 
-type VouchResolutionFailureTxInput = {
+type VouchRecoveryStatusTxInput = {
   vouchId: string
+  recoveryStatus: RecoveryStatus
+}
+
+type VouchArchiveStatusTxInput = {
+  vouchId: string
+  archiveStatus: ArchiveStatus
 }
 
 const VOUCH_SELECT = {
   id: true,
   publicId: true,
-  payerId: true,
-  payeeId: true,
-  amountCents: true,
+  merchantId: true,
+  customerId: true,
+  status: true,
+  archiveStatus: true,
+  recoveryStatus: true,
   currency: true,
-  platformFeeCents: true,
   protectedAmountCents: true,
   merchantReceivesCents: true,
   vouchServiceFeeCents: true,
   processingFeeOffsetCents: true,
   applicationFeeAmountCents: true,
   customerTotalCents: true,
-  status: true,
   label: true,
-  meetingStartsAt: true,
+  appointmentStartsAt: true,
   confirmationOpensAt: true,
   confirmationExpiresAt: true,
+  committedAt: true,
+  sentAt: true,
   acceptedAt: true,
+  authorizedAt: true,
+  confirmableAt: true,
   completedAt: true,
   expiredAt: true,
-  canceledAt: true,
-  failedAt: true,
   createdAt: true,
   updatedAt: true,
 } as const
@@ -116,34 +130,45 @@ function createPublicId(): string {
   return `vch_${randomUUID().replaceAll("-", "")}`
 }
 
-export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<VouchResult> {
+function assertValidWindow(input: {
+  appointmentStartsAt: Date
+  confirmationOpensAt: Date
+  confirmationExpiresAt: Date
+}): void {
   if (input.confirmationOpensAt >= input.confirmationExpiresAt) {
     throw new Error("INVALID_VOUCH_CONFIRMATION_WINDOW")
   }
 
-  if (input.meetingStartsAt > input.confirmationExpiresAt) {
-    throw new Error("INVALID_VOUCH_MEETING_TIME")
+  if (input.appointmentStartsAt > input.confirmationExpiresAt) {
+    throw new Error("INVALID_VOUCH_APPOINTMENT_TIME")
   }
+}
+
+export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<VouchResult> {
+  assertValidWindow(input)
+
+  const now = new Date()
+  const status: VouchStatus = input.createAsSent ? "sent" : "committed"
 
   return tx.vouch.create({
     data: {
       publicId: input.publicId ?? createPublicId(),
-      payerId: assertNonEmptyString(input.payerId, "payerId"),
-      ...(input.payeeId !== undefined ? { payeeId: input.payeeId } : {}),
-      amountCents: input.amountCents,
+      merchantId: assertNonEmptyString(input.merchantId, "merchantId"),
+      ...(input.customerId !== undefined ? { customerId: input.customerId } : {}),
+      status,
       currency: input.currency ?? "usd",
-      platformFeeCents: input.platformFeeCents ?? 0,
-      protectedAmountCents: input.protectedAmountCents ?? input.amountCents,
-      merchantReceivesCents: input.merchantReceivesCents ?? input.amountCents,
-      vouchServiceFeeCents: input.vouchServiceFeeCents ?? input.platformFeeCents ?? 0,
-      processingFeeOffsetCents: input.processingFeeOffsetCents ?? 0,
-      applicationFeeAmountCents: input.applicationFeeAmountCents ?? input.platformFeeCents ?? 0,
-      customerTotalCents: input.customerTotalCents ?? input.amountCents + (input.platformFeeCents ?? 0),
-      status: "pending",
+      protectedAmountCents: input.protectedAmountCents,
+      merchantReceivesCents: input.merchantReceivesCents,
+      vouchServiceFeeCents: input.vouchServiceFeeCents,
+      processingFeeOffsetCents: input.processingFeeOffsetCents,
+      applicationFeeAmountCents: input.applicationFeeAmountCents,
+      customerTotalCents: input.customerTotalCents,
       ...(input.label !== undefined ? { label: input.label } : {}),
-      meetingStartsAt: input.meetingStartsAt,
+      appointmentStartsAt: input.appointmentStartsAt,
       confirmationOpensAt: input.confirmationOpensAt,
       confirmationExpiresAt: input.confirmationExpiresAt,
+      committedAt: now,
+      ...(input.createAsSent ? { sentAt: now } : {}),
     },
     select: VOUCH_SELECT,
   })
@@ -151,36 +176,43 @@ export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<
 
 export async function updateVouchStatusTx(tx: Tx, input: VouchStatusTxInput): Promise<VouchResult> {
   return tx.vouch.update({
-    where: {
-      id: assertNonEmptyString(input.vouchId, "vouchId"),
-    },
+    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
+    data: { status: input.status },
+    select: VOUCH_SELECT,
+  })
+}
+
+export async function markVouchSentTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
+  const now = new Date()
+
+  return tx.vouch.update({
+    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
     data: {
-      status: input.status,
+      status: "sent",
+      sentAt: now,
     },
     select: VOUCH_SELECT,
   })
 }
 
-export async function bindPayeeToVouchTx(
+export async function bindCustomerToVouchTx(
   tx: Tx,
-  input: BindPayeeToVouchTxInput
+  input: BindCustomerToVouchTxInput
 ): Promise<VouchResult> {
   const now = new Date()
   const vouchId = assertNonEmptyString(input.vouchId, "vouchId")
-  const payeeId = assertNonEmptyString(input.payeeId, "payeeId")
+  const customerId = assertNonEmptyString(input.customerId, "customerId")
 
   const updated = await tx.vouch.updateMany({
     where: {
       id: vouchId,
-      status: "pending",
-      payeeId: null,
-      payerId: {
-        not: payeeId,
-      },
+      status: { in: ["committed", "sent"] },
+      customerId: null,
+      merchantId: { not: customerId },
     },
     data: {
-      payeeId,
-      status: "active",
+      customerId,
+      status: "accepted",
       acceptedAt: now,
     },
   })
@@ -190,34 +222,28 @@ export async function bindPayeeToVouchTx(
   }
 
   return tx.vouch.findUniqueOrThrow({
-    where: {
-      id: vouchId,
+    where: { id: vouchId },
+    select: VOUCH_SELECT,
+  })
+}
+
+export async function markVouchAuthorizedTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
+  return tx.vouch.update({
+    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
+    data: {
+      status: "authorized",
+      authorizedAt: new Date(),
     },
     select: VOUCH_SELECT,
   })
 }
 
-export async function cancelPendingVouchTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
+export async function markVouchConfirmableTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
   return tx.vouch.update({
-    where: {
-      id: assertNonEmptyString(input.vouchId, "vouchId"),
-    },
+    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
     data: {
-      status: "canceled",
-      canceledAt: new Date(),
-    },
-    select: VOUCH_SELECT,
-  })
-}
-
-export async function markVouchActiveTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return tx.vouch.update({
-    where: {
-      id: assertNonEmptyString(input.vouchId, "vouchId"),
-    },
-    data: {
-      status: "active",
-      acceptedAt: new Date(),
+      status: "confirmable",
+      confirmableAt: new Date(),
     },
     select: VOUCH_SELECT,
   })
@@ -225,9 +251,7 @@ export async function markVouchActiveTx(tx: Tx, input: VouchIdTxInput): Promise<
 
 export async function markVouchCompletedTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
   return tx.vouch.update({
-    where: {
-      id: assertNonEmptyString(input.vouchId, "vouchId"),
-    },
+    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
     data: {
       status: "completed",
       completedAt: new Date(),
@@ -238,9 +262,7 @@ export async function markVouchCompletedTx(tx: Tx, input: VouchIdTxInput): Promi
 
 export async function markVouchExpiredTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
   return tx.vouch.update({
-    where: {
-      id: assertNonEmptyString(input.vouchId, "vouchId"),
-    },
+    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
     data: {
       status: "expired",
       expiredAt: new Date(),
@@ -249,58 +271,47 @@ export async function markVouchExpiredTx(tx: Tx, input: VouchIdTxInput): Promise
   })
 }
 
-export async function markVouchRefundedTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
+export async function updateVouchArchiveStatusTx(
+  tx: Tx,
+  input: VouchArchiveStatusTxInput
+): Promise<VouchResult> {
   return tx.vouch.update({
-    where: {
-      id: assertNonEmptyString(input.vouchId, "vouchId"),
-    },
-    data: {
-      status: "refunded",
-    },
+    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
+    data: { archiveStatus: input.archiveStatus },
     select: VOUCH_SELECT,
   })
 }
 
-export async function markVouchCanceledTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
+export async function updateVouchRecoveryStatusTx(
+  tx: Tx,
+  input: VouchRecoveryStatusTxInput
+): Promise<VouchResult> {
   return tx.vouch.update({
-    where: {
-      id: assertNonEmptyString(input.vouchId, "vouchId"),
-    },
-    data: {
-      status: "canceled",
-      canceledAt: new Date(),
-    },
+    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
+    data: { recoveryStatus: input.recoveryStatus },
     select: VOUCH_SELECT,
   })
 }
 
-export async function markVouchFailedTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return tx.vouch.update({
-    where: {
-      id: assertNonEmptyString(input.vouchId, "vouchId"),
-    },
-    data: {
-      status: "failed",
-      failedAt: new Date(),
-    },
-    select: VOUCH_SELECT,
-  })
-}
-
-export async function completeVouchWithPaymentReleaseTx(
+export async function completeVouchWithPaymentCaptureTx(
   tx: Tx,
   input: VouchIdTxInput
 ): Promise<VouchResult> {
   return markVouchCompletedTx(tx, input)
 }
 
-export async function expireVouchWithRefundTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
+export async function expireVouchWithoutCaptureTx(
+  tx: Tx,
+  input: VouchIdTxInput
+): Promise<VouchResult> {
   return markVouchExpiredTx(tx, input)
 }
 
-export async function markResolutionFailureTx(
-  tx: Tx,
-  input: VouchResolutionFailureTxInput
-): Promise<VouchResult> {
-  return markVouchFailedTx(tx, input)
-}
+/**
+ * Compatibility aliases retained only for old imports during Pass 6.
+ * Later passes should remove these names.
+ */
+export const bindPayeeToVouchTx = bindCustomerToVouchTx
+export const cancelPendingVouchTx = markVouchExpiredTx
+export const markVouchActiveTx = markVouchAuthorizedTx
+export const markResolutionFailureTx = updateVouchRecoveryStatusTx

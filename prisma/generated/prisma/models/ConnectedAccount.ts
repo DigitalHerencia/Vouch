@@ -33,6 +33,9 @@ export type ConnectedAccountMinAggregateOutputType = {
   chargesEnabled: boolean | null
   payoutsEnabled: boolean | null
   detailsSubmitted: boolean | null
+  lastProviderSyncAt: Date | null
+  lastErrorCode: string | null
+  lastErrorMessage: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -46,6 +49,9 @@ export type ConnectedAccountMaxAggregateOutputType = {
   chargesEnabled: boolean | null
   payoutsEnabled: boolean | null
   detailsSubmitted: boolean | null
+  lastProviderSyncAt: Date | null
+  lastErrorCode: string | null
+  lastErrorMessage: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -59,6 +65,9 @@ export type ConnectedAccountCountAggregateOutputType = {
   chargesEnabled: number
   payoutsEnabled: number
   detailsSubmitted: number
+  lastProviderSyncAt: number
+  lastErrorCode: number
+  lastErrorMessage: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -74,6 +83,9 @@ export type ConnectedAccountMinAggregateInputType = {
   chargesEnabled?: true
   payoutsEnabled?: true
   detailsSubmitted?: true
+  lastProviderSyncAt?: true
+  lastErrorCode?: true
+  lastErrorMessage?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -87,6 +99,9 @@ export type ConnectedAccountMaxAggregateInputType = {
   chargesEnabled?: true
   payoutsEnabled?: true
   detailsSubmitted?: true
+  lastProviderSyncAt?: true
+  lastErrorCode?: true
+  lastErrorMessage?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -100,6 +115,9 @@ export type ConnectedAccountCountAggregateInputType = {
   chargesEnabled?: true
   payoutsEnabled?: true
   detailsSubmitted?: true
+  lastProviderSyncAt?: true
+  lastErrorCode?: true
+  lastErrorMessage?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -186,6 +204,9 @@ export type ConnectedAccountGroupByOutputType = {
   chargesEnabled: boolean
   payoutsEnabled: boolean
   detailsSubmitted: boolean
+  lastProviderSyncAt: Date | null
+  lastErrorCode: string | null
+  lastErrorMessage: string | null
   createdAt: Date
   updatedAt: Date
   _count: ConnectedAccountCountAggregateOutputType | null
@@ -220,6 +241,9 @@ export type ConnectedAccountWhereInput = {
   chargesEnabled?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
   payoutsEnabled?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
   detailsSubmitted?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
+  lastProviderSyncAt?: Prisma.DateTimeNullableFilter<"ConnectedAccount"> | Date | string | null
+  lastErrorCode?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  lastErrorMessage?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ConnectedAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ConnectedAccount"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -234,6 +258,9 @@ export type ConnectedAccountOrderByWithRelationInput = {
   chargesEnabled?: Prisma.SortOrder
   payoutsEnabled?: Prisma.SortOrder
   detailsSubmitted?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -251,6 +278,9 @@ export type ConnectedAccountWhereUniqueInput = Prisma.AtLeast<{
   chargesEnabled?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
   payoutsEnabled?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
   detailsSubmitted?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
+  lastProviderSyncAt?: Prisma.DateTimeNullableFilter<"ConnectedAccount"> | Date | string | null
+  lastErrorCode?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  lastErrorMessage?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
   createdAt?: Prisma.DateTimeFilter<"ConnectedAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ConnectedAccount"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -265,6 +295,9 @@ export type ConnectedAccountOrderByWithAggregationInput = {
   chargesEnabled?: Prisma.SortOrder
   payoutsEnabled?: Prisma.SortOrder
   detailsSubmitted?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ConnectedAccountCountOrderByAggregateInput
@@ -284,6 +317,9 @@ export type ConnectedAccountScalarWhereWithAggregatesInput = {
   chargesEnabled?: Prisma.BoolWithAggregatesFilter<"ConnectedAccount"> | boolean
   payoutsEnabled?: Prisma.BoolWithAggregatesFilter<"ConnectedAccount"> | boolean
   detailsSubmitted?: Prisma.BoolWithAggregatesFilter<"ConnectedAccount"> | boolean
+  lastProviderSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ConnectedAccount"> | Date | string | null
+  lastErrorCode?: Prisma.StringNullableWithAggregatesFilter<"ConnectedAccount"> | string | null
+  lastErrorMessage?: Prisma.StringNullableWithAggregatesFilter<"ConnectedAccount"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ConnectedAccount"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ConnectedAccount"> | Date | string
 }
@@ -296,6 +332,9 @@ export type ConnectedAccountCreateInput = {
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
+  lastProviderSyncAt?: Date | string | null
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutConnectedAccountInput
@@ -310,6 +349,9 @@ export type ConnectedAccountUncheckedCreateInput = {
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
+  lastProviderSyncAt?: Date | string | null
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -322,6 +364,9 @@ export type ConnectedAccountUpdateInput = {
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutConnectedAccountNestedInput
@@ -336,6 +381,9 @@ export type ConnectedAccountUncheckedUpdateInput = {
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -349,6 +397,9 @@ export type ConnectedAccountCreateManyInput = {
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
+  lastProviderSyncAt?: Date | string | null
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -361,6 +412,9 @@ export type ConnectedAccountUpdateManyMutationInput = {
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -374,6 +428,9 @@ export type ConnectedAccountUncheckedUpdateManyInput = {
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -392,6 +449,9 @@ export type ConnectedAccountCountOrderByAggregateInput = {
   chargesEnabled?: Prisma.SortOrder
   payoutsEnabled?: Prisma.SortOrder
   detailsSubmitted?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -405,6 +465,9 @@ export type ConnectedAccountMaxOrderByAggregateInput = {
   chargesEnabled?: Prisma.SortOrder
   payoutsEnabled?: Prisma.SortOrder
   detailsSubmitted?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -418,6 +481,9 @@ export type ConnectedAccountMinOrderByAggregateInput = {
   chargesEnabled?: Prisma.SortOrder
   payoutsEnabled?: Prisma.SortOrder
   detailsSubmitted?: Prisma.SortOrder
+  lastProviderSyncAt?: Prisma.SortOrder
+  lastErrorCode?: Prisma.SortOrder
+  lastErrorMessage?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -454,6 +520,10 @@ export type ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ConnectedAccountUpdateToOneWithWhereWithoutUserInput, Prisma.ConnectedAccountUpdateWithoutUserInput>, Prisma.ConnectedAccountUncheckedUpdateWithoutUserInput>
 }
 
+export type EnumPayoutReadinessStatusFieldUpdateOperationsInput = {
+  set?: $Enums.PayoutReadinessStatus
+}
+
 export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
@@ -466,6 +536,9 @@ export type ConnectedAccountCreateWithoutUserInput = {
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
+  lastProviderSyncAt?: Date | string | null
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -478,6 +551,9 @@ export type ConnectedAccountUncheckedCreateWithoutUserInput = {
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
+  lastProviderSyncAt?: Date | string | null
+  lastErrorCode?: string | null
+  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -506,6 +582,9 @@ export type ConnectedAccountUpdateWithoutUserInput = {
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -518,6 +597,9 @@ export type ConnectedAccountUncheckedUpdateWithoutUserInput = {
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -533,6 +615,9 @@ export type ConnectedAccountSelect<ExtArgs extends runtime.Types.Extensions.Inte
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
+  lastProviderSyncAt?: boolean
+  lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -547,6 +632,9 @@ export type ConnectedAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
+  lastProviderSyncAt?: boolean
+  lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -561,6 +649,9 @@ export type ConnectedAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
+  lastProviderSyncAt?: boolean
+  lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -575,11 +666,14 @@ export type ConnectedAccountSelectScalar = {
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
+  lastProviderSyncAt?: boolean
+  lastErrorCode?: boolean
+  lastErrorMessage?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ConnectedAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "provider" | "providerAccountId" | "readiness" | "chargesEnabled" | "payoutsEnabled" | "detailsSubmitted" | "createdAt" | "updatedAt", ExtArgs["result"]["connectedAccount"]>
+export type ConnectedAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "provider" | "providerAccountId" | "readiness" | "chargesEnabled" | "payoutsEnabled" | "detailsSubmitted" | "lastProviderSyncAt" | "lastErrorCode" | "lastErrorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["connectedAccount"]>
 export type ConnectedAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -604,6 +698,9 @@ export type $ConnectedAccountPayload<ExtArgs extends runtime.Types.Extensions.In
     chargesEnabled: boolean
     payoutsEnabled: boolean
     detailsSubmitted: boolean
+    lastProviderSyncAt: Date | null
+    lastErrorCode: string | null
+    lastErrorMessage: string | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["connectedAccount"]>
@@ -1038,6 +1135,9 @@ export interface ConnectedAccountFieldRefs {
   readonly chargesEnabled: Prisma.FieldRef<"ConnectedAccount", 'Boolean'>
   readonly payoutsEnabled: Prisma.FieldRef<"ConnectedAccount", 'Boolean'>
   readonly detailsSubmitted: Prisma.FieldRef<"ConnectedAccount", 'Boolean'>
+  readonly lastProviderSyncAt: Prisma.FieldRef<"ConnectedAccount", 'DateTime'>
+  readonly lastErrorCode: Prisma.FieldRef<"ConnectedAccount", 'String'>
+  readonly lastErrorMessage: Prisma.FieldRef<"ConnectedAccount", 'String'>
   readonly createdAt: Prisma.FieldRef<"ConnectedAccount", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ConnectedAccount", 'DateTime'>
 }

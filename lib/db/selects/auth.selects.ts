@@ -18,8 +18,39 @@ const authReadinessSelect = {
     select: {
       identityStatus: true,
       adultStatus: true,
-      paymentReadiness: true,
-      payoutReadiness: true,
+      provider: true,
+      providerReference: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  },
+  paymentCustomer: {
+    select: {
+      id: true,
+      provider: true,
+      providerCustomerId: true,
+      readiness: true,
+      lastProviderSyncAt: true,
+      lastErrorCode: true,
+      lastErrorMessage: true,
+      createdAt: true,
+      updatedAt: true,
+    },
+  },
+  connectedAccount: {
+    select: {
+      id: true,
+      provider: true,
+      providerAccountId: true,
+      readiness: true,
+      chargesEnabled: true,
+      payoutsEnabled: true,
+      detailsSubmitted: true,
+      lastProviderSyncAt: true,
+      lastErrorCode: true,
+      lastErrorMessage: true,
+      createdAt: true,
+      updatedAt: true,
     },
   },
   termsAcceptances: latestTermsAcceptanceArgs,
@@ -35,24 +66,17 @@ export const currentUserAuthSelect = {
   createdAt: true,
   updatedAt: true,
   ...authReadinessSelect,
-}
+} as const satisfies Prisma.UserSelect
 
 export const activeUserGateSelect = {
   id: true,
   status: true,
 } as const satisfies Prisma.UserSelect
 
-export const adminCapabilitySelect = {
-  id: true,
-  status: true,
-  clerkUserId: true,
-  email: true,
-} as const satisfies Prisma.UserSelect
-
 export const contextualParticipantRoleSelect = {
   id: true,
-  payerId: true,
-  payeeId: true,
+  merchantId: true,
+  customerId: true,
   status: true,
 } as const satisfies Prisma.VouchSelect
 
@@ -67,13 +91,19 @@ export const inviteCandidateAuthSelect = {
     select: {
       id: true,
       publicId: true,
-      payerId: true,
-      payeeId: true,
+      merchantId: true,
+      customerId: true,
       status: true,
-      amountCents: true,
+      archiveStatus: true,
+      recoveryStatus: true,
       currency: true,
-      platformFeeCents: true,
-      meetingStartsAt: true,
+      protectedAmountCents: true,
+      merchantReceivesCents: true,
+      vouchServiceFeeCents: true,
+      processingFeeOffsetCents: true,
+      applicationFeeAmountCents: true,
+      customerTotalCents: true,
+      appointmentStartsAt: true,
       confirmationOpensAt: true,
       confirmationExpiresAt: true,
     },
@@ -90,3 +120,9 @@ export const authWebhookUserSyncSelect = {
   createdAt: true,
   updatedAt: true,
 } as const satisfies Prisma.UserSelect
+
+/**
+ * Compatibility alias retained only if old imports still exist.
+ * This does not create an admin product surface.
+ */
+export const adminCapabilitySelect = activeUserGateSelect

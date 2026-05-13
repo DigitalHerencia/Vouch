@@ -1,116 +1,48 @@
 import { z } from "zod"
 
-export const vouchStatusSchema = z.enum([
-  "pending",
-  "active",
-  "completed",
-  "expired",
-  "refunded",
-  "canceled",
-  "failed",
-])
-export const invitationStatusSchema = z.enum([
-  "created",
-  "sent",
-  "opened",
-  "accepted",
-  "declined",
-  "expired",
-  "invalidated",
-])
-export const participantRoleSchema = z.enum(["payer", "payee"])
-export const confirmationStatusSchema = z.enum([
-  "not_confirmed",
-  "confirmed",
-  "ineligible",
-  "window_not_open",
-  "window_closed",
-])
-export const aggregateConfirmationStatusSchema = z.enum([
-  "none_confirmed",
-  "payer_confirmed",
-  "payee_confirmed",
-  "both_confirmed",
-])
-export const confirmationMethodSchema = z.enum(["manual", "gps", "system"])
-export const recipientMethodSchema = z.enum(["email", "link"])
-export const vouchListStatusFilterSchema = z.enum([
-  "action_required",
-  "active",
-  "pending",
-  "completed",
-  "expired",
-  "refunded",
-])
-export const vouchListSortSchema = z.enum(["newest", "oldest", "deadline"])
-export const vouchDetailVariantSchema = z.enum([
-  "pending",
-  "active",
-  "completed",
-  "expired",
-  "refunded",
-  "failed",
-  "unauthorized",
-  "loading",
-])
-export const confirmPresenceVariantSchema = z.enum([
-  "open",
-  "before_window",
-  "closed",
-  "already_confirmed",
-  "waiting",
-  "success",
-  "unauthorized",
-  "provider_failure",
-])
-export const vouchIdParamSchema = z.object({ vouchId: z.string().trim().min(1) })
-export const inviteTokenParamSchema = z.object({ token: z.string().trim().min(1) })
-export const inviteTokenInputSchema = z.object({ token: z.string().trim().min(1) })
-export const feePreviewInputSchema = z.object({ amountCents: z.number().int().min(100) })
-export const createVouchDraftInputSchema = z.object({
-  amountCents: z.number().int().min(100).optional(),
+import {
+  AGGREGATE_CONFIRMATION_STATUS_VALUES,
+  CONFIRMATION_METHOD_VALUES,
+  CONFIRMATION_STATUS_VALUES,
+  CONFIRM_PRESENCE_VARIANT_VALUES,
+  INVITATION_STATUS_VALUES,
+  PARTICIPANT_ROLE_VALUES,
+  VOUCH_DETAIL_VARIANT_VALUES,
+  VOUCH_LIST_SORT_VALUES,
+  VOUCH_LIST_STATUS_FILTER_VALUES,
+  VOUCH_STATUS_VALUES,
+} from "@/lib/vouch/constants"
+
+import { positiveMoneyCentsSchema, vouchIdSchema } from "./common"
+
+export const vouchStatusSchema = z.enum(VOUCH_STATUS_VALUES)
+export const invitationStatusSchema = z.enum(INVITATION_STATUS_VALUES)
+export const participantRoleSchema = z.enum(PARTICIPANT_ROLE_VALUES)
+export const confirmationStatusSchema = z.enum(CONFIRMATION_STATUS_VALUES)
+export const aggregateConfirmationStatusSchema = z.enum(AGGREGATE_CONFIRMATION_STATUS_VALUES)
+export const confirmationMethodSchema = z.enum(CONFIRMATION_METHOD_VALUES)
+
+export const vouchListStatusFilterSchema = z.enum(VOUCH_LIST_STATUS_FILTER_VALUES)
+export const vouchListSortSchema = z.enum(VOUCH_LIST_SORT_VALUES)
+export const vouchDetailVariantSchema = z.enum(VOUCH_DETAIL_VARIANT_VALUES)
+export const confirmPresenceVariantSchema = z.enum(CONFIRM_PRESENCE_VARIANT_VALUES)
+
+export const vouchIdParamSchema = z.object({
+  vouchId: vouchIdSchema,
+})
+
+export const feePreviewInputSchema = z.object({
+  amountCents: positiveMoneyCentsSchema,
   currency: z.literal("usd").default("usd"),
 })
-export const sendVouchInvitationInputSchema = z.object({
-  vouchId: z.string().trim().min(1),
-  recipientEmail: z.string().trim().email().optional(),
-})
-export const resendVouchInvitationInputSchema = z.object({ invitationId: z.string().trim().min(1) })
-export const cancelPendingVouchInputSchema = z.object({ vouchId: z.string().trim().min(1) })
 
-export const vouchCurrencySchema = z.literal("usd")
-
-export const vouchLabelSchema = z
-  .string()
-  .trim()
-  .min(1, "Label must not be empty.")
-  .max(120, "Label must be 120 characters or fewer.")
-  .optional()
-
-export const createVouchSchema = z
+export const createVouchDraftSchema = z
   .object({
-    amountCents: z
-      .number()
-      .int("Amount must be represented in whole cents.")
-      .min(100, "Amount must be at least $1.00."),
-    currency: vouchCurrencySchema.default("usd"),
-    meetingStartsAt: z.coerce.date(),
+    amountCents: positiveMoneyCentsSchema,
+    currency: z.literal("usd").default("usd"),
+    appointmentStartsAt: z.coerce.date(),
     confirmationOpensAt: z.coerce.date(),
     confirmationExpiresAt: z.coerce.date(),
-    recipientEmail: z
-      .string()
-      .trim()
-      .email("Enter a valid email address.")
-      .max(320)
-      .optional()
-      .or(z.literal("").transform(() => undefined)),
-    label: vouchLabelSchema,
-    termsAccepted: z.literal(true, {
-      error: "You must accept the Vouch terms before creating this Vouch.",
-    }),
-    disclaimerAccepted: z.literal(true, {
-      error: "You must accept the conditional payment disclaimer before creating this Vouch.",
-    }),
   })
   .superRefine((value, ctx) => {
     if (value.confirmationOpensAt >= value.confirmationExpiresAt) {
@@ -121,50 +53,52 @@ export const createVouchSchema = z
       })
     }
 
-    if (value.meetingStartsAt > value.confirmationExpiresAt) {
+    if (value.appointmentStartsAt > value.confirmationExpiresAt) {
       ctx.addIssue({
         code: "custom",
-        path: ["meetingStartsAt"],
-        message: "Meeting start must be before the confirmation deadline.",
+        path: ["appointmentStartsAt"],
+        message: "Appointment must occur before the confirmation deadline.",
       })
     }
   })
 
-export type CreateVouchInput = z.infer<typeof createVouchSchema>
-
-export const acceptVouchSchema = z.object({
-  token: z.string().trim().min(8, "Invite token is invalid."),
-  termsAccepted: z.literal(true, {
-    error: "You must accept the Vouch terms before accepting this Vouch.",
+export const confirmCreateVouchSchema = createVouchDraftSchema.extend({
+  disclaimerAccepted: z.literal(true, {
+    error: "You must accept the conditional payment disclaimer before creating this Vouch.",
   }),
 })
 
-export type AcceptVouchInput = z.infer<typeof acceptVouchSchema>
-
-export const declineVouchSchema = z.object({
-  token: z.string().trim().min(8, "Invite token is invalid."),
-})
-
-export type DeclineVouchInput = z.infer<typeof declineVouchSchema>
-
 export const confirmPresenceSchema = z.object({
-  vouchId: z.string().trim().min(1, "Vouch ID is required."),
-  method: z.enum(["manual", "gps", "system"]).default("manual"),
+  vouchId: vouchIdSchema,
+  submittedCode: z.string().trim().min(4).max(12),
+  method: confirmationMethodSchema.default("code_exchange"),
 })
 
-export type ConfirmPresenceInput = z.infer<typeof confirmPresenceSchema>
+export const archiveVouchSchema = z.object({
+  vouchId: vouchIdSchema,
+})
 
 export const vouchListSearchParamsSchema = z.object({
-  status: z
-    .enum(["action_required", "active", "pending", "completed", "expired", "refunded"])
-    .optional(),
+  status: vouchListStatusFilterSchema.optional(),
   page: z.coerce.number().int().min(1).default(1),
-  sort: z.enum(["newest", "oldest", "deadline"]).default("newest"),
+  sort: vouchListSortSchema.default("newest"),
 })
 
+export type CreateVouchDraftInput = z.infer<typeof createVouchDraftSchema>
+export type ConfirmCreateVouchInput = z.infer<typeof confirmCreateVouchSchema>
+export type ConfirmPresenceInput = z.infer<typeof confirmPresenceSchema>
+export type ArchiveVouchInput = z.infer<typeof archiveVouchSchema>
 export type VouchListSearchParams = z.infer<typeof vouchListSearchParamsSchema>
-export const vouchListQuerySchema = vouchListSearchParamsSchema
-export const createVouchInputSchema = createVouchSchema
-export const acceptVouchInputSchema = acceptVouchSchema
-export const declineVouchInputSchema = declineVouchSchema
+
+/**
+ * Backward-compatible schema aliases retained only to keep Pass 4 isolated.
+ * Later passes should migrate call sites to the canonical schema names.
+ */
+export const createVouchSchema = confirmCreateVouchSchema
+export const createVouchInputSchema = confirmCreateVouchSchema
+export const createVouchDraftInputSchema = createVouchDraftSchema
+export const confirmCreateVouchInputSchema = confirmCreateVouchSchema
 export const confirmPresenceInputSchema = confirmPresenceSchema
+export const vouchListQuerySchema = vouchListSearchParamsSchema
+
+export type CreateVouchInput = ConfirmCreateVouchInput

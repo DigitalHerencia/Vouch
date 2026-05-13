@@ -1,50 +1,53 @@
 {
-  "schema_version": "3.0.0",
-  "file": "handoff.json",
-  "product": "Vouch",
-  "updated_at": "2026-05-12T00:00:00.000Z",
-  "current_paradigm": {
-    "summary": "Vouch is a narrow commitment-backed payment coordination system for pre-arranged appointments and in-person agreements.",
-    "core_invariant": "both parties confirm presence within the confirmation window -> funds release; otherwise -> refund, void, or non-capture",
-    "outcome_rule": "Outcome follows system state."
-  },
-  "must_preserve": [
-    "No unilateral action releases funds.",
-    "No late confirmation releases funds.",
-    "No admin arbitration releases funds.",
-    "No manual fund award exists.",
-    "No discretionary confirmation rewrite exists.",
-    "No dispute/evidence/appeal surface exists.",
-    "Payer payment setup and payee payout setup are separate readiness tracks.",
-    "Stripe SDK calls remain isolated in lib/integrations/stripe.",
-    "Current Stripe PaymentIntent state is retrieved before settlement.",
-    "Provider webhooks reconcile state idempotently."
+  "version": 1,
+  "project": "Vouch",
+  "handoff_status": "pending_local_validation",
+  "summary": "Passes 1 through 9 have been planned as source-of-truth conformance work. The repo must not be considered launch-ready until the full validation spine passes locally.",
+  "source_invariants": [
+    "Vouch is commitment-backed payment coordination only.",
+    "Both participants confirm inside the window before funds release.",
+    "If confirmation conditions fail, funds do not release.",
+    "Stripe owns payment truth; Vouch owns workflow truth.",
+    "No disputes, evidence, mediation, arbitration, manual awards, support overrides, marketplace discovery, messaging, reviews, ratings, browse, search, or public provider profiles."
   ],
-  "primary_sources": [
-    "AGENTS.md",
-    ".agents/docs/prd.md",
-    ".agents/docs/stripe-connect-integration.md",
-    ".agents/contracts/domain-model.yaml",
-    ".agents/contracts/routes.yaml",
-    ".agents/instructions/vouch-stripe-connect.agents.md"
+  "validation_required": [
+    "pnpm prisma:validate",
+    "pnpm validate:contracts",
+    "pnpm lint",
+    "pnpm typecheck",
+    "pnpm test",
+    "pnpm test:e2e",
+    "pnpm validate",
+    "pnpm validate:all"
   ],
-  "next_work": [
-    "VC-001",
-    "VC-002",
-    "VC-003",
-    "VC-004",
-    "VC-005"
+  "known_blockers": [],
+  "do_not_reintroduce": [
+    "/setup",
+    "/settings",
+    "/settings/payment",
+    "/settings/payout",
+    "/settings/verification",
+    "/readiness",
+    "/account",
+    "/profile",
+    "/admin",
+    "/messages",
+    "/disputes",
+    "/claims",
+    "/appeals",
+    "/evidence",
+    "/reviews",
+    "/ratings",
+    "/search",
+    "/browse",
+    "/providers",
+    "/marketplace",
+    "/vouches/[vouchId]/confirm",
+    "/vouches/invite/*",
+    "pending/active/refunded/canceled/failed as VouchStatus",
+    "manual/gps/system confirmation methods",
+    "payer/payee as canonical participant roles",
+    "manual settlement or support override behavior"
   ],
-  "known_risks": [
-    {
-      "id": "RISK-001",
-      "description": "Existing code may still reflect older role, fee, route, or readiness assumptions.",
-      "mitigation": "Use the updated contracts as source of truth and update implementation in the documented phase order."
-    },
-    {
-      "id": "RISK-002",
-      "description": "The fee policy is stated as max 5% of customer total or 500 cents and must be encoded precisely in lib/vouch/fees.ts tests.",
-      "mitigation": "Add focused fee tests before changing payment settlement behavior."
-    }
-  ]
+  "next_handoff_instruction": "After local validation is run, paste the first failing command and exact error output. Fix only the smallest root cause."
 }

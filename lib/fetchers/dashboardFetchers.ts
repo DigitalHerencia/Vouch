@@ -4,36 +4,28 @@ import { unstable_noStore as noStore } from "next/cache"
 
 import type { Prisma, VouchStatus } from "@/prisma/generated/prisma/client"
 
+import {
+  getDashboardVariant,
+  mapDashboardReadinessCalloutDTO,
+  mapDashboardSummaryDTO,
+  type DashboardEmptyStateDTO,
+  type DashboardFiltersDTO,
+  type DashboardPageStateDTO,
+  type DashboardReadinessCalloutDTO,
+  type DashboardSummaryDTO,
+} from "@/lib/dto/dashboard.mappers"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { getCreateVouchSetupGate } from "@/lib/fetchers/setupFetchers"
 import { prisma } from "@/lib/db/prisma"
 import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
 
-const iso = (v: Date | null | undefined) => (v ? v.toISOString() : null)
+const DEFAULT_TAKE = 10
 
 type VouchCardRecord = Prisma.VouchGetPayload<{ select: typeof vouchCardSelect }>
 
-function mapVouch(v: VouchCardRecord | null) {
-  return v
-    ? {
-        ...v,
-        meetingStartsAt: iso(v.meetingStartsAt),
-        confirmationOpensAt: iso(v.confirmationOpensAt),
-        confirmationExpiresAt: iso(v.confirmationExpiresAt),
-        acceptedAt: iso(v.acceptedAt),
-        completedAt: iso(v.completedAt),
-        expiredAt: iso(v.expiredAt),
-        canceledAt: iso(v.canceledAt),
-        failedAt: iso(v.failedAt),
-        createdAt: iso(v.createdAt),
-        updatedAt: iso(v.updatedAt),
-      }
-    : null
-}
-
 export async function parseDashboardSearchParams(
   searchParams: Record<string, string | string[] | undefined>
-) {
+): Promise<DashboardFiltersDTO> {
   const value = (key: string) => {
     const raw = searchParams[key]
     return Array.isArray(raw) ? raw[0] : raw
@@ -46,121 +38,155 @@ export async function parseDashboardSearchParams(
   }
 }
 
-async function listForUser(userId: string, where: Prisma.VouchWhereInput, take = 10) {
+async function listForUser(
+  userId: string,
+  where: Prisma.VouchWhereInput,
+  take = DEFAULT_TAKE
+): Promise<VouchCardRecord[]> {
   noStore()
-  const rows = await prisma.vouch.findMany({
+
+  return prisma.vouch.findMany({
     where: {
-      AND: [{ OR: [{ payerId: userId }, { payeeId: userId }] }, where],
+      AND: [
+        {
+          OR: [{ merchantId: userId }, { customerId: userId }],
+        },
+        where,
+      ],
     },
     orderBy: { updatedAt: "desc" },
     take,
     select: vouchCardSelect,
   })
-
-  return rows.map(mapVouch)
 }
 
-export async function getDashboardSummary(userId: string) {
+export async function getDashboardSummary(userId: string): Promise<DashboardSummaryDTO | null> {
   const current = await requireActiveUser()
   if (current.id !== userId) return null
 
-  const [actionRequired, active, pending, completed, expiredRefunded] = await Promise.all([
+  const now = new Date()
+
+  const [actionRequired, active, completed, expired, archived] = await Promise.all([
     getActionRequiredVouches({ userId }),
     getActiveVouches({ userId }),
-    getPendingVouches({ userId }),
     getCompletedVouches({ userId }),
-    getExpiredRefundedVouches({ userId }),
+    getExpiredVouches({ userId }),
+    listForUser(userId, { archiveStatus: "archived" }),
   ])
 
-  return {
+  return mapDashboardSummaryDTO({
     userId,
-    counts: {
-      actionRequired: actionRequired.length,
-      active: active.length,
-      pending: pending.length,
-      completed: completed.length,
-      expiredRefunded: expiredRefunded.length,
-    },
-    sections: { actionRequired, active, pending, completed, expiredRefunded },
-  }
+    actionRequired,
+    active,
+    completed,
+    expired: expired.filter((vouch) => vouch.confirmationExpiresAt <= now),
+    archived,
+  })
 }
 
 export async function getDashboardPageState(input?: {
   searchParams?: Record<string, string | string[] | undefined>
-}) {
+}): Promise<DashboardPageStateDTO> {
   const current = await requireActiveUser()
   const filters = await parseDashboardSearchParams(input?.searchParams ?? {})
   const summary = await getDashboardSummary(current.id)
 
   return {
-    variant:
-      summary && Object.values(summary.counts).some(Boolean) ? "mixed_vouch_states" : "empty",
+    variant: getDashboardVariant(summary),
     filters,
     summary,
   }
 }
 
-export async function getDashboardSetupBanner(userId: string) {
+export async function getDashboardSetupBanner(
+  userId: string
+): Promise<DashboardReadinessCalloutDTO> {
   const gate = await getCreateVouchSetupGate(userId)
-  return gate.allowed
-    ? { visible: false, gate }
-    : { visible: true, title: "Finish setup to create a Vouch", gate }
+
+  const blockers = Array.isArray(gate.blockers) ? gate.blockers.map(String) : []
+
+  return mapDashboardReadinessCalloutDTO({
+    canCreateVouch: gate.allowed,
+    needsPayment: blockers.some((blocker) => blocker.includes("payment")),
+    needsPayout: blockers.some(
+      (blocker) => blocker.includes("payout") || blocker.includes("connect")
+    ),
+    needsTerms: blockers.some((blocker) => blocker.includes("terms")),
+    needsVerification: blockers.some(
+      (blocker) => blocker.includes("identity") || blocker.includes("adult")
+    ),
+  })
 }
 
-export async function getActionRequiredVouches(input: { userId: string }) {
+export async function getActionRequiredVouches(input: {
+  userId: string
+}): Promise<VouchCardRecord[]> {
   const now = new Date()
+
   return listForUser(input.userId, {
-    status: "active",
+    archiveStatus: "active",
+    status: "confirmable" satisfies VouchStatus,
     confirmationOpensAt: { lte: now },
     confirmationExpiresAt: { gt: now },
   })
 }
 
-export async function getActiveVouches(input: { userId: string }) {
-  return listForUser(input.userId, { status: "active" satisfies VouchStatus })
+export async function getActiveVouches(input: { userId: string }): Promise<VouchCardRecord[]> {
+  return listForUser(input.userId, {
+    archiveStatus: "active",
+    status: {
+      in: ["committed", "sent", "accepted", "authorized", "confirmable"] satisfies VouchStatus[],
+    },
+  })
 }
 
-export async function getPendingVouches(input: { userId: string }) {
-  return listForUser(input.userId, { status: "pending" satisfies VouchStatus })
+export async function getCompletedVouches(input: { userId: string }): Promise<VouchCardRecord[]> {
+  return listForUser(input.userId, {
+    archiveStatus: "active",
+    status: "completed" satisfies VouchStatus,
+  })
 }
 
-export async function getCompletedVouches(input: { userId: string }) {
-  return listForUser(input.userId, { status: "completed" satisfies VouchStatus })
+export async function getExpiredVouches(input: { userId: string }): Promise<VouchCardRecord[]> {
+  return listForUser(input.userId, {
+    archiveStatus: "active",
+    status: "expired" satisfies VouchStatus,
+  })
 }
 
-export async function getExpiredRefundedVouches(input: { userId: string }) {
-  return listForUser(input.userId, { status: { in: ["expired", "refunded"] } })
-}
-
-export async function getPayerDashboardSummary(userId: string) {
+export async function getMerchantDashboardSummary(
+  userId: string
+): Promise<VouchCardRecord[] | null> {
   const current = await requireActiveUser()
   if (current.id !== userId) return null
 
-  const rows = await prisma.vouch.findMany({
-    where: { payerId: userId },
+  noStore()
+
+  return prisma.vouch.findMany({
+    where: { merchantId: userId },
     orderBy: { updatedAt: "desc" },
-    take: 10,
+    take: DEFAULT_TAKE,
     select: vouchCardSelect,
   })
-
-  return rows.map(mapVouch)
 }
 
-export async function getPayeeDashboardSummary(userId: string) {
+export async function getCustomerDashboardSummary(
+  userId: string
+): Promise<VouchCardRecord[] | null> {
   const current = await requireActiveUser()
   if (current.id !== userId) return null
 
-  const rows = await prisma.vouch.findMany({
-    where: { payeeId: userId },
+  noStore()
+
+  return prisma.vouch.findMany({
+    where: { customerId: userId },
     orderBy: { updatedAt: "desc" },
-    take: 10,
+    take: DEFAULT_TAKE,
     select: vouchCardSelect,
   })
-
-  return rows.map(mapVouch)
 }
 
-export async function getDashboardEmptyState(userId: string) {
+export async function getDashboardEmptyState(userId: string): Promise<DashboardEmptyStateDTO> {
   return {
     userId,
     title: "No Vouches yet",
@@ -175,3 +201,11 @@ export async function getDashboardErrorState(input: { message?: string }) {
     message: input.message ?? "Dashboard could not be loaded.",
   }
 }
+
+/**
+ * Compatibility aliases retained only for older imports during migration.
+ */
+export const getPendingVouches = getActiveVouches
+export const getExpiredRefundedVouches = getExpiredVouches
+export const getPayerDashboardSummary = getMerchantDashboardSummary
+export const getPayeeDashboardSummary = getCustomerDashboardSummary

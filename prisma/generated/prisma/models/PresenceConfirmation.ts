@@ -20,8 +20,18 @@ export type PresenceConfirmationModel = runtime.Types.Result.DefaultSelection<Pr
 
 export type AggregatePresenceConfirmation = {
   _count: PresenceConfirmationCountAggregateOutputType | null
+  _avg: PresenceConfirmationAvgAggregateOutputType | null
+  _sum: PresenceConfirmationSumAggregateOutputType | null
   _min: PresenceConfirmationMinAggregateOutputType | null
   _max: PresenceConfirmationMaxAggregateOutputType | null
+}
+
+export type PresenceConfirmationAvgAggregateOutputType = {
+  timeBucket: number | null
+}
+
+export type PresenceConfirmationSumAggregateOutputType = {
+  timeBucket: number | null
 }
 
 export type PresenceConfirmationMinAggregateOutputType = {
@@ -32,6 +42,10 @@ export type PresenceConfirmationMinAggregateOutputType = {
   status: $Enums.ConfirmationStatus | null
   method: $Enums.ConfirmationMethod | null
   confirmedAt: Date | null
+  serverReceivedAt: Date | null
+  timeBucket: number | null
+  clockSkewAccepted: boolean | null
+  offlinePayloadHash: string | null
   createdAt: Date | null
 }
 
@@ -43,6 +57,10 @@ export type PresenceConfirmationMaxAggregateOutputType = {
   status: $Enums.ConfirmationStatus | null
   method: $Enums.ConfirmationMethod | null
   confirmedAt: Date | null
+  serverReceivedAt: Date | null
+  timeBucket: number | null
+  clockSkewAccepted: boolean | null
+  offlinePayloadHash: string | null
   createdAt: Date | null
 }
 
@@ -54,10 +72,22 @@ export type PresenceConfirmationCountAggregateOutputType = {
   status: number
   method: number
   confirmedAt: number
+  serverReceivedAt: number
+  timeBucket: number
+  clockSkewAccepted: number
+  offlinePayloadHash: number
   createdAt: number
   _all: number
 }
 
+
+export type PresenceConfirmationAvgAggregateInputType = {
+  timeBucket?: true
+}
+
+export type PresenceConfirmationSumAggregateInputType = {
+  timeBucket?: true
+}
 
 export type PresenceConfirmationMinAggregateInputType = {
   id?: true
@@ -67,6 +97,10 @@ export type PresenceConfirmationMinAggregateInputType = {
   status?: true
   method?: true
   confirmedAt?: true
+  serverReceivedAt?: true
+  timeBucket?: true
+  clockSkewAccepted?: true
+  offlinePayloadHash?: true
   createdAt?: true
 }
 
@@ -78,6 +112,10 @@ export type PresenceConfirmationMaxAggregateInputType = {
   status?: true
   method?: true
   confirmedAt?: true
+  serverReceivedAt?: true
+  timeBucket?: true
+  clockSkewAccepted?: true
+  offlinePayloadHash?: true
   createdAt?: true
 }
 
@@ -89,6 +127,10 @@ export type PresenceConfirmationCountAggregateInputType = {
   status?: true
   method?: true
   confirmedAt?: true
+  serverReceivedAt?: true
+  timeBucket?: true
+  clockSkewAccepted?: true
+  offlinePayloadHash?: true
   createdAt?: true
   _all?: true
 }
@@ -131,6 +173,18 @@ export type PresenceConfirmationAggregateArgs<ExtArgs extends runtime.Types.Exte
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: PresenceConfirmationAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: PresenceConfirmationSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: PresenceConfirmationMinAggregateInputType
@@ -161,6 +215,8 @@ export type PresenceConfirmationGroupByArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   _count?: PresenceConfirmationCountAggregateInputType | true
+  _avg?: PresenceConfirmationAvgAggregateInputType
+  _sum?: PresenceConfirmationSumAggregateInputType
   _min?: PresenceConfirmationMinAggregateInputType
   _max?: PresenceConfirmationMaxAggregateInputType
 }
@@ -172,9 +228,15 @@ export type PresenceConfirmationGroupByOutputType = {
   participantRole: $Enums.ParticipantRole
   status: $Enums.ConfirmationStatus
   method: $Enums.ConfirmationMethod
-  confirmedAt: Date
+  confirmedAt: Date | null
+  serverReceivedAt: Date
+  timeBucket: number | null
+  clockSkewAccepted: boolean
+  offlinePayloadHash: string | null
   createdAt: Date
   _count: PresenceConfirmationCountAggregateOutputType | null
+  _avg: PresenceConfirmationAvgAggregateOutputType | null
+  _sum: PresenceConfirmationSumAggregateOutputType | null
   _min: PresenceConfirmationMinAggregateOutputType | null
   _max: PresenceConfirmationMaxAggregateOutputType | null
 }
@@ -204,7 +266,11 @@ export type PresenceConfirmationWhereInput = {
   participantRole?: Prisma.EnumParticipantRoleFilter<"PresenceConfirmation"> | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFilter<"PresenceConfirmation"> | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFilter<"PresenceConfirmation"> | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  confirmedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  timeBucket?: Prisma.IntNullableFilter<"PresenceConfirmation"> | number | null
+  clockSkewAccepted?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
+  offlinePayloadHash?: Prisma.StringNullableFilter<"PresenceConfirmation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -217,7 +283,11 @@ export type PresenceConfirmationOrderByWithRelationInput = {
   participantRole?: Prisma.SortOrder
   status?: Prisma.SortOrder
   method?: Prisma.SortOrder
-  confirmedAt?: Prisma.SortOrder
+  confirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  serverReceivedAt?: Prisma.SortOrder
+  timeBucket?: Prisma.SortOrderInput | Prisma.SortOrder
+  clockSkewAccepted?: Prisma.SortOrder
+  offlinePayloadHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   vouch?: Prisma.VouchOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
@@ -235,7 +305,11 @@ export type PresenceConfirmationWhereUniqueInput = Prisma.AtLeast<{
   participantRole?: Prisma.EnumParticipantRoleFilter<"PresenceConfirmation"> | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFilter<"PresenceConfirmation"> | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFilter<"PresenceConfirmation"> | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  confirmedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  timeBucket?: Prisma.IntNullableFilter<"PresenceConfirmation"> | number | null
+  clockSkewAccepted?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
+  offlinePayloadHash?: Prisma.StringNullableFilter<"PresenceConfirmation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -248,11 +322,17 @@ export type PresenceConfirmationOrderByWithAggregationInput = {
   participantRole?: Prisma.SortOrder
   status?: Prisma.SortOrder
   method?: Prisma.SortOrder
-  confirmedAt?: Prisma.SortOrder
+  confirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  serverReceivedAt?: Prisma.SortOrder
+  timeBucket?: Prisma.SortOrderInput | Prisma.SortOrder
+  clockSkewAccepted?: Prisma.SortOrder
+  offlinePayloadHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.PresenceConfirmationCountOrderByAggregateInput
+  _avg?: Prisma.PresenceConfirmationAvgOrderByAggregateInput
   _max?: Prisma.PresenceConfirmationMaxOrderByAggregateInput
   _min?: Prisma.PresenceConfirmationMinOrderByAggregateInput
+  _sum?: Prisma.PresenceConfirmationSumOrderByAggregateInput
 }
 
 export type PresenceConfirmationScalarWhereWithAggregatesInput = {
@@ -265,7 +345,11 @@ export type PresenceConfirmationScalarWhereWithAggregatesInput = {
   participantRole?: Prisma.EnumParticipantRoleWithAggregatesFilter<"PresenceConfirmation"> | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusWithAggregatesFilter<"PresenceConfirmation"> | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodWithAggregatesFilter<"PresenceConfirmation"> | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmation"> | Date | string
+  confirmedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PresenceConfirmation"> | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmation"> | Date | string
+  timeBucket?: Prisma.IntNullableWithAggregatesFilter<"PresenceConfirmation"> | number | null
+  clockSkewAccepted?: Prisma.BoolWithAggregatesFilter<"PresenceConfirmation"> | boolean
+  offlinePayloadHash?: Prisma.StringNullableWithAggregatesFilter<"PresenceConfirmation"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmation"> | Date | string
 }
 
@@ -274,7 +358,11 @@ export type PresenceConfirmationCreateInput = {
   participantRole: $Enums.ParticipantRole
   status?: $Enums.ConfirmationStatus
   method?: $Enums.ConfirmationMethod
-  confirmedAt: Date | string
+  confirmedAt?: Date | string | null
+  serverReceivedAt?: Date | string
+  timeBucket?: number | null
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: string | null
   createdAt?: Date | string
   vouch: Prisma.VouchCreateNestedOneWithoutPresenceConfirmationsInput
   user: Prisma.UserCreateNestedOneWithoutPresenceConfirmationsInput
@@ -287,7 +375,11 @@ export type PresenceConfirmationUncheckedCreateInput = {
   participantRole: $Enums.ParticipantRole
   status?: $Enums.ConfirmationStatus
   method?: $Enums.ConfirmationMethod
-  confirmedAt: Date | string
+  confirmedAt?: Date | string | null
+  serverReceivedAt?: Date | string
+  timeBucket?: number | null
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: string | null
   createdAt?: Date | string
 }
 
@@ -296,7 +388,11 @@ export type PresenceConfirmationUpdateInput = {
   participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vouch?: Prisma.VouchUpdateOneRequiredWithoutPresenceConfirmationsNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutPresenceConfirmationsNestedInput
@@ -309,7 +405,11 @@ export type PresenceConfirmationUncheckedUpdateInput = {
   participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -320,7 +420,11 @@ export type PresenceConfirmationCreateManyInput = {
   participantRole: $Enums.ParticipantRole
   status?: $Enums.ConfirmationStatus
   method?: $Enums.ConfirmationMethod
-  confirmedAt: Date | string
+  confirmedAt?: Date | string | null
+  serverReceivedAt?: Date | string
+  timeBucket?: number | null
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: string | null
   createdAt?: Date | string
 }
 
@@ -329,7 +433,11 @@ export type PresenceConfirmationUpdateManyMutationInput = {
   participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -340,7 +448,11 @@ export type PresenceConfirmationUncheckedUpdateManyInput = {
   participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -372,7 +484,15 @@ export type PresenceConfirmationCountOrderByAggregateInput = {
   status?: Prisma.SortOrder
   method?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
+  serverReceivedAt?: Prisma.SortOrder
+  timeBucket?: Prisma.SortOrder
+  clockSkewAccepted?: Prisma.SortOrder
+  offlinePayloadHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type PresenceConfirmationAvgOrderByAggregateInput = {
+  timeBucket?: Prisma.SortOrder
 }
 
 export type PresenceConfirmationMaxOrderByAggregateInput = {
@@ -383,6 +503,10 @@ export type PresenceConfirmationMaxOrderByAggregateInput = {
   status?: Prisma.SortOrder
   method?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
+  serverReceivedAt?: Prisma.SortOrder
+  timeBucket?: Prisma.SortOrder
+  clockSkewAccepted?: Prisma.SortOrder
+  offlinePayloadHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -394,7 +518,15 @@ export type PresenceConfirmationMinOrderByAggregateInput = {
   status?: Prisma.SortOrder
   method?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
+  serverReceivedAt?: Prisma.SortOrder
+  timeBucket?: Prisma.SortOrder
+  clockSkewAccepted?: Prisma.SortOrder
+  offlinePayloadHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type PresenceConfirmationSumOrderByAggregateInput = {
+  timeBucket?: Prisma.SortOrder
 }
 
 export type PresenceConfirmationCreateNestedManyWithoutUserInput = {
@@ -493,12 +625,24 @@ export type EnumConfirmationMethodFieldUpdateOperationsInput = {
   set?: $Enums.ConfirmationMethod
 }
 
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type PresenceConfirmationCreateWithoutUserInput = {
   id?: string
   participantRole: $Enums.ParticipantRole
   status?: $Enums.ConfirmationStatus
   method?: $Enums.ConfirmationMethod
-  confirmedAt: Date | string
+  confirmedAt?: Date | string | null
+  serverReceivedAt?: Date | string
+  timeBucket?: number | null
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: string | null
   createdAt?: Date | string
   vouch: Prisma.VouchCreateNestedOneWithoutPresenceConfirmationsInput
 }
@@ -509,7 +653,11 @@ export type PresenceConfirmationUncheckedCreateWithoutUserInput = {
   participantRole: $Enums.ParticipantRole
   status?: $Enums.ConfirmationStatus
   method?: $Enums.ConfirmationMethod
-  confirmedAt: Date | string
+  confirmedAt?: Date | string | null
+  serverReceivedAt?: Date | string
+  timeBucket?: number | null
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: string | null
   createdAt?: Date | string
 }
 
@@ -549,7 +697,11 @@ export type PresenceConfirmationScalarWhereInput = {
   participantRole?: Prisma.EnumParticipantRoleFilter<"PresenceConfirmation"> | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFilter<"PresenceConfirmation"> | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFilter<"PresenceConfirmation"> | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  confirmedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  timeBucket?: Prisma.IntNullableFilter<"PresenceConfirmation"> | number | null
+  clockSkewAccepted?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
+  offlinePayloadHash?: Prisma.StringNullableFilter<"PresenceConfirmation"> | string | null
   createdAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
 }
 
@@ -558,7 +710,11 @@ export type PresenceConfirmationCreateWithoutVouchInput = {
   participantRole: $Enums.ParticipantRole
   status?: $Enums.ConfirmationStatus
   method?: $Enums.ConfirmationMethod
-  confirmedAt: Date | string
+  confirmedAt?: Date | string | null
+  serverReceivedAt?: Date | string
+  timeBucket?: number | null
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: string | null
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutPresenceConfirmationsInput
 }
@@ -569,7 +725,11 @@ export type PresenceConfirmationUncheckedCreateWithoutVouchInput = {
   participantRole: $Enums.ParticipantRole
   status?: $Enums.ConfirmationStatus
   method?: $Enums.ConfirmationMethod
-  confirmedAt: Date | string
+  confirmedAt?: Date | string | null
+  serverReceivedAt?: Date | string
+  timeBucket?: number | null
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: string | null
   createdAt?: Date | string
 }
 
@@ -605,7 +765,11 @@ export type PresenceConfirmationCreateManyUserInput = {
   participantRole: $Enums.ParticipantRole
   status?: $Enums.ConfirmationStatus
   method?: $Enums.ConfirmationMethod
-  confirmedAt: Date | string
+  confirmedAt?: Date | string | null
+  serverReceivedAt?: Date | string
+  timeBucket?: number | null
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: string | null
   createdAt?: Date | string
 }
 
@@ -614,7 +778,11 @@ export type PresenceConfirmationUpdateWithoutUserInput = {
   participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vouch?: Prisma.VouchUpdateOneRequiredWithoutPresenceConfirmationsNestedInput
 }
@@ -625,7 +793,11 @@ export type PresenceConfirmationUncheckedUpdateWithoutUserInput = {
   participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -635,7 +807,11 @@ export type PresenceConfirmationUncheckedUpdateManyWithoutUserInput = {
   participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -645,7 +821,11 @@ export type PresenceConfirmationCreateManyVouchInput = {
   participantRole: $Enums.ParticipantRole
   status?: $Enums.ConfirmationStatus
   method?: $Enums.ConfirmationMethod
-  confirmedAt: Date | string
+  confirmedAt?: Date | string | null
+  serverReceivedAt?: Date | string
+  timeBucket?: number | null
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: string | null
   createdAt?: Date | string
 }
 
@@ -654,7 +834,11 @@ export type PresenceConfirmationUpdateWithoutVouchInput = {
   participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutPresenceConfirmationsNestedInput
 }
@@ -665,7 +849,11 @@ export type PresenceConfirmationUncheckedUpdateWithoutVouchInput = {
   participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -675,7 +863,11 @@ export type PresenceConfirmationUncheckedUpdateManyWithoutVouchInput = {
   participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
   status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
   method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -689,6 +881,10 @@ export type PresenceConfirmationSelect<ExtArgs extends runtime.Types.Extensions.
   status?: boolean
   method?: boolean
   confirmedAt?: boolean
+  serverReceivedAt?: boolean
+  timeBucket?: boolean
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: boolean
   createdAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -702,6 +898,10 @@ export type PresenceConfirmationSelectCreateManyAndReturn<ExtArgs extends runtim
   status?: boolean
   method?: boolean
   confirmedAt?: boolean
+  serverReceivedAt?: boolean
+  timeBucket?: boolean
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: boolean
   createdAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -715,6 +915,10 @@ export type PresenceConfirmationSelectUpdateManyAndReturn<ExtArgs extends runtim
   status?: boolean
   method?: boolean
   confirmedAt?: boolean
+  serverReceivedAt?: boolean
+  timeBucket?: boolean
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: boolean
   createdAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -728,10 +932,14 @@ export type PresenceConfirmationSelectScalar = {
   status?: boolean
   method?: boolean
   confirmedAt?: boolean
+  serverReceivedAt?: boolean
+  timeBucket?: boolean
+  clockSkewAccepted?: boolean
+  offlinePayloadHash?: boolean
   createdAt?: boolean
 }
 
-export type PresenceConfirmationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "userId" | "participantRole" | "status" | "method" | "confirmedAt" | "createdAt", ExtArgs["result"]["presenceConfirmation"]>
+export type PresenceConfirmationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "userId" | "participantRole" | "status" | "method" | "confirmedAt" | "serverReceivedAt" | "timeBucket" | "clockSkewAccepted" | "offlinePayloadHash" | "createdAt", ExtArgs["result"]["presenceConfirmation"]>
 export type PresenceConfirmationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -758,7 +966,11 @@ export type $PresenceConfirmationPayload<ExtArgs extends runtime.Types.Extension
     participantRole: $Enums.ParticipantRole
     status: $Enums.ConfirmationStatus
     method: $Enums.ConfirmationMethod
-    confirmedAt: Date
+    confirmedAt: Date | null
+    serverReceivedAt: Date
+    timeBucket: number | null
+    clockSkewAccepted: boolean
+    offlinePayloadHash: string | null
     createdAt: Date
   }, ExtArgs["result"]["presenceConfirmation"]>
   composites: {}
@@ -1192,6 +1404,10 @@ export interface PresenceConfirmationFieldRefs {
   readonly status: Prisma.FieldRef<"PresenceConfirmation", 'ConfirmationStatus'>
   readonly method: Prisma.FieldRef<"PresenceConfirmation", 'ConfirmationMethod'>
   readonly confirmedAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly serverReceivedAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly timeBucket: Prisma.FieldRef<"PresenceConfirmation", 'Int'>
+  readonly clockSkewAccepted: Prisma.FieldRef<"PresenceConfirmation", 'Boolean'>
+  readonly offlinePayloadHash: Prisma.FieldRef<"PresenceConfirmation", 'String'>
   readonly createdAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
 }
     

@@ -9,36 +9,18 @@ export const participantSafeAuditTimelineItemSelect = {
   entityType: true,
   entityId: true,
   participantSafe: true,
+  metadata: true,
   createdAt: true,
 } as const satisfies Prisma.AuditEventSelect
 
-export const participantSafeAuditTimelineSelect = participantSafeAuditTimelineItemSelect
-
-export const adminAuditListItemSelect = {
+export const providerAuditEventSelect = {
   id: true,
   eventName: true,
   actorType: true,
-  actorUserId: true,
   entityType: true,
   entityId: true,
   requestId: true,
   participantSafe: true,
+  metadata: true,
   createdAt: true,
 } as const satisfies Prisma.AuditEventSelect
-
-export const adminAuditEventDetailSelect = {
-  ...adminAuditListItemSelect,
-  metadata: true,
-  actorUser: {
-    select: {
-      id: true,
-      email: true,
-      displayName: true,
-      status: true,
-    },
-  },
-} as const satisfies Prisma.AuditEventSelect
-
-export const vouchAuditSummarySelect = participantSafeAuditTimelineItemSelect
-export const paymentAuditSummarySelect = participantSafeAuditTimelineItemSelect
-export const userAuditSummarySelect = adminAuditListItemSelect

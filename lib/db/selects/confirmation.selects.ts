@@ -10,6 +10,10 @@ export const confirmationParticipantSummarySelect = {
   status: true,
   method: true,
   confirmedAt: true,
+  serverReceivedAt: true,
+  timeBucket: true,
+  clockSkewAccepted: true,
+  offlinePayloadHash: true,
   createdAt: true,
 } as const satisfies Prisma.PresenceConfirmationSelect
 
@@ -19,35 +23,22 @@ export const aggregateConfirmationSelect = confirmationParticipantSummarySelect
 export const confirmPresenceEligibilitySelect = {
   id: true,
   publicId: true,
-  payerId: true,
-  payeeId: true,
+  merchantId: true,
+  customerId: true,
   status: true,
   confirmationOpensAt: true,
   confirmationExpiresAt: true,
   presenceConfirmations: {
     select: confirmationParticipantSummarySelect,
   },
+  paymentRecord: {
+    select: {
+      id: true,
+      status: true,
+      settlementStatus: true,
+      providerPaymentIntentId: true,
+      amountCapturableCents: true,
+      captureBefore: true,
+    },
+  },
 } as const satisfies Prisma.VouchSelect
-
-export const adminConfirmationSelect = {
-  ...confirmationParticipantSummarySelect,
-  user: {
-    select: {
-      id: true,
-      email: true,
-      displayName: true,
-      status: true,
-    },
-  },
-  vouch: {
-    select: {
-      id: true,
-      publicId: true,
-      status: true,
-      payerId: true,
-      payeeId: true,
-      confirmationOpensAt: true,
-      confirmationExpiresAt: true,
-    },
-  },
-} as const satisfies Prisma.PresenceConfirmationSelect

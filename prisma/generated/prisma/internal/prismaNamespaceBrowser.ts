@@ -57,6 +57,7 @@ export const ModelName = {
   ConnectedAccount: 'ConnectedAccount',
   TermsAcceptance: 'TermsAcceptance',
   Vouch: 'Vouch',
+  VouchRecoverySnapshot: 'VouchRecoverySnapshot',
   Invitation: 'Invitation',
   PresenceConfirmation: 'PresenceConfirmation',
   PaymentRecord: 'PaymentRecord',
@@ -108,8 +109,6 @@ export const VerificationProfileScalarFieldEnum = {
   userId: 'userId',
   identityStatus: 'identityStatus',
   adultStatus: 'adultStatus',
-  paymentReadiness: 'paymentReadiness',
-  payoutReadiness: 'payoutReadiness',
   provider: 'provider',
   providerReference: 'providerReference',
   createdAt: 'createdAt',
@@ -124,6 +123,10 @@ export const PaymentCustomerScalarFieldEnum = {
   userId: 'userId',
   provider: 'provider',
   providerCustomerId: 'providerCustomerId',
+  readiness: 'readiness',
+  lastProviderSyncAt: 'lastProviderSyncAt',
+  lastErrorCode: 'lastErrorCode',
+  lastErrorMessage: 'lastErrorMessage',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -140,6 +143,9 @@ export const ConnectedAccountScalarFieldEnum = {
   chargesEnabled: 'chargesEnabled',
   payoutsEnabled: 'payoutsEnabled',
   detailsSubmitted: 'detailsSubmitted',
+  lastProviderSyncAt: 'lastProviderSyncAt',
+  lastErrorCode: 'lastErrorCode',
+  lastErrorMessage: 'lastErrorMessage',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -162,32 +168,48 @@ export type TermsAcceptanceScalarFieldEnum = (typeof TermsAcceptanceScalarFieldE
 export const VouchScalarFieldEnum = {
   id: 'id',
   publicId: 'publicId',
-  payerId: 'payerId',
-  payeeId: 'payeeId',
-  amountCents: 'amountCents',
+  merchantId: 'merchantId',
+  customerId: 'customerId',
+  status: 'status',
+  archiveStatus: 'archiveStatus',
+  recoveryStatus: 'recoveryStatus',
   currency: 'currency',
-  platformFeeCents: 'platformFeeCents',
   protectedAmountCents: 'protectedAmountCents',
   merchantReceivesCents: 'merchantReceivesCents',
   vouchServiceFeeCents: 'vouchServiceFeeCents',
   processingFeeOffsetCents: 'processingFeeOffsetCents',
   applicationFeeAmountCents: 'applicationFeeAmountCents',
   customerTotalCents: 'customerTotalCents',
-  status: 'status',
   label: 'label',
-  meetingStartsAt: 'meetingStartsAt',
+  appointmentStartsAt: 'appointmentStartsAt',
   confirmationOpensAt: 'confirmationOpensAt',
   confirmationExpiresAt: 'confirmationExpiresAt',
+  committedAt: 'committedAt',
+  sentAt: 'sentAt',
   acceptedAt: 'acceptedAt',
+  authorizedAt: 'authorizedAt',
+  confirmableAt: 'confirmableAt',
   completedAt: 'completedAt',
   expiredAt: 'expiredAt',
-  canceledAt: 'canceledAt',
-  failedAt: 'failedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type VouchScalarFieldEnum = (typeof VouchScalarFieldEnum)[keyof typeof VouchScalarFieldEnum]
+
+
+export const VouchRecoverySnapshotScalarFieldEnum = {
+  id: 'id',
+  vouchId: 'vouchId',
+  snapshotVersion: 'snapshotVersion',
+  originalTermsJson: 'originalTermsJson',
+  pricingSnapshotJson: 'pricingSnapshotJson',
+  providerReferencesJson: 'providerReferencesJson',
+  settlementRulesJson: 'settlementRulesJson',
+  createdAt: 'createdAt'
+} as const
+
+export type VouchRecoverySnapshotScalarFieldEnum = (typeof VouchRecoverySnapshotScalarFieldEnum)[keyof typeof VouchRecoverySnapshotScalarFieldEnum]
 
 
 export const InvitationScalarFieldEnum = {
@@ -215,6 +237,10 @@ export const PresenceConfirmationScalarFieldEnum = {
   status: 'status',
   method: 'method',
   confirmedAt: 'confirmedAt',
+  serverReceivedAt: 'serverReceivedAt',
+  timeBucket: 'timeBucket',
+  clockSkewAccepted: 'clockSkewAccepted',
+  offlinePayloadHash: 'offlinePayloadHash',
   createdAt: 'createdAt'
 } as const
 
@@ -225,20 +251,27 @@ export const PaymentRecordScalarFieldEnum = {
   id: 'id',
   vouchId: 'vouchId',
   provider: 'provider',
-  providerPaymentId: 'providerPaymentId',
+  providerPaymentIntentId: 'providerPaymentIntentId',
   providerCheckoutSessionId: 'providerCheckoutSessionId',
   providerChargeId: 'providerChargeId',
   providerTransferId: 'providerTransferId',
   status: 'status',
+  settlementStatus: 'settlementStatus',
   amountCents: 'amountCents',
   currency: 'currency',
-  platformFeeCents: 'platformFeeCents',
   protectedAmountCents: 'protectedAmountCents',
   merchantReceivesCents: 'merchantReceivesCents',
   vouchServiceFeeCents: 'vouchServiceFeeCents',
   processingFeeOffsetCents: 'processingFeeOffsetCents',
   applicationFeeAmountCents: 'applicationFeeAmountCents',
   customerTotalCents: 'customerTotalCents',
+  amountCapturableCents: 'amountCapturableCents',
+  captureBefore: 'captureBefore',
+  authorizedAt: 'authorizedAt',
+  capturedAt: 'capturedAt',
+  canceledAt: 'canceledAt',
+  failedAt: 'failedAt',
+  lastProviderSyncAt: 'lastProviderSyncAt',
   lastErrorCode: 'lastErrorCode',
   lastErrorMessage: 'lastErrorMessage',
   createdAt: 'createdAt',
@@ -413,7 +446,7 @@ export const OperationalRetryScalarFieldEnum = {
   status: 'status',
   entityType: 'entityType',
   entityId: 'entityId',
-  adminUserId: 'adminUserId',
+  userId: 'userId',
   reason: 'reason',
   errorCode: 'errorCode',
   startedAt: 'startedAt',
@@ -431,6 +464,13 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const JsonNullValueInput = {
+  JsonNull: JsonNull
+} as const
+
+export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const NullableJsonNullValueInput = {

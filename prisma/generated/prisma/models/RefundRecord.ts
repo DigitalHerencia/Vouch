@@ -270,12 +270,12 @@ export type RefundRecordOrderByWithRelationInput = {
 
 export type RefundRecordWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  vouchId?: string
-  paymentRecordId?: string
   providerRefundId?: string
   AND?: Prisma.RefundRecordWhereInput | Prisma.RefundRecordWhereInput[]
   OR?: Prisma.RefundRecordWhereInput[]
   NOT?: Prisma.RefundRecordWhereInput | Prisma.RefundRecordWhereInput[]
+  vouchId?: Prisma.StringFilter<"RefundRecord"> | string
+  paymentRecordId?: Prisma.StringFilter<"RefundRecord"> | string
   status?: Prisma.EnumRefundStatusFilter<"RefundRecord"> | $Enums.RefundStatus
   reason?: Prisma.EnumRefundReasonNullableFilter<"RefundRecord"> | $Enums.RefundReason | null
   amountCents?: Prisma.IntFilter<"RefundRecord"> | number
@@ -284,7 +284,7 @@ export type RefundRecordWhereUniqueInput = Prisma.AtLeast<{
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
   paymentRecord?: Prisma.XOR<Prisma.PaymentRecordScalarRelationFilter, Prisma.PaymentRecordWhereInput>
   webhookEvents?: Prisma.PaymentWebhookEventListRelationFilter
-}, "id" | "vouchId" | "paymentRecordId" | "providerRefundId">
+}, "id" | "providerRefundId">
 
 export type RefundRecordOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
@@ -326,8 +326,8 @@ export type RefundRecordCreateInput = {
   amountCents: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  vouch: Prisma.VouchCreateNestedOneWithoutRefundRecordInput
-  paymentRecord: Prisma.PaymentRecordCreateNestedOneWithoutRefundRecordInput
+  vouch: Prisma.VouchCreateNestedOneWithoutRefundRecordsInput
+  paymentRecord: Prisma.PaymentRecordCreateNestedOneWithoutRefundRecordsInput
   webhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutRefundRecordInput
 }
 
@@ -352,8 +352,8 @@ export type RefundRecordUpdateInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vouch?: Prisma.VouchUpdateOneRequiredWithoutRefundRecordNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneRequiredWithoutRefundRecordNestedInput
+  vouch?: Prisma.VouchUpdateOneRequiredWithoutRefundRecordsNestedInput
+  paymentRecord?: Prisma.PaymentRecordUpdateOneRequiredWithoutRefundRecordsNestedInput
   webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutRefundRecordNestedInput
 }
 
@@ -404,9 +404,14 @@ export type RefundRecordUncheckedUpdateManyInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type RefundRecordNullableScalarRelationFilter = {
-  is?: Prisma.RefundRecordWhereInput | null
-  isNot?: Prisma.RefundRecordWhereInput | null
+export type RefundRecordListRelationFilter = {
+  every?: Prisma.RefundRecordWhereInput
+  some?: Prisma.RefundRecordWhereInput
+  none?: Prisma.RefundRecordWhereInput
+}
+
+export type RefundRecordOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type RefundRecordCountOrderByAggregateInput = {
@@ -453,68 +458,93 @@ export type RefundRecordSumOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
 }
 
-export type RefundRecordCreateNestedOneWithoutVouchInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput>
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutVouchInput
-  connect?: Prisma.RefundRecordWhereUniqueInput
+export type RefundRecordNullableScalarRelationFilter = {
+  is?: Prisma.RefundRecordWhereInput | null
+  isNot?: Prisma.RefundRecordWhereInput | null
 }
 
-export type RefundRecordUncheckedCreateNestedOneWithoutVouchInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput>
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutVouchInput
-  connect?: Prisma.RefundRecordWhereUniqueInput
+export type RefundRecordCreateNestedManyWithoutVouchInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput> | Prisma.RefundRecordCreateWithoutVouchInput[] | Prisma.RefundRecordUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutVouchInput | Prisma.RefundRecordCreateOrConnectWithoutVouchInput[]
+  createMany?: Prisma.RefundRecordCreateManyVouchInputEnvelope
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
 }
 
-export type RefundRecordUpdateOneWithoutVouchNestedInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput>
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutVouchInput
-  upsert?: Prisma.RefundRecordUpsertWithoutVouchInput
-  disconnect?: Prisma.RefundRecordWhereInput | boolean
-  delete?: Prisma.RefundRecordWhereInput | boolean
-  connect?: Prisma.RefundRecordWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.RefundRecordUpdateToOneWithWhereWithoutVouchInput, Prisma.RefundRecordUpdateWithoutVouchInput>, Prisma.RefundRecordUncheckedUpdateWithoutVouchInput>
+export type RefundRecordUncheckedCreateNestedManyWithoutVouchInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput> | Prisma.RefundRecordCreateWithoutVouchInput[] | Prisma.RefundRecordUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutVouchInput | Prisma.RefundRecordCreateOrConnectWithoutVouchInput[]
+  createMany?: Prisma.RefundRecordCreateManyVouchInputEnvelope
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
 }
 
-export type RefundRecordUncheckedUpdateOneWithoutVouchNestedInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput>
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutVouchInput
-  upsert?: Prisma.RefundRecordUpsertWithoutVouchInput
-  disconnect?: Prisma.RefundRecordWhereInput | boolean
-  delete?: Prisma.RefundRecordWhereInput | boolean
-  connect?: Prisma.RefundRecordWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.RefundRecordUpdateToOneWithWhereWithoutVouchInput, Prisma.RefundRecordUpdateWithoutVouchInput>, Prisma.RefundRecordUncheckedUpdateWithoutVouchInput>
+export type RefundRecordUpdateManyWithoutVouchNestedInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput> | Prisma.RefundRecordCreateWithoutVouchInput[] | Prisma.RefundRecordUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutVouchInput | Prisma.RefundRecordCreateOrConnectWithoutVouchInput[]
+  upsert?: Prisma.RefundRecordUpsertWithWhereUniqueWithoutVouchInput | Prisma.RefundRecordUpsertWithWhereUniqueWithoutVouchInput[]
+  createMany?: Prisma.RefundRecordCreateManyVouchInputEnvelope
+  set?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  disconnect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  delete?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  update?: Prisma.RefundRecordUpdateWithWhereUniqueWithoutVouchInput | Prisma.RefundRecordUpdateWithWhereUniqueWithoutVouchInput[]
+  updateMany?: Prisma.RefundRecordUpdateManyWithWhereWithoutVouchInput | Prisma.RefundRecordUpdateManyWithWhereWithoutVouchInput[]
+  deleteMany?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
 }
 
-export type RefundRecordCreateNestedOneWithoutPaymentRecordInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput>
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput
-  connect?: Prisma.RefundRecordWhereUniqueInput
+export type RefundRecordUncheckedUpdateManyWithoutVouchNestedInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput> | Prisma.RefundRecordCreateWithoutVouchInput[] | Prisma.RefundRecordUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutVouchInput | Prisma.RefundRecordCreateOrConnectWithoutVouchInput[]
+  upsert?: Prisma.RefundRecordUpsertWithWhereUniqueWithoutVouchInput | Prisma.RefundRecordUpsertWithWhereUniqueWithoutVouchInput[]
+  createMany?: Prisma.RefundRecordCreateManyVouchInputEnvelope
+  set?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  disconnect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  delete?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  update?: Prisma.RefundRecordUpdateWithWhereUniqueWithoutVouchInput | Prisma.RefundRecordUpdateWithWhereUniqueWithoutVouchInput[]
+  updateMany?: Prisma.RefundRecordUpdateManyWithWhereWithoutVouchInput | Prisma.RefundRecordUpdateManyWithWhereWithoutVouchInput[]
+  deleteMany?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
 }
 
-export type RefundRecordUncheckedCreateNestedOneWithoutPaymentRecordInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput>
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput
-  connect?: Prisma.RefundRecordWhereUniqueInput
+export type RefundRecordCreateNestedManyWithoutPaymentRecordInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput> | Prisma.RefundRecordCreateWithoutPaymentRecordInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput[]
+  createMany?: Prisma.RefundRecordCreateManyPaymentRecordInputEnvelope
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
 }
 
-export type RefundRecordUpdateOneWithoutPaymentRecordNestedInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput>
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput
-  upsert?: Prisma.RefundRecordUpsertWithoutPaymentRecordInput
-  disconnect?: Prisma.RefundRecordWhereInput | boolean
-  delete?: Prisma.RefundRecordWhereInput | boolean
-  connect?: Prisma.RefundRecordWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.RefundRecordUpdateToOneWithWhereWithoutPaymentRecordInput, Prisma.RefundRecordUpdateWithoutPaymentRecordInput>, Prisma.RefundRecordUncheckedUpdateWithoutPaymentRecordInput>
+export type RefundRecordUncheckedCreateNestedManyWithoutPaymentRecordInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput> | Prisma.RefundRecordCreateWithoutPaymentRecordInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput[]
+  createMany?: Prisma.RefundRecordCreateManyPaymentRecordInputEnvelope
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
 }
 
-export type RefundRecordUncheckedUpdateOneWithoutPaymentRecordNestedInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput>
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput
-  upsert?: Prisma.RefundRecordUpsertWithoutPaymentRecordInput
-  disconnect?: Prisma.RefundRecordWhereInput | boolean
-  delete?: Prisma.RefundRecordWhereInput | boolean
-  connect?: Prisma.RefundRecordWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.RefundRecordUpdateToOneWithWhereWithoutPaymentRecordInput, Prisma.RefundRecordUpdateWithoutPaymentRecordInput>, Prisma.RefundRecordUncheckedUpdateWithoutPaymentRecordInput>
+export type RefundRecordUpdateManyWithoutPaymentRecordNestedInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput> | Prisma.RefundRecordCreateWithoutPaymentRecordInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput[]
+  upsert?: Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentRecordInput | Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentRecordInput[]
+  createMany?: Prisma.RefundRecordCreateManyPaymentRecordInputEnvelope
+  set?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  disconnect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  delete?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  update?: Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentRecordInput | Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentRecordInput[]
+  updateMany?: Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentRecordInput | Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentRecordInput[]
+  deleteMany?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
+}
+
+export type RefundRecordUncheckedUpdateManyWithoutPaymentRecordNestedInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput> | Prisma.RefundRecordCreateWithoutPaymentRecordInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput[]
+  upsert?: Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentRecordInput | Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentRecordInput[]
+  createMany?: Prisma.RefundRecordCreateManyPaymentRecordInputEnvelope
+  set?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  disconnect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  delete?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  update?: Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentRecordInput | Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentRecordInput[]
+  updateMany?: Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentRecordInput | Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentRecordInput[]
+  deleteMany?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
 }
 
 export type EnumRefundStatusFieldUpdateOperationsInput = {
@@ -549,7 +579,7 @@ export type RefundRecordCreateWithoutVouchInput = {
   amountCents: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  paymentRecord: Prisma.PaymentRecordCreateNestedOneWithoutRefundRecordInput
+  paymentRecord: Prisma.PaymentRecordCreateNestedOneWithoutRefundRecordsInput
   webhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutRefundRecordInput
 }
 
@@ -570,39 +600,40 @@ export type RefundRecordCreateOrConnectWithoutVouchInput = {
   create: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput>
 }
 
-export type RefundRecordUpsertWithoutVouchInput = {
-  update: Prisma.XOR<Prisma.RefundRecordUpdateWithoutVouchInput, Prisma.RefundRecordUncheckedUpdateWithoutVouchInput>
-  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput>
-  where?: Prisma.RefundRecordWhereInput
+export type RefundRecordCreateManyVouchInputEnvelope = {
+  data: Prisma.RefundRecordCreateManyVouchInput | Prisma.RefundRecordCreateManyVouchInput[]
+  skipDuplicates?: boolean
 }
 
-export type RefundRecordUpdateToOneWithWhereWithoutVouchInput = {
-  where?: Prisma.RefundRecordWhereInput
+export type RefundRecordUpsertWithWhereUniqueWithoutVouchInput = {
+  where: Prisma.RefundRecordWhereUniqueInput
+  update: Prisma.XOR<Prisma.RefundRecordUpdateWithoutVouchInput, Prisma.RefundRecordUncheckedUpdateWithoutVouchInput>
+  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutVouchInput, Prisma.RefundRecordUncheckedCreateWithoutVouchInput>
+}
+
+export type RefundRecordUpdateWithWhereUniqueWithoutVouchInput = {
+  where: Prisma.RefundRecordWhereUniqueInput
   data: Prisma.XOR<Prisma.RefundRecordUpdateWithoutVouchInput, Prisma.RefundRecordUncheckedUpdateWithoutVouchInput>
 }
 
-export type RefundRecordUpdateWithoutVouchInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
-  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  paymentRecord?: Prisma.PaymentRecordUpdateOneRequiredWithoutRefundRecordNestedInput
-  webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutRefundRecordNestedInput
+export type RefundRecordUpdateManyWithWhereWithoutVouchInput = {
+  where: Prisma.RefundRecordScalarWhereInput
+  data: Prisma.XOR<Prisma.RefundRecordUpdateManyMutationInput, Prisma.RefundRecordUncheckedUpdateManyWithoutVouchInput>
 }
 
-export type RefundRecordUncheckedUpdateWithoutVouchInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  paymentRecordId?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
-  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  webhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutRefundRecordNestedInput
+export type RefundRecordScalarWhereInput = {
+  AND?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
+  OR?: Prisma.RefundRecordScalarWhereInput[]
+  NOT?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
+  id?: Prisma.StringFilter<"RefundRecord"> | string
+  vouchId?: Prisma.StringFilter<"RefundRecord"> | string
+  paymentRecordId?: Prisma.StringFilter<"RefundRecord"> | string
+  providerRefundId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  status?: Prisma.EnumRefundStatusFilter<"RefundRecord"> | $Enums.RefundStatus
+  reason?: Prisma.EnumRefundReasonNullableFilter<"RefundRecord"> | $Enums.RefundReason | null
+  amountCents?: Prisma.IntFilter<"RefundRecord"> | number
+  createdAt?: Prisma.DateTimeFilter<"RefundRecord"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"RefundRecord"> | Date | string
 }
 
 export type RefundRecordCreateWithoutPaymentRecordInput = {
@@ -613,7 +644,7 @@ export type RefundRecordCreateWithoutPaymentRecordInput = {
   amountCents: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  vouch: Prisma.VouchCreateNestedOneWithoutRefundRecordInput
+  vouch: Prisma.VouchCreateNestedOneWithoutRefundRecordsInput
   webhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutRefundRecordInput
 }
 
@@ -634,39 +665,25 @@ export type RefundRecordCreateOrConnectWithoutPaymentRecordInput = {
   create: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput>
 }
 
-export type RefundRecordUpsertWithoutPaymentRecordInput = {
-  update: Prisma.XOR<Prisma.RefundRecordUpdateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedUpdateWithoutPaymentRecordInput>
-  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput>
-  where?: Prisma.RefundRecordWhereInput
+export type RefundRecordCreateManyPaymentRecordInputEnvelope = {
+  data: Prisma.RefundRecordCreateManyPaymentRecordInput | Prisma.RefundRecordCreateManyPaymentRecordInput[]
+  skipDuplicates?: boolean
 }
 
-export type RefundRecordUpdateToOneWithWhereWithoutPaymentRecordInput = {
-  where?: Prisma.RefundRecordWhereInput
+export type RefundRecordUpsertWithWhereUniqueWithoutPaymentRecordInput = {
+  where: Prisma.RefundRecordWhereUniqueInput
+  update: Prisma.XOR<Prisma.RefundRecordUpdateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedUpdateWithoutPaymentRecordInput>
+  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput>
+}
+
+export type RefundRecordUpdateWithWhereUniqueWithoutPaymentRecordInput = {
+  where: Prisma.RefundRecordWhereUniqueInput
   data: Prisma.XOR<Prisma.RefundRecordUpdateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedUpdateWithoutPaymentRecordInput>
 }
 
-export type RefundRecordUpdateWithoutPaymentRecordInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
-  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vouch?: Prisma.VouchUpdateOneRequiredWithoutRefundRecordNestedInput
-  webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutRefundRecordNestedInput
-}
-
-export type RefundRecordUncheckedUpdateWithoutPaymentRecordInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
-  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  webhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutRefundRecordNestedInput
+export type RefundRecordUpdateManyWithWhereWithoutPaymentRecordInput = {
+  where: Prisma.RefundRecordScalarWhereInput
+  data: Prisma.XOR<Prisma.RefundRecordUpdateManyMutationInput, Prisma.RefundRecordUncheckedUpdateManyWithoutPaymentRecordInput>
 }
 
 export type RefundRecordCreateWithoutWebhookEventsInput = {
@@ -677,8 +694,8 @@ export type RefundRecordCreateWithoutWebhookEventsInput = {
   amountCents: number
   createdAt?: Date | string
   updatedAt?: Date | string
-  vouch: Prisma.VouchCreateNestedOneWithoutRefundRecordInput
-  paymentRecord: Prisma.PaymentRecordCreateNestedOneWithoutRefundRecordInput
+  vouch: Prisma.VouchCreateNestedOneWithoutRefundRecordsInput
+  paymentRecord: Prisma.PaymentRecordCreateNestedOneWithoutRefundRecordsInput
 }
 
 export type RefundRecordUncheckedCreateWithoutWebhookEventsInput = {
@@ -717,14 +734,106 @@ export type RefundRecordUpdateWithoutWebhookEventsInput = {
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vouch?: Prisma.VouchUpdateOneRequiredWithoutRefundRecordNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneRequiredWithoutRefundRecordNestedInput
+  vouch?: Prisma.VouchUpdateOneRequiredWithoutRefundRecordsNestedInput
+  paymentRecord?: Prisma.PaymentRecordUpdateOneRequiredWithoutRefundRecordsNestedInput
 }
 
 export type RefundRecordUncheckedUpdateWithoutWebhookEventsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
   paymentRecordId?: Prisma.StringFieldUpdateOperationsInput | string
+  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RefundRecordCreateManyVouchInput = {
+  id?: string
+  paymentRecordId: string
+  providerRefundId?: string | null
+  status?: $Enums.RefundStatus
+  reason?: $Enums.RefundReason | null
+  amountCents: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RefundRecordUpdateWithoutVouchInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  paymentRecord?: Prisma.PaymentRecordUpdateOneRequiredWithoutRefundRecordsNestedInput
+  webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutRefundRecordNestedInput
+}
+
+export type RefundRecordUncheckedUpdateWithoutVouchInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentRecordId?: Prisma.StringFieldUpdateOperationsInput | string
+  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  webhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutRefundRecordNestedInput
+}
+
+export type RefundRecordUncheckedUpdateManyWithoutVouchInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  paymentRecordId?: Prisma.StringFieldUpdateOperationsInput | string
+  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type RefundRecordCreateManyPaymentRecordInput = {
+  id?: string
+  vouchId: string
+  providerRefundId?: string | null
+  status?: $Enums.RefundStatus
+  reason?: $Enums.RefundReason | null
+  amountCents: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type RefundRecordUpdateWithoutPaymentRecordInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vouch?: Prisma.VouchUpdateOneRequiredWithoutRefundRecordsNestedInput
+  webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutRefundRecordNestedInput
+}
+
+export type RefundRecordUncheckedUpdateWithoutPaymentRecordInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
+  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  webhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutRefundRecordNestedInput
+}
+
+export type RefundRecordUncheckedUpdateManyWithoutPaymentRecordInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
   providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
   reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
