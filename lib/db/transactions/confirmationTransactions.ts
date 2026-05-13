@@ -155,6 +155,17 @@ export async function createPresenceConfirmationTx(
     throw new Error("UNAUTHORIZED_CONFIRMATION_PARTICIPANT")
   }
 
+  if (vouch.status === "authorized") {
+    await tx.vouch.update({
+      where: { id: vouchId },
+      data: {
+        status: "confirmable",
+        confirmableAt: serverReceivedAt,
+      },
+      select: { id: true },
+    })
+  }
+
   return tx.presenceConfirmation.create({
     data: {
       vouchId,

@@ -1,5 +1,4 @@
-import { CalendarDays, CheckCircle2, Clock, Info, UserRound } from "lucide-react"
-import Link from "next/link"
+import { ArrowRight, CalendarDays, CheckCircle2, Clock, Info, UserRound } from "lucide-react"
 import type { ReactNode } from "react"
 
 import { SectionIntro } from "@/components/shared/section-intro"
@@ -52,24 +51,25 @@ export function VouchDetailPage({
   timeline,
 }: VouchDetailPageProps) {
   return (
-    <main className="grid w-full gap-6">
-      <div>
-        <Link href="/dashboard" className="text-sm text-blue-500">
-          Back to dashboard
-        </Link>
-        <div className="mt-5 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
-          <div>
-            <Badge className="rounded-none bg-blue-700 text-white">{statusLabel}</Badge>
-            <SectionIntro className="mt-3" title={title} />
-            <p className="mt-2 font-mono text-sm text-neutral-400">
-              Vouch ID <span className="bg-neutral-800 px-2 text-neutral-200">{vouchId}</span>
-            </p>
+    <main className="grid w-full gap-8">
+      <section className="grid min-h-[360px] content-end border-b border-neutral-800 pb-8">
+        <div className="max-w-4xl">
+          <div className="flex flex-wrap items-center gap-3">
+            <Badge className="rounded-none bg-[#1D4ED8] text-white">{statusLabel}</Badge>
+            <Badge className="rounded-none border border-neutral-700 bg-neutral-950 text-neutral-200">
+              {currentUserRoleLabel}
+            </Badge>
           </div>
-          <Badge className="rounded-none border border-neutral-700 bg-neutral-950 text-neutral-200">
-            {currentUserRoleLabel}
-          </Badge>
+          <SectionIntro className="mt-5" title="Vouch" />
+          <p className="mt-4 max-w-2xl text-lg leading-8 text-neutral-300">
+            {amountLabel} commitment for {appointmentLabel}. Outcome follows bilateral
+            confirmation inside the window.
+          </p>
+          <p className="mt-5 max-w-full overflow-hidden text-ellipsis whitespace-nowrap font-mono text-xs text-neutral-500">
+            {title} / {vouchId}
+          </p>
         </div>
-      </div>
+      </section>
 
       <section className="grid gap-4 border-y border-neutral-800 py-5 sm:grid-cols-2 lg:grid-cols-4">
         <InfoBlock icon={<UserRound />} label="Merchant" value={merchantLabel} />
@@ -82,16 +82,13 @@ export function VouchDetailPage({
         <Surface variant="muted">
           <SurfaceHeader>
             <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">
-              Confirmation status
+              Confirmation
             </h2>
           </SurfaceHeader>
           <SurfaceBody>
-            <p className="text-sm text-neutral-400">
-              Both parties must confirm presence within the window for funds to release.
-            </p>
             <div className="mt-8 grid grid-cols-[1fr_auto_1fr] items-center gap-4">
               <Party label="Merchant" confirmed={confirmation.merchantConfirmed} />
-              <div className="grid size-28 place-items-center border-4 border-blue-700 text-center font-mono text-sm text-white">
+              <div className="grid size-28 place-items-center border-4 border-[#1D4ED8] text-center font-mono text-sm text-white">
                 {confirmation.merchantConfirmed && confirmation.customerConfirmed
                   ? "Both confirmed"
                   : "Waiting"}
@@ -100,9 +97,8 @@ export function VouchDetailPage({
             </div>
             {confirmation.canConfirm ? <div className="mt-7">{confirmation.action}</div> : null}
             <p className="mt-4 border border-neutral-800 p-3 text-sm text-neutral-400">
-              <Info className="mr-2 inline size-4 text-blue-500" />
-              If both participants do not confirm by the deadline, the payment is voided, refunded,
-              or not captured according to provider state.
+              <Info className="mr-2 inline size-4 text-[#1D4ED8]" />
+              One-sided confirmation never releases funds.
             </p>
           </SurfaceBody>
         </Surface>
@@ -129,7 +125,7 @@ export function VouchDetailPage({
             <SurfaceBody className="font-mono text-sm">
               <Line label="Vouch amount" value={amountLabel} />
               <Line label="Merchant receives" value={merchantReceivesLabel} />
-              <Line label="Customer total" value={customerTotalLabel} strong />
+              <Line label="Customer authorizes" value={customerTotalLabel} strong />
               <p className="mt-4 flex flex-wrap gap-2">
                 <Badge className="rounded-none border-green-700 bg-green-950 text-green-400">
                   {paymentStatusLabel}
@@ -157,7 +153,7 @@ export function VouchDetailPage({
                   key={`${event.label}-${event.timestampLabel}`}
                   className="grid grid-cols-[20px_1fr_auto] gap-3 text-sm"
                 >
-                  <CheckCircle2 className="size-5 text-blue-500" />
+                  <CheckCircle2 className="size-5 text-[#1D4ED8]" />
                   <span className="text-white">{event.label}</span>
                   <span className="font-mono text-neutral-400">{event.timestampLabel}</span>
                 </div>
@@ -168,21 +164,15 @@ export function VouchDetailPage({
           </SurfaceBody>
         </Surface>
         <Surface variant="muted">
-          <SurfaceHeader>
+          <SurfaceHeader className="flex items-center justify-between gap-4">
             <h2 className="font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase">
-              What happens next?
+              Rule
             </h2>
+            <ArrowRight className="size-5 text-[#1D4ED8]" />
           </SurfaceHeader>
-          <SurfaceBody className="grid gap-3 text-sm text-neutral-400">
-            <p>
-              <CheckCircle2 className="mr-2 inline size-4 text-green-500" />
-              Both confirm in time: provider-backed capture can proceed.
-            </p>
-            <p>
-              <Info className="mr-2 inline size-4 text-amber-500" />
-              One or both do not confirm: provider state determines void, refund, or non-capture.
-            </p>
-            <p>No arbitration. Vouch follows the confirmation rule.</p>
+          <SurfaceBody className="text-sm leading-7 text-neutral-400">
+            Both confirm in time and capture can proceed. Otherwise provider state determines
+            void, refund, or non-capture.
           </SurfaceBody>
         </Surface>
       </div>
@@ -193,7 +183,7 @@ export function VouchDetailPage({
 function InfoBlock({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
     <div className="flex gap-3 text-sm text-neutral-400">
-      {icon}
+      <span className="text-[#1D4ED8]">{icon}</span>
       <span>
         <span className="block">{label}</span>
         <strong className="font-mono text-white">{value}</strong>
@@ -225,7 +215,7 @@ function Line({ label, value, strong }: { label: string; value: string; strong?:
   return (
     <div className="flex justify-between gap-4 border-b border-neutral-800 py-2">
       <span className="text-neutral-300">{label}</span>
-      <span className={strong ? "text-blue-500" : "text-white"}>{value}</span>
+      <span className={strong ? "text-[#1D4ED8]" : "text-white"}>{value}</span>
     </div>
   )
 }

@@ -32,6 +32,7 @@ import {
   DEFAULT_STRIPE_PERCENT_BPS,
   DEFAULT_VOUCH_SERVICE_FEE_RATE,
 } from "@/lib/vouch/fees"
+import { deriveConfirmationCode } from "@/lib/vouch/confirmation-codes"
 import { prisma } from "@/lib/db/prisma"
 import { hashInvitationToken } from "@/lib/invitations/tokens"
 import {
@@ -572,8 +573,30 @@ export async function getConfirmPresencePageState(input: { vouchId: string }) {
     return getConfirmBothConfirmedSuccessState(input.vouchId)
   }
 
-  if (vouch.merchantId === user.id) return getConfirmPresenceMerchantState(input.vouchId)
-  if (vouch.customerId === user.id) return getConfirmPresenceCustomerState(input.vouchId)
+  if (vouch.merchantId === user.id) {
+    const state = await getConfirmPresenceMerchantState(input.vouchId)
+    return {
+      ...state,
+      currentUserCode: deriveConfirmationCode({
+        vouchId: vouch.id,
+        publicId: vouch.publicId,
+        participantRole: "merchant",
+        participantUserId: user.id,
+      }),
+    }
+  }
+  if (vouch.customerId === user.id) {
+    const state = await getConfirmPresenceCustomerState(input.vouchId)
+    return {
+      ...state,
+      currentUserCode: deriveConfirmationCode({
+        vouchId: vouch.id,
+        publicId: vouch.publicId,
+        participantRole: "customer",
+        participantUserId: user.id,
+      }),
+    }
+  }
 
   return getConfirmUnauthorizedState(input.vouchId)
 }

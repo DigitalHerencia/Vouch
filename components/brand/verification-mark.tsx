@@ -9,7 +9,7 @@ export interface VerificationMarkProps {
 export function VerificationMark({ className }: VerificationMarkProps) {
   return (
     <Image
-      src="/handshake.png"
+      src="/icon-192.png"
       alt=""
       width={40}
       height={40}

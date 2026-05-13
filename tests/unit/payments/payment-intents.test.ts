@@ -42,24 +42,23 @@ describe("createStripePaymentAuthorization", () => {
 
     await createStripePaymentAuthorization({
       vouchId: "vouch_123",
-      customerTotalCents: 10_845,
+      customerTotalCents: 10_000,
       currency: "usd",
-      applicationFeeAmountCents: 845,
+      applicationFeeAmountCents: 0,
       protectedAmountCents: 10_000,
       merchantReceivesCents: 10_000,
       vouchServiceFeeCents: 500,
-      processingFeeOffsetCents: 345,
+      processingFeeOffsetCents: 46,
       connectedAccountId: "acct_connected",
       idempotencyKey: "idem_123",
     })
 
     expect(createPaymentIntent).toHaveBeenCalledWith(
       {
-        amount: 10_845,
+        amount: 10_000,
         currency: "usd",
         capture_method: "manual",
         payment_method_types: ["card"],
-        application_fee_amount: 845,
         transfer_data: { destination: "acct_connected" },
         metadata: {
           vouch_id: "vouch_123",
@@ -67,9 +66,9 @@ describe("createStripePaymentAuthorization", () => {
           protected_amount_cents: "10000",
           merchant_receives_cents: "10000",
           vouch_service_fee_cents: "500",
-          processing_fee_offset_cents: "345",
-          application_fee_amount_cents: "845",
-          customer_total_cents: "10845",
+          processing_fee_offset_cents: "46",
+          application_fee_amount_cents: "0",
+          customer_total_cents: "10000",
         },
       },
       { idempotencyKey: "idem_123" }
@@ -82,13 +81,13 @@ describe("createStripePaymentAuthorization", () => {
 
     await createStripePaymentAuthorization({
       vouchId: "vouch_merchant_customer",
-      customerTotalCents: 10_845,
+      customerTotalCents: 10_000,
       currency: "usd",
-      applicationFeeAmountCents: 845,
+      applicationFeeAmountCents: 0,
       protectedAmountCents: 10_000,
       merchantReceivesCents: 10_000,
       vouchServiceFeeCents: 500,
-      processingFeeOffsetCents: 345,
+      processingFeeOffsetCents: 46,
       providerCustomerId: "cus_accepting_customer",
       providerPaymentMethodId: "pm_customer_default",
       connectedAccountId: "acct_merchant_destination",
@@ -98,13 +97,12 @@ describe("createStripePaymentAuthorization", () => {
 
     expect(createPaymentIntent).toHaveBeenCalledWith(
       expect.objectContaining({
-        amount: 10_845,
+        amount: 10_000,
         capture_method: "manual",
         customer: "cus_accepting_customer",
         payment_method: "pm_customer_default",
         confirm: true,
         off_session: true,
-        application_fee_amount: 845,
         transfer_data: { destination: "acct_merchant_destination" },
       }),
       { idempotencyKey: "idem_roles" }

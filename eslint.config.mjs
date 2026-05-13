@@ -2,10 +2,19 @@ import { defineConfig, globalIgnores } from "eslint/config"
 import nextVitals from "eslint-config-next/core-web-vitals"
 import nextTypescript from "eslint-config-next/typescript"
 import prettier from "eslint-config-prettier/flat"
+import reactPlugin from "eslint-plugin-react"
+
+const disabledReactPluginRules = Object.fromEntries(
+  Object.keys(reactPlugin.rules).map((ruleName) => [`react/${ruleName}`, "off"])
+)
 
 const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTypescript,
+
+  {
+    rules: disabledReactPluginRules,
+  },
 
   prettier,
 

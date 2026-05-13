@@ -20,7 +20,6 @@ import {
   markInvitationAcceptedTx,
   markInvitationDeclinedTx,
   markInvitationOpenedTx,
-  markInvitationSentTx,
   rotateInvitationTokenHashTx,
 } from "@/lib/db/transactions/invitationTransactions"
 import {
@@ -28,9 +27,10 @@ import {
   createVouchTx,
   expireVouchWithoutCaptureTx,
   markVouchAuthorizedTx,
-  markVouchSentTx,
   updateVouchArchiveStatusTx,
 } from "@/lib/db/transactions/vouchTransactions"
+import { getRuntimeEnv } from "@/lib/env"
+import { createStripeMerchantCreationFeeCheckout } from "@/lib/integrations/stripe/checkout-sessions"
 import { createInvitationToken, hashInvitationToken } from "@/lib/invitations/tokens"
 import {
   authorizeVouchPayment,
@@ -39,6 +39,7 @@ import {
   startStripePaymentManagement,
 } from "@/lib/actions/paymentActions"
 import { calculateVouchPricing, type VouchPricing } from "@/lib/vouch/fees"
+import { verifyConfirmationCode } from "@/lib/vouch/confirmation-codes"
 import {
   archiveVouchSchema,
   confirmCreateVouchInputSchema,
@@ -70,6 +71,7 @@ type CreatedVouchResult = {
   vouchId: string
   invitationId: string
   detailPath: string
+  checkoutUrl?: string
 }
 
 function invitationExpiresAt(): Date {
@@ -252,8 +254,13 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
   }
 
   const pricing = calculatePricing(amountCents)
+  const merchantFeeCents = pricing.vouchServiceFeeCents + pricing.processingFeeOffsetCents
   const inviteToken = await createInvitationToken(VOUCH_LIMITS.inviteTokenBytes)
   const tokenHash = await hashInvitationToken(inviteToken)
+  const paymentCustomer = await prisma.paymentCustomer.findUnique({
+    where: { userId: user.id },
+    select: { providerCustomerId: true },
+  })
 
   const created = await prisma.$transaction(async (tx) => {
     const vouch = await createVouchTx(tx, {
@@ -268,7 +275,7 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
       appointmentStartsAt: parsed.data.appointmentStartsAt,
       confirmationOpensAt: parsed.data.confirmationOpensAt,
       confirmationExpiresAt: parsed.data.confirmationExpiresAt,
-      createAsSent: true,
+      createAsDraft: true,
     })
 
     const invitation = await createInvitationTx(tx, {
@@ -278,11 +285,9 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
       expiresAt: invitationExpiresAt(),
     })
 
-    await markInvitationSentTx(tx, { invitationId: invitation.id })
-
     await tx.auditEvent.create({
       data: {
-        eventName: "vouch.created",
+        eventName: "vouch.creation_fee_checkout_required",
         actorType: "user",
         actorUserId: user.id,
         entityType: "Vouch",
@@ -302,12 +307,28 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
     return { vouch, invitation }
   })
 
+  const appUrl = getRuntimeEnv().appUrl
+  const checkout = await createStripeMerchantCreationFeeCheckout({
+    vouchId: created.vouch.id,
+    merchantUserId: user.id,
+    feeAmountCents: merchantFeeCents,
+    protectedAmountCents: pricing.protectedAmountCents,
+    currency: parsed.data.currency,
+    successUrl: `${appUrl}/vouches/${created.vouch.id}?merchant_fee=paid`,
+    cancelUrl: `${appUrl}/vouches/new?merchant_fee=cancelled`,
+    idempotencyKey: `vouch:${created.vouch.id}:merchant-fee-checkout`,
+    ...(paymentCustomer?.providerCustomerId
+      ? { providerCustomerId: paymentCustomer.providerCustomerId }
+      : {}),
+  })
+
   await revalidateVouchSurfaces(created.vouch.id, [user.id])
 
   return actionSuccess({
     vouchId: created.vouch.id,
     invitationId: created.invitation.id,
     detailPath: `/vouches/${created.vouch.id}`,
+    ...(checkout.url ? { checkoutUrl: checkout.url } : {}),
   })
 }
 
@@ -509,6 +530,7 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
     where: { id: parsed.data.vouchId },
     select: {
       id: true,
+      publicId: true,
       merchantId: true,
       customerId: true,
       status: true,
@@ -526,6 +548,22 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
   })
 
   if (!participantRole) return actionFailure("AUTHZ_DENIED", "Participant access required.")
+  if (!vouch.customerId) return actionFailure("CUSTOMER_REQUIRED", "Customer is required.")
+
+  const counterpartyRole = participantRole === "merchant" ? "customer" : "merchant"
+  const counterpartyUserId = participantRole === "merchant" ? vouch.customerId : vouch.merchantId
+  const validCode = verifyConfirmationCode({
+    vouchId: vouch.id,
+    publicId: vouch.publicId,
+    participantRole: counterpartyRole,
+    participantUserId: counterpartyUserId,
+    submittedCode: parsed.data.submittedCode,
+    allowedBucketSkew: parsed.data.method === "offline_code_exchange" ? 1 : 0,
+  })
+
+  if (!validCode) {
+    return actionFailure("INVALID_CONFIRMATION_CODE", "Confirmation code is not valid.")
+  }
 
   try {
     await prisma.$transaction(async (tx) => {

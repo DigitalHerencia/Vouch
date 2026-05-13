@@ -40,14 +40,13 @@ export function calculateVouchPricing({
     DEFAULT_MINIMUM_VOUCH_SERVICE_FEE_CENTS
   )
 
-  const subtotalBeforeProcessing = protectedAmountCents + vouchServiceFeeCents
+  const subtotalBeforeProcessing = vouchServiceFeeCents
   const processingFeeOffsetCents = Math.ceil(
     (subtotalBeforeProcessing + stripeFixedCents) / (1 - stripePercentBps / 10_000) -
       subtotalBeforeProcessing
   )
-  const customerTotalCents =
-    protectedAmountCents + vouchServiceFeeCents + processingFeeOffsetCents
-  const applicationFeeAmountCents = vouchServiceFeeCents + processingFeeOffsetCents
+  const customerTotalCents = protectedAmountCents
+  const applicationFeeAmountCents = 0
 
   return {
     protectedAmountCents,

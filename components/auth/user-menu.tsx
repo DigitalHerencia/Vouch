@@ -2,17 +2,23 @@
 
 import { UserButton } from "@clerk/nextjs"
 
-export function UserMenu() {
+export interface UserMenuProps {
+  size?: "default" | "compact" | undefined
+}
+
+export function UserMenu({ size = "default" }: UserMenuProps) {
+  const isCompact = size === "compact"
+
   return (
     <UserButton
       appearance={{
         elements: {
           userButtonTrigger:
-            "rounded-full border border-neutral-700 transition-colors hover:border-blue-500 hover:bg-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500",
+            `grid place-items-center rounded-full border border-neutral-700 transition-colors hover:border-blue-500 hover:bg-neutral-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${isCompact ? "size-8" : "size-11"}`,
           avatarBox:
-            "h-9 w-9 rounded-full bg-blue-600 text-neutral-100 transition-colors hover:bg-blue-500",
+            `${isCompact ? "size-7" : "size-9"} rounded-full bg-blue-600 text-neutral-100 transition-colors hover:bg-blue-500`,
           userButtonAvatarBox:
-            "h-9 w-9 rounded-full bg-blue-600 text-neutral-100 transition-colors hover:bg-blue-500",
+            `${isCompact ? "size-7" : "size-9"} rounded-full bg-blue-600 text-neutral-100 transition-colors hover:bg-blue-500`,
           userButtonPopoverCard:
             "border border-neutral-700 bg-neutral-950 text-neutral-100 shadow-2xl shadow-black/40",
           userButtonPopoverActionButton:

@@ -45,9 +45,7 @@ export function AcceptVouchPage({
   return (
     <main className="grid w-full gap-8 lg:grid-cols-[0.9fr_1fr]">
       <section>
-        <Link href="/dashboard" className="text-sm text-blue-500">← Back to inbox</Link>
         <SectionIntro
-          className="mt-8"
           eyebrow="Customer invite"
           title="You've been invited"
           body="Review the Vouch details below. Finish setup and accept to lock in this commitment."
@@ -64,7 +62,7 @@ export function AcceptVouchPage({
         <div className="mt-7 grid grid-cols-3 items-center gap-3 text-center">
           {["Review", "Setup", "Accept"].map((label, index) => (
             <div key={label}>
-              <span className={index === 0 ? "mx-auto grid size-8 place-items-center rounded-full bg-blue-700 text-white" : "mx-auto grid size-8 place-items-center rounded-full bg-neutral-800 text-neutral-300"}>{index + 1}</span>
+              <span className={index === 0 ? "mx-auto grid size-8 place-items-center rounded-full bg-[#1D4ED8] text-white" : "mx-auto grid size-8 place-items-center rounded-full bg-neutral-800 text-neutral-300"}>{index + 1}</span>
               <p className="mt-2 text-xs text-neutral-400">{label}</p>
             </div>
           ))}
@@ -86,7 +84,7 @@ export function AcceptVouchPage({
         </div>
         <Surface className="mt-5 border-blue-800 bg-neutral-950" padding="md">
           <div className="flex gap-4">
-            <Info className="size-5 text-blue-500" />
+            <Info className="size-5 text-[#1D4ED8]" />
             <p className="text-sm text-neutral-400"><strong className="block text-white">What happens next?</strong>After you accept, both parties must confirm within the window. If both confirm, funds release. If not, the payment is refunded.</p>
           </div>
         </Surface>
@@ -116,7 +114,7 @@ function Summary({ amountLabel, payerLabel, windowLabel }: { amountLabel: string
         <Line label="For" value="you" />
         <Line label="Label" value="Consulting call" />
         <Line label="Window" value={windowLabel} />
-        <p className="border border-neutral-800 p-4 text-sm text-neutral-400"><ShieldCheck className="mr-2 inline size-4 text-blue-500" />Both parties must confirm before funds release.</p>
+        <p className="border border-neutral-800 p-4 text-sm text-neutral-400"><ShieldCheck className="mr-2 inline size-4 text-[#1D4ED8]" />Both parties must confirm before funds release.</p>
       </SurfaceBody>
     </Surface>
   )

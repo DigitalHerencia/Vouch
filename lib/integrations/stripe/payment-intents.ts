@@ -36,7 +36,9 @@ export async function createStripePaymentAuthorization(
       ...(input.confirmOffSession && input.providerPaymentMethodId
         ? { confirm: true, off_session: true }
         : {}),
-      application_fee_amount: input.applicationFeeAmountCents,
+      ...(input.applicationFeeAmountCents > 0
+        ? { application_fee_amount: input.applicationFeeAmountCents }
+        : {}),
       transfer_data: { destination: input.connectedAccountId },
       metadata: {
         vouch_id: input.vouchId,

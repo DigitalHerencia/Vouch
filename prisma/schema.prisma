@@ -25,9 +25,10 @@ datasource db {
  * - customer = paying participant / Stripe customer / payment authorizer
  *
  * Money model:
- * customerTotalCents = protectedAmountCents + processingFeeOffsetCents + vouchServiceFeeCents.
+ * customerTotalCents = protectedAmountCents.
  * merchantReceivesCents = protectedAmountCents.
- * applicationFeeAmountCents = vouchServiceFeeCents + processingFeeOffsetCents.
+ * merchant protocol fee = vouchServiceFeeCents + processingFeeOffsetCents, charged at Vouch creation.
+ * applicationFeeAmountCents applies only to customer authorization when explicitly needed.
  */
 
 /* ================================

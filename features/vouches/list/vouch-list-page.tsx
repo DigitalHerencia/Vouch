@@ -58,7 +58,7 @@ export function VouchListPage({ title = "Vouches", items }: VouchListPageProps) 
             <Surface key={item.id} variant="muted">
               <SurfaceHeader>
                 <h2 className="flex items-center gap-3 font-(family-name:--font-display) text-[18px] leading-none tracking-[0.08em] text-white uppercase">
-                  <ShieldCheck className="text-blue-500" />
+                  <ShieldCheck className="text-[#1D4ED8]" />
                   {item.statusLabel}
                 </h2>
               </SurfaceHeader>

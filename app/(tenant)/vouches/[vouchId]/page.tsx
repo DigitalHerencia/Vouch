@@ -36,6 +36,8 @@ export default async function Page({ params }: PageProps) {
   const confirmState = await getConfirmPresencePageState({ vouchId })
   const canConfirm =
     confirmState.variant === "confirm_as_merchant" || confirmState.variant === "confirm_as_customer"
+  const currentUserCode =
+    "currentUserCode" in confirmState ? confirmState.currentUserCode : undefined
   const timeline = await getParticipantSafeAuditTimeline(vouchId)
 
   return (
@@ -66,7 +68,12 @@ export default async function Page({ params }: PageProps) {
         customerConfirmed: vouch.aggregateConfirmationStatus === "customer_confirmed" ||
           vouch.aggregateConfirmationStatus === "both_confirmed",
         canConfirm,
-        action: canConfirm ? <ConfirmPresenceInlineForm vouchId={vouchId} /> : null,
+        action: canConfirm ? (
+          <ConfirmPresenceInlineForm
+            vouchId={vouchId}
+            {...(currentUserCode ? { currentUserCode } : {})}
+          />
+        ) : null,
       }}
       timeline={timeline.map((e) => {
         return { label: e.eventName, timestampLabel: dateTime(e.createdAt) }

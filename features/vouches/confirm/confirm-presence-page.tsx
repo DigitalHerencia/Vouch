@@ -1,5 +1,4 @@
 import type { ReactNode } from "react"
-import Link from "next/link"
 import { ArrowRight, CheckCircle2, Clock, Info, UserRound } from "lucide-react"
 
 import { SectionIntro } from "@/components/shared/section-intro"
@@ -32,9 +31,7 @@ export function ConfirmPresencePage({
     <main className="grid w-full gap-6">
       <div className="grid gap-4 lg:grid-cols-[1fr_470px]">
         <div>
-          <Link href="/dashboard" className="text-sm text-blue-500">Back to dashboard</Link>
           <SectionIntro
-            className="mt-5"
             eyebrow="Presence confirmation"
             title={title}
             body="Confirm that you were present. Both parties must confirm within the window for funds to release."
@@ -51,7 +48,7 @@ export function ConfirmPresencePage({
       <div className="grid gap-5 lg:grid-cols-2">
         <Surface variant="muted">
           <SurfaceHeader>
-            <h2 className="flex gap-3 font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase"><Clock className="text-blue-500" />Confirmation window</h2>
+            <h2 className="flex gap-3 font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase"><Clock className="text-[#1D4ED8]" />Confirmation window</h2>
           </SurfaceHeader>
           <SurfaceBody>
             <div className="grid gap-4 sm:grid-cols-2"><InfoRow label="Started" value={windowLabel} /><InfoRow label="Deadline" value={deadlineLabel} /></div>
@@ -61,12 +58,12 @@ export function ConfirmPresencePage({
         </Surface>
         <Surface variant="muted">
           <SurfaceHeader>
-            <h2 className="flex gap-3 font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase"><UserRound className="text-blue-500" />Confirmation status</h2>
+            <h2 className="flex gap-3 font-(family-name:--font-display) text-[26px] leading-none tracking-[0.07em] text-white uppercase"><UserRound className="text-[#1D4ED8]" />Confirmation status</h2>
           </SurfaceHeader>
           <SurfaceBody className="space-y-4">
             <Status label="Payer" value="Confirmed" ok />
             <Status label="Payee (You)" value={alreadyConfirmed ? "Confirmed" : "Not confirmed"} ok={alreadyConfirmed} />
-            <p className="border border-neutral-800 p-3 text-sm text-neutral-400"><Info className="mr-2 inline size-4 text-blue-500" />If you don&apos;t confirm by the deadline, payment is refunded.</p>
+            <p className="border border-neutral-800 p-3 text-sm text-neutral-400"><Info className="mr-2 inline size-4 text-[#1D4ED8]" />If you don&apos;t confirm by the deadline, payment is refunded.</p>
           </SurfaceBody>
         </Surface>
       </div>

@@ -59,6 +59,7 @@ type CreateVouchTxInput = {
   appointmentStartsAt: Date
   confirmationOpensAt: Date
   confirmationExpiresAt: Date
+  createAsDraft?: boolean
   createAsSent?: boolean
 }
 
@@ -148,7 +149,11 @@ export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<
   assertValidWindow(input)
 
   const now = new Date()
-  const status: VouchStatus = input.createAsSent ? "sent" : "committed"
+  const status: VouchStatus = input.createAsDraft
+    ? "draft"
+    : input.createAsSent
+      ? "sent"
+      : "committed"
 
   return tx.vouch.create({
     data: {
@@ -167,7 +172,7 @@ export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<
       appointmentStartsAt: input.appointmentStartsAt,
       confirmationOpensAt: input.confirmationOpensAt,
       confirmationExpiresAt: input.confirmationExpiresAt,
-      committedAt: now,
+      ...(input.createAsDraft ? {} : { committedAt: now }),
       ...(input.createAsSent ? { sentAt: now } : {}),
     },
     select: VOUCH_SELECT,
@@ -189,6 +194,7 @@ export async function markVouchSentTx(tx: Tx, input: VouchIdTxInput): Promise<Vo
     where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
     data: {
       status: "sent",
+      committedAt: now,
       sentAt: now,
     },
     select: VOUCH_SELECT,

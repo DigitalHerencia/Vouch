@@ -106,6 +106,7 @@ export const vouchDetailProviderFailureSelect = vouchDetailBaseSelect
 
 export const vouchConfirmationStateSelect = {
   id: true,
+  publicId: true,
   merchantId: true,
   customerId: true,
   status: true,

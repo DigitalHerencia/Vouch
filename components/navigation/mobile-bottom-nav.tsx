@@ -3,22 +3,27 @@
 "use client"
 
 import {
+    CreditCard,
     FileText,
     HelpCircle,
     Home,
     Plus,
+    Shield,
     ShieldCheck,
     type LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
+import { UserMenu } from "@/components/auth/user-menu"
 import { cn } from "@/lib/utils"
 
 export interface MobileBottomNavItem {
-    href: string
+    href?: string | undefined
     label: string
     icon: LucideIcon
+    action?: ((formData: FormData) => void | Promise<void>) | undefined
+    account?: boolean | undefined
     primary?: boolean | undefined
 }
 
@@ -28,9 +33,14 @@ export interface MobileBottomNavProps {
     "aria-label"?: string | undefined
 }
 
+export interface TenantMobileBottomNavProps extends Omit<MobileBottomNavProps, "items"> {
+    connectAction: (formData: FormData) => void | Promise<void>
+    paymentAction: (formData: FormData) => void | Promise<void>
+}
+
 export const defaultTenantMobileBottomNavItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home },
-    { href: "/vouches/new", label: "Create", icon: Plus, primary: true },
+    { href: "/vouches/new", label: "Vouches", icon: FileText },
 ] satisfies readonly MobileBottomNavItem[]
 
 export const defaultAppMobileBottomNavItems = defaultTenantMobileBottomNavItems
@@ -54,7 +64,7 @@ export function MobileBottomNav({
         <nav
             aria-label={ariaLabel}
             className={cn(
-                "fixed inset-x-0 bottom-0 z-50 grid border-t border-neutral-900 bg-black/92 px-2 py-2 backdrop-blur md:hidden",
+                "fixed inset-x-0 bottom-0 z-50 grid min-h-18 items-stretch border-t border-neutral-900 bg-black/95 px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] backdrop-blur md:hidden",
                 items.length >= 5 ? "grid-cols-5" : "grid-cols-4",
                 className,
             )}
@@ -62,28 +72,45 @@ export function MobileBottomNav({
             {items.map((item) => {
                 const Icon = item.icon
                 const isActive =
-                    pathname === item.href || pathname.startsWith(`${item.href}/`)
-
-                return (
-                    <Link
-                        key={item.href}
-                        href={item.href}
-                        className={cn(
-                            "flex flex-col items-center gap-1 text-[11px] font-semibold text-neutral-500",
-                            isActive ? "text-white" : undefined,
-                        )}
-                    >
+                    item.href ? pathname === item.href || pathname.startsWith(`${item.href}/`) : false
+                const content = (
+                    <>
                         <span
                             className={cn(
-                                "grid place-items-center",
+                                "grid size-8 place-items-center",
                                 item.primary ?
-                                    "size-11 bg-primary text-primary-foreground"
-                                :   "size-6 text-primary",
+                                    "bg-primary text-primary-foreground"
+                                :   "text-[#1D4ED8]",
                             )}
                         >
-                            <Icon className={item.primary ? "size-5" : "size-4"} />
+                            {item.account ? <UserMenu size="compact" /> : <Icon className="size-5" />}
                         </span>
                         {item.label}
+                    </>
+                )
+
+                const className = cn(
+                    "flex h-full w-full min-w-0 flex-col items-center justify-center gap-1 text-[10px] font-semibold leading-none tracking-[0.04em] text-neutral-500 uppercase",
+                    isActive ? "text-white" : undefined,
+                )
+
+                return item.account ? (
+                    <div key={item.label} className={className}>
+                        {content}
+                    </div>
+                ) : item.action ? (
+                    <form key={item.label} action={item.action} className="min-w-0">
+                        <button type="submit" className={className}>
+                            {content}
+                        </button>
+                    </form>
+                ) : (
+                    <Link
+                        key={item.href}
+                        href={item.href ?? "/dashboard"}
+                        className={className}
+                    >
+                        {content}
                     </Link>
                 )
             })}
@@ -100,10 +127,26 @@ export function AppMobileBottomNav(props: Omit<MobileBottomNavProps, "items">) {
     )
 }
 
-export function TenantMobileBottomNav(props: Omit<MobileBottomNavProps, "items">) {
+export function TenantMobileBottomNav({
+    connectAction,
+    paymentAction,
+    ...props
+}: TenantMobileBottomNavProps) {
+    const configuredItems = [
+        { href: "/dashboard", label: "Dashboard", icon: Home },
+        { href: "/vouches/new", label: "Vouches", icon: FileText },
+        { label: "Connect", icon: Shield, action: connectAction },
+        { label: "Payment", icon: CreditCard, action: paymentAction },
+        { label: "Account", icon: Home, account: true },
+    ] satisfies MobileBottomNavItem[]
+
+    const tenantItems = configuredItems.filter((item) =>
+        Boolean(item.href || item.action || item.account)
+    )
+
     return (
         <MobileBottomNav
-            items={defaultTenantMobileBottomNavItems}
+            items={tenantItems}
             aria-label="Tenant mobile navigation"
             {...props}
         />

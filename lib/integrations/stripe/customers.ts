@@ -104,3 +104,15 @@ export async function getStripeCustomerPaymentReadiness(providerCustomerId: stri
 
   return { readiness: "requires_action", defaultPaymentMethodId: null }
 }
+
+export async function createStripeCustomerPortalSession(input: {
+  providerCustomerId: string
+  returnUrl: string
+}): Promise<{ url: string }> {
+  const session = await getStripeServerClient().billingPortal.sessions.create({
+    customer: input.providerCustomerId,
+    return_url: input.returnUrl,
+  })
+
+  return { url: session.url }
+}

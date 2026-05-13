@@ -36,6 +36,11 @@ function readNestedString(record: Record<string, unknown> | undefined, key: stri
   return typeof value === "string" ? value : undefined
 }
 
+function readNestedBoolean(record: Record<string, unknown> | undefined, key: string) {
+  const value = record?.[key]
+  return typeof value === "boolean" ? value : undefined
+}
+
 function getStripeV2Core() {
   const stripe = getStripeServerClient() as unknown as StripeV2Client
   const core = stripe.v2?.core
@@ -115,7 +120,7 @@ export async function createStripeConnectOnboardingLink(input: {
       use_case: {
         type: "account_onboarding",
         account_onboarding: {
-          configurations: ["recipient", "merchant"],
+          configurations: ["recipient"],
           refresh_url: input.refreshUrl,
           return_url: input.returnUrl,
         },
@@ -150,6 +155,9 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
     include: ["configuration.recipient"],
   })) as Record<string, unknown>
 
+  const topLevelDetailsSubmitted = readNestedBoolean(account, "details_submitted")
+  const topLevelPayoutsEnabled = readNestedBoolean(account, "payouts_enabled")
+  const topLevelChargesEnabled = readNestedBoolean(account, "charges_enabled")
   const configuration = account.configuration as Record<string, unknown> | undefined
   const recipient = readNestedRecord(configuration, "recipient")
   const capabilities = readNestedRecord(recipient, "capabilities")
@@ -157,15 +165,16 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
   const stripeTransfers = readNestedRecord(stripeBalance, "stripe_transfers")
   const transferStatus =
     readNestedString(stripeTransfers, "status") ?? readNestedString(recipient, "status")
-  const detailsSubmitted = transferStatus === "active" || transferStatus === "enabled"
+  const detailsSubmitted =
+    topLevelDetailsSubmitted === true || transferStatus === "active" || transferStatus === "enabled"
   const readiness: PayoutReadinessStatus =
     transferStatus === "restricted" || transferStatus === "disabled"
       ? "restricted"
       : detailsSubmitted
         ? "ready"
         : "requires_action"
-  const payoutsEnabled = detailsSubmitted
-  const chargesEnabled = detailsSubmitted
+  const payoutsEnabled = topLevelPayoutsEnabled ?? detailsSubmitted
+  const chargesEnabled = topLevelChargesEnabled ?? detailsSubmitted
 
   return {
     readiness,

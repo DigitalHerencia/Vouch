@@ -6,6 +6,8 @@ import type { Prisma } from "@/prisma/generated/prisma/client"
 
 import { prisma } from "@/lib/db/prisma"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
+import { getStripeCustomerPaymentReadiness } from "@/lib/integrations/stripe/customers"
+import { refreshStripeConnectReadiness } from "@/lib/integrations/stripe/connect"
 
 const iso = (value: Date | null | undefined) => (value ? value.toISOString() : null)
 
@@ -13,8 +15,8 @@ const readinessSelect = {
   id: true,
   status: true,
   verificationProfile: { select: { identityStatus: true, adultStatus: true } },
-  paymentCustomer: { select: { readiness: true } },
-  connectedAccount: { select: { readiness: true } },
+  paymentCustomer: { select: { providerCustomerId: true, readiness: true } },
+  connectedAccount: { select: { providerAccountId: true, readiness: true } },
   termsAcceptances: {
     orderBy: { acceptedAt: "desc" },
     take: 1,
@@ -48,10 +50,7 @@ function normalizeReadiness(record: ReadinessRecord | null) {
     ...state,
     createReady:
       state.userStatus === "active" &&
-      state.identityStatus === "verified" &&
-      state.adultStatus === "verified" &&
-      state.paymentReadiness === "ready" &&
-      state.termsAccepted,
+      state.paymentReadiness === "ready",
     acceptReady:
       state.userStatus === "active" &&
       state.identityStatus === "verified" &&
@@ -64,9 +63,48 @@ function normalizeReadiness(record: ReadinessRecord | null) {
 
 async function readReadiness(userId: string) {
   noStore()
-  return normalizeReadiness(
-    await prisma.user.findUnique({ where: { id: userId }, select: readinessSelect })
-  )
+  await refreshProviderReadiness(userId)
+  return normalizeReadiness(await prisma.user.findUnique({ where: { id: userId }, select: readinessSelect }))
+}
+
+async function refreshProviderReadiness(userId: string) {
+  const record = await prisma.user.findUnique({
+    where: { id: userId },
+    select: {
+      paymentCustomer: { select: { providerCustomerId: true } },
+      connectedAccount: { select: { providerAccountId: true } },
+    },
+  })
+
+  const paymentCustomerId = record?.paymentCustomer?.providerCustomerId
+  const connectedAccountId = record?.connectedAccount?.providerAccountId
+
+  const [payment, payout] = await Promise.all([
+    paymentCustomerId ? getStripeCustomerPaymentReadiness(paymentCustomerId) : null,
+    connectedAccountId ? refreshStripeConnectReadiness({ providerAccountId: connectedAccountId }) : null,
+  ])
+
+  await prisma.$transaction(async (tx) => {
+    if (paymentCustomerId && payment) {
+      await tx.paymentCustomer.updateMany({
+        where: { userId, providerCustomerId: paymentCustomerId },
+        data: { readiness: payment.readiness, lastProviderSyncAt: new Date() },
+      })
+    }
+
+    if (connectedAccountId && payout) {
+      await tx.connectedAccount.updateMany({
+        where: { userId, providerAccountId: connectedAccountId },
+        data: {
+          readiness: payout.readiness,
+          chargesEnabled: payout.chargesEnabled,
+          payoutsEnabled: payout.payoutsEnabled,
+          detailsSubmitted: payout.detailsSubmitted,
+          lastProviderSyncAt: new Date(),
+        },
+      })
+    }
+  })
 }
 
 function blockersFor(
@@ -77,9 +115,13 @@ function blockersFor(
 
   if (readiness.userStatus !== "active") blockers.push("account_inactive")
   if (kind !== "confirm") {
-    if (readiness.identityStatus !== "verified") blockers.push("identity_verification_required")
-    if (readiness.adultStatus !== "verified") blockers.push("adult_verification_required")
-    if (!readiness.termsAccepted) blockers.push("terms_acceptance_required")
+    if (kind === "accept" && readiness.identityStatus !== "verified") {
+      blockers.push("identity_verification_required")
+    }
+    if (kind === "accept" && readiness.adultStatus !== "verified") {
+      blockers.push("adult_verification_required")
+    }
+    if (kind === "accept" && !readiness.termsAccepted) blockers.push("terms_acceptance_required")
   }
   if (kind === "create" && readiness.paymentReadiness !== "ready") {
     blockers.push("payment_method_required")

@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowRight, CalendarClock, ShieldCheck } from "lucide-react"
+import { ArrowRight } from "lucide-react"
 import { useRouter } from "next/navigation"
 import type { FormEvent, ReactNode } from "react"
 import { useMemo, useState, useTransition } from "react"
@@ -68,12 +68,17 @@ export function CreateVouchForm() {
         return
       }
 
+      if (result.data.checkoutUrl) {
+        window.location.assign(result.data.checkoutUrl)
+        return
+      }
+
       router.push(result.data.detailPath)
     })
   }
 
   return (
-    <form className="grid gap-6 lg:grid-cols-[1fr_380px]" onSubmit={handleSubmit}>
+    <form className="grid gap-6 lg:grid-cols-[1fr_340px]" onSubmit={handleSubmit}>
       <section className="border border-neutral-800 bg-neutral-950/60">
         <Step number="1" title="Amount">
           <label className="text-sm text-neutral-200" htmlFor="vouch-amount">
@@ -144,24 +149,10 @@ export function CreateVouchForm() {
 
       <aside className="grid content-start gap-4">
         <div className="border border-neutral-800 bg-neutral-950/70 p-5">
-          <CalendarClock className="mb-3 size-8 text-blue-500" />
-          <h2 className="font-bold text-white">Deterministic window</h2>
-          <p className="mt-2 text-sm text-neutral-400">
-            The appointment and confirmation window define when both participants may confirm.
-          </p>
-        </div>
-        <div className="border border-neutral-800 bg-neutral-950/70 p-5">
-          <ShieldCheck className="mb-3 size-8 text-blue-500" />
-          <h2 className="font-bold text-white">Outcome rule</h2>
-          <p className="mt-2 text-sm text-neutral-400">
-            Both confirm in time and provider-backed capture can proceed. Otherwise the payment is
-            voided, refunded, or not captured according to Stripe state.
-          </p>
-        </div>
-        <div className="border border-neutral-800 bg-neutral-950/70 p-5">
           <h2 className="text-xl font-bold text-white">Summary</h2>
           <Line label="Vouch amount" value={amount ? amountLabel : "Enter amount"} />
           <Line label="Currency" value="USD" />
+          <Line label="Merchant fee" value="Charged at creation" />
         </div>
         <label className="flex items-start gap-3 border border-neutral-800 bg-neutral-950/70 p-5">
           <Checkbox
@@ -198,7 +189,7 @@ function Step({ number, title, children }: { number: string; title: string; chil
   return (
     <section className="border-b border-neutral-800 p-5 last:border-b-0">
       <h2 className="mb-4 flex items-center gap-4 font-bold text-white">
-        <span className="font-mono text-blue-500">{number}</span>
+        <span className="font-mono text-[#1D4ED8]">{number}</span>
         {title}
       </h2>
       {children}

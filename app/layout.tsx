@@ -100,9 +100,9 @@ export const metadata: Metadata = {
     icons: {
         icon: [
             { url: "/favicon.ico" },
-            { url: "/handshake.png", type: "image/png" },
+            { url: "/icon-192.png", type: "image/png" },
         ],
-        apple: [{ url: "/handshake.png", type: "image/png" }],
+        apple: [{ url: "/apple-touch-icon.png", type: "image/png" }],
     },
     manifest: "/site.webmanifest",
 }

@@ -20,6 +20,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { cn } from "@/lib/utils"
 import { loginSchema, verificationSchema } from "@/schemas/auth"
@@ -110,7 +111,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
       }
 
       setSecondFactorMethod("email_code")
-      setNotice("We sent a verification code to your email address.")
+      setNotice(authVerificationContent.sentToEmailHeading)
       return true
     }
 
@@ -129,7 +130,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
       }
 
       setSecondFactorMethod("phone_code")
-      setNotice("We sent a verification code to your phone.")
+      setNotice(authVerificationContent.sentToPhoneHeading)
       return true
     }
 
@@ -249,9 +250,9 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
     >
       <UiFieldGroup className="max-w-full min-w-0 gap-3 overflow-hidden border-0 bg-transparent p-0 shadow-none sm:gap-4">
         {notice ? (
-          <div className="border-primary/70 bg-primary/10 max-w-full overflow-hidden border px-4 py-2.5 font-mono text-xs wrap-break-word text-blue-100 sm:text-sm">
+          <h1 className="max-w-full overflow-hidden font-(family-name:--font-display) text-[30px] leading-none tracking-[0.04em] wrap-break-word text-white uppercase sm:text-[40px] lg:text-[48px]">
             {notice}
-          </div>
+          </h1>
         ) : null}
 
         {form.formState.errors.root?.message ? (
@@ -264,7 +265,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
           <div className="max-w-full min-w-0 space-y-3 overflow-hidden sm:space-y-4">
             <Field>
               <FieldLabel className={labelClassName} htmlFor="verificationCode">
-                Verification code
+                {authVerificationContent.codeLabel}
               </FieldLabel>
 
               <Input
@@ -272,7 +273,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                 type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"
-                placeholder="Enter the code you received"
+                placeholder={authVerificationContent.codePlaceholder}
                 className={inputClassName}
                 disabled={isBusy}
                 {...form.register("verificationCode", {
@@ -282,8 +283,9 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
               />
 
               <FieldDescription className="font-mono text-xs text-neutral-500">
-                Use the latest code sent to your{" "}
-                {secondFactorMethod === "phone_code" ? "phone" : "email"}.
+                {secondFactorMethod === "phone_code"
+                  ? authVerificationContent.latestCodePhone
+                  : authVerificationContent.latestCodeEmail}
               </FieldDescription>
 
               <FieldError
@@ -296,20 +298,6 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
             </Field>
 
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-              <SubmitButton
-                disabled={isBusy}
-                className="w-full min-w-0"
-                size="cta"
-                pendingLabel={
-                  <>
-                    <LoaderCircle className="size-4 animate-spin" />
-                    Verify code
-                  </>
-                }
-              >
-                Verify code
-              </SubmitButton>
-
               <Button
                 type="button"
                 variant="secondary"
@@ -325,33 +313,47 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                 }}
               >
                 {isResending ? <LoaderCircle className="size-4 animate-spin" /> : null}
-                Resend code
+                {authVerificationContent.resendCode}
               </Button>
-            </div>
 
-            <Button
-              type="button"
-              variant="ghost"
-              size="cta"
-              disabled={isBusy}
-              className="w-full min-w-0"
-              onClick={() => {
-                startResetting(async () => {
-                  await signIn.reset()
-                  setAwaitingSecondFactor(false)
-                  setSecondFactorMethod(null)
-                  setNotice(null)
-                  form.reset({
-                    email: form.getValues("email"),
-                    password: "",
-                    verificationCode: "",
+              <Button
+                type="button"
+                variant="ghost"
+                size="cta"
+                disabled={isBusy}
+                className="w-full min-w-0"
+                onClick={() => {
+                  startResetting(async () => {
+                    await signIn.reset()
+                    setAwaitingSecondFactor(false)
+                    setSecondFactorMethod(null)
+                    setNotice(null)
+                    form.reset({
+                      email: form.getValues("email"),
+                      password: "",
+                      verificationCode: "",
+                    })
                   })
-                })
-              }}
-            >
-              {isResetting ? <LoaderCircle className="size-4 animate-spin" /> : null}
-              Start over
-            </Button>
+                }}
+              >
+                {isResetting ? <LoaderCircle className="size-4 animate-spin" /> : null}
+                {authVerificationContent.startOver}
+              </Button>
+
+              <SubmitButton
+                disabled={isBusy}
+                className="w-full min-w-0 sm:col-span-2"
+                size="cta"
+                pendingLabel={
+                  <>
+                    <LoaderCircle className="size-4 animate-spin" />
+                    {authVerificationContent.verifyCode}
+                  </>
+                }
+              >
+                {authVerificationContent.verifyCode}
+              </SubmitButton>
+            </div>
           </div>
         ) : (
           <div className="max-w-full min-w-0 space-y-3 overflow-hidden sm:space-y-4">

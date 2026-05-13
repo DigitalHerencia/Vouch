@@ -21,6 +21,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { cn } from "@/lib/utils"
 import { signupSchema, verificationSchema } from "@/schemas/auth"
@@ -94,7 +95,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
       return false
     }
 
-    setNotice("We sent a verification code to your email address.")
+    setNotice(authVerificationContent.sentToEmailHeading)
     return true
   }
 
@@ -198,18 +199,18 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
   return (
     <form
       className={cn(
-        "flex w-full min-w-0 max-w-full flex-col overflow-hidden bg-transparent text-white",
-        className,
+        "flex w-full max-w-full min-w-0 flex-col overflow-hidden bg-transparent text-white",
+        className
       )}
       onSubmit={handleSubmit}
       noValidate
       {...props}
     >
-      <UiFieldGroup className="min-w-0 max-w-full gap-2.5 overflow-hidden border-0 bg-transparent p-0 shadow-none sm:gap-3">
+      <UiFieldGroup className="max-w-full min-w-0 gap-2.5 overflow-hidden border-0 bg-transparent p-0 shadow-none sm:gap-3">
         {notice ? (
-          <div className="max-w-full overflow-hidden border border-primary/70 bg-primary/10 px-3.5 py-2 font-mono text-xs break-words text-blue-100">
+          <h1 className="max-w-full overflow-hidden font-(family-name:--font-display) text-[30px] leading-none tracking-[0.04em] break-words text-white uppercase sm:text-[40px] lg:text-[48px]">
             {notice}
-          </div>
+          </h1>
         ) : null}
 
         {form.formState.errors.root?.message ? (
@@ -219,10 +220,10 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
         ) : null}
 
         {awaitingVerification ? (
-          <div className="min-w-0 max-w-full space-y-3 overflow-hidden">
+          <div className="max-w-full min-w-0 space-y-3 overflow-hidden">
             <Field>
               <FieldLabel className={labelClassName} htmlFor="verificationCode">
-                Verification code
+                {authVerificationContent.codeLabel}
               </FieldLabel>
 
               <Input
@@ -230,7 +231,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 type="text"
                 inputMode="numeric"
                 autoComplete="one-time-code"
-                placeholder="Enter the code you received"
+                placeholder={authVerificationContent.codePlaceholder}
                 className={inputClassName}
                 disabled={isBusy}
                 {...form.register("verificationCode", {
@@ -240,7 +241,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
               />
 
               <FieldDescription className="font-mono text-xs text-neutral-500">
-                Confirm your email to finish account creation.
+                {authVerificationContent.finishSignup}
               </FieldDescription>
 
               <FieldError
@@ -253,20 +254,6 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
             </Field>
 
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-              <SubmitButton
-                disabled={isBusy}
-                size="cta"
-                className="w-full min-w-0"
-                pendingLabel={
-                  <>
-                    <LoaderCircle className="size-4 animate-spin" />
-                    Verify code
-                  </>
-                }
-              >
-                Verify code
-              </SubmitButton>
-
               <Button
                 type="button"
                 disabled={isBusy}
@@ -282,38 +269,52 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 }}
               >
                 {isResending ? <LoaderCircle className="size-4 animate-spin" /> : null}
-                Resend code
+                {authVerificationContent.resendCode}
               </Button>
-            </div>
 
-            <Button
-              type="button"
-              disabled={isBusy}
-              variant="ghost"
-              size="cta"
-              className="w-full min-w-0"
-              onClick={() => {
-                startResetting(async () => {
-                  await signUp.reset()
-                  setAwaitingVerification(false)
-                  setNotice(null)
-                  form.reset({
-                    firstName: form.getValues("firstName"),
-                    lastName: form.getValues("lastName"),
-                    email: form.getValues("email"),
-                    password: "",
-                    verificationCode: "",
-                    acceptedUserAgreement: form.getValues("acceptedUserAgreement"),
+              <Button
+                type="button"
+                disabled={isBusy}
+                variant="ghost"
+                size="cta"
+                className="w-full min-w-0"
+                onClick={() => {
+                  startResetting(async () => {
+                    await signUp.reset()
+                    setAwaitingVerification(false)
+                    setNotice(null)
+                    form.reset({
+                      firstName: form.getValues("firstName"),
+                      lastName: form.getValues("lastName"),
+                      email: form.getValues("email"),
+                      password: "",
+                      verificationCode: "",
+                      acceptedUserAgreement: form.getValues("acceptedUserAgreement"),
+                    })
                   })
-                })
-              }}
-            >
-              {isResetting ? <LoaderCircle className="size-4 animate-spin" /> : null}
-              Start over
-            </Button>
+                }}
+              >
+                {isResetting ? <LoaderCircle className="size-4 animate-spin" /> : null}
+                {authVerificationContent.startOver}
+              </Button>
+
+              <SubmitButton
+                disabled={isBusy}
+                size="cta"
+                className="w-full min-w-0 sm:col-span-2"
+                pendingLabel={
+                  <>
+                    <LoaderCircle className="size-4 animate-spin" />
+                    {authVerificationContent.verifyCode}
+                  </>
+                }
+              >
+                {authVerificationContent.verifyCode}
+              </SubmitButton>
+            </div>
           </div>
         ) : (
-          <div className="min-w-0 max-w-full space-y-2.5 overflow-hidden sm:space-y-3">
+          <div className="max-w-full min-w-0 space-y-2.5 overflow-hidden sm:space-y-3">
             <div className="grid min-w-0 gap-2.5 sm:grid-cols-2 sm:gap-3">
               <FieldGroup
                 id="firstName"
@@ -327,8 +328,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                   className={inputClassName}
                   disabled={isBusy}
                   {...form.register("firstName", {
-                    setValueAs: (value: string) =>
-                      typeof value === "string" ? value.trim() : "",
+                    setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
                   })}
                 />
               </FieldGroup>
@@ -345,8 +345,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                   className={inputClassName}
                   disabled={isBusy}
                   {...form.register("lastName", {
-                    setValueAs: (value: string) =>
-                      typeof value === "string" ? value.trim() : "",
+                    setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
                   })}
                 />
               </FieldGroup>
@@ -401,11 +400,17 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
 
                 <span className="min-w-0 text-[11px] leading-4 font-semibold break-words text-neutral-400 sm:text-xs sm:leading-5">
                   I agree to the User Agreement,{" "}
-                  <Link href="/legal/terms" className="text-primary underline-offset-4 hover:underline">
+                  <Link
+                    href="/legal/terms"
+                    className="text-primary underline-offset-4 hover:underline"
+                  >
                     Terms of Service
                   </Link>
                   , and{" "}
-                  <Link href="/legal/privacy" className="text-primary underline-offset-4 hover:underline">
+                  <Link
+                    href="/legal/privacy"
+                    className="text-primary underline-offset-4 hover:underline"
+                  >
                     Privacy Policy
                   </Link>
                   . I understand Vouch is a neutral payment coordination tool for deterministic
@@ -446,7 +451,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     ? `/sign-in?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-in"
                 }
-                className="font-mono text-primary underline-offset-4 transition-colors hover:text-white hover:underline"
+                className="text-primary font-mono underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Sign in
               </Link>

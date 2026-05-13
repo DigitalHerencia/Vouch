@@ -3,14 +3,14 @@ import { describe, expect, it } from "vitest"
 import { calculatePlatformFeeCents, calculateVouchPricing } from "@/lib/vouch/fees"
 
 describe("calculateVouchPricing", () => {
-  it("calculates customer total and application fee for the minimum service fee case", () => {
+  it("keeps customer authorization to the protected amount and charges merchant fee separately", () => {
     expect(calculateVouchPricing({ protectedAmountCents: 10_000 })).toEqual({
       protectedAmountCents: 10_000,
       merchantReceivesCents: 10_000,
       vouchServiceFeeCents: 500,
-      processingFeeOffsetCents: 345,
-      customerTotalCents: 10_845,
-      applicationFeeAmountCents: 845,
+      processingFeeOffsetCents: 46,
+      customerTotalCents: 10_000,
+      applicationFeeAmountCents: 0,
     })
   })
 
@@ -19,14 +19,8 @@ describe("calculateVouchPricing", () => {
 
     expect(pricing.vouchServiceFeeCents).toBe(2500)
     expect(pricing.merchantReceivesCents).toBe(50_000)
-    expect(pricing.applicationFeeAmountCents).toBe(
-      pricing.vouchServiceFeeCents + pricing.processingFeeOffsetCents
-    )
-    expect(pricing.customerTotalCents).toBe(
-      pricing.protectedAmountCents +
-        pricing.vouchServiceFeeCents +
-        pricing.processingFeeOffsetCents
-    )
+    expect(pricing.applicationFeeAmountCents).toBe(0)
+    expect(pricing.customerTotalCents).toBe(pricing.protectedAmountCents)
   })
 
   it("rejects invalid protected amounts", () => {

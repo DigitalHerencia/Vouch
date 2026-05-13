@@ -1,0 +1,119 @@
+- generic [active] [ref=e1]:
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - link "Vouch home" [ref=e6] [cursor=pointer]:
+          - /url: /
+          - generic "Vouch" [ref=e7]:
+            - img [ref=e8]
+            - generic [ref=e13]: Vouch
+        - navigation [ref=e14]:
+          - button "Pricing" [ref=e15] [cursor=pointer]
+          - button "FAQ" [ref=e16] [cursor=pointer]
+          - button "Terms" [ref=e17] [cursor=pointer]
+          - button "Privacy" [ref=e18] [cursor=pointer]
+        - generic [ref=e19]:
+          - button "Sign in" [ref=e20] [cursor=pointer]
+          - button "Get started" [ref=e21] [cursor=pointer]
+    - main [ref=e22]:
+      - main [ref=e23]:
+        - generic [ref=e24]:
+          - generic [ref=e25]:
+            - generic [ref=e27]:
+              - heading "Explicit Confirmation. Deterministic Settlement." [level=1] [ref=e28]:
+                - text: Explicit
+                - text: Confirmation.
+                - text: Deterministic
+                - text: Settlement.
+              - paragraph [ref=e29]: A simple way to protect appointments and in-person agreements. Both parties confirm. Then funds release. Otherwise, you’re covered.
+              - generic [ref=e30]:
+                - button "Create a Vouch" [ref=e31] [cursor=pointer]:
+                  - generic [ref=e32]: Create a Vouch
+                  - img
+                - button "How it works" [ref=e33] [cursor=pointer]:
+                  - generic [ref=e34]: How it works
+                  - img
+            - complementary [ref=e36]:
+              - paragraph [ref=e38]: Payment flow
+              - generic [ref=e39]:
+                - generic [ref=e40]:
+                  - generic [ref=e41]:
+                    - generic [ref=e42]: "1"
+                    - generic [ref=e43]:
+                      - heading "Amount" [level=2] [ref=e44]
+                      - paragraph [ref=e45]: Set the Vouch amount before anyone commits.
+                  - img [ref=e47]
+                - generic [ref=e50]:
+                  - generic [ref=e51]:
+                    - generic [ref=e52]: "2"
+                    - generic [ref=e53]:
+                      - heading "Fees" [level=2] [ref=e54]
+                      - paragraph [ref=e55]: Show platform and provider fees up front.
+                  - img [ref=e57]
+                - generic [ref=e59]:
+                  - generic [ref=e60]:
+                    - generic [ref=e61]: "3"
+                    - generic [ref=e62]:
+                      - heading "Confirm" [level=2] [ref=e63]
+                      - paragraph [ref=e64]: Both parties confirm presence in the window.
+                  - img [ref=e66]
+                - generic [ref=e69]:
+                  - generic [ref=e70]:
+                    - generic [ref=e71]: "4"
+                    - generic [ref=e72]:
+                      - heading "Release" [level=2] [ref=e73]
+                      - paragraph [ref=e74]: Provider infrastructure settles the outcome.
+                  - img [ref=e76]
+              - generic [ref=e78]: Both confirm = release
+          - generic [ref=e80]:
+            - generic [ref=e81]:
+              - article [ref=e82]:
+                - paragraph [ref=e83]: Platform fee
+                - paragraph [ref=e84]: 5%
+                - paragraph [ref=e85]: Vouch coordination fee shown before commitment.
+              - article [ref=e86]:
+                - paragraph [ref=e87]: Minimum fee
+                - paragraph [ref=e88]: $5
+                - paragraph [ref=e89]: Minimum platform fee for each Vouch.
+              - article [ref=e90]:
+                - paragraph [ref=e91]: Provider fee
+                - paragraph [ref=e92]: Stripe
+                - paragraph [ref=e93]: Processing is handled through provider-backed infrastructure.
+              - article [ref=e94]:
+                - paragraph [ref=e95]: Release rule
+                - paragraph [ref=e96]: Both
+                - paragraph [ref=e97]: Dual confirmation is required before release.
+            - generic [ref=e98]:
+              - article [ref=e99]:
+                - generic [ref=e100]:
+                  - paragraph [ref=e103]: Transparent by default
+                  - heading "Fees are visible before commitment." [level=2] [ref=e104]
+                  - paragraph [ref=e105]: The customer sees the Vouch amount, platform fee, provider fee, and total before moving forward. Pricing is part of the commitment, not a surprise after it.
+              - article [ref=e106]:
+                - generic [ref=e107]:
+                  - paragraph [ref=e110]: Payment coordination, not custody
+                  - heading "Providers handle money rails. Vouch handles workflow logic." [level=2] [ref=e111]
+                  - paragraph [ref=e112]: Vouch coordinates state. Payment providers handle payment infrastructure. Identity providers handle identity. Vouch stores participant-safe references, statuses, and lifecycle events — not raw card data, raw identity documents, or direct-custody balances.
+              - article [ref=e113]:
+                - generic [ref=e114]:
+                  - paragraph [ref=e117]: Deterministic outcome
+                  - heading "Vouch doesn’t ask who’s right. Vouch asks what happened." [level=2] [ref=e118]
+                  - paragraph [ref=e119]: No stories. No screenshots. No appeals. No mediation. No subjective judgment. Vouch converts mutual intent into explicit protocol, bounded rules, and economically meaningful confirmation. If conditions are met, funds move. If conditions fail, they don’t.
+          - generic [ref=e120]:
+            - generic [ref=e121]:
+              - img [ref=e123]
+              - generic [ref=e128]:
+                - heading "Fraud thrives in ambiguity, exceptions, and manual intervention." [level=2] [ref=e129]
+                - paragraph [ref=e130]: Vouch removes all three. No unilateral action forces settlement. No human discretion surface exists to exploit. A Vouch gets created, paid, sent, accepted, confirmed, then released, voided, refunded, or not captured according to provider state.
+            - button "Create a Vouch" [ref=e132] [cursor=pointer]:
+              - generic [ref=e133]: Create a Vouch
+              - img
+    - contentinfo [ref=e134]:
+      - generic [ref=e135]:
+        - paragraph [ref=e136]: © 2026 Vouch. Payment coordination, not escrow.
+        - navigation [ref=e137]:
+          - button "Pricing" [ref=e138] [cursor=pointer]
+          - button "FAQ" [ref=e139] [cursor=pointer]
+          - button "Terms" [ref=e140] [cursor=pointer]
+          - button "Privacy" [ref=e141] [cursor=pointer]
+  - alert [ref=e142]

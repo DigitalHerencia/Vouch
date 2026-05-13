@@ -16,6 +16,7 @@ import { CalloutPanel } from "@/components/shared/callout-panel"
 import { MetricGrid, type MetricGridItem } from "@/components/shared/metric-grid"
 import { SectionIntro } from "@/components/shared/section-intro"
 import { Surface, SurfaceHeader } from "@/components/shared/surface"
+import { dashboardContent } from "@/content/dashboard"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
 import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
 
@@ -48,7 +49,7 @@ const dateTime = (value: string | null) =>
         dateStyle: "medium",
         timeStyle: "short",
       }).format(new Date(value))
-    : "No deadline"
+    : dashboardContent.fallbackDeadline
 
 function toDashboardVouch(vouch: VouchCardDTO, userId: string): DashboardVouch {
   return {
@@ -59,7 +60,7 @@ function toDashboardVouch(vouch: VouchCardDTO, userId: string): DashboardVouch {
     amountLabel: money(vouch.protectedAmountCents, vouch.currency),
     statusLabel: vouch.status,
     deadlineLabel: dateTime(vouch.confirmationExpiresAt),
-    nextActionLabel: "Open",
+    nextActionLabel: dashboardContent.actions.open,
   }
 }
 
@@ -69,22 +70,22 @@ export async function DashboardPage() {
 
   const dashboardSections: DashboardSection[] = [
     {
-      title: "Action required",
-      description: "Vouches that need your attention.",
+      title: dashboardContent.sections.actionRequired.title,
+      description: dashboardContent.sections.actionRequired.description,
       vouches: (sections?.actionRequired ?? []).map((vouch) =>
         toDashboardVouch(vouch, state.summary?.userId ?? "")
       ),
     },
     {
-      title: "Active",
-      description: "Vouches awaiting acceptance, authorization, or confirmation.",
+      title: dashboardContent.sections.active.title,
+      description: dashboardContent.sections.active.description,
       vouches: (sections?.active ?? []).map((vouch) =>
         toDashboardVouch(vouch, state.summary?.userId ?? "")
       ),
     },
     {
-      title: "Completed",
-      description: "Final Vouches where both parties confirmed.",
+      title: dashboardContent.sections.completed.title,
+      description: dashboardContent.sections.completed.description,
       vouches: (sections?.completed ?? []).map((vouch) =>
         toDashboardVouch(vouch, state.summary?.userId ?? "")
       ),
@@ -102,17 +103,17 @@ export async function DashboardPage() {
 
   const metrics: MetricGridItem[] = [
     {
-      label: "Active Vouches",
+      label: dashboardContent.metrics.activeVouches.label,
       value: String(activeCount || active.length),
-      body: "Invites created or waiting on the other party.",
+      body: dashboardContent.metrics.activeVouches.body,
     },
     {
-      label: "Past Vouches",
+      label: dashboardContent.metrics.pastVouches.label,
       value: String(completedCount),
-      body: "Completed, refunded, expired, or otherwise resolved.",
+      body: dashboardContent.metrics.pastVouches.body,
     },
     {
-      label: "Active Value",
+      label: dashboardContent.metrics.activeValue.label,
       value: money(
         [...(sections?.active ?? []), ...(sections?.actionRequired ?? [])].reduce(
           (sum, vouch) => sum + vouch.protectedAmountCents,
@@ -120,31 +121,31 @@ export async function DashboardPage() {
         ),
         "usd"
       ),
-      body: "Payment-coordination value currently in motion.",
+      body: dashboardContent.metrics.activeValue.body,
     },
     {
-      label: "Needs Review",
+      label: dashboardContent.metrics.needsReview.label,
       value: String(actionRequiredCount),
-      body: "Items waiting on confirmation, provider readiness, or attention.",
+      body: dashboardContent.metrics.needsReview.body,
     },
   ]
 
   return (
     <main className="mx-auto grid w-full max-w-7xl gap-6 px-6 pt-8 pb-12 sm:px-10 lg:px-12 lg:pt-10 lg:pb-14">
       <SectionIntro
-        eyebrow="Participant ledger"
-        title="Dashboard"
-        body="Here's what's happening with your Vouches. Amount, status, deadline, and consequence stay visible."
+        eyebrow={dashboardContent.hero.eyebrow}
+        title={dashboardContent.hero.title}
+        body={dashboardContent.hero.body}
       />
 
       {!readinessComplete ? (
         <CalloutPanel
-          title="Complete readiness before creating or accepting Vouches."
-          body="Complete readiness checks so Vouch can coordinate payment state, confirmation windows, and deterministic outcomes."
+          title={dashboardContent.readiness.title}
+          body={dashboardContent.readiness.body}
           icon={AlertCircle}
           actions={
             <Button variant="primary" size="cta" render={<Link href="/dashboard" />}>
-              Return to dashboard
+              {dashboardContent.readiness.cta}
               <ArrowRight className="size-5" strokeWidth={1.9} />
             </Button>
           }
@@ -155,32 +156,32 @@ export async function DashboardPage() {
 
       <DashboardListPanel
         title={`Action required (${actionRequired.length})`}
-        description="The next thing to handle. No ambiguity, no buried state."
-        emptyText="No Vouches need action right now."
+        description={dashboardContent.sections.actionRequired.panelDescription}
+        emptyText={dashboardContent.sections.actionRequired.emptyText}
         icon={Bell}
         rows={actionRequired}
       />
 
       <DashboardListPanel
         title={`Active (${active.length})`}
-        description="Vouches waiting on acceptance, authorization, or confirmation."
-        emptyText="No active Vouches."
+        description={dashboardContent.sections.active.panelDescription}
+        emptyText={dashboardContent.sections.active.emptyText}
         icon={Clock}
         rows={active}
       />
 
       <DashboardListPanel
         title={`Completed (${completed.length})`}
-        description="Outcomes that followed system state."
-        emptyText="No completed Vouches yet."
+        description={dashboardContent.sections.completed.panelDescription}
+        emptyText={dashboardContent.sections.completed.emptyText}
         icon={CheckCircle2}
         rows={completed}
       />
 
       <CtaPanel
-        title="Create a Vouch"
-        body="Create the agreement, send the invite, and let dual confirmation determine release, refund, void, or non-capture."
-        cta="Create Vouch"
+        title={dashboardContent.cta.title}
+        body={dashboardContent.cta.body}
+        cta={dashboardContent.cta.label}
         href="/vouches/new"
         icon={Handshake}
         className="mt-0"
@@ -217,7 +218,7 @@ function DashboardListPanel({
           </div>
         </div>
         <Button variant="link" render={<Link href="/vouches/new" />}>
-          Create
+          {dashboardContent.actions.create}
         </Button>
       </SurfaceHeader>
 
