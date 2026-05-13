@@ -10,7 +10,7 @@ test.describe("public marketing routes", () => {
   test("pricing loads without auth", async ({ page }) => {
     await page.goto("/pricing")
 
-    await expect(page.getByRole("heading", { name: /know the cost/i })).toBeVisible()
+    await expect(page.getByRole("heading", { name: /explicit confirmation/i })).toBeVisible()
   })
 
   test("faq loads without auth", async ({ page }) => {

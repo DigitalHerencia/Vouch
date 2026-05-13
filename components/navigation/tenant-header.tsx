@@ -20,7 +20,7 @@ export interface TenantHeaderProps {
 
 export const defaultTenantNavItems = [
   { href: "/dashboard", label: "Dashboard" },
-  { href: "/vouches", label: "Vouches" },
+  { href: "/vouches/new", label: "Create" },
 ] satisfies readonly TenantHeaderNavItem[]
 
 export function TenantHeader({ navItems = defaultTenantNavItems, className }: TenantHeaderProps) {

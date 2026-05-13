@@ -52,7 +52,6 @@ Allowed user-facing tenant routes only:
 ```txt
 /dashboard
 /vouches/new
-/vouches/new/confirm
 /vouches/[vouchId]
 ```
 

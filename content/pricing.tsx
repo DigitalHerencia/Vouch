@@ -72,7 +72,7 @@ export const pricingStats = [
 
 export const pricingCalloutContent = {
   title: "Fraud thrives in ambiguity, exceptions, and manual intervention.",
-  body: "Vouch removes all three. No unilateral action forces settlement. No human discretion surface exists to exploit. A Vouch gets created, paid, sent, accepted, confirmed, then released or refunded according to system state.",
+  body: "Vouch removes all three. No unilateral action forces settlement. No human discretion surface exists to exploit. A Vouch gets created, paid, sent, accepted, confirmed, then released, voided, refunded, or not captured according to provider state.",
   label: "Create a Vouch",
   action: "/sign-up?return_to=/vouches/new",
   icon: Handshake,
@@ -82,7 +82,7 @@ export const pricingNotes = [
   {
     eyebrow: "Transparent by default",
     title: "Fees are visible before commitment.",
-    body: "The payer sees the Vouch amount, platform fee, provider fee, and total before moving forward. Pricing is part of the commitment, not a surprise after it.",
+    body: "The customer sees the Vouch amount, platform fee, provider fee, and total before moving forward. Pricing is part of the commitment, not a surprise after it.",
   },
   {
     eyebrow: "Payment coordination, not custody",

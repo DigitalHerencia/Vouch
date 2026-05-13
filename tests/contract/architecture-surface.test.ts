@@ -39,7 +39,6 @@ const requiredRouteShells = [
   "app/(tenant)/error.tsx",
   "app/(tenant)/dashboard/page.tsx",
   "app/(tenant)/vouches/new/page.tsx",
-  "app/(tenant)/vouches/new/confirm/page.tsx",
   "app/(tenant)/vouches/[vouchId]/page.tsx",
   "app/api/clerk/webhook-handler/route.ts",
   "app/api/stripe/webhooks/route.ts",

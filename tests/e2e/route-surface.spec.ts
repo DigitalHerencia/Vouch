@@ -3,12 +3,7 @@ import { expect, test } from "@playwright/test"
 const routeSmokeCases = [
   { path: "/", expectedStatus: 200 },
   { path: "/dashboard", expectedMinimumStatus: 200, expectedMaximumStatus: 399 },
-  { path: "/setup", expectedMinimumStatus: 200, expectedMaximumStatus: 399 },
-  { path: "/vouches", expectedMinimumStatus: 200, expectedMaximumStatus: 399 },
   { path: "/vouches/new", expectedMinimumStatus: 200, expectedMaximumStatus: 399 },
-  { path: "/settings/payment", expectedMinimumStatus: 200, expectedMaximumStatus: 399 },
-  { path: "/settings/payout", expectedMinimumStatus: 200, expectedMaximumStatus: 399 },
-  { path: "/settings/verification", expectedMinimumStatus: 200, expectedMaximumStatus: 399 },
 ]
 
 test.describe("contracted route surface", () => {

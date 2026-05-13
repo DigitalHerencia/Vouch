@@ -17,12 +17,13 @@ import { MetricGrid, type MetricGridItem } from "@/components/shared/metric-grid
 import { SectionIntro } from "@/components/shared/section-intro"
 import { Surface, SurfaceHeader } from "@/components/shared/surface"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
+import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
 
 type DashboardVouch = {
   id: string
   href: string
   title: string
-  role: "payer" | "payee"
+  role: "merchant" | "customer"
   amountLabel: string
   statusLabel: string
   deadlineLabel: string
@@ -41,17 +42,23 @@ const money = (cents: unknown, currency: unknown) =>
     currency: String(currency ?? "usd").toUpperCase(),
   }).format(Number(cents ?? 0) / 100)
 
-function toDashboardVouch(vouch: unknown): DashboardVouch {
-  const record = vouch as Record<string, unknown>
+const dateTime = (value: string | null) =>
+  value
+    ? new Intl.DateTimeFormat("en-US", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }).format(new Date(value))
+    : "No deadline"
 
+function toDashboardVouch(vouch: VouchCardDTO, userId: string): DashboardVouch {
   return {
-    id: String(record.id),
-    href: `/vouches/${record.id}`,
-    title: String(record.label ?? record.publicId ?? "Vouch"),
-    role: "payer",
-    amountLabel: money(record.amountCents, record.currency),
-    statusLabel: String(record.status ?? "active"),
-    deadlineLabel: String(record.confirmationExpiresAt ?? "No deadline"),
+    id: vouch.id,
+    href: `/vouches/${vouch.id}`,
+    title: vouch.publicId,
+    role: vouch.merchantId === userId ? "merchant" : "customer",
+    amountLabel: money(vouch.protectedAmountCents, vouch.currency),
+    statusLabel: vouch.status,
+    deadlineLabel: dateTime(vouch.confirmationExpiresAt),
     nextActionLabel: "Open",
   }
 }
@@ -64,17 +71,23 @@ export async function DashboardPage() {
     {
       title: "Action required",
       description: "Vouches that need your attention.",
-      vouches: (sections?.actionRequired ?? []).map(toDashboardVouch),
+      vouches: (sections?.actionRequired ?? []).map((vouch) =>
+        toDashboardVouch(vouch, state.summary?.userId ?? "")
+      ),
     },
     {
       title: "Active",
       description: "Vouches awaiting acceptance, authorization, or confirmation.",
-      vouches: (sections?.active ?? []).map(toDashboardVouch),
+      vouches: (sections?.active ?? []).map((vouch) =>
+        toDashboardVouch(vouch, state.summary?.userId ?? "")
+      ),
     },
     {
       title: "Completed",
       description: "Final Vouches where both parties confirmed.",
-      vouches: (sections?.completed ?? []).map(toDashboardVouch),
+      vouches: (sections?.completed ?? []).map((vouch) =>
+        toDashboardVouch(vouch, state.summary?.userId ?? "")
+      ),
     },
   ]
 
@@ -102,7 +115,7 @@ export async function DashboardPage() {
       label: "Active Value",
       value: money(
         [...(sections?.active ?? []), ...(sections?.actionRequired ?? [])].reduce(
-          (sum, vouch) => sum + Number((vouch as Record<string, unknown>).amountCents ?? 0),
+          (sum, vouch) => sum + vouch.protectedAmountCents,
           0
         ),
         "usd"
@@ -203,8 +216,8 @@ function DashboardListPanel({
             </p>
           </div>
         </div>
-        <Button variant="link" render={<Link href="/vouches" />}>
-          View all
+        <Button variant="link" render={<Link href="/vouches/new" />}>
+          Create
         </Button>
       </SurfaceHeader>
 

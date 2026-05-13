@@ -243,7 +243,7 @@ lib/authz/*
 Only provider webhooks are allowed:
 
 ```txt
-app/api/clerk/webhooks/route.ts
+app/api/clerk/webhook-handler/route.ts
 app/api/stripe/webhooks/route.ts
 ```
 

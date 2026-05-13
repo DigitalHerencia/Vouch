@@ -119,7 +119,7 @@ export const landingUseCases = [
 ] satisfies CardGridItem[]
 
 export const landingTrustPanelContent = {
-  action: "app/(tenant)/vouches/new/page.tsx",
+  action: "/vouches/new",
   label: "Create A Vouch",
   icon: ShieldCheck,
   title: "Mutual confirmation unlocks settlement. No confirmation, no release.",

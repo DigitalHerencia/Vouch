@@ -221,7 +221,6 @@ features/dashboard/dashboard-page.client.tsx
 components/dashboard/*
 
 app/(tenant)/vouches/new/page.tsx
-app/(tenant)/vouches/new/confirm/page.tsx
 app/(tenant)/vouches/[vouchId]/page.tsx
 features/vouches/*
 components/vouches/*

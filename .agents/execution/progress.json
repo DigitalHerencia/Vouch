@@ -2,7 +2,7 @@
   "version": 1,
   "project": "Vouch",
   "audit_program": {
-    "status": "implementation_assumed_pending_local_validation",
+    "status": "first_pass_conformance_validated",
     "passes": [
       {
         "pass": 1,
@@ -47,11 +47,11 @@
       {
         "pass": 9,
         "name": "Tests, validation spine, launch checklist, final reconciliation",
-        "status": "pending_local_validation"
+        "status": "validated_for_first_pass_scope"
       }
     ]
   },
-  "next_action": "Run the validation spine and update validation.json with actual command results.",
+  "next_action": "Review commit-ready first-pass conformance changes. Do not add seed data in this pass.",
   "required_commands": [
     "pnpm prisma:validate",
     "pnpm validate:contracts",

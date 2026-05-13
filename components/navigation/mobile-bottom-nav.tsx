@@ -3,7 +3,6 @@
 "use client"
 
 import {
-    CalendarDays,
     FileText,
     HelpCircle,
     Home,
@@ -31,7 +30,6 @@ export interface MobileBottomNavProps {
 
 export const defaultTenantMobileBottomNavItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home },
-    { href: "/vouches", label: "Vouches", icon: CalendarDays },
     { href: "/vouches/new", label: "Create", icon: Plus, primary: true },
 ] satisfies readonly MobileBottomNavItem[]
 
@@ -56,7 +54,8 @@ export function MobileBottomNav({
         <nav
             aria-label={ariaLabel}
             className={cn(
-                "fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-neutral-900 bg-black/92 px-2 py-2 backdrop-blur md:hidden",
+                "fixed inset-x-0 bottom-0 z-50 grid border-t border-neutral-900 bg-black/92 px-2 py-2 backdrop-blur md:hidden",
+                items.length >= 5 ? "grid-cols-5" : "grid-cols-4",
                 className,
             )}
         >

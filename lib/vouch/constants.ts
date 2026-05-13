@@ -185,7 +185,6 @@ export const APP_ROUTES = {
   signUp: "/sign-up",
   dashboard: "/dashboard",
   newVouch: "/vouches/new",
-  confirmNewVouch: "/vouches/new/confirm",
   vouchDetailBase: "/vouches",
   checkoutSuccess: "/checkout/success",
 } as const

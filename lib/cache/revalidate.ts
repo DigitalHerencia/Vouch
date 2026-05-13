@@ -9,7 +9,7 @@ export async function revalidateVouch(vouchId: string): Promise<void> {
 
 export async function revalidateUserVouches(userId: string): Promise<void> {
   revalidateTag(`user:${userId}:vouches`, "max")
-  revalidatePath("/vouches")
+  revalidatePath("/dashboard")
 }
 
 export async function revalidateDashboard(): Promise<void> {

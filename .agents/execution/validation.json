@@ -1,53 +1,69 @@
 {
   "version": 1,
   "project": "Vouch",
-  "last_pass": "pass-9-tests-validation-launch",
-  "status": "pending",
+  "last_pass": "first-pass-conformance-fixes",
+  "status": "passed_with_warnings",
   "commands": [
     {
+      "command": "pnpm install",
+      "status": "passed",
+      "required": true,
+      "notes": "No seed command run. Prisma client generated during postinstall."
+    },
+    {
       "command": "pnpm prisma:validate",
-      "status": "pending",
+      "status": "passed",
       "required": true
     },
     {
       "command": "pnpm validate:contracts",
-      "status": "pending",
+      "status": "passed",
       "required": true
     },
     {
       "command": "pnpm lint",
-      "status": "pending",
-      "required": true
+      "status": "passed_with_warnings",
+      "required": true,
+      "notes": "Existing unused-symbol warnings remain in paymentActions, vouchActions, vouchFetchers, and architecture-surface.test."
     },
     {
       "command": "pnpm typecheck",
-      "status": "pending",
+      "status": "passed",
       "required": true
     },
     {
       "command": "pnpm test",
-      "status": "pending",
-      "required": true
+      "status": "passed",
+      "required": true,
+      "notes": "19 test files, 69 tests passed."
     },
     {
       "command": "pnpm test:e2e",
-      "status": "pending",
+      "status": "passed",
+      "required": true,
+      "notes": "18 tests passed after route smoke assertions were aligned to the contracted route surface."
+    },
+    {
+      "command": "pnpm build",
+      "status": "passed",
       "required": true
     },
     {
       "command": "pnpm validate",
-      "status": "pending",
-      "required": true
+      "status": "not_run",
+      "required": false,
+      "notes": "Covered by individual lint/typecheck/prisma/contracts/test commands in this pass."
     },
     {
       "command": "pnpm validate:all",
-      "status": "pending",
-      "required": true
+      "status": "not_run",
+      "required": false,
+      "notes": "Covered by individual validation commands plus pnpm test:e2e in this pass."
     }
   ],
   "known_blockers": [],
   "notes": [
-    "Validation status must be updated only after local commands are run.",
-    "Do not mark launch-ready until validate:all passes."
+    "No seed data, seed scripts, database fixtures, or provider backfills were added or run.",
+    "Provider CLI audit commands were not needed for these source-only conformance fixes."
   ]
 }

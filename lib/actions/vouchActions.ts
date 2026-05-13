@@ -34,6 +34,7 @@ import {
 import { createInvitationToken, hashInvitationToken } from "@/lib/invitations/tokens"
 import {
   authorizeVouchPayment,
+  captureConfirmedVouchPayment,
   startStripeConnectOnboarding,
   startStripePaymentManagement,
 } from "@/lib/actions/paymentActions"
@@ -127,7 +128,6 @@ async function revalidateVouchSurfaces(
 ): Promise<void> {
   revalidatePath("/dashboard")
   revalidatePath("/vouches/new")
-  revalidatePath("/vouches/new/confirm")
   revalidatePath(`/vouches/${vouchId}`)
 
   for (const userId of userIds) {
@@ -495,6 +495,7 @@ export async function markInviteOpened(
 export async function confirmPresence(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
   const user = await requireActiveUser()
   const parsed = confirmPresenceInputSchema.safeParse(input)
+  let shouldCapture = false
 
   if (!parsed.success) {
     return actionFailure(
@@ -556,6 +557,8 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
       })
 
       if (aggregateStatus === "both_confirmed") {
+        shouldCapture = true
+
         await tx.auditEvent.create({
           data: {
             eventName: "vouch.confirmation_complete",
@@ -586,6 +589,28 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
     }
 
     throw error
+  }
+
+  if (shouldCapture) {
+    let capture: Awaited<ReturnType<typeof captureConfirmedVouchPayment>>
+
+    try {
+      capture = await captureConfirmedVouchPayment({
+        vouchId: parsed.data.vouchId,
+        idempotencyKey: `vouch:${parsed.data.vouchId}:capture`,
+      })
+    } catch (error) {
+      await revalidateVouchSurfaces(parsed.data.vouchId, [vouch.merchantId, vouch.customerId])
+      return actionFailure(
+        "PAYMENT_CAPTURE_FAILED",
+        error instanceof Error ? error.message : "Payment capture failed."
+      )
+    }
+
+    if (!capture.ok) {
+      await revalidateVouchSurfaces(parsed.data.vouchId, [vouch.merchantId, vouch.customerId])
+      return capture
+    }
   }
 
   await revalidateVouchSurfaces(parsed.data.vouchId, [vouch.merchantId, vouch.customerId])

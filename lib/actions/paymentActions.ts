@@ -113,7 +113,6 @@ async function revalidatePaymentSurfaces(input: {
 }): Promise<void> {
   revalidatePath("/dashboard")
   revalidatePath("/vouches/new")
-  revalidatePath("/vouches/new/confirm")
 
   if (input.vouchId) {
     revalidatePath(`/vouches/${input.vouchId}`)

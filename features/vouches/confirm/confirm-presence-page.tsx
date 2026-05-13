@@ -32,7 +32,7 @@ export function ConfirmPresencePage({
     <main className="grid w-full gap-6">
       <div className="grid gap-4 lg:grid-cols-[1fr_470px]">
         <div>
-          <Link href="/vouches" className="text-sm text-blue-500">← Back to Vouch</Link>
+          <Link href="/dashboard" className="text-sm text-blue-500">Back to dashboard</Link>
           <SectionIntro
             className="mt-5"
             eyebrow="Presence confirmation"

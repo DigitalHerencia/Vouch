@@ -11,7 +11,7 @@ export function ShareVouchPanel() {
   return (
     <main className="grid w-full gap-8 lg:grid-cols-[1fr_0.85fr]">
       <section>
-        <Link href="/vouches" className="text-sm text-blue-500">← Back to vouch</Link>
+        <Link href="/dashboard" className="text-sm text-blue-500">Back to dashboard</Link>
         <SectionIntro
           className="mt-7"
           eyebrow="Invite"

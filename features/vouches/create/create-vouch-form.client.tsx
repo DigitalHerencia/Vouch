@@ -1,69 +1,167 @@
 "use client"
 
-import { ArrowRight, LockKeyhole, ShieldCheck } from "lucide-react"
-import type { ReactNode } from "react"
-import { useState } from "react"
+import { ArrowRight, CalendarClock, ShieldCheck } from "lucide-react"
+import { useRouter } from "next/navigation"
+import type { FormEvent, ReactNode } from "react"
+import { useMemo, useState, useTransition } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
-import { Switch } from "@/components/ui/switch"
-import { Textarea } from "@/components/ui/textarea"
+import { createVouch } from "@/lib/actions/vouchActions"
+
+type FieldErrors = Record<string, string[] | undefined>
+
+const inputClass = "h-12 rounded-none border-neutral-800 bg-neutral-950 font-mono text-white"
+
+function dollarsToCents(value: string): number {
+  const normalized = value.replace(/[$,\s]/g, "")
+  const amount = Number(normalized)
+
+  if (!Number.isFinite(amount)) return 0
+  return Math.round(amount * 100)
+}
+
+function firstError(fieldErrors: FieldErrors, field: string): string | null {
+  return fieldErrors[field]?.[0] ?? null
+}
 
 export function CreateVouchForm() {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [acceptedDisclaimer, setAcceptedDisclaimer] = useState(false)
+  const [amount, setAmount] = useState("")
+  const [appointmentStartsAt, setAppointmentStartsAt] = useState("")
+  const [confirmationOpensAt, setConfirmationOpensAt] = useState("")
+  const [confirmationExpiresAt, setConfirmationExpiresAt] = useState("")
+  const [formError, setFormError] = useState<string | null>(null)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
+
+  const amountCents = useMemo(() => dollarsToCents(amount), [amount])
+  const amountLabel = useMemo(
+    () =>
+      new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(amountCents / 100),
+    [amountCents]
+  )
+
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+    setFormError(null)
+    setFieldErrors({})
+
+    startTransition(async () => {
+      const result = await createVouch({
+        amountCents,
+        currency: "usd",
+        appointmentStartsAt,
+        confirmationOpensAt,
+        confirmationExpiresAt,
+        disclaimerAccepted: acceptedDisclaimer,
+      })
+
+      if (!result.ok) {
+        setFormError(result.formError ?? "Vouch could not be created.")
+        setFieldErrors(result.fieldErrors ?? {})
+        return
+      }
+
+      router.push(result.data.detailPath)
+    })
+  }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
+    <form className="grid gap-6 lg:grid-cols-[1fr_380px]" onSubmit={handleSubmit}>
       <section className="border border-neutral-800 bg-neutral-950/60">
         <Step number="1" title="Amount">
-          <label className="text-sm text-neutral-200">Amount (USD)</label>
-          <Input className="mt-2 h-12 rounded-none border-neutral-800 bg-neutral-950 font-mono text-lg" defaultValue="$ 200.00" />
-          <p className="mt-2 font-mono text-xs text-neutral-500">Minimum $10.00</p>
+          <label className="text-sm text-neutral-200" htmlFor="vouch-amount">
+            Amount (USD)
+          </label>
+          <Input
+            id="vouch-amount"
+            className={`mt-2 ${inputClass} text-lg`}
+            inputMode="decimal"
+            min="1"
+            name="amount"
+            onChange={(event) => setAmount(event.target.value)}
+            placeholder="100.00"
+            required
+            type="text"
+            value={amount}
+          />
+          <FieldError message={firstError(fieldErrors, "amountCents")} />
         </Step>
-        <Step number="2" title="Meeting window">
+
+        <Step number="2" title="Appointment">
+          <label className="text-sm text-neutral-200" htmlFor="appointment-starts-at">
+            Appointment date and time
+          </label>
+          <Input
+            id="appointment-starts-at"
+            className={`mt-2 ${inputClass}`}
+            name="appointmentStartsAt"
+            onChange={(event) => setAppointmentStartsAt(event.target.value)}
+            required
+            type="datetime-local"
+            value={appointmentStartsAt}
+          />
+          <FieldError message={firstError(fieldErrors, "appointmentStartsAt")} />
+        </Step>
+
+        <Step number="3" title="Confirmation window">
           <div className="grid gap-3 sm:grid-cols-2">
-            <Input className="rounded-none border-neutral-800 bg-neutral-950" defaultValue="May 24, 2025" />
-            <Input className="rounded-none border-neutral-800 bg-neutral-950" defaultValue="04:00 PM" />
-            <Input className="rounded-none border-neutral-800 bg-neutral-950" defaultValue="May 24, 2025" />
-            <Input className="rounded-none border-neutral-800 bg-neutral-950" defaultValue="06:00 PM" />
+            <label className="text-sm text-neutral-200" htmlFor="confirmation-opens-at">
+              Opens
+              <Input
+                id="confirmation-opens-at"
+                className={`mt-2 ${inputClass}`}
+                name="confirmationOpensAt"
+                onChange={(event) => setConfirmationOpensAt(event.target.value)}
+                required
+                type="datetime-local"
+                value={confirmationOpensAt}
+              />
+            </label>
+            <label className="text-sm text-neutral-200" htmlFor="confirmation-expires-at">
+              Expires
+              <Input
+                id="confirmation-expires-at"
+                className={`mt-2 ${inputClass}`}
+                name="confirmationExpiresAt"
+                onChange={(event) => setConfirmationExpiresAt(event.target.value)}
+                required
+                type="datetime-local"
+                value={confirmationExpiresAt}
+              />
+            </label>
           </div>
-          <p className="mt-2 font-mono text-xs text-neutral-500">Window length: 2h 00m</p>
-        </Step>
-        <Step number="3" title="Recipient">
-          <Input className="rounded-none border-neutral-800 bg-neutral-950" placeholder="email@example.com" />
-          <div className="mt-4 flex items-center justify-between">
-            <span>
-              <strong className="block text-sm">Shareable link</strong>
-              <span className="text-sm text-neutral-500">Anyone with the link can view and accept this Vouch.</span>
-            </span>
-            <Switch defaultChecked />
-          </div>
-        </Step>
-        <Step number="4" title="Details (optional)">
-          <Input className="rounded-none border-neutral-800 bg-neutral-950" placeholder="e.g. Consulting call" />
-          <Textarea className="mt-3 rounded-none border-neutral-800 bg-neutral-950" placeholder="Add any internal notes..." />
+          <FieldError message={firstError(fieldErrors, "confirmationOpensAt")} />
+          <FieldError message={firstError(fieldErrors, "confirmationExpiresAt")} />
         </Step>
       </section>
 
-      <aside className="grid gap-4">
+      <aside className="grid content-start gap-4">
         <div className="border border-neutral-800 bg-neutral-950/70 p-5">
-          <h2 className="text-xl font-bold text-white">Summary</h2>
-          <Line label="Vouch amount" value="$200.00" />
-          <Line label="Platform fee (2.5% + $1.00)" value="$6.00" />
-          <div className="mt-4 border-t border-neutral-800 pt-4">
-            <Line label="Total commitment" value="$206.00" strong />
-          </div>
+          <CalendarClock className="mb-3 size-8 text-blue-500" />
+          <h2 className="font-bold text-white">Deterministic window</h2>
+          <p className="mt-2 text-sm text-neutral-400">
+            The appointment and confirmation window define when both participants may confirm.
+          </p>
         </div>
         <div className="border border-neutral-800 bg-neutral-950/70 p-5">
           <ShieldCheck className="mb-3 size-8 text-blue-500" />
-          <h2 className="font-bold text-white">The rule is simple</h2>
-          <p className="mt-2 text-sm text-neutral-400">Both parties confirm within the window. If both do not confirm, payment is refunded or not captured.</p>
+          <h2 className="font-bold text-white">Outcome rule</h2>
+          <p className="mt-2 text-sm text-neutral-400">
+            Both confirm in time and provider-backed capture can proceed. Otherwise the payment is
+            voided, refunded, or not captured according to Stripe state.
+          </p>
         </div>
         <div className="border border-neutral-800 bg-neutral-950/70 p-5">
-          <LockKeyhole className="mb-3 size-8 text-neutral-400" />
-          <h2 className="font-bold text-white">Secure and neutral</h2>
-          <p className="mt-2 text-sm text-neutral-400">Payments are processed by Stripe. Vouch does not hold funds or judge outcomes.</p>
+          <h2 className="text-xl font-bold text-white">Summary</h2>
+          <Line label="Vouch amount" value={amount ? amountLabel : "Enter amount"} />
+          <Line label="Currency" value="USD" />
         </div>
         <label className="flex items-start gap-3 border border-neutral-800 bg-neutral-950/70 p-5">
           <Checkbox
@@ -72,17 +170,27 @@ export function CreateVouchForm() {
             onCheckedChange={(checked) => setAcceptedDisclaimer(checked === true)}
           />
           <span className="text-sm leading-6 text-neutral-300">
-            I understand and agree to the conditional payment terms for this Vouch. Funds release
-            only if both parties confirm presence within the allowed time; otherwise the provider
-            flow refunds, voids, or does not capture. Vouch does not verify the meeting purpose,
-            guarantee outcomes, mediate disputes, or reverse completed outcomes.
+            I understand that funds release only if both parties confirm presence within the
+            confirmation window. Otherwise the provider flow voids, refunds, or does not capture.
+            Vouch does not mediate disputes or manually decide outcomes.
           </span>
         </label>
-        <Button className="h-12 rounded-none bg-blue-700 disabled:opacity-40" disabled={!acceptedDisclaimer}>
-          Review & commit <ArrowRight className="ml-auto size-5" />
+        <FieldError message={firstError(fieldErrors, "disclaimerAccepted")} />
+        {formError ? (
+          <p className="border border-red-500/40 bg-red-500/10 p-3 text-sm text-red-200">
+            {formError}
+          </p>
+        ) : null}
+        <Button
+          className="h-12 rounded-none bg-blue-700 disabled:opacity-40"
+          disabled={isPending || !acceptedDisclaimer}
+          type="submit"
+        >
+          {isPending ? "Creating" : "Create Vouch"}
+          <ArrowRight className="ml-auto size-5" />
         </Button>
       </aside>
-    </div>
+    </form>
   )
 }
 
@@ -98,11 +206,17 @@ function Step({ number, title, children }: { number: string; title: string; chil
   )
 }
 
-function Line({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
+function FieldError({ message }: { message: string | null }) {
+  if (!message) return null
+
+  return <p className="mt-2 text-sm text-red-300">{message}</p>
+}
+
+function Line({ label, value }: { label: string; value: string }) {
   return (
     <div className="mt-3 flex justify-between gap-4 font-mono text-sm">
-      <span className={strong ? "text-white" : "text-neutral-300"}>{label}</span>
-      <span className={strong ? "text-blue-500" : "text-white"}>{value}</span>
+      <span className="text-neutral-300">{label}</span>
+      <span className="text-white">{value}</span>
     </div>
   )
 }

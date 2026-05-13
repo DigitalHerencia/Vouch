@@ -25,7 +25,7 @@ export function CreateVouchPage({
           className="mt-5"
           eyebrow="Merchant action"
           title="Create a Vouch"
-          body="Set the amount, meeting window, and recipient. Funds release only if both parties confirm presence during the confirmation window."
+          body="Set the amount, appointment time, and confirmation window. Funds release only if both parties confirm presence during the window."
         />
       </div>
       {blockedReason ? (
@@ -43,7 +43,8 @@ export function CreateVouchPage({
             </h2>
             <p className="mt-2 text-sm text-neutral-400">
               Both people must confirm during the window for funds to release. If both do not
-              confirm in time, the payment is refunded or not captured.
+              confirm in time, the payment is voided, refunded, or not captured according to
+              provider state.
             </p>
           </SurfaceHeader>
           <SurfaceBody>{children ?? <CreateVouchForm />}</SurfaceBody>
