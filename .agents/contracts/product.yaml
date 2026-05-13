@@ -1,0 +1,117 @@
+version: 1
+name: vouch-product-contract
+authority: source-of-truth
+
+definition:
+  product: Vouch
+  category: commitment-backed payment coordination
+  description: >
+    Vouch coordinates conditional payment release through deterministic workflow
+    execution for pre-arranged appointments and in-person agreements.
+
+core_invariant:
+  release_when:
+    - both_participants_confirm_presence
+    - confirmation_occurs_inside_confirmation_window
+    - payment_intent_is_capturable
+    - provider_state_permits_capture
+  otherwise:
+    - non_capture
+    - cancel
+    - void
+    - expiration
+    - refund_only_if_already_captured_and_contractually_required
+
+doctrine:
+  - outcome_follows_system_state
+  - vouch_asks_what_happened_not_who_is_right
+  - no_unilateral_action_forces_settlement
+  - no_human_discretion_surface_exists_to_exploit
+  - no_subjective_adjudication
+  - no_manual_settlement_intervention
+
+not_a:
+  - marketplace
+  - broker
+  - scheduler
+  - messaging_app
+  - review_system
+  - rating_system
+  - dispute_resolution_system
+  - escrow_provider
+  - public_directory
+  - discovery_platform
+  - social_platform
+  - arbitration_service
+  - evidence_review_system
+
+forbidden_surfaces:
+  - browse
+  - search
+  - discovery
+  - public_profiles
+  - service_listings
+  - categories
+  - ratings
+  - reviews
+  - messaging
+  - disputes
+  - claims
+  - appeals
+  - evidence
+  - screenshots
+  - manual_fund_awards
+  - manual_payout_controls
+  - manual_refund_decisions
+  - manual_confirmation_rewrites
+  - admin_arbitration
+  - support_override_settlement
+
+responsibility_boundaries:
+  stripe:
+    owns:
+      - checkout
+      - payment_authorization
+      - payment_method_collection
+      - billing_details
+      - manual_capture_payment_intents
+      - application_fee_processing
+      - customer_management
+      - connect_onboarding
+      - kyc_compliance_collection
+      - payout_banking_collection
+      - payout_execution
+      - provider_payment_state
+      - provider_settlement_state
+      - payout_capability_state
+  clerk:
+    owns:
+      - authentication
+      - sign_in
+      - sign_up
+      - session_creation
+      - session_renewal
+      - session_security
+      - account_portal_auth_management
+  vouch:
+    owns:
+      - workflow_state
+      - lifecycle_state
+      - appointment_metadata
+      - confirmation_windows
+      - bilateral_presence_confirmation
+      - confirmation_code_derivation
+      - settlement_eligibility
+      - capture_orchestration
+      - dashboard_state
+      - archive_state
+      - audit_state
+      - provider_reconciliation
+      - recovery_state
+
+source_order:
+  - .agents/contracts/*.yaml
+  - .agents/docs/*.md
+  - .agents/instructions/*.md
+  - existing_repo_code
+  - implementation_judgment

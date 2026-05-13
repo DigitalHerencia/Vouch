@@ -1,0 +1,99 @@
+version: 1
+name: vouch-quality-gates
+authority: source-of-truth
+
+validation_commands:
+  base:
+    - pnpm lint
+    - pnpm typecheck
+    - pnpm prisma:validate
+    - pnpm validate:contracts
+  tests:
+    - pnpm test
+    - pnpm test:e2e
+  full:
+    - pnpm validate
+
+launch_blockers:
+  - failing_validation_gate
+  - missing_stripe_webhook_verification
+  - missing_clerk_webhook_verification
+  - non_idempotent_webhook_processing
+  - capture_without_retrieve_before_settlement
+  - capture_from_browser_return_state
+  - manual_release_path
+  - manual_refund_award_path
+  - dispute_route_or_component
+  - evidence_route_or_component
+  - marketplace_route_or_component
+  - search_route_or_component
+  - provider_listing_route_or_component
+  - messaging_route_or_component
+  - raw_stripe_object_exposed_to_ui
+  - raw_clerk_object_exposed_to_ui
+  - prisma_in_components
+  - stripe_sdk_outside_integration_layer
+  - internal_app_mutation_api_routes
+  - vouch_lifecycle_polluted_by_provider_states
+  - duplicate_confirmation_not_prevented
+  - terms_acceptance_missing
+  - per_vouch_disclaimer_missing
+  - provider_linked_vouch_hard_delete
+
+acceptance_criteria:
+  route_surface:
+    - approved_route_tree_is_only_route_tree
+    - no_forbidden_product_surface_exists
+    - provider_routes_are_webhook_only
+  architecture:
+    - app_pages_are_thin
+    - protected_reads_use_fetchers
+    - writes_use_server_actions
+    - critical_writes_use_transactions
+    - provider_sdks_are_isolated
+    - components_are_pure_ui
+  state:
+    - lifecycle_uses_canonical_states
+    - payment_provider_states_are_separate
+    - settlement_states_are_separate
+    - archive_state_is_separate
+    - recovery_state_is_internal_only
+  stripe:
+    - manual_capture_payment_intents_used
+    - checkout_return_url_not_payment_truth
+    - capture_cancel_refund_are_idempotent
+    - current_provider_state_retrieved_before_money_movement
+    - provider_restriction_blocks_unsupported_settlement
+  clerk:
+    - root_clerk_provider_configured
+    - auth_routes_work
+    - local_user_sync_works
+    - account_terms_persisted_in_db
+    - deleted_or_disabled_user_blocks_actions
+  confirmation:
+    - bilateral_confirmation_required
+    - confirmation_window_enforced
+    - duplicate_confirmation_prevented
+    - one_sided_confirmation_never_releases
+    - late_confirmation_never_releases
+  data_safety:
+    - no_raw_provider_payloads_in_ui
+    - no_raw_card_data_stored
+    - no_raw_bank_data_stored
+    - no_raw_identity_documents_stored
+    - no_raw_clerk_sessions_stored
+  tests:
+    - payment_creation_covered
+    - status_mapping_covered
+    - webhook_dedupe_covered
+    - retrieve_before_settlement_covered
+    - idempotent_capture_covered
+    - idempotent_cancel_covered
+    - refund_fallback_covered
+    - account_readiness_covered
+    - forbidden_routes_covered
+
+final_launch_invariant: >
+  Stripe owns payment truth. Clerk owns authentication truth. Vouch owns workflow truth.
+  Webhooks reconcile provider truth. Actions enforce transitions. Transactions persist facts.
+  Fetchers return safe DTOs. Components display results. Outcome follows system state.

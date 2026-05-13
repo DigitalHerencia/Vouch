@@ -1,124 +1,170 @@
-schema_version: "3.0.0"
-contract_name: "domain-model"
-product: "Vouch"
-source_of_truth_date: "2026-05-12"
+version: 1
+name: vouch-domain-model-contract
+authority: source-of-truth
 
-summary:
-  description: "Vouch is a narrow commitment-backed payment coordination system for pre-arranged appointments and in-person agreements."
-  core_invariant: "both parties confirm presence within the confirmation window -> funds release; otherwise -> refund, void, or non-capture"
-  outcome_rule: "Outcome follows system state."
+canonical_roles:
+  - merchant
+  - customer
 
-non_goals:
-  - "marketplace"
-  - "broker"
-  - "scheduler"
-  - "messaging app"
-  - "review system"
-  - "dispute system"
-  - "escrow provider"
-  - "public directory"
-  - "discovery platform"
+role_aliases:
+  merchant: payee
+  customer: payer
 
-global_invariants:
-  - id: "dual_confirmation_only"
-    rule: "Only both participants confirming presence within the confirmation window can satisfy release conditions."
-  - id: "no_unilateral_release"
-    rule: "No unilateral action releases funds."
-  - id: "no_late_release"
-    rule: "No late confirmation releases funds."
-  - id: "no_admin_arbitration"
-    rule: "Admin cannot arbitrate, manually award funds, force release, rewrite confirmation truth, or edit confirmation timestamps."
-  - id: "no_dispute_surface"
-    rule: "No dispute, claim, evidence, appeal, or adjudication surface exists."
-  - id: "provider_backed_settlement"
-    rule: "Payment readiness and settlement state are provider-backed and reconciled into Vouch DB."
-  - id: "server_authoritative"
-    rule: "Client state is never authoritative for readiness, fee math, confirmation, settlement, or lifecycle status."
+role_rules:
+  role_scope: per_vouch
+  global_account_roles: false
+  same_user_multiple_roles_across_vouches: true
 
-participants:
-  payer:
-    description: "Participant who creates or funds a Vouch and must be ready to authorize payment."
-    readiness_track: "payment"
-    confirms_presence: true
-  payee:
-    description: "Participant who accepts or becomes bound as payee and must be ready to receive funds through Stripe Connect."
-    readiness_track: "payout"
-    confirms_presence: true
+merchant:
+  definition: creator_and_intended_recipient
+  may:
+    - create_vouch
+    - review_vouch_terms
+    - accept_per_vouch_disclaimer
+    - commit_vouch
+    - share_stripe_checkout_link_externally
+    - hold_vouch_unused
+    - let_vouch_expire_unused
+    - open_vouch_detail
+    - confirm_presence_inside_window
+    - archive_from_dashboard
+    - receive_settlement_after_bilateral_confirmation
+  may_not:
+    - edit_committed_vouch
+    - cancel_committed_vouch
+    - unsend_committed_vouch
+    - rewrite_terms
+    - change_amount
+    - change_appointment_date
+    - change_confirmation_window
+    - replace_customer
+    - force_settlement
+    - force_refund
+    - manually_award_funds
+    - rewrite_confirmation_truth
+    - override_provider_state
+    - create_dispute
+    - submit_evidence
+    - appeal_outcome
 
-readiness:
-  payer:
-    required_for:
-      - "creating a Vouch"
-      - "funding a Vouch"
-    gates:
-      - "authenticated user"
-      - "active Vouch account"
-      - "adult/identity readiness when required"
-      - "accepted terms"
-      - "valid Stripe customer/payment method setup"
-      - "payment readiness stored in Vouch DB as provider-backed readiness state"
-  payee:
-    required_for:
-      - "accepting a Vouch"
-      - "becoming bound as payee"
-    gates:
-      - "authenticated user"
-      - "active Vouch account"
-      - "adult/identity readiness when required"
-      - "accepted terms"
-      - "Stripe connected account exists"
-      - "Stripe payout capability/readiness active or sufficient for the Vouch flow"
-      - "payout readiness stored in Vouch DB as provider-backed readiness state"
-  separation_rule: "Do not treat payer payment setup and payee payout setup as the same thing."
+customer:
+  definition: paying_participant_and_presence_confirmer
+  may:
+    - open_authorization_link
+    - authenticate
+    - accept_required_terms
+    - complete_stripe_checkout_authorization
+    - open_vouch_detail
+    - review_vouch_state
+    - confirm_presence_inside_window
+    - archive_from_dashboard
+  may_not:
+    - edit_vouch
+    - change_amount
+    - change_appointment_date
+    - change_confirmation_window
+    - force_settlement
+    - force_refund
+    - trigger_release_alone
+    - rewrite_confirmation_truth
+    - create_dispute
+    - submit_evidence
+    - appeal_outcome
 
-money:
-  fee_module: "lib/vouch/fees.ts"
-  fee_policy: "Vouch fee = max(5% of customer total, 500 cents)"
-  payment_intent:
-    amount: "customer total amount in cents"
-    currency: "normalized supported currency"
-    capture_method: "manual"
-    application_fee_amount: "calculated Vouch fee"
-    transfer_data_destination: "payee connected account id when destination charge is used"
-    metadata: "safe Vouch references only"
-  persisted_fields:
-    - "customer total cents"
-    - "application fee amount cents"
-    - "payee receivable amount cents"
-    - "Stripe PaymentIntent id"
-    - "Stripe status"
-    - "Stripe capture/refund/void reconciliation state"
-    - "safe provider references only"
+vouch_lifecycle:
+  canonical:
+    - draft
+    - committed
+    - sent
+    - accepted
+    - authorized
+    - confirmable
+    - completed
+    - expired
+  terminal:
+    - completed
+    - expired
+  forbidden_lifecycle_values:
+    - refunded
+    - voided
+    - canceled
+    - failed
+    - provider_blocked
+    - archived
+    - reconciliation_pending
+    - recovery_required
 
-lifecycle_states:
-  - "Draft / Created"
-  - "Invite Sent"
-  - "Accepted"
-  - "Payment Authorized"
-  - "Window Pending"
-  - "Window Open"
-  - "Payer Confirmed"
-  - "Payee Confirmed"
-  - "Both Confirmed"
-  - "Release Processing"
-  - "Completed"
-  - "Expired"
-  - "Voided"
-  - "Refunded"
-  - "Payment Failed"
-  - "Release Failed"
-  - "Refund Failed"
-  - "Canceled"
+state_axes:
+  vouch_lifecycle:
+    - draft
+    - committed
+    - sent
+    - accepted
+    - authorized
+    - confirmable
+    - completed
+    - expired
+  confirmation:
+    - none_confirmed
+    - merchant_confirmed
+    - customer_confirmed
+    - both_confirmed
+  payment_provider:
+    - not_started
+    - checkout_created
+    - requires_payment_method
+    - requires_capture
+    - authorized
+    - capture_processing
+    - captured
+    - canceled
+    - expired
+    - failed
+  settlement:
+    - pending
+    - non_capture_pending
+    - non_captured
+    - capture_pending
+    - captured
+    - refund_pending
+    - refunded
+    - provider_blocked
+    - failed
+  archive:
+    - active
+    - archived
+  recovery:
+    - normal
+    - recovery_required
+    - recovery_in_progress
+    - recovered
+    - recovery_failed
 
-storage_rules:
-  never_store:
-    - "raw card data"
-    - "raw bank data"
-    - "raw identity documents"
-    - "full provider payloads"
-    - "sensitive KYC details"
-  store_only:
-    - "safe internal references"
-    - "safe provider references"
-    - "provider statuses"
-    - "redacted/minimal webhook event records"
+confirmation:
+  allowed_methods:
+    - code_exchange
+    - offline_code_exchange
+  forbidden_methods:
+    - gps
+    - manual
+    - system
+    - screenshot
+    - evidence
+    - support_override
+  rules:
+    - each_participant_confirms_only_for_self
+    - confirmation_inside_window_required
+    - duplicate_confirmation_rejected
+    - one_sided_confirmation_never_releases_funds
+    - late_confirmation_never_releases_funds
+    - code_generation_alone_does_not_change_state
+    - bilateral_successful_verification_required_for_settlement_evaluation
+
+immutability:
+  draft_mutable: true
+  committed_and_later_immutable: true
+  completed_terminal: true
+  expired_terminal: true
+  user_cancel_after_commit_allowed: false
+  user_edit_after_commit_allowed: false
+  support_override_allowed: false
