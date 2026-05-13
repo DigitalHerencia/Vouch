@@ -8,7 +8,6 @@ import {
     HelpCircle,
     Home,
     Plus,
-    Settings,
     ShieldCheck,
     type LucideIcon,
 } from "lucide-react"
@@ -34,8 +33,6 @@ export const defaultTenantMobileBottomNavItems = [
     { href: "/dashboard", label: "Dashboard", icon: Home },
     { href: "/vouches", label: "Vouches", icon: CalendarDays },
     { href: "/vouches/new", label: "Create", icon: Plus, primary: true },
-    { href: "/settings", label: "Settings", icon: Settings },
-    { href: "/setup", label: "Setup", icon: ShieldCheck },
 ] satisfies readonly MobileBottomNavItem[]
 
 export const defaultAppMobileBottomNavItems = defaultTenantMobileBottomNavItems

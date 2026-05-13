@@ -16,8 +16,6 @@ export interface TenantFooterProps {
 export const defaultTenantFooterLinks = [
   { label: "Terms", href: "/legal/terms" },
   { label: "Privacy", href: "/legal/privacy" },
-  { label: "Payment setup", href: "/settings/payment" },
-  { label: "Payout setup", href: "/settings/payout" },
 ] satisfies readonly TenantFooterLink[]
 
 export function TenantFooter({ links = defaultTenantFooterLinks, className }: TenantFooterProps) {

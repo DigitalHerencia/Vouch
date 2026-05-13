@@ -115,7 +115,7 @@ describe("createStripePaymentAuthorization", () => {
     const { retrieveStripePaymentIntent } =
       await import("@/lib/integrations/stripe/payment-intents")
 
-    await retrieveStripePaymentIntent({ providerPaymentId: "pi_provider" })
+    await retrieveStripePaymentIntent({ providerPaymentIntentId: "pi_provider" })
 
     expect(retrievePaymentIntent).toHaveBeenCalledWith("pi_provider", {
       expand: ["latest_charge"],
@@ -126,12 +126,23 @@ describe("createStripePaymentAuthorization", () => {
     const { captureStripePayment, voidStripeAuthorization, refundStripePayment } =
       await import("@/lib/integrations/stripe/payment-intents")
 
-    await captureStripePayment({ providerPaymentId: "pi_provider", idempotencyKey: "idem_capture" })
+    retrievePaymentIntent
+      .mockResolvedValueOnce({ id: "pi_provider", status: "requires_capture" })
+      .mockResolvedValueOnce({ id: "pi_provider", status: "requires_capture" })
+      .mockResolvedValueOnce({ id: "pi_provider", status: "succeeded" })
+
+    await captureStripePayment({
+      providerPaymentIntentId: "pi_provider",
+      idempotencyKey: "idem_capture",
+    })
     await voidStripeAuthorization({
-      providerPaymentId: "pi_provider",
+      providerPaymentIntentId: "pi_provider",
       idempotencyKey: "idem_cancel",
     })
-    await refundStripePayment({ providerPaymentId: "pi_provider", idempotencyKey: "idem_refund" })
+    await refundStripePayment({
+      providerPaymentIntentId: "pi_provider",
+      idempotencyKey: "idem_refund",
+    })
 
     expect(capturePaymentIntent).toHaveBeenCalledWith("pi_provider", undefined, {
       idempotencyKey: "idem_capture",

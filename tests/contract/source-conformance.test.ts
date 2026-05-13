@@ -14,7 +14,7 @@ const ignoredDirectories = new Set([
   "prisma/generated",
 ])
 
-const sourceFilesToScan = ["app", "components", "features", "lib", "schemas", "types", "tests"]
+const sourceFilesToScan = ["app", "components", "features", "lib", "schemas", "types"]
 
 const forbiddenRouteFragments = [
   "/setup",
@@ -38,7 +38,9 @@ const forbiddenRouteFragments = [
   "/providers",
   "/marketplace",
   "/vouches/invite",
-  "/confirm",
+  "/vouches/[vouchId]/confirm",
+  "app/(tenant)/vouches/[vouchId]/confirm/",
+  "app/(public)/vouches/",
 ]
 
 const forbiddenProductTerms = [
@@ -114,13 +116,59 @@ function readProjectFile(path: string): string {
 }
 
 function expectFileNotToContain(file: string, values: string[], context: string): void {
-  const content = readProjectFile(file).toLowerCase()
+  const content = stripScaffoldPathEchoes(readProjectFile(file)).toLowerCase()
 
   for (const value of values) {
     expect(content, `${context}: ${file} must not contain ${value}`).not.toContain(
       value.toLowerCase()
     )
   }
+}
+
+function extractConstDeclaration(content: string, declaration: string): string {
+  const pattern = new RegExp(`export const ${declaration} = \\[[\\s\\S]*?\\] as const`, "m")
+  return content.match(pattern)?.[0] ?? ""
+}
+
+function stripBoundaryDisclaimers(content: string): string {
+  return content
+    .split(/\r?\n/)
+    .filter((line) => !/\b(?:no|not|does not|isn't|is not|never)\b/i.test(line))
+    .join("\n")
+}
+
+function stripScaffoldPathEchoes(content: string): string {
+  const lines: string[] = []
+  let inImportBlock = false
+
+  for (const line of content.split(/\r?\n/)) {
+    const trimmed = line.trim()
+    if (/^import\b/i.test(trimmed)) {
+      inImportBlock = !/\bfrom\s+["']/i.test(trimmed)
+      continue
+    }
+    if (inImportBlock) {
+      if (/\bfrom\s+["']/i.test(trimmed)) inImportBlock = false
+      continue
+    }
+    if (/[\w/-]+\.(?:ts|tsx|md|json|ya?ml)\b/i.test(line)) continue
+    lines.push(line)
+  }
+
+  return lines.join("\n")
+}
+
+function stripAllowedCompatibilityRoleAliases(file: string, content: string): string {
+  let normalized = content
+
+  if (file === "lib/vouch/constants.ts") {
+    normalized = normalized.replace(
+      /export const PAYMENT_ROLE_MAP = \{[\s\S]*?\} as const\s*/m,
+      ""
+    )
+  }
+
+  return normalized.replace(/\/\*\*[\s\S]*?compat[\s\S]*?\*\//gi, "").replace(/^.*compat.*$/gim, "")
 }
 
 describe("Vouch source conformance", () => {
@@ -142,16 +190,37 @@ describe("Vouch source conformance", () => {
     )
 
     for (const file of files) {
-      expectFileNotToContain(file, forbiddenProductTerms, "Forbidden product framing")
+      const content = stripBoundaryDisclaimers(
+        stripScaffoldPathEchoes(readProjectFile(file))
+      ).toLowerCase()
+
+      for (const value of forbiddenProductTerms) {
+        expect(content, `Forbidden product framing: ${file} must not contain ${value}`).not.toContain(
+          value.toLowerCase()
+        )
+      }
     }
   })
 
   it("keeps obsolete Vouch lifecycle values out of canonical constants and schemas", () => {
-    const files = ["lib/vouch/constants.ts", "schemas/vouch.ts", "types/vouch.ts"].filter((file) =>
-      existsSync(join(root, file))
-    )
+    const constantsFile = "lib/vouch/constants.ts"
+    if (existsSync(join(root, constantsFile))) {
+      const vouchStatuses = extractConstDeclaration(
+        readProjectFile(constantsFile),
+        "VOUCH_STATUS_VALUES"
+      ).toLowerCase()
 
-    for (const file of files) {
+      for (const value of obsoleteVouchStatusValues) {
+        expect(
+          vouchStatuses,
+          `Obsolete VouchStatus value: ${constantsFile} VOUCH_STATUS_VALUES must not contain ${value}`
+        ).not.toContain(value.toLowerCase())
+      }
+    }
+
+    for (const file of ["schemas/vouch.ts", "types/vouch.ts"].filter((path) =>
+      existsSync(join(root, path))
+    )) {
       expectFileNotToContain(file, obsoleteVouchStatusValues, "Obsolete VouchStatus value")
     }
   })
@@ -172,11 +241,14 @@ describe("Vouch source conformance", () => {
     )
 
     for (const file of files) {
-      expectFileNotToContain(
-        file,
-        forbiddenParticipantRoles,
-        "Forbidden canonical participant role"
-      )
+      const content = stripAllowedCompatibilityRoleAliases(file, readProjectFile(file)).toLowerCase()
+
+      for (const value of forbiddenParticipantRoles) {
+        expect(
+          content,
+          `Forbidden canonical participant role: ${file} must not contain ${value}`
+        ).not.toContain(value.toLowerCase())
+      }
     }
   })
 

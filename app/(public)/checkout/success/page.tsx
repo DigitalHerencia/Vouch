@@ -1,49 +1,27 @@
-import { AcceptVouchPage } from "@/features/vouches/invite/accept-vouch-page"
+import Link from "next/link"
+
 import { Button } from "@/components/ui/button"
-import { acceptVouch, declineVouch, markInviteOpened } from "@/lib/actions/vouchActions"
-import { getInviteLandingState } from "@/lib/fetchers/vouchFetchers"
 
-type PageProps = { params: Promise<{ token: string }> }
-
-export default async function InviteRoute({ params }: PageProps) {
-  const { token } = await params
-  const state = await getInviteLandingState(token)
-  await markInviteOpened({ token })
-  const invitation = "invitation" in state ? (state.invitation as Record<string, unknown>) : null
-  const vouch = invitation?.vouch as Record<string, unknown> | undefined
-  async function acceptAction() {
-    "use server"
-    await acceptVouch({ token })
-  }
-  async function declineAction() {
-    "use server"
-    await declineVouch({ token })
-  }
+export default function CheckoutSuccessPage() {
   return (
-    <AcceptVouchPage
-      tokenValid={!["invalid_invite", "expired_invite", "already_accepted"].includes(state.variant)}
-      signedIn={state.variant !== "unauthenticated"}
-      eligible={state.variant === "authenticated_ready"}
-      amountLabel={
-        vouch?.amountCents ? `$${(Number(vouch.amountCents) / 100).toFixed(2)}` : "Unavailable"
-      }
-      payerLabel={String(
-        (vouch?.payer as Record<string, unknown> | undefined)?.displayName ?? "Payer"
-      )}
-      windowLabel={String(vouch?.confirmationExpiresAt ?? "Unavailable")}
-      setupHref={`/setup?return_to=${encodeURIComponent(`/vouches/invite/${token}`)}`}
-      acceptAction={
-        <form action={acceptAction}>
-          <Button type="submit">Accept Vouch</Button>
-        </form>
-      }
-      declineAction={
-        <form action={declineAction}>
-          <Button type="submit" variant="outline">
-            Decline
-          </Button>
-        </form>
-      }
-    />
+    <main className="mx-auto grid min-h-[60vh] max-w-2xl place-items-center px-6 py-16">
+      <section className="space-y-6 border border-neutral-800 bg-neutral-950/70 p-6">
+        <div className="space-y-3">
+          <p className="text-sm font-medium tracking-[0.18em] text-blue-400 uppercase">
+            Payment authorized
+          </p>
+          <h1 className="font-(family-name:--font-display) text-[40px] leading-none tracking-[0.04em] text-white uppercase">
+            Your Vouch is ready for confirmation.
+          </h1>
+          <p className="text-sm leading-6 text-neutral-400">
+            Stripe has returned the authorization result. Vouch will use provider state and the
+            bilateral confirmation window to determine the final outcome.
+          </p>
+        </div>
+        <Button className="rounded-none bg-blue-700" render={<Link href="/dashboard" />}>
+          Return to dashboard
+        </Button>
+      </section>
+    </main>
   )
 }

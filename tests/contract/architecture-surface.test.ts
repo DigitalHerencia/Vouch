@@ -86,7 +86,6 @@ const forbiddenRouteShells = [
   "app/(tenant)/vouches/page.tsx",
   "app/(tenant)/vouches/[vouchId]/confirm/page.tsx",
   "app/(public)/vouches/invite/[token]/page.tsx",
-  "app/api/clerk/webhook-handler/route.ts",
   "app/api/vouches/create/route.ts",
   "app/api/vouches/confirm/route.ts",
   "app/api/vouches/capture/route.ts",
@@ -127,7 +126,7 @@ const forbiddenRoutePrefixes = [
 ]
 
 const allowedApiRouteFiles = new Set([
-  "app/api/clerk/webhooks/route.ts",
+  "app/api/clerk/webhook-handler/route.ts",
   "app/api/stripe/webhooks/route.ts",
 ])
 
@@ -209,6 +208,7 @@ describe("Vouch architecture surface", () => {
     const routeFiles = walk(join(root, "app", "api")).filter((path) => path.endsWith("/route.ts"))
 
     for (const file of routeFiles) {
+      expect(allowedApiRouteFiles.has(file), `Unexpected API route file: ${file}`).toBe(true)
       expectFileNotToMatchPatterns(file, appRouteShellOnlyPatterns, "API route boundary violation")
     }
   })

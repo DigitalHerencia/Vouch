@@ -408,8 +408,8 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                   <Link href="/legal/privacy" className="text-primary underline-offset-4 hover:underline">
                     Privacy Policy
                   </Link>
-                  . I understand Vouch is a neutral payment coordination tool and not a marketplace,
-                  escrow provider, or dispute-resolution service.
+                  . I understand Vouch is a neutral payment coordination tool for deterministic
+                  outcomes only.
                 </span>
               </label>
 

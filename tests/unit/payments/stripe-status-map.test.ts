@@ -18,8 +18,8 @@ describe("Stripe status mapping", () => {
     expect(mapStripePaymentIntentStatus("succeeded")).toBe("captured")
   })
 
-  it("maps canceled to voided", () => {
-    expect(mapStripePaymentIntentStatus("canceled")).toBe("voided")
+  it("maps canceled to canceled", () => {
+    expect(mapStripePaymentIntentStatus("canceled")).toBe("canceled")
   })
 
   it("maps refund succeeded", () => {

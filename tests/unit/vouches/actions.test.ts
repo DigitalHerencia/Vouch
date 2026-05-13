@@ -9,8 +9,8 @@ vi.mock("@/lib/fetchers/authFetchers", () => ({
 }))
 
 vi.mock("@/lib/fetchers/setupFetchers", () => ({
-  assertCreateVouchSetupReady: vi.fn(),
-  assertAcceptVouchSetupReady: vi.fn(),
+  assertCreateVouchReadinessReady: vi.fn(),
+  assertAcceptVouchReadinessReady: vi.fn(),
 }))
 
 vi.mock("@/lib/db/prisma", () => ({
@@ -56,42 +56,43 @@ describe("vouch actions", () => {
   })
 
   it("returns an ActionResult when create setup is blocked", async () => {
-    const { assertCreateVouchSetupReady } = await import("@/lib/fetchers/setupFetchers")
+    const { assertCreateVouchReadinessReady } = await import("@/lib/fetchers/setupFetchers")
     const { createVouch } = await import("@/lib/actions/vouchActions")
 
-    vi.mocked(assertCreateVouchSetupReady).mockRejectedValueOnce(
-      new Error("SETUP_BLOCKED: payment_ready")
+    vi.mocked(assertCreateVouchReadinessReady).mockRejectedValueOnce(
+      new Error("READINESS_BLOCKED: payment_ready")
     )
 
     const result = await createVouch({
       amountCents: 10_000,
       currency: "usd",
-      meetingStartsAt: new Date("2026-05-01T16:00:00.000Z"),
+      appointmentStartsAt: new Date("2026-05-01T16:00:00.000Z"),
       confirmationOpensAt: new Date("2026-05-01T16:00:00.000Z"),
       confirmationExpiresAt: new Date("2026-05-01T17:00:00.000Z"),
+      disclaimerAccepted: true,
     })
 
     expect(result).toEqual({
       ok: false,
-      code: "SETUP_BLOCKED",
-      formError: "Finish setup before continuing.",
+      code: "READINESS_BLOCKED",
+      formError: "Required account readiness is incomplete.",
     })
   })
 
   it("returns an ActionResult when accept setup is blocked", async () => {
-    const { assertAcceptVouchSetupReady } = await import("@/lib/fetchers/setupFetchers")
+    const { assertAcceptVouchReadinessReady } = await import("@/lib/fetchers/setupFetchers")
     const { acceptVouch } = await import("@/lib/actions/vouchActions")
 
-    vi.mocked(assertAcceptVouchSetupReady).mockRejectedValueOnce(
-      new Error("SETUP_BLOCKED: payout_ready")
+    vi.mocked(assertAcceptVouchReadinessReady).mockRejectedValueOnce(
+      new Error("READINESS_BLOCKED: payout_ready")
     )
 
-    const result = await acceptVouch({ token: "valid-token" })
+    const result = await acceptVouch({ token: "valid-token", disclaimerAccepted: true })
 
     expect(result).toEqual({
       ok: false,
-      code: "SETUP_BLOCKED",
-      formError: "Finish setup before continuing.",
+      code: "READINESS_BLOCKED",
+      formError: "Required account readiness is incomplete.",
     })
   })
 })

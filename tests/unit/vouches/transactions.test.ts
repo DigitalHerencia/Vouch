@@ -5,27 +5,35 @@ import { bindPayeeToVouchTx } from "@/lib/db/transactions/vouchTransactions"
 const vouchRecord = {
   id: "vouch_1",
   publicId: "vch_public",
-  payerId: "payer_1",
-  payeeId: "payee_1",
-  amountCents: 10_000,
+  merchantId: "merchant_1",
+  customerId: "customer_1",
   currency: "usd",
-  platformFeeCents: 500,
-  status: "active",
+  protectedAmountCents: 10_000,
+  merchantReceivesCents: 10_000,
+  vouchServiceFeeCents: 500,
+  processingFeeOffsetCents: 345,
+  applicationFeeAmountCents: 845,
+  customerTotalCents: 10_845,
+  status: "accepted",
+  archiveStatus: "active",
+  recoveryStatus: "normal",
   label: null,
-  meetingStartsAt: new Date("2026-05-01T16:00:00.000Z"),
+  appointmentStartsAt: new Date("2026-05-01T16:00:00.000Z"),
   confirmationOpensAt: new Date("2026-05-01T16:00:00.000Z"),
   confirmationExpiresAt: new Date("2026-05-01T17:00:00.000Z"),
+  committedAt: new Date("2026-05-01T14:00:00.000Z"),
+  sentAt: new Date("2026-05-01T14:30:00.000Z"),
   acceptedAt: new Date("2026-05-01T15:00:00.000Z"),
+  authorizedAt: null,
+  confirmableAt: null,
   completedAt: null,
   expiredAt: null,
-  canceledAt: null,
-  failedAt: null,
   createdAt: new Date("2026-04-28T00:00:00.000Z"),
   updatedAt: new Date("2026-04-28T00:00:00.000Z"),
 }
 
 describe("vouch transaction helpers", () => {
-  it("accepts only a pending Vouch without an existing payee", async () => {
+  it("accepts only a sent Vouch without an existing customer", async () => {
     const tx = {
       vouch: {
         updateMany: vi.fn().mockResolvedValue({ count: 1 }),
@@ -34,16 +42,16 @@ describe("vouch transaction helpers", () => {
     }
 
     await expect(
-      bindPayeeToVouchTx(tx as never, { vouchId: "vouch_1", payeeId: "payee_1" })
-    ).resolves.toMatchObject({ id: "vouch_1", status: "active", payeeId: "payee_1" })
+      bindPayeeToVouchTx(tx as never, { vouchId: "vouch_1", customerId: "customer_1" })
+    ).resolves.toMatchObject({ id: "vouch_1", status: "accepted", customerId: "customer_1" })
 
     expect(tx.vouch.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: {
           id: "vouch_1",
-          status: "pending",
-          payeeId: null,
-          payerId: { not: "payee_1" },
+          status: { in: ["committed", "sent"] },
+          customerId: null,
+          merchantId: { not: "customer_1" },
         },
       })
     )
@@ -58,7 +66,7 @@ describe("vouch transaction helpers", () => {
     }
 
     await expect(
-      bindPayeeToVouchTx(tx as never, { vouchId: "vouch_1", payeeId: "payee_1" })
+      bindPayeeToVouchTx(tx as never, { vouchId: "vouch_1", customerId: "customer_1" })
     ).rejects.toThrow("VOUCH_ACCEPTANCE_CONFLICT")
 
     expect(tx.vouch.findUniqueOrThrow).not.toHaveBeenCalled()

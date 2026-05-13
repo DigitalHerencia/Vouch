@@ -9,7 +9,7 @@ import {
 describe("admin schemas", () => {
   it("normalizes admin vouch filters", () => {
     const result = adminVouchFilterInputSchema.safeParse({
-      status: "failed",
+      status: "expired",
       page: "2",
       pageSize: "25",
       sort: "created_desc",

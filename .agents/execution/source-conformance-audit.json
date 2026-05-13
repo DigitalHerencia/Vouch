@@ -29,10 +29,22 @@
     "p1_count": 5,
     "p2_count": 8,
     "p3_count": 4,
+    "latest_validation": {
+      "date": "2026-05-12",
+      "status": "blocked",
+      "first_failing_command": "pnpm typecheck",
+      "passed_before_blocker": [
+        "pnpm prisma:validate",
+        "pnpm validate:contracts",
+        "pnpm test -- tests/contract/architecture-surface.test.ts tests/contract/source-conformance.test.ts"
+      ],
+      "blocker": "TypeScript still compiles broad stale pre-reconciliation modules outside the contract-test repair scope, including admin/analytics/settings/user/verification action and fetcher modules, old payer/payee Vouch state helpers, missing select modules, and DTO/select mismatches."
+    },
     "notes": [
       "Pass 2 intentionally records drift instead of fixing it.",
       "Route-level forbidden surfaces are assumed handled by Pass 1.",
-      "The largest remaining drift appears to be non-route settings/setup/admin implementation surfaces and legacy state vocabulary."
+      "The largest remaining drift appears to be non-route settings/setup/admin implementation surfaces and legacy state vocabulary.",
+      "Final reconciliation on 2026-05-12 fixed the contract/source-conformance tests and removed the unreferenced settings feature files and admin shell, but typecheck remains blocked by wider stale modules."
     ]
   },
   "findings": [

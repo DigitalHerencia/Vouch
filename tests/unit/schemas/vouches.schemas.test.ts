@@ -1,10 +1,9 @@
 import { describe, expect, it } from "vitest"
 
 import {
-  acceptVouchSchema,
+  archiveVouchSchema,
   confirmPresenceSchema,
   createVouchSchema,
-  declineVouchSchema,
 } from "@/schemas/vouch"
 
 describe("vouch schemas", () => {
@@ -17,12 +16,9 @@ describe("vouch schemas", () => {
     const result = createVouchSchema.safeParse({
       amountCents: 12_500,
       currency: "usd",
-      meetingStartsAt,
+      appointmentStartsAt: meetingStartsAt,
       confirmationOpensAt,
       confirmationExpiresAt,
-      recipientEmail: "payee@example.com",
-      label: "Studio appointment",
-      termsAccepted: true,
       disclaimerAccepted: true,
     })
 
@@ -33,7 +29,7 @@ describe("vouch schemas", () => {
     const result = createVouchSchema.safeParse({
       amountCents: 5000,
       currency: "USD",
-      meetingStartsAt: new Date(),
+      appointmentStartsAt: new Date(),
       confirmationOpensAt: new Date(),
       confirmationExpiresAt: new Date(Date.now() + 60_000),
     })
@@ -45,10 +41,7 @@ describe("vouch schemas", () => {
     expect(confirmPresenceSchema.safeParse({ vouchId: "" }).success).toBe(false)
   })
 
-  it("accepts invite token mutations", () => {
-    expect(
-      acceptVouchSchema.safeParse({ token: "abc123securetoken", termsAccepted: true }).success
-    ).toBe(true)
-    expect(declineVouchSchema.safeParse({ token: "abc123securetoken" }).success).toBe(true)
+  it("accepts archive mutations", () => {
+    expect(archiveVouchSchema.safeParse({ vouchId: "vouch_123" }).success).toBe(true)
   })
 })

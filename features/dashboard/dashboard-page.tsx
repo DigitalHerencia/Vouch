@@ -130,8 +130,8 @@ export async function DashboardPage() {
           body="Complete readiness checks so Vouch can coordinate payment state, confirmation windows, and deterministic outcomes."
           icon={AlertCircle}
           actions={
-            <Button variant="primary" size="cta" render={<Link href="/setup" />}>
-              Complete setup
+            <Button variant="primary" size="cta" render={<Link href="/dashboard" />}>
+              Return to dashboard
               <ArrowRight className="size-5" strokeWidth={1.9} />
             </Button>
           }

@@ -14,7 +14,7 @@ type CreateVouchPageProps = {
 
 export function CreateVouchPage({
   blockedReason,
-  setupHref = "/setup?return_to=/vouches/new",
+  setupHref = "/dashboard",
   children,
 }: CreateVouchPageProps) {
   return (
@@ -33,7 +33,7 @@ export function CreateVouchPage({
           className="border-amber-500/30 bg-amber-500/5"
           title="Finish setup to continue"
           body={blockedReason}
-          actions={<Button render={<a href={setupHref} />}>Review setup</Button>}
+          actions={<Button render={<a href={setupHref} />}>Return to dashboard</Button>}
         />
       ) : (
         <Surface>

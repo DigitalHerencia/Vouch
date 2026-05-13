@@ -26,7 +26,7 @@ export function AcceptVouchPage({
   amountLabel = "$200.00",
   payerLabel = "jordan@client.com",
   windowLabel = "May 24, 2025 · 4:00 PM - 6:00 PM",
-  setupHref = "/setup",
+  setupHref = "/dashboard",
   acceptAction,
   declineAction,
 }: AcceptVouchPageProps) {

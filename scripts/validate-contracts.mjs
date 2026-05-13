@@ -9,12 +9,10 @@ import YAML from "yaml"
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 
 const contractFiles = [
-  "acceptance-gates.yaml",
-  "analytics.yaml",
-  "authz.yaml",
   "domain-model.yaml",
-  "features.yaml",
-  "roles.yaml",
+  "integrations.yaml",
+  "product.yaml",
+  "quality-gates.yaml",
   "routes.yaml",
 ]
 
