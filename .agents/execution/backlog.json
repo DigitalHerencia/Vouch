@@ -63,7 +63,7 @@
     {
       "id": "VC-005",
       "title": "Normalize UI",
-      "status": "todo",
+      "status": "edited",
       "priority": "P1",
       "dependencies": ["VC-002", "VC-004"],
       "source_refs": [".agents/docs/prd.md", ".agents/docs/stripe-connect-integration.md"],

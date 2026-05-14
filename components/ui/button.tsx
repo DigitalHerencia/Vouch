@@ -21,21 +21,21 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "border border-transparent bg-[#1D4ED8] text-white hover:border-transparent hover:bg-white hover:text-[#1D4ED8] aria-expanded:border-transparent aria-expanded:bg-white aria-expanded:text-[#1D4ED8]",
+          "border border-transparent bg-primary text-primary-foreground hover:border-transparent hover:bg-white hover:text-primary aria-expanded:border-transparent aria-expanded:bg-white aria-expanded:text-primary",
         primary:
-          "border border-transparent bg-[#1D4ED8] text-white hover:border-transparent hover:bg-white hover:text-[#1D4ED8] aria-expanded:border-transparent aria-expanded:bg-white aria-expanded:text-[#1D4ED8]",
+          "border border-transparent bg-primary text-primary-foreground hover:border-transparent hover:bg-white hover:text-primary aria-expanded:border-transparent aria-expanded:bg-white aria-expanded:text-primary",
         secondary:
-          "border border-transparent bg-transparent text-white hover:border-[#1D4ED8] hover:bg-transparent hover:text-[#1D4ED8] aria-expanded:border-[#1D4ED8] aria-expanded:bg-transparent aria-expanded:text-[#1D4ED8]",
+          "border border-transparent bg-transparent text-white hover:border-primary hover:bg-transparent hover:text-primary aria-expanded:border-primary aria-expanded:bg-transparent aria-expanded:text-primary",
         outline:
-          "border border-transparent bg-transparent text-white hover:border-[#1D4ED8] hover:bg-transparent hover:text-[#1D4ED8] aria-expanded:border-[#1D4ED8] aria-expanded:bg-transparent aria-expanded:text-[#1D4ED8]",
+          "border border-transparent bg-transparent text-white hover:border-primary hover:bg-transparent hover:text-primary aria-expanded:border-primary aria-expanded:bg-transparent aria-expanded:text-primary",
         ghost:
           "border border-transparent bg-transparent text-neutral-300 hover:border-transparent hover:bg-neutral-950 hover:text-white aria-expanded:border-transparent aria-expanded:bg-neutral-950 aria-expanded:text-white",
         destructive:
           "border border-red-500/35 bg-red-500/10 text-red-200 hover:border-red-400 hover:bg-red-500/20 hover:text-red-100 focus-visible:border-red-400 focus-visible:ring-red-500/25",
         link:
-          "border border-transparent bg-transparent px-0 text-[#1D4ED8] underline-offset-4 hover:scale-105 hover:border-transparent hover:bg-transparent hover:text-white hover:underline",
+          "border border-transparent bg-transparent px-0 text-primary underline-offset-4 hover:scale-105 hover:border-transparent hover:bg-transparent hover:text-white hover:underline",
         nav:
-          "border border-transparent bg-transparent text-white underline-offset-4 hover:scale-105 hover:border-transparent hover:bg-transparent hover:text-[#1D4ED8] hover:underline",
+          "border border-transparent bg-transparent text-white underline-offset-4 hover:scale-105 hover:border-transparent hover:bg-transparent hover:text-primary hover:underline",
       },
       size: {
         default: "h-11 gap-2 px-4 text-sm sm:text-base [&_svg:not([class*='size-'])]:size-4",

@@ -80,7 +80,7 @@ export function MobileBottomNav({
                                 "grid size-8 place-items-center",
                                 item.primary ?
                                     "bg-primary text-primary-foreground"
-                                :   "text-[#1D4ED8]",
+                                :   "text-primary",
                             )}
                         >
                             {item.account ? <UserMenu size="compact" /> : <Icon className="size-5" />}

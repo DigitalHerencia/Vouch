@@ -7,7 +7,7 @@ export default function CheckoutSuccessPage() {
     <main className="mx-auto grid min-h-[60vh] max-w-2xl place-items-center px-6 py-16">
       <section className="space-y-6 border border-neutral-800 bg-neutral-950/70 p-6">
         <div className="space-y-3">
-          <p className="text-sm font-medium tracking-[0.18em] text-blue-400 uppercase">
+          <p className="text-sm font-medium tracking-[0.18em] text-primary uppercase">
             Payment authorized
           </p>
           <h1 className="font-(family-name:--font-display) text-[40px] leading-none tracking-[0.04em] text-white uppercase">
@@ -18,7 +18,7 @@ export default function CheckoutSuccessPage() {
             bilateral confirmation window to determine the final outcome.
           </p>
         </div>
-        <Button className="rounded-none bg-blue-700" render={<Link href="/dashboard" />}>
+        <Button className="rounded-none bg-primary" render={<Link href="/dashboard" />}>
           Return to dashboard
         </Button>
       </section>

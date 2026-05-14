@@ -207,9 +207,9 @@ function DashboardListPanel({
     <Surface>
       <SurfaceHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-start gap-3">
-          <Icon className="mt-0.5 size-5 text-[#1D4ED8]" strokeWidth={1.9} />
+          <Icon className="mt-0.5 size-5 text-primary" strokeWidth={1.9} />
           <div>
-            <h2 className="font-(family-name:--font-display) text-[24px] leading-none tracking-[0.07em] text-white uppercase sm:text-[30px]">
+            <h2 className="text-[24px] leading-none text-white sm:text-[30px]">
               {title}
             </h2>
             <p className="mt-2 text-[15px] leading-[1.3] font-semibold text-neutral-400">
@@ -239,7 +239,7 @@ function DashboardVouchRow({ vouch }: { vouch: DashboardVouch }) {
   return (
     <article className="grid gap-5 border-b border-neutral-800 px-5 py-5 last:border-b-0 sm:grid-cols-[1fr_auto] sm:items-center sm:px-7 lg:min-h-31">
       <div className="flex items-start gap-5">
-        <span className="grid size-11 shrink-0 place-items-center border border-[#1D4ED8] bg-[#1D4ED8]/15 text-[#1D4ED8]">
+        <span className="grid size-11 shrink-0 place-items-center border border-primary bg-primary/15 text-primary">
           <UserRound className="size-5" strokeWidth={1.9} />
         </span>
 
@@ -247,7 +247,7 @@ function DashboardVouchRow({ vouch }: { vouch: DashboardVouch }) {
           <div className="flex flex-wrap items-center gap-3">
             <Link
               href={vouch.href}
-              className="font-(family-name:--font-display) text-[22px] leading-none tracking-wider text-white uppercase hover:text-[#1D4ED8]"
+              className="text-[22px] leading-none text-white hover:text-primary"
             >
               {vouch.title}
             </Link>
@@ -275,7 +275,7 @@ function DashboardVouchRow({ vouch }: { vouch: DashboardVouch }) {
 
 function StatusPill({ label }: { label: string }) {
   return (
-    <span className="border border-[#1D4ED8] bg-[#1D4ED8]/15 px-2.5 py-1 font-mono text-[11px] font-black tracking-[0.08em] text-blue-100 uppercase">
+    <span className="border border-primary bg-primary/15 px-2.5 py-1 font-mono text-[11px] font-black tracking-[0.08em] text-primary uppercase">
       {label}
     </span>
   )

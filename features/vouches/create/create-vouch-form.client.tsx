@@ -173,7 +173,7 @@ export function CreateVouchForm() {
           </p>
         ) : null}
         <Button
-          className="h-12 rounded-none bg-blue-700 disabled:opacity-40"
+          className="h-12 disabled:opacity-40"
           disabled={isPending || !acceptedDisclaimer}
           type="submit"
         >
@@ -189,7 +189,7 @@ function Step({ number, title, children }: { number: string; title: string; chil
   return (
     <section className="border-b border-neutral-800 p-5 last:border-b-0">
       <h2 className="mb-4 flex items-center gap-4 font-bold text-white">
-        <span className="font-mono text-[#1D4ED8]">{number}</span>
+        <span className="font-mono text-primary">{number}</span>
         {title}
       </h2>
       {children}

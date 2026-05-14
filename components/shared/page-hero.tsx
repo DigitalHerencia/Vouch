@@ -26,8 +26,8 @@ export function PageHero({
     <header className={cn("max-w-170", className)}>
       {eyebrow ? (
         <div className="flex items-center gap-3">
-          <span aria-hidden="true" className="size-2.5 shrink-0 bg-[#1D4ED8]" />
-          <p className="font-(family-name:--font-display) text-sm leading-none tracking-widest text-white uppercase sm:text-base lg:text-lg">
+          <span aria-hidden="true" className="size-2.5 shrink-0 bg-primary" />
+          <p className="vouch-label text-sm leading-none text-white sm:text-base lg:text-lg">
             {eyebrow}
           </p>
         </div>
@@ -35,7 +35,7 @@ export function PageHero({
 
       <h1
         className={cn(
-          "font-(family-name:--font-display) text-[64px] leading-[0.86] tracking-[0.015em] text-white uppercase sm:text-[88px] lg:text-[108px]",
+          "text-[64px] leading-[0.86] text-white sm:text-[88px] lg:text-[108px]",
           eyebrow ? "mt-6" : undefined,
           titleClassName,
         )}

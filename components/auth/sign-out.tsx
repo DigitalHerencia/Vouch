@@ -13,7 +13,7 @@ export function SignOut({ className }: { className?: string }) {
         type="button"
         variant="ghost"
         className={cn(
-          "h-11 rounded-none border border-neutral-800 bg-black px-4 font-(family-name:--font-display) text-sm tracking-widest text-neutral-200 uppercase hover:border-[#1D4ED8] hover:bg-[#1D4ED8] hover:text-white",
+          "h-11 rounded-none border border-neutral-800 bg-black px-4 font-(family-name:--font-display) text-sm tracking-widest text-neutral-200 uppercase hover:border-primary hover:bg-primary hover:text-white",
           className
         )}
       >

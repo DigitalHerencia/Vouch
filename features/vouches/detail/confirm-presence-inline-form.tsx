@@ -41,7 +41,7 @@ export function ConfirmPresenceInlineForm({
         name="submittedCode"
         required
       />
-      <Button className="h-12 w-full rounded-none bg-blue-700" type="submit">
+      <Button className="h-12 w-full" type="submit">
         Confirm my presence
         <ArrowRight className="ml-auto size-5" />
       </Button>

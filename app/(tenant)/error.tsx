@@ -27,7 +27,7 @@ export default function GlobalError({
         <main className="relative z-10 mx-auto flex min-h-dvh w-full max-w-7xl items-center justify-center border-x border-neutral-800/80 bg-black/35 px-6 py-12">
           <section className="w-full max-w-205 border border-neutral-700 bg-black/50 p-6 backdrop-blur-[2px] sm:p-8">
             <div className="border-b border-neutral-800 pb-6">
-              <p className="font-(family-name:--font-display) text-[14px] leading-none tracking-widest text-[#1D4ED8] uppercase">
+              <p className="font-(family-name:--font-display) text-[14px] leading-none tracking-widest text-primary uppercase">
                 Global error
               </p>
 
@@ -50,7 +50,7 @@ export default function GlobalError({
               <button
                 type="button"
                 onClick={reset}
-                className="inline-flex h-12 items-center justify-center border border-[#1D4ED8] bg-[#1D4ED8] px-7 font-(family-name:--font-display) text-[14px] tracking-[0.08em] text-white uppercase transition-colors hover:bg-blue-700"
+                className="inline-flex h-12 items-center justify-center border border-primary bg-primary px-7 font-(family-name:--font-display) text-[14px] tracking-[0.08em] text-white uppercase transition-colors hover:bg-primary"
               >
                 Try again
               </button>

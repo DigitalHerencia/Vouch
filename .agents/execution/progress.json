@@ -51,7 +51,24 @@
       }
     ]
   },
-  "next_action": "Review commit-ready first-pass conformance changes. Do not add seed data in this pass.",
+  "ui_standardization": {
+    "status": "edited",
+    "date": "2026-05-13",
+    "source_refs": [
+      "C:\\Users\\scree\\Documents\\DevNotes\\10 PROJECTS\\Vouch\\Vouch Source of Truth.md",
+      ".agents/docs/design-system.md",
+      ".agents/docs/legal-and-copy.md"
+    ],
+    "completed": [
+      "deleted unreferenced verification/user helper modules",
+      "introduced shared public/tenant shell",
+      "centralized vouch page copy in content/vouches.ts",
+      "mapped dashboard and vouch-facing modules to content/theme tokens",
+      "replaced touched brand blue literals with primary theme utilities"
+    ],
+    "validation": "pnpm typecheck passed"
+  },
+  "next_action": "Review UI standardization edits and run validation when ready.",
   "required_commands": [
     "pnpm prisma:validate",
     "pnpm validate:contracts",
