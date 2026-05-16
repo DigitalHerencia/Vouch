@@ -10,8 +10,7 @@ import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 
 import { AuthPageShell } from "@/components/auth/auth-page-shell"
-import { FieldGroup } from "@/components/forms/field-group"
-import { SubmitButton } from "@/components/forms/submit-button"
+import { SignInFieldGroup } from "@/components/forms/sign-in-field-group"
 import { Button } from "@/components/ui/button"
 import {
   Field,
@@ -355,24 +354,18 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                 {authVerificationContent.startOver}
               </Button>
 
-              <SubmitButton
+              <Button type="submit"
                 disabled={isBusy}
                 className="w-full min-w-0 sm:col-span-2"
                 size="cta"
-                pendingLabel={
-                  <>
-                    <LoaderCircle className="size-4 animate-spin" />
-                    {authVerificationContent.verifyCode}
-                  </>
-                }
               >
                 {authVerificationContent.verifyCode}
-              </SubmitButton>
+              </Button>
             </div>
           </div>
         ) : (
           <div className="max-w-full min-w-0 space-y-3 overflow-hidden sm:space-y-4">
-            <FieldGroup id="email" label="Email" error={form.formState.errors.email?.message}>
+            <SignInFieldGroup id="email" label="Email" error={form.formState.errors.email?.message}>
               <Input
                 id="email"
                 type="email"
@@ -385,9 +378,9 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                     typeof value === "string" ? value.trim().toLowerCase() : "",
                 })}
               />
-            </FieldGroup>
+            </SignInFieldGroup>
 
-            <FieldGroup
+            <SignInFieldGroup
               id="password"
               label="Password"
               error={form.formState.errors.password?.message}
@@ -401,21 +394,15 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                 disabled={isBusy}
                 {...form.register("password")}
               />
-            </FieldGroup>
+            </SignInFieldGroup>
 
-            <SubmitButton
+            <Button type="submit"
               disabled={isBusy}
               size="cta"
               className="w-full min-w-0"
-              pendingLabel={
-                <>
-                  <LoaderCircle className="size-4 animate-spin" />
-                  Sign in
-                </>
-              }
             >
               Sign in
-            </SubmitButton>
+            </Button>
 
             <div className="flex min-w-0 flex-wrap items-center gap-2 overflow-hidden text-xs font-semibold text-neutral-500 sm:text-sm">
               <span>Need an account?</span>

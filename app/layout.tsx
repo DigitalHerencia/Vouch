@@ -117,9 +117,9 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${archivo.variable} ${archivoBlack.variable} ${bebasNeue.variable} ${jetBrainsMono.variable} dark`}
       suppressHydrationWarning
     >
-      <body className="min-h-dvh overflow-x-hidden bg-black font-sans text-white antialiased selection:bg-blue-700 selection:text-white">
+      <body className="min-h-dvh overflow-x-hidden bg-background font-sans text-foreground antialiased selection:bg-primary selection:text-primary-foreground">
         <AppProvider>
-          <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,rgba(29,78,216,0.20),transparent_34rem),linear-gradient(to_bottom,rgba(255,255,255,0.045)_1px,transparent_1px),linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-size-[auto,48px_48px,48px_48px]">
+          <div className="min-h-dvh bg-[radial-gradient(circle_at_top_left,--alpha(var(--color-primary)/22%),transparent_34rem),linear-gradient(to_bottom,--alpha(var(--color-foreground)/4.5%)_1px,transparent_1px),linear-gradient(to_right,--alpha(var(--color-foreground)/3.5%)_1px,transparent_1px)] bg-size-[auto,48px_48px,48px_48px]">
             {children}
           </div>
         </AppProvider>

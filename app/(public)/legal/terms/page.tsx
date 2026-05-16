@@ -20,15 +20,15 @@ export default function TermsRoute() {
   return (
     <main className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
       <PageHero
-        eyebrow="Terms of Service"
-        title="Rule-bound payment coordination"
-        body="These terms govern use of Vouch as a narrow commitment-backed payment coordination system. Vouch is not a marketplace, broker, scheduler, escrow provider, dispute-resolution service, or social platform."
+        eyebrow="Legal"
+        title="Terms of Service"
+        body="Provider-backed payment coordination. Not marketplace. Not escrow. Not arbitration."
         className="max-w-4xl"
         titleClassName="max-w-4xl text-[48px] leading-[0.92] tracking-[-0.06em] sm:text-[68px] lg:text-[88px]"
         bodyClassName="max-w-3xl text-[17px] leading-[1.45] sm:text-[19px]"
       />
 
-      <div className="mt-12 border-t border-neutral-800 pt-8">
+      <div className="mt-12">
         <ContentSectionList sections={termsSections} />
       </div>
 

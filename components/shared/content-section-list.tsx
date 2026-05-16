@@ -1,66 +1,19 @@
-// components/shared/content-section-list.tsx
-
-import type { ReactNode } from "react"
-
-import { Surface } from "@/components/shared/surface"
+import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
-export interface ContentSectionListItem {
-    heading: ReactNode
-    body: readonly ReactNode[]
-}
+export interface ContentSectionListItem { heading: string; body: readonly string[] }
 
-export interface ContentSectionListProps {
-    sections: readonly ContentSectionListItem[]
-    className?: string | undefined
-    sectionClassName?: string | undefined
-    headingClassName?: string | undefined
-    bodyClassName?: string | undefined
-    paragraphClassName?: string | undefined
-}
-
-export function ContentSectionList({
-    sections,
-    className,
-    sectionClassName,
-    headingClassName,
-    bodyClassName,
-    paragraphClassName,
-}: ContentSectionListProps) {
-    return (
-        <Surface className={cn("mt-14", className)}>
-            {sections.map((section, sectionIndex) => (
-                <section
-                    key={sectionIndex}
-                    className={cn(
-                        "border-b border-neutral-800 p-6 last:border-b-0 sm:p-7",
-                        sectionClassName,
-                    )}
-                >
-                    <h2
-                        className={cn(
-                            "font-(family-name:--font-display) text-[34px] leading-none tracking-[0.04em] text-white uppercase sm:text-[42px]",
-                            headingClassName,
-                        )}
-                    >
-                        {section.heading}
-                    </h2>
-
-                    <div className={cn("mt-5 grid gap-4", bodyClassName)}>
-                        {section.body.map((line, lineIndex) => (
-                            <p
-                                key={`${sectionIndex}-${lineIndex}`}
-                                className={cn(
-                                    "max-w-230 text-base leading-[1.45] font-semibold text-neutral-400 sm:text-lg",
-                                    paragraphClassName,
-                                )}
-                            >
-                                {line}
-                            </p>
-                        ))}
-                    </div>
-                </section>
-            ))}
-        </Surface>
-    )
+export function ContentSectionList({ sections, className }: { sections: readonly ContentSectionListItem[]; className?: string }) {
+  return (
+    <Card className={cn("rounded-none border-neutral-700 bg-black/80", className)}>
+      {sections.map((section) => (
+        <section key={section.heading} className="border-b border-neutral-800 px-6 py-7 last:border-b-0 sm:px-7 lg:px-8">
+          <h2 className="text-4xl font-semibold uppercase leading-none tracking-tight text-white">{section.heading}</h2>
+          <div className="mt-5 space-y-4">
+            {section.body.map((line) => <p key={line} className="max-w-5xl text-base font-semibold leading-7 text-neutral-400">{line}</p>)}
+          </div>
+        </section>
+      ))}
+    </Card>
+  )
 }

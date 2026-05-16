@@ -1,56 +1,8 @@
-import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
+import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Badge } from "@/components/ui/badge"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 
-export interface PaymentStatusPanelProps {
-  amountLabel: string
-  merchantReceivesLabel: string
-  customerTotalLabel: string
-  paymentStatusLabel: string
-  settlementStatusLabel: string
-  labels: {
-    vouchAmount: string
-    merchantReceives: string
-    customerAuthorizes: string
-  }
-  title: string
-}
-
-export function PaymentStatusPanel({
-  amountLabel,
-  merchantReceivesLabel,
-  customerTotalLabel,
-  paymentStatusLabel,
-  settlementStatusLabel,
-  labels,
-  title,
-}: PaymentStatusPanelProps) {
-  return (
-    <Surface variant="muted">
-      <SurfaceHeader>
-        <h2 className="text-[26px] leading-none text-white">{title}</h2>
-      </SurfaceHeader>
-      <SurfaceBody className="font-mono text-sm">
-        <Line label={labels.vouchAmount} value={amountLabel} />
-        <Line label={labels.merchantReceives} value={merchantReceivesLabel} />
-        <Line label={labels.customerAuthorizes} value={customerTotalLabel} strong />
-        <p className="mt-4 flex flex-wrap gap-2">
-          <Badge className="rounded-none border-green-700 bg-green-950 text-green-400">
-            {paymentStatusLabel}
-          </Badge>
-          <Badge className="rounded-none border-neutral-700 bg-neutral-950 text-neutral-200">
-            {settlementStatusLabel}
-          </Badge>
-        </p>
-      </SurfaceBody>
-    </Surface>
-  )
-}
-
-function Line({ label, value, strong }: { label: string; value: string; strong?: boolean }) {
-  return (
-    <div className="flex justify-between gap-4 border-b border-neutral-800 py-2">
-      <span className="text-neutral-300">{label}</span>
-      <span className={strong ? "text-primary" : "text-white"}>{value}</span>
-    </div>
-  )
+export function PaymentStatusPanel({ title, amountLabel, merchantReceivesLabel, customerTotalLabel, paymentStatusLabel, settlementStatusLabel, labels }: { title: string; amountLabel: string; merchantReceivesLabel: string; customerTotalLabel: string; paymentStatusLabel: string; settlementStatusLabel: string; labels: Record<string, string> }) {
+  const rows = [[labels.vouchAmount, amountLabel], [labels.merchantReceives, merchantReceivesLabel], [labels.customerAuthorizes, customerTotalLabel]]
+  return <Card className="rounded-none border-neutral-800 bg-black"><CardHeader><CardTitle>{title}</CardTitle></CardHeader><CardContent className="space-y-4"><div>{rows.map(([label,value])=><div key={label} className="flex items-start justify-between gap-4 border-b border-neutral-800 py-3 last:border-b-0"><p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">{label}</p><p className="text-sm font-medium text-white">{value}</p></div>)}</div><div className="flex flex-wrap gap-2"><Badge className="rounded-none border-blue-700 bg-blue-950/50 text-blue-200">{paymentStatusLabel}</Badge><Badge className="rounded-none border-neutral-700 bg-neutral-950 text-neutral-300">{settlementStatusLabel}</Badge></div><Alert className="rounded-none border-blue-900/70 bg-blue-950/30 text-blue-100"><AlertDescription>Provider state is checked before settlement-critical operations.</AlertDescription></Alert></CardContent></Card>
 }

@@ -1,8 +1,8 @@
+import { Suspense } from "react"
+import { VouchDetailPageSkeleton } from "@/components/vouches/vouch-detail-page-skeleton"
 import { VouchDetailPage } from "@/features/vouches/vouch-detail-page"
 
-type PageProps = { params: Promise<{ vouchId: string }> }
-
-export default async function Page({ params }: PageProps) {
+export default async function VouchDetailRoute({ params }: { params: Promise<{ vouchId: string }> }) {
   const { vouchId } = await params
-  return <VouchDetailPage vouchId={vouchId} />
+  return <Suspense fallback={<VouchDetailPageSkeleton />}><VouchDetailPage vouchId={vouchId} /></Suspense>
 }

@@ -5,7 +5,7 @@ import type { ReactNode } from "react"
 import { PublicMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"
 import { PublicFooter } from "@/components/navigation/public-footer"
 import { PublicHeader } from "@/components/navigation/public-header"
-import { Shell } from "@/components/navigation/shell"
+import { cn } from "@/lib/utils"
 
 export interface PublicShellProps {
   children: ReactNode
@@ -15,14 +15,11 @@ export interface PublicShellProps {
 
 export function PublicShell({ children, className, withMobileBottomNav = true }: PublicShellProps) {
   return (
-    <Shell
-      className={className}
-      header={<PublicHeader />}
-      footer={<PublicFooter />}
-      mobileBottomNav={withMobileBottomNav ? <PublicMobileBottomNav /> : undefined}
-      mainClassName={withMobileBottomNav ? undefined : "pb-0"}
-    >
-      {children}
-    </Shell>
+    <div className={cn("flex min-h-dvh flex-col bg-transparent text-foreground", className)}>
+      <PublicHeader />
+      <div className={cn("flex-1 bg-transparent", withMobileBottomNav && "pb-20 md:pb-0")}>{children}</div>
+      <PublicFooter />
+      {withMobileBottomNav ? <PublicMobileBottomNav /> : null}
+    </div>
   )
 }

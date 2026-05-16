@@ -1,64 +1,20 @@
+import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
-export interface MetricGridItem {
-  label: string
-  value: string
-  body: string
-}
+export interface MetricGridItem { label: string; value: string; body: string }
 
-export interface MetricGridProps {
-  items: MetricGridItem[]
-  className?: string
-  tileClassName?: string
-}
-
-function getMetricTileClassName(index: number, total: number) {
-  if (total === 4) {
-    return cn(
-      "min-h-37.5 border-b border-neutral-800 p-6 last:border-b-0",
-      "sm:nth-[2n-1]:border-r",
-      "lg:border-r lg:border-b-0 lg:last:border-r-0",
-    )
-  }
-
-  return cn(
-    "min-h-37.5 border-b border-neutral-800 p-6 last:border-b-0",
-    index < total - 1 ? "lg:border-r lg:border-b-0" : undefined,
-  )
-}
-
-export function MetricGrid({ items, className, tileClassName }: MetricGridProps) {
+export function MetricGrid({ items, className }: { items: MetricGridItem[]; className?: string }) {
   return (
-    <section
-      className={cn(
-        "grid border border-neutral-700 bg-black/55 backdrop-blur-[2px]",
-        items.length === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "lg:grid-cols-3",
-        className,
-      )}
-    >
-      {items.map((metric, index) => (
-        <MetricTile
-          key={`${metric.label}-${metric.value}`}
-          metric={metric}
-          className={cn(getMetricTileClassName(index, items.length), tileClassName)}
-        />
+    <section className={cn("grid gap-0 border border-neutral-700 sm:grid-cols-2 lg:grid-cols-4", className)}>
+      {items.map((metric) => (
+        <Card key={`${metric.label}-${metric.value}`} className="rounded-none border-0 border-neutral-700 bg-black/80 sm:border-r sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r lg:[&:nth-child(4n)]:border-r-0">
+          <CardContent>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-neutral-500">{metric.label}</p>
+            <p className="mt-3 text-4xl font-semibold uppercase tracking-tight text-white">{metric.value}</p>
+            <p className="mt-2 text-xs leading-5 text-neutral-400">{metric.body}</p>
+          </CardContent>
+        </Card>
       ))}
     </section>
-  )
-}
-
-export function MetricTile({ metric, className }: { metric: MetricGridItem; className?: string }) {
-  return (
-    <article className={className}>
-      <p className="font-(family-name:--font-display) text-[15px] leading-none tracking-[0.07em] text-white uppercase">
-        {metric.label}
-      </p>
-      <p className="mt-4 font-(family-name:--font-display) text-[54px] leading-[0.85] tracking-[0.02em] text-white uppercase">
-        {metric.value}
-      </p>
-      <p className="mt-3 max-w-52.5 text-[15px] leading-[1.22] font-semibold text-neutral-300">
-        {metric.body}
-      </p>
-    </article>
   )
 }

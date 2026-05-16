@@ -3,7 +3,7 @@ import type { ReactNode } from "react"
 import { TenantFooter } from "@/components/navigation/tenant-footer"
 import { TenantHeader } from "@/components/navigation/tenant-header"
 import { TenantMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"
-import { Shell } from "@/components/navigation/shell"
+import { cn } from "@/lib/utils"
 
 type TenantProviderAction = (formData: FormData) => void | Promise<void>
 
@@ -20,29 +20,23 @@ export function TenantShell({
   paymentAction,
   className,
 }: TenantShellProps) {
-  const mobileBottomNav = (
-    <TenantMobileBottomNav
-      connectAction={connectAction}
-      paymentAction={paymentAction}
-    />
-  )
-
   return (
-    <Shell
-      className={className}
-      header={<TenantHeader connectAction={connectAction} paymentAction={paymentAction} />}
-      footer={
-        <TenantFooter
-          className="hidden md:block"
-          connectAction={connectAction}
-          paymentAction={paymentAction}
-        />
-      }
-      mobileBottomNav={mobileBottomNav}
-    >
-      <div className="mx-auto w-full max-w-7xl px-4 pt-8 pb-8 sm:px-6 lg:px-8 lg:pt-12 lg:pb-12">
-        {children}
-      </div>
-    </Shell>
+    <div className={cn("flex min-h-dvh flex-col bg-transparent text-foreground", className)}>
+      <TenantHeader connectAction={connectAction} paymentAction={paymentAction} />
+      <main className="flex-1 pb-20 md:pb-0">
+        <div className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
+          {children}
+        </div>
+      </main>
+      <TenantMobileBottomNav
+        connectAction={connectAction}
+        paymentAction={paymentAction}
+      />
+      <TenantFooter
+        className="hidden md:block"
+        connectAction={connectAction}
+        paymentAction={paymentAction}
+      />
+    </div>
   )
 }

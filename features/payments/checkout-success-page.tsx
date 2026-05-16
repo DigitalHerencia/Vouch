@@ -18,7 +18,7 @@ export function CheckoutSuccessPage() {
             bilateral confirmation window to determine the final outcome.
           </p>
         </div>
-        <Button className="rounded-none bg-primary" render={<Link href="/dashboard" />}>
+        <Button render={<Link href="/dashboard" />}>
           Return to dashboard
         </Button>
       </section>

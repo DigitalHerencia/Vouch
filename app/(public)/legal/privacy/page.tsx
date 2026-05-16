@@ -20,15 +20,15 @@ export default function PrivacyRoute() {
   return (
     <main className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
       <PageHero
-        eyebrow="Privacy Policy"
-        title="Minimal data for deterministic coordination"
-        body="Vouch collects the account, provider, readiness, confirmation, timestamp, and audit information needed to operate the protocol. It does not sell personal data or build public discovery profiles."
+        eyebrow="Legal"
+        title="Privacy Policy"
+        body="Vouch minimizes data collection and stores provider references, statuses, timestamps, and audit-safe metadata."
         className="max-w-4xl"
         titleClassName="max-w-4xl text-[48px] leading-[0.92] tracking-[-0.06em] sm:text-[68px] lg:text-[88px]"
         bodyClassName="max-w-3xl text-[17px] leading-[1.45] sm:text-[19px]"
       />
 
-      <div className="mt-12 border-t border-neutral-800 pt-8">
+      <div className="mt-12">
         <ContentSectionList sections={privacySections} />
       </div>
 

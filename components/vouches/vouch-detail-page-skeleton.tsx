@@ -1,0 +1,2 @@
+import { Skeleton } from "@/components/ui/skeleton"
+export function VouchDetailPageSkeleton(){return <div className="space-y-6"><Skeleton className="h-40 rounded-none border border-neutral-800 bg-black"/><Skeleton className="h-64 rounded-none border border-neutral-800 bg-black"/><Skeleton className="h-64 rounded-none border border-neutral-800 bg-black"/></div>}

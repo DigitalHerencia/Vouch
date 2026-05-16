@@ -3,6 +3,8 @@
 import Link from "next/link"
 import { ArrowLeft, LayoutDashboard } from "lucide-react"
 
+import { Button } from "@/components/ui/button"
+
 const DIAGNOSTICS = [
   {
     label: "Boundary",
@@ -42,21 +44,15 @@ export default function NotFound() {
         </div>
 
         <div className="flex flex-col gap-3 pt-6 sm:flex-row">
-          <Link
-            href="/dashboard"
-            className="inline-flex h-12 items-center justify-center gap-3 border border-blue-700 bg-blue-700 px-7 font-(family-name:--font-display) text-[14px] tracking-[0.08em] text-white uppercase transition-colors hover:bg-blue-600"
-          >
+          <Button size="lg" render={<Link href="/dashboard" />}>
             <LayoutDashboard className="size-5" strokeWidth={1.8} />
             Go to dashboard
-          </Link>
+          </Button>
 
-          <Link
-            href="/"
-            className="inline-flex h-12 items-center justify-center gap-3 border border-neutral-700 bg-black/45 px-7 font-(family-name:--font-display) text-[14px] tracking-[0.08em] text-white uppercase transition-colors hover:border-white"
-          >
+          <Button variant="secondary" size="lg" render={<Link href="/" />}>
             <ArrowLeft className="size-5" strokeWidth={1.8} />
             Back to home
-          </Link>
+          </Button>
         </div>
       </section>
     </main>

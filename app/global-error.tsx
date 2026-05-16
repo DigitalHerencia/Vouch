@@ -4,6 +4,8 @@
 
 import { useEffect } from "react"
 
+import { Button } from "@/components/ui/button"
+
 type GlobalErrorProps = {
   error: Error & { digest?: string }
   reset: () => void
@@ -43,13 +45,9 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
             </div>
 
             <div className="pt-6">
-              <button
-                type="button"
-                onClick={reset}
-                className="inline-flex h-12 items-center justify-center border border-blue-700 bg-blue-700 px-7 font-(family-name:--font-display) text-[14px] tracking-[0.08em] text-white uppercase transition-colors hover:bg-blue-600"
-              >
+              <Button type="button" onClick={reset}>
                 Try again
-              </button>
+              </Button>
 
               <p className="mt-5 max-w-160 font-mono text-[12px] leading-normal text-neutral-500">
                 Client-visible diagnostics are intentionally limited. Check server logs for stack

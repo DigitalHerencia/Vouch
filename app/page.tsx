@@ -1,99 +1,107 @@
-import { ArrowDown, ArrowRight } from "lucide-react"
+import {
+  ArrowDown,
+  ArrowRight,
+  ShieldCheck,
+} from "lucide-react"
 import Link from "next/link"
 
+import { PublicFooter } from "@/components/navigation/public-footer"
+import { PublicHeader } from "@/components/navigation/public-header"
 import { CalloutPanel } from "@/components/shared/callout-panel"
-import { CardGrid } from "@/components/shared/card-grid"
-import { LandingHero } from "@/components/shared/landing-hero"
-import { MetricGrid } from "@/components/shared/metric-grid"
-import { ProcessPanel } from "@/components/shared/process-panel"
+import { MetricGrid, type MetricGridItem } from "@/components/shared/metric-grid"
+import { PageHero } from "@/components/shared/page-hero"
+import { ProcessPanel, type ProcessPanelStep } from "@/components/shared/process-panel"
 import { SectionIntro } from "@/components/shared/section-intro"
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card"
 import {
   landingHeroActionsContent,
-  landingHeroContent,
-  landingMetrics,
-  landingProcessPanelContent,
-  landingProcessSteps,
-  landingSectionIntroContent,
   landingTrustPanelContent,
-  landingUseCases,
 } from "@/content/marketing"
+import {
+  PricingHeroContent,
+  pricingFlowSteps,
+  pricingNotes,
+  pricingStats,
+} from "@/content/pricing"
 
-export function LandingPage() {
-  const TrustIcon = landingTrustPanelContent.icon
+export default function LandingPage() {
+  const metrics: MetricGridItem[] = [...pricingStats]
+  const processSteps: ProcessPanelStep[] = [...pricingFlowSteps]
 
   return (
-    <section className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
-      <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
-        <header className="pt-2 lg:pt-8">
-          <LandingHero
-            title={landingHeroContent.title}
-            body={landingHeroContent.body}
-            actions={
-              <>
-                <Button
-                  variant="primary"
-                  size="cta"
-                  className="min-w-62.5"
-                  render={<Link href="/sign-up?return_to=/vouches/new" />}
-                >
-                  <span className="translate-y-px">Get Started</span>
-                  <ArrowRight className="size-6" strokeWidth={1.8} />
-                </Button>
+    <>
+      <PublicHeader />
+      <main className="mx-auto w-full max-w-7xl px-6 py-14 sm:px-10 sm:py-18 lg:px-12 lg:py-20">
+        <section className="space-y-12 lg:space-y-14">
+          <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,1fr)_34rem] lg:gap-14 xl:gap-18">
+            <PageHero
+              title={PricingHeroContent.title}
+              body={PricingHeroContent.body}
+              className="border-0 bg-transparent shadow-none"
+              contentClassName="p-0"
+              titleClassName="max-w-[9.25ch] text-[clamp(4.75rem,7vw,7.4rem)] leading-[0.86]"
+              bodyClassName="max-w-xl"
+              actions={
+                <>
+                  <Button
+                    variant="primary"
+                    size="cta"
+                    render={<Link href="/sign-up?return_to=/vouches/new" />}
+                  >
+                    {landingHeroActionsContent.primaryLabel}
+                    <ArrowRight className="size-5" />
+                  </Button>
+                  <Button
+                    variant="secondary"
+                    size="cta"
+                    render={<Link href="#process" />}
+                  >
+                    {landingHeroActionsContent.secondaryLabel}
+                    <ArrowDown className="size-5" />
+                  </Button>
+                </>
+              }
+            />
 
-                <Button
-                  variant="secondary"
-                  size="cta"
-                  className="min-w-55"
-                  render={<Link href="#callout" />}
-                >
-                  <span className="translate-y-px">{landingHeroActionsContent.secondaryLabel}</span>
-                  <ArrowDown className="size-5" strokeWidth={1.8} />
-                </Button>
-              </>
+            <ProcessPanel
+              id="process"
+              title="Payment flow"
+              steps={processSteps}
+              footer="Both confirm = release"
+            />
+          </div>
+
+          <MetricGrid items={metrics} />
+
+          <section className="grid gap-4 lg:grid-cols-3">
+            {pricingNotes.map((note) => (
+              <Card key={note.title} className="rounded-none border-neutral-800 bg-black/80">
+                <CardContent>
+                  <SectionIntro eyebrow={note.eyebrow} title={note.title} body={note.body} />
+                </CardContent>
+              </Card>
+            ))}
+          </section>
+
+          <CalloutPanel
+            icon={ShieldCheck}
+            title={landingTrustPanelContent.title}
+            body={landingTrustPanelContent.body}
+            actions={
+              <Button
+                variant="primary"
+                size="cta"
+                render={<Link href={landingTrustPanelContent.action} />}
+              >
+                {landingTrustPanelContent.label}
+                <ArrowRight className="size-5" />
+              </Button>
             }
           />
-        </header>
-
-        <div id="process" className="mx-auto w-full max-w-130 scroll-mt-28 lg:pt-6">
-          <ProcessPanel
-            title={landingProcessPanelContent.title}
-            steps={landingProcessSteps}
-            footer={landingProcessPanelContent.footer}
-            className="blue"
-          />
-        </div>
-      </div>
-
-      <MetricGrid items={landingMetrics} className="mt-14" />
-
-      <section className="mt-16">
-        <SectionIntro
-          eyebrow={landingSectionIntroContent.eyebrow}
-          title={landingSectionIntroContent.title}
-          body={landingSectionIntroContent.body}
-        />
-
-        <CardGrid items={landingUseCases} className="mt-9" />
-
-        <CalloutPanel
-          className="mt-10"
-          icon={TrustIcon}
-          title={landingTrustPanelContent.title}
-          body={landingTrustPanelContent.body}
-          actions={
-            <Button
-              variant="primary"
-              size="cta"
-              className="min-w-72"
-              render={<Link href={landingTrustPanelContent.action} />}
-            >
-              <span className="translate-y-px">{landingTrustPanelContent.label}</span>
-              <ArrowRight className="size-5 sm:size-6" strokeWidth={1.9} />
-            </Button>
-          }
-        />
-      </section>
-    </section>
+        </section>
+      </main>
+      <PublicFooter />
+    </>
   )
 }

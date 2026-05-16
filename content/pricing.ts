@@ -2,21 +2,8 @@
 
 import { BadgeDollarSign, CheckCircle2, CreditCard, Handshake, Landmark } from "lucide-react"
 
-import type { MetricGridItem } from "@/components/shared/metric-grid"
-import type { ProcessStep } from "@/components/shared/process-panel"
-
 export const PricingHeroContent = {
-  title: (
-    <>
-      Explicit
-      <br />
-      Confirmation.
-      <br />
-      Deterministic
-      <br />
-      Settlement.
-    </>
-  ),
+  title: "Explicit confirmation. Deterministic settlement.",
   body: "A simple way to protect appointments and in-person agreements. Both parties confirm. Then funds release. Otherwise, you’re covered.",
 } as const
 
@@ -45,7 +32,7 @@ export const pricingFlowSteps = [
     body: "Provider infrastructure settles the outcome.",
     icon: Landmark,
   },
-] satisfies ProcessStep[]
+] as const
 
 export const pricingStats = [
   {
@@ -68,7 +55,7 @@ export const pricingStats = [
     value: "Both",
     body: "Dual confirmation is required before release.",
   },
-] satisfies MetricGridItem[]
+] as const
 
 export const pricingCalloutContent = {
   title: "Fraud thrives in ambiguity, exceptions, and manual intervention.",

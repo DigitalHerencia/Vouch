@@ -17,6 +17,7 @@ import { usePathname } from "next/navigation"
 import { useState } from "react"
 
 import { UserMenu } from "@/components/auth/user-menu"
+import { Button } from "@/components/ui/button"
 import { ProtocolDrawer } from "@/components/vouches/protocol-drawer"
 import { vouchPageCopy } from "@/content/vouches"
 import { cn } from "@/lib/utils"
@@ -140,12 +141,9 @@ export function MobileBottomNav({
                     finePrint={warning.warning.finePrint}
                     primary={
                         <form action={warning.action}>
-                            <button
-                                type="submit"
-                                className="h-11 w-full border border-transparent bg-primary px-4 font-(family-name:--font-display) text-sm leading-none tracking-widest text-primary-foreground uppercase"
-                            >
+                            <Button type="submit" className="w-full">
                                 Continue to provider
-                            </button>
+                            </Button>
                         </form>
                     }
                 />

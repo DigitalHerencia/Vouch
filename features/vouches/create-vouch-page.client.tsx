@@ -1,21 +1,18 @@
 "use client"
 
-import { Surface, SurfaceBody, SurfaceHeader } from "@/components/shared/surface"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { vouchPageCopy } from "@/content/vouches"
 
 export function CreateVouchReadyPanel() {
   return (
-    <Surface variant="muted">
-      <SurfaceHeader>
-        <h2 className="text-[26px] leading-none text-white">
-          {vouchPageCopy.create.detailsHeader}
-        </h2>
-      </SurfaceHeader>
-      <SurfaceBody>
-        <p className="max-w-2xl text-sm leading-7 text-neutral-300">
-          {vouchPageCopy.create.readyBody}
-        </p>
-      </SurfaceBody>
-    </Surface>
+    <Card className="rounded-none border-neutral-800 bg-black">
+      <CardHeader>
+        <CardTitle>{vouchPageCopy.create.detailsHeader}</CardTitle>
+        <CardDescription>{vouchPageCopy.create.readyBody}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm leading-6 text-neutral-400">Create Vouch form fields belong here: amount, appointment date/time, and confirmation window.</p>
+      </CardContent>
+    </Card>
   )
 }

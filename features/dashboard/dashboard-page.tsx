@@ -9,9 +9,8 @@ import {
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { CtaPanel } from "@/components/shared/cta-panel"
 import { CalloutPanel } from "@/components/shared/callout-panel"
-import { StatusStrip, type StatusStripItem } from "@/components/shared/status-strip"
+import { MetricGrid, type MetricGridItem } from "@/components/shared/metric-grid"
 import { SectionIntro } from "@/components/shared/section-intro"
 import { VouchCardList } from "@/components/vouches/vouch-card-list"
 import { dashboardContent } from "@/content/dashboard"
@@ -99,7 +98,7 @@ export async function DashboardPage() {
   const actionRequiredCount = sections?.actionRequired?.length ?? 0
   const readinessComplete = state.variant !== "empty"
 
-  const metrics: StatusStripItem[] = [
+  const metrics: MetricGridItem[] = [
     {
       label: dashboardContent.metrics.activeVouches.label,
       value: String(activeCount || active.length),
@@ -139,7 +138,7 @@ export async function DashboardPage() {
         />
       ) : null}
 
-      <StatusStrip items={metrics} />
+      <MetricGrid items={metrics} />
 
       <VouchCardList
         title={`Action required (${actionRequired.length})`}
@@ -165,14 +164,7 @@ export async function DashboardPage() {
         rows={completed}
       />
 
-      <CtaPanel
-        title={dashboardContent.cta.title}
-        body={dashboardContent.cta.body}
-        cta={dashboardContent.cta.label}
-        href="/vouches/new"
-        icon={Handshake}
-        className="mt-0"
-      />
+      <CalloutPanel title={dashboardContent.cta.title} body={dashboardContent.cta.body} icon={Handshake} actions={<Button variant="primary" size="cta" render={<Link href="/vouches/new" />}>{dashboardContent.cta.label}<ArrowRight className="size-5" /></Button>} />
     </main>
   )
 }

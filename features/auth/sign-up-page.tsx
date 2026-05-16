@@ -10,8 +10,7 @@ import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
 import { AuthPageShell } from "@/components/auth/auth-page-shell"
-import { FieldGroup } from "@/components/forms/field-group"
-import { SubmitButton } from "@/components/forms/submit-button"
+import { SignUpFieldGroup } from "@/components/forms/sign-up-field-group"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -313,25 +312,19 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 {authVerificationContent.startOver}
               </Button>
 
-              <SubmitButton
+              <Button type="submit"
                 disabled={isBusy}
                 size="cta"
                 className="w-full min-w-0 sm:col-span-2"
-                pendingLabel={
-                  <>
-                    <LoaderCircle className="size-4 animate-spin" />
-                    {authVerificationContent.verifyCode}
-                  </>
-                }
               >
                 {authVerificationContent.verifyCode}
-              </SubmitButton>
+              </Button>
             </div>
           </div>
         ) : (
           <div className="max-w-full min-w-0 space-y-2.5 overflow-hidden sm:space-y-3">
             <div className="grid min-w-0 gap-2.5 sm:grid-cols-2 sm:gap-3">
-              <FieldGroup
+              <SignUpFieldGroup
                 id="firstName"
                 label="First name"
                 error={form.formState.errors.firstName?.message}
@@ -346,9 +339,9 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
                   })}
                 />
-              </FieldGroup>
+              </SignUpFieldGroup>
 
-              <FieldGroup
+              <SignUpFieldGroup
                 id="lastName"
                 label="Last name"
                 error={form.formState.errors.lastName?.message}
@@ -363,10 +356,10 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
                   })}
                 />
-              </FieldGroup>
+              </SignUpFieldGroup>
             </div>
 
-            <FieldGroup id="email" label="Email" error={form.formState.errors.email?.message}>
+            <SignUpFieldGroup id="email" label="Email" error={form.formState.errors.email?.message}>
               <Input
                 id="email"
                 type="email"
@@ -379,9 +372,9 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     typeof value === "string" ? value.trim().toLowerCase() : "",
                 })}
               />
-            </FieldGroup>
+            </SignUpFieldGroup>
 
-            <FieldGroup
+            <SignUpFieldGroup
               id="password"
               label="Password"
               description="Use a strong password you have not used elsewhere."
@@ -396,7 +389,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 disabled={isBusy}
                 {...form.register("password")}
               />
-            </FieldGroup>
+            </SignUpFieldGroup>
 
             <Field data-invalid={Boolean(form.formState.errors.acceptedUserAgreement?.message)}>
               <label className="flex min-w-0 items-start gap-2.5 overflow-hidden border border-neutral-700 bg-black/55 p-3">
@@ -444,19 +437,13 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
 
             <div id="clerk-captcha" className="min-h-0 w-full max-w-full overflow-hidden" />
 
-            <SubmitButton
+            <Button type="submit"
               disabled={isBusy}
               size="cta"
               className="w-full min-w-0"
-              pendingLabel={
-                <>
-                  <LoaderCircle className="size-4 animate-spin" />
-                  Create account
-                </>
-              }
             >
               Create account
-            </SubmitButton>
+            </Button>
 
             <div className="flex min-w-0 flex-wrap items-center gap-2 overflow-hidden text-xs font-semibold text-neutral-500 sm:text-sm">
               <span>Already have an account?</span>
