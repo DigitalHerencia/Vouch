@@ -28,17 +28,17 @@ Vouch is not:
 
 Use this authority order:
 
-1. `.agents/contracts/*.yaml`
-2. `.agents/docs/*.md`
+1. `.agents/docs/*.md`
+2. `.agents/contracts/*.yaml`
 3. `.agents/instructions/*.agents.md`
 4. existing repo code
 5. agent judgment
 
-If code conflicts with contracts, contracts win.
+If code conflicts with docs or contracts, docs/contracts win.
 
-If docs conflict with contracts, stop and report.
+If contracts conflict with docs, stop and report the contradiction before implementing.
 
-If instructions conflict with contracts, contracts win.
+If instructions conflict with docs or contracts, docs/contracts win.
 
 Do not invent behavior to resolve contradictions.
 
@@ -329,7 +329,7 @@ Public:
 
 ```txt
 /
- /pricing
+/pricing
 /faq
 /legal/terms
 /legal/privacy
@@ -348,6 +348,7 @@ Tenant:
 ```txt
 /dashboard
 /vouches/new
+/vouches/new/confirm
 /vouches/[vouchId]
 ```
 
@@ -358,7 +359,7 @@ External provider surfaces are not Vouch pages.
 Only provider webhook routes are allowed:
 
 ```txt
-app/api/clerk/webhooks/route.ts
+app/api/clerk/webhook-handler/route.ts
 app/api/stripe/webhooks/route.ts
 ```
 
@@ -385,6 +386,7 @@ features/dashboard/dashboard-page.client.tsx
 components/dashboard/*
 
 app/(tenant)/vouches/new/page.tsx
+app/(tenant)/vouches/new/confirm/page.tsx
 app/(tenant)/vouches/[vouchId]/page.tsx
 features/vouches/*
 components/vouches/*
@@ -448,6 +450,32 @@ Do not implement:
 - service listings
 - categories
 - browse/search/discovery
+
+## Validation Gates
+
+Use scope-appropriate validation before reporting work complete.
+
+Preferred full validation:
+
+```txt
+pnpm prisma:validate
+pnpm validate:contracts
+pnpm lint
+pnpm typecheck
+pnpm test
+pnpm test:e2e
+pnpm validate
+pnpm validate:all
+```
+
+If a gate cannot be run, report:
+
+- command not run
+- reason it was not run
+- expected risk
+- exact user-run command needed
+
+Do not claim validation passed unless the command actually passed.
 
 ## Completion Report
 

@@ -115,3 +115,16 @@ api_route_policy:
   internal_app_mutations_use_api_routes: false
   provider_routes_require_signature_verification: true
   provider_routes_require_user_session: false
+  clerk_webhook_handler_path_locked: app/api/clerk/webhook-handler/route.ts
+  clerk_webhook_handler_must_remain_webhook_handler: true
+  clerk_webhooks_plural_path_allowed: false
+
+adapter_route_policy:
+  invite_token_routes:
+    allowed_only_as_transition_adapters: true
+    must_redirect_to_canonical_vouch_detail: true
+    must_not_render_full_acceptance_page: true
+  checkout_success_route:
+    browser_return_state_is_not_payment_truth: true
+    must_not_finalize_payment_state: true
+    must_not_mutate_provider_state: true

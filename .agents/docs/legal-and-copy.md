@@ -14,6 +14,60 @@ Vouch determines whether both participants confirmed presence inside the configu
 
 Outcome follows system state.
 
+## Legal source normalization rule
+
+Uploaded legal source files may contain:
+
+- source material
+- placeholders
+- draft phrasing
+- informal language
+- exploratory notes
+
+Agents must preserve substantive legal/product rules while removing:
+
+- jokes
+- insults
+- sarcasm
+- placeholder text
+- casual legal phrasing
+- unsupported legal conclusions
+- conversational filler
+
+Production legal copy must remain:
+
+- neutral
+- professional
+- concise
+- operationally accurate
+- aligned with Vouch product boundaries
+
+## Missing legal values rule
+
+Agents must not invent:
+
+- legal entity names
+- company addresses
+- governing law
+- effective dates
+- version numbers
+- support emails
+- privacy contact emails
+- legal contacts
+
+When a required legal value is missing, use explicit placeholders:
+
+```txt
+[LEGAL_ENTITY_NAME_REQUIRED]
+[GOVERNING_LAW_STATE_REQUIRED]
+[SUPPORT_EMAIL_REQUIRED]
+[PRIVACY_CONTACT_EMAIL_REQUIRED]
+[EFFECTIVE_DATE_REQUIRED]
+[TERMS_VERSION_REQUIRED]
+[PRIVACY_VERSION_REQUIRED]
+[USER_AGREEMENT_VERSION_REQUIRED]
+```
+
 ## What Vouch is not
 
 Vouch does not:
