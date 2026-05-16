@@ -1,39 +1,100 @@
 # Vouch Implementation Instructions
 
-## Operating mode
+## Operating Mode
 
-Treat Vouch as a production SaaS codebase with strict contracts.
+Treat Vouch as a production SaaS codebase with strict source-of-truth contracts.
 
 Do not improvise product scope.
 
-Do not add convenience surfaces that violate the product boundary.
+Do not add convenience surfaces that violate the Vouch product boundary.
 
 Smallest correct surface wins.
 
-## Before changing code
+Vouch is a narrow commitment-backed payment coordination system.
 
-1. Identify the route, page, feature, action, fetcher, transaction, integration, schema, type, DTO, and component surface involved.
-2. Read the relevant `.agents/contracts/*.yaml`.
-3. Read the relevant `.agents/docs/*.md`.
-4. Inspect existing repo code.
-5. If code conflicts with contracts, contracts win.
-6. If docs conflict with contracts, stop and report.
+Vouch is not:
 
-## Output rule
+- marketplace
+- broker
+- scheduler
+- messaging app
+- review/rating system
+- dispute-resolution system
+- escrow provider
+- discovery platform
+- admin arbitration surface
 
-When asked for implementation code, output complete affected files.
+## Source Order
 
-Do not output snippets, partial patches, ellipses, pseudo-code, or summary-only implementation.
+Use this authority order:
+
+1. `.agents/contracts/*.yaml`
+2. `.agents/docs/*.md`
+3. `.agents/instructions/*.agents.md`
+4. existing repo code
+5. agent judgment
+
+If code conflicts with contracts, contracts win.
+
+If docs conflict with contracts, stop and report.
+
+If instructions conflict with contracts, contracts win.
+
+Do not invent behavior to resolve contradictions.
+
+## Before Changing Code
+
+Before changing any file:
+
+1. Identify the smallest surface of change.
+2. Identify affected route/page/feature/action/fetcher/transaction/integration/schema/type/DTO/component.
+3. Read relevant contracts.
+4. Read relevant docs.
+5. Inspect existing repo code.
+6. Make the smallest conforming change.
+7. Output complete affected files.
+
+## Output Rule
+
+When asked for implementation code:
+
+- output complete affected files
+- no snippets
+- no partial patches
+- no ellipses
+- no pseudo-code
+- no summary-only implementation
 
 If a file changes, provide the whole file.
 
-If blocked, provide the most complete compilable blocked-state file possible and state the exact missing dependency or context.
+If blocked, provide the most complete compilable blocked-state file possible and state the exact missing context.
 
-## App Router rule
+## App Router Rule
 
-Route pages stay thin.
+Route files stay thin.
 
-Correct:
+Allowed in `app/**` route files:
+
+- metadata
+- params/searchParams handoff
+- redirects when required
+- Suspense boundary
+- feature composition
+- skeleton fallback
+- static public page assembly
+
+Forbidden in `app/**` route files:
+
+- Prisma imports
+- Stripe SDK imports
+- domain mutations
+- business transactions
+- protected DTO shaping
+- settlement logic
+- provider reconciliation
+- complex form logic
+
+Correct pattern:
 
 ```txt
 app page
@@ -42,70 +103,75 @@ app page
 -> skeleton
 ```
 
-Incorrect:
+## Feature Rule
 
-```txt
-app page
--> Prisma
--> Stripe SDK
--> domain mutation
--> DTO shaping
--> complex form logic
-```
+Server features may:
 
-## Server feature rule
+- orchestrate fetchers
+- pass DTOs
+- perform role-aware composition
+- hand actions to client components
 
-Server features may orchestrate fetchers and pass DTOs.
+Server features must not:
 
-They may not mutate provider or database state directly.
-
-## Client feature rule
+- mutate provider state
+- mutate database state directly
+- call Prisma directly
+- call Stripe SDKs directly
 
 Client features may handle:
 
-```txt
-drawer/dialog state
-form state
-transition state
-optimistic display where safe
-button interaction
-copy/share behavior
-```
+- drawer/dialog state
+- form state
+- transition state
+- optimistic display where safe
+- button interactions
+- copy/share behavior
 
 Client features must not create truth.
 
-## Form rule
+## Component Rule
 
-Forms use:
+Components may:
 
-```txt
-React Hook Form
-Zod
-server actions
-typed ActionResult
-```
+- render DTOs
+- render content module data
+- render presentational layout
+- render buttons, panels, cards, badges, drawers, summaries
 
-Client-side validation is UX only.
+Components must not:
 
-Server actions enforce truth.
+- call Prisma
+- call Stripe SDKs
+- call Clerk server APIs
+- perform protected fetching
+- perform domain mutations
+- decide settlement
+- own authorization truth
+- own confirmation truth
+- hard-code repeated long-form copy
 
-## Read implementation pattern
+## Read Pattern
 
-For a protected read:
+Protected reads go through fetchers.
 
 ```txt
 lib/fetchers/*
 -> require active user
 -> authorize access
 -> use minimal select
--> map to DTO
--> set cache policy
--> return DTO
+-> map DTO
+-> declare cache policy
+-> return transport-safe data
 ```
 
-## Write implementation pattern
+Fetchers must not mutate state.
 
-For a protected write:
+Fetchers must not return raw Prisma, Stripe, Clerk, webhook, identity, card, or bank objects.
+
+## Write Pattern
+
+Protected writes go through server actions.
 
 ```txt
 lib/actions/*
@@ -117,12 +183,21 @@ lib/actions/*
 -> call transaction helper
 -> write audit event
 -> revalidate
--> return typed result or redirect
+-> return typed ActionResult or redirect
 ```
 
-## Stripe implementation pattern
+Server actions must not trust client state for:
 
-All Stripe calls live under:
+- confirmation
+- payment
+- settlement
+- readiness
+- role
+- fee math
+
+## Stripe Pattern
+
+All Stripe SDK calls live under:
 
 ```txt
 lib/integrations/stripe/*
@@ -141,11 +216,21 @@ write audit event
 
 Never capture, cancel, void, or refund from stale local state alone.
 
-Never finalize from browser return.
+Never finalize payment state from browser return.
 
-## Clerk implementation pattern
+Never use direct charges as canonical Vouch flow.
 
-All Clerk auth access is centralized under:
+Never use invoice/product/price catalog flows for individual Vouches.
+
+Vouch uses manual-capture PaymentIntents for Vouch payment authorization.
+
+Stripe owns payment truth.
+
+Vouch owns workflow truth.
+
+## Clerk Pattern
+
+All Clerk authentication access is centralized under:
 
 ```txt
 lib/auth/*
@@ -161,56 +246,135 @@ Clerk session proves authentication.
 
 Database state proves Vouch permissions.
 
-## Confirmation implementation pattern
+Clerk must not decide:
 
-Confirmation action must enforce:
+- Vouch participation
+- payment readiness
+- payout readiness
+- settlement
+- confirmation validity
+- Vouch role by metadata alone
 
-```txt
-active user
-participant authorization
-open confirmation window
-valid role
-valid code derivation
-no duplicate confirmation
-server-side timestamp
-offline payload validity if applicable
-```
+The Clerk webhook handler must remain a webhook handler.
+
+Do not rename or reframe it away from webhook-handler semantics.
+
+## Confirmation Pattern
+
+Confirmation actions must enforce:
+
+- active user
+- participant authorization
+- open confirmation window
+- valid role
+- valid code derivation
+- no duplicate confirmation
+- server-side timestamp
+- offline payload validity if applicable
+
+One-sided confirmation never releases funds.
+
+Late confirmation never releases funds.
+
+Manual/system/support confirmation must not exist.
+
+GPS is not settlement truth.
+
+Screenshots/evidence must not influence settlement.
 
 If both confirmations are valid inside the window, settlement evaluation may run.
 
 If not, no settlement.
 
-## Dashboard implementation pattern
+## Dashboard Pattern
 
 Dashboard shows:
 
-```txt
-metric grid
-vertical Vouch card column
-callout panel
-```
+- status orientation
+- Vouch card list
+- next action
+- bottom callout
 
-Dashboard must not become analytics, marketplace, messaging, reviews, disputes, or kanban.
+Dashboard must not become:
 
-## Vouch detail implementation pattern
+- analytics dashboard
+- marketplace feed
+- messaging inbox
+- review surface
+- dispute panel
+- kanban board
+- provider discovery page
+
+## Vouch Detail Pattern
 
 Vouch detail is the canonical action surface.
 
 It owns:
 
+- payment status
+- confirmation status
+- checkout link sharing
+- presence confirmation
+- archive action
+- role-aware next action
+- safe timeline
+
+Do not create route sprawl for sub-actions.
+
+Use drawers or inline panels for protocol actions.
+
+## Approved User-Facing Pages
+
+Public:
+
 ```txt
-payment status
-confirmation status
-checkout link sharing
-presence confirmation
-archive
-role-aware next action
-safe timeline
+/
+ /pricing
+/faq
+/legal/terms
+/legal/privacy
+/checkout/success
 ```
 
-Do not create route sprawl.
+Auth:
 
-## File placement
+```txt
+/sign-in
+/sign-up
+```
+
+Tenant:
+
+```txt
+/dashboard
+/vouches/new
+/vouches/[vouchId]
+```
+
+External provider surfaces are not Vouch pages.
+
+## Approved API Routes
+
+Only provider webhook routes are allowed:
+
+```txt
+app/api/clerk/webhooks/route.ts
+app/api/stripe/webhooks/route.ts
+```
+
+Internal app mutations must not use API routes.
+
+Forbidden:
+
+```txt
+app/api/vouches/*
+app/api/accounts/*
+app/api/payment/setup/*
+app/api/payout/setup/*
+app/api/admin/*
+```
+
+## File Placement
 
 Use these placements:
 
@@ -247,38 +411,58 @@ schemas/*
 types/*
 ```
 
-## Forbidden implementation patterns
+## Design-System Rule
+
+Every UI change must follow the Vouch design system:
+
+- dark operational SaaS
+- brutalist structure
+- zero-radius panels
+- high contrast
+- black/neutral foundation
+- restrained blue accent
+- uppercase display typography
+- dense intentional spacing
+- bordered black/55 panels
+- mobile-first layouts
+- status text not color alone
+
+Do not introduce soft consumer marketplace UI patterns.
+
+## Forbidden Implementation Patterns
 
 Do not implement:
 
-```txt
-app/api/vouches/*
-app/api/accounts/*
-app/api/payment/setup/*
-components with Prisma
-components with Stripe SDK
-components with Clerk server APIs
-client fetch('/api/...') for app mutations
-manual release button
-force refund button
-admin outcome editor
-confirmation timestamp editor
-dispute form
-evidence upload
-review/rating UI
-marketplace cards
-provider search
-message thread
-```
+- manual release button
+- force refund button
+- manual payout button
+- admin outcome editor
+- confirmation timestamp editor
+- dispute form
+- evidence upload
+- review/rating UI
+- marketplace cards
+- provider search
+- message thread
+- public profiles
+- service listings
+- categories
+- browse/search/discovery
 
-## Completion report
+## Completion Report
 
-Final implementation report should contain only:
+Final implementation report must contain only:
 
 ```txt
-complete / not complete
-files delivered or changed
-validation run
-validation result
-blockers
+STATUS: COMPLETE | NOT COMPLETE
+
+FILES DELIVERED:
+- path
+- path
+
+VALIDATION:
+- command: PASS | FAIL | NOT RUN
+
+BLOCKERS:
+- none
 ```

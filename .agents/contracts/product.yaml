@@ -44,6 +44,7 @@ not_a:
   - social_platform
   - arbitration_service
   - evidence_review_system
+  - custody_layer
 
 forbidden_surfaces:
   - browse
@@ -110,8 +111,8 @@ responsibility_boundaries:
       - recovery_state
 
 source_order:
-  - .agents/contracts/*.yaml
   - .agents/docs/*.md
+  - .agents/contracts/*.yaml
   - .agents/instructions/*.md
   - existing_repo_code
   - implementation_judgment

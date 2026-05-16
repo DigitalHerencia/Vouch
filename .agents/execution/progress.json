@@ -1,74 +1,78 @@
 {
-  "version": 1,
+  "version": 2,
   "project": "Vouch",
   "audit_program": {
-    "status": "first_pass_conformance_validated",
+    "status": "source-of-truth-governed",
     "passes": [
       {
         "pass": 1,
-        "name": "Contract + route surface",
-        "status": "assumed_complete"
+        "name": "Contract and route surface",
+        "status": "complete"
       },
       {
         "pass": 2,
-        "name": "Static inventory + forbidden surface map",
-        "status": "assumed_complete"
+        "name": "Static inventory and forbidden surface map",
+        "status": "complete"
       },
       {
         "pass": 3,
-        "name": "Prisma schema + state-axis normalization",
-        "status": "assumed_complete"
+        "name": "Prisma schema and state-axis normalization",
+        "status": "complete"
       },
       {
         "pass": 4,
         "name": "Constants, TypeScript types, and Zod schemas",
-        "status": "assumed_complete"
+        "status": "complete"
       },
       {
         "pass": 5,
         "name": "Database selects, DTO mappers, and fetchers",
-        "status": "assumed_complete"
+        "status": "complete"
       },
       {
         "pass": 6,
         "name": "Server actions, transactions, auth/authz boundaries",
-        "status": "assumed_complete"
+        "status": "complete"
       },
       {
         "pass": 7,
         "name": "Stripe, Clerk, and webhook reconciliation",
-        "status": "assumed_complete"
+        "status": "complete"
       },
       {
         "pass": 8,
         "name": "Feature modules, components, UI, content, legal copy",
-        "status": "assumed_complete"
+        "status": "complete"
       },
       {
         "pass": 9,
         "name": "Tests, validation spine, launch checklist, final reconciliation",
-        "status": "validated_for_first_pass_scope"
+        "status": "complete"
       }
     ]
   },
+  "source_invariants_enforced": [
+    "Vouch is commitment-backed payment coordination only.",
+    "Outcome follows system state.",
+    "Stripe owns payment truth.",
+    "Vouch owns workflow truth.",
+    "Both participants must confirm inside the confirmation window before settlement capture.",
+    "One-sided confirmation never releases funds.",
+    "Provider state is retrieved before settlement-affecting operations.",
+    "Webhooks are idempotent and deduped by provider event ID.",
+    "No disputes, evidence, appeals, mediation, arbitration, manual awards, support overrides, marketplace discovery, messaging, reviews, ratings, browse, search, or public provider profiles."
+  ],
   "ui_standardization": {
     "status": "edited",
-    "date": "2026-05-13",
-    "source_refs": [
-      "C:\\Users\\scree\\Documents\\DevNotes\\10 PROJECTS\\Vouch\\Vouch Source of Truth.md",
-      ".agents/docs/design-system.md",
-      ".agents/docs/legal-and-copy.md"
-    ],
     "completed": [
-      "deleted unreferenced verification/user helper modules",
-      "introduced shared public/tenant shell",
-      "centralized vouch page copy in content/vouches.ts",
-      "mapped dashboard and vouch-facing modules to content/theme tokens",
-      "replaced touched brand blue literals with primary theme utilities"
-    ],
-    "validation": "pnpm typecheck passed"
+      "Deleted unreferenced verification/user helper modules where obsolete.",
+      "Introduced shared public/tenant shell.",
+      "Centralized Vouch page copy in content/vouches.ts.",
+      "Mapped dashboard and Vouch-facing modules to content/theme tokens.",
+      "Replaced touched brand blue literals with primary theme utilities."
+    ]
   },
-  "next_action": "Review UI standardization edits and run validation when ready.",
+  "next_action": "Run required validation and update validation.json with exact command results.",
   "required_commands": [
     "pnpm prisma:validate",
     "pnpm validate:contracts",

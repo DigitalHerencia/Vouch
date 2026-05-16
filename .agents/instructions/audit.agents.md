@@ -6,9 +6,27 @@ Audit the repo for conformance to Vouch source-of-truth contracts.
 
 Do not merely summarize.
 
-Find violations, classify severity, and provide complete corrected files when asked to fix.
+Find violations, classify severity, and identify corrected files.
 
-## Audit order
+When asked to fix, output complete corrected files.
+
+## Source Order
+
+Use this authority order:
+
+1. `.agents/contracts/*.yaml`
+2. `.agents/docs/*.md`
+3. `.agents/instructions/*.agents.md`
+4. existing repo code
+5. agent judgment
+
+If code conflicts with contracts, contracts win.
+
+If docs conflict with contracts, stop and report.
+
+## Audit Order
+
+Audit in this order:
 
 1. Product boundary
 2. Route tree
@@ -25,9 +43,9 @@ Find violations, classify severity, and provide complete corrected files when as
 13. UI/design-system compliance
 14. Tests and validation
 
-## Product boundary checks
+## Product Boundary Checks
 
-Fail if repo contains:
+Fail if repo contains user-facing or domain behavior for:
 
 ```txt
 marketplace
@@ -45,9 +63,9 @@ confirmation rewrite
 admin arbitration
 ```
 
-## Route checks
+## Route Checks
 
-Allowed user-facing tenant routes only:
+Allowed tenant routes:
 
 ```txt
 /dashboard
@@ -55,16 +73,34 @@ Allowed user-facing tenant routes only:
 /vouches/[vouchId]
 ```
 
-Allowed provider routes only:
+Allowed provider routes:
 
 ```txt
 /api/clerk/webhooks
 /api/stripe/webhooks
 ```
 
+Allowed public routes:
+
+```txt
+/
+ /pricing
+/faq
+/legal/terms
+/legal/privacy
+/checkout/success
+```
+
+Allowed auth routes:
+
+```txt
+/sign-in
+/sign-up
+```
+
 Fail if forbidden routes exist.
 
-## App Router purity checks
+## App Router Purity Checks
 
 Fail if `app/**` contains:
 
@@ -79,7 +115,7 @@ provider reconciliation
 large form logic
 ```
 
-## Fetcher checks
+## Fetcher Checks
 
 Every protected fetcher must:
 
@@ -92,11 +128,19 @@ return transport-safe data
 declare cache policy
 ```
 
-Fail if fetcher mutates state or returns raw Prisma/provider objects.
+Fail if fetcher:
 
-## Action checks
+```txt
+mutates state
+returns raw Prisma records
+returns raw provider objects
+skips authorization
+calls server actions
+```
 
-Every action must:
+## Action Checks
+
+Every server action must:
 
 ```txt
 authenticate
@@ -108,9 +152,18 @@ revalidate
 return typed ActionResult or redirect
 ```
 
-Fail if action trusts client state for confirmation, payment, settlement, readiness, or role.
+Fail if action trusts client state for:
 
-## Stripe checks
+```txt
+confirmation
+payment
+settlement
+readiness
+role
+fee math
+```
+
+## Stripe Checks
 
 Fail if:
 
@@ -128,7 +181,7 @@ raw Stripe object exposed to UI
 raw provider payload stored unnecessarily
 ```
 
-## Clerk checks
+## Clerk Checks
 
 Fail if:
 
@@ -141,9 +194,12 @@ Clerk decides payout readiness
 Clerk decides settlement
 raw Clerk objects exposed to UI
 raw session tokens stored or logged
+Clerk webhook handler renamed away from webhook-handler semantics
 ```
 
-## State checks
+The Clerk webhook handler must remain a webhook handler.
+
+## State Checks
 
 Canonical Vouch lifecycle only:
 
@@ -173,7 +229,7 @@ recovery_required
 
 Those belong to separate payment/settlement/archive/recovery axes.
 
-## Confirmation checks
+## Confirmation Checks
 
 Fail if:
 
@@ -187,7 +243,7 @@ screenshots/evidence can influence settlement
 support can rewrite confirmation
 ```
 
-## Webhook checks
+## Webhook Checks
 
 Every provider webhook must:
 
@@ -202,9 +258,17 @@ mark unsupported events ignored
 avoid raw payload storage
 ```
 
-Fail if duplicate webhook can cause duplicate capture/refund/audit transition.
+Fail if duplicate webhook can cause:
 
-## DTO checks
+```txt
+duplicate capture
+duplicate refund
+duplicate audit transition
+duplicate confirmation
+duplicate lifecycle transition
+```
+
+## DTO Checks
 
 Fail if UI receives:
 
@@ -219,7 +283,7 @@ internal stack traces
 secret provider IDs where unnecessary
 ```
 
-## UI checks
+## UI Checks
 
 Fail if UI violates:
 
@@ -234,91 +298,9 @@ no dispute UI
 no soft consumer review/provider-card patterns
 ```
 
-## Audit output format
+## Test Checks
 
-Use this format:
-
-```txt
-STATUS: PASS | FAIL | PARTIAL
-
-CRITICAL:
-- [file] issue
-- required correction
-
-HIGH:
-- [file] issue
-- required correction
-
-MEDIUM:
-- [file] issue
-- required correction
-
-LOW:
-- [file] issue
-- required correction
-
-VALIDATION:
-- command: result / not run
-- blocker if any
-
-NEXT FILES TO FIX:
-- path
-- path
-```
-
-When asked to fix, output complete corrected files only.
-
-````
-
----
-
-## `.agents/instructions/validation.md`
-
-```md
-# Vouch Validation Instructions
-
-## Standard validation ladder
-
-Run the narrowest useful gate first, then widen.
-
-## Basic code checks
-
-```txt
-pnpm lint
-pnpm typecheck
-````
-
-## Prisma checks
-
-```txt
-pnpm prisma:validate
-```
-
-## Contract checks
-
-```txt
-pnpm validate:contracts
-```
-
-## Unit/integration tests
-
-```txt
-pnpm test
-```
-
-## E2E tests
-
-```txt
-pnpm test:e2e
-```
-
-## Full validation
-
-```txt
-pnpm validate
-```
-
-## Required test coverage
+Required test coverage should exist for:
 
 Payment and Stripe:
 
@@ -381,39 +363,38 @@ writes use server actions
 DTOs are transport-safe
 ```
 
-Forbidden surfaces:
+## Audit Output Format
+
+Use this exact format:
 
 ```txt
-no marketplace routes
-no search/browse routes
-no messaging routes
-no disputes/claims/appeals routes
-no evidence upload
-no ratings/reviews
-no public provider profiles
-no manual settlement controls
-```
+STATUS: PASS | FAIL | PARTIAL
 
-## Validation report format
+CRITICAL:
+- [file] issue
+- required correction
 
-Use:
+HIGH:
+- [file] issue
+- required correction
 
-```txt
-VALIDATION STATUS: PASS | FAIL | NOT RUN
+MEDIUM:
+- [file] issue
+- required correction
 
-Commands:
-- pnpm lint: PASS | FAIL | NOT RUN
-- pnpm typecheck: PASS | FAIL | NOT RUN
-- pnpm prisma:validate: PASS | FAIL | NOT RUN
-- pnpm validate:contracts: PASS | FAIL | NOT RUN
-- pnpm test: PASS | FAIL | NOT RUN
-- pnpm test:e2e: PASS | FAIL | NOT RUN
-- pnpm validate: PASS | FAIL | NOT RUN
+LOW:
+- [file] issue
+- required correction
 
-Blockers:
-- none
+VALIDATION:
+- command: result / not run
+- blocker if any
+
+NEXT FILES TO FIX:
+- path
+- path
 ```
 
 Do not claim validation passed unless it was run and passed.
 
-If validation was not run locally, say so.
+When asked to fix, output complete corrected files only.

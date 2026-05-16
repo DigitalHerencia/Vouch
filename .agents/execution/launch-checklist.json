@@ -1,7 +1,7 @@
 {
-  "version": 1,
+  "version": 2,
   "project": "Vouch",
-  "status": "pending_validation",
+  "status": "not_ready_until_all_required_gates_pass",
   "source_of_truth": [
     "Vouch Source of Truth",
     ".agents/docs/*.md",
@@ -22,17 +22,17 @@
     {
       "id": "non-release-rule",
       "status": "required",
-      "description": "If confirmation conditions fail, funds do not release; provider state determines non-capture, cancellation, or refund."
-    },
-    {
-      "id": "no-discretion",
-      "status": "required",
-      "description": "No disputes, evidence, appeals, mediation, arbitration, manual awards, support overrides, or manual confirmation rewrites."
+      "description": "If confirmation conditions fail, funds do not release; provider state determines non-capture, cancellation, void, or refund."
     },
     {
       "id": "provider-truth",
       "status": "required",
-      "description": "Stripe owns payment truth; Vouch mirrors provider state and applies workflow truth."
+      "description": "Stripe owns payment truth. Vouch owns workflow truth."
+    },
+    {
+      "id": "no-discretion",
+      "status": "required",
+      "description": "No disputes, appeals, evidence, mediation, arbitration, manual awards, support overrides, or manual confirmation rewrites."
     }
   ],
   "launch_gates": [
@@ -105,22 +105,22 @@
     {
       "id": "create-vouch",
       "status": "pending",
-      "description": "Merchant can create a committed/sent Vouch with immutable pricing and appointment window."
+      "description": "Merchant can create a committed Vouch with immutable amount, fee snapshot, appointment date, and confirmation window."
     },
     {
       "id": "accept-authorize",
       "status": "pending",
-      "description": "Customer can accept and Stripe creates a manual-capture PaymentIntent with destination transfer and app fee."
+      "description": "Customer can accept and Stripe creates a manual-capture PaymentIntent with destination transfer and application fee."
     },
     {
       "id": "dual-confirm-capture",
       "status": "pending",
-      "description": "Both participants confirm inside the window and settlement captures only after Stripe retrieve confirms capturable state."
+      "description": "Both participants confirm inside the confirmation window and settlement captures only after Stripe retrieve confirms capturable state."
     },
     {
       "id": "missed-confirmation-noncapture",
       "status": "pending",
-      "description": "Missing or late confirmation causes non-capture/cancel/refund according to Stripe provider state."
+      "description": "Missing, partial, invalid, early, or late confirmation causes non-capture, cancel, void, or refund according to provider state."
     },
     {
       "id": "webhook-idempotency",
@@ -130,7 +130,7 @@
     {
       "id": "forbidden-surface",
       "status": "pending",
-      "description": "No setup/settings/admin/dispute/marketplace/messaging/review/search/browse/provider-directory surfaces render."
+      "description": "No setup, settings, admin, dispute, marketplace, messaging, review, search, browse, or provider-directory surfaces render."
     }
   ],
   "final_decision": {

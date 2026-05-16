@@ -105,8 +105,10 @@ clerk:
     - lib/auth/session.ts
     - lib/auth/user.ts
     - lib/auth/account.ts
+    - lib/auth/webhooks.ts
     - lib/authz/vouch.ts
     - lib/authz/payment.ts
+    - lib/authz/readiness.ts
   required_environment:
     - NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
     - CLERK_SECRET_KEY

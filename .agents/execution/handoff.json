@@ -1,16 +1,81 @@
 {
-  "version": 1,
+  "version": 2,
   "project": "Vouch",
-  "handoff_status": "first_pass_conformance_validated",
-  "summary": "First-pass conformance fixes were applied without seed data. Route contracts, create flow, detail/dashboard surfaces, public CTA, and bilateral-confirmation settlement wiring were updated and locally validated.",
-  "source_invariants": [
-    "Vouch is commitment-backed payment coordination only.",
-    "Both participants confirm inside the window before funds release.",
-    "If confirmation conditions fail, funds do not release.",
-    "Stripe owns payment truth; Vouch owns workflow truth.",
-    "No disputes, evidence, mediation, arbitration, manual awards, support overrides, marketplace discovery, messaging, reviews, ratings, browse, search, or public provider profiles."
+  "handoff_status": "source-of-truth-governed",
+  "summary": "Vouch is a deterministic commitment-backed payment coordination protocol implemented on Stripe Connect using authorization-first manual-capture PaymentIntents, bilateral confirmation truth, provider-backed settlement state, and non-discretionary workflow enforcement.",
+  "core_doctrine": [
+    "Vouch does not ask who is right. Vouch asks what happened.",
+    "Outcome follows system state.",
+    "Fraud thrives in ambiguity, exceptions, and manual intervention. Vouch removes all three.",
+    "Vouch is deterministic trust infrastructure for real-world commitments.",
+    "Vouch is not a marketplace, broker, escrow service, messaging platform, dispute-resolution system, review platform, social network, scheduling marketplace, or discovery platform."
   ],
-  "validation_required": [
+  "source_invariants": [
+    "Both participants must confirm presence inside the confirmation window before settlement capture occurs.",
+    "No unilateral participant action can force settlement.",
+    "If bilateral confirmation conditions fail, funds do not release.",
+    "Stripe owns payment truth.",
+    "Vouch owns workflow truth.",
+    "Provider truth and local workflow truth reconcile through idempotent webhook processing.",
+    "Settlement authority derives strictly from authenticated bilateral confirmation plus provider-confirmed capturable state.",
+    "No disputes, appeals, evidence review, screenshots, mediation, arbitration, manual awards, support overrides, or confirmation rewrites exist.",
+    "Admins may inspect operational failures and retry deterministic technical operations only.",
+    "Users cannot negotiate, message, rate, review, browse, search, or discover providers through Vouch."
+  ],
+  "architectural_rules": [
+    "All protected reads go through fetchers.",
+    "All protected writes go through server actions.",
+    "All actions must authenticate, authorize, validate, mutate, audit, and revalidate.",
+    "All provider operations must retrieve current Stripe state before capture, cancel, void, or refund operations.",
+    "All webhook handlers must be idempotent and event-deduplicated.",
+    "All important transitions must generate audit events.",
+    "Immutable pricing snapshots must be frozen at Vouch creation.",
+    "Payment readiness and payout readiness are embedded flow gates, not standalone setup products.",
+    "App Router route files remain thin orchestration shells only.",
+    "No Prisma access or business logic inside route shell components."
+  ],
+  "canonical_vouch_lifecycle": [
+    "draft",
+    "committed",
+    "sent",
+    "accepted",
+    "authorized",
+    "confirmable",
+    "completed",
+    "expired"
+  ],
+  "forbidden_surfaces": [
+    "/setup",
+    "/settings",
+    "/settings/payment",
+    "/settings/payout",
+    "/settings/verification",
+    "/admin",
+    "/messages",
+    "/disputes",
+    "/appeals",
+    "/claims",
+    "/evidence",
+    "/reviews",
+    "/ratings",
+    "/browse",
+    "/search",
+    "/providers",
+    "/marketplace"
+  ],
+  "forbidden_behaviors": [
+    "manual settlement override",
+    "manual confirmation override",
+    "support-issued settlement",
+    "GPS settlement authority",
+    "screenshot evidence review",
+    "human arbitration",
+    "forced payout",
+    "forced refund without deterministic rule evaluation",
+    "browser-authoritative payment state",
+    "client-authoritative workflow state"
+  ],
+  "required_validation": [
     "pnpm prisma:validate",
     "pnpm validate:contracts",
     "pnpm lint",
@@ -20,34 +85,5 @@
     "pnpm validate",
     "pnpm validate:all"
   ],
-  "known_blockers": [],
-  "do_not_reintroduce": [
-    "/setup",
-    "/settings",
-    "/settings/payment",
-    "/settings/payout",
-    "/settings/verification",
-    "/readiness",
-    "/account",
-    "/profile",
-    "/admin",
-    "/messages",
-    "/disputes",
-    "/claims",
-    "/appeals",
-    "/evidence",
-    "/reviews",
-    "/ratings",
-    "/search",
-    "/browse",
-    "/providers",
-    "/marketplace",
-    "/vouches/[vouchId]/confirm",
-    "/vouches/invite/*",
-    "pending/active/refunded/canceled/failed as VouchStatus",
-    "manual/gps/system confirmation methods",
-    "payer/payee as canonical participant roles",
-    "manual settlement or support override behavior"
-  ],
-  "next_handoff_instruction": "Continue with any remaining non-first-pass cleanup separately. Do not add seed data unless explicitly requested."
+  "next_handoff_instruction": "All future implementation work must conform to the deterministic settlement doctrine and source-of-truth architecture before feature expansion."
 }

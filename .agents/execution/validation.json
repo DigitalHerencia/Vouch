@@ -1,69 +1,81 @@
 {
-  "version": 1,
+  "version": 2,
   "project": "Vouch",
-  "last_pass": "first-pass-conformance-fixes",
-  "status": "passed_with_warnings",
-  "commands": [
-    {
-      "command": "pnpm install",
-      "status": "passed",
-      "required": true,
-      "notes": "No seed command run. Prisma client generated during postinstall."
-    },
+  "status": "source-governed-validation-required",
+  "source_authority": [
+    "Vouch Source of Truth",
+    "vouch.product.doctrine.md",
+    "vouch.product.trust-model.md",
+    "vouch.product.messaging.md",
+    ".agents/docs/*",
+    ".agents/contracts/*",
+    ".agents/instructions/*"
+  ],
+  "required_invariants": [
+    "Outcome follows system state.",
+    "Both participants confirm inside the confirmation window before funds release.",
+    "If bilateral confirmation fails, funds do not release.",
+    "Stripe owns payment truth.",
+    "Vouch owns workflow truth.",
+    "Webhook reconciliation is idempotent.",
+    "No discretionary settlement exists.",
+    "No marketplace/discovery/review/messaging/dispute systems exist."
+  ],
+  "validation_commands": [
     {
       "command": "pnpm prisma:validate",
-      "status": "passed",
-      "required": true
+      "required_result": "pass"
     },
     {
       "command": "pnpm validate:contracts",
-      "status": "passed",
-      "required": true
+      "required_result": "pass"
     },
     {
       "command": "pnpm lint",
-      "status": "passed_with_warnings",
-      "required": true,
-      "notes": "Existing unused-symbol warnings remain in paymentActions, vouchActions, vouchFetchers, and architecture-surface.test."
+      "required_result": "pass"
     },
     {
       "command": "pnpm typecheck",
-      "status": "passed",
-      "required": true
+      "required_result": "pass"
     },
     {
       "command": "pnpm test",
-      "status": "passed",
-      "required": true,
-      "notes": "19 test files, 69 tests passed."
+      "required_result": "pass"
     },
     {
       "command": "pnpm test:e2e",
-      "status": "passed",
-      "required": true,
-      "notes": "18 tests passed after route smoke assertions were aligned to the contracted route surface."
-    },
-    {
-      "command": "pnpm build",
-      "status": "passed",
-      "required": true
+      "required_result": "pass"
     },
     {
       "command": "pnpm validate",
-      "status": "not_run",
-      "required": false,
-      "notes": "Covered by individual lint/typecheck/prisma/contracts/test commands in this pass."
+      "required_result": "pass"
     },
     {
       "command": "pnpm validate:all",
-      "status": "not_run",
-      "required": false,
-      "notes": "Covered by individual validation commands plus pnpm test:e2e in this pass."
+      "required_result": "pass"
     }
   ],
-  "known_blockers": [],
-  "notes": [
-    "No seed data, seed scripts, database fixtures, or provider backfills were added or run.",
-    "Provider CLI audit commands were not needed for these source-only conformance fixes."
-  ]
+  "required_runtime_checks": [
+    "Merchant can create a Vouch.",
+    "Customer can accept a Vouch.",
+    "Stripe creates manual-capture PaymentIntent.",
+    "Both participants confirm inside window.",
+    "Settlement captures only after bilateral confirmation.",
+    "Late confirmation cannot release funds.",
+    "Duplicate webhooks are safely deduplicated.",
+    "Provider retrieve occurs before settlement mutation.",
+    "No forbidden surfaces render.",
+    "No manual settlement override path exists."
+  ],
+  "failure_conditions": [
+    "Any discretionary settlement path exists.",
+    "Any admin override settlement path exists.",
+    "Any setup/settings/admin route surface is reintroduced.",
+    "Any marketplace/discovery/review/messaging/dispute feature is introduced.",
+    "Any unilateral settlement path exists.",
+    "Any provider mutation occurs without provider-state retrieval."
+  ],
+  "final_decision": {
+    "status": "not_launchable_until_all_validation_and_runtime_checks_pass"
+  }
 }

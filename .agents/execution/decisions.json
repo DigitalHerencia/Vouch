@@ -1,40 +1,62 @@
 {
-  "schema_version": "3.0.0",
+  "schema_version": "4.0.0",
   "file": "decisions.json",
   "product": "Vouch",
-  "updated_at": "2026-05-12T00:00:00.000Z",
+  "updated_at": "2026-05-16T00:00:00.000Z",
   "decisions": [
     {
       "id": "DEC-001",
-      "date": "2026-05-12",
-      "title": "Remove word usage governance",
-      "decision": "Governance must preserve architecture, payment, privacy, and settlement invariants without regulating product vocabulary, copy terminology, or implementation naming.",
-      "source_refs": ["AGENTS.md", ".agents/docs/prd.md"],
-      "status": "accepted"
+      "status": "accepted",
+      "title": "Outcome follows system state",
+      "decision": "Settlement authority derives strictly from deterministic protocol state, bilateral participant confirmation, provider-confirmed payment state, bounded temporal rules, and immutable transaction metadata."
     },
     {
       "id": "DEC-002",
-      "date": "2026-05-12",
-      "title": "Stripe settlement is manual-capture and provider-backed",
-      "decision": "Use Stripe manual-capture PaymentIntents; retrieve current provider state before capture/cancel/void/refund; use idempotency keys for durable provider operations.",
-      "source_refs": [".agents/docs/stripe-connect-integration.md", ".agents/contracts/domain-model.yaml"],
-      "status": "accepted"
+      "status": "accepted",
+      "title": "Stripe owns payment truth",
+      "decision": "Stripe is the authoritative payment state provider. Vouch mirrors provider state locally and reconciles async provider events through idempotent webhook processing."
     },
     {
       "id": "DEC-003",
-      "date": "2026-05-12",
-      "title": "No route-level payment business logic",
-      "decision": "Keep app route files thin; protected reads go through fetchers; writes go through server actions, transactions, and Stripe integration modules.",
-      "source_refs": ["AGENTS.md", ".agents/contracts/routes.yaml"],
-      "status": "accepted"
+      "status": "accepted",
+      "title": "Authorization-first deferred capture",
+      "decision": "Vouch uses Stripe manual-capture PaymentIntents with deferred settlement capture after bilateral confirmation succeeds."
     },
     {
       "id": "DEC-004",
-      "date": "2026-05-12",
-      "title": "Old .agents reports and Stripe blueprints are stale",
-      "decision": "Remove old reports, legal/Stripe notes, and scoped instruction files that conflict with the architecture-corrected source of truth.",
-      "source_refs": ["AGENTS.md"],
-      "status": "accepted"
+      "status": "accepted",
+      "title": "No discretionary settlement layer",
+      "decision": "Vouch does not implement disputes, appeals, arbitration, evidence review, screenshots, mediation, manual awards, support-issued settlement, or confirmation rewrites."
+    },
+    {
+      "id": "DEC-005",
+      "status": "accepted",
+      "title": "No marketplace behavior",
+      "decision": "Vouch is not a marketplace, provider directory, discovery platform, messaging platform, review platform, or scheduling marketplace."
+    },
+    {
+      "id": "DEC-006",
+      "status": "accepted",
+      "title": "Readiness is embedded gating",
+      "decision": "Payment readiness, payout readiness, identity readiness, terms acceptance, and verification readiness are embedded gating systems within canonical flows, not standalone settings/setup products."
+    },
+    {
+      "id": "DEC-007",
+      "status": "accepted",
+      "title": "Server authority architecture",
+      "decision": "Protected reads go through fetchers. Protected writes go through server actions and transactions. Route shells remain thin orchestration layers."
+    },
+    {
+      "id": "DEC-008",
+      "status": "accepted",
+      "title": "Immutable pricing snapshots",
+      "decision": "Amount, fee configuration, currency, participants, confirmation window, and provider references freeze at Vouch creation and do not recalculate dynamically later."
+    },
+    {
+      "id": "DEC-009",
+      "status": "accepted",
+      "title": "Deterministic operational recovery only",
+      "decision": "Operational retry and reconciliation tooling may exist only for deterministic technical recovery. No operational tooling may introduce discretionary settlement authority."
     }
   ]
 }

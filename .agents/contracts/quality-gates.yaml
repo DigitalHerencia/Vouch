@@ -39,12 +39,15 @@ launch_blockers:
   - terms_acceptance_missing
   - per_vouch_disclaimer_missing
   - provider_linked_vouch_hard_delete
+  - missing_confirm_create_vouch_route
+  - clerk_webhook_route_renamed_away_from_handler_semantics
 
 acceptance_criteria:
   route_surface:
     - approved_route_tree_is_only_route_tree
     - no_forbidden_product_surface_exists
     - provider_routes_are_webhook_only
+    - confirm_create_vouch_page_exists
   architecture:
     - app_pages_are_thin
     - protected_reads_use_fetchers
@@ -70,6 +73,7 @@ acceptance_criteria:
     - local_user_sync_works
     - account_terms_persisted_in_db
     - deleted_or_disabled_user_blocks_actions
+    - clerk_webhook_handler_route_exists
   confirmation:
     - bilateral_confirmation_required
     - confirmation_window_enforced
