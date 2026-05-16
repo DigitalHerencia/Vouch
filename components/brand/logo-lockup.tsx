@@ -17,7 +17,7 @@ export function LogoLockup({ className, iconClassName, wordmarkClassName }: Logo
       aria-label="Vouch"
     >
       <Handshake
-        className={cn("size-7 text-primary sm:size-8 lg:size-9", iconClassName)}
+        className={cn("size-7 text-blue-700 sm:size-8 lg:size-9", iconClassName)}
         strokeWidth={2.4}
       />
 

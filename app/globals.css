@@ -10,25 +10,33 @@
 
   --radius: 0rem;
 
-  --background: oklch(5.5% 0 0);
-  --foreground: oklch(98.5% 0 0);
+  --background: oklch(0.055 0 0);
+  --foreground: oklch(0.985 0 0);
 
-  --card: oklch(7.5% 0 0);
-  --card-foreground: oklch(98.5% 0 0);
+  --card: oklch(0.075 0 0);
+  --card-foreground: oklch(0.985 0 0);
 
-  --secondary: oklch(10.5% 0 0);
-  --secondary-foreground: oklch(94% 0 0);
+  --popover: oklch(0.075 0 0);
+  --popover-foreground: oklch(0.985 0 0);
 
-  --muted: oklch(13% 0 0);
-  --muted-foreground: oklch(69% 0 0);
+  --primary: oklch(0.51 0.245 264);
+  --primary-foreground: oklch(0.985 0 0);
 
-  --border: oklch(24% 0 0);
-  --input: oklch(18% 0 0);
+  --secondary: oklch(0.105 0 0);
+  --secondary-foreground: oklch(0.94 0 0);
 
-  --primary: oklch(51% 0.245 264);
-  --primary-foreground: oklch(98.5% 0 0);
+  --muted: oklch(0.13 0 0);
+  --muted-foreground: oklch(0.69 0 0);
 
-  --ring: oklch(58% 0.22 264);
+  --accent: oklch(0.16 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+
+  --destructive: oklch(0.55 0.22 28);
+  --destructive-foreground: oklch(0.985 0 0);
+
+  --border: oklch(0.24 0 0);
+  --input: oklch(0.18 0 0);
+  --ring: oklch(0.58 0.22 264);
 
   --sidebar: oklch(0.065 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
@@ -117,6 +125,7 @@
   }
 
   button {
+    font: inherit;
     transition:
       background-color 160ms ease,
       border-color 160ms ease,
@@ -143,7 +152,7 @@
     color: var(--foreground);
     font-family: var(--font-heading), var(--font-sans), ui-sans-serif, system-ui, sans-serif;
     font-weight: 900;
-    letter-spacing: 0;
+    letter-spacing: -0.02em;
     text-transform: uppercase;
     text-wrap: balance;
   }
@@ -151,13 +160,11 @@
   h1 {
     font-size: clamp(3rem, 10vw, 7.5rem);
     line-height: 0.88;
-    letter-spacing: 0;
   }
 
   h2 {
     font-size: clamp(2rem, 5vw, 4rem);
     line-height: 0.92;
-    letter-spacing: 0;
   }
 
   h3 {
@@ -200,6 +207,42 @@
     font-family: var(--font-display), var(--font-mono), ui-monospace, monospace;
     letter-spacing: 0.045em;
     text-transform: uppercase;
+  }
+}
+
+@layer components {
+  .vouch-shell {
+    min-height: 100dvh;
+    background:
+      radial-gradient(circle at top left, oklch(0.51 0.245 264 / 0.2), transparent 34rem),
+      linear-gradient(to bottom, oklch(1 0 0 / 0.045) 1px, transparent 1px),
+      linear-gradient(to right, oklch(1 0 0 / 0.035) 1px, transparent 1px), var(--background);
+    background-size:
+      auto,
+      48px 48px,
+      48px 48px;
+  }
+
+  .vouch-surface {
+    border: 1px solid oklch(1 0 0 / 0.14);
+    background: oklch(0 0 0 / 0.55);
+    backdrop-filter: blur(12px);
+  }
+
+  .vouch-panel {
+    border: 1px solid var(--border);
+    background: var(--card);
+  }
+
+  .vouch-label {
+    color: var(--muted-foreground);
+    font-size: 0.75rem;
+    line-height: 1;
+  }
+
+  .vouch-blue-line {
+    background: var(--primary);
+    box-shadow: 0 0 30px oklch(0.51 0.245 264 / 0.35);
   }
 }
 

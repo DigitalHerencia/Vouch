@@ -1,3 +1,5 @@
+// components/brand/wordmark.tsx
+
 import Image from "next/image"
 
 import { cn } from "@/lib/utils"
@@ -27,9 +29,10 @@ export function Wordmark({ className, imageClassName, asImage = true }: Wordmark
   return (
     <span
       className={cn(
-        "font-[family-name:var(--font-brand)] tracking-tight text-white uppercase",
+        "font-(family-name:--font-brand) tracking-[-0.045em] text-white uppercase",
         className
       )}
+      aria-label="Vouch"
     >
       Vouch
     </span>
