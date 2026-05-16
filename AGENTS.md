@@ -70,18 +70,40 @@ support override settlement
 When implementing or auditing, use this authority order:
 
 ```txt
-1. .agents/contracts/*.yaml
-2. .agents/docs/*.md
+1. .agents/docs/*.md
+2. .agents/contracts/*.yaml
 3. .agents/instructions/*.md
 4. existing repository code
 5. implementation judgment
 ```
 
-If code conflicts with contracts, contracts win.
+If code conflicts with docs or contracts, docs/contracts win.
 
-If docs conflict with contracts, stop and report the conflict.
+If contracts conflict with docs, stop and report the exact conflict.
+
+If instructions conflict with docs or contracts, docs/contracts win.
 
 If requested behavior violates product boundaries, refuse the change and propose the closest valid Vouch-native alternative.
+
+Do not invent behavior to resolve contradictions or missing values.
+
+## Required context-gathering before implementation
+
+Before changing code, inspect the relevant governance files under `.agents/`.
+
+Minimum required reads by task type:
+
+```txt
+product/domain behavior -> .agents/docs/product-doctrine.md and .agents/contracts/product.yaml
+routes/pages/navigation -> .agents/contracts/routes.yaml and .agents/docs/architecture.md
+schema/types/states -> .agents/contracts/domain-model.yaml
+Stripe/Clerk/webhooks -> .agents/contracts/integrations.yaml
+UI/design -> .agents/docs/design-system.md
+legal/copy -> .agents/docs/legal-and-copy.md
+quality/validation -> .agents/contracts/quality-gates.yaml
+```
+
+If a value is missing from source artifacts, do not guess. Mark the exact missing value and block only that part of the work.
 
 ## Stack
 
@@ -305,6 +327,14 @@ Role is contextual per Vouch.
 
 The same user may be merchant on one Vouch and customer on another.
 
+The Clerk webhook handler path is locked:
+
+```txt
+app/api/clerk/webhook-handler/route.ts
+```
+
+Do not rename it to `webhooks`, `webhook`, `clerk-sync`, `auth-webhook`, or any other path.
+
 ## Confirmation rules
 
 Vouch uses deterministic bilateral confirmation.
@@ -353,6 +383,27 @@ recovery_required
 
 Those belong to payment, settlement, archive, webhook, or operational sub-state axes.
 
+## Legal and copy rules
+
+Legal source files may contain source material, placeholders, or draft phrasing.
+
+Agents must preserve substantive legal/product rules while removing jokes, insults, sarcasm, placeholders, casual legal phrasing, and unsupported legal conclusions from production UI or legal copy.
+
+Do not invent legal entity names, addresses, governing law, effective dates, version numbers, support emails, privacy emails, or policy contacts.
+
+Use explicit placeholders when required values are missing:
+
+```txt
+[LEGAL_ENTITY_NAME_REQUIRED]
+[GOVERNING_LAW_STATE_REQUIRED]
+[SUPPORT_EMAIL_REQUIRED]
+[PRIVACY_CONTACT_EMAIL_REQUIRED]
+[EFFECTIVE_DATE_REQUIRED]
+[TERMS_VERSION_REQUIRED]
+[PRIVACY_VERSION_REQUIRED]
+[USER_AGREEMENT_VERSION_REQUIRED]
+```
+
 ## Required validation
 
 Run scope-appropriate gates:
@@ -365,6 +416,7 @@ pnpm validate:contracts
 pnpm test
 pnpm test:e2e
 pnpm validate
+pnpm validate:all
 ```
 
 For implementation work, report:
