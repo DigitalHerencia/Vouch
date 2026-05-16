@@ -68,6 +68,14 @@ forbidden_surfaces:
   - admin_arbitration
   - support_override_settlement
 
+fee_invariant:
+  merchant_fee_charged_at_committed_creation: true
+  fee_applies_regardless_of_settlement_outcome: true
+  reason: protocol_execution_is_the_service
+  fee_snapshot_immutable_after_commit: true
+  client_fee_math_authoritative: false
+  server_fee_math_authoritative: true
+
 responsibility_boundaries:
   stripe:
     owns:
