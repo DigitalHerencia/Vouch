@@ -14,8 +14,11 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
+import { useState } from "react"
 
 import { UserMenu } from "@/components/auth/user-menu"
+import { ProtocolDrawer } from "@/components/vouches/protocol-drawer"
+import { vouchPageCopy } from "@/content/vouches"
 import { cn } from "@/lib/utils"
 
 export interface MobileBottomNavItem {
@@ -23,6 +26,12 @@ export interface MobileBottomNavItem {
     label: string
     icon: LucideIcon
     action?: ((formData: FormData) => void | Promise<void>) | undefined
+    warning?: {
+        title: string
+        consequence: string
+        context: string
+        finePrint: string
+    } | undefined
     account?: boolean | undefined
     primary?: boolean | undefined
 }
@@ -59,6 +68,7 @@ export function MobileBottomNav({
     "aria-label": ariaLabel = "Mobile navigation",
 }: MobileBottomNavProps) {
     const pathname = usePathname()
+    const [warning, setWarning] = useState<MobileBottomNavItem | null>(null)
 
     return (
         <nav
@@ -100,7 +110,11 @@ export function MobileBottomNav({
                     </div>
                 ) : item.action ? (
                     <form key={item.label} action={item.action} className="min-w-0">
-                        <button type="submit" className={className}>
+                        <button
+                            type={item.warning ? "button" : "submit"}
+                            className={className}
+                            onClick={item.warning ? () => setWarning(item) : undefined}
+                        >
                             {content}
                         </button>
                     </form>
@@ -114,6 +128,28 @@ export function MobileBottomNav({
                     </Link>
                 )
             })}
+            {warning?.warning && warning.action ? (
+                <ProtocolDrawer
+                    open
+                    onOpenChange={(nextOpen) => {
+                        if (!nextOpen) setWarning(null)
+                    }}
+                    title={warning.warning.title}
+                    consequence={warning.warning.consequence}
+                    context={warning.warning.context}
+                    finePrint={warning.warning.finePrint}
+                    primary={
+                        <form action={warning.action}>
+                            <button
+                                type="submit"
+                                className="h-11 w-full border border-transparent bg-primary px-4 font-(family-name:--font-display) text-sm leading-none tracking-widest text-primary-foreground uppercase"
+                            >
+                                Continue to provider
+                            </button>
+                        </form>
+                    }
+                />
+            ) : null}
         </nav>
     )
 }
@@ -135,8 +171,18 @@ export function TenantMobileBottomNav({
     const configuredItems = [
         { href: "/dashboard", label: "Dashboard", icon: Home },
         { href: "/vouches/new", label: "Vouches", icon: FileText },
-        { label: "Connect", icon: Shield, action: connectAction },
-        { label: "Payment", icon: CreditCard, action: paymentAction },
+        {
+            label: "Connect",
+            icon: Shield,
+            action: connectAction,
+            warning: vouchPageCopy.providerRedirects.connect,
+        },
+        {
+            label: "Payment",
+            icon: CreditCard,
+            action: paymentAction,
+            warning: vouchPageCopy.providerRedirects.payment,
+        },
         { label: "Account", icon: Home, account: true },
     ] satisfies MobileBottomNavItem[]
 

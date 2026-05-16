@@ -1,0 +1,561 @@
+{
+  "artifact": "shared-component-purpose-audit",
+  "generatedAt": "2026-05-15T18:37:44-06:00",
+  "summary": {
+    "total": 91,
+    "sharedPage": 20,
+    "domain": 14,
+    "forms": 4,
+    "interaction": 12,
+    "primitives": 34,
+    "review": 7
+  },
+  "files": [
+    {
+      "path": "components/app/app-providers.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/auth/auth-page-shell.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/auth/sign-out.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/auth/user-menu.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/brand/logo-lockup.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/brand/wordmark.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/data-display/countdown.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/data-display/summary-list.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/data-display/timeline.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/feedback/countdown.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/feedback/empty-state.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/feedback/error-state.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/feedback/loading-state.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/feedback/status-badge.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/forms/field-error.tsx",
+      "classification": "form component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/forms/field-group.tsx",
+      "classification": "form component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/forms/form-error.tsx",
+      "classification": "form component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/forms/submit-button.tsx",
+      "classification": "form component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/navigation/mobile-bottom-nav.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/navigation/public-footer.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/navigation/public-header.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/navigation/public-shell.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/navigation/shell.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/navigation/tenant-footer.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/navigation/tenant-header.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/navigation/tenant-shell.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/navigation/user-menu.tsx",
+      "classification": "interaction surface",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/shared/action-row.tsx",
+      "classification": "remove/merge candidate",
+      "boundaryViolations": [],
+      "recommendation": "review for merge/removal"
+    },
+    {
+      "path": "components/shared/callout-panel.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/shared/card-grid.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/shared/content-section-list.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/shared/cta-panel.tsx",
+      "classification": "remove/merge candidate",
+      "boundaryViolations": [],
+      "recommendation": "review for merge/removal"
+    },
+    {
+      "path": "components/shared/landing-hero.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/shared/metric-grid.tsx",
+      "classification": "remove/merge candidate",
+      "boundaryViolations": [],
+      "recommendation": "review for merge/removal"
+    },
+    {
+      "path": "components/shared/page-hero.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/shared/process-panel.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/shared/rule-panel.tsx",
+      "classification": "remove/merge candidate",
+      "boundaryViolations": [],
+      "recommendation": "review for merge/removal"
+    },
+    {
+      "path": "components/shared/section-intro.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/shared/status-strip.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/shared/summary-panel.tsx",
+      "classification": "remove/merge candidate",
+      "boundaryViolations": [],
+      "recommendation": "review for merge/removal"
+    },
+    {
+      "path": "components/shared/surface.tsx",
+      "classification": "shared page component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/accordion.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/alert-dialog.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/alert.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/avatar.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/badge.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/button.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/calendar.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/card.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/checkbox.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/collapsible.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/command.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/dialog.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/drawer.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/dropdown-menu.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/field.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/input-group.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/input-otp.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/input.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/label.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/popover.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/progress.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/radio-group.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/scroll-area.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/select.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/separator.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/sheet.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/skeleton.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/sonner.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/switch.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/table.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/tabs.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/textarea.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/toggle.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/ui/tooltip.tsx",
+      "classification": "UI primitive",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/confirmation-panel.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/lifecycle-status-panel.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/payment-status-panel.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/protocol-drawer.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-actions-panel.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-amount-summary.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-amount.tsx",
+      "classification": "remove/merge candidate",
+      "boundaryViolations": [],
+      "recommendation": "review for merge/removal"
+    },
+    {
+      "path": "components/vouches/vouch-card-list.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-card.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-code-exchange-panel.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-deadline.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-detail-header.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-status-badge.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-terms-summary.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-timeline-panel.tsx",
+      "classification": "domain component",
+      "boundaryViolations": [],
+      "recommendation": "keep"
+    },
+    {
+      "path": "components/vouches/vouch-timeline.tsx",
+      "classification": "remove/merge candidate",
+      "boundaryViolations": [],
+      "recommendation": "review for merge/removal"
+    }
+  ]
+}

@@ -5,14 +5,14 @@ import { VouchStatusBadge } from "@/components/vouches/vouch-status-badge"
 
 describe("VouchStatusBadge", () => {
   it("renders visible text for status", () => {
-    render(<VouchStatusBadge status="active" />)
+    render(<VouchStatusBadge status="authorized" />)
 
-    expect(screen.getByText(/active/i)).toBeInTheDocument()
+    expect(screen.getByText(/authorized/i)).toBeInTheDocument()
   })
 
   it("does not rely on color alone", () => {
-    render(<VouchStatusBadge status="failed" />)
+    render(<VouchStatusBadge status="expired" />)
 
-    expect(screen.getByText(/failed/i)).toBeInTheDocument()
+    expect(screen.getByText(/expired/i)).toBeInTheDocument()
   })
 })

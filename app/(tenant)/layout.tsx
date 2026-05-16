@@ -1,6 +1,10 @@
 // app/(tenant)/layout.tsx
 
 import { TenantShell } from "@/components/navigation/tenant-shell"
+import {
+    openStripeConnectDashboard,
+    openStripePaymentMethodDashboard,
+} from "@/lib/actions/paymentActions"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 
 export default async function AppLayout({
@@ -10,5 +14,12 @@ export default async function AppLayout({
 }>) {
     await requireActiveUser()
 
-    return <TenantShell>{children}</TenantShell>
+    return (
+        <TenantShell
+            connectAction={openStripeConnectDashboard}
+            paymentAction={openStripePaymentMethodDashboard}
+        >
+            {children}
+        </TenantShell>
+    )
 }

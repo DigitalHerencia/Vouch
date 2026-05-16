@@ -1,11 +1,5 @@
-import { CreateVouchPage } from "@/features/vouches/create/create-vouch-page"
-import { getCreateVouchPageState } from "@/lib/fetchers/vouchFetchers"
+import { CreateVouchPage } from "@/features/vouches/create-vouch-page"
 
-export default async function Page() {
-  const state = await getCreateVouchPageState()
-  return (
-    <CreateVouchPage
-      {...(state.variant === "blocked" ? { blockedReason: state.gate.blockers.join(", ") } : {})}
-    />
-  )
+export default function Page() {
+  return <CreateVouchPage />
 }

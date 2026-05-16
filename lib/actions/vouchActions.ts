@@ -16,11 +16,9 @@ import {
 } from "@/lib/db/transactions/confirmationTransactions"
 import {
   createInvitationTx,
-  invalidateInvitationTx,
   markInvitationAcceptedTx,
   markInvitationDeclinedTx,
   markInvitationOpenedTx,
-  rotateInvitationTokenHashTx,
 } from "@/lib/db/transactions/invitationTransactions"
 import {
   bindCustomerToVouchTx,
@@ -653,6 +651,16 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
 
   await revalidateVouchSurfaces(parsed.data.vouchId, [vouch.merchantId, vouch.customerId])
   return actionSuccess({ vouchId: parsed.data.vouchId })
+}
+
+export async function confirmPresenceFormAction(formData: FormData): Promise<void> {
+  const vouchId = String(formData.get("vouchId") ?? "")
+
+  await confirmPresence({
+    vouchId,
+    submittedCode: String(formData.get("submittedCode") ?? ""),
+    method: "code_exchange",
+  })
 }
 
 export async function archiveVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {

@@ -3,12 +3,12 @@ import Link from "next/link"
 import { LogoLockup } from "@/components/brand/logo-lockup"
 import { UserMenu } from "@/components/auth/user-menu"
 import { Button } from "@/components/ui/button"
+import { ProviderRedirectDrawer } from "@/components/vouches/provider-redirect-drawer"
 import { tenantNavigationContent } from "@/content/navigation"
-import {
-  openStripeConnectDashboard,
-  openStripePaymentMethodDashboard,
-} from "@/lib/actions/paymentActions"
+import { vouchPageCopy } from "@/content/vouches"
 import { cn } from "@/lib/utils"
+
+type TenantProviderAction = (formData: FormData) => void | Promise<void>
 
 export interface TenantHeaderNavItem {
   href: string
@@ -16,6 +16,8 @@ export interface TenantHeaderNavItem {
 }
 
 export interface TenantHeaderProps {
+  connectAction: TenantProviderAction
+  paymentAction: TenantProviderAction
   navItems?: readonly TenantHeaderNavItem[] | undefined
   className?: string | undefined
 }
@@ -25,7 +27,12 @@ export const defaultTenantNavItems = [
   { href: "/vouches/new", label: tenantNavigationContent.links.vouches },
 ] satisfies readonly TenantHeaderNavItem[]
 
-export function TenantHeader({ navItems = defaultTenantNavItems, className }: TenantHeaderProps) {
+export function TenantHeader({
+  connectAction,
+  paymentAction,
+  navItems = defaultTenantNavItems,
+  className,
+}: TenantHeaderProps) {
   return (
     <header
       className={cn(
@@ -51,16 +58,22 @@ export function TenantHeader({ navItems = defaultTenantNavItems, className }: Te
               {item.label}
             </Button>
           ))}
-          <form action={openStripeConnectDashboard}>
-            <Button type="submit" variant="nav" size="nav">
-              {tenantNavigationContent.links.connect}
-            </Button>
-          </form>
-          <form action={openStripePaymentMethodDashboard}>
-            <Button type="submit" variant="nav" size="nav">
-              {tenantNavigationContent.links.payment}
-            </Button>
-          </form>
+          <ProviderRedirectDrawer
+            action={connectAction}
+            label={tenantNavigationContent.links.connect}
+            title={vouchPageCopy.providerRedirects.connect.title}
+            consequence={vouchPageCopy.providerRedirects.connect.consequence}
+            context={vouchPageCopy.providerRedirects.connect.context}
+            finePrint={vouchPageCopy.providerRedirects.connect.finePrint}
+          />
+          <ProviderRedirectDrawer
+            action={paymentAction}
+            label={tenantNavigationContent.links.payment}
+            title={vouchPageCopy.providerRedirects.payment.title}
+            consequence={vouchPageCopy.providerRedirects.payment.consequence}
+            context={vouchPageCopy.providerRedirects.payment.context}
+            finePrint={vouchPageCopy.providerRedirects.payment.finePrint}
+          />
         </nav>
 
         <div className="flex min-w-11 items-center justify-end">

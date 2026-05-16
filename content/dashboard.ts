@@ -11,19 +11,15 @@ export const dashboardContent = {
   },
   metrics: {
     activeVouches: {
-      label: "Active Vouches",
+      label: "Active",
       body: "Invites created or waiting on the other party.",
     },
     pastVouches: {
-      label: "Past Vouches",
+      label: "Completed",
       body: "Completed, refunded, expired, or otherwise resolved.",
     },
-    activeValue: {
-      label: "Active Value",
-      body: "Payment-coordination value currently in motion.",
-    },
-    needsReview: {
-      label: "Needs Review",
+    actionRequired: {
+      label: "Action Required",
       body: "Items waiting on confirmation, provider readiness, or attention.",
     },
   },
@@ -53,7 +49,7 @@ export const dashboardContent = {
   },
   cta: {
     title: "Create a Vouch",
-    body: "Create the agreement, send the invite, and let dual confirmation determine release, refund, void, or non-capture.",
+    body: "Create the agreement, share the invite, and keep the next action tied to one Vouch object.",
     label: "Create Vouch",
   },
   fallbackDeadline: "No deadline",

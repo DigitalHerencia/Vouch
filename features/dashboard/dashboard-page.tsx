@@ -6,16 +6,14 @@ import {
   CheckCircle2,
   Clock,
   Handshake,
-  ShieldCheck,
-  UserRound,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { CtaPanel } from "@/components/shared/cta-panel"
 import { CalloutPanel } from "@/components/shared/callout-panel"
-import { MetricGrid, type MetricGridItem } from "@/components/shared/metric-grid"
+import { StatusStrip, type StatusStripItem } from "@/components/shared/status-strip"
 import { SectionIntro } from "@/components/shared/section-intro"
-import { Surface, SurfaceHeader } from "@/components/shared/surface"
+import { VouchCardList } from "@/components/vouches/vouch-card-list"
 import { dashboardContent } from "@/content/dashboard"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
 import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
@@ -101,7 +99,7 @@ export async function DashboardPage() {
   const actionRequiredCount = sections?.actionRequired?.length ?? 0
   const readinessComplete = state.variant !== "empty"
 
-  const metrics: MetricGridItem[] = [
+  const metrics: StatusStripItem[] = [
     {
       label: dashboardContent.metrics.activeVouches.label,
       value: String(activeCount || active.length),
@@ -113,20 +111,9 @@ export async function DashboardPage() {
       body: dashboardContent.metrics.pastVouches.body,
     },
     {
-      label: dashboardContent.metrics.activeValue.label,
-      value: money(
-        [...(sections?.active ?? []), ...(sections?.actionRequired ?? [])].reduce(
-          (sum, vouch) => sum + vouch.protectedAmountCents,
-          0
-        ),
-        "usd"
-      ),
-      body: dashboardContent.metrics.activeValue.body,
-    },
-    {
-      label: dashboardContent.metrics.needsReview.label,
+      label: dashboardContent.metrics.actionRequired.label,
       value: String(actionRequiredCount),
-      body: dashboardContent.metrics.needsReview.body,
+      body: dashboardContent.metrics.actionRequired.body,
     },
   ]
 
@@ -152,9 +139,9 @@ export async function DashboardPage() {
         />
       ) : null}
 
-      <MetricGrid items={metrics} />
+      <StatusStrip items={metrics} />
 
-      <DashboardListPanel
+      <VouchCardList
         title={`Action required (${actionRequired.length})`}
         description={dashboardContent.sections.actionRequired.panelDescription}
         emptyText={dashboardContent.sections.actionRequired.emptyText}
@@ -162,7 +149,7 @@ export async function DashboardPage() {
         rows={actionRequired}
       />
 
-      <DashboardListPanel
+      <VouchCardList
         title={`Active (${active.length})`}
         description={dashboardContent.sections.active.panelDescription}
         emptyText={dashboardContent.sections.active.emptyText}
@@ -170,7 +157,7 @@ export async function DashboardPage() {
         rows={active}
       />
 
-      <DashboardListPanel
+      <VouchCardList
         title={`Completed (${completed.length})`}
         description={dashboardContent.sections.completed.panelDescription}
         emptyText={dashboardContent.sections.completed.emptyText}
@@ -187,96 +174,5 @@ export async function DashboardPage() {
         className="mt-0"
       />
     </main>
-  )
-}
-
-function DashboardListPanel({
-  title,
-  description,
-  emptyText,
-  icon: Icon,
-  rows,
-}: {
-  title: string
-  description: string
-  emptyText: string
-  icon: typeof ShieldCheck
-  rows: DashboardVouch[]
-}) {
-  return (
-    <Surface>
-      <SurfaceHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-start gap-3">
-          <Icon className="mt-0.5 size-5 text-primary" strokeWidth={1.9} />
-          <div>
-            <h2 className="text-[24px] leading-none text-white sm:text-[30px]">
-              {title}
-            </h2>
-            <p className="mt-2 text-[15px] leading-[1.3] font-semibold text-neutral-400">
-              {description}
-            </p>
-          </div>
-        </div>
-        <Button variant="link" render={<Link href="/vouches/new" />}>
-          {dashboardContent.actions.create}
-        </Button>
-      </SurfaceHeader>
-
-      <div>
-        {rows.length ? (
-          rows.map((vouch) => <DashboardVouchRow key={vouch.id} vouch={vouch} />)
-        ) : (
-          <p className="border-t border-neutral-800 px-5 py-6 text-[15px] font-semibold text-neutral-400 sm:px-7">
-            {emptyText}
-          </p>
-        )}
-      </div>
-    </Surface>
-  )
-}
-
-function DashboardVouchRow({ vouch }: { vouch: DashboardVouch }) {
-  return (
-    <article className="grid gap-5 border-b border-neutral-800 px-5 py-5 last:border-b-0 sm:grid-cols-[1fr_auto] sm:items-center sm:px-7 lg:min-h-31">
-      <div className="flex items-start gap-5">
-        <span className="grid size-11 shrink-0 place-items-center border border-primary bg-primary/15 text-primary">
-          <UserRound className="size-5" strokeWidth={1.9} />
-        </span>
-
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href={vouch.href}
-              className="text-[22px] leading-none text-white hover:text-primary"
-            >
-              {vouch.title}
-            </Link>
-            <StatusPill label={vouch.statusLabel} />
-          </div>
-          <p className="mt-2 text-[15px] leading-tight font-semibold text-neutral-400">
-            {vouch.role} · {vouch.amountLabel}
-          </p>
-        </div>
-      </div>
-
-      <div className="grid gap-3 sm:justify-items-end">
-        <p className="font-mono text-sm font-black tracking-[0.02em] text-white uppercase tabular-nums">
-          {vouch.deadlineLabel}
-        </p>
-        {vouch.nextActionLabel ? (
-          <Button size="sm" variant="primary" render={<Link href={vouch.href} />}>
-            {vouch.nextActionLabel}
-          </Button>
-        ) : null}
-      </div>
-    </article>
-  )
-}
-
-function StatusPill({ label }: { label: string }) {
-  return (
-    <span className="border border-primary bg-primary/15 px-2.5 py-1 font-mono text-[11px] font-black tracking-[0.08em] text-primary uppercase">
-      {label}
-    </span>
   )
 }

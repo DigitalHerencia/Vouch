@@ -23,11 +23,11 @@ export function PageHero({
   bodyClassName,
 }: PageHeroProps) {
   return (
-    <header className={cn("max-w-170", className)}>
+    <header className={cn("max-w-3xl", className)}>
       {eyebrow ? (
         <div className="flex items-center gap-3">
           <span aria-hidden="true" className="size-2.5 shrink-0 bg-primary" />
-          <p className="vouch-label text-sm leading-none text-white sm:text-base lg:text-lg">
+          <p className="vouch-label text-sm leading-none text-white sm:text-base">
             {eyebrow}
           </p>
         </div>
@@ -35,7 +35,7 @@ export function PageHero({
 
       <h1
         className={cn(
-          "text-[64px] leading-[0.86] text-white sm:text-[88px] lg:text-[108px]",
+          "text-6xl leading-none text-white sm:text-7xl lg:text-8xl",
           eyebrow ? "mt-6" : undefined,
           titleClassName,
         )}
@@ -46,7 +46,7 @@ export function PageHero({
       {body ? (
         <p
           className={cn(
-            "mt-7 max-w-140 text-[18px] leading-[1.35] font-semibold text-neutral-300",
+            "mt-7 max-w-2xl text-base leading-snug font-semibold text-neutral-300 sm:text-lg",
             bodyClassName,
           )}
         >

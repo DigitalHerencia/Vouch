@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
+import { AuthPageShell } from "@/components/auth/auth-page-shell"
 import { FieldGroup } from "@/components/forms/field-group"
 import { SubmitButton } from "@/components/forms/submit-button"
 import { Button } from "@/components/ui/button"
@@ -32,6 +33,20 @@ const inputClassName =
 
 const labelClassName =
   "font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-white uppercase sm:text-base"
+
+export function SignUpPageFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
+  return (
+    <AuthPageShell
+      variant="signup"
+      eyebrow="Commitment-backed payments"
+      title="Create your account."
+      description="Set up a verified account to create Vouches, accept invites, and confirm real-world presence."
+      footnote="Vouch coordinates deterministic payment outcomes for pre-arranged, in-person commitments. It does not broker services or resolve disputes."
+    >
+      <SignupForm redirectUrl={redirectUrl} />
+    </AuthPageShell>
+  )
+}
 
 function getErrorMessage(error: unknown, fallback: string): string {
   const clerkError = error as { errors?: Array<{ message?: string }> }

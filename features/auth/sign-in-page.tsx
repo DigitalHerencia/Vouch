@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 
+import { AuthPageShell } from "@/components/auth/auth-page-shell"
 import { FieldGroup } from "@/components/forms/field-group"
 import { SubmitButton } from "@/components/forms/submit-button"
 import { Button } from "@/components/ui/button"
@@ -31,6 +32,20 @@ const inputClassName =
 
 const labelClassName =
   "font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-white uppercase sm:text-base"
+
+export function SignInPageFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
+  return (
+    <AuthPageShell
+      variant="signin"
+      eyebrow="Payment-backed commitments"
+      title="Back your commitment."
+      description="Sign in to manage Vouches, confirm presence, and keep payment-backed commitments on track."
+      footnote="Vouch is not a marketplace, scheduler, escrow provider, or dispute system. Users bring their own agreement; Vouch coordinates the payment outcome."
+    >
+      <LoginForm redirectUrl={redirectUrl} />
+    </AuthPageShell>
+  )
+}
 
 function getErrorMessage(error: unknown, fallback: string): string {
   const clerkError = error as { errors?: Array<{ message?: string }> }
