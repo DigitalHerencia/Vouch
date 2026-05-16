@@ -100,6 +100,8 @@ stripe:
 
 clerk:
   role: authentication_provider
+  webhook_handler_path_locked: app/api/clerk/webhook-handler/route.ts
+  do_not_rename_webhook_handler: true
   required_modules:
     - lib/auth/clerk.ts
     - lib/auth/session.ts
@@ -152,6 +154,26 @@ clerk:
       - passwords
       - full_clerk_user_objects
       - unnecessary_provider_identity_data
+
+readiness_language:
+  readiness_is_internal_gate: true
+  setup_is_not_user_facing_product_surface: true
+  settings_is_not_user_facing_product_surface: true
+  allowed_internal_names:
+    - readiness
+    - payment_readiness
+    - payout_readiness
+    - account_agreement
+    - provider_sync
+  discouraged_new_internal_names:
+    - setup
+    - settings
+  forbidden_user_facing_routes:
+    - /setup
+    - /settings
+    - /settings/payment
+    - /settings/payout
+    - /settings/verification
 
 webhooks:
   allowed_routes:
