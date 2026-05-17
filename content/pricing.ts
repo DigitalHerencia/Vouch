@@ -4,7 +4,7 @@ import { BadgeDollarSign, CheckCircle2, CreditCard, Handshake, Landmark } from "
 
 export const PricingHeroContent = {
   title: "Explicit confirmation. Deterministic settlement.",
-  body: "A simple way to protect appointments and in-person agreements. Both parties confirm. Then funds release. Otherwise, you’re covered.",
+  body: "A simple way to protect appointments and in-person agreements. The merchant pays the Vouch fee at commitment through Stripe. The customer authorizes payment through Stripe. Vouch coordinates the outcome.",
 } as const
 
 export const pricingFlowSteps = [
@@ -17,7 +17,7 @@ export const pricingFlowSteps = [
   {
     number: "2",
     title: "Fees",
-    body: "Show platform and provider fees up front.",
+    body: "Merchant Vouch fee is paid at committed creation through hosted Stripe checkout.",
     icon: CreditCard,
   },
   {
@@ -38,7 +38,7 @@ export const pricingStats = [
   {
     label: "Platform fee",
     value: "5%",
-    body: "Vouch coordination fee shown before commitment.",
+    body: "Merchant fee shown before commitment and paid through Stripe at creation.",
   },
   {
     label: "Minimum fee",
@@ -48,7 +48,7 @@ export const pricingStats = [
   {
     label: "Provider fee",
     value: "Stripe",
-    body: "Processing is handled through provider-backed infrastructure.",
+    body: "Payment method, authorization, identity, and payout readiness are hosted by Stripe.",
   },
   {
     label: "Release rule",
@@ -69,12 +69,12 @@ export const pricingNotes = [
   {
     eyebrow: "Transparent by default",
     title: "Fees are visible before commitment.",
-    body: "The customer sees the Vouch amount, platform fee, provider fee, and total before moving forward. Pricing is part of the commitment, not a surprise after it.",
+    body: "The merchant sees the Vouch amount, Vouch fee, provider fee, and total before committed creation. Pricing is part of the commitment, not a surprise after it.",
   },
   {
     eyebrow: "Payment coordination, not custody",
     title: "Providers handle money rails. Vouch handles workflow logic.",
-    body: "Vouch coordinates state. Payment providers handle payment infrastructure. Identity providers handle identity. Vouch stores participant-safe references, statuses, and lifecycle events — not raw card data, raw identity documents, or direct-custody balances.",
+    body: "Stripe handles payment infrastructure, customer payment method collection, merchant identity, payout onboarding, and hosted payment authorization. Vouch stores participant-safe references, statuses, and lifecycle events.",
   },
   {
     eyebrow: "Deterministic outcome",

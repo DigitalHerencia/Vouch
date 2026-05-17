@@ -26,6 +26,11 @@ type DashboardVouch = {
   statusLabel: string
   deadlineLabel: string
   nextActionLabel?: string
+  labels: {
+    role: string
+    amount: string
+    deadline: string
+  }
 }
 
 type DashboardSection = {
@@ -58,6 +63,7 @@ function toDashboardVouch(vouch: VouchCardDTO, userId: string): DashboardVouch {
     statusLabel: vouch.status,
     deadlineLabel: dateTime(vouch.confirmationExpiresAt),
     nextActionLabel: dashboardContent.actions.open,
+    labels: dashboardContent.labels,
   }
 }
 
@@ -146,6 +152,10 @@ export async function DashboardPage() {
         emptyText={dashboardContent.sections.actionRequired.emptyText}
         icon={Bell}
         rows={actionRequired}
+        labels={{
+          eyebrow: dashboardContent.labels.vouchIndex,
+          emptyEyebrow: dashboardContent.labels.noRecords,
+        }}
       />
 
       <VouchCardList
@@ -154,6 +164,10 @@ export async function DashboardPage() {
         emptyText={dashboardContent.sections.active.emptyText}
         icon={Clock}
         rows={active}
+        labels={{
+          eyebrow: dashboardContent.labels.vouchIndex,
+          emptyEyebrow: dashboardContent.labels.noRecords,
+        }}
       />
 
       <VouchCardList
@@ -162,6 +176,10 @@ export async function DashboardPage() {
         emptyText={dashboardContent.sections.completed.emptyText}
         icon={CheckCircle2}
         rows={completed}
+        labels={{
+          eyebrow: dashboardContent.labels.vouchIndex,
+          emptyEyebrow: dashboardContent.labels.noRecords,
+        }}
       />
 
       <CalloutPanel title={dashboardContent.cta.title} body={dashboardContent.cta.body} icon={Handshake} actions={<Button variant="primary" size="cta" render={<Link href="/vouches/new" />}>{dashboardContent.cta.label}<ArrowRight className="size-5" /></Button>} />

@@ -47,6 +47,13 @@ export const dashboardContent = {
     create: "Create",
     open: "Open",
   },
+  labels: {
+    vouchIndex: "Vouch index",
+    noRecords: "No records",
+    role: "Role",
+    amount: "Amount",
+    deadline: "Deadline",
+  },
   cta: {
     title: "Create a Vouch",
     body: "Create the agreement, share the invite, and keep the next action tied to one Vouch object.",

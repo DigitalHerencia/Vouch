@@ -111,7 +111,10 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
           vouch.aggregateConfirmationStatus === "both_confirmed",
         canConfirm,
         action: canConfirm ? (
-          <VouchCodeExchangePanel>
+          <VouchCodeExchangePanel
+            title={vouchPageCopy.detail.confirmDrawerTitle}
+            body={vouchPageCopy.detail.confirmDrawerBody}
+          >
             <ConfirmPresenceInlineForm
               action={confirmPresenceFormAction}
               vouchId={vouchId}
@@ -157,10 +160,19 @@ function VouchDetailView({
         appointmentLabel={appointmentLabel}
         statusLabel={statusLabel}
         currentUserRoleLabel={currentUserRoleLabel}
-        copy={{ title: copy.title, heroBody: copy.heroBody }}
+        copy={{
+          title: copy.title,
+          heroBody: copy.heroBody,
+          labels: {
+            status: copy.labels.status,
+            amount: copy.labels.amount,
+            role: copy.labels.role,
+          },
+        }}
       />
 
       <VouchTermsSummary
+        title={copy.termsTitle}
         merchantLabel={merchantLabel}
         customerLabel={customerLabel}
         amountLabel={amountLabel}
@@ -192,8 +204,12 @@ function VouchDetailView({
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1fr_0.85fr]">
-        <VouchTimelinePanel timeline={timeline} />
-        <VouchActionsPanel />
+        <VouchTimelinePanel
+          timeline={timeline}
+          title={copy.sections.timeline}
+          emptyLabel={copy.states.noTimeline}
+        />
+        <VouchActionsPanel title={copy.actionsTitle} providerBoundary={copy.providerBoundary} />
       </div>
 
       <CalloutPanel title={copy.bottomCalloutTitle} body={copy.bottomCalloutBody} />

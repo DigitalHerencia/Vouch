@@ -23,7 +23,7 @@ export function LogoLockup({ className, iconClassName, wordmarkClassName }: Logo
 
       <span
         className={cn(
-          "font-(family-name:--font-brand) text-[22px] leading-none tracking-[-0.045em] text-white uppercase sm:text-[28px] lg:text-[34px]",
+          "font-(family-name:--font-brand) text-[22px] leading-none tracking-normal text-white uppercase sm:text-[28px] lg:text-[34px]",
           wordmarkClassName
         )}
       >

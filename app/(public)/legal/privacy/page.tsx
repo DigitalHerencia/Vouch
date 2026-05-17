@@ -24,7 +24,7 @@ export default function PrivacyRoute() {
         title="Privacy Policy"
         body="Vouch minimizes data collection and stores provider references, statuses, timestamps, and audit-safe metadata."
         className="max-w-4xl"
-        titleClassName="max-w-4xl text-[48px] leading-[0.92] tracking-[-0.06em] sm:text-[68px] lg:text-[88px]"
+        titleClassName="max-w-4xl text-[48px] leading-[0.92] tracking-normal sm:text-[68px] lg:text-[88px]"
         bodyClassName="max-w-3xl text-[17px] leading-[1.45] sm:text-[19px]"
       />
 

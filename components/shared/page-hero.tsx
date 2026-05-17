@@ -7,9 +7,25 @@ export function PageHero({ eyebrow, title, body, actions, className, contentClas
   return (
     <Card className={cn("min-w-0 rounded-none border-0 bg-transparent shadow-none", className)}>
       <CardContent className={cn("space-y-6 p-0", contentClassName)}>
-        {eyebrow ? <p className="text-xs font-semibold uppercase tracking-[0.24em] text-blue-400">{eyebrow}</p> : null}
-        <h1 className={cn("max-w-4xl text-5xl font-semibold uppercase leading-none tracking-tight text-white sm:text-6xl lg:text-7xl", titleClassName)}>{title}</h1>
-        {body ? <p className={cn("max-w-2xl text-base font-semibold leading-7 text-neutral-300 sm:text-lg", bodyClassName)}>{body}</p> : null}
+        {eyebrow ? (
+          <p className="flex items-center gap-3 font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-neutral-100 uppercase">
+            <span className="size-2 bg-primary" />
+            {eyebrow}
+          </p>
+        ) : null}
+        <h1
+          className={cn(
+            "max-w-5xl font-(family-name:--font-brand) text-[clamp(3.5rem,9vw,7.75rem)] leading-[0.86] font-black tracking-normal text-white uppercase",
+            titleClassName
+          )}
+        >
+          {title}
+        </h1>
+        {body ? (
+          <p className={cn("max-w-2xl text-base leading-7 font-bold text-neutral-300 sm:text-lg", bodyClassName)}>
+            {body}
+          </p>
+        ) : null}
         {actions ? <div className="flex flex-col gap-3 sm:flex-row">{actions}</div> : null}
       </CardContent>
     </Card>

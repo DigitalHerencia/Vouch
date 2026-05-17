@@ -29,7 +29,7 @@ export function Wordmark({ className, imageClassName, asImage = true }: Wordmark
   return (
     <span
       className={cn(
-        "font-(family-name:--font-brand) tracking-[-0.045em] text-white uppercase",
+        "font-(family-name:--font-brand) tracking-normal text-white uppercase",
         className
       )}
       aria-label="Vouch"

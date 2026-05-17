@@ -94,7 +94,11 @@
 
   html {
     min-height: 100%;
-    background: var(--background);
+    background:
+      radial-gradient(circle at 18% 0%, oklch(0.24 0.15 264 / 0.46) 0, transparent 28rem),
+      radial-gradient(circle at 82% 42%, oklch(0.2 0.12 264 / 0.34) 0, transparent 34rem),
+      linear-gradient(90deg, oklch(0.09 0.035 264 / 0.82) 0%, oklch(0.055 0 0) 46%, oklch(0.045 0 0) 100%),
+      var(--background);
     color: var(--foreground);
     font-family:
       var(--font-sans),
@@ -117,7 +121,19 @@
   body {
     min-height: 100vh;
     margin: 0;
-    background: var(--background);
+    background:
+      linear-gradient(oklch(1 0 0 / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, oklch(1 0 0 / 0.035) 1px, transparent 1px),
+      radial-gradient(circle at 18% 0%, oklch(0.26 0.16 264 / 0.42) 0, transparent 30rem),
+      radial-gradient(circle at 82% 42%, oklch(0.2 0.12 264 / 0.32) 0, transparent 36rem),
+      linear-gradient(90deg, oklch(0.09 0.035 264 / 0.82) 0%, oklch(0.055 0 0) 46%, oklch(0.045 0 0) 100%);
+    background-attachment: fixed;
+    background-size:
+      4rem 4rem,
+      4rem 4rem,
+      auto,
+      auto,
+      auto;
     color: var(--foreground);
   }
 
@@ -215,35 +231,10 @@
 
   nav,
   button,
-  .eyebrow,
-  .vouch-label {
+  .eyebrow {
     font-family: var(--font-display), var(--font-mono), ui-monospace, monospace;
     letter-spacing: 0.045em;
     text-transform: uppercase;
-  }
-}
-
-@layer components {
-  .vouch-surface {
-    border: 1px solid oklch(1 0 0 / 0.14);
-    background: oklch(0 0 0 / 0.55);
-    backdrop-filter: blur(12px);
-  }
-
-  .vouch-panel {
-    border: 1px solid var(--border);
-    background: var(--card);
-  }
-
-  .vouch-label {
-    color: var(--muted-foreground);
-    font-size: 0.75rem;
-    line-height: 1;
-  }
-
-  .vouch-blue-line {
-    background: var(--primary);
-    box-shadow: 0 0 30px oklch(0.51 0.245 264 / 0.35);
   }
 }
 

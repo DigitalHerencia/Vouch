@@ -11,7 +11,7 @@ import { faqCalloutContent, faqSections } from "@/content/faq"
 export const metadata: Metadata = {
   title: "FAQ | Vouch",
   description:
-    "Answers about how Vouch coordinates commitment-backed payments without acting as a marketplace, broker, scheduler, escrow provider, or dispute-resolution service.",
+    "Answers about how Vouch coordinates commitment-backed payments through deterministic confirmation state.",
 }
 
 export default function FaqRoute() {
@@ -22,9 +22,9 @@ export default function FaqRoute() {
       <PageHero
         eyebrow="FAQ"
         title="Precise answers"
-        body="Vouch is the commitment layer, not a marketplace, scheduler, escrow provider, broker, or judge."
+        body="Vouch is the commitment layer for deterministic confirmation and provider-backed payment coordination."
         className="max-w-4xl"
-        titleClassName="max-w-4xl text-[48px] leading-[0.92] tracking-[-0.06em] sm:text-[68px] lg:text-[88px]"
+        titleClassName="max-w-4xl text-[48px] leading-[0.92] tracking-normal sm:text-[68px] lg:text-[88px]"
         bodyClassName="max-w-3xl text-[17px] leading-[1.45] sm:text-[19px]"
       />
 

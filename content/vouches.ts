@@ -7,6 +7,18 @@ export const vouchPageCopy = {
     detailsHeader: "Vouch details",
     readyBody:
       "Start with the amount, appointment time, and confirmation window. These terms become the basis for the Vouch protocol before commitment.",
+    reviewTitle: "Review your Vouch",
+    reviewBody:
+      "Review immutable terms before creation. The Vouch fee is paid by the merchant through hosted Stripe checkout at committed creation.",
+    feeTitle: "Creation fee",
+    feeBody:
+      "The Vouch fee is due when the merchant commits the Vouch. Stripe hosts the payment step and returns provider state for reconciliation.",
+    hostedPaymentTitle: "Stripe-hosted payment step",
+    hostedPaymentBody:
+      "Vouch does not host card, bank, identity, payout, or payment authorization forms. Stripe owns those hosted surfaces.",
+    disclaimerLabel:
+      "I understand this Vouch becomes immutable after commitment and the merchant Vouch fee is paid through Stripe at creation.",
+    commitAction: "Create Vouch and pay fee",
     ruleTitle: "Outcome follows confirmation state.",
     ruleBody:
       "Both participants confirm presence inside the configured window for release. Anything else resolves through provider-backed non-capture, void, refund, cancel, or expiration state.",
@@ -27,6 +39,8 @@ export const vouchPageCopy = {
       vouchAmount: "Vouch amount",
       merchantReceives: "Merchant receives",
       customerAuthorizes: "Customer authorizes",
+      status: "Status",
+      role: "Role",
     },
     sections: {
       confirmation: "Confirmation",
@@ -43,6 +57,10 @@ export const vouchPageCopy = {
       notConfirmed: "Not confirmed",
       noTimeline: "No participant-safe events recorded yet.",
     },
+    termsTitle: "Immutable terms",
+    actionsTitle: "Safe actions",
+    providerBoundary:
+      "Provider payment, identity, payout, and payment method steps stay on hosted provider surfaces. Vouch only shows safe state and next actions.",
     oneSidedRule: "One-sided confirmation never releases funds.",
     ruleDescription:
       "Both confirm in time and capture can proceed. Otherwise provider state determines void, refund, or non-capture.",

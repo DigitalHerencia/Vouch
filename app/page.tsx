@@ -12,8 +12,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 
-import { PublicFooter } from "@/components/navigation/public-footer"
-import { PublicHeader } from "@/components/navigation/public-header"
+import { PublicShell } from "@/components/navigation/public-shell"
 import { Button } from "@/components/ui/button"
 import {
   landingHeroActionsContent,
@@ -31,8 +30,7 @@ const useCaseIcons = [CalendarDays, UsersRound, Wrench, MoreHorizontal] as const
 
 export default function LandingPage() {
   return (
-    <>
-      <PublicHeader />
+    <PublicShell>
       <main className="mx-auto w-full max-w-7xl px-6 py-16 sm:px-10 lg:px-12">
         <section className="grid items-center gap-14 lg:grid-cols-[1fr_35rem]">
           <section className="space-y-7">
@@ -172,7 +170,6 @@ export default function LandingPage() {
           </Button>
         </section>
       </main>
-      <PublicFooter />
-    </>
+    </PublicShell>
   )
 }

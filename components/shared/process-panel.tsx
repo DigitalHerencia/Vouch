@@ -20,7 +20,7 @@ export interface ProcessPanelProps {
 
 export function ProcessPanel({ title, steps, footer, id, className }: ProcessPanelProps) {
   return (
-    <Card id={id} className={cn("min-w-0 rounded-none border-neutral-700 bg-black/80", className)}>
+    <Card id={id} className={cn("min-w-0 rounded-none border-neutral-700 bg-black shadow-[6px_6px_0_0_#1d4ed8]", className)}>
       <CardHeader className="border-neutral-700 px-5 py-5 sm:px-6">
         <CardTitle>{title}</CardTitle>
       </CardHeader>
@@ -39,10 +39,10 @@ export function ProcessPanel({ title, steps, footer, id, className }: ProcessPan
                 </span>
               </div>
               <div className="min-w-0 px-3 py-6 sm:px-5">
-                <h2 className="text-2xl font-semibold uppercase tracking-tight text-white sm:text-3xl">
+                <h2 className="font-(family-name:--font-display) text-3xl leading-none tracking-[0.04em] text-white uppercase sm:text-4xl">
                   {step.title}
                 </h2>
-                <p className="mt-2 text-sm font-semibold leading-6 text-neutral-400">
+                <p className="mt-2 text-sm leading-6 font-bold text-neutral-400">
                   {step.body}
                 </p>
               </div>

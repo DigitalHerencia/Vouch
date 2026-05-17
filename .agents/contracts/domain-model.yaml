@@ -1,0 +1,27 @@
+id: vouch.domain-model
+source_date: "2026-05-16"
+authority: source-of-truth
+lifecycle_states:
+  - draft
+  - committed
+  - sent
+  - accepted
+  - authorized
+  - confirmable
+  - completed
+  - expired
+roles:
+  - merchant
+  - customer
+rules:
+  immutable_after_commit: true
+  sent_vouches_are_immutable: true
+  bilateral_confirmation_required_for_release: true
+  provider_states_separate_from_lifecycle: true
+forbidden_surfaces:
+  - marketplace
+  - messaging
+  - disputes
+  - evidence
+  - reviews
+  - manual_settlement
