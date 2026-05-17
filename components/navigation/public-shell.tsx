@@ -17,8 +17,12 @@ export function PublicShell({ children, className, withMobileBottomNav = true }:
   return (
     <div className={cn("flex min-h-dvh flex-col bg-transparent text-foreground", className)}>
       <PublicHeader />
-      <div className={cn("flex-1 bg-transparent", withMobileBottomNav && "pb-20 md:pb-0")}>{children}</div>
-      <PublicFooter />
+      <div className={cn("flex-1 bg-transparent", withMobileBottomNav && "pb-20 md:pb-0")}>
+        {children}
+      </div>
+      <div className="hidden md:block">
+        <PublicFooter />
+      </div>
       {withMobileBottomNav ? <PublicMobileBottomNav /> : null}
     </div>
   )
