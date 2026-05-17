@@ -28,7 +28,7 @@ export function VouchCardList({
 }: VouchCardListProps) {
   return (
     <section className={cn("grid gap-4", className)}>
-      <header className="flex flex-col gap-3 border border-neutral-800 bg-black/70 p-5 sm:flex-row sm:items-center sm:justify-between">
+      <header className="flex flex-col gap-3 border-2 border-neutral-100 bg-black p-5 shadow-[6px_6px_0_0_#1d4ed8] sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-primary uppercase">
             {labels.eyebrow}
@@ -46,7 +46,7 @@ export function VouchCardList({
       </header>
 
       {rows.length > 0 ? (
-        <div className="grid gap-4 lg:grid-cols-3">
+        <div className="grid gap-4">
           {rows.map((row) => (
             <VouchCard key={row.id} {...row} />
           ))}

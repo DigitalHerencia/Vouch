@@ -1,8 +1,17 @@
 import { Suspense } from "react"
-import { VouchDetailPageSkeleton } from "@/components/vouches/vouch-detail-page-skeleton"
-import { VouchDetailPage } from "@/features/vouches/vouch-detail-page"
 
-export default async function VouchDetailRoute({ params }: { params: Promise<{ vouchId: string }> }) {
+import { VouchDetailFeature } from "@/features/vouch-detail/vouch-detail-feature"
+import { VouchDetailSkeleton } from "@/features/vouch-detail/vouch-detail-skeleton"
+
+export default async function VouchDetailRoute({
+  params,
+}: {
+  params: Promise<{ vouchId: string }>
+}) {
   const { vouchId } = await params
-  return <Suspense fallback={<VouchDetailPageSkeleton />}><VouchDetailPage vouchId={vouchId} /></Suspense>
+  return (
+    <Suspense fallback={<VouchDetailSkeleton />}>
+      <VouchDetailFeature vouchId={vouchId} />
+    </Suspense>
+  )
 }

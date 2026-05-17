@@ -1,12 +1,5 @@
 import Link from "next/link"
-import {
-  AlertCircle,
-  ArrowRight,
-  Bell,
-  CheckCircle2,
-  Clock,
-  Handshake,
-} from "lucide-react"
+import { AlertCircle, ArrowRight, Bell, CheckCircle2, Clock, Handshake } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { CalloutPanel } from "@/components/shared/callout-panel"
@@ -123,66 +116,83 @@ export async function DashboardPage() {
   ]
 
   return (
-    <main className="mx-auto grid w-full max-w-7xl gap-6 px-6 pt-8 pb-12 sm:px-10 lg:px-12 lg:pt-10 lg:pb-14">
-      <SectionIntro
-        eyebrow={dashboardContent.hero.eyebrow}
-        title={dashboardContent.hero.title}
-        body={dashboardContent.hero.body}
-      />
+    <main className="grid min-h-[calc(100dvh-8rem)] grid-rows-none gap-4 sm:gap-6 md:grid-rows-4 md:gap-8">
+      <section className="grid min-h-0 gap-4 sm:gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-8">
+        <section className="border-2 border-neutral-100 bg-black p-5 shadow-[6px_6px_0_0_#1d4ed8] sm:p-6">
+          <SectionIntro
+            eyebrow={dashboardContent.hero.eyebrow}
+            title={dashboardContent.hero.title}
+            body={dashboardContent.hero.body}
+            titleClassName="text-[clamp(3rem,6vw,5.5rem)]"
+          />
+        </section>
 
-      {!readinessComplete ? (
+        <MetricGrid items={metrics} className="min-h-0 lg:grid-cols-3" />
+      </section>
+
+      <section className="grid min-h-0 gap-4 sm:gap-6 md:row-span-3 md:gap-8">
+        {!readinessComplete ? (
+          <CalloutPanel
+            title={dashboardContent.readiness.title}
+            body={dashboardContent.readiness.body}
+            icon={AlertCircle}
+            actions={
+              <Button variant="primary" size="cta" render={<Link href="/dashboard" />}>
+                {dashboardContent.readiness.cta}
+                <ArrowRight className="size-5" strokeWidth={1.9} />
+              </Button>
+            }
+          />
+        ) : null}
+
+        <VouchCardList
+          title={`Action required (${actionRequired.length})`}
+          description={dashboardContent.sections.actionRequired.panelDescription}
+          emptyText={dashboardContent.sections.actionRequired.emptyText}
+          icon={Bell}
+          rows={actionRequired}
+          labels={{
+            eyebrow: dashboardContent.labels.vouchIndex,
+            emptyEyebrow: dashboardContent.labels.noRecords,
+          }}
+        />
+
+        <VouchCardList
+          title={`Active (${active.length})`}
+          description={dashboardContent.sections.active.panelDescription}
+          emptyText={dashboardContent.sections.active.emptyText}
+          icon={Clock}
+          rows={active}
+          labels={{
+            eyebrow: dashboardContent.labels.vouchIndex,
+            emptyEyebrow: dashboardContent.labels.noRecords,
+          }}
+        />
+
+        <VouchCardList
+          title={`Completed (${completed.length})`}
+          description={dashboardContent.sections.completed.panelDescription}
+          emptyText={dashboardContent.sections.completed.emptyText}
+          icon={CheckCircle2}
+          rows={completed}
+          labels={{
+            eyebrow: dashboardContent.labels.vouchIndex,
+            emptyEyebrow: dashboardContent.labels.noRecords,
+          }}
+        />
+
         <CalloutPanel
-          title={dashboardContent.readiness.title}
-          body={dashboardContent.readiness.body}
-          icon={AlertCircle}
+          title={dashboardContent.cta.title}
+          body={dashboardContent.cta.body}
+          icon={Handshake}
           actions={
-            <Button variant="primary" size="cta" render={<Link href="/dashboard" />}>
-              {dashboardContent.readiness.cta}
-              <ArrowRight className="size-5" strokeWidth={1.9} />
+            <Button variant="primary" size="cta" render={<Link href="/vouches/new" />}>
+              {dashboardContent.cta.label}
+              <ArrowRight className="size-5" />
             </Button>
           }
         />
-      ) : null}
-
-      <MetricGrid items={metrics} />
-
-      <VouchCardList
-        title={`Action required (${actionRequired.length})`}
-        description={dashboardContent.sections.actionRequired.panelDescription}
-        emptyText={dashboardContent.sections.actionRequired.emptyText}
-        icon={Bell}
-        rows={actionRequired}
-        labels={{
-          eyebrow: dashboardContent.labels.vouchIndex,
-          emptyEyebrow: dashboardContent.labels.noRecords,
-        }}
-      />
-
-      <VouchCardList
-        title={`Active (${active.length})`}
-        description={dashboardContent.sections.active.panelDescription}
-        emptyText={dashboardContent.sections.active.emptyText}
-        icon={Clock}
-        rows={active}
-        labels={{
-          eyebrow: dashboardContent.labels.vouchIndex,
-          emptyEyebrow: dashboardContent.labels.noRecords,
-        }}
-      />
-
-      <VouchCardList
-        title={`Completed (${completed.length})`}
-        description={dashboardContent.sections.completed.panelDescription}
-        emptyText={dashboardContent.sections.completed.emptyText}
-        icon={CheckCircle2}
-        rows={completed}
-        labels={{
-          eyebrow: dashboardContent.labels.vouchIndex,
-          emptyEyebrow: dashboardContent.labels.noRecords,
-        }}
-      />
-
-      <CalloutPanel title={dashboardContent.cta.title} body={dashboardContent.cta.body} icon={Handshake} actions={<Button variant="primary" size="cta" render={<Link href="/vouches/new" />}>{dashboardContent.cta.label}<ArrowRight className="size-5" /></Button>} />
+      </section>
     </main>
   )
 }

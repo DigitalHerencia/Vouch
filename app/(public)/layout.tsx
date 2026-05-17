@@ -3,9 +3,9 @@
 import { PublicShell } from "@/components/navigation/public-shell"
 
 export default function PublicLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode
+  children: React.ReactNode
 }>) {
-    return <PublicShell>{children}</PublicShell>
+  return <PublicShell>{children}</PublicShell>
 }

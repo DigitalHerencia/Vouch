@@ -1,12 +1,19 @@
-import { SignUpPageFeature } from "@/features/auth/sign-up-page"
+import { Suspense } from "react"
+
+import { SignUpFeature } from "@/features/sign-up/sign-up-feature"
+import { SignUpSkeleton } from "@/features/sign-up/sign-up-skeleton"
 import { type SignupPageProps } from "@/types/auth"
 
 export default async function SignUpPage({ searchParams }: SignupPageProps) {
   const params = await searchParams
 
   return (
-    <SignUpPageFeature
-      redirectUrl={params.redirect_url ?? params.return_to ?? params.redirectUrl ?? params.returnTo}
-    />
+    <Suspense fallback={<SignUpSkeleton />}>
+      <SignUpFeature
+        redirectUrl={
+          params.redirect_url ?? params.return_to ?? params.redirectUrl ?? params.returnTo
+        }
+      />
+    </Suspense>
   )
 }

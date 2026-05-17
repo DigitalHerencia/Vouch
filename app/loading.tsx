@@ -13,7 +13,9 @@ export default function Loading() {
       >
         <div className="flex items-start justify-between gap-6 border-b border-neutral-800 pb-6">
           <div>
-            <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-blue-500 uppercase">Loading</p>
+            <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-blue-500 uppercase">
+              Loading
+            </p>
             <h1 className="mt-4 font-(family-name:--font-display) text-[52px] leading-[0.9] tracking-[0.02em] text-white uppercase sm:text-[72px]">
               Vouch
             </h1>

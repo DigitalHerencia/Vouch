@@ -11,6 +11,16 @@ import { useForm } from "react-hook-form"
 
 import { AuthPageShell } from "@/components/auth/auth-page-shell"
 import { SignInFieldGroup } from "@/components/forms/sign-in-field-group"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import {
   Field,
@@ -77,6 +87,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
 
   const nextUrl = sanitizePostAuthRedirect(redirectUrl)
   const isBusy = form.formState.isSubmitting || isResending || isResetting || !fetchStatus
+  const rootError = form.formState.errors.root?.message
 
   async function finalizeAndRedirect(): Promise<boolean> {
     const finalizeResult = await signIn.finalize({
@@ -269,10 +280,26 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
           </h1>
         ) : null}
 
-        {form.formState.errors.root?.message ? (
-          <div className="max-w-full overflow-hidden border border-red-900 bg-red-950/30 px-4 py-2.5 font-mono text-xs wrap-break-word text-red-100 sm:text-sm">
-            {form.formState.errors.root.message}
-          </div>
+        {rootError ? (
+          <>
+            <Alert variant="destructive">
+              <AlertTitle>Sign-in blocked</AlertTitle>
+              <AlertDescription>{rootError}</AlertDescription>
+            </Alert>
+            <AlertDialog open>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Sign-in needs attention</AlertDialogTitle>
+                  <AlertDialogDescription>{rootError}</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogAction type="button" onClick={() => form.clearErrors("root")}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
         ) : null}
 
         {awaitingSecondFactor ? (
@@ -354,7 +381,8 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                 {authVerificationContent.startOver}
               </Button>
 
-              <Button type="submit"
+              <Button
+                type="submit"
                 disabled={isBusy}
                 className="w-full min-w-0 sm:col-span-2"
                 size="cta"
@@ -396,11 +424,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
               />
             </SignInFieldGroup>
 
-            <Button type="submit"
-              disabled={isBusy}
-              size="cta"
-              className="w-full min-w-0"
-            >
+            <Button type="submit" disabled={isBusy} size="cta" className="w-full min-w-0">
               Sign in
             </Button>
 
@@ -412,7 +436,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                     ? `/sign-up?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-up"
                 }
-                className="text-primary font-mono underline-offset-4 transition-colors hover:text-white hover:underline"
+                className="font-mono text-primary underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Create one
               </Link>

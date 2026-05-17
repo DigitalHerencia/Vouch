@@ -1,7 +1,12 @@
 import { Suspense } from "react"
-import { CreateVouchPageSkeleton } from "@/components/vouches/create-vouch-page-skeleton"
-import { CreateVouchPage } from "@/features/vouches/create-vouch-page"
+
+import { NewVouchFeature } from "@/features/new-vouch/new-vouch-feature"
+import { NewVouchSkeleton } from "@/features/new-vouch/new-vouch-skeleton"
 
 export default function Page() {
-  return <Suspense fallback={<CreateVouchPageSkeleton />}><CreateVouchPage /></Suspense>
+  return (
+    <Suspense fallback={<NewVouchSkeleton />}>
+      <NewVouchFeature />
+    </Suspense>
+  )
 }

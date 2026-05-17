@@ -26,5 +26,9 @@ export default async function Page({
         }
       : null
 
-  return <Suspense fallback={<ConfirmCreateVouchPageSkeleton />}><ConfirmCreateVouchPage draft={draft} /></Suspense>
+  return (
+    <Suspense fallback={<ConfirmCreateVouchPageSkeleton />}>
+      <ConfirmCreateVouchPage draft={draft} />
+    </Suspense>
+  )
 }

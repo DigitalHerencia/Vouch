@@ -2,24 +2,24 @@
 
 import { TenantShell } from "@/components/navigation/tenant-shell"
 import {
-    openStripeConnectDashboard,
-    openStripePaymentMethodDashboard,
+  openStripeConnectDashboard,
+  openStripePaymentMethodDashboard,
 } from "@/lib/actions/paymentActions"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 
 export default async function AppLayout({
-    children,
+  children,
 }: Readonly<{
-    children: React.ReactNode
+  children: React.ReactNode
 }>) {
-    await requireActiveUser()
+  await requireActiveUser()
 
-    return (
-        <TenantShell
-            connectAction={openStripeConnectDashboard}
-            paymentAction={openStripePaymentMethodDashboard}
-        >
-            {children}
-        </TenantShell>
-    )
+  return (
+    <TenantShell
+      connectAction={openStripeConnectDashboard}
+      paymentAction={openStripePaymentMethodDashboard}
+    >
+      {children}
+    </TenantShell>
+  )
 }

@@ -34,7 +34,7 @@ export function ConfirmPresenceInlineForm({
         context={
           currentUserCode ? (
             <div>
-              <p className="text-xs font-semibold uppercase text-neutral-500">Your code</p>
+              <p className="text-xs font-semibold text-neutral-500 uppercase">Your code</p>
               <p className="mt-1 font-mono text-2xl text-white">{currentUserCode}</p>
             </div>
           ) : null

@@ -11,6 +11,16 @@ import { useForm, useWatch } from "react-hook-form"
 
 import { AuthPageShell } from "@/components/auth/auth-page-shell"
 import { SignUpFieldGroup } from "@/components/forms/sign-up-field-group"
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -83,6 +93,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
 
   const nextUrl = sanitizePostAuthRedirect(redirectUrl)
   const isBusy = form.formState.isSubmitting || isResending || isResetting || !fetchStatus
+  const rootError = form.formState.errors.root?.message
 
   async function finalizeAndRedirect(): Promise<boolean> {
     const finalizeResult = await signUp.finalize()
@@ -227,10 +238,26 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
           </h1>
         ) : null}
 
-        {form.formState.errors.root?.message ? (
-          <div className="max-w-full overflow-hidden border border-red-950/70 bg-red-950/30 px-3.5 py-2 font-mono text-xs break-words text-red-100">
-            {form.formState.errors.root.message}
-          </div>
+        {rootError ? (
+          <>
+            <Alert variant="destructive">
+              <AlertTitle>Sign-up blocked</AlertTitle>
+              <AlertDescription>{rootError}</AlertDescription>
+            </Alert>
+            <AlertDialog open>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Sign-up needs attention</AlertDialogTitle>
+                  <AlertDialogDescription>{rootError}</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogAction type="button" onClick={() => form.clearErrors("root")}>
+                    Continue
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </>
         ) : null}
 
         {awaitingVerification ? (
@@ -312,7 +339,8 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 {authVerificationContent.startOver}
               </Button>
 
-              <Button type="submit"
+              <Button
+                type="submit"
                 disabled={isBusy}
                 size="cta"
                 className="w-full min-w-0 sm:col-span-2"
@@ -407,18 +435,19 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 />
 
                 <span className="min-w-0 text-[11px] leading-4 font-semibold break-words text-neutral-400 sm:text-xs sm:leading-5">
-                  I agree to the User Agreement,{" "}
+                  I agree to the{" "}
                   <Link
-                    href="/legal/terms"
+                    href="/user-agreement"
                     className="text-primary underline-offset-4 hover:underline"
                   >
+                    User Agreement
+                  </Link>
+                  ,{" "}
+                  <Link href="/terms" className="text-primary underline-offset-4 hover:underline">
                     Terms of Service
                   </Link>
                   , and{" "}
-                  <Link
-                    href="/legal/privacy"
-                    className="text-primary underline-offset-4 hover:underline"
-                  >
+                  <Link href="/privacy" className="text-primary underline-offset-4 hover:underline">
                     Privacy Policy
                   </Link>
                   . I understand Vouch is a neutral payment coordination tool for deterministic
@@ -437,11 +466,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
 
             <div id="clerk-captcha" className="min-h-0 w-full max-w-full overflow-hidden" />
 
-            <Button type="submit"
-              disabled={isBusy}
-              size="cta"
-              className="w-full min-w-0"
-            >
+            <Button type="submit" disabled={isBusy} size="cta" className="w-full min-w-0">
               Create account
             </Button>
 
@@ -453,7 +478,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     ? `/sign-in?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-in"
                 }
-                className="text-primary font-mono underline-offset-4 transition-colors hover:text-white hover:underline"
+                className="font-mono text-primary underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Sign in
               </Link>

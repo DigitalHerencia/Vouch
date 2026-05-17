@@ -20,6 +20,22 @@ export const privacyCalloutContent = {
   icon: Handshake,
 } as const
 
+export const disclaimerCalloutContent = {
+  title: "Create only when the commitment is explicit.",
+  body: "A Vouch follows provider-backed payment state and the confirmation window. It does not arbitrate, investigate, or rewrite outcomes.",
+  label: "Create a Vouch",
+  action: "/sign-up?return_to=/vouches/new",
+  icon: Handshake,
+} as const
+
+export const userAgreementCalloutContent = {
+  title: "Use Vouch as a narrow payment coordination system.",
+  body: "The product is intentionally bounded: no marketplace, no scheduling, no messaging, no dispute workflow, and no manual fund award.",
+  label: "Create account",
+  action: "/sign-up",
+  icon: Handshake,
+} as const
+
 export const termsSections = [
   {
     heading: "1. Acceptance of Terms",
@@ -110,6 +126,62 @@ export const privacySections = [
     heading: "7. Your Rights",
     body: [
       "Depending on your location, you may have rights to access, correct, delete, or restrict processing of your data.",
+    ],
+  },
+] satisfies readonly ContentSectionListItem[]
+
+export const disclaimerSections = [
+  {
+    heading: "1. No Escrow or Custody",
+    body: [
+      "Vouch coordinates payment state through third-party providers. Vouch does not directly custody funds, hold card data, store bank data, or act as an escrow provider.",
+    ],
+  },
+  {
+    heading: "2. Deterministic Confirmation Rule",
+    body: [
+      "Funds release only when both parties confirm presence within the confirmation window and the provider payment state permits settlement.",
+      "One-sided confirmation, late confirmation, expired windows, provider failures, or incomplete readiness do not release funds through Vouch.",
+    ],
+  },
+  {
+    heading: "3. No Dispute or Appeal Process",
+    body: [
+      "Vouch does not collect evidence, judge claims, decide who was right, mediate disputes, or provide an appeal surface.",
+      "Outcomes follow authenticated participant state, provider-backed payment state, and the configured confirmation window.",
+    ],
+  },
+  {
+    heading: "4. User Responsibility",
+    body: [
+      "Users are responsible for creating accurate commitments, reviewing amounts and timing before submission, and understanding that sent Vouches are intended to be immutable.",
+    ],
+  },
+] satisfies readonly ContentSectionListItem[]
+
+export const userAgreementSections = [
+  {
+    heading: "1. Account Commitments",
+    body: [
+      "You agree to provide accurate account information, maintain account security, and use Vouch only for lawful real-world commitments.",
+    ],
+  },
+  {
+    heading: "2. Payment Provider Flows",
+    body: [
+      "You understand that customer authorization, merchant fee checkout, identity verification, payout readiness, and related payment flows may be hosted by Stripe or another provider.",
+    ],
+  },
+  {
+    heading: "3. Confirmation Behavior",
+    body: [
+      "You agree not to misuse confirmation codes, misrepresent presence, attempt to force settlement, or interfere with another participant's confirmation flow.",
+    ],
+  },
+  {
+    heading: "4. Product Boundaries",
+    body: [
+      "You understand Vouch is not a marketplace, broker, scheduler, messaging service, review system, dispute system, escrow provider, public directory, or discovery platform.",
     ],
   },
 ] satisfies readonly ContentSectionListItem[]

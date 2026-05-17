@@ -4,7 +4,6 @@ import type { ReactNode } from "react"
 import { CalloutPanel } from "@/components/shared/callout-panel"
 import { ConfirmationPanel } from "@/components/vouches/confirmation-panel"
 import { LifecycleStatusPanel } from "@/components/vouches/lifecycle-status-panel"
-import { PaymentStatusPanel } from "@/components/vouches/payment-status-panel"
 import { VouchActionsPanel } from "@/components/vouches/vouch-actions-panel"
 import { VouchCodeExchangePanel } from "@/components/vouches/vouch-code-exchange-panel"
 import { VouchDetailHeader } from "@/components/vouches/vouch-detail-header"
@@ -152,67 +151,60 @@ function VouchDetailView({
   const copy = vouchPageCopy.detail
 
   return (
-    <main className="grid w-full gap-8">
-      <VouchDetailHeader
-        vouchId={vouchId}
-        title={title}
-        amountLabel={amountLabel}
-        appointmentLabel={appointmentLabel}
-        statusLabel={statusLabel}
-        currentUserRoleLabel={currentUserRoleLabel}
-        copy={{
-          title: copy.title,
-          heroBody: copy.heroBody,
-          labels: {
-            status: copy.labels.status,
-            amount: copy.labels.amount,
-            role: copy.labels.role,
-          },
-        }}
-      />
+    <main className="grid min-h-[calc(100dvh-8rem)] grid-rows-none gap-4 sm:gap-6 md:grid-rows-3 md:gap-8">
+      <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-2 md:gap-8">
+        <VouchDetailHeader
+          vouchId={vouchId}
+          title={title}
+          amountLabel={amountLabel}
+          appointmentLabel={appointmentLabel}
+          statusLabel={statusLabel}
+          currentUserRoleLabel={currentUserRoleLabel}
+          copy={{
+            title: copy.title,
+            heroBody: copy.heroBody,
+            labels: {
+              status: copy.labels.status,
+              amount: copy.labels.amount,
+              role: copy.labels.role,
+            },
+          }}
+        />
+        <LifecycleStatusPanel
+          title={copy.sections.schedule}
+          appointmentLabel={appointmentLabel}
+          windowLabel={windowLabel}
+          deadlineLabel={deadlineLabel}
+          labels={copy.labels}
+        />
+      </section>
 
-      <VouchTermsSummary
-        title={copy.termsTitle}
-        merchantLabel={merchantLabel}
-        customerLabel={customerLabel}
-        amountLabel={amountLabel}
-        windowLabel={windowLabel}
-        labels={copy.labels}
-      />
-
-      <div className="grid gap-5 lg:grid-cols-[1fr_0.85fr]">
-        <ConfirmationPanel {...confirmation} />
-
-        <div className="grid gap-5">
-          <LifecycleStatusPanel
-            title={copy.sections.schedule}
-            appointmentLabel={appointmentLabel}
-            windowLabel={windowLabel}
-            deadlineLabel={deadlineLabel}
-            labels={copy.labels}
-          />
-          <PaymentStatusPanel
-            title={copy.sections.payment}
-            amountLabel={amountLabel}
-            merchantReceivesLabel={merchantReceivesLabel}
-            customerTotalLabel={customerTotalLabel}
-            paymentStatusLabel={paymentStatusLabel}
-            settlementStatusLabel={settlementStatusLabel}
-            labels={copy.labels}
-          />
-        </div>
-      </div>
-
-      <div className="grid gap-5 lg:grid-cols-[1fr_0.85fr]">
+      <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-[0.85fr_1.15fr] md:gap-8">
+        <VouchTermsSummary
+          title={copy.termsTitle}
+          merchantLabel={merchantLabel}
+          customerLabel={customerLabel}
+          amountLabel={amountLabel}
+          windowLabel={windowLabel}
+          labels={copy.labels}
+        />
         <VouchTimelinePanel
           timeline={timeline}
           title={copy.sections.timeline}
           emptyLabel={copy.states.noTimeline}
         />
-        <VouchActionsPanel title={copy.actionsTitle} providerBoundary={copy.providerBoundary} />
-      </div>
+      </section>
 
-      <CalloutPanel title={copy.bottomCalloutTitle} body={copy.bottomCalloutBody} />
+      <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-2 md:gap-8">
+        <div className="grid gap-4 sm:gap-6">
+          <ConfirmationPanel {...confirmation} />
+          <VouchActionsPanel title={copy.actionsTitle} providerBoundary={copy.providerBoundary} />
+        </div>
+        <CalloutPanel
+          title={copy.bottomCalloutTitle}
+          body={`${copy.bottomCalloutBody} Payment: ${paymentStatusLabel}. Settlement: ${settlementStatusLabel}. Merchant receives ${merchantReceivesLabel}; customer total ${customerTotalLabel}.`}
+        />
+      </section>
     </main>
   )
 }

@@ -25,7 +25,9 @@ export default function NotFound() {
     <main className="flex min-h-dvh items-center justify-center px-6 py-12">
       <section className="w-full max-w-205 border border-neutral-700 bg-black/80 p-6 shadow-[6px_6px_0_0_#1d4ed8] sm:p-8">
         <div className="border-b border-neutral-800 pb-6">
-          <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-blue-500 uppercase">404 / Not found</p>
+          <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-blue-500 uppercase">
+            404 / Not found
+          </p>
 
           <h1 className="mt-4 font-(family-name:--font-display) text-[56px] leading-[0.88] tracking-[0.02em] text-white uppercase sm:text-[84px]">
             This route does not exist.

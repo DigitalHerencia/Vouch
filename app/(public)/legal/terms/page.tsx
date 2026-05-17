@@ -18,37 +18,35 @@ export default function TermsRoute() {
   const CalloutIcon = termsCalloutContent.icon
 
   return (
-    <main className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
+    <main className="grid min-h-[calc(100dvh-8rem)] grid-rows-none gap-4 sm:gap-6 md:grid-rows-4 md:gap-8">
       <PageHero
         eyebrow="Legal"
         title="Terms of Service"
         body="Provider-backed payment coordination with deterministic confirmation rules and hosted Stripe payment flows."
-        className="max-w-4xl"
-        titleClassName="max-w-4xl text-[48px] leading-[0.92] tracking-normal sm:text-[68px] lg:text-[88px]"
-        bodyClassName="max-w-3xl text-[17px] leading-[1.45] sm:text-[19px]"
+        className="min-h-0 border-2 border-neutral-100 bg-black p-5 shadow-[6px_6px_0_0_#1d4ed8] sm:p-6 md:p-8"
+        contentClassName="p-0"
+        titleClassName="max-w-4xl text-[clamp(3rem,7vw,6rem)]"
       />
-
-      <div className="mt-12">
-        <ContentSectionList sections={termsSections} />
-      </div>
-
-      <CalloutPanel
-        className="mt-12"
-        icon={CalloutIcon}
-        title={termsCalloutContent.title}
-        body={termsCalloutContent.body}
-        actions={
-          <Button
-            variant="primary"
-            size="cta"
-            className="w-full sm:col-span-2 lg:col-span-1 lg:w-auto lg:min-w-60"
-            render={<Link href={termsCalloutContent.action} />}
-          >
-            <span className="translate-y-px">{termsCalloutContent.label}</span>
-            <ArrowRight className="size-5 shrink-0" strokeWidth={1.9} />
-          </Button>
-        }
-      />
+      <section className="grid min-h-0 gap-4 sm:gap-6 md:row-span-3 md:grid-cols-[minmax(0,1fr)_24rem] md:gap-8">
+        <ContentSectionList sections={termsSections} className="min-h-0" />
+        <CalloutPanel
+          className="self-start"
+          icon={CalloutIcon}
+          title={termsCalloutContent.title}
+          body={termsCalloutContent.body}
+          actions={
+            <Button
+              variant="primary"
+              size="cta"
+              className="w-full"
+              render={<Link href={termsCalloutContent.action} />}
+            >
+              {termsCalloutContent.label}
+              <ArrowRight className="size-5" />
+            </Button>
+          }
+        />
+      </section>
     </main>
   )
 }

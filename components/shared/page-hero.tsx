@@ -3,7 +3,25 @@ import type { ReactNode } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
-export function PageHero({ eyebrow, title, body, actions, className, contentClassName, titleClassName, bodyClassName }: { eyebrow?: ReactNode; title: ReactNode; body?: ReactNode; actions?: ReactNode; className?: string; contentClassName?: string; titleClassName?: string; bodyClassName?: string }) {
+export function PageHero({
+  eyebrow,
+  title,
+  body,
+  actions,
+  className,
+  contentClassName,
+  titleClassName,
+  bodyClassName,
+}: {
+  eyebrow?: ReactNode
+  title: ReactNode
+  body?: ReactNode
+  actions?: ReactNode
+  className?: string
+  contentClassName?: string
+  titleClassName?: string
+  bodyClassName?: string
+}) {
   return (
     <Card className={cn("min-w-0 rounded-none border-0 bg-transparent shadow-none", className)}>
       <CardContent className={cn("space-y-6 p-0", contentClassName)}>
@@ -22,7 +40,12 @@ export function PageHero({ eyebrow, title, body, actions, className, contentClas
           {title}
         </h1>
         {body ? (
-          <p className={cn("max-w-2xl text-base leading-7 font-bold text-neutral-300 sm:text-lg", bodyClassName)}>
+          <p
+            className={cn(
+              "max-w-2xl text-base leading-7 font-bold text-neutral-300 sm:text-lg",
+              bodyClassName
+            )}
+          >
             {body}
           </p>
         ) : null}

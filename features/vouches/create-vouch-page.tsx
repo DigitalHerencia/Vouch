@@ -25,7 +25,9 @@ export async function CreateVouchPage() {
             <CardDescription>{blockedReason}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button render={<Link href="/dashboard" />}>{vouchPageCopy.create.blockedActionLabel}</Button>
+            <Button render={<Link href="/dashboard" />}>
+              {vouchPageCopy.create.blockedActionLabel}
+            </Button>
           </CardContent>
         </Card>
       ) : (

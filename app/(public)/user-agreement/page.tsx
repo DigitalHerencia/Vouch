@@ -6,42 +6,41 @@ import { CalloutPanel } from "@/components/shared/callout-panel"
 import { ContentSectionList } from "@/components/shared/content-section-list"
 import { PageHero } from "@/components/shared/page-hero"
 import { Button } from "@/components/ui/button"
-import { privacyCalloutContent, privacySections } from "@/content/legal"
+import { userAgreementCalloutContent, userAgreementSections } from "@/content/legal"
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | Vouch",
-  description:
-    "Privacy policy for Vouch, including account, payment-provider, readiness, audit, and confirmation data handling.",
+  title: "User Agreement | Vouch",
+  description: "User agreement for Vouch accounts, provider flows, and confirmation conduct.",
 }
 
-export default function PrivacyRoute() {
-  const CalloutIcon = privacyCalloutContent.icon
+export default function UserAgreementRoute() {
+  const CalloutIcon = userAgreementCalloutContent.icon
 
   return (
     <main className="grid min-h-[calc(100dvh-8rem)] grid-rows-none gap-4 sm:gap-6 md:grid-rows-4 md:gap-8">
       <PageHero
-        eyebrow="Legal"
-        title="Privacy Policy"
-        body="Vouch minimizes data collection and stores provider references, statuses, timestamps, and audit-safe metadata."
+        eyebrow="Agreement"
+        title="User Agreement"
+        body="Use Vouch only for explicit, lawful, pre-arranged commitments where the confirmation rule is understood before anyone commits."
         className="min-h-0 border-2 border-neutral-100 bg-black p-5 shadow-[6px_6px_0_0_#1d4ed8] sm:p-6 md:p-8"
         contentClassName="p-0"
         titleClassName="max-w-4xl text-[clamp(3rem,7vw,6rem)]"
       />
       <section className="grid min-h-0 gap-4 sm:gap-6 md:row-span-3 md:grid-cols-[minmax(0,1fr)_24rem] md:gap-8">
-        <ContentSectionList sections={privacySections} className="min-h-0" />
+        <ContentSectionList sections={userAgreementSections} className="min-h-0" />
         <CalloutPanel
           className="self-start"
           icon={CalloutIcon}
-          title={privacyCalloutContent.title}
-          body={privacyCalloutContent.body}
+          title={userAgreementCalloutContent.title}
+          body={userAgreementCalloutContent.body}
           actions={
             <Button
               variant="primary"
               size="cta"
               className="w-full"
-              render={<Link href={privacyCalloutContent.action} />}
+              render={<Link href={userAgreementCalloutContent.action} />}
             >
-              {privacyCalloutContent.label}
+              {userAgreementCalloutContent.label}
               <ArrowRight className="size-5" />
             </Button>
           }

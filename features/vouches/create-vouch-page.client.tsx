@@ -2,18 +2,34 @@
 
 import { zodResolver } from "@hookform/resolvers/zod"
 import { ArrowRight, LoaderCircle } from "lucide-react"
+import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useTransition } from "react"
+import { useState, useTransition } from "react"
 import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { CreateVouchFieldGroup } from "@/components/forms/create-vouch-field-group"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldError } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet"
 import { createVouch } from "@/lib/actions/vouchActions"
 import { cn } from "@/lib/utils"
 import { vouchPageCopy } from "@/content/vouches"
@@ -107,8 +123,17 @@ export function CreateVouchDraftForm({ className }: { className?: string | undef
         })}
       >
         <CardContent className="grid gap-5">
-          <CreateVouchFieldGroup id="amount" label="Amount" error={form.formState.errors.amount?.message}>
-            <Input id="amount" inputMode="decimal" placeholder="$250.00" {...form.register("amount")} />
+          <CreateVouchFieldGroup
+            id="amount"
+            label="Amount"
+            error={form.formState.errors.amount?.message}
+          >
+            <Input
+              id="amount"
+              inputMode="decimal"
+              placeholder="$250.00"
+              {...form.register("amount")}
+            />
           </CreateVouchFieldGroup>
 
           <CreateVouchFieldGroup
@@ -116,7 +141,11 @@ export function CreateVouchDraftForm({ className }: { className?: string | undef
             label="Appointment date/time"
             error={form.formState.errors.appointmentStartsAt?.message}
           >
-            <Input id="appointmentStartsAt" type="datetime-local" {...form.register("appointmentStartsAt")} />
+            <Input
+              id="appointmentStartsAt"
+              type="datetime-local"
+              {...form.register("appointmentStartsAt")}
+            />
           </CreateVouchFieldGroup>
 
           <div className="grid gap-5 sm:grid-cols-2">
@@ -125,14 +154,22 @@ export function CreateVouchDraftForm({ className }: { className?: string | undef
               label="Confirmation opens"
               error={form.formState.errors.confirmationOpensAt?.message}
             >
-              <Input id="confirmationOpensAt" type="datetime-local" {...form.register("confirmationOpensAt")} />
+              <Input
+                id="confirmationOpensAt"
+                type="datetime-local"
+                {...form.register("confirmationOpensAt")}
+              />
             </CreateVouchFieldGroup>
             <CreateVouchFieldGroup
               id="confirmationExpiresAt"
               label="Confirmation closes"
               error={form.formState.errors.confirmationExpiresAt?.message}
             >
-              <Input id="confirmationExpiresAt" type="datetime-local" {...form.register("confirmationExpiresAt")} />
+              <Input
+                id="confirmationExpiresAt"
+                type="datetime-local"
+                {...form.register("confirmationExpiresAt")}
+              />
             </CreateVouchFieldGroup>
           </div>
 
@@ -160,6 +197,7 @@ export function ConfirmCreateVouchForm({
   className?: string | undefined
 }) {
   const [isPending, startTransition] = useTransition()
+  const [confirmationOpen, setConfirmationOpen] = useState(false)
   const form = useForm<CommitFormValues>({
     resolver: zodResolver(commitFormSchema),
     defaultValues: {
@@ -178,6 +216,7 @@ export function ConfirmCreateVouchForm({
         <CardDescription>{vouchPageCopy.create.reviewBody}</CardDescription>
       </CardHeader>
       <form
+        id="confirm-create-vouch-form"
         onSubmit={form.handleSubmit((values) => {
           startTransition(async () => {
             const result = await createVouch({
@@ -227,44 +266,93 @@ export function ConfirmCreateVouchForm({
             <AlertDescription>{vouchPageCopy.create.feeBody}</AlertDescription>
           </Alert>
 
-          <Controller
-            control={form.control}
-            name="disclaimerAccepted"
-            render={({ field, fieldState }) => (
-              <Field>
-                <label className="flex items-start gap-3 border border-neutral-700 bg-black/70 p-4">
-                  <Checkbox
-                    className="mt-1"
-                    checked={field.value}
-                    disabled={isPending}
-                    aria-invalid={Boolean(fieldState.error)}
-                    onCheckedChange={(checked) => field.onChange(checked === true)}
-                  />
-                  <span>
-                    <span className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-white uppercase">
-                      {vouchPageCopy.create.disclaimerLabel}
-                    </span>
-                    <span className="mt-2 block text-xs leading-5 font-semibold text-neutral-400">
-                      Sent Vouches are immutable. Customer payment authorization happens through hosted Stripe checkout.
-                    </span>
-                  </span>
-                </label>
-                <FieldError
-                  errors={
-                    fieldState.error?.message ? [{ message: fieldState.error.message }] : undefined
-                  }
-                />
-              </Field>
-            )}
-          />
+          <Alert>
+            <AlertTitle>{vouchPageCopy.create.disclaimerLabel}</AlertTitle>
+            <AlertDescription>
+              Final confirmation is handled in a sheet with the required disclaimer acknowledgement
+              before hosted Stripe checkout.
+            </AlertDescription>
+          </Alert>
         </CardContent>
         <CardFooter>
-          <Button type="submit" size="cta" className="w-full justify-between" disabled={isPending}>
-            {isPending ? <LoaderCircle className="size-5 animate-spin" /> : null}
-            {vouchPageCopy.create.commitAction}
+          <Button
+            type="button"
+            size="cta"
+            className="w-full justify-between"
+            disabled={isPending}
+            onClick={() => setConfirmationOpen(true)}
+          >
+            Review disclaimer
             <ArrowRight className="size-5" />
           </Button>
         </CardFooter>
+        <Sheet open={confirmationOpen} onOpenChange={setConfirmationOpen}>
+          <SheetContent className="border-l-2 border-neutral-100 bg-black text-white shadow-[6px_0_0_0_#1d4ed8]">
+            <SheetHeader className="border-b-2 border-neutral-100 p-5">
+              <SheetTitle className="font-(family-name:--font-display) text-4xl leading-none tracking-[0.04em] text-white uppercase">
+                {vouchPageCopy.create.commitAction}
+              </SheetTitle>
+              <SheetDescription className="text-sm leading-6 font-bold text-neutral-400">
+                Confirm the immutable Vouch terms before Vouch sends you to hosted Stripe checkout.
+              </SheetDescription>
+            </SheetHeader>
+            <div className="grid gap-5 p-5">
+              <Controller
+                control={form.control}
+                name="disclaimerAccepted"
+                render={({ field, fieldState }) => (
+                  <Field>
+                    <label className="flex items-start gap-3 border-2 border-neutral-100 bg-neutral-950 p-4">
+                      <Checkbox
+                        className="mt-1 rounded-none"
+                        checked={field.value}
+                        disabled={isPending}
+                        aria-invalid={Boolean(fieldState.error)}
+                        onCheckedChange={(checked) => field.onChange(checked === true)}
+                      />
+                      <span>
+                        <span className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-white uppercase">
+                          {vouchPageCopy.create.disclaimerLabel}
+                        </span>
+                        <span className="mt-2 block text-xs leading-5 font-semibold text-neutral-400">
+                          Sent Vouches are immutable. Customer payment authorization happens through
+                          hosted Stripe checkout. Read the{" "}
+                          <Link
+                            href="/disclaimer"
+                            className="text-primary underline-offset-4 hover:underline"
+                          >
+                            disclaimer
+                          </Link>
+                          .
+                        </span>
+                      </span>
+                    </label>
+                    <FieldError
+                      errors={
+                        fieldState.error?.message
+                          ? [{ message: fieldState.error.message }]
+                          : undefined
+                      }
+                    />
+                  </Field>
+                )}
+              />
+            </div>
+            <SheetFooter className="border-t-2 border-neutral-100 p-5">
+              <Button
+                type="submit"
+                form="confirm-create-vouch-form"
+                size="cta"
+                className="w-full justify-between"
+                disabled={isPending}
+              >
+                {isPending ? <LoaderCircle className="size-5 animate-spin" /> : null}
+                {vouchPageCopy.create.commitAction}
+                <ArrowRight className="size-5" />
+              </Button>
+            </SheetFooter>
+          </SheetContent>
+        </Sheet>
       </form>
     </Card>
   )
