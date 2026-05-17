@@ -1,0 +1,17 @@
+export const pageGeometry = {
+  shell: "flex min-h-dvh flex-col bg-transparent text-foreground",
+  routeBody: "flex-1 bg-transparent pb-20 md:pb-0",
+  frame: "mx-auto w-full max-w-7xl px-4 py-4 sm:px-6 md:px-8 md:py-8",
+  gap: "gap-4 sm:gap-6 md:gap-8",
+  pageA: "grid min-h-[calc(100dvh-8rem)] grid-rows-3 gap-4 sm:gap-6 md:gap-8",
+  pageB: "grid min-h-[calc(100dvh-8rem)] grid-rows-3 gap-4 sm:gap-6 md:gap-8",
+  pageC: "grid min-h-[calc(100dvh-8rem)] grid-rows-4 gap-4 sm:gap-6 md:gap-8",
+  twoColumns: "grid min-h-0 grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 md:gap-8",
+  panel: "min-h-0 rounded-none border-2 border-neutral-100 bg-neutral-950 p-5 shadow-[6px_6px_0_0_rgb(255_255_255)] sm:p-6 md:p-8",
+  panelMuted: "min-h-0 rounded-none border-2 border-neutral-800 bg-black/70 p-5 shadow-[6px_6px_0_0_rgb(38_38_38)] sm:p-6 md:p-8",
+  panelBlue: "min-h-0 rounded-none border-2 border-blue-500 bg-neutral-950 p-5 shadow-[6px_6px_0_0_rgb(37_99_235)] sm:p-6 md:p-8",
+  panelInner: "flex h-full min-h-0 flex-col justify-center gap-3",
+  eyebrow: "font-mono text-xs font-black uppercase tracking-[0.2em] text-blue-400",
+  title: "font-(family-name:--font-display) text-3xl font-black uppercase leading-none tracking-[0.04em] text-white sm:text-4xl md:text-6xl",
+  subtitle: "max-w-3xl text-base font-semibold leading-7 text-neutral-300 md:text-lg",
+} as const
