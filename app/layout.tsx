@@ -1,19 +1,10 @@
 // app/layout.tsx
 
 import type { Metadata, Viewport } from "next"
-import { Archivo, Archivo_Black, Bebas_Neue, JetBrains_Mono } from "next/font/google"
+import { Archivo_Black, Bebas_Neue, JetBrains_Mono } from "next/font/google"
 import type { ReactNode } from "react"
-
 import { AppProvider } from "@/components/app/app-providers"
-
 import "./globals.css"
-
-const archivo = Archivo({
-  variable: "--font-sans",
-  subsets: ["latin"],
-  display: "swap",
-  weight: ["400", "500", "600", "700", "800", "900"],
-})
 
 const archivoBlack = Archivo_Black({
   variable: "--font-brand",
@@ -36,8 +27,7 @@ const jetBrainsMono = JetBrains_Mono({
   weight: ["400", "500", "600", "700", "800"],
 })
 
-const appUrl =
-  process.env.NEXT_PUBLIC_APP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
+const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
@@ -114,10 +104,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${archivoBlack.variable} ${bebasNeue.variable} ${jetBrainsMono.variable} dark`}
+      className={`${archivoBlack.variable} ${bebasNeue.variable} ${jetBrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="selection:text-primary-foreground min-h-dvh overflow-x-hidden font-sans antialiased">
+      <body className="min-h-dvh overflow-x-hidden">
         <AppProvider>{children}</AppProvider>
       </body>
     </html>

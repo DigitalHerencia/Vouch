@@ -1,56 +1,57 @@
 import type { ReactNode } from "react"
 
-import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import { Button } from "../ui/button"
+import { landingHeroActionsContent } from "@/content/marketing"
+import Link from "next/link"
+import { ArrowDown, ArrowRight } from "lucide-react"
 
 export function PageHero({
   eyebrow,
   title,
   body,
   actions,
-  className,
-  contentClassName,
-  titleClassName,
-  bodyClassName,
 }: {
   eyebrow?: ReactNode
   title: ReactNode
   body?: ReactNode
   actions?: ReactNode
-  className?: string
-  contentClassName?: string
-  titleClassName?: string
-  bodyClassName?: string
 }) {
   return (
-    <Card className={cn("min-w-0 p-5 sm:p-6 md:p-8", className)}>
-      <CardContent className={cn("space-y-6 p-0", contentClassName)}>
+    <section className="space-y-6">
+      <div className="flex items-center gap-3 uppercase">
         {eyebrow ? (
-          <p className="flex items-center gap-3 font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-neutral-100 uppercase">
-            <span className="bg-primary size-2" />
+          <p>
+            <span className="size-2 bg-blue-600" />
             {eyebrow}
           </p>
         ) : null}
-        <h1
-          className={cn(
-            "max-w-5xl font-(family-name:--font-brand) text-[clamp(3.5rem,9vw,7.75rem)] leading-[0.86] font-black tracking-normal text-white uppercase",
-            titleClassName
-          )}
-        >
-          {title}
-        </h1>
-        {body ? (
-          <p
-            className={cn(
-              "max-w-2xl text-base leading-7 font-bold text-neutral-300 sm:text-lg",
-              bodyClassName
-            )}
+      </div>
+
+      <h1 className="font-brand text-5xl leading-tight font-black tracking-tight text-neutral-100 uppercase shadow-blue-600 md:text-7xl">
+        {title}
+      </h1>
+
+      {body ? <p className="text-neutral-400">{body}</p> : null}
+
+      {actions ? (
+        actions
+      ) : (
+        <div className="flex flex-row gap-3 sm:flex-col md:flex-row">
+          <Button
+            variant="primary"
+            size="cta"
+            render={<Link href="/sign-up?return_to=/vouches/new" />}
           >
-            {body}
-          </p>
-        ) : null}
-        {actions ? <div className="flex flex-col gap-3 sm:flex-row">{actions}</div> : null}
-      </CardContent>
-    </Card>
+            {landingHeroActionsContent.primaryLabel}
+            <ArrowRight className="size-5" />
+          </Button>
+          <Button variant="secondary" size="cta" render={<Link href="#process" />}>
+            {landingHeroActionsContent.secondaryLabel}
+            <ArrowDown className="size-5" />
+          </Button>
+        </div>
+      )}
+    </section>
   )
 }

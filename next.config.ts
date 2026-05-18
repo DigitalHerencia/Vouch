@@ -29,6 +29,16 @@ const nextConfig: NextConfig = {
     tsconfigPath: "tsconfig.json",
   },
 
+  images: {
+    localPatterns: [
+      {
+        pathname: "/**",
+        search: "",
+      },
+    ],
+    remotePatterns: [],
+  },
+
   async headers() {
     return [
       {

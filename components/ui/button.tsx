@@ -1,78 +1,70 @@
-// components/ui/button.tsx
-
-import { Button as ButtonPrimitive } from "@base-ui/react/button"
+import * as React from "react"
+import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-    [
-        "group/button inline-flex shrink-0 items-center justify-center rounded-none border bg-clip-padding",
-        "font-(family-name:--font-display) leading-none font-normal tracking-[0.08em] whitespace-nowrap uppercase",
-        "transition-all duration-[160ms] outline-none select-none",
-        "hover:-translate-y-px active:not-aria-[haspopup]:translate-y-0",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-3",
-        "disabled:pointer-events-none disabled:translate-y-0 disabled:opacity-50",
-        "aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20",
-        "dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40",
-        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-    ].join(" "),
-    {
-        variants: {
-            variant: {
-                default:
-                    "border-primary bg-primary text-primary-foreground hover:border-white hover:bg-white hover:text-primary aria-expanded:border-white aria-expanded:bg-white aria-expanded:text-primary",
-                primary:
-                    "border-primary bg-primary text-primary-foreground hover:border-white hover:bg-white hover:text-primary aria-expanded:border-white aria-expanded:bg-white aria-expanded:text-primary",
-                secondary:
-                    "border-transparent bg-transparent text-primary-foreground hover:border-primary hover:bg-transparent hover:text-primary aria-expanded:border-primary aria-expanded:bg-transparent aria-expanded:text-primary",
-                outline:
-                    "border-transparent bg-transparent text-primary-foreground hover:border-primary hover:bg-transparent hover:text-primary aria-expanded:border-primary aria-expanded:bg-transparent aria-expanded:text-primary",
-                ghost:
-                    "border-transparent bg-transparent text-neutral-300 hover:border-neutral-800 hover:bg-neutral-950 hover:text-white aria-expanded:border-neutral-800 aria-expanded:bg-neutral-950 aria-expanded:text-white",
-                destructive:
-                    "border-red-500/35 bg-red-500/10 text-red-200 hover:border-red-400 hover:bg-red-500/20 hover:text-red-100 focus-visible:border-red-400 focus-visible:ring-red-500/25",
-                link: "border-transparent bg-transparent px-0 text-primary underline-offset-4 hover:scale-105 hover:translate-y-0 hover:text-white hover:underline",
-                nav: "border-transparent bg-transparent text-white underline-offset-4 hover:scale-105 hover:translate-y-0 hover:border-transparent hover:bg-transparent hover:text-primary hover:underline",
-            },
-            size: {
-                default:
-                    "h-11 gap-2 px-4 text-sm sm:text-base [&_svg:not([class*='size-'])]:size-4",
-                xs: "h-7 gap-1.5 px-2.5 text-[12px] tracking-[0.07em] [&_svg:not([class*='size-'])]:size-3",
-                sm: "h-9 gap-2 px-3 text-[13px] tracking-[0.075em] [&_svg:not([class*='size-'])]:size-3.5",
-                lg: "h-12 gap-3 px-5 text-sm sm:text-base [&_svg:not([class*='size-'])]:size-5",
-                cta: "h-14.5 gap-6 px-7 text-center text-sm tracking-[0.1em] sm:text-base lg:text-lg [&_svg:not([class*='size-'])]:size-5",
-                nav: "h-auto gap-2 px-0 text-sm tracking-[0.1em] sm:text-base lg:text-lg",
-                icon: "size-11 p-0 [&_svg:not([class*='size-'])]:size-5",
-                "icon-xs": "size-7 p-0 [&_svg:not([class*='size-'])]:size-3",
-                "icon-sm": "size-9 p-0 [&_svg:not([class*='size-'])]:size-4",
-                "icon-lg": "size-12 p-0 [&_svg:not([class*='size-'])]:size-5",
-            },
-        },
-        defaultVariants: {
-            variant: "default",
-            size: "default",
-        },
+  "border-foreground focus-visible:ring-ring inline-flex items-center justify-center gap-2 border-3 text-sm font-bold tracking-wide whitespace-nowrap uppercase transition-all duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  {
+    variants: {
+      variant: {
+        default:
+          "bg-primary text-primary-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+        secondary:
+          "bg-secondary text-secondary-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+        accent:
+          "bg-accent text-accent-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+        destructive:
+          "bg-destructive text-destructive-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+        outline:
+          "bg-background text-foreground hover:bg-muted shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+        ghost: "hover:bg-muted hover:border-foreground border-transparent shadow-none",
+        link: "text-primary border-transparent underline-offset-4 shadow-none hover:underline",
+        noShadow: "bg-primary text-primary-foreground",
+        reverse:
+          "bg-primary text-primary-foreground hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[4px_4px_0px_hsl(var(--shadow-color))]",
+      },
+      size: {
+        default: "h-11 px-5 py-2",
+        sm: "h-9 px-4 text-xs",
+        lg: "h-12 px-8 text-base",
+        xl: "h-14 px-10 text-lg",
+        icon: "h-11 w-11",
+      },
+      animation: {
+        none: "",
+        pulse: "animate-[brutal-pulse_2s_ease-in-out_infinite]",
+        bounce: "animate-[brutal-bounce_0.5s_ease-in-out_infinite]",
+        shake: "hover:animate-[brutal-shake_0.4s_ease-in-out]",
+        wiggle: "hover:animate-[brutal-wiggle_0.3s_ease-in-out]",
+        pop: "hover:animate-[brutal-pop_0.2s_ease-out] active:scale-95",
+      },
     },
+    defaultVariants: {
+      variant: "default",
+      size: "default",
+      animation: "none",
+    },
+  }
 )
 
-function Button({
-    className,
-    variant = "default",
-    size = "default",
-    render,
-    nativeButton,
-    ...props
-}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
-    return (
-        <ButtonPrimitive
-            data-slot="button"
-            nativeButton={nativeButton ?? !render}
-            render={render}
-            className={cn(buttonVariants({ variant, size, className }))}
-            {...props}
-        />
-    )
+export interface ButtonProps
+  extends React.ButtonHTMLAttributes<HTMLButtonElement>, VariantProps<typeof buttonVariants> {
+  asChild?: boolean
 }
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ className, variant, size, animation, asChild = false, ...props }, ref) => {
+    const Comp = asChild ? Slot : "button"
+    return (
+      <Comp
+        className={cn(buttonVariants({ variant, size, animation, className }))}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Button.displayName = "Button"
 
 export { Button, buttonVariants }

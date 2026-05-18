@@ -19,7 +19,7 @@ export function MetricGrid({ items, className }: { items: MetricGridItem[]; clas
         <Card
           key={`${metric.label}-${metric.value}`}
           variant="ghost"
-          className="border-neutral-100 sm:border-r-2 sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r-2 lg:[&:nth-child(4n)]:border-r-0"
+          className="border-neutral-100 sm:border-r-2 sm:nth-[2n]:border-r-0 lg:nth-[2n]:border-r-2 lg:nth-[4n]:border-r-0"
         >
           <CardContent className="p-5 sm:p-6">
             <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-neutral-400 uppercase">

@@ -22,7 +22,7 @@ export function CardGrid({
   cardClassName?: string | undefined | undefined
 }) {
   return (
-    <div className={cn("grid gap-4", className)}>
+    <div className={cn("grid gap-4 sm:grid-cols-2 lg:grid-cols-4", className)}>
       {items.map((item) => (
         <CardGridTile key={item.title} item={item} className={cardClassName} />
       ))}
