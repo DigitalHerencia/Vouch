@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react"
 import type { ReactNode } from "react"
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Card, CardDescription, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 export function CalloutPanel({
@@ -18,26 +18,19 @@ export function CalloutPanel({
   className?: string
 }) {
   return (
-    <Alert
-      className={cn(
-        "rounded-none border-2 border-neutral-100 bg-black p-5 text-white shadow-[6px_6px_0_0_#1d4ed8] sm:p-6",
-        className
-      )}
-    >
+    <Card className={cn("p-5 text-white sm:p-6", className)}>
       <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
         {Icon ? <Icon className="size-10 shrink-0 text-white" strokeWidth={1.7} /> : null}
         <div className="min-w-0 flex-1">
-          <AlertTitle className="font-(family-name:--font-display) text-3xl leading-none tracking-[0.04em] text-white uppercase">
-            {title}
-          </AlertTitle>
+          <CardTitle className="text-3xl">{title}</CardTitle>
           {body ? (
-            <AlertDescription className="mt-2 text-sm leading-6 font-bold text-neutral-400">
+            <CardDescription className="mt-2 text-sm leading-6 font-bold text-neutral-400">
               {body}
-            </AlertDescription>
+            </CardDescription>
           ) : null}
         </div>
         {actions ? <div className="flex shrink-0 flex-col gap-3 sm:flex-row">{actions}</div> : null}
       </div>
-    </Alert>
+    </Card>
   )
 }

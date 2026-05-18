@@ -23,11 +23,11 @@ export function PageHero({
   bodyClassName?: string
 }) {
   return (
-    <Card className={cn("min-w-0 rounded-none border-0 bg-transparent shadow-none", className)}>
+    <Card className={cn("min-w-0 p-5 sm:p-6 md:p-8", className)}>
       <CardContent className={cn("space-y-6 p-0", contentClassName)}>
         {eyebrow ? (
           <p className="flex items-center gap-3 font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-neutral-100 uppercase">
-            <span className="size-2 bg-primary" />
+            <span className="bg-primary size-2" />
             {eyebrow}
           </p>
         ) : null}

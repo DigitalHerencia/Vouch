@@ -26,7 +26,7 @@ export function PaymentStatusPanel({
   ]
 
   return (
-    <Card className="bg-black/80">
+    <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>

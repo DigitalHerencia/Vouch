@@ -15,9 +15,14 @@ export interface PublicShellProps {
 
 export function PublicShell({ children, className, withMobileBottomNav = true }: PublicShellProps) {
   return (
-    <div className={cn("flex min-h-dvh flex-col bg-transparent text-foreground", className)}>
+    <div className={cn("flex min-h-dvh flex-col", className)}>
       <PublicHeader />
-      <div className={cn("flex-1 bg-transparent", withMobileBottomNav && "pb-20 md:pb-0")}>
+      <div
+        className={cn(
+          "mx-auto min-h-[calc(100dvh-4rem)] w-full max-w-7xl px-4 py-4 sm:px-6 md:min-h-[calc(100dvh-8rem)] md:px-8 md:py-8",
+          withMobileBottomNav && "pb-20 md:pb-0"
+        )}
+      >
         {children}
       </div>
       <div className="hidden md:block">

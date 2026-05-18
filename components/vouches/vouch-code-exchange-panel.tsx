@@ -12,14 +12,12 @@ export function VouchCodeExchangePanel({
   children: ReactNode
 }) {
   return (
-    <Card className="bg-black/80 shadow-none">
+    <Card variant="inset">
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4">
-        <p className="text-sm leading-6 font-bold text-neutral-400">
-          {body}
-        </p>
+        <p className="text-sm leading-6 font-bold text-neutral-400">{body}</p>
         {children}
       </CardContent>
     </Card>

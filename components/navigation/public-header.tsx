@@ -1,3 +1,5 @@
+// components/navigation/public-header.tsx
+
 import type { ReactNode } from "react"
 import Link from "next/link"
 
@@ -31,8 +33,8 @@ export function PublicHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 h-21 w-full border-b border-neutral-900 bg-black",
-        className,
+        "sticky top-0 z-50 h-20 w-full border-b border-neutral-700 bg-neutral-950",
+        className
       )}
     >
       <div className="mx-auto hidden h-full w-full max-w-7xl items-center justify-between px-6 sm:px-10 md:flex lg:px-12">

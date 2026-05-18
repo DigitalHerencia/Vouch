@@ -14,7 +14,7 @@ export function ContentSectionList({
   className?: string
 }) {
   return (
-    <Card className={cn("rounded-none border-2 border-neutral-100 bg-black/80", className)}>
+    <Card className={cn("overflow-hidden", className)}>
       {sections.map((section) => (
         <section
           key={section.heading}

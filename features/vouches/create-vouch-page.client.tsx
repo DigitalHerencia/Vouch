@@ -31,7 +31,6 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { createVouch } from "@/lib/actions/vouchActions"
-import { cn } from "@/lib/utils"
 import { vouchPageCopy } from "@/content/vouches"
 
 const draftFormSchema = z
@@ -112,7 +111,7 @@ export function CreateVouchDraftForm({ className }: { className?: string | undef
   })
 
   return (
-    <Card className={cn("bg-black/80", className)}>
+    <Card className={className}>
       <CardHeader>
         <CardTitle>{vouchPageCopy.create.detailsHeader}</CardTitle>
         <CardDescription>{vouchPageCopy.create.readyBody}</CardDescription>
@@ -210,7 +209,7 @@ export function ConfirmCreateVouchForm({
   const feeEstimate = Math.max(Math.round(amountCents * 0.05), 500)
 
   return (
-    <Card className={cn("bg-black/80", className)}>
+    <Card className={className}>
       <CardHeader>
         <CardTitle>{vouchPageCopy.create.reviewTitle}</CardTitle>
         <CardDescription>{vouchPageCopy.create.reviewBody}</CardDescription>

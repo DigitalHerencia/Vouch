@@ -8,7 +8,7 @@ export interface VouchActionsPanelProps {
 
 export function VouchActionsPanel({ title, providerBoundary }: VouchActionsPanelProps) {
   return (
-    <Card className="bg-black/80">
+    <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>

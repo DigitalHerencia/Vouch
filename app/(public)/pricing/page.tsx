@@ -25,8 +25,8 @@ export default function PricingPage() {
         <PageHero
           title={PricingHeroContent.title}
           body={PricingHeroContent.body}
-          className="flex min-h-0 border-2 border-neutral-100 bg-black p-5 shadow-[6px_6px_0_0_#1d4ed8] sm:p-6 md:p-8"
-          contentClassName="flex h-full flex-col justify-center p-0"
+          className="flex min-h-0"
+          contentClassName="flex h-full flex-col justify-center"
           titleClassName="max-w-[9ch] text-[clamp(3.5rem,7vw,7rem)]"
           bodyClassName="max-w-xl"
           actions={
@@ -53,7 +53,7 @@ export default function PricingPage() {
         <MetricGrid items={[...pricingStats]} className="min-h-0 lg:grid-cols-2" />
         <section className="grid min-h-0 gap-4">
           {pricingNotes.map((note) => (
-            <Card key={note.title} className="border-2 border-neutral-100 bg-black">
+            <Card key={note.title}>
               <CardContent>
                 <SectionIntro
                   eyebrow={note.eyebrow}

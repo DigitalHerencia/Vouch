@@ -21,13 +21,16 @@ export function LifecycleStatusPanel({
   ]
 
   return (
-    <Card className="bg-black/80">
+    <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
         {rows.map(([label, value]) => (
-          <div key={label} className="flex items-start justify-between gap-4 border-b border-neutral-800 px-5 py-4 last:border-b-0">
+          <div
+            key={label}
+            className="flex items-start justify-between gap-4 border-b border-neutral-800 px-5 py-4 last:border-b-0"
+          >
             <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-500 uppercase">
               {label}
             </p>

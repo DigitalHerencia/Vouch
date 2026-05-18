@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge"
+import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import type { VouchStatus } from "@/types/vouch"
 
@@ -32,17 +33,12 @@ export function VouchDetailHeader({
   className,
 }: VouchDetailHeaderProps) {
   return (
-    <section
-      className={cn(
-        "grid gap-6 border border-neutral-700 bg-black/80 p-6 shadow-[6px_6px_0_0_#1d4ed8] lg:grid-cols-[1fr_auto]",
-        className
-      )}
-    >
+    <Card className={cn("grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_auto]", className)}>
       <div className="min-w-0">
         <p className="font-mono text-xs font-bold tracking-[0.08em] text-neutral-500 uppercase">
           {copy.title} / {vouchId}
         </p>
-        <h1 className="mt-3 max-w-5xl font-(family-name:--font-brand) text-[clamp(3rem,7vw,6rem)] leading-[0.88] text-white uppercase">
+        <h1 className="mt-3 max-w-5xl font-(family-name:--font-brand) text-[clamp(2.75rem,6vw,5rem)] leading-[0.88] break-all text-white uppercase">
           {title}
         </h1>
         <p className="mt-4 max-w-3xl text-base leading-7 font-bold text-neutral-400">
@@ -54,7 +50,7 @@ export function VouchDetailHeader({
         <StatusItem label={copy.labels.amount} value={amountLabel} />
         <StatusItem label={copy.labels.role} value={currentUserRoleLabel} />
       </div>
-    </section>
+    </Card>
   )
 }
 

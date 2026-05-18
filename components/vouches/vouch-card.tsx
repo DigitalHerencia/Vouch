@@ -47,12 +47,7 @@ export function VouchCard({
 }: VouchCardProps) {
   return (
     <Link href={href} className="block">
-      <Card
-        className={cn(
-          "group border-2 border-neutral-100 bg-black transition-transform hover:-translate-y-0.5",
-          className
-        )}
-      >
+      <Card className={cn("group transition-transform hover:-translate-y-0.5", className)}>
         <CardContent className="grid gap-0 p-0 md:grid-cols-[1fr_2fr_1fr]">
           <div className="flex min-h-28 items-center border-b-2 border-neutral-100 p-5 md:border-r-2 md:border-b-0">
             <Badge className={cn("w-full justify-center", statusTone(statusLabel))}>
@@ -89,7 +84,7 @@ export function VouchCard({
             <p className="mt-3 font-mono text-lg leading-tight font-black text-white">
               {deadlineLabel}
             </p>
-            <p className="mt-3 text-xs font-bold tracking-[0.12em] text-primary uppercase">
+            <p className="text-primary mt-3 text-xs font-bold tracking-[0.12em] uppercase">
               Open details
             </p>
           </div>

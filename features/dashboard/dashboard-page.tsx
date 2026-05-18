@@ -118,14 +118,13 @@ export async function DashboardPage() {
   return (
     <main className="grid min-h-[calc(100dvh-8rem)] grid-rows-none gap-4 sm:gap-6 md:grid-rows-4 md:gap-8">
       <section className="grid min-h-0 gap-4 sm:gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-8">
-        <section className="border-2 border-neutral-100 bg-black p-5 shadow-[6px_6px_0_0_#1d4ed8] sm:p-6">
-          <SectionIntro
-            eyebrow={dashboardContent.hero.eyebrow}
-            title={dashboardContent.hero.title}
-            body={dashboardContent.hero.body}
-            titleClassName="text-[clamp(3rem,6vw,5.5rem)]"
-          />
-        </section>
+        <SectionIntro
+          panel
+          eyebrow={dashboardContent.hero.eyebrow}
+          title={dashboardContent.hero.title}
+          body={dashboardContent.hero.body}
+          titleClassName="text-[clamp(3rem,6vw,5.5rem)]"
+        />
 
         <MetricGrid items={metrics} className="min-h-0 lg:grid-cols-3" />
       </section>

@@ -7,9 +7,9 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 export function CheckoutSuccessPage() {
   return (
     <main className="mx-auto grid min-h-[60vh] max-w-3xl place-items-center px-6 py-16">
-      <Card className="w-full bg-black/80">
+      <Card className="w-full">
         <CardHeader>
-          <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-primary uppercase">
+          <p className="text-primary font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] uppercase">
             Provider return
           </p>
           <CardTitle className="text-[clamp(2.75rem,6vw,5rem)]">

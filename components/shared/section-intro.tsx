@@ -1,5 +1,6 @@
 import type { ReactNode } from "react"
 
+import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 export function SectionIntro({
@@ -8,6 +9,7 @@ export function SectionIntro({
   body,
   actions,
   className,
+  panel = false,
   titleClassName,
   bodyClassName,
 }: {
@@ -16,14 +18,15 @@ export function SectionIntro({
   body?: ReactNode
   actions?: ReactNode
   className?: string
+  panel?: boolean
   titleClassName?: string
   bodyClassName?: string
 }) {
-  return (
-    <section className={cn("space-y-4", className)}>
+  const content = (
+    <section className={cn("space-y-4", !panel && className)}>
       {eyebrow ? (
-        <p className="flex items-center gap-3 font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-primary uppercase">
-          <span className="size-2 bg-primary" />
+        <p className="text-primary flex items-center gap-3 font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] uppercase">
+          <span className="bg-primary size-2" />
           {eyebrow}
         </p>
       ) : null}
@@ -47,5 +50,13 @@ export function SectionIntro({
       ) : null}
       {actions ? <div className="flex flex-col gap-3 sm:flex-row">{actions}</div> : null}
     </section>
+  )
+
+  if (!panel) return content
+
+  return (
+    <Card className={cn("flex min-h-0 p-5 sm:p-6 md:p-8", className)}>
+      <CardContent className="flex h-full flex-col justify-center p-0">{content}</CardContent>
+    </Card>
   )
 }

@@ -9,7 +9,7 @@ export interface VouchTimelinePanelProps {
 
 export function VouchTimelinePanel({ timeline, title, emptyLabel }: VouchTimelinePanelProps) {
   return (
-    <Card className="bg-black/80">
+    <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
@@ -17,9 +17,7 @@ export function VouchTimelinePanel({ timeline, title, emptyLabel }: VouchTimelin
         {timeline.length > 0 ? (
           <Timeline items={timeline} className="border-neutral-800 bg-black" />
         ) : (
-          <p className="text-sm leading-6 font-bold text-neutral-400">
-            {emptyLabel}
-          </p>
+          <p className="text-sm leading-6 font-bold text-neutral-400">{emptyLabel}</p>
         )}
       </CardContent>
     </Card>

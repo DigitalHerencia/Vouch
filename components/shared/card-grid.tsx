@@ -22,7 +22,7 @@ export function CardGrid({
   cardClassName?: string | undefined | undefined
 }) {
   return (
-    <div className={cn("grid gap-4 bg-black", className)}>
+    <div className={cn("grid gap-4", className)}>
       {items.map((item) => (
         <CardGridTile key={item.title} item={item} className={cardClassName} />
       ))}
@@ -33,13 +33,13 @@ export function CardGrid({
 function CardGridTile({ item, className }: { item: CardGridItem; className?: string | undefined }) {
   const Icon = item.icon
   const content = (
-    <Card className={cn("min-h-52 rounded-none border-neutral-700 bg-black", className)}>
+    <Card className={cn("min-h-52", className)}>
       <CardContent>
         {Icon ? <Icon className="size-9 text-white" strokeWidth={1.7} /> : null}
         <CardTitle className={cn("text-3xl", Icon ? "mt-8" : undefined)}>{item.title}</CardTitle>
         <CardDescription className="mt-4 text-sm leading-6 font-bold">{item.body}</CardDescription>
         {item.actionLabel ? (
-          <p className="mt-6 font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-primary uppercase">
+          <p className="text-primary mt-6 font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] uppercase">
             {item.actionLabel}
           </p>
         ) : null}

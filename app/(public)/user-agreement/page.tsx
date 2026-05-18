@@ -22,8 +22,7 @@ export default function UserAgreementRoute() {
         eyebrow="Agreement"
         title="User Agreement"
         body="Use Vouch only for explicit, lawful, pre-arranged commitments where the confirmation rule is understood before anyone commits."
-        className="min-h-0 border-2 border-neutral-100 bg-black p-5 shadow-[6px_6px_0_0_#1d4ed8] sm:p-6 md:p-8"
-        contentClassName="p-0"
+        className="min-h-0"
         titleClassName="max-w-4xl text-[clamp(3rem,7vw,6rem)]"
       />
       <section className="grid min-h-0 gap-4 sm:gap-6 md:row-span-3 md:grid-cols-[minmax(0,1fr)_24rem] md:gap-8">

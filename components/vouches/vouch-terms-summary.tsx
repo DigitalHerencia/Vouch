@@ -25,13 +25,16 @@ export function VouchTermsSummary({
   ]
 
   return (
-    <Card className="bg-black/80">
+    <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-0 p-0 sm:grid-cols-2 lg:grid-cols-4">
         {rows.map(([label, value]) => (
-          <div key={label} className="border-b border-neutral-800 p-5 sm:border-r sm:last:border-r-0 lg:border-b-0">
+          <div
+            key={label}
+            className="border-b border-neutral-800 p-5 sm:border-r sm:last:border-r-0 lg:border-b-0"
+          >
             <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-500 uppercase">
               {label}
             </p>

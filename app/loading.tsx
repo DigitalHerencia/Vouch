@@ -1,15 +1,17 @@
 // app/loading.tsx
 
+import { Card } from "@/components/ui/card"
+
 const LOADING_STEPS = ["Auth", "State", "View"] as const
 
 export default function Loading() {
   return (
     <main className="flex min-h-dvh items-center justify-center px-6 py-12">
-      <section
+      <Card
         role="status"
         aria-live="polite"
         aria-label="Loading Vouch"
-        className="w-full max-w-180 border border-neutral-700 bg-black/80 p-6 shadow-[6px_6px_0_0_#1d4ed8] sm:p-8"
+        className="w-full max-w-180 p-6 sm:p-8"
       >
         <div className="flex items-start justify-between gap-6 border-b border-neutral-800 pb-6">
           <div>
@@ -38,7 +40,7 @@ export default function Loading() {
           </div>
 
           <div className="mt-5 h-4 overflow-hidden border border-neutral-700 bg-black">
-            <div className="h-full w-2/3 animate-[vouch-load_1.15s_ease-in-out_infinite] bg-primary shadow-[0_0_30px_rgba(29,78,216,0.35)]" />
+            <div className="bg-primary h-full w-2/3 animate-[vouch-load_1.15s_ease-in-out_infinite] shadow-[0_0_30px_rgba(29,78,216,0.35)]" />
           </div>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">
@@ -52,7 +54,7 @@ export default function Loading() {
             server-authoritative.
           </p>
         </div>
-      </section>
+      </Card>
     </main>
   )
 }

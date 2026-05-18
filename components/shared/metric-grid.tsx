@@ -11,14 +11,15 @@ export function MetricGrid({ items, className }: { items: MetricGridItem[]; clas
   return (
     <section
       className={cn(
-        "grid gap-0 border-2 border-neutral-100 bg-black shadow-[6px_6px_0_0_#1d4ed8] sm:grid-cols-2 lg:grid-cols-4",
+        "grid gap-0 overflow-hidden border-2 border-neutral-100 bg-black shadow-[6px_6px_0_0_#1d4ed8] sm:grid-cols-2 lg:grid-cols-4",
         className
       )}
     >
       {items.map((metric) => (
         <Card
           key={`${metric.label}-${metric.value}`}
-          className="rounded-none border-0 border-neutral-100 bg-black shadow-none sm:border-r-2 sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r-2 lg:[&:nth-child(4n)]:border-r-0"
+          variant="ghost"
+          className="border-neutral-100 sm:border-r-2 sm:[&:nth-child(2n)]:border-r-0 lg:[&:nth-child(2n)]:border-r-2 lg:[&:nth-child(4n)]:border-r-0"
         >
           <CardContent className="p-5 sm:p-6">
             <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-neutral-400 uppercase">

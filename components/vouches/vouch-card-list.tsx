@@ -1,6 +1,7 @@
 import type { LucideIcon } from "lucide-react"
 
 import { EmptyState } from "@/components/status/empty-state"
+import { Card } from "@/components/ui/card"
 import { VouchCard, type VouchCardProps } from "@/components/vouches/vouch-card"
 import { cn } from "@/lib/utils"
 
@@ -28,9 +29,9 @@ export function VouchCardList({
 }: VouchCardListProps) {
   return (
     <section className={cn("grid gap-4", className)}>
-      <header className="flex flex-col gap-3 border-2 border-neutral-100 bg-black p-5 shadow-[6px_6px_0_0_#1d4ed8] sm:flex-row sm:items-center sm:justify-between">
+      <Card className="flex flex-col gap-3 p-5 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-primary uppercase">
+          <p className="text-primary font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] uppercase">
             {labels.eyebrow}
           </p>
           <h2 className="mt-2 font-(family-name:--font-display) text-4xl leading-none tracking-[0.03em] text-white uppercase">
@@ -43,7 +44,7 @@ export function VouchCardList({
           ) : null}
         </div>
         {Icon ? <Icon className="size-8 text-white" strokeWidth={1.7} /> : null}
-      </header>
+      </Card>
 
       {rows.length > 0 ? (
         <div className="grid gap-4">

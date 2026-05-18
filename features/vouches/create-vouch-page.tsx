@@ -19,7 +19,7 @@ export async function CreateVouchPage() {
         body={vouchPageCopy.create.readyBody}
       />
       {blockedReason ? (
-        <Card className="bg-black/80">
+        <Card>
           <CardHeader>
             <CardTitle>{vouchPageCopy.create.blockedTitle}</CardTitle>
             <CardDescription>{blockedReason}</CardDescription>

@@ -1,16 +1,15 @@
-// components/navigation/mobile-bottom-nav.tsx
-
 "use client"
 
 import {
-    CreditCard,
-    FileText,
-    HelpCircle,
-    Home,
-    Plus,
-    Shield,
-    ShieldCheck,
-    type LucideIcon,
+  CreditCard,
+  FileText,
+  HelpCircle,
+  Home,
+  Plus,
+  Shield,
+  ShieldCheck,
+  User,
+  type LucideIcon,
 } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -22,187 +21,188 @@ import { ProtocolDrawer } from "@/components/vouches/protocol-drawer"
 import { vouchPageCopy } from "@/content/vouches"
 import { cn } from "@/lib/utils"
 
-export interface MobileBottomNavItem {
-    href?: string | undefined
-    label: string
-    icon: LucideIcon
-    action?: ((formData: FormData) => void | Promise<void>) | undefined
-    warning?: {
-        title: string
-        consequence: string
-        context: string
-        finePrint: string
-    } | undefined
-    account?: boolean | undefined
-    primary?: boolean | undefined
+type WarningCopy = {
+  title: string
+  consequence: string
+  context: string
+  finePrint: string
 }
 
-export interface MobileBottomNavProps {
-    items?: readonly MobileBottomNavItem[] | undefined
-    className?: string | undefined
-    "aria-label"?: string | undefined
+type BaseItem = {
+  label: string
+  icon: LucideIcon
+  primary?: boolean
 }
 
-export interface TenantMobileBottomNavProps extends Omit<MobileBottomNavProps, "items"> {
-    connectAction: (formData: FormData) => void | Promise<void>
-    paymentAction: (formData: FormData) => void | Promise<void>
+type LinkItem = BaseItem & {
+  kind: "link"
+  href: string
 }
 
-export const defaultTenantMobileBottomNavItems = [
-    { href: "/dashboard", label: "Dashboard", icon: Home },
-    { href: "/vouches/new", label: "Vouches", icon: FileText },
-] satisfies readonly MobileBottomNavItem[]
+type ActionItem = BaseItem & {
+  kind: "action"
+  warning: WarningCopy
+  action: (formData: FormData) => void | Promise<void>
+}
 
-export const defaultAppMobileBottomNavItems = defaultTenantMobileBottomNavItems
+type AccountItem = BaseItem & {
+  kind: "account"
+}
 
-export const defaultPublicMobileBottomNavItems = [
-    { href: "/", label: "Home", icon: Home },
-    { href: "/pricing", label: "Pricing", icon: FileText },
-    { href: "/sign-up?return_to=/vouches/new", label: "Create", icon: Plus, primary: true },
-    { href: "/faq", label: "FAQ", icon: HelpCircle },
-    { href: "/sign-in", label: "Sign in", icon: ShieldCheck },
-] satisfies readonly MobileBottomNavItem[]
+type MobileBottomNavItem = LinkItem | ActionItem | AccountItem
+
+type MobileBottomNavProps = {
+  items: readonly MobileBottomNavItem[]
+  className?: string
+  "aria-label"?: string
+}
+
+type TenantMobileBottomNavProps = {
+  connectAction: (formData: FormData) => void | Promise<void>
+  paymentAction: (formData: FormData) => void | Promise<void>
+}
+
+function isActivePath(pathname: string, href: string) {
+  return pathname === href || pathname.startsWith(`${href}/`)
+}
 
 export function MobileBottomNav({
-    items = defaultTenantMobileBottomNavItems,
-    className,
-    "aria-label": ariaLabel = "Mobile navigation",
+  items,
+  className,
+  "aria-label": ariaLabel = "Mobile navigation",
 }: MobileBottomNavProps) {
-    const pathname = usePathname()
-    const [warning, setWarning] = useState<MobileBottomNavItem | null>(null)
+  const pathname = usePathname()
+  const [pendingAction, setPendingAction] = useState<ActionItem | null>(null)
 
-    return (
-        <nav
-            aria-label={ariaLabel}
-            className={cn(
-                "fixed inset-x-0 bottom-0 z-50 grid min-h-18 items-stretch border-t border-neutral-900 bg-black/95 px-2 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] backdrop-blur md:hidden",
-                items.length >= 5 ? "grid-cols-5" : "grid-cols-4",
-                className,
-            )}
-        >
-            {items.map((item) => {
-                const Icon = item.icon
-                const isActive =
-                    item.href ? pathname === item.href || pathname.startsWith(`${item.href}/`) : false
-                const content = (
-                    <>
-                        <span
-                            className={cn(
-                                "grid size-8 place-items-center",
-                                item.primary ?
-                                    "bg-primary text-primary-foreground"
-                                :   "text-primary",
-                            )}
-                        >
-                            {item.account ? <UserMenu size="compact" /> : <Icon className="size-5" />}
-                        </span>
-                        {item.label}
-                    </>
-                )
+  return (
+    <>
+      <nav
+        aria-label={ariaLabel}
+        className={cn(
+          "fixed inset-x-0 bottom-0 z-50 grid h-14 w-full items-center border-t border-neutral-700 bg-neutral-950 px-1 pb-[env(safe-area-inset-bottom)] md:hidden",
+          items.length >= 5 ? "grid-cols-5" : "grid-cols-4",
+          className
+        )}
+      >
+        {items.map((item) => {
+          const Icon = item.icon
+          const isActive = item.kind === "link" && isActivePath(pathname, item.href)
 
-                const className = cn(
-                    "flex h-full w-full min-w-0 flex-col items-center justify-center gap-1 text-[10px] font-semibold leading-none tracking-[0.04em] text-neutral-500 uppercase",
-                    isActive ? "text-white" : undefined,
-                )
+          const itemClassName = cn(
+            "flex h-full min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] leading-none font-semibold text-neutral-400 uppercase",
+            isActive && "text-neutral-100"
+          )
 
-                return item.account ? (
-                    <div key={item.label} className={className}>
-                        {content}
-                    </div>
-                ) : item.action ? (
-                    <form key={item.label} action={item.action} className="min-w-0">
-                        <button
-                            type={item.warning ? "button" : "submit"}
-                            className={className}
-                            onClick={item.warning ? () => setWarning(item) : undefined}
-                        >
-                            {content}
-                        </button>
-                    </form>
+          const iconClassName = cn(
+            "grid size-5 shrink-0 place-items-center",
+            item.primary ? "text-blue-600" : "text-current"
+          )
+
+          const content = (
+            <>
+              <span className={iconClassName}>
+                {item.kind === "account" ? (
+                  <UserMenu size="compact" />
                 ) : (
-                    <Link
-                        key={item.href}
-                        href={item.href ?? "/dashboard"}
-                        className={className}
-                    >
-                        {content}
-                    </Link>
-                )
-            })}
-            {warning?.warning && warning.action ? (
-                <ProtocolDrawer
-                    open
-                    onOpenChange={(nextOpen) => {
-                        if (!nextOpen) setWarning(null)
-                    }}
-                    title={warning.warning.title}
-                    consequence={warning.warning.consequence}
-                    context={warning.warning.context}
-                    finePrint={warning.warning.finePrint}
-                    primary={
-                        <form action={warning.action}>
-                            <Button type="submit" className="w-full">
-                                Continue to provider
-                            </Button>
-                        </form>
-                    }
-                />
-            ) : null}
-        </nav>
-    )
+                  <Icon className="size-4" />
+                )}
+              </span>
+              <span className="max-w-full truncate">{item.label}</span>
+            </>
+          )
+
+          if (item.kind === "link") {
+            return (
+              <Link key={item.href} href={item.href} className={itemClassName}>
+                {content}
+              </Link>
+            )
+          }
+
+          if (item.kind === "action") {
+            return (
+              <button
+                key={item.label}
+                type="button"
+                className={itemClassName}
+                onClick={() => setPendingAction(item)}
+              >
+                {content}
+              </button>
+            )
+          }
+
+          return (
+            <div key={item.label} className={itemClassName}>
+              {content}
+            </div>
+          )
+        })}
+      </nav>
+
+      {pendingAction ? (
+        <ProtocolDrawer
+          open
+          onOpenChange={(open) => {
+            if (!open) setPendingAction(null)
+          }}
+          title={pendingAction.warning.title}
+          consequence={pendingAction.warning.consequence}
+          context={pendingAction.warning.context}
+          finePrint={pendingAction.warning.finePrint}
+          primary={
+            <form action={pendingAction.action}>
+              <Button type="submit" className="w-full">
+                Continue
+              </Button>
+            </form>
+          }
+        />
+      ) : null}
+    </>
+  )
 }
 
-export function AppMobileBottomNav(props: Omit<MobileBottomNavProps, "items">) {
-    return (
-        <MobileBottomNav
-            items={defaultTenantMobileBottomNavItems}
-            {...props}
-        />
-    )
+const publicItems = [
+  { kind: "link", href: "/", label: "Home", icon: Home },
+  { kind: "link", href: "/pricing", label: "Price", icon: FileText },
+  { kind: "link", href: "/faq", label: "FAQ", icon: HelpCircle },
+  { kind: "link", href: "/sign-in", label: "Sign", icon: ShieldCheck },
+] satisfies readonly MobileBottomNavItem[]
+
+export function PublicMobileBottomNav() {
+  return <MobileBottomNav items={publicItems} aria-label="Public mobile navigation" />
 }
 
 export function TenantMobileBottomNav({
-    connectAction,
-    paymentAction,
-    ...props
+  connectAction,
+  paymentAction,
 }: TenantMobileBottomNavProps) {
-    const configuredItems = [
-        { href: "/dashboard", label: "Dashboard", icon: Home },
-        { href: "/vouches/new", label: "Vouches", icon: FileText },
-        {
-            label: "Connect",
-            icon: Shield,
-            action: connectAction,
-            warning: vouchPageCopy.providerRedirects.connect,
-        },
-        {
-            label: "Payment",
-            icon: CreditCard,
-            action: paymentAction,
-            warning: vouchPageCopy.providerRedirects.payment,
-        },
-        { label: "Account", icon: Home, account: true },
-    ] satisfies MobileBottomNavItem[]
+  const tenantItems = [
+    { kind: "link", href: "/dashboard", label: "Dash", icon: Home },
+    {
+      kind: "link",
+      href: "/vouches/new",
+      label: "New",
+      icon: Plus,
+      primary: true,
+    },
+    {
+      kind: "action",
+      label: "Stripe",
+      icon: Shield,
+      action: connectAction,
+      warning: vouchPageCopy.providerRedirects.connect,
+    },
+    {
+      kind: "action",
+      label: "Pay",
+      icon: CreditCard,
+      action: paymentAction,
+      warning: vouchPageCopy.providerRedirects.payment,
+    },
+    { kind: "account", label: "Me", icon: User },
+  ] satisfies readonly MobileBottomNavItem[]
 
-    const tenantItems = configuredItems.filter((item) =>
-        Boolean(item.href || item.action || item.account)
-    )
-
-    return (
-        <MobileBottomNav
-            items={tenantItems}
-            aria-label="Tenant mobile navigation"
-            {...props}
-        />
-    )
-}
-
-export function PublicMobileBottomNav(props: Omit<MobileBottomNavProps, "items">) {
-    return (
-        <MobileBottomNav
-            items={defaultPublicMobileBottomNavItems}
-            aria-label="Public mobile navigation"
-            {...props}
-        />
-    )
+  return <MobileBottomNav items={tenantItems} aria-label="Tenant mobile navigation" />
 }
