@@ -54,8 +54,8 @@ export function TenantHeader({
           className="flex items-center gap-8 lg:gap-12"
         >
           {navItems.map((item) => (
-            <Button key={item.href} variant="nav" size="nav" render={<Link href={item.href} />}>
-              {item.label}
+            <Button key={item.href} variant="ghost" size="sm" asChild>
+              <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}
           <ProviderRedirectDrawer

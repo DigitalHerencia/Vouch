@@ -29,8 +29,8 @@ export function CheckoutSuccessPage() {
           </Alert>
         </CardContent>
         <CardFooter>
-          <Button className="w-full justify-center sm:w-auto" render={<Link href="/dashboard" />}>
-            Return to dashboard
+          <Button className="w-full justify-center sm:w-auto" asChild>
+            <Link href="/dashboard">Return to dashboard</Link>
           </Button>
         </CardFooter>
       </Card>

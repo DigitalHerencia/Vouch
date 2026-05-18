@@ -1,5 +1,5 @@
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { PageHero } from "@/components/shared/page-hero"
+import { HeroSection } from "@/components/blocks/hero-section"
 import { vouchPageCopy } from "@/content/vouches"
 import {
   ConfirmCreateVouchForm,
@@ -13,10 +13,10 @@ type ConfirmCreateVouchPageProps = {
 export async function ConfirmCreateVouchPage({ draft }: ConfirmCreateVouchPageProps) {
   return (
     <main className="grid gap-6">
-      <PageHero
-        eyebrow={vouchPageCopy.create.eyebrow}
+      <HeroSection.Minimal
         title={vouchPageCopy.create.reviewTitle}
-        body={vouchPageCopy.create.reviewBody}
+        description={vouchPageCopy.create.reviewBody}
+        className="px-0 py-0"
       />
       {draft ? (
         <ConfirmCreateVouchForm draft={draft} />

@@ -1,7 +1,9 @@
 /* eslint-disable react-refresh/only-export-components */
 import * as React from 'react'
-import { cn, safeHref } from '@/lib/utils'
-import { Marquee } from '@/components/ui/marquee'
+import { cn } from '@/lib/utils'
+
+const safeHref = (href: string) =>
+  href.trim().toLowerCase().startsWith('javascript:') ? '#' : href
 
 export interface LogoItem {
   name: string
@@ -89,14 +91,11 @@ export function LogoCloudMarquee({
           </p>
         )}
 
-        <Marquee
-          className="py-4"
-          direction={direction}
-          speed={speed}
-        >
-          {logos.map((logo) => (
+        <div className={cn('bk-marquee py-4', direction === 'right' && 'animate-marquee-reverse')}>
+          <div className={cn('bk-marquee-content', speed === 'slow' && 'animate-marquee-slow', speed === 'fast' && 'animate-marquee-fast')}>
+            {[...logos, ...logos].map((logo, index) => (
             <div
-              key={`logo-marquee-${logo.name}`}
+              key={`logo-marquee-${logo.name}-${index}`}
               className="mx-8 flex items-center justify-center h-12 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
             >
               {typeof logo.logo === 'string' ? (
@@ -109,8 +108,9 @@ export function LogoCloudMarquee({
                 logo.logo
               )}
             </div>
-          ))}
-        </Marquee>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   )
@@ -197,9 +197,6 @@ export function LogoCloudWithStats({
   stats,
   className,
 }: LogoCloudWithStatsProps) {
-  if (import.meta.env.DEV && logos.length > 9) {
-    console.warn(`[LogoCloud] WithStats variant only shows first 9 logos. ${logos.length} logos provided.`)
-  }
   return (
     <section className={cn('py-16 px-4 md:px-8 lg:px-16', className)}>
       <div className="max-w-6xl mx-auto">

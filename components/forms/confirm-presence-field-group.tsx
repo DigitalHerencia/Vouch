@@ -8,7 +8,7 @@ export function ConfirmPresenceFieldGroup({ id, label, description, error, child
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       {children}
       {description ? <FieldDescription>{description}</FieldDescription> : null}
-      <FieldError errors={error ? [{ message: error }] : undefined} />
+      <FieldError {...(error ? { errors: [{ message: error }] } : {})} />
     </Field>
   )
 }

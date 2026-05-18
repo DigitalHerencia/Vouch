@@ -8,7 +8,7 @@ export function CreateVouchFieldGroup({ id, label, description, error, children 
       <FieldLabel htmlFor={id}>{label}</FieldLabel>
       {children}
       {description ? <FieldDescription>{description}</FieldDescription> : null}
-      <FieldError errors={error ? [{ message: error }] : undefined} />
+      <FieldError {...(error ? { errors: [{ message: error }] } : {})} />
     </Field>
   )
 }

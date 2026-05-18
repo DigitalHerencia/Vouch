@@ -1,11 +1,8 @@
 import type { Metadata } from "next"
-import { ArrowRight } from "lucide-react"
-import Link from "next/link"
 
-import { CalloutPanel } from "@/components/shared/callout-panel"
-import { ContentSectionList } from "@/components/shared/content-section-list"
-import { PageHero } from "@/components/shared/page-hero"
-import { Button } from "@/components/ui/button"
+import { CTASection } from "@/components/blocks/cta-section"
+import { FAQSection } from "@/components/blocks/faq-section"
+import { HeroSection } from "@/components/blocks/hero-section"
 import { faqCalloutContent, faqSections } from "@/content/faq"
 
 export const metadata: Metadata = {
@@ -18,33 +15,28 @@ export default function FaqRoute() {
   const CalloutIcon = faqCalloutContent.icon
 
   return (
-    <main className="grid min-h-[calc(100dvh-8rem)] grid-rows-none gap-4 sm:gap-6 md:grid-rows-4 md:gap-8">
-      <PageHero
-        eyebrow="FAQ"
+    <main className="grid min-h-[calc(100dvh-8rem)] gap-8 sm:gap-10 md:gap-12">
+      <HeroSection.Minimal
         title="Precise answers"
-        body="Vouch is the commitment layer for deterministic confirmation and provider-backed payment coordination."
-        className="min-h-0"
-        titleClassName="max-w-4xl text-[clamp(3rem,7vw,6rem)]"
+        description="Vouch is the commitment layer for deterministic confirmation and provider-backed payment coordination."
+        className="px-0 py-0"
       />
 
-      <section className="grid min-h-0 gap-4 sm:gap-6 md:row-span-3 md:grid-cols-[minmax(0,1fr)_24rem] md:gap-8">
-        <ContentSectionList sections={faqSections} className="min-h-0" />
-        <CalloutPanel
-          className="self-start"
-          icon={CalloutIcon}
+      <section className="grid min-h-0 gap-8 md:grid-cols-[minmax(0,1fr)_24rem]">
+        <FAQSection.Accordion
+          subtitle="FAQ"
+          items={faqSections.map((section) => ({
+            question: section.heading,
+            answer: section.body.join(" "),
+          }))}
+          className="px-0 py-0"
+        />
+        <CTASection.WithBackground
+          className="self-start px-0 py-0"
+          icon={<CalloutIcon className="size-8" />}
           title={faqCalloutContent.title}
-          body={faqCalloutContent.body}
-          actions={
-            <Button
-              variant="primary"
-              size="cta"
-              className="w-full"
-              render={<Link href={faqCalloutContent.action} />}
-            >
-              <span className="translate-y-px">{faqCalloutContent.label}</span>
-              <ArrowRight className="size-5 shrink-0" strokeWidth={1.9} />
-            </Button>
-          }
+          description={faqCalloutContent.body}
+          primaryAction={{ label: faqCalloutContent.label, href: faqCalloutContent.action }}
         />
       </section>
     </main>

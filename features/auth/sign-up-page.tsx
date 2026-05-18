@@ -10,6 +10,7 @@ import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
 import { AuthPageShell } from "@/components/auth/auth-page-shell"
+import { AuthForms } from "@/components/blocks/auth-forms"
 import { SignUpFieldGroup } from "@/components/forms/sign-up-field-group"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
@@ -23,13 +24,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup as UiFieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
+import { Field, FieldError, FieldGroup as UiFieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
@@ -39,9 +34,6 @@ import { type SignupFormProps, type SignupFormValues } from "@/types/auth"
 
 const inputClassName =
   "h-10 w-full min-w-0 rounded-none border border-neutral-700 bg-black/55 px-3.5 font-(family-name:--font-sans) text-sm font-semibold text-white shadow-none outline-none placeholder:text-neutral-600 focus-visible:border-primary focus-visible:ring-0 sm:h-11 sm:px-4 lg:h-12"
-
-const labelClassName =
-  "font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-white uppercase sm:text-base"
 
 export function SignUpPageFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
   return (
@@ -262,44 +254,29 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
 
         {awaitingVerification ? (
           <div className="max-w-full min-w-0 space-y-3 overflow-hidden">
-            <Field>
-              <FieldLabel className={labelClassName} htmlFor="verificationCode">
-                {authVerificationContent.codeLabel}
-              </FieldLabel>
-
-              <Input
-                id="verificationCode"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                placeholder={authVerificationContent.codePlaceholder}
-                className={inputClassName}
-                disabled={isBusy}
-                {...form.register("verificationCode", {
-                  setValueAs: (value: string) =>
-                    typeof value === "string" ? value.replace(/\s+/g, "").trim() : "",
-                })}
-              />
-
-              <FieldDescription className="font-mono text-xs text-neutral-500">
-                {authVerificationContent.finishSignup}
-              </FieldDescription>
-
-              <FieldError
-                errors={
-                  form.formState.errors.verificationCode?.message
-                    ? [{ message: form.formState.errors.verificationCode.message }]
-                    : undefined
-                }
-              />
-            </Field>
+            <AuthForms.OTPVerification
+              title={authVerificationContent.codeLabel}
+              description={authVerificationContent.finishSignup}
+              length={6}
+              value={form.watch("verificationCode")}
+              error={form.formState.errors.verificationCode?.message}
+              disabled={isBusy}
+              submitLabel={authVerificationContent.verifyCode}
+              onChange={(code) =>
+                form.setValue("verificationCode", code, {
+                  shouldDirty: true,
+                  shouldValidate: code.length === 6,
+                })
+              }
+              className="max-w-full"
+            />
 
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
               <Button
                 type="button"
                 disabled={isBusy}
                 variant="secondary"
-                size="cta"
+                size="lg"
                 className="w-full min-w-0"
                 onClick={() => {
                   startResending(async () => {
@@ -317,7 +294,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                 type="button"
                 disabled={isBusy}
                 variant="ghost"
-                size="cta"
+                size="lg"
                 className="w-full min-w-0"
                 onClick={() => {
                   startResetting(async () => {
@@ -342,7 +319,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
               <Button
                 type="submit"
                 disabled={isBusy}
-                size="cta"
+                size="lg"
                 className="w-full min-w-0 sm:col-span-2"
               >
                 {authVerificationContent.verifyCode}
@@ -456,17 +433,17 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
               </label>
 
               <FieldError
-                errors={
-                  form.formState.errors.acceptedUserAgreement?.message
-                    ? [{ message: form.formState.errors.acceptedUserAgreement.message }]
-                    : undefined
-                }
+                {...(form.formState.errors.acceptedUserAgreement?.message
+                  ? {
+                      errors: [{ message: form.formState.errors.acceptedUserAgreement.message }],
+                    }
+                  : {})}
               />
             </Field>
 
             <div id="clerk-captcha" className="min-h-0 w-full max-w-full overflow-hidden" />
 
-            <Button type="submit" disabled={isBusy} size="cta" className="w-full min-w-0">
+            <Button type="submit" disabled={isBusy} size="lg" className="w-full min-w-0">
               Create account
             </Button>
 

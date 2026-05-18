@@ -1,9 +1,13 @@
 /* eslint-disable react-refresh/only-export-components */
 import * as React from 'react'
+import type { LucideIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import { cn } from '@/lib/utils'
-import { Download, Printer, Mail, Check, Clock, AlertCircle } from 'lucide-react'
+import { Download, Printer, Mail, Check, Clock, AlertCircle, ArrowRight } from 'lucide-react'
+
+const safeHref = (href: string) =>
+  href.trim().toLowerCase().startsWith('javascript:') ? '#' : href
 
 // ============================================================================
 // Common Types
@@ -12,7 +16,9 @@ export interface InvoiceItem {
   description: string
   quantity: number
   unitPrice: number
+  unitPriceLabel?: string
   total?: number
+  totalLabel?: string
 }
 
 export interface InvoiceAddress {
@@ -29,9 +35,10 @@ export interface InvoiceAddress {
 
 export interface InvoiceData {
   invoiceNumber: string
+  title?: string
   issueDate: string
   dueDate: string
-  status?: 'paid' | 'pending' | 'overdue'
+  status?: 'paid' | 'pending' | 'overdue' | string
   from: InvoiceAddress
   to: InvoiceAddress
   items: InvoiceItem[]
@@ -47,6 +54,8 @@ export interface InvoiceData {
     routingNumber?: string
     paymentMethods?: string[]
   }
+  details?: Array<{ label: string; value: string }>
+  actions?: React.ReactNode
 }
 
 // ============================================================================
@@ -78,32 +87,22 @@ export function Invoice({
     (data.tax?.amount ?? 0) -
     (data.discount?.amount ?? 0)
 
-  if (import.meta.env.DEV) {
-    if (Math.abs(computedSubtotal - data.subtotal) > 0.01) {
-      console.warn(
-        `[Invoice] subtotal mismatch: passed ${data.subtotal.toFixed(2)}, computed ${computedSubtotal.toFixed(2)}`
-      )
-    }
-    if (Math.abs(computedTotal - data.total) > 0.01) {
-      console.warn(
-        `[Invoice] total mismatch: passed ${data.total.toFixed(2)}, computed ${computedTotal.toFixed(2)}`
-      )
-    }
-  }
-
-  const statusConfig = {
+  const statusConfig: Record<string, { bg: string; text: string; icon: LucideIcon }> = {
     paid: { bg: 'bg-success', text: 'text-success-foreground', icon: Check },
     pending: { bg: 'bg-warning', text: 'text-warning-foreground', icon: Clock },
     overdue: { bg: 'bg-destructive', text: 'text-destructive-foreground', icon: AlertCircle },
   }
 
-  const status = data.status ? statusConfig[data.status] : null
+  const status = data.status
+    ? statusConfig[data.status] ?? { bg: 'bg-primary', text: 'text-primary-foreground', icon: Clock }
+    : null
+  const documentTitle = data.title ?? 'Invoice'
 
   return (
     <div className={cn('max-w-4xl mx-auto', className)}>
       {/* Actions Bar */}
       <div className="flex items-center justify-between mb-6 print:hidden">
-        <h1 className="text-2xl font-black uppercase">Invoice</h1>
+        <h1 className="text-2xl font-black uppercase">{documentTitle}</h1>
         <div className="flex gap-2">
           {onSendEmail && (
             <Button variant="outline" size="sm" onClick={onSendEmail}>
@@ -137,7 +136,7 @@ export function Invoice({
             </div>
 
             <div className="text-left md:text-right space-y-2">
-              <h2 className="text-4xl font-black uppercase tracking-tight">Invoice</h2>
+              <h2 className="text-4xl font-black uppercase tracking-tight">{documentTitle}</h2>
               <div className="space-y-1 text-sm">
                 <p>
                   <span className="font-bold uppercase text-muted-foreground">Invoice #:</span>{' '}
@@ -167,6 +166,17 @@ export function Invoice({
             </div>
           </div>
 
+          {data.details && data.details.length > 0 && (
+            <div className="mb-8 grid border-3 border-foreground bg-muted/20 md:grid-cols-2">
+              {data.details.map((detail) => (
+                <div key={detail.label} className="border-b border-foreground/20 p-4 md:border-r md:[&:nth-child(2n)]:border-r-0">
+                  <p className="text-xs font-bold uppercase text-muted-foreground">{detail.label}</p>
+                  <p className="mt-2 font-medium">{detail.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Bill To */}
           <div className="mb-8 p-4 border-3 border-foreground bg-muted/30">
             <p className="font-bold uppercase text-xs text-muted-foreground mb-2">Bill To</p>
@@ -189,9 +199,11 @@ export function Invoice({
                   <tr key={`invoice-item-${item.description}`} className="border-b border-foreground/20">
                     <td className="py-4">{item.description}</td>
                     <td className="py-4 text-center">{item.quantity}</td>
-                    <td className="py-4 text-right font-mono">${item.unitPrice.toFixed(2)}</td>
+                    <td className="py-4 text-right font-mono">
+                      {item.unitPriceLabel ?? `$${item.unitPrice.toFixed(2)}`}
+                    </td>
                     <td className="py-4 text-right font-mono font-bold">
-                      ${(item.total || item.quantity * item.unitPrice).toFixed(2)}
+                      {item.totalLabel ?? `$${(item.total || item.quantity * item.unitPrice).toFixed(2)}`}
                     </td>
                   </tr>
                 ))}
@@ -288,6 +300,8 @@ export function Invoice({
               )}
             </div>
           )}
+
+          {data.actions ? <div className="mt-8 print:hidden">{data.actions}</div> : null}
         </div>
       </div>
     </div>
@@ -432,7 +446,9 @@ export interface InvoiceSummaryProps {
   issueDate: string
   dueDate: string
   amount: number
-  status: 'paid' | 'pending' | 'overdue'
+  status: 'paid' | 'pending' | 'overdue' | string
+  amountLabel?: string
+  href?: string
   onView?: () => void
   onDownload?: () => void
   className?: string
@@ -445,17 +461,23 @@ export function InvoiceSummary({
   dueDate,
   amount,
   status,
+  amountLabel,
+  href,
   onView,
   onDownload,
   className,
 }: InvoiceSummaryProps) {
-  const statusConfig = {
+  const statusConfig: Record<string, { bg: string; border: string; text: string }> = {
     paid: { bg: 'bg-success/10', border: 'border-success', text: 'text-success' },
     pending: { bg: 'bg-warning/10', border: 'border-warning', text: 'text-warning' },
     overdue: { bg: 'bg-destructive/10', border: 'border-destructive', text: 'text-destructive' },
   }
 
-  const statusStyle = statusConfig[status]
+  const statusStyle = statusConfig[status] ?? {
+    bg: 'bg-primary/10',
+    border: 'border-primary',
+    text: 'text-primary',
+  }
 
   return (
     <div
@@ -493,7 +515,7 @@ export function InvoiceSummary({
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-2xl font-black font-mono">${amount.toFixed(2)}</p>
+        <p className="text-2xl font-black font-mono">{amountLabel ?? `$${amount.toFixed(2)}`}</p>
         <div className="flex gap-2">
           {onDownload && (
             <Button variant="ghost" size="sm" onClick={onDownload}>
@@ -503,6 +525,11 @@ export function InvoiceSummary({
           {onView && (
             <Button size="sm" onClick={onView}>
               View
+            </Button>
+          )}
+          {href && (
+            <Button size="sm" asChild>
+              <a href={safeHref(href)}>View</a>
             </Button>
           )}
         </div>
@@ -520,11 +547,20 @@ export interface InvoiceListItem {
   clientName: string
   date: string
   amount: number
-  status: 'paid' | 'pending' | 'overdue'
+  amountLabel?: string
+  status: 'paid' | 'pending' | 'overdue' | string
+  href?: string
 }
 
 export interface InvoiceListProps {
   invoices: InvoiceListItem[]
+  labels?: {
+    number?: string
+    client?: string
+    date?: string
+    amount?: string
+    status?: string
+  }
   onView?: (id: string) => void
   onDownload?: (id: string) => void
   className?: string
@@ -532,11 +568,12 @@ export interface InvoiceListProps {
 
 export function InvoiceList({
   invoices,
+  labels,
   onView,
   onDownload,
   className,
 }: InvoiceListProps) {
-  const statusConfig = {
+  const statusConfig: Record<string, string> = {
     paid: 'bg-success text-success-foreground',
     pending: 'bg-warning text-warning-foreground',
     overdue: 'bg-destructive text-destructive-foreground',
@@ -546,11 +583,11 @@ export function InvoiceList({
     <div className={cn('border-3 border-foreground bg-card', className)}>
       {/* Header */}
       <div className="grid grid-cols-12 gap-2 p-4 border-b-3 border-foreground bg-muted/50 font-bold uppercase text-xs">
-        <div className="col-span-2">Invoice</div>
-        <div className="col-span-3">Client</div>
-        <div className="col-span-2">Date</div>
-        <div className="col-span-2 text-right">Amount</div>
-        <div className="col-span-2 text-right">Status</div>
+        <div className="col-span-2">{labels?.number ?? 'Invoice'}</div>
+        <div className="col-span-3">{labels?.client ?? 'Client'}</div>
+        <div className="col-span-2">{labels?.date ?? 'Date'}</div>
+        <div className="col-span-2 text-right">{labels?.amount ?? 'Amount'}</div>
+        <div className="col-span-2 text-right">{labels?.status ?? 'Status'}</div>
         <div className="col-span-1" />
       </div>
 
@@ -564,13 +601,13 @@ export function InvoiceList({
           <div className="col-span-3 text-muted-foreground truncate">{invoice.clientName}</div>
           <div className="col-span-2 text-sm text-muted-foreground">{invoice.date}</div>
           <div className="col-span-2 text-right font-mono font-bold">
-            ${invoice.amount.toFixed(2)}
+            {invoice.amountLabel ?? `$${invoice.amount.toFixed(2)}`}
           </div>
           <div className="col-span-2 flex justify-end">
             <span
               className={cn(
                 'px-2 py-0.5 text-xs font-bold uppercase whitespace-nowrap',
-                statusConfig[invoice.status]
+                statusConfig[invoice.status] ?? 'bg-primary text-primary-foreground'
               )}
             >
               {invoice.status}
@@ -594,7 +631,14 @@ export function InvoiceList({
                 className="h-7 w-7 p-0"
                 onClick={() => onView(invoice.id)}
               >
-                →
+                <ArrowRight className="h-3 w-3" />
+              </Button>
+            )}
+            {invoice.href && (
+              <Button variant="ghost" size="sm" className="h-7 w-7 p-0" asChild>
+                <a href={safeHref(invoice.href)} aria-label={`Open ${invoice.invoiceNumber}`}>
+                  <ArrowRight className="h-3 w-3" />
+                </a>
               </Button>
             )}
           </div>

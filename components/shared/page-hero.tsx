@@ -38,17 +38,17 @@ export function PageHero({
         actions
       ) : (
         <div className="flex flex-row gap-3 sm:flex-col md:flex-row">
-          <Button
-            variant="primary"
-            size="cta"
-            render={<Link href="/sign-up?return_to=/vouches/new" />}
-          >
-            {landingHeroActionsContent.primaryLabel}
-            <ArrowRight className="size-5" />
+          <Button size="lg" asChild>
+            <Link href="/sign-up?return_to=/vouches/new">
+              {landingHeroActionsContent.primaryLabel}
+              <ArrowRight className="size-5" />
+            </Link>
           </Button>
-          <Button variant="secondary" size="cta" render={<Link href="#process" />}>
-            {landingHeroActionsContent.secondaryLabel}
-            <ArrowDown className="size-5" />
+          <Button variant="secondary" size="lg" asChild>
+            <Link href="#process">
+              {landingHeroActionsContent.secondaryLabel}
+              <ArrowDown className="size-5" />
+            </Link>
           </Button>
         </div>
       )}

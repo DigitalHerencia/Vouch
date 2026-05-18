@@ -1,13 +1,12 @@
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
 
-import { CalloutPanel } from "@/components/shared/callout-panel"
+import { InvoiceBlocks } from "@/components/blocks/invoice"
 import { ConfirmationPanel } from "@/components/vouches/confirmation-panel"
 import { LifecycleStatusPanel } from "@/components/vouches/lifecycle-status-panel"
 import { VouchActionsPanel } from "@/components/vouches/vouch-actions-panel"
 import { VouchCodeExchangePanel } from "@/components/vouches/vouch-code-exchange-panel"
 import { VouchDetailHeader } from "@/components/vouches/vouch-detail-header"
-import { VouchTermsSummary } from "@/components/vouches/vouch-terms-summary"
 import { VouchTimelinePanel } from "@/components/vouches/vouch-timeline-panel"
 import { vouchPageCopy } from "@/content/vouches"
 import { ConfirmPresenceInlineForm } from "@/features/vouches/vouch-detail-page.client"
@@ -180,13 +179,71 @@ function VouchDetailView({
       </section>
 
       <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-[0.85fr_1.15fr] md:gap-8">
-        <VouchTermsSummary
-          title={copy.termsTitle}
-          merchantLabel={merchantLabel}
-          customerLabel={customerLabel}
-          amountLabel={amountLabel}
-          windowLabel={windowLabel}
-          labels={copy.labels}
+        <InvoiceBlocks.Full
+          data={{
+            title: copy.termsTitle,
+            invoiceNumber: title,
+            issueDate: appointmentLabel,
+            dueDate: deadlineLabel,
+            status: String(statusLabel),
+            from: {
+              name: merchantLabel,
+              address: copy.labels.merchant,
+              city: currentUserRoleLabel,
+              zip: "",
+            },
+            to: {
+              name: customerLabel,
+              address: copy.labels.customer,
+              city: "participant",
+              zip: "",
+            },
+            items: [
+              {
+                description: copy.labels.vouchAmount,
+                quantity: 1,
+                unitPrice: 0,
+                unitPriceLabel: amountLabel,
+                totalLabel: amountLabel,
+              },
+              {
+                description: copy.labels.merchantReceives,
+                quantity: 1,
+                unitPrice: 0,
+                unitPriceLabel: merchantReceivesLabel,
+                totalLabel: merchantReceivesLabel,
+              },
+              {
+                description: copy.labels.customerAuthorizes,
+                quantity: 1,
+                unitPrice: 0,
+                unitPriceLabel: customerTotalLabel,
+                totalLabel: customerTotalLabel,
+              },
+            ],
+            subtotal: 0,
+            total: 0,
+            details: [
+              { label: copy.labels.window, value: windowLabel },
+              { label: copy.labels.expires, value: deadlineLabel },
+              { label: copy.labels.status, value: String(statusLabel) },
+              { label: copy.labels.role, value: currentUserRoleLabel },
+              { label: copy.sections.payment, value: paymentStatusLabel },
+              { label: "Settlement", value: settlementStatusLabel },
+            ],
+            notes: copy.ruleDescription,
+            terms: copy.oneSidedRule,
+            actions: (
+              <div className="grid gap-4">
+                <ConfirmationPanel {...confirmation} />
+                <VouchActionsPanel
+                  title={copy.actionsTitle}
+                  providerBoundary={copy.providerBoundary}
+                />
+              </div>
+            ),
+          }}
+          className="max-w-none"
         />
         <VouchTimelinePanel
           timeline={timeline}
@@ -196,13 +253,16 @@ function VouchDetailView({
       </section>
 
       <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-2 md:gap-8">
-        <div className="grid gap-4 sm:gap-6">
-          <ConfirmationPanel {...confirmation} />
-          <VouchActionsPanel title={copy.actionsTitle} providerBoundary={copy.providerBoundary} />
-        </div>
-        <CalloutPanel
-          title={copy.bottomCalloutTitle}
-          body={`${copy.bottomCalloutBody} Payment: ${paymentStatusLabel}. Settlement: ${settlementStatusLabel}. Merchant receives ${merchantReceivesLabel}; customer total ${customerTotalLabel}.`}
+        <InvoiceBlocks.Summary
+          invoiceNumber={copy.bottomCalloutTitle}
+          clientName={copy.bottomCalloutBody}
+          issueDate={paymentStatusLabel}
+          dueDate={settlementStatusLabel}
+          amount={0}
+          amountLabel={customerTotalLabel}
+          status={String(statusLabel)}
+          href={`/vouches/${vouchId}`}
+          className="md:col-span-2"
         />
       </section>
     </main>

@@ -1,18 +1,15 @@
-import { ArrowDown, ArrowRight } from "lucide-react"
-import Link from "next/link"
-
-import { CalloutPanel } from "@/components/shared/callout-panel"
-import { MetricGrid } from "@/components/shared/metric-grid"
-import { PageHero } from "@/components/shared/page-hero"
-import { ProcessPanel } from "@/components/shared/process-panel"
-import { SectionIntro } from "@/components/shared/section-intro"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
+import { CTASection } from "@/components/blocks/cta-section"
+import { FeatureGrid } from "@/components/blocks/feature-grid"
+import { HeroSection } from "@/components/blocks/hero-section"
+import { LogoCloud } from "@/components/blocks/logo-cloud"
+import { OnboardingFlow } from "@/components/blocks/onboarding-flow"
+import { StatsSection } from "@/components/blocks/stats-section"
 import {
+  pricingAlternatingFeatures,
   pricingCalloutContent,
   pricingFlowSteps,
-  pricingNotes,
   pricingStats,
+  pricingTrustContent,
   PricingHeroContent,
 } from "@/content/pricing"
 
@@ -20,64 +17,85 @@ export default function PricingPage() {
   const PricingCalloutIcon = pricingCalloutContent.icon
 
   return (
-    <main className="grid min-h-[calc(100dvh-8rem)] grid-rows-none gap-4 sm:gap-6 md:grid-rows-3 md:gap-8">
-      <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-[minmax(0,1fr)_34rem] md:gap-8">
-        <PageHero
-          title={PricingHeroContent.title}
-          body={PricingHeroContent.body}
-          className="flex min-h-0"
-          contentClassName="flex h-full flex-col justify-center"
-          titleClassName="max-w-[9ch] text-[clamp(3.5rem,7vw,7rem)]"
-          bodyClassName="max-w-xl"
-          actions={
-            <>
-              <Button size="cta" render={<Link href="/sign-up?return_to=/vouches/new" />}>
-                Create a Vouch
-                <ArrowRight className="size-5" />
-              </Button>
-              <Button variant="secondary" size="cta" render={<Link href="#pricing-rule" />}>
-                How it works
-                <ArrowDown className="size-5" />
-              </Button>
-            </>
-          }
-        />
-        <ProcessPanel
-          title="Payment flow"
-          steps={[...pricingFlowSteps]}
-          footer="Both confirm = release"
-        />
-      </section>
+    <main className="grid min-h-[calc(100dvh-8rem)] gap-8 sm:gap-10 md:gap-12">
+      <HeroSection.WithStats
+        title={PricingHeroContent.title}
+        description={PricingHeroContent.body}
+        primaryAction={{ label: "Create a Vouch", href: "/sign-up?return_to=/vouches/new" }}
+        stats={pricingStats.map((stat) => ({ value: stat.value, label: stat.label }))}
+        className="px-0 py-0"
+      />
 
-      <section id="pricing-rule" className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-2 md:gap-8">
-        <MetricGrid items={[...pricingStats]} className="min-h-0 lg:grid-cols-2" />
-        <section className="grid min-h-0 gap-4">
-          {pricingNotes.map((note) => (
-            <Card key={note.title}>
-              <CardContent>
-                <SectionIntro
-                  eyebrow={note.eyebrow}
-                  title={note.title}
-                  body={note.body}
-                  titleClassName="text-[clamp(2rem,3.5vw,3.5rem)]"
+      <LogoCloud.Cards
+        title={pricingTrustContent.title}
+        subtitle={pricingTrustContent.subtitle}
+        logos={pricingTrustContent.logos.map((item) => ({
+          name: item.name,
+          logo: (
+            <span className="font-(family-name:--font-display) text-2xl tracking-[0.08em] text-white uppercase">
+              {item.logo}
+            </span>
+          ),
+        }))}
+        className="bg-transparent px-0 py-0"
+      />
+
+      <FeatureGrid.Alternating
+        features={pricingAlternatingFeatures.map((feature, index) => {
+          const Icon = feature.icon
+          return {
+            icon: <Icon className="size-8" />,
+            title: feature.title,
+            description: feature.description,
+            media:
+              index === 0 ? (
+                <StatsSection.Cards
+                  stats={pricingStats.slice(0, 2).map((stat) => ({
+                    label: stat.label,
+                    value: stat.value,
+                    description: stat.body,
+                  }))}
+                  className="bg-transparent px-0 py-0"
                 />
-              </CardContent>
-            </Card>
-          ))}
-        </section>
+              ) : (
+                <OnboardingFlow.Completion
+                  title={index === 1 ? "Payment flow" : "Release rule"}
+                  subtitle={index === 1 ? "Providers handle money rails." : "Both confirm or funds do not release."}
+                  features={pricingFlowSteps.map((step) => ({
+                    title: `${step.number}. ${step.title}`,
+                    description: step.body,
+                  }))}
+                  className="max-w-none border-0 shadow-none"
+                />
+              ),
+          }
+        })}
+        className="px-0 py-0"
+      />
+
+      <section className="grid gap-6 md:grid-cols-[minmax(0,1fr)_24rem]">
+        <HeroSection.Minimal
+          title={PricingHeroContent.title}
+          description="Fees are visible before commitment. Provider-backed payment state determines what can happen next."
+          primaryAction={{ label: "Create a Vouch", href: "/sign-up?return_to=/vouches/new" }}
+          className="px-0 py-0"
+        />
+        <StatsSection.Cards
+          stats={pricingStats.map((stat) => ({
+            label: stat.label,
+            value: stat.value,
+            description: stat.body,
+          }))}
+          className="bg-transparent px-0 py-0"
+        />
       </section>
 
-      <CalloutPanel
-        className="min-h-0"
-        icon={PricingCalloutIcon}
+      <CTASection.WithBackground
+        className="px-0 py-0"
+        icon={<PricingCalloutIcon className="size-8" />}
         title={pricingCalloutContent.title}
-        body={pricingCalloutContent.body}
-        actions={
-          <Button size="cta" render={<Link href={pricingCalloutContent.action} />}>
-            {pricingCalloutContent.label}
-            <ArrowRight className="size-5" />
-          </Button>
-        }
+        description={pricingCalloutContent.body}
+        primaryAction={{ label: pricingCalloutContent.label, href: pricingCalloutContent.action }}
       />
     </main>
   )

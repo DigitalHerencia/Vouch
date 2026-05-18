@@ -21,7 +21,7 @@ export function TenantShell({
   className,
 }: TenantShellProps) {
   return (
-    <div className={cn("flex min-h-dvh flex-col bg-transparent text-foreground", className)}>
+    <div className={cn("flex min-h-dvh flex-col bg-neutral-950 text-foreground", className)}>
       <TenantHeader connectAction={connectAction} paymentAction={paymentAction} />
       <main className="flex-1 pb-20 md:pb-0">
         <div className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">

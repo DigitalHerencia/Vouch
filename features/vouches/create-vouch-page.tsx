@@ -1,7 +1,7 @@
 import Link from "next/link"
 
-import { CalloutPanel } from "@/components/shared/callout-panel"
-import { PageHero } from "@/components/shared/page-hero"
+import { CTASection } from "@/components/blocks/cta-section"
+import { HeroSection } from "@/components/blocks/hero-section"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { vouchPageCopy } from "@/content/vouches"
@@ -13,10 +13,10 @@ export async function CreateVouchPage() {
   const blockedReason = state.variant === "blocked" ? state.gate.blockers.join(", ") : null
   return (
     <main className="grid gap-6">
-      <PageHero
-        eyebrow={vouchPageCopy.create.eyebrow}
+      <HeroSection.Minimal
         title={vouchPageCopy.create.title}
-        body={vouchPageCopy.create.readyBody}
+        description={vouchPageCopy.create.readyBody}
+        className="px-0 py-0"
       />
       {blockedReason ? (
         <Card>
@@ -25,15 +25,20 @@ export async function CreateVouchPage() {
             <CardDescription>{blockedReason}</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button render={<Link href="/dashboard" />}>
-              {vouchPageCopy.create.blockedActionLabel}
+            <Button asChild>
+              <Link href="/dashboard">{vouchPageCopy.create.blockedActionLabel}</Link>
             </Button>
           </CardContent>
         </Card>
       ) : (
         <CreateVouchDraftForm />
       )}
-      <CalloutPanel title={vouchPageCopy.create.ruleTitle} body={vouchPageCopy.create.ruleBody} />
+      <CTASection.WithBackground
+        title={vouchPageCopy.create.ruleTitle}
+        description={vouchPageCopy.create.ruleBody}
+        primaryAction={{ label: vouchPageCopy.create.blockedActionLabel, href: "/dashboard" }}
+        className="px-0 py-0"
+      />
     </main>
   )
 }

@@ -1,6 +1,13 @@
 // content/pricing.ts
 
-import { BadgeDollarSign, CheckCircle2, CreditCard, Handshake, Landmark } from "lucide-react"
+import {
+  BadgeDollarSign,
+  CheckCircle2,
+  CreditCard,
+  Handshake,
+  Landmark,
+  ShieldCheck,
+} from "lucide-react"
 
 export const PricingHeroContent = {
   title: "Explicit confirmation. Deterministic settlement.",
@@ -80,5 +87,34 @@ export const pricingNotes = [
     eyebrow: "Deterministic outcome",
     title: "Vouch doesn’t ask who’s right. Vouch asks what happened.",
     body: "No stories. No screenshots. No appeals. No mediation. No subjective judgment. Vouch converts mutual intent into explicit protocol, bounded rules, and economically meaningful confirmation. If conditions are met, funds move. If conditions fail, they don’t.",
+  },
+] as const
+
+export const pricingTrustContent = {
+  title: "Provider-backed coordination, narrow by design.",
+  subtitle: "Trust boundaries",
+  logos: [
+    { name: "Stripe", logo: "Stripe" },
+    { name: "Stripe Connect", logo: "Connect" },
+    { name: "Clerk", logo: "Clerk" },
+    { name: "Neon", logo: "Neon" },
+  ],
+} as const
+
+export const pricingAlternatingFeatures = [
+  {
+    icon: BadgeDollarSign,
+    title: pricingNotes[0].title,
+    description: pricingNotes[0].body,
+  },
+  {
+    icon: Landmark,
+    title: pricingNotes[1].title,
+    description: pricingNotes[1].body,
+  },
+  {
+    icon: ShieldCheck,
+    title: pricingNotes[2].title,
+    description: pricingNotes[2].body,
   },
 ] as const

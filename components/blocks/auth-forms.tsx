@@ -5,8 +5,11 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { cn, safeHref } from '@/lib/utils'
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight, Github, Chrome } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, CircleUserRound } from 'lucide-react'
+
+const safeHref = (href: string) =>
+  href.trim().toLowerCase().startsWith('javascript:') ? '#' : href
 
 // ============================================================================
 // AUTH VARIANT 1: Login Form
@@ -147,13 +150,13 @@ export function LoginForm({
                 <div className="grid grid-cols-2 gap-3">
                   {socialProviders.includes('google') && (
                     <Button variant="outline" type="button">
-                      <Chrome className="mr-2 h-4 w-4" />
+                      <CircleUserRound className="mr-2 h-4 w-4" />
                       Google
                     </Button>
                   )}
                   {socialProviders.includes('github') && (
                     <Button variant="outline" type="button">
-                      <Github className="mr-2 h-4 w-4" />
+                      <CircleUserRound className="mr-2 h-4 w-4" />
                       GitHub
                     </Button>
                   )}
@@ -350,13 +353,13 @@ export function SignUpForm({
                 <div className="grid grid-cols-2 gap-3">
                   {socialProviders.includes('google') && (
                     <Button variant="outline" type="button">
-                      <Chrome className="mr-2 h-4 w-4" />
+                      <CircleUserRound className="mr-2 h-4 w-4" />
                       Google
                     </Button>
                   )}
                   {socialProviders.includes('github') && (
                     <Button variant="outline" type="button">
-                      <Github className="mr-2 h-4 w-4" />
+                      <CircleUserRound className="mr-2 h-4 w-4" />
                       GitHub
                     </Button>
                   )}
@@ -507,7 +510,13 @@ export interface OTPVerificationFormProps {
   description?: string
   email?: string
   length?: number
+  value?: string
+  name?: string
+  error?: string | undefined
+  disabled?: boolean | undefined
+  submitLabel?: string | undefined
   onSubmit?: (otp: string) => void
+  onChange?: (otp: string) => void
   onResend?: () => void
   onBackToLogin?: () => void
   className?: string
@@ -519,14 +528,32 @@ export function OTPVerificationForm({
   description,
   email,
   length = 6,
+  value,
+  name,
+  error,
+  disabled,
+  submitLabel = 'Verify',
   onSubmit,
+  onChange,
   onResend,
   onBackToLogin,
   className,
 }: OTPVerificationFormProps) {
-  const [otp, setOtp] = React.useState<string[]>(new Array(length).fill(''))
+  const [uncontrolledOtp, setUncontrolledOtp] = React.useState<string[]>(new Array(length).fill(''))
+  const controlledOtp = React.useMemo(() => {
+    const normalized = (value ?? '').replace(/\D/g, '').slice(0, length)
+    return Array.from({ length }, (_, index) => normalized[index] ?? '')
+  }, [length, value])
+  const otp = value !== undefined ? controlledOtp : uncontrolledOtp
   const inputRefs = React.useRef<HTMLInputElement[]>([])
   const hasSubmitted = React.useRef(false)
+
+  const setOtp = (nextOtp: string[]) => {
+    if (value === undefined) {
+      setUncontrolledOtp(nextOtp)
+    }
+    onChange?.(nextOtp.join('').trim())
+  }
 
   const handleChange = (index: number, value: string) => {
     if (!/^\d*$/.test(value)) return
@@ -596,6 +623,7 @@ export function OTPVerificationForm({
                 maxLength={1}
                 aria-label={`Digit ${index + 1} of ${length}`}
                 value={digit}
+                disabled={disabled}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 onPaste={handlePaste}
@@ -603,8 +631,11 @@ export function OTPVerificationForm({
               />
             ))}
           </div>
+          {name ? <input type="hidden" name={name} value={otp.join('').trim()} /> : null}
+          {error ? <p className="text-center text-sm font-bold text-destructive">{error}</p> : null}
 
           <Button
+            type="submit"
             className="w-full"
             size="lg"
             onClick={() => {
@@ -613,9 +644,9 @@ export function OTPVerificationForm({
                 onSubmit?.(otp.join(''))
               }
             }}
-            disabled={otp.some((digit) => digit === '')}
+            disabled={disabled || otp.some((digit) => digit === '')}
           >
-            Verify
+            {submitLabel}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
 
@@ -625,6 +656,7 @@ export function OTPVerificationForm({
                 Didn't receive a code?{' '}
                 <button
                   type="button"
+                  disabled={disabled}
                   onClick={onResend}
                   className="font-bold text-primary hover:underline"
                 >
@@ -633,7 +665,7 @@ export function OTPVerificationForm({
               </p>
             )}
             {onBackToLogin && (
-              <Button variant="ghost" size="sm" onClick={onBackToLogin}>
+              <Button type="button" variant="ghost" size="sm" disabled={disabled} onClick={onBackToLogin}>
                 Back to login
               </Button>
             )}

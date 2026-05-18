@@ -31,7 +31,13 @@ export function ProviderRedirectDrawer({
 
   return (
     <>
-      <Button type="button" variant={variant} size={variant === "nav" ? "nav" : "default"} className={className} onClick={() => setOpen(true)}>
+      <Button
+        type="button"
+        variant={variant === "nav" ? "ghost" : "default"}
+        size={variant === "nav" ? "sm" : "default"}
+        className={className}
+        onClick={() => setOpen(true)}
+      >
         {label}
       </Button>
       <ProtocolDrawer

@@ -107,7 +107,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${archivoBlack.variable} ${bebasNeue.variable} ${jetBrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-dvh overflow-x-hidden">
+      <body className="grid-pattern min-h-dvh overflow-x-hidden bg-neutral-950 bg-[radial-gradient(circle_at_18%_8%,rgba(37,99,235,0.26),transparent_30rem),radial-gradient(circle_at_88%_72%,rgba(37,99,235,0.14),transparent_34rem)]">
         <AppProvider>{children}</AppProvider>
       </body>
     </html>

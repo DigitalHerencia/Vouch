@@ -10,6 +10,7 @@ import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 
 import { AuthPageShell } from "@/components/auth/auth-page-shell"
+import { AuthForms } from "@/components/blocks/auth-forms"
 import { SignInFieldGroup } from "@/components/forms/sign-in-field-group"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
@@ -22,13 +23,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup as UiFieldGroup,
-  FieldLabel,
-} from "@/components/ui/field"
+import { FieldGroup as UiFieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
@@ -38,9 +33,6 @@ import { type LoginFormProps, type LoginFormValues } from "@/types/auth"
 
 const inputClassName =
   "h-11 w-full min-w-0 rounded-none border border-neutral-700 bg-black/55 px-4 font-(family-name:--font-sans) text-sm font-semibold text-white shadow-none outline-none placeholder:text-neutral-600 focus-visible:border-primary focus-visible:ring-0 sm:h-12 sm:text-base lg:h-13"
-
-const labelClassName =
-  "font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-white uppercase sm:text-base"
 
 export function SignInPageFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
   return (
@@ -304,45 +296,32 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
 
         {awaitingSecondFactor ? (
           <div className="max-w-full min-w-0 space-y-3 overflow-hidden sm:space-y-4">
-            <Field>
-              <FieldLabel className={labelClassName} htmlFor="verificationCode">
-                {authVerificationContent.codeLabel}
-              </FieldLabel>
-
-              <Input
-                id="verificationCode"
-                type="text"
-                inputMode="numeric"
-                autoComplete="one-time-code"
-                placeholder={authVerificationContent.codePlaceholder}
-                className={inputClassName}
-                disabled={isBusy}
-                {...form.register("verificationCode", {
-                  setValueAs: (value: string) =>
-                    typeof value === "string" ? value.replace(/\s+/g, "").trim() : "",
-                })}
-              />
-
-              <FieldDescription className="font-mono text-xs text-neutral-500">
-                {secondFactorMethod === "phone_code"
+            <AuthForms.OTPVerification
+              title={authVerificationContent.codeLabel}
+              description={
+                secondFactorMethod === "phone_code"
                   ? authVerificationContent.latestCodePhone
-                  : authVerificationContent.latestCodeEmail}
-              </FieldDescription>
-
-              <FieldError
-                errors={
-                  form.formState.errors.verificationCode?.message
-                    ? [{ message: form.formState.errors.verificationCode.message }]
-                    : undefined
-                }
-              />
-            </Field>
+                  : authVerificationContent.latestCodeEmail
+              }
+              length={6}
+              value={form.watch("verificationCode")}
+              error={form.formState.errors.verificationCode?.message}
+              disabled={isBusy}
+              submitLabel={authVerificationContent.verifyCode}
+              onChange={(code) =>
+                form.setValue("verificationCode", code, {
+                  shouldDirty: true,
+                  shouldValidate: code.length === 6,
+                })
+              }
+              className="max-w-full"
+            />
 
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
               <Button
                 type="button"
                 variant="secondary"
-                size="cta"
+                size="lg"
                 disabled={isBusy}
                 className="w-full min-w-0"
                 onClick={() => {
@@ -360,7 +339,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
               <Button
                 type="button"
                 variant="ghost"
-                size="cta"
+                size="lg"
                 disabled={isBusy}
                 className="w-full min-w-0"
                 onClick={() => {
@@ -385,7 +364,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                 type="submit"
                 disabled={isBusy}
                 className="w-full min-w-0 sm:col-span-2"
-                size="cta"
+                size="lg"
               >
                 {authVerificationContent.verifyCode}
               </Button>
@@ -424,7 +403,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
               />
             </SignInFieldGroup>
 
-            <Button type="submit" disabled={isBusy} size="cta" className="w-full min-w-0">
+            <Button type="submit" disabled={isBusy} size="lg" className="w-full min-w-0">
               Sign in
             </Button>
 

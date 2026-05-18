@@ -176,7 +176,8 @@ export interface FeatureAlternatingItem {
   icon: React.ReactNode
   title: string
   description: string
-  image: string
+  image?: string
+  media?: React.ReactNode
 }
 
 export interface FeatureGridAlternatingProps {
@@ -221,11 +222,15 @@ export function FeatureGridAlternating({
 
               <div className="relative">
                 <div className="border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))] overflow-hidden">
-                  <img
-                    src={feature.image}
-                    alt={feature.title}
-                    className="w-full h-auto object-cover"
-                  />
+                  {feature.media ? (
+                    feature.media
+                  ) : feature.image ? (
+                    <img
+                      src={feature.image}
+                      alt={feature.title}
+                      className="w-full h-auto object-cover"
+                    />
+                  ) : null}
                 </div>
                 <div
                   className={cn(

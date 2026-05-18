@@ -14,7 +14,7 @@ export interface PublicShellProps {
 
 export function PublicShell({ children, withMobileBottomNav = true }: PublicShellProps) {
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="flex min-h-dvh flex-col bg-neutral-950 text-foreground">
       <PublicHeader />
       <div
         className={cn(

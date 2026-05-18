@@ -104,6 +104,11 @@ export function StatsCards({
               <div className="text-sm font-bold uppercase tracking-wide mt-2">
                 {stat.label}
               </div>
+              {stat.description && (
+                <p className="mt-3 text-sm font-medium leading-6 text-muted-foreground">
+                  {stat.description}
+                </p>
+              )}
               {stat.trend && (
                 <div className="flex items-center gap-1 mt-2">
                   {stat.trend === 'up' && (

@@ -91,8 +91,9 @@ export interface HeroSplitProps {
   description: string
   primaryAction?: { label: string; href?: string; onClick?: () => void }
   secondaryAction?: { label: string; href?: string; onClick?: () => void }
-  imageSrc: string
+  imageSrc?: string
   imageAlt?: string
+  media?: React.ReactNode
   imagePosition?: "left" | "right"
   className?: string
 }
@@ -105,6 +106,7 @@ export function HeroSplit({
   secondaryAction,
   imageSrc,
   imageAlt = "Hero image",
+  media,
   imagePosition = "right",
   className,
 }: HeroSplitProps) {
@@ -160,7 +162,11 @@ export function HeroSplit({
 
         <div className={cn("relative", imageOrder)}>
           <div className="border-foreground overflow-hidden border-3 shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-            <img src={imageSrc} alt={imageAlt} className="h-auto w-full object-cover" />
+            {media ? (
+              media
+            ) : imageSrc ? (
+              <img src={imageSrc} alt={imageAlt} className="h-auto w-full object-cover" />
+            ) : null}
           </div>
           {/* Decorative elements */}
           <div className="bg-primary border-foreground absolute -top-4 -right-4 h-8 w-8 border-3" />

@@ -12,7 +12,7 @@ export function VouchCodeExchangePanel({
   children: ReactNode
 }) {
   return (
-    <Card variant="inset">
+    <Card>
       <CardHeader>
         <CardTitle>{title}</CardTitle>
       </CardHeader>

@@ -1,10 +1,8 @@
-import Link from "next/link"
-import { AlertCircle, ArrowRight, Bell, CheckCircle2, Clock, Handshake } from "lucide-react"
+import { AlertCircle, Bell, CheckCircle2, Clock, Handshake } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
-import { CalloutPanel } from "@/components/shared/callout-panel"
-import { MetricGrid, type MetricGridItem } from "@/components/shared/metric-grid"
-import { SectionIntro } from "@/components/shared/section-intro"
+import { CTASection } from "@/components/blocks/cta-section"
+import { HeroSection } from "@/components/blocks/hero-section"
+import { StatsSection, type StatItem } from "@/components/blocks/stats-section"
 import { VouchCardList } from "@/components/vouches/vouch-card-list"
 import { dashboardContent } from "@/content/dashboard"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
@@ -97,50 +95,44 @@ export async function DashboardPage() {
   const actionRequiredCount = sections?.actionRequired?.length ?? 0
   const readinessComplete = state.variant !== "empty"
 
-  const metrics: MetricGridItem[] = [
+  const metrics: StatItem[] = [
     {
       label: dashboardContent.metrics.activeVouches.label,
       value: String(activeCount || active.length),
-      body: dashboardContent.metrics.activeVouches.body,
+      description: dashboardContent.metrics.activeVouches.body,
     },
     {
       label: dashboardContent.metrics.pastVouches.label,
       value: String(completedCount),
-      body: dashboardContent.metrics.pastVouches.body,
+      description: dashboardContent.metrics.pastVouches.body,
     },
     {
       label: dashboardContent.metrics.actionRequired.label,
       value: String(actionRequiredCount),
-      body: dashboardContent.metrics.actionRequired.body,
+      description: dashboardContent.metrics.actionRequired.body,
     },
   ]
 
   return (
     <main className="grid min-h-[calc(100dvh-8rem)] grid-rows-none gap-4 sm:gap-6 md:grid-rows-4 md:gap-8">
       <section className="grid min-h-0 gap-4 sm:gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:gap-8">
-        <SectionIntro
-          panel
-          eyebrow={dashboardContent.hero.eyebrow}
+        <HeroSection.Minimal
           title={dashboardContent.hero.title}
-          body={dashboardContent.hero.body}
-          titleClassName="text-[clamp(3rem,6vw,5.5rem)]"
+          description={dashboardContent.hero.body}
+          className="px-0 py-0"
         />
 
-        <MetricGrid items={metrics} className="min-h-0 lg:grid-cols-3" />
+        <StatsSection.Cards stats={metrics} className="bg-transparent px-0 py-0" />
       </section>
 
       <section className="grid min-h-0 gap-4 sm:gap-6 md:row-span-3 md:gap-8">
         {!readinessComplete ? (
-          <CalloutPanel
+          <CTASection.WithBackground
             title={dashboardContent.readiness.title}
-            body={dashboardContent.readiness.body}
-            icon={AlertCircle}
-            actions={
-              <Button variant="primary" size="cta" render={<Link href="/dashboard" />}>
-                {dashboardContent.readiness.cta}
-                <ArrowRight className="size-5" strokeWidth={1.9} />
-              </Button>
-            }
+            description={dashboardContent.readiness.body}
+            icon={<AlertCircle className="size-8" />}
+            primaryAction={{ label: dashboardContent.readiness.cta, href: "/dashboard" }}
+            className="px-0 py-0"
           />
         ) : null}
 
@@ -180,16 +172,12 @@ export async function DashboardPage() {
           }}
         />
 
-        <CalloutPanel
+        <CTASection.WithBackground
           title={dashboardContent.cta.title}
-          body={dashboardContent.cta.body}
-          icon={Handshake}
-          actions={
-            <Button variant="primary" size="cta" render={<Link href="/vouches/new" />}>
-              {dashboardContent.cta.label}
-              <ArrowRight className="size-5" />
-            </Button>
-          }
+          description={dashboardContent.cta.body}
+          icon={<Handshake className="size-8" />}
+          primaryAction={{ label: dashboardContent.cta.label, href: "/vouches/new" }}
+          className="px-0 py-0"
         />
       </section>
     </main>

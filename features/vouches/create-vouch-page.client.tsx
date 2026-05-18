@@ -9,6 +9,7 @@ import { Controller, useForm } from "react-hook-form"
 import { z } from "zod"
 
 import { CreateVouchFieldGroup } from "@/components/forms/create-vouch-field-group"
+import { OnboardingFlow } from "@/components/blocks/onboarding-flow"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import {
@@ -111,17 +112,18 @@ export function CreateVouchDraftForm({ className }: { className?: string | undef
   })
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <CardTitle>{vouchPageCopy.create.detailsHeader}</CardTitle>
-        <CardDescription>{vouchPageCopy.create.readyBody}</CardDescription>
-      </CardHeader>
+    <OnboardingFlow.WorkspaceSetup
+      title={vouchPageCopy.create.detailsHeader}
+      description={vouchPageCopy.create.readyBody}
+      className={className}
+    >
       <form
         onSubmit={form.handleSubmit((values) => {
           router.push(`/vouches/new/confirm?${draftToSearchParams(values).toString()}`)
         })}
+        className="space-y-5"
       >
-        <CardContent className="grid gap-5">
+        <div className="grid gap-5">
           <CreateVouchFieldGroup
             id="amount"
             label="Amount"
@@ -176,15 +178,15 @@ export function CreateVouchDraftForm({ className }: { className?: string | undef
             <AlertTitle>{vouchPageCopy.create.hostedPaymentTitle}</AlertTitle>
             <AlertDescription>{vouchPageCopy.create.hostedPaymentBody}</AlertDescription>
           </Alert>
-        </CardContent>
-        <CardFooter>
-          <Button type="submit" size="cta" className="w-full justify-between">
+        </div>
+        <div className="mt-6">
+          <Button type="submit" size="lg" className="w-full justify-between">
             Review Vouch
             <ArrowRight className="size-5" />
           </Button>
-        </CardFooter>
+        </div>
       </form>
-    </Card>
+    </OnboardingFlow.WorkspaceSetup>
   )
 }
 
@@ -276,7 +278,7 @@ export function ConfirmCreateVouchForm({
         <CardFooter>
           <Button
             type="button"
-            size="cta"
+            size="lg"
             className="w-full justify-between"
             disabled={isPending}
             onClick={() => setConfirmationOpen(true)}
@@ -327,11 +329,9 @@ export function ConfirmCreateVouchForm({
                       </span>
                     </label>
                     <FieldError
-                      errors={
-                        fieldState.error?.message
-                          ? [{ message: fieldState.error.message }]
-                          : undefined
-                      }
+                      {...(fieldState.error?.message
+                        ? { errors: [{ message: fieldState.error.message }] }
+                        : {})}
                     />
                   </Field>
                 )}
@@ -341,7 +341,7 @@ export function ConfirmCreateVouchForm({
               <Button
                 type="submit"
                 form="confirm-create-vouch-form"
-                size="cta"
+                size="lg"
                 className="w-full justify-between"
                 disabled={isPending}
               >

@@ -1,8 +1,9 @@
 import type { LucideIcon } from "lucide-react"
 
-import { EmptyState } from "@/components/status/empty-state"
+import { InvoiceBlocks } from "@/components/blocks/invoice"
+import { EmptyStatePreset } from "@/components/ui/empty-state"
 import { Card } from "@/components/ui/card"
-import { VouchCard, type VouchCardProps } from "@/components/vouches/vouch-card"
+import type { VouchCardProps } from "@/components/vouches/vouch-card"
 import { cn } from "@/lib/utils"
 
 export interface VouchCardListProps {
@@ -47,14 +48,38 @@ export function VouchCardList({
       </Card>
 
       {rows.length > 0 ? (
-        <div className="grid gap-4">
-          {rows.map((row) => (
-            <VouchCard key={row.id} {...row} />
-          ))}
-        </div>
+        <InvoiceBlocks.List
+          invoices={rows.map((row) => ({
+            id: row.id,
+            invoiceNumber: row.title,
+            clientName: row.role,
+            date: row.deadlineLabel,
+            amount: 0,
+            amountLabel: row.amountLabel,
+            status: row.statusLabel,
+            href: row.href,
+          }))}
+          labels={{
+            number: "Vouch",
+            client: "Role",
+            date: rowDateLabel(rows),
+            amount: "Amount",
+            status: "Status",
+          }}
+        />
       ) : (
-        <EmptyState eyebrow={labels.emptyEyebrow} title={emptyText} />
+        <EmptyStatePreset
+          preset="no-data"
+          customTitle={labels.emptyEyebrow}
+          customDescription={emptyText}
+          variant="card"
+          className="bg-black/70"
+        />
       )}
     </section>
   )
+}
+
+function rowDateLabel(rows: VouchCardProps[]) {
+  return rows.some((row) => row.deadlineLabel) ? "Deadline" : "Date"
 }

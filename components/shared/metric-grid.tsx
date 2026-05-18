@@ -18,7 +18,6 @@ export function MetricGrid({ items, className }: { items: MetricGridItem[]; clas
       {items.map((metric) => (
         <Card
           key={`${metric.label}-${metric.value}`}
-          variant="ghost"
           className="border-neutral-100 sm:border-r-2 sm:nth-[2n]:border-r-0 lg:nth-[2n]:border-r-2 lg:nth-[4n]:border-r-0"
         >
           <CardContent className="p-5 sm:p-6">

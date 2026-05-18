@@ -44,24 +44,23 @@ export function PublicHeader({
 
         <nav className="flex items-center gap-8 lg:gap-12">
           {navItems.map((item) => (
-            <Button key={item.href} variant="nav" size="nav" render={<Link href={item.href} />}>
-              {item.label}
+            <Button key={item.href} variant="ghost" size="sm" asChild>
+              <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}
         </nav>
 
         <div className="flex items-center gap-4 lg:gap-5">
-          <Button variant="secondary" size="lg" render={<Link href="/sign-in" />}>
-            Sign in
+          <Button variant="secondary" size="lg" asChild>
+            <Link href="/sign-in">Sign in</Link>
           </Button>
 
           <Button
-            variant="primary"
             size="lg"
             className="min-w-40 sm:min-w-44 lg:min-w-48"
-            render={<Link href="/sign-up?return_to=/vouches/new" />}
+            asChild
           >
-            Get started
+            <Link href="/sign-up?return_to=/vouches/new">Get started</Link>
           </Button>
         </div>
       </div>

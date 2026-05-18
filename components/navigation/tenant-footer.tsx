@@ -43,8 +43,8 @@ export function TenantFooter({
           className="flex flex-wrap gap-x-7 gap-y-4 sm:gap-x-9"
         >
           {links.map((item) => (
-            <Button key={item.href} variant="nav" size="nav" render={<Link href={item.href} />}>
-              {item.label}
+            <Button key={item.href} variant="ghost" size="sm" asChild>
+              <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}
           <ProviderRedirectDrawer

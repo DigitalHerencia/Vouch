@@ -1,5 +1,16 @@
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { CalendarDays, Clock, TimerReset } from "lucide-react"
+
+import {
+  Timeline,
+  TimelineCard,
+  TimelineConnector,
+  TimelineContent,
+  TimelineDescription,
+  TimelineDot,
+  TimelineHeader,
+  TimelineItem,
+  TimelineTitle,
+} from "@/components/ui/timeline"
 
 export function LifecycleStatusPanel({
   title,
@@ -15,29 +26,52 @@ export function LifecycleStatusPanel({
   labels: Record<string, string>
 }) {
   const rows = [
-    [labels.appointment, appointmentLabel],
-    [labels.opens, windowLabel],
-    [labels.expires, deadlineLabel],
+    {
+      label: labels.appointment,
+      value: appointmentLabel,
+      icon: CalendarDays,
+      status: "completed" as const,
+    },
+    {
+      label: labels.opens,
+      value: windowLabel,
+      icon: Clock,
+      status: "current" as const,
+    },
+    {
+      label: labels.expires,
+      value: deadlineLabel,
+      icon: TimerReset,
+      status: "upcoming" as const,
+    },
   ]
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{title}</CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        {rows.map(([label, value]) => (
-          <div
-            key={label}
-            className="flex items-start justify-between gap-4 border-b border-neutral-800 px-5 py-4 last:border-b-0"
-          >
-            <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-500 uppercase">
-              {label}
-            </p>
-            <Badge className="border-neutral-700 bg-neutral-950 text-neutral-300">{value}</Badge>
-          </div>
-        ))}
-      </CardContent>
-    </Card>
+    <TimelineCard>
+      <h2 className="mb-6 font-(family-name:--font-display) text-3xl leading-none tracking-[0.04em] text-white uppercase">
+        {title}
+      </h2>
+      <Timeline>
+        {rows.map((row, index) => {
+          const Icon = row.icon
+          return (
+            <TimelineItem key={row.label} status={row.status}>
+              <div>
+                <TimelineDot status={row.status}>
+                  <Icon className="h-4 w-4" />
+                </TimelineDot>
+                {index < rows.length - 1 ? <TimelineConnector status={row.status} /> : null}
+              </div>
+              <TimelineContent>
+                <TimelineHeader>
+                  <TimelineTitle>{row.label}</TimelineTitle>
+                </TimelineHeader>
+                <TimelineDescription>{row.value}</TimelineDescription>
+              </TimelineContent>
+            </TimelineItem>
+          )
+        })}
+      </Timeline>
+    </TimelineCard>
   )
 }

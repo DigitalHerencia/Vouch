@@ -1,11 +1,8 @@
 import type { Metadata } from "next"
-import { ArrowRight } from "lucide-react"
-import Link from "next/link"
 
-import { CalloutPanel } from "@/components/shared/callout-panel"
-import { ContentSectionList } from "@/components/shared/content-section-list"
-import { PageHero } from "@/components/shared/page-hero"
-import { Button } from "@/components/ui/button"
+import { CTASection } from "@/components/blocks/cta-section"
+import { FAQSection } from "@/components/blocks/faq-section"
+import { HeroSection } from "@/components/blocks/hero-section"
 import { privacyCalloutContent, privacySections } from "@/content/legal"
 
 export const metadata: Metadata = {
@@ -18,32 +15,27 @@ export default function PrivacyRoute() {
   const CalloutIcon = privacyCalloutContent.icon
 
   return (
-    <main className="grid min-h-[calc(100dvh-8rem)] grid-rows-none gap-4 sm:gap-6 md:grid-rows-4 md:gap-8">
-      <PageHero
-        eyebrow="Legal"
+    <main className="grid min-h-[calc(100dvh-8rem)] gap-8 sm:gap-10 md:gap-12">
+      <HeroSection.Minimal
         title="Privacy Policy"
-        body="Vouch minimizes data collection and stores provider references, statuses, timestamps, and audit-safe metadata."
-        className="min-h-0"
-        titleClassName="max-w-4xl text-[clamp(3rem,7vw,6rem)]"
+        description="Vouch minimizes data collection and stores provider references, statuses, timestamps, and audit-safe metadata."
+        className="px-0 py-0"
       />
-      <section className="grid min-h-0 gap-4 sm:gap-6 md:row-span-3 md:grid-cols-[minmax(0,1fr)_24rem] md:gap-8">
-        <ContentSectionList sections={privacySections} className="min-h-0" />
-        <CalloutPanel
-          className="self-start"
-          icon={CalloutIcon}
+      <section className="grid min-h-0 gap-8 md:grid-cols-[minmax(0,1fr)_24rem]">
+        <FAQSection.SimpleList
+          title="Legal"
+          items={privacySections.map((section) => ({
+            question: section.heading,
+            answer: section.body.join(" "),
+          }))}
+          className="bg-transparent px-0 py-0"
+        />
+        <CTASection.WithBackground
+          className="self-start px-0 py-0"
+          icon={<CalloutIcon className="size-8" />}
           title={privacyCalloutContent.title}
-          body={privacyCalloutContent.body}
-          actions={
-            <Button
-              variant="primary"
-              size="cta"
-              className="w-full"
-              render={<Link href={privacyCalloutContent.action} />}
-            >
-              {privacyCalloutContent.label}
-              <ArrowRight className="size-5" />
-            </Button>
-          }
+          description={privacyCalloutContent.body}
+          primaryAction={{ label: privacyCalloutContent.label, href: privacyCalloutContent.action }}
         />
       </section>
     </main>
