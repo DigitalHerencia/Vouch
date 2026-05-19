@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 
 export interface MetricGridItem {
@@ -7,30 +6,59 @@ export interface MetricGridItem {
   body: string
 }
 
-export function MetricGrid({ items, className }: { items: MetricGridItem[]; className?: string }) {
+export interface MetricGridProps {
+  items: readonly MetricGridItem[]
+  className?: string
+  tileClassName?: string
+}
+
+function getMetricTileClassName(index: number, total: number) {
+  if (total === 4) {
+    return cn(
+      "min-h-37.5 border-b border-neutral-800 p-6 last:border-b-0",
+      "sm:nth-[2n-1]:border-r",
+      "lg:border-r lg:border-b-0 lg:last:border-r-0"
+    )
+  }
+
+  return cn(
+    "min-h-37.5 border-b border-neutral-800 p-6 last:border-b-0",
+    index < total - 1 ? "lg:border-r lg:border-b-0" : undefined
+  )
+}
+
+export function MetricGrid({ items, className, tileClassName }: MetricGridProps) {
   return (
     <section
       className={cn(
-        "grid gap-0 overflow-hidden border-2 border-neutral-100 bg-black shadow-[6px_6px_0_0_#1d4ed8] sm:grid-cols-2 lg:grid-cols-4",
+        "grid border border-neutral-700 bg-black/55 backdrop-blur-[2px]",
+        items.length === 4 ? "sm:grid-cols-2 lg:grid-cols-4" : "lg:grid-cols-3",
         className
       )}
     >
-      {items.map((metric) => (
-        <Card
+      {items.map((metric, index) => (
+        <MetricTile
           key={`${metric.label}-${metric.value}`}
-          className="border-neutral-100 sm:border-r-2 sm:nth-[2n]:border-r-0 lg:nth-[2n]:border-r-2 lg:nth-[4n]:border-r-0"
-        >
-          <CardContent className="p-5 sm:p-6">
-            <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-neutral-400 uppercase">
-              {metric.label}
-            </p>
-            <p className="mt-4 font-(family-name:--font-display) text-5xl leading-none tracking-[0.02em] text-white uppercase">
-              {metric.value}
-            </p>
-            <p className="mt-4 text-sm leading-5 font-bold text-neutral-300">{metric.body}</p>
-          </CardContent>
-        </Card>
+          metric={metric}
+          className={cn(getMetricTileClassName(index, items.length), tileClassName)}
+        />
       ))}
     </section>
+  )
+}
+
+export function MetricTile({ metric, className }: { metric: MetricGridItem; className?: string }) {
+  return (
+    <article className={className}>
+      <p className="font-(family-name:--font-display) text-[15px] leading-none tracking-[0.07em] text-white uppercase">
+        {metric.label}
+      </p>
+      <p className="mt-4 font-(family-name:--font-display) text-[54px] leading-[0.85] tracking-[0.02em] text-white uppercase">
+        {metric.value}
+      </p>
+      <p className="mt-3 max-w-52.5 text-[15px] leading-[1.22] font-semibold text-neutral-300">
+        {metric.body}
+      </p>
+    </article>
   )
 }

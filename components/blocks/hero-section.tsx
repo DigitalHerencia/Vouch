@@ -168,9 +168,6 @@ export function HeroSplit({
               <img src={imageSrc} alt={imageAlt} className="h-auto w-full object-cover" />
             ) : null}
           </div>
-          {/* Decorative elements */}
-          <div className="bg-primary border-foreground absolute -top-4 -right-4 h-8 w-8 border-3" />
-          <div className="bg-accent border-foreground absolute -bottom-4 -left-4 h-12 w-12 border-3" />
         </div>
       </div>
     </section>

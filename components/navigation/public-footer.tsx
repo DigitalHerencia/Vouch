@@ -30,7 +30,7 @@ export function PublicFooter({ links = defaultPublicFooterLinks, className }: Pu
 
         <nav className="flex flex-wrap gap-x-7 gap-y-4 sm:gap-x-9">
           {links.map((item) => (
-            <Button key={item.href} variant="ghost" size="sm" asChild>
+            <Button key={item.href} variant="nav" size="nav" asChild>
               <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}

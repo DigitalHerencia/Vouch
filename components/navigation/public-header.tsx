@@ -33,7 +33,7 @@ export function PublicHeader({
   return (
     <header
       className={cn(
-        "sticky top-0 z-50 h-20 w-full border-b border-neutral-700 bg-neutral-950",
+        "sticky top-0 z-50 h-21 w-full border-b border-neutral-900 bg-black",
         className
       )}
     >
@@ -44,7 +44,7 @@ export function PublicHeader({
 
         <nav className="flex items-center gap-8 lg:gap-12">
           {navItems.map((item) => (
-            <Button key={item.href} variant="ghost" size="sm" asChild>
+            <Button key={item.href} variant="nav" size="nav" asChild>
               <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}
@@ -55,11 +55,7 @@ export function PublicHeader({
             <Link href="/sign-in">Sign in</Link>
           </Button>
 
-          <Button
-            size="lg"
-            className="min-w-40 sm:min-w-44 lg:min-w-48"
-            asChild
-          >
+          <Button variant="primary" size="lg" className="min-w-40 sm:min-w-44 lg:min-w-48" asChild>
             <Link href="/sign-up?return_to=/vouches/new">Get started</Link>
           </Button>
         </div>
