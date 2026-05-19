@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
-import { AuthPageShell } from "@/components/auth/auth-page-shell"
+import { AuthShell } from "@/components/auth/auth-shell"
 import { AuthForms } from "@/components/blocks/auth-forms"
 import { SignUpFieldGroup } from "@/components/forms/sign-up-field-group"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -36,17 +36,7 @@ const inputClassName =
   "h-10 w-full min-w-0 rounded-none border border-neutral-700 bg-black/55 px-3.5 font-(family-name:--font-sans) text-sm font-semibold text-white shadow-none outline-none placeholder:text-neutral-600 focus-visible:border-primary focus-visible:ring-0 sm:h-11 sm:px-4 lg:h-12"
 
 export function SignUpPageFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
-  return (
-    <AuthPageShell
-      variant="signup"
-      eyebrow="Commitment-backed payments"
-      title="Create your account."
-      description="Set up a verified account to create Vouches, accept invites, and confirm real-world presence."
-      footnote="Vouch coordinates deterministic payment outcomes for pre-arranged, in-person commitments. It does not broker services or resolve disputes."
-    >
-      <SignupForm redirectUrl={redirectUrl} />
-    </AuthPageShell>
-  )
+  return <SignupForm redirectUrl={redirectUrl} />
 }
 
 function getErrorMessage(error: unknown, fallback: string): string {
@@ -455,7 +445,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     ? `/sign-in?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-in"
                 }
-                className="font-mono text-primary underline-offset-4 transition-colors hover:text-white hover:underline"
+                className="text-primary font-mono underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Sign in
               </Link>

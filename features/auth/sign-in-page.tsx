@@ -9,7 +9,7 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 
-import { AuthPageShell } from "@/components/auth/auth-page-shell"
+import { AuthShell } from "@/components/auth/auth-shell"
 import { AuthForms } from "@/components/blocks/auth-forms"
 import { SignInFieldGroup } from "@/components/forms/sign-in-field-group"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -35,17 +35,7 @@ const inputClassName =
   "h-11 w-full min-w-0 rounded-none border border-neutral-700 bg-black/55 px-4 font-(family-name:--font-sans) text-sm font-semibold text-white shadow-none outline-none placeholder:text-neutral-600 focus-visible:border-primary focus-visible:ring-0 sm:h-12 sm:text-base lg:h-13"
 
 export function SignInPageFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
-  return (
-    <AuthPageShell
-      variant="signin"
-      eyebrow="Payment-backed commitments"
-      title="Back your commitment."
-      description="Sign in to manage Vouches, confirm presence, and keep payment-backed commitments on track."
-      footnote="Vouch is not a marketplace, scheduler, escrow provider, or dispute system. Users bring their own agreement; Vouch coordinates the payment outcome."
-    >
-      <LoginForm redirectUrl={redirectUrl} />
-    </AuthPageShell>
-  )
+  return <LoginForm redirectUrl={redirectUrl} />
 }
 
 function getErrorMessage(error: unknown, fallback: string): string {
@@ -415,7 +405,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                     ? `/sign-up?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-up"
                 }
-                className="font-mono text-primary underline-offset-4 transition-colors hover:text-white hover:underline"
+                className="text-primary font-mono underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Create one
               </Link>

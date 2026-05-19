@@ -15,9 +15,11 @@ export interface PublicShellProps {
 
 export function PublicShell({ children, className, withMobileBottomNav = true }: PublicShellProps) {
   return (
-    <div className={cn("min-h-dvh bg-transparent text-white", className)}>
+    <div className={cn("min-h-dvh bg-transparent", className)}>
       <PublicHeader />
-      <main className={cn("w-full pb-24 md:pb-0", !withMobileBottomNav && "pb-0")}>{children}</main>
+      <main className={cn("mx-auto w-full max-w-7xl", !withMobileBottomNav ? "pb-0" : undefined)}>
+        {children}
+      </main>
       <PublicFooter />
       {withMobileBottomNav ? <PublicMobileBottomNav /> : null}
     </div>

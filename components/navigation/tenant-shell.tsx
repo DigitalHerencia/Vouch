@@ -1,3 +1,5 @@
+// components/navigation/tenant-shell.tsx
+
 import type { ReactNode } from "react"
 
 import { TenantFooter } from "@/components/navigation/tenant-footer"
@@ -12,6 +14,7 @@ export interface TenantShellProps {
   connectAction: TenantProviderAction
   paymentAction: TenantProviderAction
   className?: string | undefined
+  withMobileBottomNav?: boolean | undefined
 }
 
 export function TenantShell({
@@ -19,24 +22,18 @@ export function TenantShell({
   connectAction,
   paymentAction,
   className,
+  withMobileBottomNav = true,
 }: TenantShellProps) {
   return (
-    <div className={cn("flex min-h-dvh flex-col bg-neutral-950 text-foreground", className)}>
+    <div className={cn("min-h-dvh bg-transparent", className)}>
       <TenantHeader connectAction={connectAction} paymentAction={paymentAction} />
-      <main className="flex-1 pb-20 md:pb-0">
-        <div className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
-          {children}
-        </div>
+      <main className={cn("mx-auto w-full max-w-7xl", !withMobileBottomNav ? "pb-0" : undefined)}>
+        {children}
       </main>
-      <TenantMobileBottomNav
-        connectAction={connectAction}
-        paymentAction={paymentAction}
-      />
-      <TenantFooter
-        className="hidden md:block"
-        connectAction={connectAction}
-        paymentAction={paymentAction}
-      />
+      <TenantFooter connectAction={connectAction} paymentAction={paymentAction} />
+      {withMobileBottomNav ? (
+        <TenantMobileBottomNav connectAction={connectAction} paymentAction={paymentAction} />
+      ) : null}
     </div>
   )
 }
