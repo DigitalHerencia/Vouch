@@ -2,11 +2,8 @@
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import { cn, safeHref } from '@/lib/utils'
 import { ArrowRight, Mail, Sparkles, Zap } from 'lucide-react'
-
-const safeHref = (href: string) =>
-  href.trim().toLowerCase().startsWith('javascript:') ? '#' : href
 
 // ============================================================================
 // CTA VARIANT 1: Simple Centered
@@ -74,7 +71,6 @@ export interface CTAWithBackgroundProps {
   title: string
   description?: string
   primaryAction: { label: string; href?: string; onClick?: () => void }
-  icon?: React.ReactNode
   backgroundColor?: 'primary' | 'secondary' | 'accent' | 'muted'
   className?: string
 }
@@ -83,7 +79,6 @@ export function CTAWithBackground({
   title,
   description,
   primaryAction,
-  icon,
   backgroundColor = 'primary',
   className,
 }: CTAWithBackgroundProps) {
@@ -103,9 +98,7 @@ export function CTAWithBackground({
         )}
       >
         <div className="text-center space-y-6">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center border-3 border-foreground bg-background text-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
-            {icon ?? <Sparkles className="h-8 w-8" />}
-          </div>
+          <Sparkles className="h-12 w-12 mx-auto" />
 
           <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tight">
             {title}

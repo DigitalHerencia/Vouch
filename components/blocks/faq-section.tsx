@@ -166,7 +166,7 @@ export function FAQWithCategories({
         </div>
 
         <Accordion type="single" collapsible className="space-y-4" key={activeCategory}>
-          {categories[activeCategory]?.items.map((item, index) => (
+          {categories[activeCategory].items.map((item, index) => (
             <AccordionItem
               key={item.question}
               value={`item-${index}`}

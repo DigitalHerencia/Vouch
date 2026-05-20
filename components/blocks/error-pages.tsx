@@ -1,10 +1,8 @@
-"use client"
-
 /* eslint-disable react-refresh/only-export-components */
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import { cn, safeHref } from '@/lib/utils'
 import {
   Home,
   ArrowLeft,
@@ -19,9 +17,6 @@ import {
   Clock,
   Lock,
 } from 'lucide-react'
-
-const safeHref = (href: string) =>
-  href.trim().toLowerCase().startsWith('javascript:') ? '#' : href
 
 // ============================================================================
 // ERROR PAGE VARIANT 1: 404 Not Found

@@ -38,11 +38,11 @@ export function HeroCentered({
         <h1 className="text-4xl font-black tracking-tight uppercase md:text-5xl lg:text-6xl">
           {title}{" "}
           {titleHighlight && (
-            <span className="bg-primary text-primary-foreground px-2">{titleHighlight}</span>
+            <span className="bg-primary px-2 text-primary-foreground">{titleHighlight}</span>
           )}
         </h1>
 
-        <p className="text-muted-foreground mx-auto max-w-2xl text-lg font-medium md:text-xl">
+        <p className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground md:text-xl">
           {description}
         </p>
 
@@ -65,10 +65,7 @@ export function HeroCentered({
             {secondaryAction &&
               (secondaryAction.href ? (
                 <Button size="lg" variant="outline" asChild>
-                  <a href={secondaryAction.href}>
-                    {secondaryAction.label}
-                    <Play className="ml-2 h-4 w-4" />
-                  </a>
+                  <a href={secondaryAction.href}>{secondaryAction.label}</a>
                 </Button>
               ) : (
                 <Button size="lg" variant="outline" onClick={secondaryAction.onClick}>
@@ -91,9 +88,8 @@ export interface HeroSplitProps {
   description: string
   primaryAction?: { label: string; href?: string; onClick?: () => void }
   secondaryAction?: { label: string; href?: string; onClick?: () => void }
-  imageSrc?: string
+  imageSrc: string
   imageAlt?: string
-  media?: React.ReactNode
   imagePosition?: "left" | "right"
   className?: string
 }
@@ -106,7 +102,6 @@ export function HeroSplit({
   secondaryAction,
   imageSrc,
   imageAlt = "Hero image",
-  media,
   imagePosition = "right",
   className,
 }: HeroSplitProps) {
@@ -120,11 +115,11 @@ export function HeroSplit({
           <h1 className="text-4xl font-black tracking-tight uppercase md:text-5xl">
             {title}{" "}
             {titleHighlight && (
-              <span className="bg-accent text-accent-foreground px-2">{titleHighlight}</span>
+              <span className="bg-accent px-2 text-accent-foreground">{titleHighlight}</span>
             )}
           </h1>
 
-          <p className="text-muted-foreground text-lg font-medium">{description}</p>
+          <p className="text-lg font-medium text-muted-foreground">{description}</p>
 
           {(primaryAction || secondaryAction) && (
             <div className="flex flex-col gap-4 sm:flex-row">
@@ -161,13 +156,12 @@ export function HeroSplit({
         </div>
 
         <div className={cn("relative", imageOrder)}>
-          <div className="border-foreground overflow-hidden border-3 shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-            {media ? (
-              media
-            ) : imageSrc ? (
-              <img src={imageSrc} alt={imageAlt} className="h-auto w-full object-cover" />
-            ) : null}
+          <div className="overflow-hidden border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
+            <img src={imageSrc} alt={imageAlt} className="h-auto w-full object-cover" />
           </div>
+          {/* Decorative elements */}
+          <div className="absolute -top-4 -right-4 h-8 w-8 border-3 border-foreground bg-primary" />
+          <div className="absolute -bottom-4 -left-4 h-12 w-12 border-3 border-foreground bg-accent" />
         </div>
       </div>
     </section>
@@ -201,11 +195,11 @@ export function HeroWithStats({
           <h1 className="text-4xl font-black tracking-tight uppercase md:text-5xl lg:text-6xl">
             {title}{" "}
             {titleHighlight && (
-              <span className="bg-secondary text-secondary-foreground px-2">{titleHighlight}</span>
+              <span className="bg-secondary px-2 text-secondary-foreground">{titleHighlight}</span>
             )}
           </h1>
 
-          <p className="text-muted-foreground mx-auto max-w-2xl text-lg font-medium md:text-xl">
+          <p className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground md:text-xl">
             {description}
           </p>
 
@@ -229,10 +223,10 @@ export function HeroWithStats({
           {stats.map((stat) => (
             <div
               key={`stat-${stat.label}`}
-              className="border-foreground bg-card border-3 p-6 text-center shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
+              className="border-3 border-foreground bg-card p-6 text-center shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
             >
               <div className="text-3xl font-black md:text-4xl">{stat.value}</div>
-              <div className="text-muted-foreground mt-1 text-sm font-bold tracking-wide uppercase">
+              <div className="mt-1 text-sm font-bold tracking-wide text-muted-foreground uppercase">
                 {stat.label}
               </div>
             </div>
@@ -262,7 +256,7 @@ export function HeroMinimal({ title, description, primaryAction, className }: He
         </h1>
 
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
-          <p className="text-muted-foreground max-w-md text-lg font-medium">{description}</p>
+          <p className="max-w-md text-lg font-medium text-muted-foreground">{description}</p>
 
           {primaryAction &&
             (primaryAction.href ? (
@@ -280,7 +274,7 @@ export function HeroMinimal({ title, description, primaryAction, className }: He
             ))}
         </div>
 
-        <div className="bg-foreground h-1 w-full" />
+        <div className="h-1 w-full bg-foreground" />
       </div>
     </section>
   )
@@ -324,13 +318,13 @@ export function HeroWithVideo({
           <h1 className="text-4xl font-black tracking-tight uppercase md:text-5xl">
             {title}{" "}
             {titleHighlight && (
-              <span className="decoration-primary underline decoration-4 underline-offset-4">
+              <span className="underline decoration-primary decoration-4 underline-offset-4">
                 {titleHighlight}
               </span>
             )}
           </h1>
 
-          <p className="text-muted-foreground mx-auto max-w-2xl text-lg font-medium">
+          <p className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground">
             {description}
           </p>
 
@@ -351,7 +345,7 @@ export function HeroWithVideo({
         </div>
 
         <div className="group relative cursor-pointer" onClick={onPlayClick}>
-          <div className="border-foreground overflow-hidden border-3 shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
+          <div className="overflow-hidden border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
             <img
               src={videoThumbnail}
               alt="Video thumbnail"
@@ -359,8 +353,8 @@ export function HeroWithVideo({
             />
           </div>
           {/* Play button overlay */}
-          <div className="bg-foreground/20 group-hover:bg-foreground/30 absolute inset-0 flex items-center justify-center transition-colors">
-            <div className="bg-primary border-foreground flex h-20 w-20 items-center justify-center border-3 shadow-[4px_4px_0px_hsl(var(--shadow-color))] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
+          <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 transition-colors group-hover:bg-foreground/30">
+            <div className="flex h-20 w-20 items-center justify-center border-3 border-foreground bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
               <Play className="h-8 w-8 fill-current" />
             </div>
           </div>
