@@ -1,0 +1,71 @@
+{
+  "artifact": "generalized-architecture-standard",
+  "created": "2026-05-19",
+  "status": "drafted",
+  "scope": "new-project-standard",
+  "stack": [
+    "Next.js App Router",
+    "React",
+    "TypeScript",
+    "Tailwind CSS v4",
+    "shadcn-compatible UI primitives",
+    "Zod",
+    "server actions",
+    "PostgreSQL-compatible server-only DB layer",
+    "provider webhooks"
+  ],
+  "outputs": [
+    {
+      "path": ".agents/docs/architecture-governance.md",
+      "type": "markdown",
+      "purpose": "general human-readable architecture standard"
+    },
+    {
+      "path": ".agents/contracts/architecture-boundaries.yml",
+      "type": "yaml",
+      "purpose": "general agent-readable boundary contract"
+    },
+    {
+      "path": ".agents/instructions/agent-architecture-rules.md",
+      "type": "markdown",
+      "purpose": "portable agent editing instructions"
+    },
+    {
+      "path": ".agents/execution/architecture-standard.json",
+      "type": "json",
+      "purpose": "machine-readable creation state"
+    }
+  ],
+  "replaced_prior_repo_specific_artifacts": [
+    ".codex/docs/architecture-governance.md",
+    ".codex/contracts/architecture-boundaries.yml",
+    ".codex/instructions/agent-architecture-rules.md",
+    ".codex/execution/architecture-governance.json"
+  ],
+  "open_decisions_for_user": [
+    {
+      "id": "decision-001",
+      "question": "Should generalized project standards always use .agents, or should repo-specific implementation artifacts still use .codex when Codex needs local execution state?",
+      "recommended_default": ".agents for portable standards; .codex for repo-local execution artifacts."
+    },
+    {
+      "id": "decision-002",
+      "question": "Should DTO mappers live in lib/mappers, lib/dto, or beside fetchers for small projects?",
+      "recommended_default": "lib/mappers for medium/large projects; colocate in fetchers only for small prototypes."
+    },
+    {
+      "id": "decision-003",
+      "question": "Should static public pages always skip features, or only when they have no protected data/actions/provider operations?",
+      "recommended_default": "Skip features only when no orchestration exists."
+    },
+    {
+      "id": "decision-004",
+      "question": "Should UI blocks live only in components/blocks or can namespace-specific blocks live under components/{namespace}?",
+      "recommended_default": "Use components/blocks for cross-page reusable sections and components/{namespace} for domain-specific assemblies."
+    }
+  ],
+  "validation": {
+    "commands_run": [],
+    "notes": "No repo code, QA gates, server, or config files were changed in this pass."
+  }
+}

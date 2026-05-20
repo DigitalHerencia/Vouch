@@ -1,22 +1,42 @@
 export default function AuthPageD1() {
   return (
-    <main className="p-2 md:p-8">
-      <section className="grid h-[calc(100vh-13rem)] w-full grid-cols-1 md:grid-cols-2">
-        <Panel title="authContent" />
+    <main className="h-dvh min-h-0 w-full overflow-hidden">
+      <section className="grid h-full min-h-0 w-full grid-cols-1 overflow-hidden md:grid-cols-2">
+        <div className="hidden min-h-0 md:block">
+          <AuthContentPanel />
+        </div>
 
-        <Panel title="signInForm" />
+        <div className="min-h-0">
+          <SignInFormPanel />
+        </div>
       </section>
     </main>
   )
 }
 
-function Panel({ title }: { title: string }) {
+function AuthContentPanel() {
   return (
-    <div className="border border-neutral-700 bg-neutral-950 p-6 md:p-8">
+    <div className="flex h-full min-h-0 w-full flex-col justify-center overflow-hidden border-r border-neutral-700 bg-neutral-950 p-6 md:p-8">
       <div className="flex w-full flex-col gap-6">
         <div className="space-y-2">
           <p className="text-xs font-medium tracking-wide text-blue-600 uppercase">Section</p>
-          <h2 className="text-xl font-semibold tracking-tight text-neutral-100">{title}</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-neutral-100">authContent</h2>
+          <p className="max-w-prose text-sm leading-6 text-neutral-400">
+            Content sits inside consistent padding with balanced X/Y spacing.
+          </p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function SignInFormPanel() {
+  return (
+    <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden bg-neutral-950 p-6 pt-24 pb-20 md:p-8">
+      <div className="flex w-full max-w-xl flex-col gap-6">
+        <div className="space-y-2">
+          <p className="text-xs font-medium tracking-wide text-blue-600 uppercase">Section</p>
+          <h2 className="text-xl font-semibold tracking-tight text-neutral-100">signInForm</h2>
           <p className="max-w-prose text-sm leading-6 text-neutral-400">
             Content sits inside consistent padding with balanced X/Y spacing.
           </p>

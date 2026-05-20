@@ -1,0 +1,197 @@
+version: 1
+name: full-stack-architecture-boundaries
+created: 2026-05-19
+scope: generalized-nextjs-stack
+stack:
+  framework: Next.js App Router
+  language: TypeScript
+  ui: React
+  css: Tailwind CSS v4
+  primitives: shadcn-ui-compatible registry components
+  validation: Zod
+  database: PostgreSQL-compatible server-only DB layer
+  operations: server actions, fetchers, route handlers, webhooks
+
+doctrine:
+  primary_rule: "Each file has one primary architectural role."
+  anti_pattern: "A page file that owns route selection, layout, fetching, mutation, DTO shaping, form state, provider calls, and rendering."
+  ambiguity_policy: "Ask before deciding when a boundary is unclear and the project has no existing convention."
+
+terms:
+  namespace:
+    definition: "Stable naming label used across folders and files."
+    examples: [auth, authz, billing, dashboard, marketing, navigation, notifications, ops, payments, settings, system, user, verification]
+  domain:
+    definition: "Capability that owns rules, state, lifecycle, persistence, provider coordination, security, or workflow truth."
+    examples: [auth, authz, billing, payments, verification, orders, projects, audit]
+  platform_concern:
+    definition: "Support capability such as CI, deployment, logging, monitoring, storage, email, configuration, or rate limiting."
+  route_surface:
+    definition: "User-facing App Router endpoint or route group."
+  feature:
+    definition: "Orchestration unit that marries UI assemblies to business operation contracts."
+  block:
+    definition: "Assembly component that combines components/primitives into reusable sections or surfaces."
+  component:
+    definition: "Pure UI renderer composed from props and primitives."
+  primitive:
+    definition: "Low-level accessible UI control with variants and no business rules."
+  action:
+    definition: "Protected write operation."
+  fetcher:
+    definition: "Protected read operation."
+  select:
+    definition: "Minimal persistence read shape."
+  dto:
+    definition: "Transport-safe contract derived from persistence/provider state."
+  transaction:
+    definition: "Atomic mutation sequence."
+
+owners:
+  root_layout:
+    paths: ["app/layout.tsx"]
+    owns: [metadata, viewport, global_providers, font_variables, root_body_baseline]
+    forbids: [route_chrome, domain_operations, feature_logic]
+  globals_css:
+    paths: ["app/globals.css"]
+    owns: [tokens, tailwind_theme_mappings, typography_taxonomy, global_background, base_reset, focus_policy, reduced_motion]
+    forbids: [page_specific_layout, route_chrome, business_logic]
+  route_group_layout:
+    paths: ["app/**/layout.tsx"]
+    owns: [route_shell_selection, persistent_group_structure, loading_error_boundary_placement]
+    forbids: [database_queries, provider_business_logic, dto_shaping]
+  shell:
+    preferred_paths: ["components/shells/*-shell.tsx", "features/**/shell.tsx"]
+    owns: [header, footer, sidebar, mobile_chrome, route_frame, responsive_macro_layout]
+    forbids: [business_mutation, raw_db_access, provider_reconciliation]
+  page:
+    paths: ["app/**/page.tsx"]
+    owns: [route_endpoint_selection, params_boundary_handoff, one_feature_render, static_public_composition, suspense_wrapper]
+    forbids: [db_queries, provider_business_logic, protected_dto_shaping, form_state_orchestration, mutations]
+  feature:
+    paths: ["features/**/*"]
+    owns: [feature_orchestration, fetcher_calls, action_wiring, dto_branching, suspense_boundaries, client_interaction_state]
+    forbids: [primitive_ui_implementation, raw_sql, provider_sdk_business_logic, reusable_visual_library_behavior]
+  block:
+    paths: ["components/blocks/**/*", "components/**/blocks/**/*"]
+    owns: [section_assembly, component_composition, repeated_page_surfaces]
+    forbids: [protected_reads, writes, authz, provider_calls]
+  component:
+    paths: ["components/**/*"]
+    owns: [pure_ui_rendering, props_to_markup, local_presentational_state, primitive_composition]
+    forbids: [server_actions, fetchers, database_access, authz, provider_sdks, domain_truth]
+  primitive:
+    paths: ["components/ui/**/*"]
+    owns: [accessible_control_behavior, variants, primitive_styling_contract]
+    forbids: [domain_language, business_rules, protected_data]
+    modification_requires_confirmation: true
+  auth:
+    paths: ["lib/auth/**/*"]
+    owns: [session_lookup, identity_mapping, local_user_account_context]
+    forbids: [permission_decisions, business_mutations]
+  authz:
+    paths: ["lib/authz/**/*"]
+    owns: [policies, assertions, capabilities, participant_scope, owner_scope, tenant_scope]
+    preferred_files: [assertions.ts, capabilities.ts, policies.ts, participants.ts]
+    forbids: [mutations, provider_calls, ui_data_fetching]
+  action:
+    paths: ["lib/actions/**/*Actions.ts"]
+    owns: [protected_writes]
+    sequence: [authenticate, authorize, validate, transaction_or_provider_operation, audit_or_log, revalidate_or_redirect, typed_result]
+    forbids: [raw_provider_return_to_ui, raw_db_model_return_to_ui]
+  fetcher:
+    paths: ["lib/fetchers/**/*Fetchers.ts"]
+    owns: [protected_reads]
+    sequence: [authenticate, authorize, minimal_select, map_to_dto, cache_policy, transport_safe_return]
+    forbids: [mutation, provider_reconciliation]
+  db_client:
+    paths: ["lib/db/client.ts"]
+    owns: [server_only_database_client]
+    forbids: [client_component_imports, ui_labels, route_rendering]
+  db_select:
+    paths: ["lib/db/selects/**/*.ts"]
+    owns: [minimal_persistence_read_shapes]
+    forbids: [ui_labels_by_default, authorization_by_default, mutation]
+  dto_mapper:
+    paths: ["lib/mappers/**/*.ts", "lib/dto/**/*.ts"]
+    owns: [persistence_to_transport_mapping, provider_to_transport_mapping]
+    forbids: [raw_sensitive_payload_leakage]
+  transaction:
+    paths: ["lib/db/transactions/**/*.ts"]
+    owns: [atomic_mutation_sequences, idempotent_persistence_mechanics]
+    forbids: [react_imports, route_revalidation, ui_rendering]
+  provider_adapter:
+    paths: ["lib/providers/**/*.ts", "lib/integrations/**/*.ts"]
+    owns: [external_sdk_adaptation, provider_payload_normalization]
+    forbids: [react_rendering, route_chrome]
+  webhook:
+    paths: ["app/api/**/route.ts"]
+    owns: [provider_event_ingress, signature_verification, idempotent_reconciliation]
+    sequence: [read_raw_body, verify_signature, parse_event_envelope, classify_event_type, record_provider_event_id, process_idempotently, provider_compatible_response]
+    forbids: [browser_user_session_dependency, ui_fetchers, non_idempotent_writes]
+  schemas:
+    paths: ["schemas/**/*Schemas.ts"]
+    owns: [zod_validation, input_sanitation]
+    forbids: [database_queries, provider_calls, authorization, mutation]
+  types:
+    paths: ["types/**/*Types.ts"]
+    owns: [dto_types, action_results, safe_provider_summaries, unions]
+    forbids: [runtime_logic, raw_sensitive_payload_contracts]
+
+dependency_rules:
+  allowed:
+    - "app -> features"
+    - "app -> components for static public composition"
+    - "features -> lib/fetchers"
+    - "features -> lib/actions"
+    - "features -> components/blocks"
+    - "components/blocks -> components"
+    - "components -> components/ui"
+    - "lib/actions -> lib/auth"
+    - "lib/actions -> lib/authz"
+    - "lib/actions -> schemas"
+    - "lib/actions -> lib/db/transactions"
+    - "lib/actions -> lib/providers"
+    - "lib/fetchers -> lib/auth"
+    - "lib/fetchers -> lib/authz"
+    - "lib/fetchers -> lib/db/selects"
+    - "lib/fetchers -> lib/mappers"
+    - "webhooks -> schemas"
+    - "webhooks -> lib/providers"
+    - "webhooks -> lib/db/transactions"
+  forbidden:
+    - "components -> lib/actions"
+    - "components -> lib/fetchers"
+    - "components -> lib/db"
+    - "components -> provider_sdks"
+    - "components/ui -> domain_logic"
+    - "lib/db -> app"
+    - "lib/db -> features"
+    - "lib/db -> components"
+    - "schemas -> lib/db"
+    - "fetchers -> actions"
+    - "actions -> React components"
+    - "webhooks -> user_session_fetchers"
+
+naming:
+  root_namespace_files:
+    types: "types/{namespace}Types.ts"
+    schemas: "schemas/{namespace}Schemas.ts"
+    actions: "lib/actions/{namespace}Actions.ts"
+    fetchers: "lib/fetchers/{namespace}Fetchers.ts"
+  nested_namespace_files:
+    rule: "Do not repeat the namespace when the directory already scopes it."
+    examples: ["lib/authz/assertions.ts", "lib/authz/capabilities.ts"]
+  react_files:
+    style: lowercase-hyphenated
+    examples: ["authz-feature.tsx", "authz-feature.client.tsx", "authz-skeleton.tsx", "authz-table.tsx"]
+
+decision_points:
+  ask_user_when_unclear:
+    - "Is this a domain, platform concern, route surface, or UI namespace?"
+    - "Should this route be static composition or feature orchestration?"
+    - "Should this shape be a DB select, DTO, or UI view model?"
+    - "Should user-facing labels live in DTO mapping or content modules?"
+    - "Should this component live in blocks, shared, or namespace-specific components?"
+    - "Should provider SDK details be wrapped in an adapter first?"
+    - "Is primitive or registry component modification allowed?"

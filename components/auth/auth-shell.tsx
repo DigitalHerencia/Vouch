@@ -12,15 +12,21 @@ export interface AuthShellProps {
 
 export function AuthShell({ children, className }: AuthShellProps) {
   return (
-    <div className={cn("bg-transparent", className)}>
-      <div className="grid grid-cols-1 md:grid-cols-2">
-        <div />
-        <AuthHeader />
+    <div className={cn("relative h-dvh overflow-hidden bg-transparent", className)}>
+      <div className="h-full min-h-0 w-full overflow-hidden">{children}</div>
+
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-10 grid grid-cols-1 md:grid-cols-2">
+        <div className="hidden md:block" />
+        <div className="pointer-events-auto">
+          <AuthHeader />
+        </div>
       </div>
-      <main className="mx-auto h-[calc(100vh-9rem)] w-full overflow-hidden">{children}</main>
-      <div className="grid grid-cols-1 md:grid-cols-2">
-        <div />
-        <AuthFooter />
+
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 grid grid-cols-1 md:grid-cols-2">
+        <div className="pointer-events-auto">
+          <AuthFooter />
+        </div>
+        <div className="hidden md:block" />
       </div>
     </div>
   )

@@ -1,0 +1,51 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - link "N Next Stack" [ref=e5] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e6]: "N"
+        - generic [ref=e7]: Next Stack
+      - navigation [ref=e8]:
+        - link "Pricing" [ref=e9] [cursor=pointer]:
+          - /url: /pricing
+        - link "FAQ" [ref=e10] [cursor=pointer]:
+          - /url: /faq
+      - generic [ref=e11]:
+        - link "Sign in" [ref=e12] [cursor=pointer]:
+          - /url: /sign-in
+        - link "Start" [ref=e13] [cursor=pointer]:
+          - /url: /sign-up
+  - main [ref=e14]:
+    - generic [ref=e15]:
+      - generic [ref=e16]:
+        - paragraph [ref=e17]: Generic SaaS starter
+        - heading "Build the app, not the boundary map." [level=1] [ref=e18]
+        - paragraph [ref=e19]: A strict App Router template for server-owned SaaS workflows, Clerk identity, local row-level authorization, Server Actions, Prisma, and Neon.
+      - generic [ref=e20]:
+        - link "Start the app" [ref=e21] [cursor=pointer]:
+          - /url: /sign-up
+        - link "View structure" [ref=e22] [cursor=pointer]:
+          - /url: /pricing
+      - generic [ref=e23]:
+        - generic [ref=e24]:
+          - paragraph [ref=e25]: Runtime
+          - paragraph [ref=e26]: RSC
+        - generic [ref=e27]:
+          - paragraph [ref=e28]: Writes
+          - paragraph [ref=e29]: Actions
+        - generic [ref=e30]:
+          - paragraph [ref=e31]: Authz
+          - paragraph [ref=e32]: Rows
+      - generic [ref=e33]:
+        - generic [ref=e34]:
+          - paragraph [ref=e35]: Step 1
+          - heading "Identify" [level=3] [ref=e36]
+          - paragraph [ref=e37]: Clerk owns identity and session lifecycle without organizations.
+        - generic [ref=e38]:
+          - paragraph [ref=e39]: Step 2
+          - heading "Authorize" [level=3] [ref=e40]
+          - paragraph [ref=e41]: Local Prisma rows decide whether a user can read or write a resource.
+        - generic [ref=e42]:
+          - paragraph [ref=e43]: Step 3
+          - heading "Persist" [level=3] [ref=e44]
+          - paragraph [ref=e45]: Server Actions validate inputs and transactions write deterministic state.
