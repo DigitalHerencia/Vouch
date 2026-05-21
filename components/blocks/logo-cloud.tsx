@@ -1,7 +1,6 @@
-/* eslint-disable react-refresh/only-export-components */
-import * as React from 'react'
-import { cn, safeHref } from '@/lib/utils'
-import { Marquee } from '@/components/ui/marquee'
+import * as React from "react"
+import { cn, safeHref } from "@/lib/utils"
+import { Marquee } from "@/components/ui/marquee"
 
 export interface LogoItem {
   name: string
@@ -28,31 +27,29 @@ export function LogoCloudGrid({
   className,
 }: LogoCloudGridProps) {
   const gridCols = {
-    3: 'grid-cols-3',
-    4: 'grid-cols-2 md:grid-cols-4',
-    5: 'grid-cols-2 md:grid-cols-3 lg:grid-cols-5',
-    6: 'grid-cols-3 md:grid-cols-6',
+    3: "grid-cols-3",
+    4: "grid-cols-2 md:grid-cols-4",
+    5: "grid-cols-2 md:grid-cols-3 lg:grid-cols-5",
+    6: "grid-cols-3 md:grid-cols-6",
   }
 
   return (
-    <section className={cn('py-12 px-4 md:px-8 lg:px-16', className)}>
-      <div className="max-w-6xl mx-auto">
+    <section className={cn("px-4 py-12 md:px-8 lg:px-16", className)}>
+      <div className="mx-auto max-w-6xl">
         {(title || subtitle) && (
-          <div className="text-center mb-8 space-y-2">
+          <div className="mb-8 space-y-2 text-center">
             {subtitle && (
-              <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">
+              <p className="text-sm font-bold tracking-widest text-muted-foreground uppercase">
                 {subtitle}
               </p>
             )}
             {title && (
-              <h2 className="text-xl md:text-2xl font-black uppercase tracking-tight">
-                {title}
-              </h2>
+              <h2 className="text-xl font-black tracking-tight uppercase md:text-2xl">{title}</h2>
             )}
           </div>
         )}
 
-        <div className={cn('grid gap-8 items-center', gridCols[columns])}>
+        <div className={cn("grid items-center gap-8", gridCols[columns])}>
           {logos.map((logo) => (
             <LogoCloudItem key={`logo-${logo.name}`} logo={logo} />
           ))}
@@ -68,43 +65,35 @@ export function LogoCloudGrid({
 export interface LogoCloudMarqueeProps {
   title?: string
   logos: LogoItem[]
-  speed?: 'slow' | 'normal' | 'fast'
-  direction?: 'left' | 'right'
+  speed?: "slow" | "normal" | "fast"
+  direction?: "left" | "right"
   className?: string
 }
 
 export function LogoCloudMarquee({
   title,
   logos,
-  speed = 'normal',
-  direction = 'left',
+  speed = "normal",
+  direction = "left",
   className,
 }: LogoCloudMarqueeProps) {
   return (
-    <section className={cn('py-12 px-4 md:px-8 lg:px-16 overflow-hidden', className)}>
-      <div className="max-w-7xl mx-auto">
+    <section className={cn("overflow-hidden px-4 py-12 md:px-8 lg:px-16", className)}>
+      <div className="mx-auto max-w-7xl">
         {title && (
-          <p className="text-center text-sm font-bold uppercase tracking-widest text-muted-foreground mb-8">
+          <p className="mb-8 text-center text-sm font-bold tracking-widest text-muted-foreground uppercase">
             {title}
           </p>
         )}
 
-        <Marquee
-          className="py-4"
-          direction={direction}
-          speed={speed}
-        >
+        <Marquee className="py-4" direction={direction} speed={speed}>
           {logos.map((logo) => (
             <div
               key={`logo-marquee-${logo.name}`}
-              className="mx-8 flex items-center justify-center h-12 opacity-70 hover:opacity-100 transition-opacity grayscale hover:grayscale-0"
+              className="mx-8 flex h-12 items-center justify-center opacity-70 grayscale transition-opacity hover:opacity-100 hover:grayscale-0"
             >
-              {typeof logo.logo === 'string' ? (
-                <img
-                  src={logo.logo}
-                  alt={logo.name}
-                  className="h-full w-auto object-contain"
-                />
+              {typeof logo.logo === "string" ? (
+                <img src={logo.logo} alt={logo.name} className="h-full w-auto object-contain" />
               ) : (
                 logo.logo
               )}
@@ -126,49 +115,39 @@ export interface LogoCloudCardsProps {
   className?: string
 }
 
-export function LogoCloudCards({
-  title,
-  subtitle,
-  logos,
-  className,
-}: LogoCloudCardsProps) {
+export function LogoCloudCards({ title, subtitle, logos, className }: LogoCloudCardsProps) {
   return (
-    <section className={cn('py-16 px-4 md:px-8 lg:px-16 bg-muted/30', className)}>
-      <div className="max-w-6xl mx-auto">
+    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
+      <div className="mx-auto max-w-6xl">
         {(title || subtitle) && (
-          <div className="text-center mb-10 space-y-2">
+          <div className="mb-10 space-y-2 text-center">
             {subtitle && (
-              <p className="text-sm font-bold uppercase tracking-widest text-primary">
-                {subtitle}
-              </p>
+              <p className="text-sm font-bold tracking-widest text-primary uppercase">{subtitle}</p>
             )}
             {title && (
-              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight">
-                {title}
-              </h2>
+              <h2 className="text-2xl font-black tracking-tight uppercase md:text-3xl">{title}</h2>
             )}
           </div>
         )}
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
           {logos.map((logo) => {
             const inner = (
-              <div
-                className="border-3 border-foreground bg-card p-6 flex items-center justify-center h-24 hover:shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all cursor-pointer"
-              >
-                {typeof logo.logo === 'string' ? (
-                  <img
-                    src={logo.logo}
-                    alt={logo.name}
-                    className="h-10 w-auto object-contain"
-                  />
+              <div className="flex h-24 cursor-pointer items-center justify-center border-3 border-foreground bg-card p-6 transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+                {typeof logo.logo === "string" ? (
+                  <img src={logo.logo} alt={logo.name} className="h-10 w-auto object-contain" />
                 ) : (
                   logo.logo
                 )}
               </div>
             )
             return logo.url ? (
-              <a key={`logo-${logo.name}`} href={safeHref(logo.url)} target="_blank" rel="noopener noreferrer">
+              <a
+                key={`logo-${logo.name}`}
+                href={safeHref(logo.url)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 {inner}
               </a>
             ) : (
@@ -191,24 +170,14 @@ export interface LogoCloudWithStatsProps {
   className?: string
 }
 
-export function LogoCloudWithStats({
-  title,
-  logos,
-  stats,
-  className,
-}: LogoCloudWithStatsProps) {
-  if ((import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV && logos.length > 9) {
-    console.warn(`[LogoCloud] WithStats variant only shows first 9 logos. ${logos.length} logos provided.`)
-  }
+export function LogoCloudWithStats({ title, logos, stats, className }: LogoCloudWithStatsProps) {
   return (
-    <section className={cn('py-16 px-4 md:px-8 lg:px-16', className)}>
-      <div className="max-w-6xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
+      <div className="mx-auto max-w-6xl">
+        <div className="grid items-center gap-12 lg:grid-cols-2">
           <div className="space-y-8">
             {title && (
-              <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight">
-                {title}
-              </h2>
+              <h2 className="text-2xl font-black tracking-tight uppercase md:text-3xl">{title}</h2>
             )}
 
             <div className="grid grid-cols-2 gap-4">
@@ -218,7 +187,7 @@ export function LogoCloudWithStats({
                   className="border-3 border-foreground p-4 shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
                 >
                   <div className="text-3xl font-black">{stat.value}</div>
-                  <div className="text-sm text-muted-foreground font-bold uppercase">
+                  <div className="text-sm font-bold text-muted-foreground uppercase">
                     {stat.label}
                   </div>
                 </div>
@@ -229,14 +198,12 @@ export function LogoCloudWithStats({
           <div className="grid grid-cols-3 gap-6">
             {logos.slice(0, 9).map((logo) => {
               const inner = (
-                <div
-                  className="flex items-center justify-center h-16 opacity-70 hover:opacity-100 transition-opacity"
-                >
-                  {typeof logo.logo === 'string' ? (
+                <div className="flex h-16 items-center justify-center opacity-70 transition-opacity hover:opacity-100">
+                  {typeof logo.logo === "string" ? (
                     <img
                       src={logo.logo}
                       alt={logo.name}
-                      className="h-8 w-auto object-contain grayscale hover:grayscale-0 transition-all"
+                      className="h-8 w-auto object-contain grayscale transition-all hover:grayscale-0"
                     />
                   ) : (
                     logo.logo
@@ -244,7 +211,13 @@ export function LogoCloudWithStats({
                 </div>
               )
               return logo.url ? (
-                <a key={`logo-${logo.name}`} href={safeHref(logo.url)} target="_blank" rel="noopener noreferrer" className="cursor-pointer">
+                <a
+                  key={`logo-${logo.name}`}
+                  href={safeHref(logo.url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cursor-pointer"
+                >
                   {inner}
                 </a>
               ) : (
@@ -263,13 +236,9 @@ export function LogoCloudWithStats({
 // ============================================================================
 function LogoCloudItem({ logo }: { logo: LogoItem }) {
   const content = (
-    <div className="flex items-center justify-center h-12 opacity-60 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
-      {typeof logo.logo === 'string' ? (
-        <img
-          src={logo.logo}
-          alt={logo.name}
-          className="h-full w-auto object-contain"
-        />
+    <div className="flex h-12 items-center justify-center opacity-60 grayscale transition-opacity hover:opacity-100 hover:grayscale-0">
+      {typeof logo.logo === "string" ? (
+        <img src={logo.logo} alt={logo.name} className="h-full w-auto object-contain" />
       ) : (
         logo.logo
       )}

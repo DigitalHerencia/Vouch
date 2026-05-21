@@ -31,8 +31,8 @@ const sessions = [
 
 export default function SettingsBlocksPage() {
   return (
-    <main className="min-h-screen p-2 text-neutral-100 md:p-8">
-      <section className="grid min-h-full grid-rows-6 gap-2 md:gap-4">
+    <main className="p-8 md:p-12">
+      <section className="grid gap-8 md:gap-16">
         <ProfileSettings user={user} onSave={() => undefined} onAvatarChange={() => undefined} />
         <NotificationSettings onSave={() => undefined} />
         <SecuritySettings
@@ -44,7 +44,7 @@ export default function SettingsBlocksPage() {
         />
         <AppearanceSettings
           theme="dark"
-          accentColor="#3b82f6"
+          accentColor="#154fef"
           onThemeChange={() => undefined}
           onAccentColorChange={() => undefined}
         />

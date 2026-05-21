@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import {
   Accordion,
@@ -245,7 +247,7 @@ export interface FAQSimpleListProps {
 
 export function FAQSimpleList({ title, items, className }: FAQSimpleListProps) {
   return (
-    <section className={cn("bg-muted/30 px-4 py-16 md:px-8 lg:px-16", className)}>
+    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
       <div className="mx-auto max-w-3xl">
         {title && (
           <h2 className="mb-12 text-center text-3xl font-black tracking-tight uppercase md:text-4xl">

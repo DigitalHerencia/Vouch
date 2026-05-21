@@ -53,7 +53,7 @@ export function LoginForm({
                   type="email"
                   autoComplete="email"
                   placeholder="you@example.com"
-                  className="pl-10"
+                  className="border-2 border-primary-foreground pl-10"
                   defaultValue="you@example.com"
                   readOnly
                   required
@@ -72,7 +72,7 @@ export function LoginForm({
                   type="password"
                   autoComplete="current-password"
                   placeholder="Enter your password"
-                  className="pr-10 pl-10"
+                  className="border-2 border-primary-foreground pr-10 pl-10"
                   defaultValue="password"
                   readOnly
                   required
@@ -89,19 +89,13 @@ export function LoginForm({
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="remember"
-                  defaultChecked
-                />
+                <Checkbox id="remember" defaultChecked />
                 <Label htmlFor="remember" className="cursor-pointer text-sm font-medium">
                   Remember me
                 </Label>
               </div>
               {onForgotPassword && (
-                <button
-                  type="button"
-                  className="text-sm font-bold text-primary hover:underline"
-                >
+                <button type="button" className="text-sm font-bold text-primary hover:underline">
                   Forgot password?
                 </button>
               )}
@@ -145,10 +139,7 @@ export function LoginForm({
             {onSignUp && (
               <p className="mt-4 text-center text-sm text-muted-foreground">
                 Don't have an account?{" "}
-                <button
-                  type="button"
-                  className="font-bold text-primary hover:underline"
-                >
+                <button type="button" className="font-bold text-primary hover:underline">
                   Sign up
                 </button>
               </p>
@@ -208,7 +199,7 @@ export function SignUpForm({
                   type="text"
                   autoComplete="name"
                   placeholder="John Doe"
-                  className="pl-10"
+                  className="border-2 border-primary-foreground pl-10"
                   defaultValue="John Doe"
                   readOnly
                   required
@@ -227,7 +218,7 @@ export function SignUpForm({
                   type="email"
                   autoComplete="email"
                   placeholder="you@example.com"
-                  className="pl-10"
+                  className="border-2 border-primary-foreground pl-10"
                   defaultValue="you@example.com"
                   readOnly
                   required
@@ -246,7 +237,7 @@ export function SignUpForm({
                   type="password"
                   autoComplete="new-password"
                   placeholder="Create a password"
-                  className="pr-10 pl-10"
+                  className="border-2 border-primary-foreground pr-10 pl-10"
                   defaultValue="password"
                   readOnly
                   required
@@ -264,10 +255,7 @@ export function SignUpForm({
 
             <div className="space-y-1">
               <div className="flex items-start space-x-2">
-                <Checkbox
-                  id="terms"
-                  defaultChecked
-                />
+                <Checkbox id="terms" defaultChecked />
                 <Label htmlFor="terms" className="cursor-pointer text-sm leading-tight">
                   I agree to the{" "}
                   <a href={termsUrl} className="font-bold text-primary hover:underline">
@@ -319,10 +307,7 @@ export function SignUpForm({
             {onSignIn && (
               <p className="mt-4 text-center text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <button
-                  type="button"
-                  className="font-bold text-primary hover:underline"
-                >
+                <button type="button" className="font-bold text-primary hover:underline">
                   Sign in
                 </button>
               </p>
@@ -375,7 +360,7 @@ export function ForgotPasswordForm({
                   id="reset-email"
                   type="email"
                   placeholder="you@example.com"
-                  className="pl-10"
+                  className="border-2 border-primary-foreground pl-10"
                   defaultValue="you@example.com"
                   readOnly
                   required
@@ -461,7 +446,7 @@ export function OTPVerificationForm({
                 value={digit}
                 readOnly
                 disabled={disabled}
-                className="h-14 w-12 text-center text-2xl font-black"
+                className="h-14 w-12 border-2 border-primary-foreground text-center text-2xl font-black"
               />
             ))}
           </div>
@@ -481,10 +466,7 @@ export function OTPVerificationForm({
             {onResend && (
               <p className="text-sm text-muted-foreground">
                 Didn't receive a code?{" "}
-                <button
-                  type="button"
-                  className="font-bold text-primary hover:underline"
-                >
+                <button type="button" className="font-bold text-primary hover:underline">
                   Resend
                 </button>
               </p>

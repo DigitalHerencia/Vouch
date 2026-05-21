@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 
-import { AuthShell } from "@/components/auth/auth-shell"
 import { AuthForms } from "@/components/blocks/auth-forms"
 import { SignInFieldGroup } from "@/components/forms/sign-in-field-group"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -405,7 +404,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                     ? `/sign-up?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-up"
                 }
-                className="text-primary font-mono underline-offset-4 transition-colors hover:text-white hover:underline"
+                className="font-mono text-primary underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Create one
               </Link>

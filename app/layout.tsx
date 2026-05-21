@@ -64,7 +64,7 @@ export const metadata: Metadata = {
       "Outcome follows system state. Both parties confirm presence inside the confirmation window before funds release.",
     images: [
       {
-        url: "public/VOUCHdark.png",
+        url: "/VOUCHdark.png",
         width: 1200,
         height: 630,
         alt: "Vouch - A Protocol for Commitment",
@@ -75,7 +75,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Vouch - A Protocol for Commitment",
     description: "Deterministic payment coordination for real-world commitments.",
-    images: ["public/VOUCHdark.png"],
+    images: ["/VOUCHdark.png"],
   },
   robots: {
     index: true,

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import { ArrowRight, Play, Sparkles, Star, Zap } from "lucide-react"
+import Image from "next/image"
 
 // ============================================================================
 // HERO VARIANT 1: Centered with Badge
@@ -35,7 +36,7 @@ export function HeroCentered({
           </Badge>
         )}
 
-        <h1 className="text-4xl font-black tracking-tight uppercase md:text-5xl lg:text-6xl">
+        <h1 className="text-4xl leading-snug font-black tracking-tight uppercase md:text-5xl lg:text-6xl">
           {title}{" "}
           {titleHighlight && (
             <span className="bg-primary px-2 text-primary-foreground">{titleHighlight}</span>
@@ -157,11 +158,14 @@ export function HeroSplit({
 
         <div className={cn("relative", imageOrder)}>
           <div className="overflow-hidden border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-            <img src={imageSrc} alt={imageAlt} className="h-auto w-full object-cover" />
+            <Image
+              src={imageSrc}
+              alt={imageAlt}
+              width={1280}
+              height={960}
+              className="h-auto w-full object-cover"
+            />
           </div>
-          {/* Decorative elements */}
-          <div className="absolute -top-4 -right-4 h-8 w-8 border-3 border-foreground bg-primary" />
-          <div className="absolute -bottom-4 -left-4 h-12 w-12 border-3 border-foreground bg-accent" />
         </div>
       </div>
     </section>
@@ -346,9 +350,11 @@ export function HeroWithVideo({
 
         <div className="group relative cursor-pointer" onClick={onPlayClick}>
           <div className="overflow-hidden border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-            <img
+            <Image
               src={videoThumbnail}
               alt="Video thumbnail"
+              width={1280}
+              height={720}
               className="aspect-video h-auto w-full object-cover"
             />
           </div>

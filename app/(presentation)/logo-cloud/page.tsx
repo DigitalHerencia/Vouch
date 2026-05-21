@@ -5,7 +5,7 @@ import {
   LogoCloudWithStats,
 } from "@/components/blocks/logo-cloud"
 
-const logos = ["Stripe", "Clerk", "Neon", "Vercel", "Prisma", "Next.js"].map((name) => ({
+const logos = ["Stripe", "Clerk"].map((name) => ({
   name,
   logo: <span className="text-lg font-black uppercase">{name}</span>,
   url: "#",
@@ -13,10 +13,15 @@ const logos = ["Stripe", "Clerk", "Neon", "Vercel", "Prisma", "Next.js"].map((na
 
 export default function LogoCloud() {
   return (
-    <main className="min-h-screen p-2 text-neutral-100 md:p-8">
-      <section className="grid min-h-[calc(100vh-3rem)] grid-rows-4 gap-2 md:min-h-[calc(100vh-4rem)] md:gap-4">
+    <main className="p-8 md:p-12">
+      <section className="grid gap-8 md:gap-16">
         <LogoCloudGrid title="Built With" subtitle="Stack" logos={logos} />
-        <LogoCloudMarquee title="Provider Ecosystem" logos={logos} />
+        <LogoCloudMarquee
+          title="Trusted by leading companies"
+          logos={logos}
+          speed="normal" // 'slow' | 'normal' | 'fast'
+          direction="left" // or 'right'
+        />
         <LogoCloudCards title="Infrastructure" subtitle="Services" logos={logos} />
         <LogoCloudWithStats
           title="Operational Coverage"

@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
-import { AuthShell } from "@/components/auth/auth-shell"
 import { AuthForms } from "@/components/blocks/auth-forms"
 import { SignUpFieldGroup } from "@/components/forms/sign-up-field-group"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -215,7 +214,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
     >
       <UiFieldGroup className="max-w-full min-w-0 gap-2.5 overflow-hidden border-0 bg-transparent p-0 shadow-none sm:gap-3">
         {notice ? (
-          <h1 className="max-w-full overflow-hidden font-(family-name:--font-display) text-[30px] leading-none tracking-[0.04em] break-words text-white uppercase sm:text-[40px] lg:text-[48px]">
+          <h1 className="max-w-full overflow-hidden font-(family-name:--font-display) text-[30px] leading-none tracking-[0.04em] wrap-break-word text-white uppercase sm:text-[40px] lg:text-[48px]">
             {notice}
           </h1>
         ) : null}
@@ -401,7 +400,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                   }}
                 />
 
-                <span className="min-w-0 text-[11px] leading-4 font-semibold break-words text-neutral-400 sm:text-xs sm:leading-5">
+                <span className="min-w-0 text-[11px] leading-4 font-semibold wrap-break-word text-neutral-400 sm:text-xs sm:leading-5">
                   I agree to the{" "}
                   <Link
                     href="/user-agreement"
@@ -445,7 +444,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     ? `/sign-in?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-in"
                 }
-                className="text-primary font-mono underline-offset-4 transition-colors hover:text-white hover:underline"
+                className="font-mono text-primary underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Sign in
               </Link>

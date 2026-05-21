@@ -344,7 +344,7 @@ export interface ReceiptProps {
 
 export function Receipt({ data, logo, onDownload, className }: ReceiptProps) {
   return (
-    <div className={cn("mx-auto max-w-sm", className)}>
+    <div className={cn("mx-auto min-w-lg", className)}>
       <div className="border-3 border-foreground bg-card shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
         <div className="space-y-6 p-6">
           {/* Header */}

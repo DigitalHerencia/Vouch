@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -47,9 +49,7 @@ export function NotFoundPage({
   }
 
   return (
-    <div
-      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
-    >
+    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
       <div className="max-w-lg space-y-8 text-center">
         {/* Large 404 */}
         <div className="relative">
@@ -75,6 +75,7 @@ export function NotFoundPage({
               placeholder="Search for pages..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              className="border-2 border-primary-foreground"
             />
             <Button type="submit">
               <Search className="h-4 w-4" />
@@ -126,9 +127,7 @@ export function ServerErrorPage({
   className,
 }: ServerErrorPageProps) {
   return (
-    <div
-      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
-    >
+    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
       <div className="max-w-lg space-y-8 text-center">
         {/* Large 500 */}
         <div className="relative">
@@ -204,9 +203,7 @@ export function MaintenancePage({
   className,
 }: MaintenancePageProps) {
   return (
-    <div
-      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
-    >
+    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
       <div className="max-w-lg space-y-8 text-center">
         <div className="bg-warning mx-auto flex h-32 w-32 items-center justify-center border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
           <Construction className="text-warning-foreground h-16 w-16" />
@@ -269,9 +266,7 @@ export function OfflinePage({
   className,
 }: OfflinePageProps) {
   return (
-    <div
-      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
-    >
+    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
       <div className="max-w-md space-y-8 text-center">
         <div className="mx-auto flex h-32 w-32 items-center justify-center border-3 border-foreground bg-muted shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
           <Wifi className="h-16 w-16 text-muted-foreground" />
@@ -323,9 +318,7 @@ export function ForbiddenPage({
   className,
 }: ForbiddenPageProps) {
   return (
-    <div
-      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
-    >
+    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
       <div className="max-w-lg space-y-8 text-center">
         {/* Large 403 */}
         <div className="relative">
@@ -415,9 +408,7 @@ export function ComingSoonPage({
   }, [launchDate])
 
   return (
-    <div
-      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
-    >
+    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
       <div className="max-w-lg space-y-8 text-center">
         <div className="mx-auto flex h-32 w-32 items-center justify-center border-3 border-foreground bg-primary shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
           <Clock className="h-16 w-16 text-primary-foreground" />
@@ -456,6 +447,7 @@ export function ComingSoonPage({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
+              className="border-2 border-primary-foreground"
             />
             <Button type="submit">Notify Me</Button>
           </form>
@@ -495,9 +487,7 @@ export function GenericErrorPage({
   className,
 }: GenericErrorPageProps) {
   return (
-    <div
-      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
-    >
+    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
       <div className="max-w-md space-y-8 text-center">
         <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-foreground bg-destructive/10 shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
           {icon || <AlertTriangle className="h-12 w-12 text-destructive" />}

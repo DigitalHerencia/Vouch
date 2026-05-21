@@ -92,7 +92,13 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
               <Label htmlFor="name" className="text-xs font-bold uppercase">
                 Full Name
               </Label>
-              <Input id="name" value={user.name} readOnly placeholder="John Doe" />
+              <Input
+                id="name"
+                value={user.name}
+                readOnly
+                placeholder="John Doe"
+                className="border-2 border-primary-foreground"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="email" className="text-xs font-bold uppercase">
@@ -104,6 +110,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
                 value={user.email}
                 readOnly
                 placeholder="you@example.com"
+                className="border-2 border-primary-foreground"
               />
             </div>
           </div>
@@ -118,6 +125,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
               readOnly
               placeholder="Tell us about yourself..."
               rows={3}
+              className="border-2 border-primary-foreground"
             />
           </div>
 
@@ -126,7 +134,13 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
               <Label htmlFor="company" className="text-xs font-bold uppercase">
                 Company
               </Label>
-              <Input id="company" value={user.company ?? ""} readOnly placeholder="Acme Inc." />
+              <Input
+                id="company"
+                value={user.company ?? ""}
+                readOnly
+                placeholder="Acme Inc."
+                className="border-2 border-primary-foreground"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="location" className="text-xs font-bold uppercase">
@@ -137,6 +151,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
                 value={user.location ?? ""}
                 readOnly
                 placeholder="San Francisco, CA"
+                className="border-2 border-primary-foreground"
               />
             </div>
           </div>
@@ -150,6 +165,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
               value={user.website ?? ""}
               readOnly
               placeholder="https://yourwebsite.com"
+              className="border-2 border-primary-foreground"
             />
           </div>
 
@@ -227,7 +243,7 @@ export function NotificationSettings({
         <CardDescription>Choose how you want to be notified</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex items-center justify-end gap-8 text-xs font-bold tracking-wide text-muted-foreground uppercase">
+        <div className="mr-8 flex items-center justify-end gap-8 text-xs font-bold tracking-wide text-foreground uppercase">
           <span>Email</span>
           <span>Push</span>
         </div>

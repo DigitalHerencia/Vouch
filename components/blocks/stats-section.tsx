@@ -32,7 +32,7 @@ export function StatsGrid({ stats, columns = 4, className }: StatsGridProps) {
         {stats.map((stat) => (
           <div key={`stat-${stat.label}`} className="space-y-2 text-center">
             <div className="text-4xl font-black md:text-5xl">{stat.value}</div>
-            <div className="text-sm font-bold tracking-wide text-muted-foreground uppercase">
+            <div className="text-sm font-bold tracking-wide text-foreground uppercase">
               {stat.label}
             </div>
             {stat.description && (
@@ -56,7 +56,7 @@ export interface StatsCardsProps {
 }
 
 export function StatsCards({ title, subtitle, stats, className }: StatsCardsProps) {
-  const cardColors = ["bg-primary/10", "bg-secondary/10", "bg-accent/10", "bg-green-500/10"]
+  const cardColors = ["bg-secondary", "bg-secondary", "bg-secondary", "bg-secondary"]
 
   return (
     <section className={cn("bg-muted/30 px-4 py-16 md:px-8 lg:px-16", className)}>
@@ -179,7 +179,7 @@ export function StatsInline({ stats, className }: StatsInlineProps) {
         {stats.map((stat) => (
           <div key={`stat-${stat.label}`} className="text-center">
             <span className="text-3xl font-black md:text-4xl">{stat.value}</span>
-            <span className="ml-2 text-sm font-bold tracking-wide text-muted-foreground uppercase">
+            <span className="ml-2 text-sm font-bold tracking-wide text-foreground uppercase">
               {stat.label}
             </span>
           </div>
@@ -202,7 +202,7 @@ export interface StatsWithIconsProps {
 }
 
 export function StatsWithIcons({ stats, className }: StatsWithIconsProps) {
-  const iconColors = ["bg-primary", "bg-secondary", "bg-accent", "bg-green-500"]
+  const iconColors = ["bg-secondary", "bg-secondary", "bg-secondary", "bg-secondary"]
 
   return (
     <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
@@ -219,7 +219,7 @@ export function StatsWithIcons({ stats, className }: StatsWithIconsProps) {
             </div>
             <div>
               <div className="text-3xl font-black md:text-4xl">{stat.value}</div>
-              <div className="mt-1 text-sm font-bold tracking-wide text-muted-foreground uppercase">
+              <div className="mt-1 text-sm font-bold tracking-wide text-foreground uppercase">
                 {stat.label}
               </div>
             </div>

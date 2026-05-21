@@ -1,8 +1,11 @@
+"use client"
+
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { cn, safeHref } from "@/lib/utils"
 import { ArrowRight, Mail, Sparkles, Zap } from "lucide-react"
+import Image from "next/image"
 
 // ============================================================================
 // CTA VARIANT 1: Simple Centered
@@ -173,7 +176,7 @@ export function CTANewsletter({
   }
 
   return (
-    <section className={cn("bg-muted/30 px-4 py-16 md:px-8 lg:px-16", className)}>
+    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
       <div className="mx-auto max-w-2xl space-y-6 text-center">
         <Mail className="mx-auto h-12 w-12 text-primary" />
 
@@ -268,7 +271,13 @@ export function CTASplit({
           </div>
 
           <div className="bg-muted">
-            <img src={imageSrc} alt={imageAlt} className="h-full w-full object-cover" />
+            <Image
+              src={imageSrc}
+              alt={imageAlt}
+              width={960}
+              height={720}
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </div>

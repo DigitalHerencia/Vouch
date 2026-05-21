@@ -10,8 +10,8 @@ import {
 
 export default function AuthForms() {
   return (
-    <main className="min-h-screen p-2 text-neutral-100 md:p-8">
-      <section className="grid min-h-[calc(100vh-3rem)] grid-rows-5 gap-2 md:min-h-[calc(100vh-4rem)] md:gap-4">
+    <main className="p-8 md:p-12">
+      <section className="grid gap-8 md:gap-16">
         <LoginForm
           title="Welcome Back"
           description="Sign in to manage your account."

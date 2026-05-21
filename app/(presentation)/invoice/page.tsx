@@ -1,11 +1,6 @@
 "use client"
 
-import {
-  Invoice,
-  InvoiceList,
-  InvoiceSummary,
-  Receipt,
-} from "@/components/blocks/invoice"
+import { Invoice, InvoiceList, InvoiceSummary, Receipt } from "@/components/blocks/invoice"
 
 const invoiceData = {
   invoiceNumber: "INV-2026-001",
@@ -60,16 +55,42 @@ const receiptData = {
 }
 
 const invoices = [
-  { id: "1", invoiceNumber: "INV-001", clientName: "Client One", date: "May 20, 2026", amount: 1000, status: "paid" as const },
-  { id: "2", invoiceNumber: "INV-002", clientName: "Client Two", date: "May 21, 2026", amount: 1250, status: "pending" as const },
-  { id: "3", invoiceNumber: "INV-003", clientName: "Client Three", date: "May 22, 2026", amount: 750, status: "overdue" as const },
+  {
+    id: "1",
+    invoiceNumber: "INV-001",
+    clientName: "Client One",
+    date: "May 20, 2026",
+    amount: 1000,
+    status: "paid" as const,
+  },
+  {
+    id: "2",
+    invoiceNumber: "INV-002",
+    clientName: "Client Two",
+    date: "May 21, 2026",
+    amount: 1250,
+    status: "pending" as const,
+  },
+  {
+    id: "3",
+    invoiceNumber: "INV-003",
+    clientName: "Client Three",
+    date: "May 22, 2026",
+    amount: 750,
+    status: "overdue" as const,
+  },
 ]
 
 export default function InvoiceBlocks() {
   return (
-    <main className="min-h-screen p-2 text-neutral-100 md:p-8">
-      <section className="grid min-h-[calc(100vh-3rem)] grid-rows-4 gap-2 md:min-h-[calc(100vh-4rem)] md:gap-4">
-        <Invoice data={invoiceData} onDownload={() => undefined} onPrint={() => undefined} onSendEmail={() => undefined} />
+    <main className="p-8 md:p-12">
+      <section className="grid gap-8 md:gap-16">
+        <Invoice
+          data={invoiceData}
+          onDownload={() => undefined}
+          onPrint={() => undefined}
+          onSendEmail={() => undefined}
+        />
         <Receipt data={receiptData} onDownload={() => undefined} />
         <InvoiceSummary
           invoiceNumber="INV-2026-002"

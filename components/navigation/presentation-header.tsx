@@ -3,9 +3,7 @@
 import type { ReactNode } from "react"
 import Link from "next/link"
 
-import { LogoLockup } from "@/components/brand/logo-lockup"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
 
 export interface PresentationHeaderNavItem {
   label: string

@@ -1,3 +1,5 @@
+"use client"
+
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -16,6 +18,7 @@ import {
   PartyPopper,
   Upload,
 } from "lucide-react"
+import Image from "next/image"
 
 // ============================================================================
 // ONBOARDING VARIANT 1: Step Wizard
@@ -126,7 +129,7 @@ export function OnboardingWizard({
       <Card>
         <CardHeader className="text-center">
           {step.icon && (
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border-3 border-foreground bg-primary/10 shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border-3 border-foreground bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
               {step.icon}
             </div>
           )}
@@ -204,7 +207,7 @@ export function WelcomeScreen({
                   key={feature.title}
                   className="space-y-2 border-3 border-foreground bg-muted/30 p-4"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-card">
+                  <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-primary">
                     {feature.icon}
                   </div>
                   <h3 className="font-bold">{feature.title}</h3>
@@ -247,8 +250,6 @@ const defaultRoles = [
   { value: "developer", label: "Developer" },
   { value: "designer", label: "Designer" },
   { value: "manager", label: "Product Manager" },
-  { value: "marketing", label: "Marketing" },
-  { value: "other", label: "Other" },
 ]
 
 const defaultInterests = [
@@ -313,7 +314,7 @@ export function ProfileSetup({
   return (
     <Card className={cn("mx-auto w-full max-w-lg", className)}>
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-foreground bg-primary/10 shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-foreground bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
           <User className="h-7 w-7" />
         </div>
         <CardTitle className="text-2xl font-black uppercase">Set Up Your Profile</CardTitle>
@@ -329,9 +330,11 @@ export function ProfileSetup({
               className="relative flex h-24 w-24 items-center justify-center border-3 border-dashed border-foreground bg-muted transition-colors hover:bg-muted/80"
             >
               {avatarPreview ? (
-                <img
+                <Image
                   src={avatarPreview}
                   alt="Avatar preview"
+                  width={96}
+                  height={96}
                   className="h-full w-full object-cover"
                 />
               ) : (
@@ -359,6 +362,7 @@ export function ProfileSetup({
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="What should we call you?"
               required
+              className="border-2 border-primary-foreground"
             />
           </div>
 
@@ -471,7 +475,7 @@ export function WorkspaceSetup({
   return (
     <Card className={cn("mx-auto w-full max-w-lg", className)}>
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-foreground bg-secondary/10 shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-foreground bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
           <Building className="h-7 w-7" />
         </div>
         <CardTitle className="text-2xl font-black uppercase">{title}</CardTitle>
@@ -490,6 +494,7 @@ export function WorkspaceSetup({
                 onChange={(e) => setWorkspaceName(e.target.value)}
                 placeholder="e.g., Acme Inc."
                 required
+                className="border-2 border-primary-foreground"
               />
             </div>
 
@@ -504,6 +509,7 @@ export function WorkspaceSetup({
                   value={memberEmail}
                   onChange={(e) => setMemberEmail(e.target.value)}
                   placeholder="colleague@email.com"
+                  className="border-2 border-primary-foreground"
                 />
                 <Button type="button" variant="outline" onClick={addMember}>
                   Add
@@ -590,7 +596,7 @@ export function GoalSelection({
   return (
     <Card className={cn("mx-auto w-full max-w-2xl", className)}>
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-foreground bg-accent/10 shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-foreground bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
           <Target className="h-7 w-7" />
         </div>
         <CardTitle className="text-2xl font-black uppercase">What are your goals?</CardTitle>
@@ -608,14 +614,14 @@ export function GoalSelection({
               className={cn(
                 "flex items-start gap-4 border-3 border-foreground p-4 text-left transition-all",
                 selected.includes(goal.id)
-                  ? "-translate-x-0.5 -translate-y-0.5 bg-primary/10 shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
+                  ? "-translate-x-0.5 -translate-y-0.5 bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
                   : "bg-card hover:bg-muted"
               )}
             >
               <div
                 className={cn(
                   "flex h-10 w-10 shrink-0 items-center justify-center border-2 border-foreground",
-                  selected.includes(goal.id) ? "bg-primary text-primary-foreground" : "bg-muted"
+                  selected.includes(goal.id) ? "bg-secondary text-primary-foreground" : "bg-primary"
                 )}
               >
                 {goal.icon}

@@ -8,8 +8,8 @@ import {
 
 export default function HeroSection() {
   return (
-    <main className="min-h-screen p-2 text-neutral-100 md:p-8">
-      <section className="grid min-h-[calc(100vh-3rem)] grid-rows-5 gap-2 md:min-h-[calc(100vh-4rem)] md:gap-4">
+    <main className="p-8 md:p-12">
+      <section className="grid gap-8 md:gap-16">
         <HeroCentered
           badge="New"
           title="Welcome to Our Site"
@@ -21,7 +21,7 @@ export default function HeroSection() {
         <HeroSplit
           title="Innovative Solutions"
           description="Our cutting-edge technology is designed to meet your needs and exceed your expectations."
-          imageSrc="/logo-light.png"
+          imageSrc="/logo-dark.png"
           imageAlt="Innovative Solutions"
           primaryAction={{ label: "Explore Now", href: "#" }}
         />
@@ -32,6 +32,7 @@ export default function HeroSection() {
             { label: "Users", value: "10K+" },
             { label: "Projects", value: "500+" },
             { label: "Awards", value: "50+" },
+            { label: "Stat", value: "100+" },
           ]}
         />
         <HeroMinimal

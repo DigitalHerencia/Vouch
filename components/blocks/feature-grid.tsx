@@ -1,24 +1,11 @@
 import * as React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
+import Image from "next/image"
 
-const featureColors = [
-  "bg-primary/10",
-  "bg-secondary/10",
-  "bg-accent/10",
-  "bg-green-500/10",
-  "bg-yellow-500/10",
-  "bg-blue-500/10",
-]
+const featureColors = ["bg-secondary"]
 
-const iconColors = [
-  "bg-primary",
-  "bg-secondary",
-  "bg-accent",
-  "bg-green-500",
-  "bg-yellow-500",
-  "bg-blue-500",
-]
+const iconColors = ["bg-primary", "bg-primary", "bg-primary", "bg-primary", "bg-primary"]
 
 // ============================================================================
 // FEATURE GRID VARIANT 1: With Icons
@@ -144,7 +131,13 @@ export function FeatureGridWithImages({
           {features.map((feature) => (
             <div key={feature.title} className="group">
               <div className="mb-4 overflow-hidden border-3 border-foreground shadow-[6px_6px_0px_hsl(var(--shadow-color))] transition-all group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-                <img src={feature.image} alt={feature.title} className="h-48 w-full object-cover" />
+                <Image
+                  src={feature.image}
+                  alt={feature.title}
+                  width={640}
+                  height={360}
+                  className="h-48 w-full object-cover"
+                />
               </div>
               <h3 className="mb-2 text-xl font-black uppercase">{feature.title}</h3>
               <p className="font-medium text-muted-foreground">{feature.description}</p>
@@ -200,20 +193,15 @@ export function FeatureGridAlternating({ features, className }: FeatureGridAlter
               </div>
 
               <div className="relative">
-                <div className="overflow-hidden border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-                  <img
+                <div className="overflow-hidden border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_hsl(var(--shadow-color))]">
+                  <Image
                     src={feature.image}
                     alt={feature.title}
+                    width={960}
+                    height={720}
                     className="h-auto w-full object-cover"
                   />
                 </div>
-                <div
-                  className={cn(
-                    "absolute -bottom-4 h-16 w-16 border-3 border-foreground",
-                    isReversed ? "-right-4" : "-left-4",
-                    featureColors[index % 6]
-                  )}
-                />
               </div>
             </div>
           )

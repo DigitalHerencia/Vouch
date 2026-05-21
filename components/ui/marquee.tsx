@@ -1,40 +1,128 @@
-import * as React from "react"
+import * as React from 'react'
+import { cn } from '@/lib/utils'
 
-import { cn } from "@/lib/utils"
-
-export interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
+interface MarqueeProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Content to display in the marquee */
   children: React.ReactNode
-  direction?: "left" | "right"
-  speed?: "slow" | "normal" | "fast"
+  /** Direction of the marquee animation */
+  direction?: 'left' | 'right'
+  /** Speed of the animation: 'slow' | 'normal' | 'fast' */
+  speed?: 'slow' | 'normal' | 'fast'
+  /** Pause animation on hover */
+  pauseOnHover?: boolean
+  /** Show neubrutalism border styling */
+  bordered?: boolean
+  /** Number of times to repeat the content (for seamless loop) */
+  repeat?: number
 }
 
-const durations = {
-  slow: "40s",
-  normal: "25s",
-  fast: "15s",
+const speedClasses = {
+  slow: 'animate-marquee-slow',
+  normal: 'animate-marquee',
+  fast: 'animate-marquee-fast',
 }
 
-export function Marquee({
-  children,
-  className,
-  direction = "left",
-  speed = "normal",
-  ...props
-}: MarqueeProps) {
-  return (
-    <div className={cn("overflow-hidden", className)} {...props}>
+const reverseSpeedClasses = {
+  slow: 'animate-marquee-slow-reverse',
+  normal: 'animate-marquee-reverse',
+  fast: 'animate-marquee-fast-reverse',
+}
+
+const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
+  (
+    {
+      className,
+      children,
+      direction = 'left',
+      speed = 'normal',
+      pauseOnHover = true,
+      bordered = true,
+      repeat = 4,
+      ...props
+    },
+    ref
+  ) => {
+    const animationClass = direction === 'right' ? reverseSpeedClasses[speed] : speedClasses[speed]
+
+    return (
       <div
+        ref={ref}
         className={cn(
-          "flex w-max min-w-full items-center motion-reduce:animate-none",
-          direction === "left" ? "animate-marquee-left" : "animate-marquee-right"
+          'flex overflow-hidden',
+          bordered && 'border-3 border-foreground bg-background',
+          className
         )}
-        style={{ "--marquee-duration": durations[speed] } as React.CSSProperties}
+        {...props}
       >
-        <div className="flex shrink-0 items-center">{children}</div>
-        <div className="flex shrink-0 items-center" aria-hidden="true">
-          {children}
+        <div
+          className={cn(
+            'marquee-content flex shrink-0 items-center gap-8 py-3',
+            animationClass,
+            pauseOnHover && 'hover:[animation-play-state:paused]'
+          )}
+        >
+          {Array.from({ length: repeat }).map((_, i) => (
+            <React.Fragment key={i}>{children}</React.Fragment>
+          ))}
+        </div>
+        <div
+          className={cn(
+            'marquee-content flex shrink-0 items-center gap-8 py-3',
+            animationClass,
+            pauseOnHover && 'hover:[animation-play-state:paused]'
+          )}
+          aria-hidden="true"
+        >
+          {Array.from({ length: repeat }).map((_, i) => (
+            <React.Fragment key={i}>{children}</React.Fragment>
+          ))}
         </div>
       </div>
-    </div>
-  )
+    )
+  }
+)
+Marquee.displayName = 'Marquee'
+
+interface MarqueeItemProps extends React.HTMLAttributes<HTMLSpanElement> {
+  children: React.ReactNode
 }
+
+const MarqueeItem = React.forwardRef<HTMLSpanElement, MarqueeItemProps>(
+  ({ className, children, ...props }, ref) => {
+    return (
+      <span
+        ref={ref}
+        className={cn(
+          'inline-flex items-center gap-2 whitespace-nowrap px-4 text-lg font-bold uppercase tracking-wide',
+          className
+        )}
+        {...props}
+      >
+        {children}
+      </span>
+    )
+  }
+)
+MarqueeItem.displayName = 'MarqueeItem'
+
+interface MarqueeSeparatorProps extends React.HTMLAttributes<HTMLSpanElement> {
+  /** Separator character or element */
+  children?: React.ReactNode
+}
+
+const MarqueeSeparator = React.forwardRef<HTMLSpanElement, MarqueeSeparatorProps>(
+  ({ className, children = '/', ...props }, ref) => {
+    return (
+      <span
+        ref={ref}
+        className={cn('text-2xl font-black text-muted-foreground', className)}
+        {...props}
+      >
+        {children}
+      </span>
+    )
+  }
+)
+MarqueeSeparator.displayName = 'MarqueeSeparator'
+
+export { Marquee, MarqueeItem, MarqueeSeparator }
