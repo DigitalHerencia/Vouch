@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 
-import { ErrorPages } from "@/components/blocks/error-pages"
+import { GenericErrorPage } from "@/components/blocks/error-pages"
 
 export default function AuthError({
   error,
@@ -16,7 +16,7 @@ export default function AuthError({
   }, [error])
 
   return (
-    <ErrorPages.Generic
+    <GenericErrorPage
       title="Authentication view failed"
       description="The authentication surface could not render. Try again or return home."
       actions={[

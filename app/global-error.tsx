@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 
-import { ErrorPages } from "@/components/blocks/error-pages"
+import { ServerErrorPage } from "@/components/blocks/error-pages"
 
 type GlobalErrorProps = {
   error: Error & { digest?: string }
@@ -20,7 +20,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   return (
     <html lang="en" className="dark">
       <body className="min-h-dvh overflow-x-hidden bg-neutral-950 text-white antialiased">
-        <ErrorPages.ServerError
+        <ServerErrorPage
           description="Vouch could not render this application boundary. Try again. Client-visible diagnostics are intentionally limited."
           errorId={error.digest ?? "not provided"}
           onRetry={reset}

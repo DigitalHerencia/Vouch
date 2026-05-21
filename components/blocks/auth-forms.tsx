@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, EyeOff, Mail, Lock, User, ArrowRight } from "lucide-react"
+import { Eye, Mail, Lock, User, ArrowRight } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 // ============================================================================
@@ -25,24 +25,11 @@ export function LoginForm({
   logo,
   title = "Welcome back",
   description = "Enter your credentials to access your account",
-  onSubmit,
   onForgotPassword,
   onSignUp,
   socialProviders,
   className,
 }: LoginFormProps) {
-  const [formData, setFormData] = React.useState({
-    email: "",
-    password: "",
-    remember: false,
-  })
-  const [showPassword, setShowPassword] = React.useState(false)
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit?.(formData)
-  }
-
   return (
     <div className={cn("mx-auto w-full max-w-md", className)}>
       <Card>
@@ -54,7 +41,7 @@ export function LoginForm({
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-xs font-bold uppercase">
                 Email
@@ -67,8 +54,8 @@ export function LoginForm({
                   autoComplete="email"
                   placeholder="you@example.com"
                   className="pl-10"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  defaultValue="you@example.com"
+                  readOnly
                   required
                 />
               </div>
@@ -82,21 +69,20 @@ export function LoginForm({
                 <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="password"
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   autoComplete="current-password"
                   placeholder="Enter your password"
                   className="pr-10 pl-10"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  defaultValue="password"
+                  readOnly
                   required
                 />
                 <button
                   type="button"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label="Show password"
                   className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  <Eye className="h-4 w-4" />
                 </button>
               </div>
             </div>
@@ -105,10 +91,7 @@ export function LoginForm({
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="remember"
-                  checked={formData.remember}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, remember: checked as boolean })
-                  }
+                  defaultChecked
                 />
                 <Label htmlFor="remember" className="cursor-pointer text-sm font-medium">
                   Remember me
@@ -117,7 +100,6 @@ export function LoginForm({
               {onForgotPassword && (
                 <button
                   type="button"
-                  onClick={onForgotPassword}
                   className="text-sm font-bold text-primary hover:underline"
                 >
                   Forgot password?
@@ -125,7 +107,7 @@ export function LoginForm({
               )}
             </div>
 
-            <Button type="submit" className="w-full" size="lg">
+            <Button type="button" className="w-full" size="lg">
               Sign In
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -165,14 +147,13 @@ export function LoginForm({
                 Don't have an account?{" "}
                 <button
                   type="button"
-                  onClick={onSignUp}
                   className="font-bold text-primary hover:underline"
                 >
                   Sign up
                 </button>
               </p>
             )}
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -198,32 +179,12 @@ export function SignUpForm({
   logo,
   title = "Create an account",
   description = "Enter your details to get started",
-  onSubmit,
   onSignIn,
   socialProviders,
   termsUrl = "#",
   privacyUrl = "#",
   className,
 }: SignUpFormProps) {
-  const [formData, setFormData] = React.useState({
-    name: "",
-    email: "",
-    password: "",
-    terms: false,
-  })
-  const [showPassword, setShowPassword] = React.useState(false)
-  const [termsError, setTermsError] = React.useState("")
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!formData.terms) {
-      setTermsError("You must accept the terms to continue")
-      return
-    }
-    setTermsError("")
-    onSubmit?.(formData)
-  }
-
   return (
     <div className={cn("mx-auto w-full max-w-md", className)}>
       <Card>
@@ -235,7 +196,7 @@ export function SignUpForm({
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-xs font-bold uppercase">
                 Full Name
@@ -248,8 +209,8 @@ export function SignUpForm({
                   autoComplete="name"
                   placeholder="John Doe"
                   className="pl-10"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  defaultValue="John Doe"
+                  readOnly
                   required
                 />
               </div>
@@ -267,8 +228,8 @@ export function SignUpForm({
                   autoComplete="email"
                   placeholder="you@example.com"
                   className="pl-10"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  defaultValue="you@example.com"
+                  readOnly
                   required
                 />
               </div>
@@ -282,21 +243,20 @@ export function SignUpForm({
                 <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
                   id="signup-password"
-                  type={showPassword ? "text" : "password"}
+                  type="password"
                   autoComplete="new-password"
                   placeholder="Create a password"
                   className="pr-10 pl-10"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  defaultValue="password"
+                  readOnly
                   required
                 />
                 <button
                   type="button"
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label="Show password"
                   className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                 >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  <Eye className="h-4 w-4" />
                 </button>
               </div>
               <p className="text-xs text-muted-foreground">Must be at least 8 characters</p>
@@ -306,11 +266,7 @@ export function SignUpForm({
               <div className="flex items-start space-x-2">
                 <Checkbox
                   id="terms"
-                  checked={formData.terms}
-                  onCheckedChange={(checked) => {
-                    setFormData({ ...formData, terms: checked as boolean })
-                    if (checked) setTermsError("")
-                  }}
+                  defaultChecked
                 />
                 <Label htmlFor="terms" className="cursor-pointer text-sm leading-tight">
                   I agree to the{" "}
@@ -323,10 +279,9 @@ export function SignUpForm({
                   </a>
                 </Label>
               </div>
-              {termsError && <p className="text-xs font-medium text-destructive">{termsError}</p>}
             </div>
 
-            <Button type="submit" className="w-full" size="lg">
+            <Button type="button" className="w-full" size="lg">
               Create Account
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -366,14 +321,13 @@ export function SignUpForm({
                 Already have an account?{" "}
                 <button
                   type="button"
-                  onClick={onSignIn}
                   className="font-bold text-primary hover:underline"
                 >
                   Sign in
                 </button>
               </p>
             )}
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -396,53 +350,9 @@ export function ForgotPasswordForm({
   logo,
   title = "Forgot password?",
   description = "No worries, we'll send you reset instructions.",
-  onSubmit,
   onBackToLogin,
   className,
 }: ForgotPasswordFormProps) {
-  const [email, setEmail] = React.useState("")
-  const [submitted, setSubmitted] = React.useState(false)
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit?.(email)
-    setSubmitted(true)
-  }
-
-  if (submitted) {
-    return (
-      <div className={cn("mx-auto w-full max-w-md", className)}>
-        <Card>
-          <CardContent className="space-y-4 pt-6 text-center">
-            <div className="bg-success/20 mx-auto flex h-16 w-16 items-center justify-center border-3 border-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
-              <Mail className="text-success h-8 w-8" />
-            </div>
-            <div>
-              <h3 className="text-xl font-black uppercase">Check your email</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                We sent a password reset link to{" "}
-                <span className="font-bold text-foreground">{email}</span>
-              </p>
-            </div>
-            <Button variant="outline" className="w-full" onClick={onBackToLogin}>
-              Back to login
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              Didn't receive the email?{" "}
-              <button
-                type="button"
-                onClick={() => setSubmitted(false)}
-                className="font-bold text-primary hover:underline"
-              >
-                Click to resend
-              </button>
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
   return (
     <div className={cn("mx-auto w-full max-w-md", className)}>
       <Card>
@@ -454,7 +364,7 @@ export function ForgotPasswordForm({
           </div>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="reset-email" className="text-xs font-bold uppercase">
                 Email
@@ -466,24 +376,24 @@ export function ForgotPasswordForm({
                   type="email"
                   placeholder="you@example.com"
                   className="pl-10"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  defaultValue="you@example.com"
+                  readOnly
                   required
                 />
               </div>
             </div>
 
-            <Button type="submit" className="w-full" size="lg">
+            <Button type="button" className="w-full" size="lg">
               Send Reset Link
               <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
 
             {onBackToLogin && (
-              <Button type="button" variant="ghost" className="w-full" onClick={onBackToLogin}>
+              <Button type="button" variant="ghost" className="w-full">
                 Back to login
               </Button>
             )}
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>
@@ -499,6 +409,11 @@ export interface OTPVerificationFormProps {
   description?: string
   email?: string
   length?: number
+  value?: string
+  error?: string | undefined
+  disabled?: boolean
+  submitLabel?: string
+  onChange?: (otp: string) => void
   onSubmit?: (otp: string) => void
   onResend?: () => void
   onBackToLogin?: () => void
@@ -511,58 +426,15 @@ export function OTPVerificationForm({
   description,
   email,
   length = 6,
-  onSubmit,
+  value = "123456",
+  error,
+  disabled = false,
+  submitLabel = "Verify",
   onResend,
   onBackToLogin,
   className,
 }: OTPVerificationFormProps) {
-  const [otp, setOtp] = React.useState<string[]>(new Array(length).fill(""))
-  const inputRefs = React.useRef<HTMLInputElement[]>([])
-  const hasSubmitted = React.useRef(false)
-
-  const handleChange = (index: number, value: string) => {
-    if (!/^\d*$/.test(value)) return
-
-    const newOtp = [...otp]
-    newOtp[index] = value.slice(-1)
-    setOtp(newOtp)
-
-    // Reset guard so user can re-submit after editing a filled OTP
-    hasSubmitted.current = false
-
-    if (value && index < length - 1) {
-      inputRefs.current[index + 1]?.focus()
-    }
-
-    // Use local newOtp (not stale hasSubmitted.current) to check auto-submit
-    if (newOtp.every((digit) => digit !== "") && newOtp.join("").length === length) {
-      hasSubmitted.current = true
-      onSubmit?.(newOtp.join(""))
-    }
-  }
-
-  const handleKeyDown = (index: number, e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus()
-    }
-  }
-
-  const handlePaste = (e: React.ClipboardEvent) => {
-    e.preventDefault()
-    const pastedData = e.clipboardData.getData("text").slice(0, length)
-    if (!/^\d+$/.test(pastedData)) return
-
-    const newOtp = [...otp]
-    pastedData.split("").forEach((char, index) => {
-      if (index < length) newOtp[index] = char
-    })
-    setOtp(newOtp)
-
-    if (newOtp.every((digit) => digit !== "") && !hasSubmitted.current) {
-      hasSubmitted.current = true
-      onSubmit?.(newOtp.join(""))
-    }
-  }
+  const digits = value.padEnd(length).slice(0, length).split("")
 
   return (
     <div className={cn("mx-auto w-full max-w-md", className)}>
@@ -579,37 +451,29 @@ export function OTPVerificationForm({
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="flex justify-center gap-2">
-            {otp.map((digit, index) => (
+            {digits.map((digit, index) => (
               <Input
                 key={`otp-digit-${index}`}
-                ref={(el) => {
-                  if (el) inputRefs.current[index] = el
-                }}
                 type="text"
                 inputMode="numeric"
                 maxLength={1}
                 aria-label={`Digit ${index + 1} of ${length}`}
                 value={digit}
-                onChange={(e) => handleChange(index, e.target.value)}
-                onKeyDown={(e) => handleKeyDown(index, e)}
-                onPaste={handlePaste}
+                readOnly
+                disabled={disabled}
                 className="h-14 w-12 text-center text-2xl font-black"
               />
             ))}
           </div>
+          {error && <p className="text-sm font-medium text-destructive">{error}</p>}
 
           <Button
+            type="button"
             className="w-full"
             size="lg"
-            onClick={() => {
-              if (!hasSubmitted.current) {
-                hasSubmitted.current = true
-                onSubmit?.(otp.join(""))
-              }
-            }}
-            disabled={otp.some((digit) => digit === "")}
+            disabled={disabled || digits.some((digit) => digit.trim() === "")}
           >
-            Verify
+            {submitLabel}
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
 
@@ -619,7 +483,6 @@ export function OTPVerificationForm({
                 Didn't receive a code?{" "}
                 <button
                   type="button"
-                  onClick={onResend}
                   className="font-bold text-primary hover:underline"
                 >
                   Resend
@@ -627,7 +490,7 @@ export function OTPVerificationForm({
               </p>
             )}
             {onBackToLogin && (
-              <Button variant="ghost" size="sm" onClick={onBackToLogin}>
+              <Button type="button" variant="ghost" size="sm">
                 Back to login
               </Button>
             )}

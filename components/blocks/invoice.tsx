@@ -1,9 +1,8 @@
-/* eslint-disable react-refresh/only-export-components */
-import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { Separator } from '@/components/ui/separator'
-import { cn } from '@/lib/utils'
-import { Download, Printer, Mail, Check, Clock, AlertCircle } from 'lucide-react'
+import * as React from "react"
+import { Button } from "@/components/ui/button"
+import { Separator } from "@/components/ui/separator"
+import { cn } from "@/lib/utils"
+import { Download, Printer, Mail, Check, Clock, AlertCircle } from "lucide-react"
 
 // ============================================================================
 // Common Types
@@ -12,7 +11,9 @@ export interface InvoiceItem {
   description: string
   quantity: number
   unitPrice: number
+  unitPriceLabel?: string
   total?: number
+  totalLabel?: string
 }
 
 export interface InvoiceAddress {
@@ -28,10 +29,11 @@ export interface InvoiceAddress {
 }
 
 export interface InvoiceData {
+  title?: string
   invoiceNumber: string
   issueDate: string
   dueDate: string
-  status?: 'paid' | 'pending' | 'overdue'
+  status?: "paid" | "pending" | "overdue" | string
   from: InvoiceAddress
   to: InvoiceAddress
   items: InvoiceItem[]
@@ -41,6 +43,8 @@ export interface InvoiceData {
   total: number
   notes?: string
   terms?: string
+  details?: Array<{ label: string; value: string }>
+  actions?: React.ReactNode
   paymentInfo?: {
     bankName?: string
     accountNumber?: string
@@ -61,24 +65,14 @@ export interface InvoiceProps {
   className?: string
 }
 
-export function Invoice({
-  data,
-  logo,
-  onDownload,
-  onPrint,
-  onSendEmail,
-  className,
-}: InvoiceProps) {
+export function Invoice({ data, logo, onDownload, onPrint, onSendEmail, className }: InvoiceProps) {
   const computedSubtotal = data.items.reduce(
     (sum, item) => sum + (item.total ?? item.quantity * item.unitPrice),
     0
   )
-  const computedTotal =
-    computedSubtotal +
-    (data.tax?.amount ?? 0) -
-    (data.discount?.amount ?? 0)
+  const computedTotal = computedSubtotal + (data.tax?.amount ?? 0) - (data.discount?.amount ?? 0)
 
-  if (import.meta.env.DEV) {
+  if ((import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV) {
     if (Math.abs(computedSubtotal - data.subtotal) > 0.01) {
       console.warn(
         `[Invoice] subtotal mismatch: passed ${data.subtotal.toFixed(2)}, computed ${computedSubtotal.toFixed(2)}`
@@ -92,17 +86,20 @@ export function Invoice({
   }
 
   const statusConfig = {
-    paid: { bg: 'bg-success', text: 'text-success-foreground', icon: Check },
-    pending: { bg: 'bg-warning', text: 'text-warning-foreground', icon: Clock },
-    overdue: { bg: 'bg-destructive', text: 'text-destructive-foreground', icon: AlertCircle },
+    paid: { bg: "bg-success", text: "text-success-foreground", icon: Check },
+    pending: { bg: "bg-warning", text: "text-warning-foreground", icon: Clock },
+    overdue: { bg: "bg-destructive", text: "text-destructive-foreground", icon: AlertCircle },
   }
 
-  const status = data.status ? statusConfig[data.status] : null
+  const status =
+    data.status && data.status in statusConfig
+      ? statusConfig[data.status as keyof typeof statusConfig]
+      : null
 
   return (
-    <div className={cn('max-w-4xl mx-auto', className)}>
+    <div className={cn("mx-auto max-w-4xl", className)}>
       {/* Actions Bar */}
-      <div className="flex items-center justify-between mb-6 print:hidden">
+      <div className="mb-6 flex items-center justify-between print:hidden">
         <h1 className="text-2xl font-black uppercase">Invoice</h1>
         <div className="flex gap-2">
           {onSendEmail && (
@@ -130,32 +127,34 @@ export function Invoice({
       <div className="border-3 border-foreground bg-card shadow-[8px_8px_0px_hsl(var(--shadow-color))] print:border-0 print:shadow-none">
         <div className="p-8 md:p-12">
           {/* Header */}
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6 mb-8">
+          <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
               {logo && <div className="mb-4">{logo}</div>}
               <AddressBlock address={data.from} />
             </div>
 
-            <div className="text-left md:text-right space-y-2">
-              <h2 className="text-4xl font-black uppercase tracking-tight">Invoice</h2>
+            <div className="space-y-2 text-left md:text-right">
+              <h2 className="text-4xl font-black tracking-tight uppercase">
+                {data.title ?? "Invoice"}
+              </h2>
               <div className="space-y-1 text-sm">
                 <p>
-                  <span className="font-bold uppercase text-muted-foreground">Invoice #:</span>{' '}
+                  <span className="font-bold text-muted-foreground uppercase">Invoice #:</span>{" "}
                   <span className="font-medium">{data.invoiceNumber}</span>
                 </p>
                 <p>
-                  <span className="font-bold uppercase text-muted-foreground">Issue Date:</span>{' '}
+                  <span className="font-bold text-muted-foreground uppercase">Issue Date:</span>{" "}
                   <span className="font-medium">{data.issueDate}</span>
                 </p>
                 <p>
-                  <span className="font-bold uppercase text-muted-foreground">Due Date:</span>{' '}
+                  <span className="font-bold text-muted-foreground uppercase">Due Date:</span>{" "}
                   <span className="font-medium">{data.dueDate}</span>
                 </p>
               </div>
               {status && (
                 <div
                   className={cn(
-                    'inline-flex items-center gap-1 px-3 py-1 font-bold uppercase text-xs',
+                    "inline-flex items-center gap-1 px-3 py-1 text-xs font-bold uppercase",
                     status.bg,
                     status.text
                   )}
@@ -168,8 +167,8 @@ export function Invoice({
           </div>
 
           {/* Bill To */}
-          <div className="mb-8 p-4 border-3 border-foreground bg-muted/30">
-            <p className="font-bold uppercase text-xs text-muted-foreground mb-2">Bill To</p>
+          <div className="mb-8 border-3 border-foreground bg-muted/30 p-4">
+            <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Bill To</p>
             <AddressBlock address={data.to} />
           </div>
 
@@ -178,20 +177,26 @@ export function Invoice({
             <table className="w-full">
               <thead>
                 <tr className="border-b-3 border-foreground">
-                  <th className="text-left py-3 font-black uppercase text-sm">Description</th>
-                  <th className="text-center py-3 font-black uppercase text-sm w-24">Qty</th>
-                  <th className="text-right py-3 font-black uppercase text-sm w-32">Unit Price</th>
-                  <th className="text-right py-3 font-black uppercase text-sm w-32">Total</th>
+                  <th className="py-3 text-left text-sm font-black uppercase">Description</th>
+                  <th className="w-24 py-3 text-center text-sm font-black uppercase">Qty</th>
+                  <th className="w-32 py-3 text-right text-sm font-black uppercase">Unit Price</th>
+                  <th className="w-32 py-3 text-right text-sm font-black uppercase">Total</th>
                 </tr>
               </thead>
               <tbody>
                 {data.items.map((item) => (
-                  <tr key={`invoice-item-${item.description}`} className="border-b border-foreground/20">
+                  <tr
+                    key={`invoice-item-${item.description}`}
+                    className="border-b border-foreground/20"
+                  >
                     <td className="py-4">{item.description}</td>
                     <td className="py-4 text-center">{item.quantity}</td>
-                    <td className="py-4 text-right font-mono">${item.unitPrice.toFixed(2)}</td>
+                    <td className="py-4 text-right font-mono">
+                      {item.unitPriceLabel ?? `$${item.unitPrice.toFixed(2)}`}
+                    </td>
                     <td className="py-4 text-right font-mono font-bold">
-                      ${(item.total || item.quantity * item.unitPrice).toFixed(2)}
+                      {item.totalLabel ??
+                        `$${(item.total || item.quantity * item.unitPrice).toFixed(2)}`}
                     </td>
                   </tr>
                 ))}
@@ -200,7 +205,7 @@ export function Invoice({
           </div>
 
           {/* Totals */}
-          <div className="flex justify-end mb-8">
+          <div className="mb-8 flex justify-end">
             <div className="w-full max-w-xs space-y-2">
               <div className="flex justify-between py-2">
                 <span className="text-muted-foreground">Subtotal</span>
@@ -215,26 +220,26 @@ export function Invoice({
                 </div>
               )}
               {data.discount && (
-                <div className="flex justify-between py-2 text-success">
+                <div className="text-success flex justify-between py-2">
                   <span>{data.discount.label}</span>
                   <span className="font-mono">-${data.discount.amount.toFixed(2)}</span>
                 </div>
               )}
-              <Separator className="bg-foreground h-[2px]" />
+              <Separator className="h-0.5 bg-foreground" />
               <div className="flex justify-between py-2">
                 <span className="text-lg font-black uppercase">Total</span>
-                <span className="text-2xl font-black font-mono">${data.total.toFixed(2)}</span>
+                <span className="font-mono text-2xl font-black">${data.total.toFixed(2)}</span>
               </div>
             </div>
           </div>
 
           {/* Payment Info */}
           {data.paymentInfo && (
-            <div className="mb-8 p-4 border-3 border-foreground bg-primary/5">
-              <p className="font-bold uppercase text-xs text-muted-foreground mb-3">
+            <div className="mb-8 border-3 border-foreground bg-primary/5 p-4">
+              <p className="mb-3 text-xs font-bold text-muted-foreground uppercase">
                 Payment Information
               </p>
-              <div className="grid md:grid-cols-2 gap-4 text-sm">
+              <div className="grid gap-4 text-sm md:grid-cols-2">
                 {data.paymentInfo.bankName && (
                   <div>
                     <p className="font-bold">Bank Name</p>
@@ -244,7 +249,7 @@ export function Invoice({
                 {data.paymentInfo.accountNumber && (
                   <div>
                     <p className="font-bold">Account Number</p>
-                    <p className="text-muted-foreground font-mono">
+                    <p className="font-mono text-muted-foreground">
                       {data.paymentInfo.accountNumber}
                     </p>
                   </div>
@@ -252,7 +257,7 @@ export function Invoice({
                 {data.paymentInfo.routingNumber && (
                   <div>
                     <p className="font-bold">Routing Number</p>
-                    <p className="text-muted-foreground font-mono">
+                    <p className="font-mono text-muted-foreground">
                       {data.paymentInfo.routingNumber}
                     </p>
                   </div>
@@ -261,7 +266,7 @@ export function Invoice({
                   <div>
                     <p className="font-bold">Accepted Methods</p>
                     <p className="text-muted-foreground">
-                      {data.paymentInfo.paymentMethods.join(', ')}
+                      {data.paymentInfo.paymentMethods.join(", ")}
                     </p>
                   </div>
                 )}
@@ -271,16 +276,16 @@ export function Invoice({
 
           {/* Notes & Terms */}
           {(data.notes || data.terms) && (
-            <div className="grid md:grid-cols-2 gap-6 text-sm">
+            <div className="grid gap-6 text-sm md:grid-cols-2">
               {data.notes && (
                 <div>
-                  <p className="font-bold uppercase text-xs text-muted-foreground mb-2">Notes</p>
+                  <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">Notes</p>
                   <p className="text-muted-foreground">{data.notes}</p>
                 </div>
               )}
               {data.terms && (
                 <div>
-                  <p className="font-bold uppercase text-xs text-muted-foreground mb-2">
+                  <p className="mb-2 text-xs font-bold text-muted-foreground uppercase">
                     Terms & Conditions
                   </p>
                   <p className="text-muted-foreground">{data.terms}</p>
@@ -288,6 +293,19 @@ export function Invoice({
               )}
             </div>
           )}
+          {data.details && (
+            <div className="mt-8 grid gap-3 text-sm md:grid-cols-2">
+              {data.details.map((detail) => (
+                <div key={detail.label} className="border-2 border-foreground p-3">
+                  <p className="text-xs font-bold text-muted-foreground uppercase">
+                    {detail.label}
+                  </p>
+                  <p className="mt-1">{detail.value}</p>
+                </div>
+              ))}
+            </div>
+          )}
+          {data.actions && <div className="mt-8">{data.actions}</div>}
         </div>
       </div>
     </div>
@@ -324,20 +342,15 @@ export interface ReceiptProps {
   className?: string
 }
 
-export function Receipt({
-  data,
-  logo,
-  onDownload,
-  className,
-}: ReceiptProps) {
+export function Receipt({ data, logo, onDownload, className }: ReceiptProps) {
   return (
-    <div className={cn('max-w-sm mx-auto', className)}>
+    <div className={cn("mx-auto max-w-sm", className)}>
       <div className="border-3 border-foreground bg-card shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
-        <div className="p-6 space-y-6">
+        <div className="space-y-6 p-6">
           {/* Header */}
-          <div className="text-center space-y-2">
-            {logo && <div className="flex justify-center mb-4">{logo}</div>}
-            <h2 className="font-black uppercase text-xl">{data.merchant.name}</h2>
+          <div className="space-y-2 text-center">
+            {logo && <div className="mb-4 flex justify-center">{logo}</div>}
+            <h2 className="text-xl font-black uppercase">{data.merchant.name}</h2>
             {data.merchant.address && (
               <p className="text-sm text-muted-foreground">{data.merchant.address}</p>
             )}
@@ -346,15 +359,15 @@ export function Receipt({
             )}
           </div>
 
-          <Separator className="bg-foreground h-[2px] border-dashed" />
+          <Separator className="h-0.5 border-dashed bg-foreground" />
 
           {/* Receipt Info */}
-          <div className="text-center space-y-1 text-sm">
+          <div className="space-y-1 text-center text-sm">
             <p className="font-bold uppercase">Receipt #{data.receiptNumber}</p>
             <p className="text-muted-foreground">{data.date}</p>
           </div>
 
-          <Separator className="bg-foreground h-[2px] border-dashed" />
+          <Separator className="h-0.5 border-dashed bg-foreground" />
 
           {/* Items */}
           <div className="space-y-2">
@@ -369,7 +382,7 @@ export function Receipt({
             ))}
           </div>
 
-          <Separator className="bg-foreground h-[2px] border-dashed" />
+          <Separator className="h-0.5 border-dashed bg-foreground" />
 
           {/* Totals */}
           <div className="space-y-2">
@@ -389,30 +402,24 @@ export function Receipt({
             </div>
           </div>
 
-          <Separator className="bg-foreground h-[2px] border-dashed" />
+          <Separator className="h-0.5 border-dashed bg-foreground" />
 
           {/* Payment Method */}
           {data.paymentMethod && (
-            <div className="text-center text-sm space-y-1">
+            <div className="space-y-1 text-center text-sm">
               <p className="text-muted-foreground">Paid with {data.paymentMethod}</p>
-              {data.cardLast4 && (
-                <p className="font-mono">•••• {data.cardLast4}</p>
-              )}
+              {data.cardLast4 && <p className="font-mono">•••• {data.cardLast4}</p>}
             </div>
           )}
 
           {/* Thank You */}
           <div className="text-center">
-            <p className="font-bold uppercase text-sm">Thank You!</p>
+            <p className="text-sm font-bold uppercase">Thank You!</p>
           </div>
 
           {/* Download */}
           {onDownload && (
-            <Button
-              variant="outline"
-              className="w-full print:hidden"
-              onClick={onDownload}
-            >
+            <Button variant="outline" className="w-full print:hidden" onClick={onDownload}>
               <Download className="mr-2 h-4 w-4" />
               Download Receipt
             </Button>
@@ -432,7 +439,9 @@ export interface InvoiceSummaryProps {
   issueDate: string
   dueDate: string
   amount: number
-  status: 'paid' | 'pending' | 'overdue'
+  amountLabel?: string
+  status: "paid" | "pending" | "overdue" | string
+  href?: string
   onView?: () => void
   onDownload?: () => void
   className?: string
@@ -444,34 +453,39 @@ export function InvoiceSummary({
   issueDate,
   dueDate,
   amount,
+  amountLabel,
   status,
+  href,
   onView,
   onDownload,
   className,
 }: InvoiceSummaryProps) {
   const statusConfig = {
-    paid: { bg: 'bg-success/10', border: 'border-success', text: 'text-success' },
-    pending: { bg: 'bg-warning/10', border: 'border-warning', text: 'text-warning' },
-    overdue: { bg: 'bg-destructive/10', border: 'border-destructive', text: 'text-destructive' },
+    paid: { bg: "bg-success/10", border: "border-success", text: "text-success" },
+    pending: { bg: "bg-warning/10", border: "border-warning", text: "text-warning" },
+    overdue: { bg: "bg-destructive/10", border: "border-destructive", text: "text-destructive" },
   }
 
-  const statusStyle = statusConfig[status]
+  const statusStyle =
+    status in statusConfig
+      ? statusConfig[status as keyof typeof statusConfig]
+      : statusConfig.pending
 
   return (
     <div
       className={cn(
-        'border-3 border-foreground p-4 bg-card shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:shadow-[6px_6px_0px_hsl(var(--shadow-color))] hover:translate-x-[-2px] hover:translate-y-[-2px] transition-all',
+        "border-3 border-foreground bg-card p-4 shadow-[4px_4px_0px_hsl(var(--shadow-color))] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_hsl(var(--shadow-color))]",
         className
       )}
     >
-      <div className="flex items-start justify-between mb-4">
+      <div className="mb-4 flex items-start justify-between">
         <div>
-          <p className="font-black text-lg">{invoiceNumber}</p>
+          <p className="text-lg font-black">{invoiceNumber}</p>
           <p className="text-sm text-muted-foreground">{clientName}</p>
         </div>
         <div
           className={cn(
-            'px-2 py-1 text-xs font-bold uppercase border-2',
+            "border-2 px-2 py-1 text-xs font-bold uppercase",
             statusStyle.bg,
             statusStyle.border,
             statusStyle.text
@@ -481,28 +495,28 @@ export function InvoiceSummary({
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+      <div className="mb-4 grid grid-cols-2 gap-4 text-sm">
         <div>
-          <p className="text-xs font-bold uppercase text-muted-foreground">Issued</p>
+          <p className="text-xs font-bold text-muted-foreground uppercase">Issued</p>
           <p className="font-medium">{issueDate}</p>
         </div>
         <div>
-          <p className="text-xs font-bold uppercase text-muted-foreground">Due</p>
+          <p className="text-xs font-bold text-muted-foreground uppercase">Due</p>
           <p className="font-medium">{dueDate}</p>
         </div>
       </div>
 
       <div className="flex items-center justify-between">
-        <p className="text-2xl font-black font-mono">${amount.toFixed(2)}</p>
+        <p className="font-mono text-2xl font-black">{amountLabel ?? `$${amount.toFixed(2)}`}</p>
         <div className="flex gap-2">
           {onDownload && (
             <Button variant="ghost" size="sm" onClick={onDownload}>
               <Download className="h-4 w-4" />
             </Button>
           )}
-          {onView && (
-            <Button size="sm" onClick={onView}>
-              View
+          {(onView || href) && (
+            <Button size="sm" onClick={onView} asChild={!!href}>
+              {href ? <a href={href}>View</a> : "View"}
             </Button>
           )}
         </div>
@@ -520,7 +534,7 @@ export interface InvoiceListItem {
   clientName: string
   date: string
   amount: number
-  status: 'paid' | 'pending' | 'overdue'
+  status: "paid" | "pending" | "overdue"
 }
 
 export interface InvoiceListProps {
@@ -530,22 +544,17 @@ export interface InvoiceListProps {
   className?: string
 }
 
-export function InvoiceList({
-  invoices,
-  onView,
-  onDownload,
-  className,
-}: InvoiceListProps) {
+export function InvoiceList({ invoices, onView, onDownload, className }: InvoiceListProps) {
   const statusConfig = {
-    paid: 'bg-success text-success-foreground',
-    pending: 'bg-warning text-warning-foreground',
-    overdue: 'bg-destructive text-destructive-foreground',
+    paid: "bg-success text-success-foreground",
+    pending: "bg-warning text-warning-foreground",
+    overdue: "bg-destructive text-destructive-foreground",
   }
 
   return (
-    <div className={cn('border-3 border-foreground bg-card', className)}>
+    <div className={cn("border-3 border-foreground bg-card", className)}>
       {/* Header */}
-      <div className="grid grid-cols-12 gap-2 p-4 border-b-3 border-foreground bg-muted/50 font-bold uppercase text-xs">
+      <div className="grid grid-cols-12 gap-2 border-b-3 border-foreground bg-muted/50 p-4 text-xs font-bold uppercase">
         <div className="col-span-2">Invoice</div>
         <div className="col-span-3">Client</div>
         <div className="col-span-2">Date</div>
@@ -558,10 +567,10 @@ export function InvoiceList({
       {invoices.map((invoice) => (
         <div
           key={invoice.id}
-          className="grid grid-cols-12 gap-2 p-4 border-b border-foreground/20 hover:bg-muted/30 transition-colors items-center"
+          className="grid grid-cols-12 items-center gap-2 border-b border-foreground/20 p-4 transition-colors hover:bg-muted/30"
         >
-          <div className="col-span-2 font-bold truncate">{invoice.invoiceNumber}</div>
-          <div className="col-span-3 text-muted-foreground truncate">{invoice.clientName}</div>
+          <div className="col-span-2 truncate font-bold">{invoice.invoiceNumber}</div>
+          <div className="col-span-3 truncate text-muted-foreground">{invoice.clientName}</div>
           <div className="col-span-2 text-sm text-muted-foreground">{invoice.date}</div>
           <div className="col-span-2 text-right font-mono font-bold">
             ${invoice.amount.toFixed(2)}
@@ -569,7 +578,7 @@ export function InvoiceList({
           <div className="col-span-2 flex justify-end">
             <span
               className={cn(
-                'px-2 py-0.5 text-xs font-bold uppercase whitespace-nowrap',
+                "px-2 py-0.5 text-xs font-bold whitespace-nowrap uppercase",
                 statusConfig[invoice.status]
               )}
             >

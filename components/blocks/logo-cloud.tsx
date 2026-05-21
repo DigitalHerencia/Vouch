@@ -197,7 +197,7 @@ export function LogoCloudWithStats({
   stats,
   className,
 }: LogoCloudWithStatsProps) {
-  if (import.meta.env.DEV && logos.length > 9) {
+  if ((import.meta as ImportMeta & { env?: { DEV?: boolean } }).env?.DEV && logos.length > 9) {
     console.warn(`[LogoCloud] WithStats variant only shows first 9 logos. ${logos.length} logos provided.`)
   }
   return (

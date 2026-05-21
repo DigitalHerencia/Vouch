@@ -8,6 +8,8 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
+        primary:
+          "bg-primary text-primary-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         default:
           "bg-primary text-primary-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         secondary:
@@ -20,6 +22,7 @@ const buttonVariants = cva(
           "bg-background text-foreground hover:bg-muted shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         ghost: "hover:bg-muted hover:border-foreground border-transparent shadow-none",
         link: "text-primary border-transparent underline-offset-4 shadow-none hover:underline",
+        nav: "border-transparent bg-transparent text-neutral-300 shadow-none hover:text-white",
         noShadow: "bg-primary text-primary-foreground",
         reverse:
           "bg-primary text-primary-foreground hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[4px_4px_0px_hsl(var(--shadow-color))]",
@@ -30,6 +33,7 @@ const buttonVariants = cva(
         lg: "h-12 px-8 text-base",
         xl: "h-14 px-10 text-lg",
         icon: "h-11 w-11",
+        nav: "h-auto px-0 py-0 text-sm",
       },
       animation: {
         none: "",

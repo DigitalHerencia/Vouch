@@ -2,12 +2,10 @@ import { CTASection } from "@/components/blocks/cta-section"
 import { FeatureGrid } from "@/components/blocks/feature-grid"
 import { HeroSection } from "@/components/blocks/hero-section"
 import { LogoCloud } from "@/components/blocks/logo-cloud"
-import { OnboardingFlow } from "@/components/blocks/onboarding-flow"
 import { StatsSection } from "@/components/blocks/stats-section"
 import {
   pricingAlternatingFeatures,
   pricingCalloutContent,
-  pricingFlowSteps,
   pricingStats,
   pricingTrustContent,
   PricingHeroContent,
@@ -47,27 +45,7 @@ export default function PricingPage() {
             icon: <Icon className="size-8" />,
             title: feature.title,
             description: feature.description,
-            media:
-              index === 0 ? (
-                <StatsSection.Cards
-                  stats={pricingStats.slice(0, 2).map((stat) => ({
-                    label: stat.label,
-                    value: stat.value,
-                    description: stat.body,
-                  }))}
-                  className="bg-transparent px-0 py-0"
-                />
-              ) : (
-                <OnboardingFlow.Completion
-                  title={index === 1 ? "Payment flow" : "Release rule"}
-                  subtitle={index === 1 ? "Providers handle money rails." : "Both confirm or funds do not release."}
-                  features={pricingFlowSteps.map((step) => ({
-                    title: `${step.number}. ${step.title}`,
-                    description: step.body,
-                  }))}
-                  className="max-w-none border-0 shadow-none"
-                />
-              ),
+            image: index % 2 === 0 ? "/logo-light.png" : "/logo-dark.png",
           }
         })}
         className="px-0 py-0"

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 
-import { ErrorPages } from "@/components/blocks/error-pages"
+import { GenericErrorPage } from "@/components/blocks/error-pages"
 
 export default function TenantError({
   error,
@@ -16,7 +16,7 @@ export default function TenantError({
   }, [error])
 
   return (
-    <ErrorPages.Generic
+    <GenericErrorPage
       title="Dashboard view failed"
       description="This participant-scoped Vouch surface could not render. Try again or return to the dashboard."
       actions={[

@@ -21,7 +21,7 @@ export default function HeroSection() {
         <HeroSplit
           title="Innovative Solutions"
           description="Our cutting-edge technology is designed to meet your needs and exceed your expectations."
-          imageSrc="/images/hero-split.jpg"
+          imageSrc="/logo-light.png"
           imageAlt="Innovative Solutions"
           primaryAction={{ label: "Explore Now", href: "#" }}
         />
@@ -42,7 +42,7 @@ export default function HeroSection() {
         <HeroWithVideo
           title="See It in Action"
           description="Watch our video to see how our product can transform your workflow and boost productivity."
-          videoThumbnail=""
+          videoThumbnail="/logo-dark.png"
           primaryAction={{ label: "Watch Video", href: "#" }}
         />
       </section>

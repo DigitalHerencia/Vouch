@@ -55,17 +55,8 @@ export function VouchCardList({
             clientName: row.role,
             date: row.deadlineLabel,
             amount: 0,
-            amountLabel: row.amountLabel,
-            status: row.statusLabel,
-            href: row.href,
+            status: "pending",
           }))}
-          labels={{
-            number: "Vouch",
-            client: "Role",
-            date: rowDateLabel(rows),
-            amount: "Amount",
-            status: "Status",
-          }}
         />
       ) : (
         <EmptyStatePreset
@@ -78,8 +69,4 @@ export function VouchCardList({
       )}
     </section>
   )
-}
-
-function rowDateLabel(rows: VouchCardProps[]) {
-  return rows.some((row) => row.deadlineLabel) ? "Deadline" : "Date"
 }

@@ -1,8 +1,7 @@
-/* eslint-disable react-refresh/only-export-components */
-import * as React from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { cn, safeHref } from '@/lib/utils'
+import * as React from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { cn, safeHref } from "@/lib/utils"
 import {
   Home,
   ArrowLeft,
@@ -16,7 +15,7 @@ import {
   Ban,
   Clock,
   Lock,
-} from 'lucide-react'
+} from "lucide-react"
 
 // ============================================================================
 // ERROR PAGE VARIANT 1: 404 Not Found
@@ -32,15 +31,15 @@ export interface NotFoundPageProps {
 }
 
 export function NotFoundPage({
-  title = '404',
+  title = "404",
   description = "Oops! The page you're looking for doesn't exist or has been moved.",
   showSearch = false,
   onSearch,
-  homeHref = '/',
+  homeHref = "/",
   backHref,
   className,
 }: NotFoundPageProps) {
-  const [searchQuery, setSearchQuery] = React.useState('')
+  const [searchQuery, setSearchQuery] = React.useState("")
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,31 +48,28 @@ export function NotFoundPage({
 
   return (
     <div
-      className={cn(
-        'min-h-screen flex items-center justify-center p-4 bg-background',
-        className
-      )}
+      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
     >
-      <div className="text-center space-y-8 max-w-lg">
+      <div className="max-w-lg space-y-8 text-center">
         {/* Large 404 */}
         <div className="relative">
-          <h1 className="text-[150px] md:text-[200px] font-black leading-none text-muted-foreground/20">
+          <h1 className="text-[150px] leading-none font-black text-muted-foreground/20 md:text-[200px]">
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-24 h-24 flex items-center justify-center border-3 border-foreground bg-primary shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-foreground bg-primary shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
               <FileQuestion className="h-12 w-12 text-primary-foreground" />
             </div>
           </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl md:text-3xl font-black uppercase">Page Not Found</h2>
+          <h2 className="text-2xl font-black uppercase md:text-3xl">Page Not Found</h2>
           <p className="text-muted-foreground">{description}</p>
         </div>
 
         {showSearch && (
-          <form onSubmit={handleSearch} className="flex gap-2 max-w-sm mx-auto">
+          <form onSubmit={handleSearch} className="mx-auto flex max-w-sm gap-2">
             <Input
               type="search"
               placeholder="Search for pages..."
@@ -86,7 +82,7 @@ export function NotFoundPage({
           </form>
         )}
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button asChild>
             <a href={safeHref(homeHref)}>
               <Home className="mr-2 h-4 w-4" />
@@ -121,45 +117,42 @@ export interface ServerErrorPageProps {
 }
 
 export function ServerErrorPage({
-  title = '500',
-  description = 'Something went wrong on our end. Our team has been notified and is working on a fix.',
+  title = "500",
+  description = "Something went wrong on our end. Our team has been notified and is working on a fix.",
   errorId,
   onRetry,
-  homeHref = '/',
+  homeHref = "/",
   supportEmail,
   className,
 }: ServerErrorPageProps) {
   return (
     <div
-      className={cn(
-        'min-h-screen flex items-center justify-center p-4 bg-background',
-        className
-      )}
+      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
     >
-      <div className="text-center space-y-8 max-w-lg">
+      <div className="max-w-lg space-y-8 text-center">
         {/* Large 500 */}
         <div className="relative">
-          <h1 className="text-[150px] md:text-[200px] font-black leading-none text-muted-foreground/20">
+          <h1 className="text-[150px] leading-none font-black text-muted-foreground/20 md:text-[200px]">
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-24 h-24 flex items-center justify-center border-3 border-foreground bg-destructive shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-foreground bg-destructive shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
               <ServerCrash className="h-12 w-12 text-destructive-foreground" />
             </div>
           </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl md:text-3xl font-black uppercase">Server Error</h2>
+          <h2 className="text-2xl font-black uppercase md:text-3xl">Server Error</h2>
           <p className="text-muted-foreground">{description}</p>
           {errorId && (
-            <p className="text-xs text-muted-foreground font-mono bg-muted p-2 border-2 border-foreground">
+            <p className="border-2 border-foreground bg-muted p-2 font-mono text-xs text-muted-foreground">
               Error ID: {errorId}
             </p>
           )}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           {onRetry && (
             <Button onClick={onRetry}>
               <RefreshCw className="mr-2 h-4 w-4" />
@@ -176,7 +169,7 @@ export function ServerErrorPage({
 
         {supportEmail && (
           <p className="text-sm text-muted-foreground">
-            Still having issues?{' '}
+            Still having issues?{" "}
             <a
               href={safeHref(`mailto:${supportEmail}`)}
               className="font-bold text-primary hover:underline"
@@ -203,7 +196,7 @@ export interface MaintenancePageProps {
 }
 
 export function MaintenancePage({
-  title = 'Under Maintenance',
+  title = "Under Maintenance",
   description = "We're currently performing scheduled maintenance to improve your experience.",
   estimatedTime,
   features,
@@ -212,21 +205,16 @@ export function MaintenancePage({
 }: MaintenancePageProps) {
   return (
     <div
-      className={cn(
-        'min-h-screen flex items-center justify-center p-4 bg-background',
-        className
-      )}
+      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
     >
-      <div className="text-center space-y-8 max-w-lg">
-        <div className="w-32 h-32 mx-auto flex items-center justify-center border-3 border-foreground bg-warning shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-          <Construction className="h-16 w-16 text-warning-foreground" />
+      <div className="max-w-lg space-y-8 text-center">
+        <div className="bg-warning mx-auto flex h-32 w-32 items-center justify-center border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
+          <Construction className="text-warning-foreground h-16 w-16" />
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">
-            {title}
-          </h1>
-          <p className="text-muted-foreground text-lg">{description}</p>
+          <h1 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h1>
+          <p className="text-lg text-muted-foreground">{description}</p>
 
           {estimatedTime && (
             <div className="inline-flex items-center gap-2 border-3 border-foreground bg-muted px-4 py-2">
@@ -237,12 +225,12 @@ export function MaintenancePage({
         </div>
 
         {features && features.length > 0 && (
-          <div className="border-3 border-foreground p-6 bg-card text-left space-y-3">
-            <h3 className="font-bold uppercase text-sm">What we're working on:</h3>
+          <div className="space-y-3 border-3 border-foreground bg-card p-6 text-left">
+            <h3 className="text-sm font-bold uppercase">What we're working on:</h3>
             <ul className="space-y-2">
               {features.map((feature, index) => (
                 <li key={`feature-${index}`} className="flex items-start gap-2 text-sm">
-                  <div className="w-5 h-5 flex items-center justify-center bg-primary text-primary-foreground border-2 border-foreground shrink-0 mt-0.5">
+                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border-2 border-foreground bg-primary text-primary-foreground">
                     ✓
                   </div>
                   {feature}
@@ -282,26 +270,21 @@ export function OfflinePage({
 }: OfflinePageProps) {
   return (
     <div
-      className={cn(
-        'min-h-screen flex items-center justify-center p-4 bg-background',
-        className
-      )}
+      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
     >
-      <div className="text-center space-y-8 max-w-md">
-        <div className="w-32 h-32 mx-auto flex items-center justify-center border-3 border-foreground bg-muted shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
+      <div className="max-w-md space-y-8 text-center">
+        <div className="mx-auto flex h-32 w-32 items-center justify-center border-3 border-foreground bg-muted shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
           <Wifi className="h-16 w-16 text-muted-foreground" />
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-3xl md:text-4xl font-black uppercase tracking-tight">
-            {title}
-          </h1>
+          <h1 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h1>
           <p className="text-muted-foreground">{description}</p>
         </div>
 
         <div className="space-y-4">
-          <div className="border-3 border-foreground p-4 bg-muted/30 text-left">
-            <h3 className="font-bold uppercase text-sm mb-2">Things to try:</h3>
+          <div className="border-3 border-foreground bg-muted/30 p-4 text-left">
+            <h3 className="mb-2 text-sm font-bold uppercase">Things to try:</h3>
             <ul className="space-y-1 text-sm text-muted-foreground">
               <li>• Check your Wi-Fi connection</li>
               <li>• Restart your router</li>
@@ -333,38 +316,35 @@ export interface ForbiddenPageProps {
 }
 
 export function ForbiddenPage({
-  title = '403',
+  title = "403",
   description = "You don't have permission to access this page. Please contact your administrator if you believe this is an error.",
-  homeHref = '/',
+  homeHref = "/",
   loginHref,
   className,
 }: ForbiddenPageProps) {
   return (
     <div
-      className={cn(
-        'min-h-screen flex items-center justify-center p-4 bg-background',
-        className
-      )}
+      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
     >
-      <div className="text-center space-y-8 max-w-lg">
+      <div className="max-w-lg space-y-8 text-center">
         {/* Large 403 */}
         <div className="relative">
-          <h1 className="text-[150px] md:text-[200px] font-black leading-none text-muted-foreground/20">
+          <h1 className="text-[150px] leading-none font-black text-muted-foreground/20 md:text-[200px]">
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-24 h-24 flex items-center justify-center border-3 border-foreground bg-warning shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
-              <Ban className="h-12 w-12 text-warning-foreground" />
+            <div className="bg-warning flex h-24 w-24 items-center justify-center border-3 border-foreground shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
+              <Ban className="text-warning-foreground h-12 w-12" />
             </div>
           </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl md:text-3xl font-black uppercase">Access Denied</h2>
+          <h2 className="text-2xl font-black uppercase md:text-3xl">Access Denied</h2>
           <p className="text-muted-foreground">{description}</p>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button asChild>
             <a href={safeHref(homeHref)}>
               <Home className="mr-2 h-4 w-4" />
@@ -409,13 +389,13 @@ export interface ComingSoonPageProps {
 }
 
 export function ComingSoonPage({
-  title = 'Coming Soon',
+  title = "Coming Soon",
   description = "We're working hard to bring you something amazing. Stay tuned!",
   launchDate,
   onNotify,
   className,
 }: ComingSoonPageProps) {
-  const [email, setEmail] = React.useState('')
+  const [email, setEmail] = React.useState("")
   const [submitted, setSubmitted] = React.useState(false)
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -436,36 +416,31 @@ export function ComingSoonPage({
 
   return (
     <div
-      className={cn(
-        'min-h-screen flex items-center justify-center p-4 bg-background',
-        className
-      )}
+      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
     >
-      <div className="text-center space-y-8 max-w-lg">
-        <div className="w-32 h-32 mx-auto flex items-center justify-center border-3 border-foreground bg-primary shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
+      <div className="max-w-lg space-y-8 text-center">
+        <div className="mx-auto flex h-32 w-32 items-center justify-center border-3 border-foreground bg-primary shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
           <Clock className="h-16 w-16 text-primary-foreground" />
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tight">
-            {title}
-          </h1>
+          <h1 className="text-4xl font-black tracking-tight uppercase md:text-5xl">{title}</h1>
           <p className="text-lg text-muted-foreground">{description}</p>
         </div>
 
         {timeRemaining && (
           <div className="flex justify-center gap-4">
             {[
-              { value: timeRemaining.days, label: 'Days' },
-              { value: timeRemaining.hours, label: 'Hours' },
-              { value: timeRemaining.minutes, label: 'Minutes' },
+              { value: timeRemaining.days, label: "Days" },
+              { value: timeRemaining.hours, label: "Hours" },
+              { value: timeRemaining.minutes, label: "Minutes" },
             ].map((item) => (
               <div
                 key={`action-${item.label}`}
-                className="border-3 border-foreground p-4 bg-card shadow-[4px_4px_0px_hsl(var(--shadow-color))] w-24"
+                className="w-24 border-3 border-foreground bg-card p-4 shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
               >
                 <div className="text-3xl font-black">{item.value}</div>
-                <div className="text-xs font-bold uppercase text-muted-foreground">
+                <div className="text-xs font-bold text-muted-foreground uppercase">
                   {item.label}
                 </div>
               </div>
@@ -474,7 +449,7 @@ export function ComingSoonPage({
         )}
 
         {onNotify && !submitted && (
-          <form onSubmit={handleSubmit} className="flex gap-2 max-w-sm mx-auto">
+          <form onSubmit={handleSubmit} className="mx-auto flex max-w-sm gap-2">
             <Input
               type="email"
               placeholder="Enter your email"
@@ -487,10 +462,8 @@ export function ComingSoonPage({
         )}
 
         {submitted && (
-          <div className="border-3 border-success bg-success/10 p-4">
-            <p className="font-bold text-success">
-              Thanks! We'll notify you when we launch.
-            </p>
+          <div className="border-success bg-success/10 border-3 p-4">
+            <p className="text-success font-bold">Thanks! We'll notify you when we launch.</p>
           </div>
         )}
       </div>
@@ -509,43 +482,38 @@ export interface GenericErrorPageProps {
     label: string
     href?: string
     onClick?: () => void
-    variant?: 'default' | 'outline'
+    variant?: "default" | "outline"
   }>
   className?: string
 }
 
 export function GenericErrorPage({
   icon,
-  title = 'Something went wrong',
-  description = 'An unexpected error occurred. Please try again later.',
+  title = "Something went wrong",
+  description = "An unexpected error occurred. Please try again later.",
   actions,
   className,
 }: GenericErrorPageProps) {
   return (
     <div
-      className={cn(
-        'min-h-screen flex items-center justify-center p-4 bg-background',
-        className
-      )}
+      className={cn("flex min-h-screen items-center justify-center bg-background p-4", className)}
     >
-      <div className="text-center space-y-8 max-w-md">
-        <div className="w-24 h-24 mx-auto flex items-center justify-center border-3 border-foreground bg-destructive/10 shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
+      <div className="max-w-md space-y-8 text-center">
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-foreground bg-destructive/10 shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
           {icon || <AlertTriangle className="h-12 w-12 text-destructive" />}
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-2xl md:text-3xl font-black uppercase tracking-tight">
-            {title}
-          </h1>
+          <h1 className="text-2xl font-black tracking-tight uppercase md:text-3xl">{title}</h1>
           <p className="text-muted-foreground">{description}</p>
         </div>
 
         {actions && actions.length > 0 && (
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             {actions.map((action) => (
               <Button
                 key={action.label}
-                variant={action.variant || 'default'}
+                variant={action.variant || "default"}
                 onClick={action.onClick}
                 asChild={!!action.href}
               >
