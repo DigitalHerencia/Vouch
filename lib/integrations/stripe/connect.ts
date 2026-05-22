@@ -120,7 +120,7 @@ export async function createStripeConnectOnboardingLink(input: {
       use_case: {
         type: "account_onboarding",
         account_onboarding: {
-          configurations: ["recipient"],
+          configurations: ["recipient", "merchant"],
           refresh_url: input.refreshUrl,
           return_url: input.returnUrl,
         },

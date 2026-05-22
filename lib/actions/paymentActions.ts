@@ -44,6 +44,7 @@ import {
   refundStripePayment,
   retrieveStripePaymentIntent,
 } from "@/lib/integrations/stripe/payment-intents"
+import { createStripePaymentMethodSetupCheckout } from "@/lib/integrations/stripe/checkout-sessions"
 import {
   getPaymentIntentCaptureBefore,
   getPaymentIntentLatestChargeId,
@@ -347,10 +348,30 @@ export async function openStripeConnectDashboard(): Promise<never> {
   const user = await requireActiveUser()
   const connectedAccount = await prisma.connectedAccount.findUnique({
     where: { userId: user.id },
-    select: { providerAccountId: true },
+    select: { providerAccountId: true, readiness: true },
   })
 
   if (!connectedAccount?.providerAccountId) {
+    await startStripeConnectOnboarding()
+    redirect("/dashboard")
+  }
+
+  const readiness = await refreshStripeConnectReadiness({
+    providerAccountId: connectedAccount.providerAccountId,
+  })
+
+  await prisma.connectedAccount.updateMany({
+    where: { userId: user.id, providerAccountId: connectedAccount.providerAccountId },
+    data: {
+      readiness: readiness.readiness,
+      chargesEnabled: readiness.chargesEnabled,
+      payoutsEnabled: readiness.payoutsEnabled,
+      detailsSubmitted: readiness.detailsSubmitted,
+      lastProviderSyncAt: new Date(),
+    },
+  })
+
+  if (readiness.readiness !== "ready") {
     await startStripeConnectOnboarding()
     redirect("/dashboard")
   }
@@ -366,7 +387,7 @@ export async function openStripePaymentMethodDashboard(): Promise<never> {
   const user = await requireActiveUser()
   const existing = await prisma.paymentCustomer.findUnique({
     where: { userId: user.id },
-    select: { providerCustomerId: true },
+    select: { providerCustomerId: true, readiness: true },
   })
 
   const providerCustomerId =
@@ -380,37 +401,55 @@ export async function openStripePaymentMethodDashboard(): Promise<never> {
       })
     ).providerCustomerId
 
-  if (!existing?.providerCustomerId) {
-    await prisma.$transaction(async (tx) => {
-      await tx.paymentCustomer.upsert({
-        where: { userId: user.id },
-        create: {
-          userId: user.id,
-          providerCustomerId,
-          readiness: "requires_action",
-          lastProviderSyncAt: new Date(),
-        },
-        update: {
-          providerCustomerId,
-          lastProviderSyncAt: new Date(),
-        },
-      })
+  const readiness = await getStripeCustomerPaymentReadiness(providerCustomerId)
 
-      await tx.auditEvent.create({
-        data: {
-          eventName: "payment.customer_portal_started",
-          actorType: "user",
-          actorUserId: user.id,
-          entityType: "PaymentCustomer",
-          entityId: user.id,
-          participantSafe: false,
-          metadata: { provider: "stripe" },
-        },
-      })
+  await prisma.$transaction(async (tx) => {
+    await tx.paymentCustomer.upsert({
+      where: { userId: user.id },
+      create: {
+        userId: user.id,
+        providerCustomerId,
+        readiness: readiness.readiness,
+        lastProviderSyncAt: new Date(),
+      },
+      update: {
+        providerCustomerId,
+        readiness: readiness.readiness,
+        lastProviderSyncAt: new Date(),
+      },
     })
-  }
+
+    await tx.auditEvent.create({
+      data: {
+        eventName:
+          readiness.readiness === "ready"
+            ? "payment.customer_portal_started"
+            : "payment.customer_setup_checkout_started",
+        actorType: "user",
+        actorUserId: user.id,
+        entityType: "PaymentCustomer",
+        entityId: user.id,
+        participantSafe: false,
+        metadata: { provider: "stripe" },
+      },
+    })
+  })
 
   const appUrl = getAppUrl()
+
+  if (readiness.readiness !== "ready") {
+    const checkout = await createStripePaymentMethodSetupCheckout({
+      userId: user.id,
+      providerCustomerId,
+      successUrl: `${appUrl}/dashboard?stripe_payment_return=1`,
+      cancelUrl: `${appUrl}/dashboard?stripe_payment_cancelled=1`,
+      idempotencyKey: `user:${user.id}:payment-method-setup-checkout`,
+    })
+
+    await revalidatePaymentSurfaces({ userId: user.id })
+    redirect(checkout.url ?? "/dashboard")
+  }
+
   const link = await createStripeCustomerPortalSession({
     providerCustomerId,
     returnUrl: `${appUrl}/dashboard?stripe_payment_return=1`,
@@ -508,6 +547,14 @@ export async function authorizeVouchPayment(
     return actionFailure("CONNECTED_ACCOUNT_REQUIRED", "Merchant connected account is required.")
   }
 
+  const customerPaymentReadiness = await getStripeCustomerPaymentReadiness(
+    vouch.customer.paymentCustomer.providerCustomerId
+  )
+
+  if (!customerPaymentReadiness.defaultPaymentMethodId) {
+    return actionFailure("PAYMENT_METHOD_REQUIRED", "Customer payment setup is required.")
+  }
+
   const intent = await createStripePaymentAuthorization({
     vouchId: vouch.id,
     customerTotalCents: vouch.customerTotalCents,
@@ -518,6 +565,7 @@ export async function authorizeVouchPayment(
     vouchServiceFeeCents: vouch.vouchServiceFeeCents,
     processingFeeOffsetCents: vouch.processingFeeOffsetCents,
     providerCustomerId: vouch.customer.paymentCustomer.providerCustomerId,
+    providerPaymentMethodId: customerPaymentReadiness.defaultPaymentMethodId,
     connectedAccountId: vouch.merchant.connectedAccount.providerAccountId,
     confirmOffSession: true,
     idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${vouch.id}:authorize`,
@@ -846,7 +894,7 @@ export async function processStripeWebhookEvent(
     })
   )
 
-  if (ledger.duplicate) {
+  if (ledger.duplicate && ledger.event.processed) {
     return actionSuccess({
       providerWebhookEventId: ledger.event.id,
       providerEventId: ledger.event.providerEventId,
@@ -999,6 +1047,43 @@ async function reconcileStripeCheckoutSessionEvent(
     })
 
     await revalidatePaymentSurfaces({ vouchId })
+    return
+  }
+
+  if (paymentRole === "customer_payment_method_setup") {
+    const customerId =
+      typeof session.customer === "string" ? session.customer : session.customer?.id
+    const readiness = customerId ? await getStripeCustomerPaymentReadiness(customerId) : null
+
+    await prisma.$transaction(async (tx) => {
+      if (customerId && readiness) {
+        await tx.paymentCustomer.updateMany({
+          where: { providerCustomerId: customerId },
+          data: {
+            readiness: readiness.readiness,
+            lastProviderSyncAt: new Date(),
+          },
+        })
+      }
+
+      await tx.paymentWebhookEvent.create({
+        data: {
+          providerEventId: event.id,
+          eventType: event.type,
+          providerWebhookEventId,
+          processed: true,
+          processedAt: new Date(),
+          safeMetadata: {
+            checkout_session_id: session.id,
+            payment_role: paymentRole,
+            payment_status: session.payment_status,
+          },
+        },
+      })
+
+      await markProviderWebhookProcessedTx(tx, { id: providerWebhookEventId })
+    })
+
     return
   }
 

@@ -29,6 +29,14 @@ export type CreateStripeMerchantCreationFeeCheckoutInput = {
   idempotencyKey: string
 }
 
+export type CreateStripePaymentMethodSetupCheckoutInput = {
+  userId: string
+  providerCustomerId: string
+  successUrl: string
+  cancelUrl: string
+  idempotencyKey: string
+}
+
 function pricingMetadata(input: { vouchId: string; pricing: VouchPricing }) {
   return {
     vouch_id: input.vouchId,
@@ -71,6 +79,30 @@ export async function createStripeMerchantCreationFeeCheckout(
       mode: "payment",
       payment_intent_data: { metadata },
       metadata,
+    },
+    { idempotencyKey: input.idempotencyKey }
+  )
+}
+
+export async function createStripePaymentMethodSetupCheckout(
+  input: CreateStripePaymentMethodSetupCheckoutInput
+): Promise<Stripe.Checkout.Session> {
+  return getStripeServerClient().checkout.sessions.create(
+    {
+      customer: input.providerCustomerId,
+      mode: "setup",
+      success_url: input.successUrl,
+      cancel_url: input.cancelUrl,
+      metadata: {
+        vouch_user_id: input.userId,
+        payment_role: "customer_payment_method_setup",
+      },
+      setup_intent_data: {
+        metadata: {
+          vouch_user_id: input.userId,
+          payment_role: "customer_payment_method_setup",
+        },
+      },
     },
     { idempotencyKey: input.idempotencyKey }
   )

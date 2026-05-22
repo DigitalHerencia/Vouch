@@ -49,14 +49,9 @@ function normalizeReadiness(record: ReadinessRecord | null) {
   return {
     ...state,
     createReady:
-      state.userStatus === "active" &&
-      state.paymentReadiness === "ready",
+      state.userStatus === "active" && state.payoutReadiness === "ready" && state.termsAccepted,
     acceptReady:
-      state.userStatus === "active" &&
-      state.identityStatus === "verified" &&
-      state.adultStatus === "verified" &&
-      state.payoutReadiness === "ready" &&
-      state.termsAccepted,
+      state.userStatus === "active" && state.paymentReadiness === "ready" && state.termsAccepted,
     confirmReady: state.userStatus === "active",
   }
 }
@@ -64,7 +59,9 @@ function normalizeReadiness(record: ReadinessRecord | null) {
 async function readReadiness(userId: string) {
   noStore()
   await refreshProviderReadiness(userId)
-  return normalizeReadiness(await prisma.user.findUnique({ where: { id: userId }, select: readinessSelect }))
+  return normalizeReadiness(
+    await prisma.user.findUnique({ where: { id: userId }, select: readinessSelect })
+  )
 }
 
 async function refreshProviderReadiness(userId: string) {
@@ -81,7 +78,9 @@ async function refreshProviderReadiness(userId: string) {
 
   const [payment, payout] = await Promise.all([
     paymentCustomerId ? getStripeCustomerPaymentReadiness(paymentCustomerId) : null,
-    connectedAccountId ? refreshStripeConnectReadiness({ providerAccountId: connectedAccountId }) : null,
+    connectedAccountId
+      ? refreshStripeConnectReadiness({ providerAccountId: connectedAccountId })
+      : null,
   ])
 
   await prisma.$transaction(async (tx) => {
@@ -114,20 +113,17 @@ function blockersFor(
   const blockers: string[] = []
 
   if (readiness.userStatus !== "active") blockers.push("account_inactive")
-  if (kind !== "confirm") {
-    if (kind === "accept" && readiness.identityStatus !== "verified") {
-      blockers.push("identity_verification_required")
-    }
-    if (kind === "accept" && readiness.adultStatus !== "verified") {
-      blockers.push("adult_verification_required")
-    }
-    if (kind === "accept" && !readiness.termsAccepted) blockers.push("terms_acceptance_required")
+  if (kind === "create" && readiness.payoutReadiness !== "ready") {
+    blockers.push("payout_method_required")
   }
-  if (kind === "create" && readiness.paymentReadiness !== "ready") {
+  if (kind === "create" && !readiness.termsAccepted) {
+    blockers.push("terms_acceptance_required")
+  }
+  if (kind === "accept" && readiness.paymentReadiness !== "ready") {
     blockers.push("payment_method_required")
   }
-  if (kind === "accept" && readiness.payoutReadiness !== "ready") {
-    blockers.push("payout_method_required")
+  if (kind === "accept" && !readiness.termsAccepted) {
+    blockers.push("terms_acceptance_required")
   }
 
   return blockers

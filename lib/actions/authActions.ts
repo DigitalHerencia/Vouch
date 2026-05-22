@@ -25,10 +25,25 @@ import {
 import type { ClerkWebhookEvent, ClerkWebhookUserData } from "@/types/auth"
 import { clerkWebhookEventSchema, supportedClerkWebhookEventTypeSchema } from "@/schemas/auth"
 
+const CURRENT_TERMS_VERSION = "2026-05-22"
+
 export async function syncClerkUser(input: LocalUserSyncInput) {
   const user = await prisma.$transaction(async (tx) => {
     const syncedUser = await upsertUserFromClerkTx(tx, input)
     await createDefaultVerificationProfileTx(tx, { userId: syncedUser.id })
+    await tx.termsAcceptance.upsert({
+      where: {
+        userId_termsVersion: {
+          userId: syncedUser.id,
+          termsVersion: CURRENT_TERMS_VERSION,
+        },
+      },
+      create: {
+        userId: syncedUser.id,
+        termsVersion: CURRENT_TERMS_VERSION,
+      },
+      update: {},
+    })
     await tx.auditEvent.create({
       data: {
         eventName: "user.synced",
@@ -90,6 +105,22 @@ async function upsertLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
       create: { userId: user.id },
       update: {},
     })
+
+    if (event.type === "user.created") {
+      await tx.termsAcceptance.upsert({
+        where: {
+          userId_termsVersion: {
+            userId: user.id,
+            termsVersion: CURRENT_TERMS_VERSION,
+          },
+        },
+        create: {
+          userId: user.id,
+          termsVersion: CURRENT_TERMS_VERSION,
+        },
+        update: {},
+      })
+    }
 
     await tx.auditEvent.create({
       data: {
@@ -275,7 +306,7 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
     safeMetadata: safeClerkMetadata(parsed),
   })
 
-  if (ledger.duplicate || ledger.event.processed) {
+  if (ledger.duplicate && ledger.event.processed) {
     return { ok: true as const, status: "duplicate" as const, ignored: true as const }
   }
 
