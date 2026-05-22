@@ -1,11 +1,12 @@
 import * as React from "react"
+import Link from "next/link"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Eye, Mail, Lock, User, ArrowRight } from "lucide-react"
-import { cn } from "@/lib/utils"
 
 // ============================================================================
 // AUTH VARIANT 1: Login Form
@@ -18,7 +19,6 @@ export interface LoginFormProps {
   onForgotPassword?: () => void
   onSignUp?: () => void
   socialProviders?: Array<"google" | "github">
-  className?: string
 }
 
 export function LoginForm({
@@ -28,10 +28,9 @@ export function LoginForm({
   onForgotPassword,
   onSignUp,
   socialProviders,
-  className,
 }: LoginFormProps) {
   return (
-    <div className={cn("mx-auto w-full max-w-md", className)}>
+    <div className="mx-auto w-full max-w-md">
       <Card>
         <CardHeader className="space-y-4 text-center">
           {logo && <div className="mx-auto">{logo}</div>}
@@ -47,13 +46,13 @@ export function LoginForm({
                 Email
               </Label>
               <div className="relative">
-                <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                 <Input
                   id="email"
                   type="email"
                   autoComplete="email"
                   placeholder="you@example.com"
-                  className="border-2 border-primary-foreground pl-10"
+                  className="border-2 border-neutral-400 pl-10"
                   defaultValue="you@example.com"
                   readOnly
                   required
@@ -66,24 +65,26 @@ export function LoginForm({
                 Password
               </Label>
               <div className="relative">
-                <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                 <Input
                   id="password"
                   type="password"
                   autoComplete="current-password"
                   placeholder="Enter your password"
-                  className="border-2 border-primary-foreground pr-10 pl-10"
+                  className="border-2 border-neutral-400 pr-10 pl-10"
                   defaultValue="password"
                   readOnly
                   required
                 />
-                <button
+                <Button
                   type="button"
                   aria-label="Show password"
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1/2 right-3 h-auto w-auto -translate-y-1/2 p-0 text-neutral-400 hover:text-white"
                 >
                   <Eye className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -95,9 +96,9 @@ export function LoginForm({
                 </Label>
               </div>
               {onForgotPassword && (
-                <button type="button" className="text-sm font-bold text-primary hover:underline">
+                <Button type="button" variant="link" size="nav" className="text-sm">
                   Forgot password?
-                </button>
+                </Button>
               )}
             </div>
 
@@ -110,12 +111,10 @@ export function LoginForm({
               <>
                 <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t-2 border-foreground" />
+                    <div className="w-full border-t-2 border-neutral-400" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 font-bold text-muted-foreground">
-                      Or continue with
-                    </span>
+                    <span className="bg-black px-2 font-bold text-white">Or continue with</span>
                   </div>
                 </div>
 
@@ -137,11 +136,13 @@ export function LoginForm({
             )}
 
             {onSignUp && (
-              <p className="mt-4 text-center text-sm text-muted-foreground">
+              <p className="mt-4 text-center text-sm text-neutral-400">
                 Don't have an account?{" "}
-                <button type="button" className="font-bold text-primary hover:underline">
-                  Sign up
-                </button>
+                <span>
+                  <Button type="button" variant="link" size="nav">
+                    Sign up
+                  </Button>
+                </span>
               </p>
             )}
           </div>
@@ -163,7 +164,6 @@ export interface SignUpFormProps {
   socialProviders?: Array<"google" | "github">
   termsUrl?: string
   privacyUrl?: string
-  className?: string
 }
 
 export function SignUpForm({
@@ -174,10 +174,9 @@ export function SignUpForm({
   socialProviders,
   termsUrl = "#",
   privacyUrl = "#",
-  className,
 }: SignUpFormProps) {
   return (
-    <div className={cn("mx-auto w-full max-w-md", className)}>
+    <div className="mx-auto w-full max-w-md">
       <Card>
         <CardHeader className="space-y-4 text-center">
           {logo && <div className="mx-auto">{logo}</div>}
@@ -193,13 +192,13 @@ export function SignUpForm({
                 Full Name
               </Label>
               <div className="relative">
-                <User className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <User className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                 <Input
                   id="name"
                   type="text"
                   autoComplete="name"
                   placeholder="John Doe"
-                  className="border-2 border-primary-foreground pl-10"
+                  className="border-2 border-neutral-400 pl-10"
                   defaultValue="John Doe"
                   readOnly
                   required
@@ -212,13 +211,13 @@ export function SignUpForm({
                 Email
               </Label>
               <div className="relative">
-                <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                 <Input
                   id="signup-email"
                   type="email"
                   autoComplete="email"
                   placeholder="you@example.com"
-                  className="border-2 border-primary-foreground pl-10"
+                  className="border-2 border-neutral-400 pl-10"
                   defaultValue="you@example.com"
                   readOnly
                   required
@@ -231,26 +230,28 @@ export function SignUpForm({
                 Password
               </Label>
               <div className="relative">
-                <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                 <Input
                   id="signup-password"
                   type="password"
                   autoComplete="new-password"
                   placeholder="Create a password"
-                  className="border-2 border-primary-foreground pr-10 pl-10"
+                  className="border-2 border-neutral-400 pr-10 pl-10"
                   defaultValue="password"
                   readOnly
                   required
                 />
-                <button
+                <Button
                   type="button"
                   aria-label="Show password"
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute top-1/2 right-3 h-auto w-auto -translate-y-1/2 p-0 text-neutral-400 hover:text-white"
                 >
                   <Eye className="h-4 w-4" />
-                </button>
+                </Button>
               </div>
-              <p className="text-xs text-muted-foreground">Must be at least 8 characters</p>
+              <p className="text-xs text-neutral-400">Must be at least 8 characters</p>
             </div>
 
             <div className="space-y-1">
@@ -258,13 +259,13 @@ export function SignUpForm({
                 <Checkbox id="terms" defaultChecked />
                 <Label htmlFor="terms" className="cursor-pointer text-sm leading-tight">
                   I agree to the{" "}
-                  <a href={termsUrl} className="font-bold text-primary hover:underline">
+                  <Link href={termsUrl} className="font-bold text-blue-600 hover:underline">
                     Terms of Service
-                  </a>{" "}
+                  </Link>{" "}
                   and{" "}
-                  <a href={privacyUrl} className="font-bold text-primary hover:underline">
+                  <Link href={privacyUrl} className="font-bold text-blue-600 hover:underline">
                     Privacy Policy
-                  </a>
+                  </Link>
                 </Label>
               </div>
             </div>
@@ -278,10 +279,10 @@ export function SignUpForm({
               <>
                 <div className="relative my-6">
                   <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t-2 border-foreground" />
+                    <div className="w-full border-t-2 border-neutral-400" />
                   </div>
                   <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-card px-2 font-bold text-muted-foreground">
+                    <span className="bg-black px-2 font-bold text-neutral-400">
                       Or continue with
                     </span>
                   </div>
@@ -305,11 +306,11 @@ export function SignUpForm({
             )}
 
             {onSignIn && (
-              <p className="mt-4 text-center text-sm text-muted-foreground">
+              <p className="mt-4 text-center text-sm text-neutral-400">
                 Already have an account?{" "}
-                <button type="button" className="font-bold text-primary hover:underline">
+                <Button type="button" variant="link" size="nav">
                   Sign in
-                </button>
+                </Button>
               </p>
             )}
           </div>
@@ -328,7 +329,6 @@ export interface ForgotPasswordFormProps {
   description?: string
   onSubmit?: (email: string) => void
   onBackToLogin?: () => void
-  className?: string
 }
 
 export function ForgotPasswordForm({
@@ -336,10 +336,9 @@ export function ForgotPasswordForm({
   title = "Forgot password?",
   description = "No worries, we'll send you reset instructions.",
   onBackToLogin,
-  className,
 }: ForgotPasswordFormProps) {
   return (
-    <div className={cn("mx-auto w-full max-w-md", className)}>
+    <div className="mx-auto w-full max-w-md">
       <Card>
         <CardHeader className="space-y-4 text-center">
           {logo && <div className="mx-auto">{logo}</div>}
@@ -355,12 +354,12 @@ export function ForgotPasswordForm({
                 Email
               </Label>
               <div className="relative">
-                <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
                 <Input
                   id="reset-email"
                   type="email"
                   placeholder="you@example.com"
-                  className="border-2 border-primary-foreground pl-10"
+                  className="border-2 border-neutral-400 pl-10"
                   defaultValue="you@example.com"
                   readOnly
                   required
@@ -374,7 +373,7 @@ export function ForgotPasswordForm({
             </Button>
 
             {onBackToLogin && (
-              <Button type="button" variant="ghost" className="w-full">
+              <Button type="button" variant="outline" className="w-full">
                 Back to login
               </Button>
             )}
@@ -402,7 +401,6 @@ export interface OTPVerificationFormProps {
   onSubmit?: (otp: string) => void
   onResend?: () => void
   onBackToLogin?: () => void
-  className?: string
 }
 
 export function OTPVerificationForm({
@@ -417,12 +415,11 @@ export function OTPVerificationForm({
   submitLabel = "Verify",
   onResend,
   onBackToLogin,
-  className,
 }: OTPVerificationFormProps) {
   const digits = value.padEnd(length).slice(0, length).split("")
 
   return (
-    <div className={cn("mx-auto w-full max-w-md", className)}>
+    <div className="mx-auto w-full max-w-md">
       <Card>
         <CardHeader className="space-y-4 text-center">
           {logo && <div className="mx-auto">{logo}</div>}
@@ -446,11 +443,11 @@ export function OTPVerificationForm({
                 value={digit}
                 readOnly
                 disabled={disabled}
-                className="h-14 w-12 border-2 border-primary-foreground text-center text-2xl font-black"
+                className="h-14 w-12 border-2 border-neutral-400 text-center text-2xl font-black"
               />
             ))}
           </div>
-          {error && <p className="text-sm font-medium text-destructive">{error}</p>}
+          {error && <p className="text-sm font-medium text-red-600">{error}</p>}
 
           <Button
             type="button"
@@ -464,11 +461,11 @@ export function OTPVerificationForm({
 
           <div className="space-y-2 text-center">
             {onResend && (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-neutral-400">
                 Didn't receive a code?{" "}
-                <button type="button" className="font-bold text-primary hover:underline">
+                <Button type="button" variant="link" size="nav">
                   Resend
-                </button>
+                </Button>
               </p>
             )}
             {onBackToLogin && (
@@ -489,24 +486,18 @@ export function OTPVerificationForm({
 export interface AuthSplitLayoutProps {
   children: React.ReactNode
   brandContent?: React.ReactNode
-  brandBackground?: string
   position?: "left" | "right"
-  className?: string
 }
 
 export function AuthSplitLayout({
   children,
   brandContent,
-  brandBackground = "bg-primary",
   position = "left",
-  className,
 }: AuthSplitLayoutProps) {
   return (
-    <div className={cn("flex min-h-screen", className)}>
+    <div className="flex min-h-screen">
       {position === "left" && brandContent && (
-        <div
-          className={cn("hidden flex-col justify-center p-12 lg:flex lg:w-1/2", brandBackground)}
-        >
+        <div className="hidden flex-col justify-center bg-blue-600 p-12 lg:flex lg:w-1/2">
           {brandContent}
         </div>
       )}
@@ -514,9 +505,7 @@ export function AuthSplitLayout({
       <div className="flex flex-1 items-center justify-center p-4 md:p-8">{children}</div>
 
       {position === "right" && brandContent && (
-        <div
-          className={cn("hidden flex-col justify-center p-12 lg:flex lg:w-1/2", brandBackground)}
-        >
+        <div className="hidden flex-col justify-center bg-blue-600 p-12 lg:flex lg:w-1/2">
           {brandContent}
         </div>
       )}

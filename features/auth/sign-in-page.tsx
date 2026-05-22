@@ -26,12 +26,11 @@ import { FieldGroup as UiFieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
-import { cn } from "@/lib/utils"
 import { loginSchema, verificationSchema } from "@/schemas/auth"
 import { type LoginFormProps, type LoginFormValues } from "@/types/auth"
 
 const inputClassName =
-  "h-11 w-full min-w-0 rounded-none border border-neutral-700 bg-black/55 px-4 font-(family-name:--font-sans) text-sm font-semibold text-white shadow-none outline-none placeholder:text-neutral-600 focus-visible:border-primary focus-visible:ring-0 sm:h-12 sm:text-base lg:h-13"
+  "h-11 w-full min-w-0 rounded-none border border-neutral-400 bg-black px-4 font-(family-name:--font-sans) text-sm font-semibold text-white shadow-none outline-none placeholder:text-neutral-400 focus-visible:border-blue-600 focus-visible:ring-0 sm:h-12 sm:text-base lg:h-13"
 
 export function SignInPageFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
   return <LoginForm redirectUrl={redirectUrl} />
@@ -46,7 +45,7 @@ function getErrorMessage(error: unknown, fallback: string): string {
     : fallback
 }
 
-export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) {
+export function LoginForm({ redirectUrl, ...props }: LoginFormProps) {
   const { fetchStatus, signIn } = useSignIn()
   const router = useRouter()
   const [awaitingSecondFactor, setAwaitingSecondFactor] = useState(false)
@@ -246,15 +245,12 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
 
   return (
     <form
-      className={cn(
-        "flex w-full max-w-full min-w-0 flex-col overflow-hidden bg-transparent text-white",
-        className
-      )}
+      className="flex w-full max-w-full min-w-0 flex-col overflow-hidden bg-black text-white"
       onSubmit={handleSubmit}
       noValidate
       {...props}
     >
-      <UiFieldGroup className="max-w-full min-w-0 gap-3 overflow-hidden border-0 bg-transparent p-0 shadow-none sm:gap-4">
+      <UiFieldGroup className="max-w-full min-w-0 gap-3 overflow-hidden border-0 bg-black p-0 shadow-none sm:gap-4">
         {notice ? (
           <h1 className="max-w-full overflow-hidden font-(family-name:--font-display) text-[30px] leading-none tracking-[0.04em] wrap-break-word text-white uppercase sm:text-[40px] lg:text-[48px]">
             {notice}
@@ -303,7 +299,6 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                   shouldValidate: code.length === 6,
                 })
               }
-              className="max-w-full"
             />
 
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
@@ -396,7 +391,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
               Sign in
             </Button>
 
-            <div className="flex min-w-0 flex-wrap items-center gap-2 overflow-hidden text-xs font-semibold text-neutral-500 sm:text-sm">
+            <div className="flex min-w-0 flex-wrap items-center gap-2 overflow-hidden text-xs font-semibold text-neutral-400 sm:text-sm">
               <span>Need an account?</span>
               <Link
                 href={
@@ -404,7 +399,7 @@ export function LoginForm({ className, redirectUrl, ...props }: LoginFormProps) 
                     ? `/sign-up?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-up"
                 }
-                className="font-mono text-primary underline-offset-4 transition-colors hover:text-white hover:underline"
+                className="font-mono text-blue-600 underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Create one
               </Link>

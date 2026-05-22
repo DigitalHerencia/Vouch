@@ -1,6 +1,5 @@
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
 import type { VouchStatus } from "@/types/vouch"
 
 export interface VouchDetailHeaderProps {
@@ -19,7 +18,6 @@ export interface VouchDetailHeaderProps {
       role: string
     }
   }
-  className?: string | undefined
 }
 
 export function VouchDetailHeader({
@@ -30,12 +28,11 @@ export function VouchDetailHeader({
   statusLabel,
   currentUserRoleLabel,
   copy,
-  className,
 }: VouchDetailHeaderProps) {
   return (
-    <Card className={cn("grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_auto]", className)}>
+    <Card className="grid gap-6 p-6 lg:grid-cols-[minmax(0,1fr)_auto]">
       <div className="min-w-0">
-        <p className="font-mono text-xs font-bold tracking-[0.08em] text-neutral-500 uppercase">
+        <p className="font-mono text-xs font-bold tracking-[0.08em] text-neutral-400 uppercase">
           {copy.title} / {vouchId}
         </p>
         <h1 className="mt-3 max-w-5xl font-(family-name:--font-brand) text-[clamp(2.75rem,6vw,5rem)] leading-[0.88] break-all text-white uppercase">
@@ -56,11 +53,11 @@ export function VouchDetailHeader({
 
 function StatusItem({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border border-neutral-800 bg-neutral-950/70 p-4">
-      <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-500 uppercase">
+    <div className="border border-neutral-400 bg-black p-4">
+      <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-400 uppercase">
         {label}
       </p>
-      <Badge className="mt-3 border-neutral-700 bg-black text-neutral-100">{value}</Badge>
+      <Badge className="mt-3 border-neutral-400 bg-black text-white">{value}</Badge>
     </div>
   )
 }

@@ -243,7 +243,6 @@ function VouchDetailView({
               </div>
             ),
           }}
-          className="max-w-none"
         />
         <VouchTimelinePanel
           timeline={timeline}
@@ -262,7 +261,6 @@ function VouchDetailView({
           amountLabel={customerTotalLabel}
           status={String(statusLabel)}
           href={`/vouches/${vouchId}`}
-          className="md:col-span-2"
         />
       </section>
     </main>

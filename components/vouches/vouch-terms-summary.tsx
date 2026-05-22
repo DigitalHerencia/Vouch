@@ -33,12 +33,12 @@ export function VouchTermsSummary({
         {rows.map(([label, value]) => (
           <div
             key={label}
-            className="border-b border-neutral-800 p-5 sm:border-r sm:last:border-r-0 lg:border-b-0"
+            className="border-b border-neutral-400 p-5 sm:border-r sm:last:border-r-0 lg:border-b-0"
           >
-            <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-500 uppercase">
+            <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-400 uppercase">
               {label}
             </p>
-            <p className="mt-3 text-base leading-6 font-bold text-neutral-100">{value}</p>
+            <p className="mt-3 text-base leading-6 font-bold text-white">{value}</p>
           </div>
         ))}
       </CardContent>

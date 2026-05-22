@@ -1,6 +1,6 @@
 // app/(auth)/layout.tsx
 
-import { AuthShell } from "@/components/auth/auth-shell"
+import { AuthShell } from "@/components/navigation/auth-shell"
 
 export default function AuthLayout({
   children,

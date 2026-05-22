@@ -1,12 +1,11 @@
 import Link from "next/link"
 
 import { LogoLockup } from "@/components/brand/logo-lockup"
-import { UserMenu } from "@/components/auth/user-menu"
+import { UserMenu } from "@/components/navigation/user-menu"
 import { Button } from "@/components/ui/button"
 import { ProviderRedirectDrawer } from "@/components/vouches/provider-redirect-drawer"
 import { tenantNavigationContent } from "@/content/navigation"
 import { vouchPageCopy } from "@/content/vouches"
-import { cn } from "@/lib/utils"
 
 type TenantProviderAction = (formData: FormData) => void | Promise<void>
 
@@ -19,7 +18,6 @@ export interface TenantHeaderProps {
   connectAction: TenantProviderAction
   paymentAction: TenantProviderAction
   navItems?: readonly TenantHeaderNavItem[] | undefined
-  className?: string | undefined
 }
 
 export const defaultTenantNavItems = [
@@ -31,16 +29,10 @@ export function TenantHeader({
   connectAction,
   paymentAction,
   navItems = defaultTenantNavItems,
-  className,
 }: TenantHeaderProps) {
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 h-21 w-full border-b border-neutral-900 bg-black",
-        className
-      )}
-    >
-      <div className="mx-auto hidden h-full w-full max-w-7xl items-center justify-between px-6 sm:px-10 md:flex lg:px-12">
+    <header className="sticky top-0 z-50 h-18 w-full border-b-3 border-neutral-400 bg-black">
+      <div className="mx-auto hidden h-full w-full max-w-7xl items-center justify-between px-4 md:flex md:px-6 lg:px-8">
         <Link
           href="/dashboard"
           aria-label={tenantNavigationContent.labels.dashboard}
@@ -51,10 +43,10 @@ export function TenantHeader({
 
         <nav
           aria-label={tenantNavigationContent.labels.mainNavigation}
-          className="flex items-center gap-8 lg:gap-12"
+          className="flex items-center gap-5 lg:gap-7"
         >
           {navItems.map((item) => (
-            <Button key={item.href} variant="ghost" size="sm" asChild>
+            <Button key={item.href} variant="link" size="nav" asChild>
               <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}
@@ -87,11 +79,7 @@ export function TenantHeader({
           aria-label={tenantNavigationContent.labels.dashboard}
           className="inline-flex items-center"
         >
-          <LogoLockup
-            className="justify-center"
-            iconClassName="size-9"
-            wordmarkClassName="text-[34px]"
-          />
+          <LogoLockup />
         </Link>
       </div>
     </header>

@@ -6,9 +6,9 @@ The supplied mockups define direction, not one-for-one layout. The system is bla
 
 ## Visual Tokens
 
-- Background: black / `neutral-950`.
-- Panel: black or `neutral-950`.
-- Text: `neutral-100` or white for primary, `neutral-400` for muted.
+- Background: black / `black`.
+- Panel: black or `black`.
+- Text: `white` or white for primary, `neutral-400` for muted.
 - Borders: `neutral-700` for visible structure, `neutral-800` for internal rows.
 - Accent: blue-600 / Vouch primary only.
 - Radius: none.

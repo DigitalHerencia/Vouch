@@ -44,7 +44,7 @@ export default function SettingsBlocksPage() {
         />
         <AppearanceSettings
           theme="dark"
-          accentColor="#154fef"
+          accentColor="blue-600"
           onThemeChange={() => undefined}
           onAccentColorChange={() => undefined}
         />

@@ -9,7 +9,7 @@ export function CheckoutSuccessPage() {
     <main className="mx-auto grid min-h-[60vh] max-w-3xl place-items-center px-6 py-16">
       <Card className="w-full">
         <CardHeader>
-          <p className="text-primary font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] uppercase">
+          <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-blue-600 uppercase">
             Provider return
           </p>
           <CardTitle className="text-[clamp(2.75rem,6vw,5rem)]">

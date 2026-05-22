@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { ProviderRedirectDrawer } from "@/components/vouches/provider-redirect-drawer"
 import { tenantNavigationContent } from "@/content/navigation"
 import { vouchPageCopy } from "@/content/vouches"
-import { cn } from "@/lib/utils"
 
 type TenantProviderAction = (formData: FormData) => void | Promise<void>
 
@@ -17,7 +16,6 @@ export interface TenantFooterProps {
   connectAction: TenantProviderAction
   paymentAction: TenantProviderAction
   links?: readonly TenantFooterLink[] | undefined
-  className?: string | undefined
 }
 
 export const defaultTenantFooterLinks = [
@@ -29,21 +27,20 @@ export function TenantFooter({
   connectAction,
   paymentAction,
   links = defaultTenantFooterLinks,
-  className,
 }: TenantFooterProps) {
   return (
-    <footer className={cn("w-full border-t border-neutral-900 bg-black", className)}>
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6 px-6 py-7 pb-24 sm:px-10 md:pb-7 lg:flex-row lg:items-center lg:justify-between lg:px-12">
-        <p className="font-mono text-sm leading-none text-neutral-600 sm:text-base lg:text-lg">
+    <footer className="w-full border-t-3 border-neutral-400 bg-black">
+      <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-5 pb-22 md:px-6 md:pb-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <p className="text-sm leading-none text-neutral-400 md:text-base">
           © {new Date().getFullYear()} {tenantNavigationContent.footer.legalLine}
         </p>
 
         <nav
           aria-label={tenantNavigationContent.labels.footerNavigation}
-          className="flex flex-wrap gap-x-7 gap-y-4 sm:gap-x-9"
+          className="flex flex-wrap gap-x-5 gap-y-3 lg:gap-x-7"
         >
           {links.map((item) => (
-            <Button key={item.href} variant="ghost" size="sm" asChild>
+            <Button key={item.href} variant="link" size="nav" asChild>
               <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}

@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
-import { cn } from "@/lib/utils"
 import {
   ArrowRight,
   ArrowLeft,
@@ -37,7 +36,6 @@ export interface OnboardingWizardProps {
   onComplete?: () => void
   onStepChange?: (stepIndex: number) => void
   showProgress?: boolean
-  className?: string | undefined
 }
 
 export function OnboardingWizard({
@@ -45,7 +43,6 @@ export function OnboardingWizard({
   onComplete,
   onStepChange,
   showProgress = true,
-  className,
 }: OnboardingWizardProps) {
   const [currentStep, setCurrentStep] = React.useState(0)
   const progress = ((currentStep + 1) / steps.length) * 100
@@ -76,7 +73,7 @@ export function OnboardingWizard({
   if (!step) return null
 
   return (
-    <div className={cn("mx-auto w-full max-w-2xl", className)}>
+    <div className="mx-auto w-full max-w-2xl">
       {/* Progress */}
       {showProgress && (
         <div className="mb-8 space-y-4">
@@ -84,7 +81,7 @@ export function OnboardingWizard({
             <span className="font-bold tracking-wide uppercase">
               Step {currentStep + 1} of {steps.length}
             </span>
-            <span className="text-muted-foreground">{Math.round(progress)}% complete</span>
+            <span className="text-neutral-400">{Math.round(progress)}% complete</span>
           </div>
           <Progress value={progress} className="h-3" />
         </div>
@@ -102,23 +99,19 @@ export function OnboardingWizard({
               role="listitem"
               aria-label={`Step ${index + 1} of ${steps.length}: ${step.title}`}
               aria-current={index === currentStep ? "step" : undefined}
-              className={cn(
-                "flex h-10 w-10 items-center justify-center border-3 border-foreground font-bold transition-all",
+              className={
                 index < currentStep
-                  ? "bg-success text-success-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
+                  ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 font-bold transition-all bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
                   : index === currentStep
-                    ? "scale-110 bg-primary text-primary-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
-                    : "bg-muted text-muted-foreground"
-              )}
+                    ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 font-bold transition-all scale-110 bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+                    : "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 font-bold transition-all bg-neutral-900 text-neutral-400"
+              }
             >
               {index < currentStep ? <Check className="h-5 w-5" /> : index + 1}
             </div>
             {index < steps.length - 1 && (
               <div
-                className={cn(
-                  "h-1 w-8 transition-colors",
-                  index < currentStep ? "bg-success" : "bg-muted"
-                )}
+                className={index < currentStep ? "h-1 w-8 transition-colors bg-blue-600" : "h-1 w-8 transition-colors bg-neutral-900"}
               />
             )}
           </React.Fragment>
@@ -129,7 +122,7 @@ export function OnboardingWizard({
       <Card>
         <CardHeader className="text-center">
           {step.icon && (
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border-3 border-foreground bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
               {step.icon}
             </div>
           )}
@@ -173,7 +166,6 @@ export interface WelcomeScreenProps {
   features?: Array<{ icon: React.ReactNode; title: string; description: string }>
   primaryAction?: { label: string; onClick?: () => void }
   secondaryAction?: { label: string; onClick?: () => void }
-  className?: string
 }
 
 export function WelcomeScreen({
@@ -183,21 +175,20 @@ export function WelcomeScreen({
   features,
   primaryAction,
   secondaryAction,
-  className,
 }: WelcomeScreenProps) {
   return (
-    <div className={cn("mx-auto w-full max-w-2xl text-center", className)}>
+    <div className="mx-auto w-full max-w-2xl text-center">
       <Card>
         <CardContent className="space-y-8 pt-8 pb-8">
           {logo && (
-            <div className="mx-auto flex h-20 w-20 items-center justify-center border-3 border-foreground bg-primary shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
               {logo}
             </div>
           )}
 
           <div className="space-y-2">
-            <h1 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h1>
-            <p className="text-lg text-muted-foreground">{subtitle}</p>
+            <h2 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h2>
+            <p className="text-lg text-neutral-400">{subtitle}</p>
           </div>
 
           {features && features.length > 0 && (
@@ -205,13 +196,13 @@ export function WelcomeScreen({
               {features.map((feature) => (
                 <div
                   key={feature.title}
-                  className="space-y-2 border-3 border-foreground bg-muted/30 p-4"
+                  className="space-y-2 border-3 border-neutral-400 bg-black p-4"
                 >
-                  <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-primary">
+                  <div className="flex h-10 w-10 items-center justify-center border-2 border-neutral-400 bg-blue-600">
                     {feature.icon}
                   </div>
-                  <h3 className="font-bold">{feature.title}</h3>
-                  <p className="text-sm text-muted-foreground">{feature.description}</p>
+                  <h4 className="font-bold">{feature.title}</h4>
+                  <p className="text-sm text-neutral-400">{feature.description}</p>
                 </div>
               ))}
             </div>
@@ -243,7 +234,6 @@ export interface ProfileSetupProps {
   onSubmit?: (data: { name: string; role: string; avatar?: File; interests: string[] }) => void
   availableRoles?: Array<{ value: string; label: string }>
   availableInterests?: Array<{ value: string; label: string }>
-  className?: string
 }
 
 const defaultRoles = [
@@ -265,7 +255,6 @@ export function ProfileSetup({
   onSubmit,
   availableRoles = defaultRoles,
   availableInterests = defaultInterests,
-  className,
 }: ProfileSetupProps) {
   const [formData, setFormData] = React.useState({
     name: "",
@@ -312,9 +301,9 @@ export function ProfileSetup({
   }
 
   return (
-    <Card className={cn("mx-auto w-full max-w-lg", className)}>
+    <Card className="mx-auto w-full max-w-lg">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-foreground bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
           <User className="h-7 w-7" />
         </div>
         <CardTitle className="text-2xl font-black uppercase">Set Up Your Profile</CardTitle>
@@ -327,7 +316,7 @@ export function ProfileSetup({
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="relative flex h-24 w-24 items-center justify-center border-3 border-dashed border-foreground bg-muted transition-colors hover:bg-muted/80"
+              className="relative flex h-24 w-24 items-center justify-center border-3 border-dashed border-neutral-400 bg-neutral-900 transition-colors hover:bg-neutral-900"
             >
               {avatarPreview ? (
                 <Image
@@ -338,7 +327,7 @@ export function ProfileSetup({
                   className="h-full w-full object-cover"
                 />
               ) : (
-                <Upload className="h-8 w-8 text-muted-foreground" />
+                <Upload className="h-8 w-8 text-neutral-400" />
               )}
               <input
                 ref={fileInputRef}
@@ -348,7 +337,7 @@ export function ProfileSetup({
                 className="hidden"
               />
             </button>
-            {avatarError && <p className="text-sm font-medium text-destructive">{avatarError}</p>}
+            {avatarError && <p className="text-sm font-medium text-red-600">{avatarError}</p>}
           </div>
 
           {/* Name */}
@@ -362,7 +351,7 @@ export function ProfileSetup({
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="What should we call you?"
               required
-              className="border-2 border-primary-foreground"
+              className="border-2 border-neutral-400"
             />
           </div>
 
@@ -375,12 +364,11 @@ export function ProfileSetup({
                   key={role.value}
                   type="button"
                   onClick={() => setFormData({ ...formData, role: role.value })}
-                  className={cn(
-                    "border-2 border-foreground p-2 text-sm font-medium transition-all",
+                  className={
                     formData.role === role.value
-                      ? "bg-primary text-primary-foreground shadow-[3px_3px_0px_hsl(var(--shadow-color))]"
-                      : "bg-card hover:bg-muted"
-                  )}
+                      ? "border-2 border-neutral-400 p-2 text-sm font-medium transition-all bg-blue-600 text-white shadow-[3px_3px_0px_oklch(54.6%_0.245_262.881)]"
+                      : "border-2 border-neutral-400 p-2 text-sm font-medium transition-all bg-black hover:bg-neutral-900"
+                  }
                 >
                   {role.label}
                 </button>
@@ -391,7 +379,7 @@ export function ProfileSetup({
           {/* Interests */}
           <div className="space-y-2">
             <Label className="text-xs font-bold uppercase">
-              Your Interests <span className="text-muted-foreground">(Select all that apply)</span>
+              Your Interests <span className="text-neutral-400">(Select all that apply)</span>
             </Label>
             <div className="grid grid-cols-2 gap-2">
               {availableInterests.map((interest) => (
@@ -399,21 +387,21 @@ export function ProfileSetup({
                   key={interest.value}
                   type="button"
                   onClick={() => toggleInterest(interest.value)}
-                  className={cn(
-                    "flex items-center gap-2 border-2 border-foreground p-2 text-sm font-medium transition-all",
+                  className={
                     formData.interests.includes(interest.value)
-                      ? "bg-secondary text-secondary-foreground shadow-[3px_3px_0px_hsl(var(--shadow-color))]"
-                      : "bg-card hover:bg-muted"
-                  )}
+                      ? "flex items-center gap-2 border-2 border-neutral-400 p-2 text-sm font-medium transition-all bg-neutral-900 text-white shadow-[3px_3px_0px_oklch(54.6%_0.245_262.881)]"
+                      : "flex items-center gap-2 border-2 border-neutral-400 p-2 text-sm font-medium transition-all bg-black hover:bg-neutral-900"
+                  }
                 >
                   <div
-                    className={cn(
-                      "flex h-4 w-4 items-center justify-center border-2 border-current",
-                      formData.interests.includes(interest.value) && "bg-current"
-                    )}
+                    className={
+                      formData.interests.includes(interest.value)
+                        ? "flex h-4 w-4 items-center justify-center border-2 border-neutral-400 bg-blue-600"
+                        : "flex h-4 w-4 items-center justify-center border-2 border-neutral-400"
+                    }
                   >
                     {formData.interests.includes(interest.value) && (
-                      <Check className="h-3 w-3 text-secondary" />
+                      <Check className="h-3 w-3 text-neutral-400" />
                     )}
                   </div>
                   {interest.label}
@@ -441,7 +429,6 @@ export interface WorkspaceSetupProps {
   description?: string
   onSubmit?: (data: { name: string; members: string[] }) => void
   onSkip?: () => void
-  className?: string | undefined
 }
 
 export function WorkspaceSetup({
@@ -450,7 +437,6 @@ export function WorkspaceSetup({
   description = "Set up your team workspace and invite members",
   onSubmit,
   onSkip,
-  className,
 }: WorkspaceSetupProps) {
   const [workspaceName, setWorkspaceName] = React.useState("")
   const [memberEmail, setMemberEmail] = React.useState("")
@@ -473,9 +459,9 @@ export function WorkspaceSetup({
   }
 
   return (
-    <Card className={cn("mx-auto w-full max-w-lg", className)}>
+    <Card className="mx-auto w-full max-w-lg">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-foreground bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
           <Building className="h-7 w-7" />
         </div>
         <CardTitle className="text-2xl font-black uppercase">{title}</CardTitle>
@@ -494,13 +480,13 @@ export function WorkspaceSetup({
                 onChange={(e) => setWorkspaceName(e.target.value)}
                 placeholder="e.g., Acme Inc."
                 required
-                className="border-2 border-primary-foreground"
+                className="border-2 border-neutral-400"
               />
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="invite" className="text-xs font-bold uppercase">
-                Invite Team Members <span className="text-muted-foreground">(Optional)</span>
+                Invite Team Members <span className="text-neutral-400">(Optional)</span>
               </Label>
               <div className="flex gap-2">
                 <Input
@@ -509,7 +495,7 @@ export function WorkspaceSetup({
                   value={memberEmail}
                   onChange={(e) => setMemberEmail(e.target.value)}
                   placeholder="colleague@email.com"
-                  className="border-2 border-primary-foreground"
+                  className="border-2 border-neutral-400"
                 />
                 <Button type="button" variant="outline" onClick={addMember}>
                   Add
@@ -519,20 +505,20 @@ export function WorkspaceSetup({
 
             {members.length > 0 && (
               <div className="space-y-2">
-                <p className="text-xs font-bold text-muted-foreground uppercase">
+                <p className="text-xs font-bold text-neutral-400 uppercase">
                   Pending Invites ({members.length})
                 </p>
                 <div className="space-y-2">
                   {members.map((email) => (
                     <div
                       key={email}
-                      className="flex items-center justify-between border-2 border-foreground bg-muted/30 p-2"
+                      className="flex items-center justify-between border-2 border-neutral-400 bg-neutral-900 p-2"
                     >
                       <span className="text-sm">{email}</span>
                       <button
                         type="button"
                         onClick={() => removeMember(email)}
-                        className="text-muted-foreground hover:text-destructive"
+                        className="text-neutral-400 hover:text-red-600"
                       >
                         ×
                       </button>
@@ -573,7 +559,6 @@ export interface GoalSelectionProps {
   onSubmit?: (selectedGoals: string[]) => void
   minSelection?: number
   maxSelection?: number
-  className?: string
 }
 
 export function GoalSelection({
@@ -581,7 +566,6 @@ export function GoalSelection({
   onSubmit,
   minSelection = 1,
   maxSelection = 3,
-  className,
 }: GoalSelectionProps) {
   const [selected, setSelected] = React.useState<string[]>([])
 
@@ -594,9 +578,9 @@ export function GoalSelection({
   }
 
   return (
-    <Card className={cn("mx-auto w-full max-w-2xl", className)}>
+    <Card className="mx-auto w-full max-w-2xl">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-foreground bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
           <Target className="h-7 w-7" />
         </div>
         <CardTitle className="text-2xl font-black uppercase">What are your goals?</CardTitle>
@@ -611,24 +595,24 @@ export function GoalSelection({
               key={goal.id}
               type="button"
               onClick={() => toggleGoal(goal.id)}
-              className={cn(
-                "flex items-start gap-4 border-3 border-foreground p-4 text-left transition-all",
+              className={
                 selected.includes(goal.id)
-                  ? "-translate-x-0.5 -translate-y-0.5 bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
-                  : "bg-card hover:bg-muted"
-              )}
+                  ? "flex items-start gap-4 border-3 border-neutral-400 p-4 text-left transition-all -translate-x-0.5 -translate-y-0.5 bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+                  : "flex items-start gap-4 border-3 border-neutral-400 p-4 text-left transition-all bg-black hover:bg-neutral-900"
+              }
             >
               <div
-                className={cn(
-                  "flex h-10 w-10 shrink-0 items-center justify-center border-2 border-foreground",
-                  selected.includes(goal.id) ? "bg-secondary text-primary-foreground" : "bg-primary"
-                )}
+                className={
+                  selected.includes(goal.id)
+                    ? "flex h-10 w-10 shrink-0 items-center justify-center border-2 border-neutral-400 bg-neutral-900 text-white"
+                    : "flex h-10 w-10 shrink-0 items-center justify-center border-2 border-neutral-400 bg-blue-600"
+                }
               >
                 {goal.icon}
               </div>
               <div>
                 <h3 className="font-bold">{goal.title}</h3>
-                <p className="text-sm text-muted-foreground">{goal.description}</p>
+                <p className="text-sm text-neutral-400">{goal.description}</p>
               </div>
             </button>
           ))}
@@ -656,7 +640,6 @@ export interface CompletionScreenProps {
   subtitle?: string
   features?: Array<{ title: string; description: string }>
   primaryAction?: { label: string; onClick?: () => void }
-  className?: string
 }
 
 export function CompletionScreen({
@@ -664,18 +647,17 @@ export function CompletionScreen({
   subtitle = "Your account is ready to go. Here are some things you can do next:",
   features,
   primaryAction,
-  className,
 }: CompletionScreenProps) {
   return (
-    <Card className={cn("mx-auto w-full max-w-lg", className)}>
+    <Card className="mx-auto w-full max-w-lg">
       <CardContent className="space-y-6 pt-8 pb-8 text-center">
-        <div className="bg-success text-success-foreground mx-auto flex h-20 w-20 items-center justify-center border-3 border-foreground shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-white shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
           <PartyPopper className="h-10 w-10" />
         </div>
 
         <div className="space-y-2">
-          <h1 className="text-3xl font-black tracking-tight uppercase">{title}</h1>
-          <p className="text-muted-foreground">{subtitle}</p>
+          <h2 className="text-3xl font-black tracking-tight uppercase">{title}</h2>
+          <p className="text-neutral-400">{subtitle}</p>
         </div>
 
         {features && features.length > 0 && (
@@ -683,14 +665,14 @@ export function CompletionScreen({
             {features.map((feature) => (
               <div
                 key={feature.title}
-                className="flex items-start gap-3 border-2 border-foreground bg-muted/30 p-3"
+                className="flex items-start gap-3 border-2 border-neutral-400 bg-neutral-900 p-3"
               >
-                <div className="bg-success text-success-foreground flex h-6 w-6 shrink-0 items-center justify-center border-2 border-foreground">
+                <div className="flex h-6 w-6 shrink-0 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white">
                   <Check className="h-4 w-4" />
                 </div>
                 <div>
                   <p className="text-sm font-bold">{feature.title}</p>
-                  <p className="text-xs text-muted-foreground">{feature.description}</p>
+                  <p className="text-xs text-neutral-400">{feature.description}</p>
                 </div>
               </div>
             ))}

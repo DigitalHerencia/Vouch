@@ -23,7 +23,6 @@ export default function TenantError({
         { label: "Try again", onClick: reset },
         { label: "Dashboard", href: "/dashboard", variant: "outline" },
       ]}
-      className="grid-pattern bg-neutral-950"
     />
   )
 }

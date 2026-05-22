@@ -18,7 +18,6 @@ export default function PrivacyRoute() {
       <HeroSection.Minimal
         title="Privacy"
         description="Vouch stores operational state needed to coordinate provider-backed payments and confirmation windows."
-        className="px-0 py-0"
       />
       <section className="grid min-h-0 gap-8 md:grid-cols-[minmax(0,1fr)_24rem]">
         <FAQSection.SimpleList
@@ -27,10 +26,8 @@ export default function PrivacyRoute() {
             question: section.heading,
             answer: section.body.join(" "),
           }))}
-          className="bg-transparent px-0 py-0"
         />
         <CTASection.WithBackground
-          className="self-start px-0 py-0"
           icon={<CalloutIcon className="size-8" />}
           title={privacyCalloutContent.title}
           description={privacyCalloutContent.body}

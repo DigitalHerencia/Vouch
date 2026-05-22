@@ -89,7 +89,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: "#0a0a0a",
+  themeColor: "oklch(14.5% 0 0)",
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
@@ -107,7 +107,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${archivoBlack.variable} ${bebasNeue.variable} ${jetBrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-dvh overflow-x-hidden bg-background">
+      <body className="min-h-dvh overflow-x-hidden">
         <AppProvider>{children}</AppProvider>
       </body>
     </html>

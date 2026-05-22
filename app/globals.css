@@ -1,128 +1,43 @@
-/* app/globals.css */
-
+/* Loads Tailwind CSS v4's CSS-first engine and scans this stylesheet for utilities. */
 @import "tailwindcss";
+
+/* Adds animation utility classes used by shadcn/ui and Radix-style components. */
 @import "tw-animate-css";
+
+/* Loads shadcn's v4 utility layer without defining project theme tokens here. */
 @import "shadcn/tailwind.css";
 
-:root {
-  --radius: 0rem;
-
-  --blue-600: oklch(51% 0.245 264);
-
-  --neutral-950: oklch(5.5% 0 0);
-  --neutral-900: oklch(10.5% 0 0);
-  --neutral-800: oklch(16% 0 0);
-  --neutral-700: oklch(24% 0 0);
-  --neutral-600: oklch(34% 0 0);
-  --neutral-500: oklch(48% 0 0);
-  --neutral-400: oklch(69% 0 0);
-  --neutral-300: oklch(82% 0 0);
-  --neutral-100: oklch(98.5% 0 0);
-
-  --background: oklch(5.5% 0 0);
-  --foreground: oklch(98.5% 0 0);
-
-  --card: oklch(10.5% 0 0);
-  --card-foreground: oklch(98.5% 0 0);
-
-  --secondary: oklch(10.5% 0 0);
-  --secondary-foreground: oklch(98.5% 0 0);
-
-  --accent: oklch(51% 0.245 264);
-  --accent-foreground: oklch(5.5% 0 0);
-
-  --muted: oklch(10.5% 0 0);
-  --muted-foreground: oklch(69% 0 0);
-
-  --border: oklch(24% 0 0);
-  --input: oklch(10.5% 0 0);
-
-  --primary: oklch(51% 0.245 264);
-  --primary-foreground: oklch(98.5% 0 0);
-
-  --destructive: oklch(62% 0.22 25);
-  --destructive-foreground: oklch(10.5% 0 0);
-
-  --ring: oklch(51% 0.245 264);
-
-  --sidebar: oklch(10.5% 0 0);
-  --sidebar-foreground: oklch(98.5% 0 0);
-  --sidebar-primary: oklch(51% 0.245 264);
-  --sidebar-primary-foreground: oklch(98.5% 0 0);
-  --sidebar-accent: oklch(51% 0.245 264);
-  --sidebar-accent-foreground: oklch(10.5% 0 0);
-  --sidebar-border: oklch(24% 0 0);
-  --sidebar-ring: oklch(51% 0.245 264);
-
-  --shadow-color: oklch(51% 0.245 264);
-}
-
-@theme inline {
-  --radius-sm: 0rem;
-  --radius-md: 0rem;
-  --radius-lg: 0rem;
-  --radius-xl: 0rem;
-
-  --color-blue-600: var(--blue-600);
-
-  --color-neutral-950: var(--neutral-950);
-  --color-neutral-900: var(--neutral-900);
-  --color-neutral-800: var(--neutral-800);
-  --color-neutral-700: var(--neutral-700);
-  --color-neutral-600: var(--neutral-600);
-  --color-neutral-500: var(--neutral-500);
-  --color-neutral-400: var(--neutral-400);
-  --color-neutral-300: var(--neutral-300);
-  --color-neutral-100: var(--neutral-100);
-
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-destructive: var(--destructive);
-  --color-destructive-foreground: var(--destructive-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-ring: var(--sidebar-ring);
-}
-
 @layer base {
-  * {
-    box-sizing: border-box;
-    border-color: var(--border);
-  }
-
+  /* Uses border-box sizing everywhere so padding and borders do not expand layouts. */
+  *,
   *::before,
   *::after {
     box-sizing: border-box;
   }
 
+  /* Provides the dark application canvas and fixed brutalist grid background. */
   body {
     min-height: 100vh;
     margin: 0;
     background:
-      linear-gradient(oklch(69% 0 0 / 0.16) 1px, transparent 1px),
-      linear-gradient(90deg, oklch(69% 0 0 / 0.16) 1px, transparent 1px),
-      radial-gradient(circle at 0% 0%, oklch(51% 0.245 264 / 0.42), transparent 28rem),
-      radial-gradient(circle at 0% 100%, oklch(51% 0.245 264 / 0.28), transparent 30rem),
-      radial-gradient(circle at 100% 50%, oklch(51% 0.245 264 / 0.34), transparent 34rem),
-      var(--background);
+      linear-gradient(oklch(70.5% 0 0 / 0.05) 1px, oklch(15.5% 0 0 / 0) 1px),
+      linear-gradient(90deg, oklch(70.5% 0 0 / 0.05) 1px, oklch(15.5% 0 0 / 0) 1px),
+      radial-gradient(
+        circle at 0% 0%,
+        oklch(54.6% 0.245 262.881 / 0.22),
+        oklch(10.5% 0 0 / 0.26) 24rem
+      ),
+      radial-gradient(
+        circle at 0% 100%,
+        oklch(54.6% 0.245 262.881 / 0.18),
+        oklch(10.5% 0 0 / 0.34) 20rem
+      ),
+      radial-gradient(
+        circle at 100% 50%,
+        oklch(54.6% 0.245 262.881 / 0.24),
+        oklch(10.5% 0 0 / 0.24) 20rem
+      ),
+      oklch(5.5% 0 0);
     background-attachment: fixed;
     background-position:
       0 0,
@@ -138,30 +53,32 @@
       auto,
       auto,
       auto;
-    color: var(--foreground);
+    color: oklch(95.5% 0 0);
   }
 
+  /* Keeps selected text visible against the dark interface. */
   *::selection {
-    background: var(--primary);
-    color: var(--primary-foreground);
+    background: oklch(54.6% 0.245 262.881);
+    color: oklch(95.5% 0 0);
   }
 
+  /* Gives keyboard users one consistent focus treatment across controls. */
   *:focus-visible {
-    outline: 2px solid var(--ring);
+    outline: 2px solid oklch(54.6% 0.245 262.881);
     outline-offset: 3px;
   }
 
+  /* Shows disabled controls as unavailable even when component styles vary. */
   *:disabled {
     cursor: not-allowed;
   }
 
-  label {
-    font-family: var(--font-display), var(--font-mono), ui-monospace, monospace;
-    line-height: 1;
-    letter-spacing: 0.045em;
-    text-transform: uppercase;
+  /* Makes native buttons feel clickable even before component classes are applied. */
+  button {
+    cursor: pointer;
   }
 
+  /* Normalizes form typography so native controls inherit surrounding text styles. */
   input,
   optgroup,
   select,
@@ -169,100 +86,91 @@
     font: inherit;
   }
 
-  button {
-    cursor: pointer;
+  /* Makes labels match Vouch's compact uppercase operational language. */
+  label {
+    @apply leading-none tracking-wide uppercase;
     font-family: var(--font-display), var(--font-mono), ui-monospace, monospace;
-    letter-spacing: 0.045em;
-    text-transform: uppercase;
-    transition:
-      background-color 160ms ease,
-      border-color 160ms ease,
-      color 160ms ease,
-      transform 160ms ease,
-      box-shadow 160ms ease;
   }
 
+  /* Removes browser heading margins and gives headings consistent display behavior. */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    margin: 0;
-    color: var(--foreground);
-    font-weight: 400;
-    letter-spacing: 0;
-    text-transform: uppercase;
-    text-wrap: balance;
+    @apply m-0 uppercase text-white;
   }
 
+  /* Block title. */
   h1 {
-    font-family: var(--font-brand), var(--font-display), Impact, Haettenschweiler, sans-serif;
-    font-size: clamp(3rem, 9vw, 7.5rem);
-    line-height: 0.88;
+    @apply text-4xl leading-none font-black tracking-wide md:text-6xl;
+    font-family: var(--font-brand);
   }
 
+  /* Panel title. */
   h2 {
-    font-family: var(--font-display), var(--font-brand), Impact, Haettenschweiler, sans-serif;
-    font-size: clamp(2.25rem, 5vw, 5rem);
-    line-height: 0.92;
+    @apply text-2xl leading-none font-black tracking-wide md:text-4xl;
+    font-family: var(--font-brand);
   }
 
+  /* Section and row title. */
   h3 {
-    font-family: var(--font-display), var(--font-brand), Impact, Haettenschweiler, sans-serif;
-    font-size: clamp(1.75rem, 3vw, 3rem);
-    line-height: 1;
+    @apply text-xl leading-tight font-black tracking-normal md:text-2xl;
+    font-family: var(--font-display);
   }
 
+  /* Action text. */
   h4 {
-    font-family: var(--font-display), var(--font-brand), Impact, Haettenschweiler, sans-serif;
-    font-size: clamp(1.375rem, 2vw, 2rem);
-    line-height: 1;
+    @apply text-base leading-tight font-black tracking-wide md:text-lg;
+    font-family: var(--font-brand);
   }
 
+  /* Dense metadata headings. */
   h5,
   h6 {
-    font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    font-size: 0.875rem;
-    line-height: 1.25;
-    letter-spacing: 0.045em;
+    @apply text-xs leading-tight font-semibold tracking-wide text-neutral-400 md:text-sm;
+    font-family: var(--font-display);
   }
 
+  /* Body copy. Eyebrows and metadata stay as inline Tailwind overrides on p. */
   p {
-    margin: 0;
-    font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    line-height: 1.55;
+    @apply m-0 text-sm leading-relaxed font-normal text-neutral-100 md:text-base;
+    font-family: var(--font-mono);
   }
 
+  /* Keeps small text readable in dense panels. */
   small {
-    font-size: 0.8125rem;
-    line-height: 1.45;
+    @apply text-xs leading-relaxed text-neutral-400;
+    font-family: var(--font-mono);
   }
 
+  /* Makes emphasized text visually decisive in high-contrast panels. */
   strong {
-    font-weight: 800;
+    @apply font-extrabold;
   }
 
+  /* Resets horizontal rules to a single hard neutral divider. */
   hr {
     height: 1px;
     margin: 0;
     border: 0;
-    background: var(--border);
+    background: oklch(5.5% 0 0);
   }
 
+  /* Prevents icons from shrinking inside compact flex rows. */
   svg {
     flex-shrink: 0;
   }
 
-  nav,
-  .eyebrow,
-  .vouch-label {
-    font-family: var(--font-display), var(--font-mono), ui-monospace, monospace;
-    letter-spacing: 0.045em;
-    text-transform: uppercase;
+  /* Applies the uppercase navigation voice to shared navigation regions. */
+  nav {
+    @apply tracking-wide uppercase;
+    font-family: var(--font-mono);
   }
 }
 
+/* Respects OS-level reduced motion preferences while preserving final UI states. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

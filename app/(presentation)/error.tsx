@@ -23,7 +23,6 @@ export default function PublicError({
         { label: "Try again", onClick: reset },
         { label: "Home", href: "/", variant: "outline" },
       ]}
-      className="grid-pattern bg-neutral-950"
     />
   )
 }

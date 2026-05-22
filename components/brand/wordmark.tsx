@@ -2,25 +2,21 @@
 
 import Image from "next/image"
 
-import { cn } from "@/lib/utils"
-
 export interface WordmarkProps {
-  className?: string
-  imageClassName?: string
   asImage?: boolean
 }
 
-export function Wordmark({ className, imageClassName, asImage = true }: WordmarkProps) {
+export function Wordmark({ asImage = true }: WordmarkProps) {
   if (asImage) {
     return (
-      <span className={cn("inline-flex items-center", className)} aria-label="Vouch">
+      <span className="inline-flex items-center" aria-label="Vouch">
         <Image
           src="/VOUCHdark.png"
           alt="Vouch"
           width={240}
           height={80}
           priority
-          className={cn("h-10 w-auto object-contain", imageClassName)}
+          className="h-10 w-auto object-contain"
         />
       </span>
     )
@@ -28,10 +24,7 @@ export function Wordmark({ className, imageClassName, asImage = true }: Wordmark
 
   return (
     <span
-      className={cn(
-        "font-(family-name:--font-brand) tracking-normal text-white uppercase",
-        className
-      )}
+      className="font-(family-name:--font-brand) tracking-normal text-white uppercase"
       aria-label="Vouch"
     >
       Vouch

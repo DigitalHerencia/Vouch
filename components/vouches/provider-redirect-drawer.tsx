@@ -14,7 +14,6 @@ export interface ProviderRedirectDrawerProps {
   context: string
   finePrint: string
   variant?: "nav" | "primary"
-  className?: string
 }
 
 export function ProviderRedirectDrawer({
@@ -25,7 +24,6 @@ export function ProviderRedirectDrawer({
   context,
   finePrint,
   variant = "nav",
-  className,
 }: ProviderRedirectDrawerProps) {
   const [open, setOpen] = useState(false)
 
@@ -33,9 +31,8 @@ export function ProviderRedirectDrawer({
     <>
       <Button
         type="button"
-        variant={variant === "nav" ? "ghost" : "default"}
-        size={variant === "nav" ? "sm" : "default"}
-        className={className}
+        variant={variant === "nav" ? "link" : "default"}
+        size={variant === "nav" ? "nav" : "default"}
         onClick={() => setOpen(true)}
       >
         {label}

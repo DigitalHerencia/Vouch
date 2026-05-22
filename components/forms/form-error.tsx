@@ -1,15 +1,10 @@
-import { cn } from "@/lib/utils"
-
-export function FormError({ message, className }: { message?: string | null; className?: string }) {
+export function FormError({ message }: { message?: string | null }) {
   if (!message) return null
 
   return (
     <p
       role="alert"
-      className={cn(
-        "rounded-lg border border-red-500/30 bg-red-500/10 px-3 py-2 text-sm text-red-200",
-        className
-      )}
+      className="rounded-lg border border-red-600 bg-red-600 px-3 py-2 text-sm text-red-600"
     >
       {message}
     </p>

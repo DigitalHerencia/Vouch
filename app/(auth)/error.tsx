@@ -23,7 +23,6 @@ export default function AuthError({
         { label: "Try again", onClick: reset },
         { label: "Home", href: "/", variant: "outline" },
       ]}
-      className="grid-pattern bg-neutral-950"
     />
   )
 }

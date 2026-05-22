@@ -16,7 +16,6 @@ export async function ConfirmCreateVouchPage({ draft }: ConfirmCreateVouchPagePr
       <HeroSection.Minimal
         title={vouchPageCopy.create.reviewTitle}
         description={vouchPageCopy.create.reviewBody}
-        className="px-0 py-0"
       />
       {draft ? (
         <ConfirmCreateVouchForm draft={draft} />

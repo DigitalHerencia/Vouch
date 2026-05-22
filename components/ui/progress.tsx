@@ -3,7 +3,7 @@ import * as ProgressPrimitive from "@radix-ui/react-progress"
 import { cn } from "@/lib/utils"
 
 const Progress = React.forwardRef<
-  React.ElementRef<typeof ProgressPrimitive.Root>,
+  React.ComponentRef<typeof ProgressPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ProgressPrimitive.Root>
 >(({ className, value, ...props }, ref) => {
   const clampedValue = Math.max(0, Math.min(100, value ?? 0))
@@ -11,13 +11,13 @@ const Progress = React.forwardRef<
     <ProgressPrimitive.Root
       ref={ref}
       className={cn(
-        "border-foreground bg-muted relative h-5 w-full overflow-hidden border-3 shadow-[4px_4px_0px_hsl(var(--shadow-color))]",
+        "relative h-5 w-full overflow-hidden border-3 border-neutral-400 bg-neutral-900 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
         className
       )}
       {...props}
     >
       <ProgressPrimitive.Indicator
-        className="bg-primary h-full w-full flex-1 transition-all duration-500 ease-out"
+        className="h-full w-full flex-1 bg-blue-600 transition-all duration-500 ease-out"
         style={{ transform: `translateX(-${100 - clampedValue}%)` }}
       />
     </ProgressPrimitive.Root>

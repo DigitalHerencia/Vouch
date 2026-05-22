@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { cn } from "@/lib/utils"
 import { ArrowRight, Play, Sparkles, Star, Zap } from "lucide-react"
 import Image from "next/image"
 
@@ -14,7 +13,6 @@ export interface HeroCenteredProps {
   description: string
   primaryAction?: { label: string; href?: string; onClick?: () => void }
   secondaryAction?: { label: string; href?: string; onClick?: () => void }
-  className?: string
 }
 
 export function HeroCentered({
@@ -24,10 +22,9 @@ export function HeroCentered({
   description,
   primaryAction,
   secondaryAction,
-  className,
 }: HeroCenteredProps) {
   return (
-    <section className={cn("px-4 py-20 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-20 md:px-8 lg:px-16">
       <div className="mx-auto max-w-4xl space-y-8 text-center">
         {badge && (
           <Badge variant="outline" className="px-4 py-1 text-sm">
@@ -36,14 +33,12 @@ export function HeroCentered({
           </Badge>
         )}
 
-        <h1 className="text-4xl leading-snug font-black tracking-tight uppercase md:text-5xl lg:text-6xl">
+        <h2 className="text-4xl leading-snug font-black uppercase md:text-5xl lg:text-6xl">
           {title}{" "}
-          {titleHighlight && (
-            <span className="bg-primary px-2 text-primary-foreground">{titleHighlight}</span>
-          )}
-        </h1>
+          {titleHighlight && <span className="bg-blue-600 px-2 text-white">{titleHighlight}</span>}
+        </h2>
 
-        <p className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground md:text-xl">
+        <p className="mx-auto max-w-2xl text-lg font-medium text-neutral-400 md:text-xl">
           {description}
         </p>
 
@@ -92,7 +87,6 @@ export interface HeroSplitProps {
   imageSrc: string
   imageAlt?: string
   imagePosition?: "left" | "right"
-  className?: string
 }
 
 export function HeroSplit({
@@ -104,23 +98,22 @@ export function HeroSplit({
   imageSrc,
   imageAlt = "Hero image",
   imagePosition = "right",
-  className,
 }: HeroSplitProps) {
   const contentOrder = imagePosition === "right" ? "order-1" : "order-2"
   const imageOrder = imagePosition === "right" ? "order-2" : "order-1"
 
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-16 md:px-8 lg:px-16">
       <div className="mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-2">
-        <div className={cn("space-y-6", contentOrder)}>
-          <h1 className="text-4xl font-black tracking-tight uppercase md:text-5xl">
+        <div className={`space-y-6 ${contentOrder}`}>
+          <h2 className="text-4xl font-black uppercase md:text-5xl">
             {title}{" "}
             {titleHighlight && (
-              <span className="bg-accent px-2 text-accent-foreground">{titleHighlight}</span>
+              <span className="bg-blue-600 px-2 text-white">{titleHighlight}</span>
             )}
-          </h1>
+          </h2>
 
-          <p className="text-lg font-medium text-muted-foreground">{description}</p>
+          <p className="text-lg font-medium text-neutral-400">{description}</p>
 
           {(primaryAction || secondaryAction) && (
             <div className="flex flex-col gap-4 sm:flex-row">
@@ -156,8 +149,8 @@ export function HeroSplit({
           )}
         </div>
 
-        <div className={cn("relative", imageOrder)}>
-          <div className="overflow-hidden border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
+        <div className={`relative ${imageOrder}`}>
+          <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
             <Image
               src={imageSrc}
               alt={imageAlt}
@@ -181,7 +174,6 @@ export interface HeroWithStatsProps {
   description: string
   primaryAction?: { label: string; href?: string; onClick?: () => void }
   stats: Array<{ value: string; label: string }>
-  className?: string
 }
 
 export function HeroWithStats({
@@ -190,20 +182,19 @@ export function HeroWithStats({
   description,
   primaryAction,
   stats,
-  className,
 }: HeroWithStatsProps) {
   return (
-    <section className={cn("px-4 py-20 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-20 md:px-8 lg:px-16">
       <div className="mx-auto max-w-6xl">
         <div className="mb-16 space-y-6 text-center">
-          <h1 className="text-4xl font-black tracking-tight uppercase md:text-5xl lg:text-6xl">
+          <h2 className="text-4xl font-black uppercase md:text-5xl lg:text-6xl">
             {title}{" "}
             {titleHighlight && (
-              <span className="bg-secondary px-2 text-secondary-foreground">{titleHighlight}</span>
+              <span className="bg-neutral-900 px-2 text-white">{titleHighlight}</span>
             )}
-          </h1>
+          </h2>
 
-          <p className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground md:text-xl">
+          <p className="mx-auto max-w-2xl text-lg font-medium text-neutral-400 md:text-xl">
             {description}
           </p>
 
@@ -227,10 +218,10 @@ export function HeroWithStats({
           {stats.map((stat) => (
             <div
               key={`stat-${stat.label}`}
-              className="border-3 border-foreground bg-card p-6 text-center shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
+              className="border-3 border-neutral-400 bg-black p-6 text-center shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
             >
               <div className="text-3xl font-black md:text-4xl">{stat.value}</div>
-              <div className="mt-1 text-sm font-bold tracking-wide text-muted-foreground uppercase">
+              <div className="mt-1 text-sm font-bold tracking-wide text-neutral-400 uppercase">
                 {stat.label}
               </div>
             </div>
@@ -248,19 +239,18 @@ export interface HeroMinimalProps {
   title: string
   description: string
   primaryAction?: { label: string; href?: string; onClick?: () => void }
-  className?: string
 }
 
-export function HeroMinimal({ title, description, primaryAction, className }: HeroMinimalProps) {
+export function HeroMinimal({ title, description, primaryAction }: HeroMinimalProps) {
   return (
-    <section className={cn("px-4 py-32 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-32 md:px-8 lg:px-16">
       <div className="mx-auto max-w-3xl space-y-8">
-        <h1 className="text-5xl leading-none font-black tracking-tight uppercase md:text-6xl lg:text-7xl">
+        <h2 className="text-5xl leading-none font-black uppercase md:text-6xl lg:text-7xl">
           {title}
-        </h1>
+        </h2>
 
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
-          <p className="max-w-md text-lg font-medium text-muted-foreground">{description}</p>
+          <p className="max-w-md text-lg font-medium text-neutral-400">{description}</p>
 
           {primaryAction &&
             (primaryAction.href ? (
@@ -278,7 +268,7 @@ export function HeroMinimal({ title, description, primaryAction, className }: He
             ))}
         </div>
 
-        <div className="h-1 w-full bg-foreground" />
+        <div className="h-1 w-full bg-white" />
       </div>
     </section>
   )
@@ -295,7 +285,6 @@ export interface HeroWithVideoProps {
   primaryAction?: { label: string; href?: string; onClick?: () => void }
   videoThumbnail: string
   onPlayClick?: () => void
-  className?: string
 }
 
 export function HeroWithVideo({
@@ -306,10 +295,9 @@ export function HeroWithVideo({
   primaryAction,
   videoThumbnail,
   onPlayClick,
-  className,
 }: HeroWithVideoProps) {
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-16 md:px-8 lg:px-16">
       <div className="mx-auto max-w-6xl space-y-12">
         <div className="space-y-6 text-center">
           {badge && (
@@ -319,18 +307,16 @@ export function HeroWithVideo({
             </Badge>
           )}
 
-          <h1 className="text-4xl font-black tracking-tight uppercase md:text-5xl">
+          <h2 className="text-4xl font-black uppercase md:text-5xl">
             {title}{" "}
             {titleHighlight && (
-              <span className="underline decoration-primary decoration-4 underline-offset-4">
+              <span className="underline decoration-blue-600 decoration-4 underline-offset-4">
                 {titleHighlight}
               </span>
             )}
-          </h1>
+          </h2>
 
-          <p className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground">
-            {description}
-          </p>
+          <p className="mx-auto max-w-2xl text-lg font-medium text-neutral-400">{description}</p>
 
           {primaryAction &&
             (primaryAction.href ? (
@@ -349,7 +335,7 @@ export function HeroWithVideo({
         </div>
 
         <div className="group relative cursor-pointer" onClick={onPlayClick}>
-          <div className="overflow-hidden border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
+          <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
             <Image
               src={videoThumbnail}
               alt="Video thumbnail"
@@ -359,9 +345,9 @@ export function HeroWithVideo({
             />
           </div>
           {/* Play button overlay */}
-          <div className="absolute inset-0 flex items-center justify-center bg-foreground/20 transition-colors group-hover:bg-foreground/30">
-            <div className="flex h-20 w-20 items-center justify-center border-3 border-foreground bg-primary shadow-[4px_4px_0px_hsl(var(--shadow-color))] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-              <Play className="h-8 w-8 fill-current" />
+          <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/20 transition-colors group-hover:bg-neutral-400/80">
+            <div className="flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+              <Play className="h-8 w-8 fill-white" />
             </div>
           </div>
         </div>

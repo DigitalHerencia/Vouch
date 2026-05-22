@@ -4,36 +4,37 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "border-foreground focus-visible:ring-ring inline-flex items-center justify-center gap-2 border-3 text-sm font-bold tracking-wide whitespace-nowrap uppercase transition-all duration-200 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 border-3 border-neutral-400 font-(family-name:--font-brand) text-base leading-none font-black tracking-wide whitespace-nowrap uppercase transition-all duration-200 focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        primary:
-          "bg-primary text-primary-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         default:
-          "bg-primary text-primary-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
-        accent:
-          "bg-accent text-accent-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
-        destructive:
-          "bg-destructive text-destructive-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+          "bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         outline:
-          "bg-background text-foreground hover:bg-muted shadow-[4px_4px_0px_hsl(var(--shadow-color))] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
-        ghost: "hover:bg-muted hover:border-foreground border-transparent shadow-none",
-        link: "text-primary border-transparent underline-offset-4 shadow-none hover:underline",
-        nav: "border-transparent bg-transparent text-neutral-300 shadow-none hover:text-white",
-        noShadow: "bg-primary text-primary-foreground",
+          "bg-black text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+        link: "border-none text-white shadow-none hover:scale-110 hover:text-blue-600 hover:underline hover:underline-offset-4",
+        nav: "border-none text-white shadow-none hover:scale-110 hover:text-blue-600 hover:underline hover:underline-offset-4",
+        destructive:
+          "bg-red-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+        ghost:
+          "border-none bg-transparent text-white shadow-none hover:text-blue-600 hover:underline hover:underline-offset-4",
+        primary:
+          "bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+        secondary:
+          "bg-black text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+        accent:
+          "bg-neutral-400 text-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+        noShadow: "bg-blue-600 text-white",
         reverse:
-          "bg-primary text-primary-foreground hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[4px_4px_0px_hsl(var(--shadow-color))]",
+          "bg-blue-600 text-white hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
       },
       size: {
         default: "h-11 px-5 py-2",
-        sm: "h-9 px-4 text-xs",
+        sm: "h-10 px-4 text-sm",
         lg: "h-12 px-8 text-base",
         xl: "h-14 px-10 text-lg",
         icon: "h-11 w-11",
-        nav: "h-auto px-0 py-0 text-sm",
+        nav: "h-auto px-0 py-0 text-base",
       },
       animation: {
         none: "",

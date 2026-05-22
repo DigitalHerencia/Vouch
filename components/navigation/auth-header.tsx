@@ -12,7 +12,7 @@ export function AuthHeader() {
 
       <Link
         href={authHeaderContent.homeHref}
-        className="font-(family-name:--font-display) text-xs leading-none tracking-widest text-neutral-100 uppercase underline-offset-4 transition-colors hover:scale-105 hover:text-blue-600 hover:underline md:text-sm"
+        className="text-white underline-offset-4 transition-colors hover:scale-105 hover:text-blue-600 hover:underline md:text-sm"
       >
         {authHeaderContent.homeLabel}
       </Link>

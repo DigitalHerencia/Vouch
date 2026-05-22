@@ -3,9 +3,10 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { cn, safeHref } from "@/lib/utils"
-import { ArrowRight, Mail, Sparkles, Zap } from "lucide-react"
+import { safeHref } from "@/lib/utils"
+import { ArrowRight, CheckCircle, CheckCircle2, Mail, Sparkles, Zap } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 // ============================================================================
 // CTA VARIANT 1: Simple Centered
@@ -15,25 +16,16 @@ export interface CTASimpleProps {
   description?: string
   primaryAction: { label: string; href?: string; onClick?: () => void }
   secondaryAction?: { label: string; href?: string; onClick?: () => void }
-  className?: string
 }
 
-export function CTASimple({
-  title,
-  description,
-  primaryAction,
-  secondaryAction,
-  className,
-}: CTASimpleProps) {
+export function CTASimple({ title, description, primaryAction, secondaryAction }: CTASimpleProps) {
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
-      <div className="mx-auto max-w-4xl space-y-6 text-center">
-        <h2 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h2>
+    <section className="px-4 py-16 md:px-8">
+      <div className="mx-auto space-y-6 text-center">
+        <h1 className="font-black">{title}</h1>
 
         {description && (
-          <p className="mx-auto max-w-2xl text-lg font-medium text-muted-foreground">
-            {description}
-          </p>
+          <p className="mx-auto text-base font-medium text-white md:text-lg">{description}</p>
         )}
 
         <div className="flex flex-col justify-center gap-4 sm:flex-row">
@@ -75,7 +67,6 @@ export interface CTAWithBackgroundProps {
   description?: string
   primaryAction: { label: string; href?: string; onClick?: () => void }
   backgroundColor?: "primary" | "secondary" | "accent" | "muted"
-  className?: string
 }
 
 export function CTAWithBackground({
@@ -84,61 +75,39 @@ export function CTAWithBackground({
   description,
   primaryAction,
   backgroundColor = "primary",
-  className,
 }: CTAWithBackgroundProps) {
   const bgColors = {
-    primary: "bg-primary text-primary-foreground",
-    secondary: "bg-secondary text-secondary-foreground",
-    accent: "bg-accent text-accent-foreground",
-    muted: "bg-muted text-foreground",
+    primary: "bg-blue-600/10 text-white",
+    secondary: "bg-black text-white",
+    accent: "bg-blue-600 text-white",
+    muted: "bg-black/90 text-white",
   }
 
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-16 md:px-8 lg:px-16">
       <div
-        className={cn(
-          "mx-auto max-w-5xl border-3 border-foreground p-8 shadow-[8px_8px_0px_hsl(var(--shadow-color))] md:p-12",
-          bgColors[backgroundColor]
-        )}
+        className={`mx-auto max-w-5xl border-3 border-neutral-400 p-8 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:p-12 ${bgColors[backgroundColor]}`}
       >
         <div className="space-y-6 text-center">
-          {icon || <Sparkles className="mx-auto h-12 w-12" />}
+          {icon || <CheckCircle className="mx-auto h-12 w-12" />}
 
-          <h2 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h2>
+          <h1 className="font-black">{title}</h1>
 
           {description && (
-            <p className="mx-auto max-w-2xl text-lg font-medium opacity-90">{description}</p>
+            <p className="mx-auto text-base font-medium text-white md:text-lg">{description}</p>
           )}
 
           {primaryAction.href ? (
-            <Button
-              size="lg"
-              variant={backgroundColor === "muted" ? "default" : "outline"}
-              className={
-                backgroundColor !== "muted"
-                  ? "bg-background text-foreground hover:bg-background/90"
-                  : ""
-              }
-              asChild
-            >
-              <a href={safeHref(primaryAction.href)}>
+            <Button size="lg" variant="outline" asChild>
+              <Link href={safeHref(primaryAction.href)}>
                 {primaryAction.label}
-                <Zap className="ml-2 h-4 w-4" />
-              </a>
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Link>
             </Button>
           ) : (
-            <Button
-              size="lg"
-              variant={backgroundColor === "muted" ? "default" : "outline"}
-              className={
-                backgroundColor !== "muted"
-                  ? "bg-background text-foreground hover:bg-background/90"
-                  : ""
-              }
-              onClick={primaryAction.onClick}
-            >
+            <Button size="lg" variant="outline" onClick={primaryAction.onClick}>
               {primaryAction.label}
-              <Zap className="ml-2 h-4 w-4" />
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
           )}
         </div>
@@ -156,7 +125,6 @@ export interface CTANewsletterProps {
   placeholder?: string
   buttonLabel?: string
   onSubmit?: (email: string) => void
-  className?: string
 }
 
 export function CTANewsletter({
@@ -165,7 +133,6 @@ export function CTANewsletter({
   placeholder = "Enter your email",
   buttonLabel = "Subscribe",
   onSubmit,
-  className,
 }: CTANewsletterProps) {
   const [email, setEmail] = React.useState("")
 
@@ -176,15 +143,15 @@ export function CTANewsletter({
   }
 
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-16 md:px-8">
       <div className="mx-auto max-w-2xl space-y-6 text-center">
-        <Mail className="mx-auto h-12 w-12 text-primary" />
+        <Mail className="mx-auto h-16 w-16 text-blue-600" />
 
-        <h2 className="text-2xl font-black tracking-tight uppercase md:text-3xl">{title}</h2>
+        <h2 className="font-black">{title}</h2>
 
-        {description && <p className="font-medium text-muted-foreground">{description}</p>}
+        {description && <p className="font-medium text-neutral-400">{description}</p>}
 
-        <form onSubmit={handleSubmit} className="mx-auto flex max-w-md flex-col gap-3 sm:flex-row">
+        <form onSubmit={handleSubmit} className="mx-auto flex max-w-2xl flex-col gap-3 md:flex-row">
           <Input
             type="email"
             placeholder={placeholder}
@@ -199,7 +166,7 @@ export function CTANewsletter({
           </Button>
         </form>
 
-        <p className="text-xs text-muted-foreground">No spam. Unsubscribe anytime.</p>
+        <p className="md:base text-xs text-neutral-400">No spam. Unsubscribe anytime.</p>
       </div>
     </section>
   )
@@ -216,7 +183,6 @@ export interface CTASplitProps {
   imageSrc: string
   imageAlt?: string
   imagePosition?: "left" | "right"
-  className?: string
 }
 
 export function CTASplit({
@@ -227,29 +193,23 @@ export function CTASplit({
   imageSrc,
   imageAlt = "CTA image",
   imagePosition = "right",
-  className,
 }: CTASplitProps) {
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
-      <div className="mx-auto max-w-6xl overflow-hidden border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-        <div
-          className={cn(
-            "grid md:grid-cols-2",
-            imagePosition === "left" && "md:[&>*:first-child]:order-2"
-          )}
-        >
+    <section className="px-4 py-16 md:px-8">
+      <div className="mx-auto max-w-7xl overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className={"grid md:grid-cols-2"}>
           <div className="flex flex-col justify-center space-y-6 p-8 md:p-12">
-            <h2 className="text-2xl font-black tracking-tight uppercase md:text-3xl">{title}</h2>
+            <h3 className="font-black">{title}</h3>
 
-            {description && <p className="font-medium text-muted-foreground">{description}</p>}
+            {description && <p className="font-medium text-white">{description}</p>}
 
             <div className="flex flex-col gap-3 sm:flex-row">
               {primaryAction.href ? (
                 <Button size="lg" asChild>
-                  <a href={safeHref(primaryAction.href)}>
+                  <Link href={safeHref(primaryAction.href)}>
                     {primaryAction.label}
                     <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
+                  </Link>
                 </Button>
               ) : (
                 <Button size="lg" onClick={primaryAction.onClick}>
@@ -270,13 +230,13 @@ export function CTASplit({
             </div>
           </div>
 
-          <div className="bg-muted">
+          <div className="bg-white">
             <Image
               src={imageSrc}
               alt={imageAlt}
               width={960}
               height={720}
-              className="h-full w-full object-cover"
+              className="h-full object-center"
             />
           </div>
         </div>
@@ -294,7 +254,6 @@ export interface CTABannerProps {
   dismissible?: boolean
   onDismiss?: () => void
   variant?: "primary" | "secondary" | "accent" | "warning"
-  className?: string
 }
 
 export function CTABanner({
@@ -303,48 +262,31 @@ export function CTABanner({
   dismissible = false,
   onDismiss,
   variant = "primary",
-  className,
 }: CTABannerProps) {
   const [isVisible, setIsVisible] = React.useState(true)
 
   const variantStyles = {
-    primary: "bg-primary text-primary-foreground",
-    secondary: "bg-secondary text-secondary-foreground",
-    accent: "bg-accent text-accent-foreground",
-    warning: "bg-yellow-500 text-foreground",
+    primary: "bg-black text-white",
+    secondary: "bg-black text-white",
+    accent: "bg-blue-600/10 text-white",
+    warning: "bg-red-600/10 text-white",
   }
 
   if (!isVisible) return null
 
   return (
-    <div
-      className={cn(
-        "relative border-b-3 border-foreground px-4 py-3",
-        variantStyles[variant],
-        className
-      )}
-    >
+    <div className={`relative border-b-3 border-neutral-400 px-4 py-3 ${variantStyles[variant]}`}>
       <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-3 text-center sm:flex-row sm:text-left">
         <p className="text-sm font-bold">{text}</p>
         {action.href ? (
-          <Button
-            size="sm"
-            variant="outline"
-            className="shrink-0 bg-background text-foreground hover:bg-background/90"
-            asChild
-          >
+          <Button size="sm" variant="outline" className="shrink-0" asChild>
             <a href={safeHref(action.href)}>
               {action.label}
               <ArrowRight className="ml-1 h-3 w-3" />
             </a>
           </Button>
         ) : (
-          <Button
-            size="sm"
-            variant="outline"
-            className="shrink-0 bg-background text-foreground hover:bg-background/90"
-            onClick={action.onClick}
-          >
+          <Button size="sm" variant="outline" className="shrink-0" onClick={action.onClick}>
             {action.label}
             <ArrowRight className="ml-1 h-3 w-3" />
           </Button>
@@ -356,7 +298,7 @@ export function CTABanner({
               setIsVisible(false)
               onDismiss?.()
             }}
-            className="absolute right-4 text-current opacity-70 hover:opacity-100"
+            className="absolute right-4 text-white opacity-70 hover:opacity-100"
           >
             ×
           </button>

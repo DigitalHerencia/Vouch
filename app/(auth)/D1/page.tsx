@@ -16,11 +16,11 @@ export default function AuthPageD1() {
 
 function AuthContentPanel() {
   return (
-    <div className="flex h-full min-h-0 w-full flex-col justify-center overflow-hidden border-r border-neutral-700 bg-neutral-950 p-6 md:p-8">
+    <div className="flex h-full min-h-0 w-full flex-col justify-center overflow-hidden border-r border-neutral-400 bg-black p-6 md:p-8">
       <div className="flex w-full flex-col gap-6">
         <div className="space-y-2">
           <p className="text-xs font-medium tracking-wide text-blue-600 uppercase">Section</p>
-          <h2 className="text-xl font-semibold tracking-tight text-neutral-100">authContent</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-white">authContent</h2>
           <p className="max-w-prose text-sm leading-6 text-neutral-400">
             Content sits inside consistent padding with balanced X/Y spacing.
           </p>
@@ -32,11 +32,11 @@ function AuthContentPanel() {
 
 function SignInFormPanel() {
   return (
-    <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden bg-neutral-950 p-6 pt-24 pb-20 md:p-8">
+    <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden bg-black p-6 pt-24 pb-20 md:p-8">
       <div className="flex w-full max-w-xl flex-col gap-6">
         <div className="space-y-2">
           <p className="text-xs font-medium tracking-wide text-blue-600 uppercase">Section</p>
-          <h2 className="text-xl font-semibold tracking-tight text-neutral-100">signInForm</h2>
+          <h2 className="text-xl font-semibold tracking-tight text-white">signInForm</h2>
           <p className="max-w-prose text-sm leading-6 text-neutral-400">
             Content sits inside consistent padding with balanced X/Y spacing.
           </p>

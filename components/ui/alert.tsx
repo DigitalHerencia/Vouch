@@ -3,16 +3,15 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
-  "border-foreground animate-in fade-in-0 slide-in-from-top-2 [&>svg]:text-foreground relative w-full border-3 p-4 shadow-[4px_4px_0px_hsl(var(--shadow-color))] transition-all duration-300 [&>svg]:absolute [&>svg]:top-4 [&>svg]:left-4 [&>svg+div]:translate-y-[-3px] [&>svg~*:not([data-alert-action])]:pl-8 [&>svg~[data-alert-action]]:ml-8",
+  "relative w-full animate-in border-3 border-neutral-400 p-4 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all duration-300 fade-in-0 slide-in-from-top-2 [&>svg]:absolute [&>svg]:top-4 [&>svg]:left-4 [&>svg]:text-white [&>svg+div]:translate-y-[-3px] [&>svg~*:not([data-alert-action])]:pl-8 [&>svg~[data-alert-action]]:ml-8",
   {
     variants: {
       variant: {
-        default: "bg-background text-foreground",
-        destructive:
-          "bg-destructive text-destructive-foreground [&>svg]:text-destructive-foreground",
-        success: "bg-success text-success-foreground",
-        warning: "bg-warning text-warning-foreground",
-        info: "bg-info text-info-foreground",
+        default: "bg-black text-white",
+        destructive: "bg-red-600 text-white [&>svg]:text-white",
+        success: "bg-blue-600 text-white",
+        warning: "bg-blue-600 text-white",
+        info: "bg-blue-600 text-white",
       },
     },
     defaultVariants: {
@@ -63,17 +62,17 @@ const AlertAction = React.forwardRef<HTMLButtonElement, AlertActionProps>(
         // layout
         "mt-3 inline-flex max-w-full min-w-0 items-center gap-1.5",
         // shape — no rounded corners, thin border inheriting text color
-        "rounded-none border border-current",
+        "rounded-none border border-neutral-400",
         // typography
         "px-4 py-1 text-xs font-bold tracking-wide uppercase",
         // transitions
         "transition-all duration-150",
         // hover
-        "hover:bg-current/10 hover:opacity-100",
+        "hover:bg-blue-600/10 hover:opacity-100",
         // active
         "active:scale-95",
         // focus
-        "focus-visible:ring-2 focus-visible:ring-current focus-visible:ring-offset-1 focus-visible:outline-none",
+        "focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-1 focus-visible:outline-none",
         // cursor + pointer-events when non-interactive
         "disabled:pointer-events-none disabled:cursor-not-allowed",
         // opacity: loading stays visible, truly-disabled fades out, default is 80%
@@ -86,7 +85,7 @@ const AlertAction = React.forwardRef<HTMLButtonElement, AlertActionProps>(
         <span
           data-testid="alert-action-spinner"
           aria-hidden="true"
-          className="h-3 w-3 shrink-0 animate-spin rounded-full border-2 border-current border-t-transparent"
+          className="h-3 w-3 shrink-0 animate-spin rounded-full border-2 border-neutral-400 border-t-blue-600"
         />
       )}
       <span className="inline-flex items-center gap-1.5 overflow-hidden whitespace-nowrap">

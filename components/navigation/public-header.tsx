@@ -5,7 +5,6 @@ import Link from "next/link"
 
 import { LogoLockup } from "@/components/brand/logo-lockup"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
 
 export interface PublicHeaderNavItem {
   label: string
@@ -15,7 +14,6 @@ export interface PublicHeaderNavItem {
 export interface PublicHeaderProps {
   logo?: ReactNode | undefined
   navItems?: readonly PublicHeaderNavItem[] | undefined
-  className?: string | undefined
 }
 
 export const defaultPublicNavItems = [
@@ -28,15 +26,9 @@ export const defaultPublicNavItems = [
 export function PublicHeader({
   logo = <LogoLockup />,
   navItems = defaultPublicNavItems,
-  className,
 }: PublicHeaderProps) {
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-50 h-21 w-full border-b border-neutral-900 bg-black",
-        className
-      )}
-    >
+    <header className="sticky top-0 z-50 h-21 w-full border-b border-neutral-400 bg-black">
       <div className="mx-auto hidden h-full w-full max-w-7xl items-center justify-between px-6 sm:px-10 md:flex lg:px-12">
         <Link href="/" aria-label="Vouch home" className="flex shrink-0 items-center">
           {logo}
@@ -63,11 +55,7 @@ export function PublicHeader({
 
       <div className="flex h-full items-center justify-center px-6 md:hidden">
         <Link href="/" aria-label="Vouch home" className="inline-flex items-center">
-          <LogoLockup
-            className="justify-center"
-            iconClassName="size-9"
-            wordmarkClassName="text-[34px]"
-          />
+          <LogoLockup />
         </Link>
       </div>
     </header>

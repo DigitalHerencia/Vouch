@@ -53,7 +53,7 @@ export function VouchTimelinePanel({ timeline, title, emptyLabel }: VouchTimelin
           customTitle="No timeline"
           customDescription={emptyLabel}
           variant="filled"
-          className="bg-black/40"
+          className="bg-black"
         />
       )}
     </TimelineCard>

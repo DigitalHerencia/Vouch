@@ -19,7 +19,6 @@ export default function DisclaimerRoute() {
       <HeroSection.Minimal
         title="Bounded by state"
         description="Vouch coordinates provider-backed payments through explicit commitments and dual confirmation. It does not arbitrate human disputes."
-        className="px-0 py-0"
       />
       <section className="grid min-h-0 gap-8 md:grid-cols-[minmax(0,1fr)_24rem]">
         <FAQSection.SimpleList
@@ -28,10 +27,8 @@ export default function DisclaimerRoute() {
             question: section.heading,
             answer: section.body.join(" "),
           }))}
-          className="bg-transparent px-0 py-0"
         />
         <CTASection.WithBackground
-          className="self-start px-0 py-0"
           icon={<CalloutIcon className="size-8" />}
           title={disclaimerCalloutContent.title}
           description={disclaimerCalloutContent.body}

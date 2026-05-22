@@ -26,8 +26,8 @@ const emptyStateVariants = cva("flex items-center justify-center", {
   variants: {
     variant: {
       default: "",
-      filled: "border-3 border-dashed border-foreground bg-muted/30 p-8",
-      card: "border-3 border-foreground bg-card p-8 shadow-[4px_4px_0px_hsl(var(--shadow-color))]",
+      filled: "border-3 border-dashed border-neutral-400 bg-neutral-900 p-8",
+      card: "border-3 border-neutral-400 bg-black p-8 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
     },
     size: {
       compact: "gap-2 p-2",
@@ -77,7 +77,7 @@ EmptyState.displayName = "EmptyState"
 // ============================================================================
 
 const iconContainerVariants = cva(
-  "flex items-center justify-center border-3 border-foreground shadow-[3px_3px_0px_hsl(var(--shadow-color))]",
+  "flex items-center justify-center border-3 border-neutral-400 shadow-[3px_3px_0px_oklch(54.6%_0.245_262.881)]",
   {
     variants: {
       size: {
@@ -88,14 +88,14 @@ const iconContainerVariants = cva(
         xl: "h-24 w-24",
       },
       iconColor: {
-        default: "bg-muted text-foreground",
-        primary: "bg-primary text-primary-foreground",
-        secondary: "bg-secondary text-secondary-foreground",
-        accent: "bg-accent text-accent-foreground",
-        muted: "bg-muted text-muted-foreground",
-        destructive: "bg-destructive text-destructive-foreground",
-        warning: "bg-warning text-warning-foreground",
-        success: "bg-success text-success-foreground",
+        default: "bg-neutral-900 text-white",
+        primary: "bg-blue-600 text-white",
+        secondary: "bg-neutral-900 text-white",
+        accent: "bg-blue-600 text-white",
+        muted: "bg-neutral-900 text-neutral-400",
+        destructive: "bg-red-600 text-white",
+        warning: "bg-blue-600 text-white",
+        success: "bg-blue-600 text-white",
       },
     },
     defaultVariants: {
@@ -196,11 +196,7 @@ export type EmptyStateDescriptionProps = React.HTMLAttributes<HTMLParagraphEleme
 const EmptyStateDescription = React.forwardRef<HTMLParagraphElement, EmptyStateDescriptionProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <p
-        ref={ref}
-        className={cn("max-w-sm font-medium text-muted-foreground", className)}
-        {...props}
-      >
+      <p ref={ref} className={cn("max-w-sm font-medium text-neutral-400", className)} {...props}>
         {children}
       </p>
     )

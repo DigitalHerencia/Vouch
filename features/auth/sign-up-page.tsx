@@ -27,12 +27,11 @@ import { Field, FieldError, FieldGroup as UiFieldGroup } from "@/components/ui/f
 import { Input } from "@/components/ui/input"
 import { authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
-import { cn } from "@/lib/utils"
 import { signupSchema, verificationSchema } from "@/schemas/auth"
 import { type SignupFormProps, type SignupFormValues } from "@/types/auth"
 
 const inputClassName =
-  "h-10 w-full min-w-0 rounded-none border border-neutral-700 bg-black/55 px-3.5 font-(family-name:--font-sans) text-sm font-semibold text-white shadow-none outline-none placeholder:text-neutral-600 focus-visible:border-primary focus-visible:ring-0 sm:h-11 sm:px-4 lg:h-12"
+  "h-10 w-full min-w-0 rounded-none border border-neutral-400 bg-black px-3.5 font-(family-name:--font-sans) text-sm font-semibold text-white shadow-none outline-none placeholder:text-neutral-400 focus-visible:border-blue-600 focus-visible:ring-0 sm:h-11 sm:px-4 lg:h-12"
 
 export function SignUpPageFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
   return <SignupForm redirectUrl={redirectUrl} />
@@ -47,7 +46,7 @@ function getErrorMessage(error: unknown, fallback: string): string {
     : fallback
 }
 
-export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps) {
+export function SignupForm({ redirectUrl, ...props }: SignupFormProps) {
   const { fetchStatus, signUp } = useSignUp()
   const router = useRouter()
   const [awaitingVerification, setAwaitingVerification] = useState(false)
@@ -204,15 +203,12 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
 
   return (
     <form
-      className={cn(
-        "flex w-full max-w-full min-w-0 flex-col overflow-hidden bg-transparent text-white",
-        className
-      )}
+      className="flex w-full max-w-full min-w-0 flex-col overflow-hidden bg-black text-white"
       onSubmit={handleSubmit}
       noValidate
       {...props}
     >
-      <UiFieldGroup className="max-w-full min-w-0 gap-2.5 overflow-hidden border-0 bg-transparent p-0 shadow-none sm:gap-3">
+      <UiFieldGroup className="max-w-full min-w-0 gap-2.5 overflow-hidden border-0 bg-black p-0 shadow-none sm:gap-3">
         {notice ? (
           <h1 className="max-w-full overflow-hidden font-(family-name:--font-display) text-[30px] leading-none tracking-[0.04em] wrap-break-word text-white uppercase sm:text-[40px] lg:text-[48px]">
             {notice}
@@ -257,7 +253,6 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                   shouldValidate: code.length === 6,
                 })
               }
-              className="max-w-full"
             />
 
             <div className="grid min-w-0 gap-3 sm:grid-cols-2">
@@ -386,7 +381,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
             </SignUpFieldGroup>
 
             <Field data-invalid={Boolean(form.formState.errors.acceptedUserAgreement?.message)}>
-              <label className="flex min-w-0 items-start gap-2.5 overflow-hidden border border-neutral-700 bg-black/55 p-3">
+              <label className="flex min-w-0 items-start gap-2.5 overflow-hidden border border-neutral-400 bg-black p-3">
                 <Checkbox
                   className="mt-1 shrink-0 rounded-none"
                   checked={acceptedUserAgreement}
@@ -404,16 +399,19 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                   I agree to the{" "}
                   <Link
                     href="/user-agreement"
-                    className="text-primary underline-offset-4 hover:underline"
+                    className="text-blue-600 underline-offset-4 hover:underline"
                   >
                     User Agreement
                   </Link>
                   ,{" "}
-                  <Link href="/terms" className="text-primary underline-offset-4 hover:underline">
+                  <Link href="/terms" className="text-blue-600 underline-offset-4 hover:underline">
                     Terms of Service
                   </Link>
                   , and{" "}
-                  <Link href="/privacy" className="text-primary underline-offset-4 hover:underline">
+                  <Link
+                    href="/privacy"
+                    className="text-blue-600 underline-offset-4 hover:underline"
+                  >
                     Privacy Policy
                   </Link>
                   . I understand Vouch is a neutral payment coordination tool for deterministic
@@ -436,7 +434,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
               Create account
             </Button>
 
-            <div className="flex min-w-0 flex-wrap items-center gap-2 overflow-hidden text-xs font-semibold text-neutral-500 sm:text-sm">
+            <div className="flex min-w-0 flex-wrap items-center gap-2 overflow-hidden text-xs font-semibold text-neutral-400 sm:text-sm">
               <span>Already have an account?</span>
               <Link
                 href={
@@ -444,7 +442,7 @@ export function SignupForm({ className, redirectUrl, ...props }: SignupFormProps
                     ? `/sign-in?redirect_url=${encodeURIComponent(redirectUrl)}`
                     : "/sign-in"
                 }
-                className="font-mono text-primary underline-offset-4 transition-colors hover:text-white hover:underline"
+                className="font-mono text-blue-600 underline-offset-4 transition-colors hover:text-white hover:underline"
               >
                 Sign in
               </Link>

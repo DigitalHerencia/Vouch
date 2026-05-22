@@ -50,7 +50,7 @@ export default function HomePage() {
   return (
     <PublicShell>
       <section className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
-        <div className="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+        <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
           <header className="pt-2 lg:pt-8">
             <PageHero
               title={landingHeroContent.title}
@@ -87,12 +87,13 @@ export default function HomePage() {
                 icon: processIcons[step.icon] ?? FileText,
               }))}
               footer={landingProcessPanelContent.footer}
-              className="blue"
             />
           </div>
         </div>
 
-        <MetricGrid items={landingMetrics} className="mt-14" />
+        <div className="mt-14">
+          <MetricGrid items={landingMetrics} />
+        </div>
 
         <section className="mt-16">
           <SectionIntro
@@ -101,30 +102,32 @@ export default function HomePage() {
             body={landingSectionIntroContent.body}
           />
 
-          <CardGrid
-            items={landingUseCases.map((item) => ({
-              title: item.title,
-              body: item.body,
-              icon: useCaseIcons[item.icon] ?? MoreHorizontal,
-            }))}
-            className="mt-9"
-          />
+          <div className="mt-9">
+            <CardGrid
+              items={landingUseCases.map((item) => ({
+                title: item.title,
+                body: item.body,
+                icon: useCaseIcons[item.icon] ?? MoreHorizontal,
+              }))}
+            />
+          </div>
 
-          <CalloutPanel
-            id="callout"
-            className="mt-10"
-            icon={ShieldCheck}
-            title={landingTrustPanelContent.title}
-            body={landingTrustPanelContent.body}
-            actions={
-              <Button variant="default" size="default" className="min-w-72" asChild>
-                <Link href={landingTrustPanelContent.action}>
-                  <span className="translate-y-px">{landingTrustPanelContent.label}</span>
-                  <ArrowRight className="size-5 sm:size-6" strokeWidth={1.9} />
-                </Link>
-              </Button>
-            }
-          />
+          <div className="mt-10">
+            <CalloutPanel
+              id="callout"
+              icon={ShieldCheck}
+              title={landingTrustPanelContent.title}
+              body={landingTrustPanelContent.body}
+              actions={
+                <Button variant="default" size="default" className="min-w-72" asChild>
+                  <Link href={landingTrustPanelContent.action}>
+                    <span className="translate-y-px">{landingTrustPanelContent.label}</span>
+                    <ArrowRight className="size-5 sm:size-6" strokeWidth={1.9} />
+                  </Link>
+                </Button>
+              }
+            />
+          </div>
         </section>
       </section>
     </PublicShell>

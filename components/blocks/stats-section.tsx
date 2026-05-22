@@ -1,5 +1,4 @@
 import * as React from "react"
-import { cn } from "@/lib/utils"
 import { TrendingUp, TrendingDown, Minus } from "lucide-react"
 
 export interface StatItem {
@@ -16,10 +15,9 @@ export interface StatItem {
 export interface StatsGridProps {
   stats: StatItem[]
   columns?: 2 | 3 | 4
-  className?: string
 }
 
-export function StatsGrid({ stats, columns = 4, className }: StatsGridProps) {
+export function StatsGrid({ stats, columns = 4 }: StatsGridProps) {
   const gridCols = {
     2: "grid-cols-2",
     3: "grid-cols-1 md:grid-cols-3",
@@ -27,17 +25,13 @@ export function StatsGrid({ stats, columns = 4, className }: StatsGridProps) {
   }
 
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
-      <div className={cn("mx-auto grid max-w-6xl gap-6", gridCols[columns])}>
+    <section className="px-4 py-16 md:px-8 lg:px-16">
+      <div className={`mx-auto grid max-w-6xl gap-6 ${gridCols[columns]}`}>
         {stats.map((stat) => (
           <div key={`stat-${stat.label}`} className="space-y-2 text-center">
             <div className="text-4xl font-black md:text-5xl">{stat.value}</div>
-            <div className="text-sm font-bold tracking-wide text-foreground uppercase">
-              {stat.label}
-            </div>
-            {stat.description && (
-              <p className="text-sm text-muted-foreground">{stat.description}</p>
-            )}
+            <div className="text-sm font-bold tracking-wide text-white uppercase">{stat.label}</div>
+            {stat.description && <p className="text-sm text-neutral-400">{stat.description}</p>}
           </div>
         ))}
       </div>
@@ -52,23 +46,22 @@ export interface StatsCardsProps {
   title?: string
   subtitle?: string
   stats: StatItem[]
-  className?: string
 }
 
-export function StatsCards({ title, subtitle, stats, className }: StatsCardsProps) {
-  const cardColors = ["bg-secondary", "bg-secondary", "bg-secondary", "bg-secondary"]
+export function StatsCards({ title, subtitle, stats }: StatsCardsProps) {
+  const cardColors = ["bg-black", "bg-black", "bg-black", "bg-black"]
 
   return (
-    <section className={cn("bg-muted/30 px-4 py-16 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-16 md:px-8 lg:px-16">
       <div className="mx-auto max-w-6xl">
         {(title || subtitle) && (
           <div className="mb-12 space-y-2 text-center">
             {subtitle && (
-              <p className="text-sm font-bold tracking-widest text-primary uppercase">{subtitle}</p>
+              <p className="text-sm font-bold tracking-widest text-blue-600 uppercase">
+                {subtitle}
+              </p>
             )}
-            {title && (
-              <h2 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h2>
-            )}
+            {title && <h2 className="text-3xl font-black uppercase md:text-4xl">{title}</h2>}
           </div>
         )}
 
@@ -76,26 +69,26 @@ export function StatsCards({ title, subtitle, stats, className }: StatsCardsProp
           {stats.map((stat, index) => (
             <div
               key={`stat-${stat.label}`}
-              className={cn(
-                "border-3 border-foreground p-6 shadow-[4px_4px_0px_hsl(var(--shadow-color))] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_hsl(var(--shadow-color))]",
+              className={`border-3 border-neutral-400 p-6 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
                 cardColors[index % 4]
-              )}
+              }`}
             >
               <div className="text-3xl font-black md:text-4xl">{stat.value}</div>
               <div className="mt-2 text-sm font-bold tracking-wide uppercase">{stat.label}</div>
               {stat.trend && (
                 <div className="mt-2 flex items-center gap-1">
-                  {stat.trend === "up" && <TrendingUp className="h-4 w-4 text-green-600" />}
-                  {stat.trend === "down" && <TrendingDown className="h-4 w-4 text-destructive" />}
-                  {stat.trend === "neutral" && <Minus className="h-4 w-4 text-muted-foreground" />}
+                  {stat.trend === "up" && <TrendingUp className="h-4 w-4 text-blue-600" />}
+                  {stat.trend === "down" && <TrendingDown className="h-4 w-4 text-red-600" />}
+                  {stat.trend === "neutral" && <Minus className="h-4 w-4 text-neutral-400" />}
                   {stat.trendValue && (
                     <span
-                      className={cn(
-                        "text-xs font-bold",
-                        stat.trend === "up" && "text-green-600",
-                        stat.trend === "down" && "text-destructive",
-                        stat.trend === "neutral" && "text-muted-foreground"
-                      )}
+                      className={`text-xs font-bold ${
+                        stat.trend === "up"
+                          ? "text-blue-600"
+                          : stat.trend === "down"
+                            ? "text-red-600"
+                            : "text-neutral-400"
+                      }`}
                     >
                       {stat.trendValue}
                     </span>
@@ -118,7 +111,6 @@ export interface StatsSplitProps {
   description: string
   stats: StatItem[]
   contentPosition?: "left" | "right"
-  className?: string
 }
 
 export function StatsSplit({
@@ -126,29 +118,29 @@ export function StatsSplit({
   description,
   stats,
   contentPosition = "left",
-  className,
 }: StatsSplitProps) {
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-16 md:px-8 lg:px-16">
       <div
-        className={cn(
-          "mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2",
-          contentPosition === "right" && "md:[&>*:first-child]:order-2"
-        )}
+        className={
+          contentPosition === "right"
+            ? "mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2 md:[&>*:first-child]:order-2"
+            : "mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2"
+        }
       >
         <div className="space-y-6">
-          <h2 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h2>
-          <p className="text-lg font-medium text-muted-foreground">{description}</p>
+          <h2 className="text-3xl font-black uppercase md:text-4xl">{title}</h2>
+          <p className="text-lg font-medium text-neutral-400">{description}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           {stats.map((stat) => (
             <div
               key={`stat-${stat.label}`}
-              className="border-3 border-foreground bg-card p-6 shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
+              className="border-3 border-neutral-400 bg-black p-6 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
             >
               <div className="text-3xl font-black">{stat.value}</div>
-              <div className="mt-1 text-sm font-bold tracking-wide text-muted-foreground uppercase">
+              <div className="mt-1 text-sm font-bold tracking-wide text-neutral-400 uppercase">
                 {stat.label}
               </div>
             </div>
@@ -164,22 +156,16 @@ export function StatsSplit({
 // ============================================================================
 export interface StatsInlineProps {
   stats: StatItem[]
-  className?: string
 }
 
-export function StatsInline({ stats, className }: StatsInlineProps) {
+export function StatsInline({ stats }: StatsInlineProps) {
   return (
-    <section
-      className={cn(
-        "border-y-3 border-foreground bg-muted/30 px-4 py-8 md:px-8 lg:px-16",
-        className
-      )}
-    >
+    <section className="border-y-3 border-neutral-400 bg-black px-4 py-8 md:px-8 lg:px-16">
       <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-8 md:gap-16">
         {stats.map((stat) => (
           <div key={`stat-${stat.label}`} className="text-center">
             <span className="text-3xl font-black md:text-4xl">{stat.value}</span>
-            <span className="ml-2 text-sm font-bold tracking-wide text-foreground uppercase">
+            <span className="ml-2 text-sm font-bold tracking-wide text-white uppercase">
               {stat.label}
             </span>
           </div>
@@ -198,28 +184,26 @@ export interface StatWithIconItem extends StatItem {
 
 export interface StatsWithIconsProps {
   stats: StatWithIconItem[]
-  className?: string
 }
 
-export function StatsWithIcons({ stats, className }: StatsWithIconsProps) {
-  const iconColors = ["bg-secondary", "bg-secondary", "bg-secondary", "bg-secondary"]
+export function StatsWithIcons({ stats }: StatsWithIconsProps) {
+  const iconColors = ["bg-black", "bg-black", "bg-black", "bg-black"]
 
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-16 md:px-8 lg:px-16">
       <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 md:grid-cols-4">
         {stats.map((stat, index) => (
           <div key={`stat-${stat.label}`} className="space-y-4 text-center">
             <div
-              className={cn(
-                "mx-auto flex h-16 w-16 items-center justify-center border-3 border-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))]",
+              className={`mx-auto flex h-16 w-16 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
                 iconColors[index % 4]
-              )}
+              }`}
             >
               {stat.icon}
             </div>
             <div>
               <div className="text-3xl font-black md:text-4xl">{stat.value}</div>
-              <div className="mt-1 text-sm font-bold tracking-wide text-foreground uppercase">
+              <div className="mt-1 text-sm font-bold tracking-wide text-white uppercase">
                 {stat.label}
               </div>
             </div>

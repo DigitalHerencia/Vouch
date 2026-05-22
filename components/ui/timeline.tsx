@@ -72,13 +72,13 @@ TimelineItem.displayName = "TimelineItem"
 
 // Timeline Dot
 const timelineDotVariants = cva(
-  "border-foreground relative z-10 flex items-center justify-center border-3 transition-all duration-200",
+  "relative z-10 flex items-center justify-center border-3 border-neutral-400 transition-all duration-200",
   {
     variants: {
       status: {
-        completed: "bg-success shadow-[4px_4px_0px_hsl(var(--shadow-color))]",
-        current: "bg-primary scale-110 shadow-[4px_4px_0px_hsl(var(--shadow-color))]",
-        upcoming: "bg-muted",
+        completed: "bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
+        current: "scale-110 bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
+        upcoming: "bg-neutral-900",
       },
       size: {
         sm: "h-6 w-6",
@@ -111,9 +111,9 @@ TimelineDot.displayName = "TimelineDot"
 const timelineConnectorVariants = cva("transition-all duration-200", {
   variants: {
     status: {
-      completed: "bg-foreground",
-      current: "bg-foreground",
-      upcoming: "border-foreground/50 border-2 border-dashed bg-transparent",
+      completed: "bg-neutral-900",
+      current: "bg-neutral-900",
+      upcoming: "border-2 border-dashed border-neutral-400 bg-black",
     },
     orientation: {
       vertical: "ml-[14px] min-h-8 w-[3px]",
@@ -190,7 +190,7 @@ const TimelineDescription = React.forwardRef<
   HTMLParagraphElement,
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, ...props }, ref) => {
-  return <p ref={ref} className={cn("text-muted-foreground mt-1 text-sm", className)} {...props} />
+  return <p ref={ref} className={cn("mt-1 text-sm text-neutral-400", className)} {...props} />
 })
 TimelineDescription.displayName = "TimelineDescription"
 
@@ -200,7 +200,7 @@ const TimelineTime = React.forwardRef<HTMLTimeElement, React.TimeHTMLAttributes<
     return (
       <time
         ref={ref}
-        className={cn("text-muted-foreground text-xs font-medium", className)}
+        className={cn("text-xs font-medium text-neutral-400", className)}
         {...props}
       />
     )
@@ -215,8 +215,8 @@ const TimelineCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
       <div
         ref={ref}
         className={cn(
-          "border-foreground bg-card border-3 p-4",
-          "shadow-[4px_4px_0px_hsl(var(--shadow-color))]",
+          "border-3 border-neutral-400 bg-black p-4",
+          "shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
           className
         )}
         {...props}

@@ -16,7 +16,6 @@ export async function CreateVouchPage() {
       <HeroSection.Minimal
         title={vouchPageCopy.create.title}
         description={vouchPageCopy.create.readyBody}
-        className="px-0 py-0"
       />
       {blockedReason ? (
         <Card>
@@ -37,7 +36,6 @@ export async function CreateVouchPage() {
         title={vouchPageCopy.create.ruleTitle}
         description={vouchPageCopy.create.ruleBody}
         primaryAction={{ label: vouchPageCopy.create.blockedActionLabel, href: "/dashboard" }}
-        className="px-0 py-0"
       />
     </main>
   )

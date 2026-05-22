@@ -3,7 +3,7 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { cn, safeHref } from "@/lib/utils"
+import { safeHref } from "@/lib/utils"
 import {
   Home,
   ArrowLeft,
@@ -18,6 +18,7 @@ import {
   Clock,
   Lock,
 } from "lucide-react"
+import Link from "next/link"
 
 // ============================================================================
 // ERROR PAGE VARIANT 1: 404 Not Found
@@ -29,7 +30,6 @@ export interface NotFoundPageProps {
   onSearch?: (query: string) => void
   homeHref?: string
   backHref?: string
-  className?: string
 }
 
 export function NotFoundPage({
@@ -39,7 +39,6 @@ export function NotFoundPage({
   onSearch,
   homeHref = "/",
   backHref,
-  className,
 }: NotFoundPageProps) {
   const [searchQuery, setSearchQuery] = React.useState("")
 
@@ -49,23 +48,23 @@ export function NotFoundPage({
   }
 
   return (
-    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
+    <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-lg space-y-8 text-center">
         {/* Large 404 */}
         <div className="relative">
-          <h1 className="text-[150px] leading-none font-black text-muted-foreground/20 md:text-[200px]">
+          <h1 className="text-[150px] leading-none font-black text-neutral-400/20 md:text-[200px]">
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-foreground bg-primary shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
-              <FileQuestion className="h-12 w-12 text-primary-foreground" />
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+              <FileQuestion className="h-12 w-12 text-white" />
             </div>
           </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-black uppercase md:text-3xl">Page Not Found</h2>
-          <p className="text-muted-foreground">{description}</p>
+          <h2 className="font-black">Page Not Found</h2>
+          <p className="text-neutral-400">{description}</p>
         </div>
 
         {showSearch && (
@@ -75,7 +74,7 @@ export function NotFoundPage({
               placeholder="Search for pages..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="border-2 border-primary-foreground"
+              className="border-2 border-neutral-400"
             />
             <Button type="submit">
               <Search className="h-4 w-4" />
@@ -114,7 +113,6 @@ export interface ServerErrorPageProps {
   onRetry?: () => void
   homeHref?: string
   supportEmail?: string
-  className?: string
 }
 
 export function ServerErrorPage({
@@ -124,28 +122,27 @@ export function ServerErrorPage({
   onRetry,
   homeHref = "/",
   supportEmail,
-  className,
 }: ServerErrorPageProps) {
   return (
-    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
+    <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-lg space-y-8 text-center">
         {/* Large 500 */}
         <div className="relative">
-          <h1 className="text-[150px] leading-none font-black text-muted-foreground/20 md:text-[200px]">
+          <h1 className="text-[150px] leading-none font-black text-neutral-400/20 md:text-[200px]">
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-foreground bg-destructive shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
-              <ServerCrash className="h-12 w-12 text-destructive-foreground" />
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+              <ServerCrash className="h-12 w-12 text-white" />
             </div>
           </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-black uppercase md:text-3xl">Server Error</h2>
-          <p className="text-muted-foreground">{description}</p>
+          <h2 className="font-black">Server Error</h2>
+          <p className="text-neutral-400">{description}</p>
           {errorId && (
-            <p className="border-2 border-foreground bg-muted p-2 font-mono text-xs text-muted-foreground">
+            <p className="border-3 border-neutral-400 bg-black p-2 text-xs text-neutral-400 md:text-base">
               Error ID: {errorId}
             </p>
           )}
@@ -159,22 +156,22 @@ export function ServerErrorPage({
             </Button>
           )}
           <Button variant="outline" asChild>
-            <a href={safeHref(homeHref)}>
+            <Link href={safeHref(homeHref)}>
               <Home className="mr-2 h-4 w-4" />
               Back to Home
-            </a>
+            </Link>
           </Button>
         </div>
 
         {supportEmail && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-neutral-400">
             Still having issues?{" "}
-            <a
+            <Link
               href={safeHref(`mailto:${supportEmail}`)}
-              className="font-bold text-primary hover:underline"
+              className="font-bold text-white hover:text-blue-600 hover:underline hover:underline-offset-4"
             >
               Contact support
-            </a>
+            </Link>
           </p>
         )}
       </div>
@@ -191,7 +188,6 @@ export interface MaintenancePageProps {
   estimatedTime?: string
   features?: string[]
   statusPageUrl?: string
-  className?: string
 }
 
 export function MaintenancePage({
@@ -200,21 +196,20 @@ export function MaintenancePage({
   estimatedTime,
   features,
   statusPageUrl,
-  className,
 }: MaintenancePageProps) {
   return (
-    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
+    <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-lg space-y-8 text-center">
-        <div className="bg-warning mx-auto flex h-32 w-32 items-center justify-center border-3 border-foreground shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-          <Construction className="text-warning-foreground h-16 w-16" />
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+          <Construction className="h-12 w-12 text-white" />
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h1>
-          <p className="text-lg text-muted-foreground">{description}</p>
+          <h2 className="font-black">{title}</h2>
+          <p className="text-base text-white md:text-lg">{description}</p>
 
           {estimatedTime && (
-            <div className="inline-flex items-center gap-2 border-3 border-foreground bg-muted px-4 py-2">
+            <div className="inline-flex items-center gap-2 border-3 border-neutral-400 bg-black px-4 py-2">
               <Clock className="h-5 w-5" />
               <span className="font-bold">Estimated time: {estimatedTime}</span>
             </div>
@@ -222,12 +217,12 @@ export function MaintenancePage({
         </div>
 
         {features && features.length > 0 && (
-          <div className="space-y-3 border-3 border-foreground bg-card p-6 text-left">
-            <h3 className="text-sm font-bold uppercase">What we're working on:</h3>
+          <div className="space-y-3 border-3 border-neutral-400 bg-black p-6 text-left">
+            <h3 className="font-bold">What we're working on:</h3>
             <ul className="space-y-2">
               {features.map((feature, index) => (
                 <li key={`feature-${index}`} className="flex items-start gap-2 text-sm">
-                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border-2 border-foreground bg-primary text-primary-foreground">
+                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white">
                     ✓
                   </div>
                   {feature}
@@ -256,31 +251,29 @@ export interface OfflinePageProps {
   title?: string
   description?: string
   onRetry?: () => void
-  className?: string
 }
 
 export function OfflinePage({
   title = "You're Offline",
   description = "It looks like you've lost your internet connection. Please check your connection and try again.",
   onRetry,
-  className,
 }: OfflinePageProps) {
   return (
-    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
+    <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-md space-y-8 text-center">
-        <div className="mx-auto flex h-32 w-32 items-center justify-center border-3 border-foreground bg-muted shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-          <Wifi className="h-16 w-16 text-muted-foreground" />
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+          <Wifi className="h-12 w-12 text-neutral-400" />
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h1>
-          <p className="text-muted-foreground">{description}</p>
+          <h2 className="font-black">{title}</h2>
+          <p className="text-white">{description}</p>
         </div>
 
         <div className="space-y-4">
-          <div className="border-3 border-foreground bg-muted/30 p-4 text-left">
-            <h3 className="mb-2 text-sm font-bold uppercase">Things to try:</h3>
-            <ul className="space-y-1 text-sm text-muted-foreground">
+          <div className="border-3 border-neutral-400 bg-black p-4 text-left shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+            <h4 className="font-bold">Things to try:</h4>
+            <ul className="mt-2 space-y-1 text-sm text-white md:text-base">
               <li>• Check your Wi-Fi connection</li>
               <li>• Restart your router</li>
               <li>• Try disabling VPN if you're using one</li>
@@ -307,7 +300,6 @@ export interface ForbiddenPageProps {
   description?: string
   homeHref?: string
   loginHref?: string
-  className?: string
 }
 
 export function ForbiddenPage({
@@ -315,34 +307,33 @@ export function ForbiddenPage({
   description = "You don't have permission to access this page. Please contact your administrator if you believe this is an error.",
   homeHref = "/",
   loginHref,
-  className,
 }: ForbiddenPageProps) {
   return (
-    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
+    <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-lg space-y-8 text-center">
         {/* Large 403 */}
         <div className="relative">
-          <h1 className="text-[150px] leading-none font-black text-muted-foreground/20 md:text-[200px]">
+          <h1 className="text-[150px] leading-none font-black text-neutral-400/20 md:text-[200px]">
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="bg-warning flex h-24 w-24 items-center justify-center border-3 border-foreground shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
-              <Ban className="text-warning-foreground h-12 w-12" />
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+              <Ban className="h-12 w-12 text-white" />
             </div>
           </div>
         </div>
 
         <div className="space-y-4">
-          <h2 className="text-2xl font-black uppercase md:text-3xl">Access Denied</h2>
-          <p className="text-muted-foreground">{description}</p>
+          <h2 className="font-black">Access Denied</h2>
+          <p className="text-white">{description}</p>
         </div>
 
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button asChild>
-            <a href={safeHref(homeHref)}>
+            <Link href={safeHref(homeHref)}>
               <Home className="mr-2 h-4 w-4" />
               Back to Home
-            </a>
+            </Link>
           </Button>
           {loginHref && (
             <Button variant="outline" asChild>
@@ -378,7 +369,6 @@ export interface ComingSoonPageProps {
   description?: string
   launchDate?: Date
   onNotify?: (email: string) => void
-  className?: string
 }
 
 export function ComingSoonPage({
@@ -386,7 +376,6 @@ export function ComingSoonPage({
   description = "We're working hard to bring you something amazing. Stay tuned!",
   launchDate,
   onNotify,
-  className,
 }: ComingSoonPageProps) {
   const [email, setEmail] = React.useState("")
   const [submitted, setSubmitted] = React.useState(false)
@@ -408,15 +397,15 @@ export function ComingSoonPage({
   }, [launchDate])
 
   return (
-    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
+    <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-lg space-y-8 text-center">
-        <div className="mx-auto flex h-32 w-32 items-center justify-center border-3 border-foreground bg-primary shadow-[8px_8px_0px_hsl(var(--shadow-color))]">
-          <Clock className="h-16 w-16 text-primary-foreground" />
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+          <Clock className="h-16 w-16 text-white" />
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-4xl font-black tracking-tight uppercase md:text-5xl">{title}</h1>
-          <p className="text-lg text-muted-foreground">{description}</p>
+          <h2 className="font-black">{title}</h2>
+          <p className="text-base text-white md:text-lg">{description}</p>
         </div>
 
         {timeRemaining && (
@@ -428,12 +417,10 @@ export function ComingSoonPage({
             ].map((item) => (
               <div
                 key={`action-${item.label}`}
-                className="w-24 border-3 border-foreground bg-card p-4 shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
+                className="w-24 border-3 border-neutral-400 bg-black p-4 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
               >
-                <div className="text-3xl font-black">{item.value}</div>
-                <div className="text-xs font-bold text-muted-foreground uppercase">
-                  {item.label}
-                </div>
+                <p className="text-3xl font-black">{item.value}</p>
+                <p className="text-xs font-bold text-neutral-400 uppercase">{item.label}</p>
               </div>
             ))}
           </div>
@@ -447,15 +434,15 @@ export function ComingSoonPage({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="border-2 border-primary-foreground"
+              className="border-2 border-neutral-400"
             />
             <Button type="submit">Notify Me</Button>
           </form>
         )}
 
         {submitted && (
-          <div className="border-success bg-success/10 border-3 p-4">
-            <p className="text-success font-bold">Thanks! We'll notify you when we launch.</p>
+          <div className="border-3 border-neutral-400 bg-blue-600/10 p-4">
+            <p className="font-bold text-white">Thanks! We'll notify you when we launch.</p>
           </div>
         )}
       </div>
@@ -476,7 +463,6 @@ export interface GenericErrorPageProps {
     onClick?: () => void
     variant?: "default" | "outline"
   }>
-  className?: string
 }
 
 export function GenericErrorPage({
@@ -484,18 +470,17 @@ export function GenericErrorPage({
   title = "Something went wrong",
   description = "An unexpected error occurred. Please try again later.",
   actions,
-  className,
 }: GenericErrorPageProps) {
   return (
-    <div className={cn("flex min-h-screen items-center justify-center p-4", className)}>
+    <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-md space-y-8 text-center">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-foreground bg-destructive/10 shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
-          {icon || <AlertTriangle className="h-12 w-12 text-destructive" />}
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+          {icon || <AlertTriangle className="h-12 w-12 text-white" />}
         </div>
 
         <div className="space-y-4">
-          <h1 className="text-2xl font-black tracking-tight uppercase md:text-3xl">{title}</h1>
-          <p className="text-muted-foreground">{description}</p>
+          <h2 className="font-black">{title}</h2>
+          <p className="text-sm text-white md:text-base">{description}</p>
         </div>
 
         {actions && actions.length > 0 && (
@@ -507,7 +492,11 @@ export function GenericErrorPage({
                 onClick={action.onClick}
                 asChild={!!action.href}
               >
-                {action.href ? <a href={safeHref(action.href)}>{action.label}</a> : action.label}
+                {action.href ? (
+                  <Link href={safeHref(action.href)}>{action.label}</Link>
+                ) : (
+                  action.label
+                )}
               </Button>
             ))}
           </div>

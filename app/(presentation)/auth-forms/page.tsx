@@ -29,7 +29,7 @@ export default function AuthForms() {
         <OTPVerificationForm email="user@example.com" onResend={() => undefined} />
         <AuthSplitLayout
           brandContent={
-            <div className="space-y-4 text-primary-foreground">
+            <div className="space-y-4 text-white">
               <h2 className="text-4xl font-black uppercase">Vouch</h2>
               <p className="text-lg font-medium">
                 Commitment-backed coordination for real-world agreements.

@@ -6,7 +6,6 @@ export default function NotFound() {
       description="The requested Vouch surface could not be found. Protected records may also return not found when the active user is not an authorized participant."
       homeHref="/dashboard"
       backHref="/"
-      className="grid-pattern bg-neutral-950"
     />
   )
 }

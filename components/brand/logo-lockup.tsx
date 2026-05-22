@@ -2,31 +2,12 @@
 
 import { Handshake } from "lucide-react"
 
-import { cn } from "@/lib/utils"
-
-export interface LogoLockupProps {
-  className?: string
-  iconClassName?: string
-  wordmarkClassName?: string
-}
-
-export function LogoLockup({ className, iconClassName, wordmarkClassName }: LogoLockupProps) {
+export function LogoLockup() {
   return (
-    <span
-      className={cn("inline-flex items-center gap-2.5 text-white", className)}
-      aria-label="Vouch"
-    >
-      <Handshake
-        className={cn("size-7 text-blue-700 sm:size-8 lg:size-9", iconClassName)}
-        strokeWidth={2.4}
-      />
+    <span className="inline-flex items-center gap-2.5 text-white" aria-label="Vouch">
+      <Handshake className="size-7 text-blue-600 sm:size-8 lg:size-9" strokeWidth={2.4} />
 
-      <span
-        className={cn(
-          "font-(family-name:--font-brand) text-[22px] leading-none tracking-normal text-white uppercase sm:text-[28px] lg:text-[34px]",
-          wordmarkClassName
-        )}
-      >
+      <span className="font-(family-name:--font-brand) text-[22px] leading-none tracking-normal text-white uppercase sm:text-[28px] lg:text-[34px]">
         Vouch
       </span>
     </span>

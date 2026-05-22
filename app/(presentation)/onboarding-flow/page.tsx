@@ -67,9 +67,7 @@ export default function OnboardingFlow() {
               description: "Identify the participant.",
               icon: <User className="h-7 w-7" />,
               content: (
-                <p className="text-muted-foreground">
-                  Add account details before creating a Vouch.
-                </p>
+                <p className="text-neutral-400">Add account details before creating a Vouch.</p>
               ),
             },
             {
@@ -77,16 +75,14 @@ export default function OnboardingFlow() {
               title: "Payment",
               description: "Prepare payment readiness.",
               icon: <CreditCard className="h-7 w-7" />,
-              content: (
-                <p className="text-muted-foreground">Connect provider-backed payment setup.</p>
-              ),
+              content: <p className="text-neutral-400">Connect provider-backed payment setup.</p>,
             },
             {
               id: "confirm",
               title: "Confirm",
               description: "Understand the confirmation window.",
               icon: <BadgeCheck className="h-7 w-7" />,
-              content: <p className="text-muted-foreground">Both parties must confirm in time.</p>,
+              content: <p className="text-neutral-400">Both parties must confirm in time.</p>,
             },
           ]}
         />

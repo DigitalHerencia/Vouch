@@ -7,7 +7,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { cn } from "@/lib/utils"
 import { HelpCircle, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
@@ -24,29 +23,18 @@ export interface FAQAccordionProps {
   subtitle?: string
   description?: string
   items: FAQItem[]
-  className?: string
 }
 
-export function FAQAccordion({
-  title,
-  subtitle,
-  description,
-  items,
-  className,
-}: FAQAccordionProps) {
+export function FAQAccordion({ title, subtitle, description, items }: FAQAccordionProps) {
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
-      <div className="mx-auto max-w-3xl">
+    <section className="px-4 py-16 md:px-8">
+      <div className="mx-auto max-w-6xl">
         {(title || subtitle || description) && (
-          <div className="mb-12 space-y-4 text-center">
-            {subtitle && (
-              <p className="text-sm font-bold tracking-widest text-primary uppercase">{subtitle}</p>
-            )}
-            {title && (
-              <h2 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h2>
-            )}
+          <div className="mb-12 space-y-2 text-center">
+            {subtitle && <p className="text-sm font-bold text-blue-600 uppercase">{subtitle}</p>}
+            {title && <h2 className="font-black">{title}</h2>}
             {description && (
-              <p className="text-lg font-medium text-muted-foreground">{description}</p>
+              <p className="text-base font-medium text-white md:text-lg">{description}</p>
             )}
           </div>
         )}
@@ -56,13 +44,13 @@ export function FAQAccordion({
             <AccordionItem
               key={item.question}
               value={`item-${index}`}
-              className="border-3 border-foreground bg-card shadow-[4px_4px_0px_hsl(var(--shadow-color))] transition-all data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5 data-[state=open]:shadow-[6px_6px_0px_hsl(var(--shadow-color))]"
+              className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5 data-[state=open]:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
             >
-              <AccordionTrigger className="px-6 py-4 font-bold tracking-wide uppercase hover:no-underline">
-                {item.question}
+              <AccordionTrigger className="px-6 py-8 md:px-8">
+                <h4 className="font-bold tracking-wide">{item.question}</h4>
               </AccordionTrigger>
-              <AccordionContent className="px-6 pb-4 text-muted-foreground">
-                {item.answer}
+              <AccordionContent className="px-6 pb-4">
+                <p className="text-sm font-medium text-white md:text-base">{item.answer}</p>
               </AccordionContent>
             </AccordionItem>
           ))}
@@ -77,22 +65,27 @@ export function FAQAccordion({
 // ============================================================================
 export interface FAQTwoColumnsProps {
   title?: string
+  subtitle?: string
+  description?: string
   items: FAQItem[]
-  className?: string
 }
 
-export function FAQTwoColumns({ title, items, className }: FAQTwoColumnsProps) {
+export function FAQTwoColumns({ title, subtitle, description, items }: FAQTwoColumnsProps) {
   const midpoint = Math.ceil(items.length / 2)
   const leftColumn = items.slice(0, midpoint)
   const rightColumn = items.slice(midpoint)
 
   return (
-    <section className={cn("bg-muted/30 px-4 py-16 md:px-8 lg:px-16", className)}>
+    <section className="px-4 py-16 md:px-8">
       <div className="mx-auto max-w-6xl">
-        {title && (
-          <h2 className="mb-12 text-center text-3xl font-black tracking-tight uppercase md:text-4xl">
-            {title}
-          </h2>
+        {(title || subtitle || description) && (
+          <div className="mb-12 space-y-2 text-center">
+            {subtitle && <p className="text-sm font-bold text-blue-600 uppercase">{subtitle}</p>}
+            {title && <h2 className="font-black">{title}</h2>}
+            {description && (
+              <p className="text-base font-medium text-white md:text-lg">{description}</p>
+            )}
+          </div>
         )}
 
         <div className="grid gap-8 md:grid-cols-2">
@@ -122,23 +115,33 @@ export interface FAQCategory {
 
 export interface FAQWithCategoriesProps {
   title?: string
+  subtitle?: string
+  description?: string
   categories: FAQCategory[]
-  className?: string
 }
 
-export function FAQWithCategories({ title, categories, className }: FAQWithCategoriesProps) {
+export function FAQWithCategories({
+  title,
+  subtitle,
+  description,
+  categories,
+}: FAQWithCategoriesProps) {
   const [activeCategory, setActiveCategory] = React.useState(0)
 
   if (!categories.length) return null
   const activeItems = categories[activeCategory]?.items ?? []
 
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
-      <div className="mx-auto max-w-4xl">
-        {title && (
-          <h2 className="mb-12 text-center text-3xl font-black tracking-tight uppercase md:text-4xl">
-            {title}
-          </h2>
+    <section className="px-4 py-16 md:px-8">
+      <div className="mx-auto max-w-6xl">
+        {(title || subtitle || description) && (
+          <div className="mb-12 space-y-2 text-center">
+            {subtitle && <p className="text-sm font-bold text-blue-600 uppercase">{subtitle}</p>}
+            {title && <h2 className="font-black">{title}</h2>}
+            {description && (
+              <p className="text-base font-medium text-white md:text-lg">{description}</p>
+            )}
+          </div>
         )}
 
         <div className="mb-8 flex flex-wrap justify-center gap-2">
@@ -158,13 +161,13 @@ export function FAQWithCategories({ title, categories, className }: FAQWithCateg
             <AccordionItem
               key={item.question}
               value={`item-${index}`}
-              className="border-3 border-foreground bg-card shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
+              className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
             >
-              <AccordionTrigger className="px-6 py-4 font-bold tracking-wide uppercase hover:no-underline">
-                {item.question}
+              <AccordionTrigger className="px-6 py-8 md:px-8">
+                <h4 className="font-bold tracking-wide">{item.question}</h4>
               </AccordionTrigger>
-              <AccordionContent className="px-6 pb-4 text-muted-foreground">
-                {item.answer}
+              <AccordionContent className="px-6 pb-4">
+                <p className="text-sm font-medium text-white md:text-base">{item.answer}</p>
               </AccordionContent>
             </AccordionItem>
           ))}
@@ -179,28 +182,34 @@ export function FAQWithCategories({ title, categories, className }: FAQWithCateg
 // ============================================================================
 export interface FAQWithContactProps {
   title?: string
+  subtitle?: string
+  description?: string
   items: FAQItem[]
   contactTitle?: string
   contactDescription?: string
   contactAction?: { label: string; onClick?: () => void }
-  className?: string
 }
 
 export function FAQWithContact({
   title,
+  subtitle,
+  description,
   items,
   contactTitle = "Still have questions?",
   contactDescription = "Can't find the answer you're looking for? Please reach out to our friendly team.",
   contactAction,
-  className,
 }: FAQWithContactProps) {
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
-      <div className="mx-auto max-w-4xl">
-        {title && (
-          <h2 className="mb-12 text-center text-3xl font-black tracking-tight uppercase md:text-4xl">
-            {title}
-          </h2>
+    <section className="px-4 py-16 md:px-8">
+      <div className="mx-auto max-w-6xl">
+        {(title || subtitle || description) && (
+          <div className="mb-12 space-y-2 text-center">
+            {subtitle && <p className="text-sm font-bold text-blue-600 uppercase">{subtitle}</p>}
+            {title && <h2 className="font-black">{title}</h2>}
+            {description && (
+              <p className="text-base font-medium text-white md:text-lg">{description}</p>
+            )}
+          </div>
         )}
 
         <Accordion type="single" collapsible className="mb-12 space-y-4">
@@ -208,22 +217,22 @@ export function FAQWithContact({
             <AccordionItem
               key={item.question}
               value={`item-${index}`}
-              className="border-3 border-foreground bg-card shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
+              className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
             >
-              <AccordionTrigger className="px-6 py-4 font-bold tracking-wide uppercase hover:no-underline">
-                {item.question}
+              <AccordionTrigger className="px-6 py-8 md:px-8">
+                <h4 className="font-bold tracking-wide">{item.question}</h4>
               </AccordionTrigger>
-              <AccordionContent className="px-6 pb-4 text-muted-foreground">
-                {item.answer}
+              <AccordionContent className="px-6 pb-4">
+                <p className="text-sm font-medium text-white md:text-base">{item.answer}</p>
               </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
 
-        <div className="space-y-4 border-3 border-foreground bg-primary/10 p-8 text-center shadow-[6px_6px_0px_hsl(var(--shadow-color))]">
-          <HelpCircle className="mx-auto h-12 w-12 text-primary" />
-          <h3 className="text-xl font-black uppercase">{contactTitle}</h3>
-          <p className="mx-auto max-w-md font-medium text-muted-foreground">{contactDescription}</p>
+        <div className="space-y-4 border-3 border-neutral-400 bg-blue-600/10 p-8 text-center shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+          <HelpCircle className="mx-auto h-12 w-12 text-white" />
+          <h3 className="font-black">{contactTitle}</h3>
+          <p className="text-base font-medium text-white md:text-lg">{contactDescription}</p>
           {contactAction && (
             <Button size="lg" onClick={contactAction.onClick}>
               <MessageCircle className="mr-2 h-4 w-4" />
@@ -241,25 +250,33 @@ export function FAQWithContact({
 // ============================================================================
 export interface FAQSimpleListProps {
   title?: string
+  subtitle?: string
+  description?: string
   items: FAQItem[]
-  className?: string
 }
 
-export function FAQSimpleList({ title, items, className }: FAQSimpleListProps) {
+export function FAQSimpleList({ title, subtitle, description, items }: FAQSimpleListProps) {
   return (
-    <section className={cn("px-4 py-16 md:px-8 lg:px-16", className)}>
-      <div className="mx-auto max-w-3xl">
-        {title && (
-          <h2 className="mb-12 text-center text-3xl font-black tracking-tight uppercase md:text-4xl">
-            {title}
-          </h2>
+    <section className="px-4 py-16 md:px-8">
+      <div className="mx-auto max-w-6xl">
+        {(title || subtitle || description) && (
+          <div className="mb-12 space-y-2 text-center">
+            {subtitle && <p className="text-sm font-bold text-blue-600 uppercase">{subtitle}</p>}
+            {title && <h2 className="font-black">{title}</h2>}
+            {description && (
+              <p className="text-base font-medium text-white md:text-lg">{description}</p>
+            )}
+          </div>
         )}
 
-        <div className="space-y-8">
+        <div className="space-y-4">
           {items.map((item) => (
-            <div key={item.question} className="space-y-2">
-              <h3 className="text-lg font-bold">{item.question}</h3>
-              <p className="text-muted-foreground">{item.answer}</p>
+            <div
+              key={item.question}
+              className="border-3 border-neutral-400 bg-black px-6 py-8 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] md:px-8"
+            >
+              <h4 className="font-bold tracking-wide">{item.question}</h4>
+              <p className="mt-4 text-sm font-medium text-white md:text-base">{item.answer}</p>
             </div>
           ))}
         </div>
@@ -273,14 +290,14 @@ export function FAQSimpleList({ title, items, className }: FAQSimpleListProps) {
 // ============================================================================
 function FAQCard({ item, index }: { item: FAQItem; index: number }) {
   return (
-    <div className="border-3 border-foreground bg-card p-6 shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+    <div className="border-3 border-neutral-400 bg-black px-6 py-8 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] md:px-8">
       <div className="flex gap-4">
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center border-2 border-foreground bg-primary text-sm font-black text-primary-foreground">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-sm font-black text-white">
           {index + 1}
         </div>
         <div>
-          <h3 className="mb-2 font-bold">{item.question}</h3>
-          <p className="text-sm text-muted-foreground">{item.answer}</p>
+          <h4 className="font-bold tracking-wide">{item.question}</h4>
+          <p className="mt-4 text-sm font-medium text-white md:text-base">{item.answer}</p>
         </div>
       </div>
     </div>

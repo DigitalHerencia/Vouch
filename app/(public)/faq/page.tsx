@@ -19,7 +19,6 @@ export default function FaqRoute() {
       <HeroSection.Minimal
         title="Precise answers"
         description="Vouch is the commitment layer for deterministic confirmation and provider-backed payment coordination."
-        className="px-0 py-0"
       />
 
       <section className="grid min-h-0 gap-8 md:grid-cols-[minmax(0,1fr)_24rem]">
@@ -29,10 +28,8 @@ export default function FaqRoute() {
             question: section.heading,
             answer: section.body.join(" "),
           }))}
-          className="px-0 py-0"
         />
         <CTASection.WithBackground
-          className="self-start px-0 py-0"
           icon={<CalloutIcon className="size-8" />}
           title={faqCalloutContent.title}
           description={faqCalloutContent.body}

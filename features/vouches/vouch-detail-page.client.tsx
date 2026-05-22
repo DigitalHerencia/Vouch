@@ -34,7 +34,7 @@ export function ConfirmPresenceInlineForm({
         context={
           currentUserCode ? (
             <div>
-              <p className="text-xs font-semibold text-neutral-500 uppercase">Your code</p>
+              <p className="text-xs font-semibold text-neutral-400 uppercase">Your code</p>
               <p className="mt-1 font-mono text-2xl text-white">{currentUserCode}</p>
             </div>
           ) : null
@@ -43,7 +43,7 @@ export function ConfirmPresenceInlineForm({
         primary={
           <form action={action} className="grid gap-4">
             <input name="vouchId" type="hidden" value={vouchId} />
-            <label className="text-sm font-semibold text-neutral-300" htmlFor="submittedCode">
+            <label className="text-sm font-semibold text-neutral-400" htmlFor="submittedCode">
               Other participant code
             </label>
             <Input

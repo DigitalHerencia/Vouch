@@ -99,7 +99,7 @@ function draftToSearchParams(values: DraftFormValues): URLSearchParams {
   return params
 }
 
-export function CreateVouchDraftForm({ className }: { className?: string | undefined }) {
+export function CreateVouchDraftForm() {
   const router = useRouter()
   const form = useForm<DraftFormValues>({
     resolver: zodResolver(draftFormSchema),
@@ -115,7 +115,6 @@ export function CreateVouchDraftForm({ className }: { className?: string | undef
     <OnboardingFlow.WorkspaceSetup
       title={vouchPageCopy.create.detailsHeader}
       description={vouchPageCopy.create.readyBody}
-      className={className}
     >
       <form
         onSubmit={form.handleSubmit((values) => {
@@ -192,10 +191,8 @@ export function CreateVouchDraftForm({ className }: { className?: string | undef
 
 export function ConfirmCreateVouchForm({
   draft,
-  className,
 }: {
   draft: CreateVouchDraftValues
-  className?: string | undefined
 }) {
   const [isPending, startTransition] = useTransition()
   const [confirmationOpen, setConfirmationOpen] = useState(false)
@@ -211,7 +208,7 @@ export function ConfirmCreateVouchForm({
   const feeEstimate = Math.max(Math.round(amountCents * 0.05), 500)
 
   return (
-    <Card className={className}>
+    <Card>
       <CardHeader>
         <CardTitle>{vouchPageCopy.create.reviewTitle}</CardTitle>
         <CardDescription>{vouchPageCopy.create.reviewBody}</CardDescription>
@@ -252,7 +249,7 @@ export function ConfirmCreateVouchForm({
             </Alert>
           ) : null}
 
-          <div className="grid border border-neutral-800 sm:grid-cols-2">
+          <div className="grid border border-neutral-400 sm:grid-cols-2">
             <SummaryRow label="Vouch amount" value={formatCurrency(amountCents)} />
             <SummaryRow label="Estimated Vouch fee" value={formatCurrency(feeEstimate)} />
             <SummaryRow label="Appointment" value={draft.appointmentStartsAt.replace("T", " ")} />
@@ -288,8 +285,8 @@ export function ConfirmCreateVouchForm({
           </Button>
         </CardFooter>
         <Sheet open={confirmationOpen} onOpenChange={setConfirmationOpen}>
-          <SheetContent className="border-l-2 border-neutral-100 bg-black text-white shadow-[6px_0_0_0_#1d4ed8]">
-            <SheetHeader className="border-b-2 border-neutral-100 p-5">
+          <SheetContent className="border-l-2 border-neutral-400 bg-black text-white shadow-[6px_0_0_0_oklch(54.6%_0.245_262.881)]">
+            <SheetHeader className="border-b-2 border-neutral-400 p-5">
               <SheetTitle className="font-(family-name:--font-display) text-4xl leading-none tracking-[0.04em] text-white uppercase">
                 {vouchPageCopy.create.commitAction}
               </SheetTitle>
@@ -303,7 +300,7 @@ export function ConfirmCreateVouchForm({
                 name="disclaimerAccepted"
                 render={({ field, fieldState }) => (
                   <Field>
-                    <label className="flex items-start gap-3 border-2 border-neutral-100 bg-neutral-950 p-4">
+                    <label className="flex items-start gap-3 border-2 border-neutral-400 bg-black p-4">
                       <Checkbox
                         className="mt-1 rounded-none"
                         checked={field.value}
@@ -320,7 +317,7 @@ export function ConfirmCreateVouchForm({
                           hosted Stripe checkout. Read the{" "}
                           <Link
                             href="/disclaimer"
-                            className="text-primary underline-offset-4 hover:underline"
+                            className="text-blue-600 underline-offset-4 hover:underline"
                           >
                             disclaimer
                           </Link>
@@ -337,7 +334,7 @@ export function ConfirmCreateVouchForm({
                 )}
               />
             </div>
-            <SheetFooter className="border-t-2 border-neutral-100 p-5">
+            <SheetFooter className="border-t-2 border-neutral-400 p-5">
               <Button
                 type="submit"
                 form="confirm-create-vouch-form"
@@ -359,11 +356,11 @@ export function ConfirmCreateVouchForm({
 
 function SummaryRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-b border-neutral-800 p-4 sm:border-r sm:[&:nth-child(2n)]:border-r-0">
-      <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-500 uppercase">
+    <div className="border-b border-neutral-400 p-4 sm:border-r sm:[&:nth-child(2n)]:border-r-0">
+      <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-400 uppercase">
         {label}
       </p>
-      <p className="mt-2 text-sm leading-6 font-bold text-neutral-100">{value}</p>
+      <p className="mt-2 text-sm leading-6 font-bold text-white">{value}</p>
     </div>
   )
 }

@@ -5,19 +5,17 @@ import type { ReactNode } from "react"
 import { PublicMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"
 import { PublicFooter } from "@/components/navigation/public-footer"
 import { PublicHeader } from "@/components/navigation/public-header"
-import { cn } from "@/lib/utils"
 
 export interface PublicShellProps {
   children: ReactNode
-  className?: string | undefined
   withMobileBottomNav?: boolean | undefined
 }
 
-export function PublicShell({ children, className, withMobileBottomNav = true }: PublicShellProps) {
+export function PublicShell({ children, withMobileBottomNav = true }: PublicShellProps) {
   return (
-    <div className={cn("min-h-dvh bg-transparent", className)}>
+    <div className="min-h-dvh">
       <PublicHeader />
-      <main className={cn("mx-auto w-full max-w-7xl", !withMobileBottomNav ? "pb-0" : undefined)}>
+      <main className={withMobileBottomNav ? "mx-auto w-full max-w-7xl" : "mx-auto w-full max-w-7xl pb-0"}>
         {children}
       </main>
       <PublicFooter />

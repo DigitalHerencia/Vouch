@@ -3,18 +3,18 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "border-foreground focus:ring-ring inline-flex items-center border-2 px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase shadow-[4px_4px_0px_hsl(var(--shadow-color))] transition-all duration-200 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none focus:ring-2 focus:ring-offset-2 focus:outline-none",
+  "inline-flex items-center border-2 border-neutral-400 px-2.5 py-0.5 text-xs font-bold tracking-wide uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all duration-200 hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 focus:outline-none",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground",
-        secondary: "bg-secondary text-secondary-foreground",
-        accent: "bg-accent text-accent-foreground",
-        destructive: "bg-destructive text-destructive-foreground",
-        success: "bg-success text-success-foreground",
-        warning: "bg-warning text-warning-foreground",
-        info: "bg-info text-info-foreground",
-        outline: "bg-background text-foreground",
+        default: "bg-blue-600 text-white",
+        secondary: "bg-neutral-900 text-white",
+        accent: "bg-blue-600 text-white",
+        destructive: "bg-red-600 text-white",
+        success: "bg-blue-600 text-white",
+        warning: "bg-blue-600 text-white",
+        info: "bg-blue-600 text-white",
+        outline: "bg-black text-white",
       },
     },
     defaultVariants: {

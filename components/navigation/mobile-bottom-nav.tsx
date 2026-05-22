@@ -15,11 +15,10 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
 
-import { UserMenu } from "@/components/auth/user-menu"
+import { UserMenu } from "@/components/navigation/user-menu"
 import { Button } from "@/components/ui/button"
 import { ProtocolDrawer } from "@/components/vouches/protocol-drawer"
 import { vouchPageCopy } from "@/content/vouches"
-import { cn } from "@/lib/utils"
 
 type WarningCopy = {
   title: string
@@ -53,7 +52,6 @@ type MobileBottomNavItem = LinkItem | ActionItem | AccountItem
 
 type MobileBottomNavProps = {
   items: readonly MobileBottomNavItem[]
-  className?: string
   "aria-label"?: string
 }
 
@@ -68,7 +66,6 @@ function isActivePath(pathname: string, href: string) {
 
 export function MobileBottomNav({
   items,
-  className,
   "aria-label": ariaLabel = "Mobile navigation",
 }: MobileBottomNavProps) {
   const pathname = usePathname()
@@ -78,25 +75,21 @@ export function MobileBottomNav({
     <>
       <nav
         aria-label={ariaLabel}
-        className={cn(
-          "fixed inset-x-0 bottom-0 z-50 grid h-14 w-full items-center border-t border-neutral-700 bg-neutral-950 px-1 pb-[env(safe-area-inset-bottom)] md:hidden",
-          items.length >= 5 ? "grid-cols-5" : "grid-cols-4",
-          className
-        )}
+        className={`fixed inset-x-0 bottom-0 z-50 grid h-14 w-full items-center border-t border-neutral-400 bg-black px-1 pb-[env(safe-area-inset-bottom)] md:hidden ${
+          items.length >= 5 ? "grid-cols-5" : "grid-cols-4"
+        }`}
       >
         {items.map((item) => {
           const Icon = item.icon
           const isActive = item.kind === "link" && isActivePath(pathname, item.href)
 
-          const itemClassName = cn(
-            "flex h-full min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] leading-none font-semibold text-neutral-400 uppercase",
-            isActive && "text-neutral-100"
-          )
+          const itemClassName = isActive
+            ? "flex h-full min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] leading-none font-semibold text-white uppercase"
+            : "flex h-full min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] leading-none font-semibold text-neutral-400 uppercase"
 
-          const iconClassName = cn(
-            "grid size-5 shrink-0 place-items-center",
-            item.primary ? "text-blue-600" : "text-current"
-          )
+          const iconClassName = item.primary
+            ? "grid size-5 shrink-0 place-items-center text-blue-600"
+            : "grid size-5 shrink-0 place-items-center text-white"
 
           const content = (
             <>

@@ -1,20 +1,15 @@
 // components/status/countdown.tsx
 
-import { cn } from "@/lib/utils"
-
 export interface CountdownProps {
   label: string
   value: string
   description?: string | undefined
-  className?: string | undefined
 }
 
-export function Countdown({ label, value, description, className }: CountdownProps) {
+export function Countdown({ label, value, description }: CountdownProps) {
   return (
-    <section
-      className={cn("border border-neutral-700 bg-black/55 p-5 backdrop-blur-[2px]", className)}
-    >
-      <p className="font-(family-name:--font-display) text-[14px] leading-none tracking-[0.08em] text-neutral-500 uppercase">
+    <section className="border border-neutral-400 bg-black p-5 backdrop-blur-[2px]">
+      <p className="font-(family-name:--font-display) text-[14px] leading-none tracking-[0.08em] text-neutral-400 uppercase">
         {label}
       </p>
 

@@ -31,13 +31,13 @@ export function PaymentStatusPanel({
         <CardTitle>{title}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="border border-neutral-800">
+        <div className="border border-neutral-400">
           {rows.map(([label, value]) => (
             <div
               key={label}
-              className="flex items-start justify-between gap-4 border-b border-neutral-800 px-4 py-3 last:border-b-0"
+              className="flex items-start justify-between gap-4 border-b border-neutral-400 px-4 py-3 last:border-b-0"
             >
-              <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-500 uppercase">
+              <p className="font-(family-name:--font-display) text-xs leading-none tracking-[0.08em] text-neutral-400 uppercase">
                 {label}
               </p>
               <p className="text-sm font-bold text-white">{value}</p>
@@ -45,10 +45,8 @@ export function PaymentStatusPanel({
           ))}
         </div>
         <div className="flex flex-wrap gap-2">
-          <Badge className="border-blue-700 bg-blue-950/50 text-blue-200">
-            {paymentStatusLabel}
-          </Badge>
-          <Badge className="border-neutral-700 bg-neutral-950 text-neutral-300">
+          <Badge className="border-blue-600 bg-blue-600 text-white">{paymentStatusLabel}</Badge>
+          <Badge className="border-neutral-400 bg-black text-neutral-400">
             {settlementStatusLabel}
           </Badge>
         </div>

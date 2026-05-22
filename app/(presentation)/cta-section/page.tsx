@@ -19,6 +19,7 @@ export default function CTASection() {
           secondaryAction={{ label: "Learn More", href: "#" }}
         />
         <CTAWithBackground
+          backgroundColor="primary"
           title="Both Confirm, Funds Release"
           description="Payment outcome follows authenticated state."
           primaryAction={{ label: "Get Started", href: "#" }}

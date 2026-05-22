@@ -8,7 +8,6 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
-import { cn } from "@/lib/utils"
 import {
   User,
   Bell,
@@ -46,15 +45,14 @@ export interface ProfileSettingsProps {
   }
   onSave?: (data: ProfileSettingsProps["user"]) => void
   onAvatarChange?: (file: File) => void
-  className?: string
 }
 
-export function ProfileSettings({ user = defaultProfileUser, className }: ProfileSettingsProps) {
+export function ProfileSettings({ user = defaultProfileUser }: ProfileSettingsProps) {
   return (
-    <Card className={className}>
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-black uppercase">
-          <User className="h-5 w-5" />
+          <User className="h-12 w-12" />
           Profile Settings
         </CardTitle>
         <CardDescription>Manage your public profile information</CardDescription>
@@ -63,7 +61,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
         <div className="space-y-6">
           <div className="flex items-center gap-6">
             <div className="relative">
-              <Avatar className="h-24 w-24 border-3 border-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))]">
+              <Avatar className="h-24 w-24 border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
                 <AvatarImage src={user.avatar} />
                 <AvatarFallback className="text-2xl font-bold">
                   {user.name
@@ -74,14 +72,14 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
               </Avatar>
               <button
                 type="button"
-                className="absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center border-2 border-foreground bg-primary text-primary-foreground shadow-[2px_2px_0px_hsl(var(--shadow-color))] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
+                className="absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white shadow-[2px_2px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
               >
                 <Upload className="h-4 w-4" />
               </button>
             </div>
             <div>
               <h3 className="font-bold">Profile Photo</h3>
-              <p className="text-sm text-muted-foreground">JPG, PNG or GIF. Max 2MB.</p>
+              <p className="text-sm text-neutral-400">JPG, PNG or GIF. Max 2MB.</p>
             </div>
           </div>
 
@@ -97,7 +95,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
                 value={user.name}
                 readOnly
                 placeholder="John Doe"
-                className="border-2 border-primary-foreground"
+                className="border-2 border-neutral-400"
               />
             </div>
             <div className="space-y-2">
@@ -110,7 +108,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
                 value={user.email}
                 readOnly
                 placeholder="you@example.com"
-                className="border-2 border-primary-foreground"
+                className="border-2 border-neutral-400"
               />
             </div>
           </div>
@@ -125,7 +123,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
               readOnly
               placeholder="Tell us about yourself..."
               rows={3}
-              className="border-2 border-primary-foreground"
+              className="border-2 border-neutral-400"
             />
           </div>
 
@@ -139,7 +137,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
                 value={user.company ?? ""}
                 readOnly
                 placeholder="Acme Inc."
-                className="border-2 border-primary-foreground"
+                className="border-2 border-neutral-400"
               />
             </div>
             <div className="space-y-2">
@@ -151,7 +149,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
                 value={user.location ?? ""}
                 readOnly
                 placeholder="San Francisco, CA"
-                className="border-2 border-primary-foreground"
+                className="border-2 border-neutral-400"
               />
             </div>
           </div>
@@ -165,7 +163,7 @@ export function ProfileSettings({ user = defaultProfileUser, className }: Profil
               value={user.website ?? ""}
               readOnly
               placeholder="https://yourwebsite.com"
-              className="border-2 border-primary-foreground"
+              className="border-2 border-neutral-400"
             />
           </div>
 
@@ -195,7 +193,6 @@ export interface NotificationSetting {
 export interface NotificationSettingsProps {
   notifications?: NotificationSetting[]
   onSave?: (settings: NotificationSetting[]) => void
-  className?: string
 }
 
 const defaultNotifications: NotificationSetting[] = [
@@ -229,21 +226,18 @@ const defaultNotifications: NotificationSetting[] = [
   },
 ]
 
-export function NotificationSettings({
-  notifications = defaultNotifications,
-  className,
-}: NotificationSettingsProps) {
+export function NotificationSettings({ notifications = defaultNotifications }: NotificationSettingsProps) {
   return (
-    <Card className={className}>
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-black uppercase">
-          <Bell className="h-5 w-5" />
+          <Bell className="h-12 w-12" />
           Notifications
         </CardTitle>
         <CardDescription>Choose how you want to be notified</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="mr-8 flex items-center justify-end gap-8 text-xs font-bold tracking-wide text-foreground uppercase">
+        <div className="mr-8 flex items-center justify-end gap-8 text-xs font-bold tracking-wide text-white uppercase">
           <span>Email</span>
           <span>Push</span>
         </div>
@@ -252,11 +246,11 @@ export function NotificationSettings({
           {notifications.map((setting) => (
             <div
               key={setting.id}
-              className="flex items-center justify-between border-3 border-foreground bg-card p-4"
+              className="flex items-center justify-between border-3 border-neutral-400 bg-black p-4"
             >
               <div>
                 <p className="font-bold">{setting.title}</p>
-                <p className="text-sm text-muted-foreground">{setting.description}</p>
+                <p className="text-sm text-neutral-400">{setting.description}</p>
               </div>
               <div className="flex items-center gap-6">
                 <Switch
@@ -298,33 +292,31 @@ export interface SecuritySettingsProps {
   onChangePassword?: () => void
   onToggleTwoFactor?: (enabled: boolean) => void
   onRevokeSession?: (sessionId: string) => void
-  className?: string
 }
 
 export function SecuritySettings({
   twoFactorEnabled = false,
   sessions = [],
-  className,
 }: SecuritySettingsProps) {
   return (
-    <Card className={className}>
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-black uppercase">
-          <Shield className="h-5 w-5" />
+          <Shield className="h-12 w-12" />
           Security
         </CardTitle>
         <CardDescription>Manage your account security settings</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* Password */}
-        <div className="flex items-center justify-between border-3 border-foreground bg-muted/30 p-4">
+        <div className="flex items-center justify-between border-3 border-neutral-400 bg-black p-4">
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-card">
+            <div className="flex h-10 w-10 items-center justify-center border-2 border-neutral-400 bg-blue-600">
               <Key className="h-5 w-5" />
             </div>
             <div>
               <p className="font-bold">Password</p>
-              <p className="text-sm text-muted-foreground">Last changed 30 days ago</p>
+              <p className="text-sm text-neutral-400">Last changed 30 days ago</p>
             </div>
           </div>
           <Button type="button" variant="outline">
@@ -333,14 +325,14 @@ export function SecuritySettings({
         </div>
 
         {/* Two-Factor Authentication */}
-        <div className="flex items-center justify-between border-3 border-foreground bg-muted/30 p-4">
+        <div className="flex items-center justify-between border-3 border-neutral-400 bg-black p-4">
           <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center border-2 border-foreground bg-card">
+            <div className="flex h-10 w-10 items-center justify-center border-2 border-neutral-400 bg-blue-600">
               <Shield className="h-5 w-5" />
             </div>
             <div>
               <p className="font-bold">Two-Factor Authentication</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-neutral-400">
                 {twoFactorEnabled
                   ? "Enabled - Your account is more secure"
                   : "Add an extra layer of security"}
@@ -360,23 +352,23 @@ export function SecuritySettings({
                 {sessions.map((session) => (
                   <div
                     key={session.id}
-                    className="flex items-center justify-between border-2 border-foreground p-3"
+                    className="flex items-center justify-between border-2 border-neutral-400 p-3"
                   >
                     <div>
                       <p className="flex items-center gap-2 font-medium">
                         {session.device}
                         {session.current && (
-                          <span className="bg-success/20 text-success px-2 py-0.5 text-xs font-bold uppercase">
+                          <span className="bg-blue-600 px-2 py-0.5 text-xs font-bold text-white uppercase">
                             Current
                           </span>
                         )}
                       </p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-neutral-400">
                         {session.location} · {session.lastActive}
                       </p>
                     </div>
                     {!session.current && (
-                      <Button type="button" variant="ghost" size="sm">
+                      <Button type="button" variant="outline" size="sm">
                         Revoke
                       </Button>
                     )}
@@ -399,28 +391,19 @@ export interface AppearanceSettingsProps {
   accentColor?: string
   onThemeChange?: (theme: "light" | "dark" | "system") => void
   onAccentColorChange?: (color: string) => void
-  className?: string
 }
 
-const accentColors = [
-  { name: "Blue", value: "#3b82f6" },
-  { name: "Green", value: "#22c55e" },
-  { name: "Purple", value: "#a855f7" },
-  { name: "Orange", value: "#f97316" },
-  { name: "Pink", value: "#ec4899" },
-  { name: "Red", value: "#ef4444" },
-]
+const accentColors = [{ name: "Blue", value: "blue-600" }]
 
 export function AppearanceSettings({
   theme = "system",
-  accentColor = "#3b82f6",
-  className,
+  accentColor = "blue-600",
 }: AppearanceSettingsProps) {
   return (
-    <Card className={className}>
+    <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2 font-black uppercase">
-          <Palette className="h-5 w-5" />
+          <Palette className="h-12 w-12" />
           Appearance
         </CardTitle>
         <CardDescription>Customize the look and feel</CardDescription>
@@ -438,38 +421,14 @@ export function AppearanceSettings({
               <button
                 key={value}
                 type="button"
-                className={cn(
-                  "flex flex-col items-center gap-2 border-3 border-foreground p-4 transition-all",
+                className={
                   theme === value
-                    ? "bg-primary text-primary-foreground shadow-[4px_4px_0px_hsl(var(--shadow-color))]"
-                    : "bg-card hover:bg-muted"
-                )}
+                    ? "flex flex-col items-center gap-2 border-3 border-neutral-400 p-4 transition-all bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+                    : "flex flex-col items-center gap-2 border-3 border-neutral-400 p-4 transition-all bg-black hover:bg-black"
+                }
               >
                 <Icon className="h-6 w-6" />
                 <span className="text-sm font-bold uppercase">{label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <Separator />
-
-        {/* Accent Color */}
-        <div className="space-y-3">
-          <Label className="text-xs font-bold uppercase">Accent Color</Label>
-          <div className="flex flex-wrap gap-3">
-            {accentColors.map((color) => (
-              <button
-                key={color.value}
-                type="button"
-                className={cn(
-                  "h-10 w-10 border-3 border-foreground transition-all",
-                  accentColor === color.value && "ring-2 ring-foreground ring-offset-2"
-                )}
-                style={{ backgroundColor: color.value }}
-                title={color.name}
-              >
-                {accentColor === color.value && <Check className="mx-auto h-5 w-5 text-white" />}
               </button>
             ))}
           </div>
@@ -486,46 +445,43 @@ export interface DangerZoneProps {
   onExportData?: () => void
   onDeactivate?: () => void
   onDelete?: () => void
-  className?: string
 }
 
-export function DangerZone({ className }: DangerZoneProps) {
+export function DangerZone({}: DangerZoneProps) {
   return (
-    <Card className={cn("border-destructive", className)}>
+    <Card className="border-red-600">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-black text-destructive uppercase">
-          <AlertTriangle className="h-5 w-5" />
+        <CardTitle className="flex items-center gap-2 font-black text-red-600 uppercase">
+          <AlertTriangle className="h-12 w-12" />
           Danger Zone
         </CardTitle>
         <CardDescription>Irreversible and destructive actions</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="flex items-center justify-between border-2 border-foreground p-4">
+        <div className="flex items-center justify-between border-2 border-neutral-400 p-4">
           <div>
             <p className="font-bold">Export Data</p>
-            <p className="text-sm text-muted-foreground">Download all your data in JSON format</p>
+            <p className="text-sm text-neutral-400">Download all your data in JSON format</p>
           </div>
           <Button type="button" variant="outline">
             Export
           </Button>
         </div>
 
-        <div className="flex items-center justify-between border-2 border-foreground p-4">
+        <div className="flex items-center justify-between border-2 border-neutral-400 p-4">
           <div>
             <p className="font-bold">Deactivate Account</p>
-            <p className="text-sm text-muted-foreground">Temporarily disable your account</p>
+            <p className="text-sm text-neutral-400">Temporarily disable your account</p>
           </div>
           <Button type="button" variant="outline">
             Deactivate
           </Button>
         </div>
 
-        <div className="flex items-center justify-between border-2 border-destructive/50 bg-destructive/5 p-4">
+        <div className="flex items-center justify-between border-2 border-red-600 bg-red-600/10 p-4">
           <div>
-            <p className="font-bold text-destructive">Delete Account</p>
-            <p className="text-sm text-muted-foreground">
-              Permanently delete your account and all data
-            </p>
+            <p className="font-bold text-red-600">Delete Account</p>
+            <p className="text-sm text-neutral-400">Permanently delete your account and all data</p>
           </div>
           <Button type="button" variant="destructive">
             <Trash2 className="mr-2 h-4 w-4" />
@@ -542,15 +498,14 @@ export function DangerZone({ className }: DangerZoneProps) {
 // ============================================================================
 export interface SettingsPageProps {
   defaultTab?: string
-  className?: string
 }
 
-export function SettingsPage({ defaultTab = "profile", className }: SettingsPageProps) {
+export function SettingsPage({ defaultTab = "profile" }: SettingsPageProps) {
   return (
-    <div className={cn("mx-auto max-w-4xl px-4 py-8", className)}>
+    <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-black tracking-tight uppercase">Settings</h1>
-        <p className="mt-1 text-muted-foreground">Manage your account settings and preferences</p>
+        <h3 className="text-3xl font-black uppercase">Settings</h3>
+        <p className="mt-1 text-neutral-400">Manage your account settings and preferences</p>
       </div>
 
       <Tabs defaultValue={defaultTab} className="space-y-6">
@@ -613,13 +568,13 @@ export function SettingsPage({ defaultTab = "profile", className }: SettingsPage
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2 font-black uppercase">
-                <CreditCard className="h-5 w-5" />
+                <CreditCard className="h-12 w-12" />
                 Billing
               </CardTitle>
               <CardDescription>Manage your subscription and payment methods</CardDescription>
             </CardHeader>
             <CardContent>
-              <p className="text-muted-foreground">Billing settings coming soon...</p>
+              <p className="text-neutral-400">Billing settings coming soon...</p>
             </CardContent>
           </Card>
         </TabsContent>

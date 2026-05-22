@@ -119,10 +119,9 @@ export async function DashboardPage() {
         <HeroSection.Minimal
           title={dashboardContent.hero.title}
           description={dashboardContent.hero.body}
-          className="px-0 py-0"
         />
 
-        <StatsSection.Cards stats={metrics} className="bg-transparent px-0 py-0" />
+        <StatsSection.Cards stats={metrics} />
       </section>
 
       <section className="grid min-h-0 gap-4 sm:gap-6 md:row-span-3 md:gap-8">
@@ -132,7 +131,6 @@ export async function DashboardPage() {
             description={dashboardContent.readiness.body}
             icon={<AlertCircle className="size-8" />}
             primaryAction={{ label: dashboardContent.readiness.cta, href: "/dashboard" }}
-            className="px-0 py-0"
           />
         ) : null}
 
@@ -177,7 +175,6 @@ export async function DashboardPage() {
           description={dashboardContent.cta.body}
           icon={<Handshake className="size-8" />}
           primaryAction={{ label: dashboardContent.cta.label, href: "/vouches/new" }}
-          className="px-0 py-0"
         />
       </section>
     </main>

@@ -1,7 +1,6 @@
 import { CTASection } from "@/components/blocks/cta-section"
 import { FeatureGrid } from "@/components/blocks/feature-grid"
 import { HeroSection } from "@/components/blocks/hero-section"
-import { LogoCloud } from "@/components/blocks/logo-cloud"
 import { StatsSection } from "@/components/blocks/stats-section"
 import {
   pricingAlternatingFeatures,
@@ -21,21 +20,6 @@ export default function PricingPage() {
         description={PricingHeroContent.body}
         primaryAction={{ label: "Create a Vouch", href: "/sign-up?return_to=/vouches/new" }}
         stats={pricingStats.map((stat) => ({ value: stat.value, label: stat.label }))}
-        className="px-0 py-0"
-      />
-
-      <LogoCloud.Cards
-        title={pricingTrustContent.title}
-        subtitle={pricingTrustContent.subtitle}
-        logos={pricingTrustContent.logos.map((item) => ({
-          name: item.name,
-          logo: (
-            <span className="font-(family-name:--font-display) text-2xl tracking-[0.08em] text-white uppercase">
-              {item.logo}
-            </span>
-          ),
-        }))}
-        className="bg-transparent px-0 py-0"
       />
 
       <FeatureGrid.Alternating
@@ -48,7 +32,6 @@ export default function PricingPage() {
             image: index % 2 === 0 ? "/logo-light.png" : "/logo-dark.png",
           }
         })}
-        className="px-0 py-0"
       />
 
       <section className="grid gap-6 md:grid-cols-[minmax(0,1fr)_24rem]">
@@ -56,7 +39,6 @@ export default function PricingPage() {
           title={PricingHeroContent.title}
           description="Fees are visible before commitment. Provider-backed payment state determines what can happen next."
           primaryAction={{ label: "Create a Vouch", href: "/sign-up?return_to=/vouches/new" }}
-          className="px-0 py-0"
         />
         <StatsSection.Cards
           stats={pricingStats.map((stat) => ({
@@ -64,12 +46,10 @@ export default function PricingPage() {
             value: stat.value,
             description: stat.body,
           }))}
-          className="bg-transparent px-0 py-0"
         />
       </section>
 
       <CTASection.WithBackground
-        className="px-0 py-0"
         icon={<PricingCalloutIcon className="size-8" />}
         title={pricingCalloutContent.title}
         description={pricingCalloutContent.body}
