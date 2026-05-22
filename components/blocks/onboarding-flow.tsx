@@ -10,6 +10,9 @@ import {
   ArrowRight,
   ArrowLeft,
   Check,
+  CalendarClock,
+  CircleDollarSign,
+  FileCheck2,
   User,
   Building,
   Target,
@@ -101,17 +104,21 @@ export function OnboardingWizard({
               aria-current={index === currentStep ? "step" : undefined}
               className={
                 index < currentStep
-                  ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 font-bold transition-all bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+                  ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-blue-600 font-bold text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all"
                   : index === currentStep
-                    ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 font-bold transition-all scale-110 bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
-                    : "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 font-bold transition-all bg-neutral-900 text-neutral-400"
+                    ? "flex h-10 w-10 scale-110 items-center justify-center border-3 border-neutral-400 bg-blue-600 font-bold text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all"
+                    : "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-neutral-900 font-bold text-neutral-400 transition-all"
               }
             >
               {index < currentStep ? <Check className="h-5 w-5" /> : index + 1}
             </div>
             {index < steps.length - 1 && (
               <div
-                className={index < currentStep ? "h-1 w-8 transition-colors bg-blue-600" : "h-1 w-8 transition-colors bg-neutral-900"}
+                className={
+                  index < currentStep
+                    ? "h-1 w-8 bg-blue-600 transition-colors"
+                    : "h-1 w-8 bg-neutral-900 transition-colors"
+                }
               />
             )}
           </React.Fragment>
@@ -152,6 +159,419 @@ export function OnboardingWizard({
           </div>
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+// ============================================================================
+// ONBOARDING VARIANT 1B: Vouch Creation Wizard
+// ============================================================================
+export type VouchCreationDraft = {
+  amountDollars: string
+  appointmentStartsAt: string
+  confirmationOpensAt: string
+  confirmationExpiresAt: string
+  disclaimerAccepted: boolean
+}
+
+export type VouchCreationActionResult =
+  | {
+      ok: true
+      data?: {
+        amountCents?: number
+        customerTotalCents?: number
+        vouchServiceFeeCents?: number
+        processingFeeOffsetCents?: number
+        detailPath?: string
+        checkoutUrl?: string
+      }
+    }
+  | {
+      ok: false
+      formError?: string
+      fieldErrors?: Record<string, string[]>
+    }
+
+export interface VouchCreationWizardProps {
+  initialDraft?: Partial<VouchCreationDraft> | undefined
+  onSaveAmount: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
+  onSaveWindow: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
+  onCreateVouch: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
+}
+
+const defaultVouchDraft: VouchCreationDraft = {
+  amountDollars: "50.00",
+  appointmentStartsAt: "",
+  confirmationOpensAt: "",
+  confirmationExpiresAt: "",
+  disclaimerAccepted: false,
+}
+
+function dollarsFromCents(cents?: number): string {
+  if (!Number.isFinite(cents)) return "$0.00"
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format((cents ?? 0) / 100)
+}
+
+function firstFieldError(
+  fieldErrors: Record<string, string[]> | undefined,
+  fields: string[]
+): string | null {
+  for (const field of fields) {
+    const message = fieldErrors?.[field]?.[0]
+    if (message) return message
+  }
+
+  return null
+}
+
+function FieldShell({
+  label,
+  children,
+  description,
+  error,
+}: {
+  label: string
+  children: React.ReactNode
+  description?: string | undefined
+  error?: string | null | undefined
+}) {
+  return (
+    <div className="min-w-0 space-y-2">
+      <Label className="text-[11px] font-black tracking-widest text-neutral-300 uppercase">
+        {label}
+      </Label>
+      {children}
+      {description ? (
+        <p className="text-[12px] leading-5 font-semibold text-neutral-400">{description}</p>
+      ) : null}
+      {error ? <p className="text-[12px] leading-5 font-semibold text-red-600">{error}</p> : null}
+    </div>
+  )
+}
+
+export function VouchCreationWizard({
+  initialDraft,
+  onSaveAmount,
+  onSaveWindow,
+  onCreateVouch,
+}: VouchCreationWizardProps) {
+  const [currentStep, setCurrentStep] = React.useState(0)
+  const [draft, setDraft] = React.useState<VouchCreationDraft>({
+    ...defaultVouchDraft,
+    ...initialDraft,
+  })
+  const [savedSteps, setSavedSteps] = React.useState<Set<number>>(() => new Set())
+  const [result, setResult] = React.useState<VouchCreationActionResult | null>(null)
+  const [isPending, startTransition] = React.useTransition()
+  const [optimisticStep, setOptimisticStep] = React.useOptimistic(currentStep)
+  const progress = ((optimisticStep + 1) / 3) * 100
+
+  const fieldErrors = result?.ok === false ? result.fieldErrors : undefined
+  const formError = result?.ok === false ? result.formError : null
+  const preview = result?.ok ? result.data : undefined
+  const steps = [
+    { title: "Amount", icon: CircleDollarSign },
+    { title: "Window", icon: CalendarClock },
+    { title: "Commit", icon: FileCheck2 },
+  ] as const
+
+  function updateDraft(patch: Partial<VouchCreationDraft>) {
+    setDraft((current) => ({ ...current, ...patch }))
+    setResult(null)
+  }
+
+  function markSaved(stepIndex: number) {
+    setSavedSteps((current) => {
+      const next = new Set(current)
+      next.add(stepIndex)
+      return next
+    })
+  }
+
+  function runStep(action: () => Promise<VouchCreationActionResult>, nextStep?: number) {
+    startTransition(async () => {
+      setResult(null)
+      if (typeof nextStep === "number") setOptimisticStep(nextStep)
+      const nextResult = await action()
+      setResult(nextResult)
+
+      if (!nextResult.ok) return
+
+      markSaved(currentStep)
+
+      if (typeof nextStep === "number") {
+        setCurrentStep(nextStep)
+      } else if (nextResult.data?.checkoutUrl) {
+        window.location.href = nextResult.data.checkoutUrl
+      } else if (nextResult.data?.detailPath) {
+        window.location.href = nextResult.data.detailPath
+      }
+    })
+  }
+
+  function goBack() {
+    const nextStep = Math.max(currentStep - 1, 0)
+    setOptimisticStep(nextStep)
+    setCurrentStep(nextStep)
+    setResult(null)
+  }
+
+  return (
+    <div className="grid h-full min-h-0 w-full gap-4 overflow-hidden lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+      <aside className="flex min-h-0 flex-col border border-neutral-400 bg-black">
+        <div className="border-b border-neutral-400 p-4 md:p-5">
+          <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
+            New Vouch
+          </p>
+          <h1 className="mt-2 text-2xl leading-none font-black tracking-wide uppercase md:text-4xl">
+            Create commitment
+          </h1>
+        </div>
+
+        <div className="grid flex-1 content-between gap-4 p-4 md:p-5">
+          <div className="space-y-3">
+            {steps.map((step, index) => {
+              const Icon = step.icon
+              const active = index === optimisticStep
+              const complete = savedSteps.has(index)
+
+              return (
+                <button
+                  key={step.title}
+                  type="button"
+                  onClick={() => {
+                    if (index <= currentStep || savedSteps.has(index - 1)) {
+                      setOptimisticStep(index)
+                      setCurrentStep(index)
+                      setResult(null)
+                    }
+                  }}
+                  className={[
+                    "grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border p-3 text-left transition",
+                    active
+                      ? "border-blue-600 bg-blue-600 text-white shadow-[5px_5px_0_#000]"
+                      : "border-neutral-400 bg-black text-neutral-300 hover:border-blue-600",
+                  ].join(" ")}
+                >
+                  <span className="flex size-10 items-center justify-center border border-neutral-400 bg-black text-white">
+                    {complete ? <Check className="size-5" /> : <Icon className="size-5" />}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-xs font-black tracking-widest uppercase">
+                      Step {index + 1}
+                    </span>
+                    <span className="block truncate text-sm font-black uppercase">
+                      {step.title}
+                    </span>
+                  </span>
+                  <span className="font-mono text-xs font-black">{complete ? "OK" : "..."}</span>
+                </button>
+              )
+            })}
+          </div>
+
+          <div>
+            <Progress value={progress} className="h-3 shadow-none" />
+            <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-bold text-neutral-400">
+              <span>{Math.round(progress)}% complete</span>
+              <span className="text-right">No manual release</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section className="min-h-0 overflow-hidden border border-neutral-400 bg-black">
+        <div className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto]">
+          <div className="border-b border-neutral-400 p-4 md:p-5">
+            <h2 className="text-xl leading-none font-black tracking-wide uppercase md:text-3xl">
+              {steps[optimisticStep]?.title}
+            </h2>
+            <p className="mt-2 max-w-2xl text-[12px] leading-5 font-semibold text-neutral-400 md:text-sm">
+              Each step validates independently. The final step writes the Vouch and routes to
+              provider-backed checkout when required.
+            </p>
+          </div>
+
+          <div className="min-h-0 overflow-hidden p-4 md:p-5">
+            {formError ? (
+              <div className="mb-4 border border-red-600 bg-red-600/10 p-3 text-sm font-semibold text-white">
+                {formError}
+              </div>
+            ) : null}
+
+            {optimisticStep === 0 ? (
+              <div className="grid h-full min-h-0 content-center gap-4">
+                <FieldShell
+                  label="Protected amount"
+                  description="Customer total is provider-owned. Vouch calculates fees server-side."
+                  error={firstFieldError(fieldErrors, ["amountCents"])}
+                >
+                  <Input
+                    type="number"
+                    inputMode="decimal"
+                    min="5"
+                    max="2500"
+                    step="0.01"
+                    value={draft.amountDollars}
+                    onChange={(event) => updateDraft({ amountDollars: event.target.value })}
+                    className="h-14 rounded-none border border-neutral-400 bg-black px-4 text-xl font-black text-white focus-visible:border-blue-600 focus-visible:ring-0"
+                  />
+                </FieldShell>
+
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <SummaryTile label="Protected" value={dollarsFromCents(preview?.amountCents)} />
+                  <SummaryTile
+                    label="Vouch fee"
+                    value={dollarsFromCents(preview?.vouchServiceFeeCents)}
+                  />
+                  <SummaryTile
+                    label="Processing offset"
+                    value={dollarsFromCents(preview?.processingFeeOffsetCents)}
+                  />
+                </div>
+              </div>
+            ) : null}
+
+            {optimisticStep === 1 ? (
+              <div className="grid h-full min-h-0 content-center gap-4">
+                <div className="grid gap-4 md:grid-cols-3">
+                  <FieldShell
+                    label="Appointment"
+                    error={firstFieldError(fieldErrors, ["appointmentStartsAt"])}
+                  >
+                    <Input
+                      type="datetime-local"
+                      value={draft.appointmentStartsAt}
+                      onChange={(event) => updateDraft({ appointmentStartsAt: event.target.value })}
+                      className="h-12 rounded-none border border-neutral-400 bg-black px-3 text-sm font-bold text-white focus-visible:border-blue-600 focus-visible:ring-0"
+                    />
+                  </FieldShell>
+                  <FieldShell
+                    label="Opens"
+                    error={firstFieldError(fieldErrors, ["confirmationOpensAt"])}
+                  >
+                    <Input
+                      type="datetime-local"
+                      value={draft.confirmationOpensAt}
+                      onChange={(event) => updateDraft({ confirmationOpensAt: event.target.value })}
+                      className="h-12 rounded-none border border-neutral-400 bg-black px-3 text-sm font-bold text-white focus-visible:border-blue-600 focus-visible:ring-0"
+                    />
+                  </FieldShell>
+                  <FieldShell
+                    label="Expires"
+                    error={firstFieldError(fieldErrors, ["confirmationExpiresAt"])}
+                  >
+                    <Input
+                      type="datetime-local"
+                      value={draft.confirmationExpiresAt}
+                      onChange={(event) =>
+                        updateDraft({ confirmationExpiresAt: event.target.value })
+                      }
+                      className="h-12 rounded-none border border-neutral-400 bg-black px-3 text-sm font-bold text-white focus-visible:border-blue-600 focus-visible:ring-0"
+                    />
+                  </FieldShell>
+                </div>
+
+                <div className="border border-neutral-400 p-4">
+                  <p className="text-sm font-semibold text-neutral-300">
+                    The confirmation window must open before it expires. The appointment must be at
+                    or before the confirmation deadline.
+                  </p>
+                </div>
+              </div>
+            ) : null}
+
+            {optimisticStep === 2 ? (
+              <div className="grid h-full min-h-0 content-center gap-4">
+                <div className="grid gap-3 md:grid-cols-3">
+                  <SummaryTile
+                    label="Amount"
+                    value={draft.amountDollars ? `$${draft.amountDollars}` : "$0.00"}
+                  />
+                  <SummaryTile label="Currency" value="USD" />
+                  <SummaryTile label="Outcome" value="State decides" />
+                </div>
+
+                <label className="flex min-w-0 items-start gap-3 border border-neutral-400 p-4">
+                  <input
+                    type="checkbox"
+                    checked={draft.disclaimerAccepted}
+                    onChange={(event) => updateDraft({ disclaimerAccepted: event.target.checked })}
+                    className="mt-1 size-5 accent-blue-600"
+                  />
+                  <span className="text-sm leading-6 font-semibold text-neutral-300">
+                    I understand this Vouch releases funds only when both parties confirm presence
+                    inside the confirmation window. Otherwise the provider-backed outcome is refund,
+                    void, or non-capture.
+                  </span>
+                </label>
+                {firstFieldError(fieldErrors, ["disclaimerAccepted"]) ? (
+                  <p className="text-sm font-semibold text-red-600">
+                    {firstFieldError(fieldErrors, ["disclaimerAccepted"])}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+
+          <div className="flex items-center justify-between gap-3 border-t border-neutral-400 p-4 md:p-5">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={goBack}
+              disabled={currentStep === 0 || isPending}
+            >
+              <ArrowLeft className="size-4" />
+              Back
+            </Button>
+
+            {currentStep === 0 ? (
+              <Button
+                type="button"
+                disabled={isPending}
+                onClick={() => runStep(() => onSaveAmount(draft), 1)}
+              >
+                Save amount
+                <ArrowRight className="size-4" />
+              </Button>
+            ) : null}
+
+            {currentStep === 1 ? (
+              <Button
+                type="button"
+                disabled={isPending}
+                onClick={() => runStep(() => onSaveWindow(draft), 2)}
+              >
+                Save window
+                <ArrowRight className="size-4" />
+              </Button>
+            ) : null}
+
+            {currentStep === 2 ? (
+              <Button
+                type="button"
+                disabled={isPending || !draft.disclaimerAccepted}
+                onClick={() => runStep(() => onCreateVouch(draft))}
+              >
+                Create Vouch
+                <ArrowRight className="size-4" />
+              </Button>
+            ) : null}
+          </div>
+        </div>
+      </section>
+    </div>
+  )
+}
+
+function SummaryTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 border border-neutral-400 bg-black p-4">
+      <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">{label}</p>
+      <p className="mt-2 truncate text-lg leading-none font-black text-white uppercase">{value}</p>
     </div>
   )
 }
@@ -366,8 +786,8 @@ export function ProfileSetup({
                   onClick={() => setFormData({ ...formData, role: role.value })}
                   className={
                     formData.role === role.value
-                      ? "border-2 border-neutral-400 p-2 text-sm font-medium transition-all bg-blue-600 text-white shadow-[3px_3px_0px_oklch(54.6%_0.245_262.881)]"
-                      : "border-2 border-neutral-400 p-2 text-sm font-medium transition-all bg-black hover:bg-neutral-900"
+                      ? "border-2 border-neutral-400 bg-blue-600 p-2 text-sm font-medium text-white shadow-[3px_3px_0px_oklch(54.6%_0.245_262.881)] transition-all"
+                      : "border-2 border-neutral-400 bg-black p-2 text-sm font-medium transition-all hover:bg-neutral-900"
                   }
                 >
                   {role.label}
@@ -389,8 +809,8 @@ export function ProfileSetup({
                   onClick={() => toggleInterest(interest.value)}
                   className={
                     formData.interests.includes(interest.value)
-                      ? "flex items-center gap-2 border-2 border-neutral-400 p-2 text-sm font-medium transition-all bg-neutral-900 text-white shadow-[3px_3px_0px_oklch(54.6%_0.245_262.881)]"
-                      : "flex items-center gap-2 border-2 border-neutral-400 p-2 text-sm font-medium transition-all bg-black hover:bg-neutral-900"
+                      ? "flex items-center gap-2 border-2 border-neutral-400 bg-neutral-900 p-2 text-sm font-medium text-white shadow-[3px_3px_0px_oklch(54.6%_0.245_262.881)] transition-all"
+                      : "flex items-center gap-2 border-2 border-neutral-400 bg-black p-2 text-sm font-medium transition-all hover:bg-neutral-900"
                   }
                 >
                   <div
@@ -597,8 +1017,8 @@ export function GoalSelection({
               onClick={() => toggleGoal(goal.id)}
               className={
                 selected.includes(goal.id)
-                  ? "flex items-start gap-4 border-3 border-neutral-400 p-4 text-left transition-all -translate-x-0.5 -translate-y-0.5 bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
-                  : "flex items-start gap-4 border-3 border-neutral-400 p-4 text-left transition-all bg-black hover:bg-neutral-900"
+                  ? "flex -translate-x-0.5 -translate-y-0.5 items-start gap-4 border-3 border-neutral-400 bg-blue-600 p-4 text-left shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all"
+                  : "flex items-start gap-4 border-3 border-neutral-400 bg-black p-4 text-left transition-all hover:bg-neutral-900"
               }
             >
               <div
@@ -695,6 +1115,7 @@ export function CompletionScreen({
 // ============================================================================
 export const OnboardingFlow = {
   Wizard: OnboardingWizard,
+  VouchCreation: VouchCreationWizard,
   Welcome: WelcomeScreen,
   ProfileSetup: ProfileSetup,
   WorkspaceSetup: WorkspaceSetup,

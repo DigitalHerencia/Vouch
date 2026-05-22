@@ -1,12 +1,13 @@
 import { Suspense } from "react"
 
-import { NewVouchFeature } from "@/features/new-vouch/new-vouch-feature"
-import { NewVouchSkeleton } from "@/features/new-vouch/new-vouch-skeleton"
+import { VouchForm } from "@/features/vouches/vouchForm"
 
-export default function Page() {
+import Loading from "./loading"
+
+export default function NewVouchRoute() {
   return (
-    <Suspense fallback={<NewVouchSkeleton />}>
-      <NewVouchFeature />
+    <Suspense fallback={<Loading />}>
+      <VouchForm />
     </Suspense>
   )
 }

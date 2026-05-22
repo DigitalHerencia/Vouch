@@ -3,8 +3,6 @@ export default function TenantPageC() {
     <main className="p-8 md:p-12">
       <section className="grid gap-8 md:gap-16">
         <Panel title="Top" />
-        <Panel title="Middle" />
-        <Panel title="Bottom" />
       </section>
     </main>
   )

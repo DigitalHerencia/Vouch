@@ -9,7 +9,7 @@ import { VouchCodeExchangePanel } from "@/components/vouches/vouch-code-exchange
 import { VouchDetailHeader } from "@/components/vouches/vouch-detail-header"
 import { VouchTimelinePanel } from "@/components/vouches/vouch-timeline-panel"
 import { vouchPageCopy } from "@/content/vouches"
-import { ConfirmPresenceInlineForm } from "@/features/vouches/vouch-detail-page.client"
+import { ConfirmPresenceInlineForm } from "@/features/vouches/vouchDetailFeature.client"
 import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
 import {
   getConfirmPresencePageState,
