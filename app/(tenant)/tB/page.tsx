@@ -1,7 +1,7 @@
-export default function TenantPageB() {
+export default function TenantPageC() {
   return (
-    <main className="min-h-screen p-2 text-white md:p-8">
-      <section className="grid min-h-[calc(100vh-3rem)] grid-rows-3 gap-2 md:min-h-[calc(100vh-4rem)] md:gap-2">
+    <main className="p-8 md:p-12">
+      <section className="grid gap-8 md:gap-16">
         <Panel title="Top" />
         <Panel title="Middle" />
         <Panel title="Bottom" />

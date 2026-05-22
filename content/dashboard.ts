@@ -5,9 +5,9 @@ export const dashboardContent = {
     body: "Here's what's happening with your Vouches. Amount, status, deadline, and consequence stay visible.",
   },
   readiness: {
-    title: "Complete readiness before creating or accepting Vouches.",
-    body: "Complete readiness checks so Vouch can coordinate payment state, confirmation windows, and deterministic outcomes.",
-    cta: "Return to dashboard",
+    title: "Complete Onboarding .",
+    body: "Stripe Connect Account onboarding is required before creating or sending Vouches.",
+    cta: "Stripe Connect Onboarding",
   },
   metrics: {
     activeVouches: {

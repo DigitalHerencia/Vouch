@@ -276,7 +276,7 @@ export function CTABanner({
 
   return (
     <div className={`relative border-b-3 border-neutral-400 px-4 py-3 ${variantStyles[variant]}`}>
-      <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-3 text-center sm:flex-row sm:text-left">
+      <div className="flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:text-left">
         <p className="text-sm font-bold">{text}</p>
         {action.href ? (
           <Button size="sm" variant="outline" className="shrink-0" asChild>

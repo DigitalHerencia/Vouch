@@ -10,7 +10,7 @@ import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
 import { AuthForms } from "@/components/blocks/auth-forms"
-import { SignUpFieldGroup } from "@/components/forms/sign-up-field-group"
+import { SignUp } from "@/components/forms/sign-up"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import {
   AlertDialog,
@@ -33,8 +33,8 @@ import { type SignupFormProps, type SignupFormValues } from "@/types/auth"
 const inputClassName =
   "h-10 w-full min-w-0 rounded-none border border-neutral-400 bg-black px-3.5 font-(family-name:--font-sans) text-sm font-semibold text-white shadow-none outline-none placeholder:text-neutral-400 focus-visible:border-blue-600 focus-visible:ring-0 sm:h-11 sm:px-4 lg:h-12"
 
-export function SignUpPageFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
-  return <SignupForm redirectUrl={redirectUrl} />
+export function SignUpFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
+  return <SignUpForm redirectUrl={redirectUrl} />
 }
 
 function getErrorMessage(error: unknown, fallback: string): string {
@@ -46,7 +46,7 @@ function getErrorMessage(error: unknown, fallback: string): string {
     : fallback
 }
 
-export function SignupForm({ redirectUrl, ...props }: SignupFormProps) {
+export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
   const { fetchStatus, signUp } = useSignUp()
   const router = useRouter()
   const [awaitingVerification, setAwaitingVerification] = useState(false)
@@ -313,7 +313,7 @@ export function SignupForm({ redirectUrl, ...props }: SignupFormProps) {
         ) : (
           <div className="max-w-full min-w-0 space-y-2.5 overflow-hidden sm:space-y-3">
             <div className="grid min-w-0 gap-2.5 sm:grid-cols-2 sm:gap-3">
-              <SignUpFieldGroup
+              <SignUp
                 id="firstName"
                 label="First name"
                 error={form.formState.errors.firstName?.message}
@@ -328,9 +328,9 @@ export function SignupForm({ redirectUrl, ...props }: SignupFormProps) {
                     setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
                   })}
                 />
-              </SignUpFieldGroup>
+              </SignUp>
 
-              <SignUpFieldGroup
+              <SignUp
                 id="lastName"
                 label="Last name"
                 error={form.formState.errors.lastName?.message}
@@ -345,10 +345,10 @@ export function SignupForm({ redirectUrl, ...props }: SignupFormProps) {
                     setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
                   })}
                 />
-              </SignUpFieldGroup>
+              </SignUp>
             </div>
 
-            <SignUpFieldGroup id="email" label="Email" error={form.formState.errors.email?.message}>
+            <SignUp id="email" label="Email" error={form.formState.errors.email?.message}>
               <Input
                 id="email"
                 type="email"
@@ -361,9 +361,9 @@ export function SignupForm({ redirectUrl, ...props }: SignupFormProps) {
                     typeof value === "string" ? value.trim().toLowerCase() : "",
                 })}
               />
-            </SignUpFieldGroup>
+            </SignUp>
 
-            <SignUpFieldGroup
+            <SignUp
               id="password"
               label="Password"
               description="Use a strong password you have not used elsewhere."
@@ -378,7 +378,7 @@ export function SignupForm({ redirectUrl, ...props }: SignupFormProps) {
                 disabled={isBusy}
                 {...form.register("password")}
               />
-            </SignUpFieldGroup>
+            </SignUp>
 
             <Field data-invalid={Boolean(form.formState.errors.acceptedUserAgreement?.message)}>
               <label className="flex min-w-0 items-start gap-2.5 overflow-hidden border border-neutral-400 bg-black p-3">

@@ -1,7 +1,7 @@
 import { Suspense } from "react"
 
-import { SignUpFeature } from "@/features/sign-up/sign-up-feature"
-import { SignUpSkeleton } from "@/features/sign-up/sign-up-skeleton"
+import { SignUpForm } from "@/features/auth/signupForm"
+import { SignUpSkeleton } from "@/features/auth/sign-up-skeleton"
 import { type SignupPageProps } from "@/types/auth"
 
 export default async function SignUpPage({ searchParams }: SignupPageProps) {
@@ -9,7 +9,7 @@ export default async function SignUpPage({ searchParams }: SignupPageProps) {
 
   return (
     <Suspense fallback={<SignUpSkeleton />}>
-      <SignUpFeature
+      <SignUpForm
         redirectUrl={
           params.redirect_url ?? params.return_to ?? params.redirectUrl ?? params.returnTo
         }

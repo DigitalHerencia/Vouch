@@ -15,6 +15,10 @@ export interface LoginFormProps {
   logo?: React.ReactNode
   title?: string
   description?: string
+  notice?: React.ReactNode
+  error?: React.ReactNode
+  children?: React.ReactNode
+  footer?: React.ReactNode
   onSubmit?: (data: { email: string; password: string; remember: boolean }) => void
   onForgotPassword?: () => void
   onSignUp?: () => void
@@ -25,10 +29,31 @@ export function LoginForm({
   logo,
   title = "Welcome back",
   description = "Enter your credentials to access your account",
+  notice,
+  error,
+  children,
+  footer,
   onForgotPassword,
   onSignUp,
   socialProviders,
 }: LoginFormProps) {
+  const content = children ? (
+    <div className="space-y-4">
+      {notice ? (
+        <div className="border-3 border-blue-600 bg-blue-600/10 px-4 py-3 text-sm text-white">
+          {notice}
+        </div>
+      ) : null}
+      {error ? (
+        <div className="border-3 border-red-600 bg-red-600/10 px-4 py-3 text-sm text-white">
+          {error}
+        </div>
+      ) : null}
+      {children}
+      {footer ? <div className="text-center text-sm text-neutral-400">{footer}</div> : null}
+    </div>
+  ) : null
+
   return (
     <div className="mx-auto w-full max-w-md">
       <Card>
@@ -40,7 +65,8 @@ export function LoginForm({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          {content ?? (
+            <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email" className="text-xs font-bold uppercase">
                 Email
@@ -145,7 +171,8 @@ export function LoginForm({
                 </span>
               </p>
             )}
-          </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
@@ -401,6 +428,7 @@ export interface OTPVerificationFormProps {
   onSubmit?: (otp: string) => void
   onResend?: () => void
   onBackToLogin?: () => void
+  actions?: React.ReactNode
 }
 
 export function OTPVerificationForm({
@@ -413,8 +441,11 @@ export function OTPVerificationForm({
   error,
   disabled = false,
   submitLabel = "Verify",
+  onChange,
+  onSubmit,
   onResend,
   onBackToLogin,
+  actions,
 }: OTPVerificationFormProps) {
   const digits = value.padEnd(length).slice(0, length).split("")
 
@@ -441,7 +472,13 @@ export function OTPVerificationForm({
                 maxLength={1}
                 aria-label={`Digit ${index + 1} of ${length}`}
                 value={digit}
-                readOnly
+                onChange={(event) => {
+                  const nextDigit = event.target.value.replace(/\D/g, "").slice(-1)
+                  const nextDigits = [...digits]
+                  nextDigits[index] = nextDigit
+                  onChange?.(nextDigits.join("").trim())
+                }}
+                readOnly={!onChange}
                 disabled={disabled}
                 className="h-14 w-12 border-2 border-neutral-400 text-center text-2xl font-black"
               />
@@ -449,15 +486,18 @@ export function OTPVerificationForm({
           </div>
           {error && <p className="text-sm font-medium text-red-600">{error}</p>}
 
-          <Button
-            type="button"
-            className="w-full"
-            size="lg"
-            disabled={disabled || digits.some((digit) => digit.trim() === "")}
-          >
-            {submitLabel}
-            <ArrowRight className="ml-2 h-4 w-4" />
-          </Button>
+          {actions ?? (
+            <Button
+              type="button"
+              className="w-full"
+              size="lg"
+              disabled={disabled || digits.some((digit) => digit.trim() === "")}
+              onClick={() => onSubmit?.(value)}
+            >
+              {submitLabel}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          )}
 
           <div className="space-y-2 text-center">
             {onResend && (
