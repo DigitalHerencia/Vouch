@@ -1,13 +1,7 @@
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
 
-import { InvoiceBlocks } from "@/components/blocks/invoice"
-import { ConfirmationPanel } from "@/components/vouches/confirmation-panel"
-import { LifecycleStatusPanel } from "@/components/vouches/lifecycle-status-panel"
-import { VouchActionsPanel } from "@/components/vouches/vouch-actions-panel"
-import { VouchCodeExchangePanel } from "@/components/vouches/vouch-code-exchange-panel"
-import { VouchDetailHeader } from "@/components/vouches/vouch-detail-header"
-import { VouchTimelinePanel } from "@/components/vouches/vouch-timeline-panel"
+import { StatusBlocks, type VouchStatusTimelineItem } from "@/components/blocks/status"
 import { vouchPageCopy } from "@/content/vouches"
 import { ConfirmPresenceInlineForm } from "@/features/vouches/vouchDetailFeature.client"
 import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
@@ -30,7 +24,6 @@ type VouchDetailPageProps = {
 }
 
 type VouchDetailViewProps = {
-  vouchId: string
   title: string
   amountLabel: string
   statusLabel: VouchStatus | string
@@ -80,7 +73,6 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
 
   return (
     <VouchDetailView
-      vouchId={vouch.id}
       title={vouch.label ?? vouch.publicId}
       amountLabel={money(vouch.protectedAmountCents, vouch.currency)}
       statusLabel={vouch.status}
@@ -109,16 +101,11 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
           vouch.aggregateConfirmationStatus === "both_confirmed",
         canConfirm,
         action: canConfirm ? (
-          <VouchCodeExchangePanel
-            title={vouchPageCopy.detail.confirmDrawerTitle}
-            body={vouchPageCopy.detail.confirmDrawerBody}
-          >
-            <ConfirmPresenceInlineForm
-              action={confirmPresenceFormAction}
-              vouchId={vouchId}
-              {...(currentUserCode ? { currentUserCode } : {})}
-            />
-          </VouchCodeExchangePanel>
+          <ConfirmPresenceInlineForm
+            action={confirmPresenceFormAction}
+            vouchId={vouchId}
+            {...(currentUserCode ? { currentUserCode } : {})}
+          />
         ) : null,
       }}
       timeline={timeline.map((event) => ({
@@ -130,7 +117,6 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
 }
 
 function VouchDetailView({
-  vouchId,
   title,
   amountLabel,
   statusLabel,
@@ -148,121 +134,205 @@ function VouchDetailView({
   timeline,
 }: VouchDetailViewProps) {
   const copy = vouchPageCopy.detail
+  const statusTimeline = buildStatusTimeline({
+    appointmentLabel,
+    windowLabel,
+    deadlineLabel,
+    paymentStatusLabel,
+    settlementStatusLabel,
+    merchantConfirmed: confirmation.merchantConfirmed,
+    customerConfirmed: confirmation.customerConfirmed,
+    auditTimeline: timeline,
+  })
 
   return (
-    <main className="grid min-h-[calc(100dvh-8rem)] grid-rows-none gap-4 sm:gap-6 md:grid-rows-3 md:gap-8">
-      <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-2 md:gap-8">
-        <VouchDetailHeader
-          vouchId={vouchId}
-          title={title}
-          amountLabel={amountLabel}
-          appointmentLabel={appointmentLabel}
-          statusLabel={statusLabel}
-          currentUserRoleLabel={currentUserRoleLabel}
-          copy={{
-            title: copy.title,
-            heroBody: copy.heroBody,
-            labels: {
-              status: copy.labels.status,
-              amount: copy.labels.amount,
-              role: copy.labels.role,
-            },
-          }}
-        />
-        <LifecycleStatusPanel
-          title={copy.sections.schedule}
-          appointmentLabel={appointmentLabel}
-          windowLabel={windowLabel}
-          deadlineLabel={deadlineLabel}
-          labels={copy.labels}
-        />
-      </section>
-
+    <main className="grid min-h-[calc(100dvh-8rem)] gap-4 sm:gap-6 md:gap-8">
       <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-[0.85fr_1.15fr] md:gap-8">
-        <InvoiceBlocks.Full
+        <StatusBlocks.Full
           data={{
             title: copy.termsTitle,
-            invoiceNumber: title,
-            issueDate: appointmentLabel,
-            dueDate: deadlineLabel,
+            publicId: title,
             status: String(statusLabel),
-            from: {
-              name: merchantLabel,
-              address: copy.labels.merchant,
-              city: currentUserRoleLabel,
-              zip: "",
+            statusTone: statusToneFromLabel(String(statusLabel)),
+            amountLabel,
+            merchantReceivesLabel,
+            customerTotalLabel,
+            merchantLabel,
+            customerLabel,
+            appointmentLabel,
+            confirmationOpensLabel: windowLabel,
+            confirmationExpiresLabel: deadlineLabel,
+            paymentStatusLabel,
+            settlementStatusLabel,
+            countdown: {
+              label: "Confirmation window",
+              expiresAtLabel: deadlineLabel,
+              remainingLabel: deadlineLabel === "Not set" ? "Not set" : "Server timed",
+              percentRemaining: confirmationProgress(confirmation),
+              tone:
+                confirmation.customerConfirmed && confirmation.merchantConfirmed
+                  ? "complete"
+                  : "active",
             },
-            to: {
-              name: customerLabel,
-              address: copy.labels.customer,
-              city: "participant",
-              zip: "",
+            timeline: statusTimeline,
+            confirmations: {
+              merchantConfirmed: confirmation.merchantConfirmed,
+              customerConfirmed: confirmation.customerConfirmed,
+              action: (
+                <div className="grid gap-4">
+                  {confirmation.action}
+                  <div className="border border-neutral-400 bg-neutral-900 p-4">
+                    <p className="text-sm font-black text-white uppercase">{copy.actionsTitle}</p>
+                    <p className="mt-2 text-xs leading-5 font-semibold text-neutral-400">
+                      {copy.providerBoundary}
+                    </p>
+                  </div>
+                </div>
+              ),
             },
-            items: [
-              {
-                description: copy.labels.vouchAmount,
-                quantity: 1,
-                unitPrice: 0,
-                unitPriceLabel: amountLabel,
-                totalLabel: amountLabel,
-              },
-              {
-                description: copy.labels.merchantReceives,
-                quantity: 1,
-                unitPrice: 0,
-                unitPriceLabel: merchantReceivesLabel,
-                totalLabel: merchantReceivesLabel,
-              },
-              {
-                description: copy.labels.customerAuthorizes,
-                quantity: 1,
-                unitPrice: 0,
-                unitPriceLabel: customerTotalLabel,
-                totalLabel: customerTotalLabel,
-              },
-            ],
-            subtotal: 0,
-            total: 0,
-            details: [
+            audit: [
               { label: copy.labels.window, value: windowLabel },
               { label: copy.labels.expires, value: deadlineLabel },
               { label: copy.labels.status, value: String(statusLabel) },
               { label: copy.labels.role, value: currentUserRoleLabel },
               { label: copy.sections.payment, value: paymentStatusLabel },
               { label: "Settlement", value: settlementStatusLabel },
+              { label: "Rule", value: copy.oneSidedRule },
             ],
-            notes: copy.ruleDescription,
-            terms: copy.oneSidedRule,
-            actions: (
-              <div className="grid gap-4">
-                <ConfirmationPanel {...confirmation} />
-                <VouchActionsPanel
-                  title={copy.actionsTitle}
-                  providerBoundary={copy.providerBoundary}
-                />
-              </div>
-            ),
           }}
         />
-        <VouchTimelinePanel
-          timeline={timeline}
-          title={copy.sections.timeline}
-          emptyLabel={copy.states.noTimeline}
-        />
+        <section className="border-3 border-neutral-400 bg-black p-4">
+          <div className="mb-4 border-b border-neutral-400 pb-3">
+            <h2 className="text-xl font-black tracking-wide uppercase">{copy.sections.timeline}</h2>
+            {timeline.length === 0 ? (
+              <p className="mt-2 text-sm font-semibold text-neutral-400">
+                {copy.states.noTimeline}
+              </p>
+            ) : null}
+          </div>
+          <StatusBlocks.Timeline items={statusTimeline} />
+        </section>
       </section>
 
       <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-2 md:gap-8">
-        <InvoiceBlocks.Summary
-          invoiceNumber={copy.bottomCalloutTitle}
-          clientName={copy.bottomCalloutBody}
-          issueDate={paymentStatusLabel}
-          dueDate={settlementStatusLabel}
-          amount={0}
-          amountLabel={customerTotalLabel}
-          status={String(statusLabel)}
-          href={`/vouches/${vouchId}`}
+        <StatusBlocks.Countdown
+          label={copy.bottomCalloutTitle}
+          expiresAtLabel={deadlineLabel}
+          remainingLabel={copy.bottomCalloutBody}
+          percentRemaining={confirmationProgress(confirmation)}
+          tone={
+            confirmation.customerConfirmed && confirmation.merchantConfirmed ? "complete" : "active"
+          }
         />
       </section>
     </main>
   )
+}
+
+function confirmationProgress(confirmation: ConfirmationState) {
+  const confirmed = Number(confirmation.merchantConfirmed) + Number(confirmation.customerConfirmed)
+
+  return (confirmed / 2) * 100
+}
+
+function statusToneFromLabel(
+  status: string
+): "active" | "pending" | "complete" | "failed" | "expired" {
+  const normalized = status.toLowerCase()
+
+  if (normalized.includes("expired") || normalized.includes("void")) return "expired"
+  if (normalized.includes("fail") || normalized.includes("refund")) return "failed"
+  if (normalized.includes("complete") || normalized.includes("captured")) return "complete"
+  if (normalized.includes("pending") || normalized.includes("draft")) return "pending"
+
+  return "active"
+}
+
+function buildStatusTimeline({
+  appointmentLabel,
+  windowLabel,
+  deadlineLabel,
+  paymentStatusLabel,
+  settlementStatusLabel,
+  merchantConfirmed,
+  customerConfirmed,
+  auditTimeline,
+}: {
+  appointmentLabel: string
+  windowLabel: string
+  deadlineLabel: string
+  paymentStatusLabel: string
+  settlementStatusLabel: string
+  merchantConfirmed: boolean
+  customerConfirmed: boolean
+  auditTimeline: { label: string; timestampLabel: string }[]
+}): VouchStatusTimelineItem[] {
+  const bothConfirmed = merchantConfirmed && customerConfirmed
+  const withTime = (
+    item: Omit<VouchStatusTimelineItem, "timeLabel"> & { timeLabel?: string | undefined }
+  ): VouchStatusTimelineItem => {
+    const { timeLabel, ...rest } = item
+
+    return timeLabel ? { ...rest, timeLabel } : rest
+  }
+
+  return [
+    withTime({
+      id: "created",
+      title: "Vouch created",
+      description: "Application fee invoice paid, provider link issued, immutable state opened.",
+      timeLabel: auditTimeline[0]?.timestampLabel,
+      state: "completed",
+      meta: paymentStatusLabel,
+    }),
+    withTime({
+      id: "authorized",
+      title: "Destination PaymentIntent",
+      description: "Customer authorizes the hosted payment method and provider-backed intent.",
+      timeLabel: appointmentLabel,
+      state: paymentStatusLabel === "not_started" ? "upcoming" : "completed",
+      meta: `payment=${paymentStatusLabel}`,
+    }),
+    withTime({
+      id: "window",
+      title: "Confirmation window",
+      description: "Merchant and customer confirmations must both be written before expiration.",
+      timeLabel: windowLabel,
+      state: bothConfirmed ? "completed" : "current",
+      meta: `expires=${deadlineLabel}`,
+    }),
+    {
+      id: "merchant",
+      title: "Merchant presence",
+      description: "Idempotent server write records merchant confirmation.",
+      state: merchantConfirmed ? "completed" : "upcoming",
+      meta: merchantConfirmed ? "merchant_confirmed=true" : "merchant_confirmed=false",
+    },
+    {
+      id: "customer",
+      title: "Customer presence",
+      description: "Idempotent server write records customer confirmation.",
+      state: customerConfirmed ? "completed" : "upcoming",
+      meta: customerConfirmed ? "customer_confirmed=true" : "customer_confirmed=false",
+    },
+    withTime({
+      id: "settlement",
+      title: "Capture or expire",
+      description: bothConfirmed
+        ? "Both writes are present in time, so server orchestration can signal capture."
+        : "If both writes are not present in time, provider state resolves to expiration, void, or non-capture.",
+      timeLabel: deadlineLabel,
+      state: bothConfirmed ? "current" : "upcoming",
+      meta: `settlement=${settlementStatusLabel}`,
+    }),
+    ...auditTimeline.slice(0, 4).map((event, index) =>
+      withTime({
+        id: `audit-${index}-${event.label}`,
+        title: event.label,
+        description: "Participant-safe audit log event.",
+        timeLabel: event.timestampLabel,
+        state: "completed" as const,
+      })
+    ),
+  ]
 }

@@ -1,10 +1,10 @@
 import Link from "next/link"
 
 import {
-  OnboardingFlow,
+  StatusBlocks,
   type VouchCreationActionResult,
   type VouchCreationDraft,
-} from "@/components/blocks/onboarding-flow"
+} from "@/components/blocks/status"
 import { Button } from "@/components/ui/button"
 import {
   calculatePlatformFee,
@@ -84,7 +84,7 @@ export async function VouchForm() {
           </Panel>
         ) : (
           <Panel title="Create Vouch">
-            <OnboardingFlow.VouchCreation
+            <StatusBlocks.VouchCreation
               onSaveAmount={saveVouchAmountStep}
               onSaveWindow={saveVouchWindowStep}
               onCreateVouch={createVouchWizardStep}
