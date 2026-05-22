@@ -1,6 +1,17 @@
 import * as React from "react"
-import type { LucideIcon } from "lucide-react"
+import Image from "next/image"
+import {
+  BadgeCheck,
+  Clock3,
+  CreditCard,
+  Handshake,
+  LockKeyhole,
+  ShieldCheck,
+  type LucideIcon,
+} from "lucide-react"
 import { CardHeader, Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
+import { Marquee, MarqueeItem, MarqueeSeparator } from "@/components/ui/marquee"
+import { cn } from "@/lib/utils"
 
 // ============================================================================
 // Process Panel VARIANT 1: Table with Icons
@@ -214,49 +225,198 @@ export function ProcessPanelCallout({
 export interface ProcessPanelGridItem {
   name: string
   logo: React.ReactNode
+  detail?: string | undefined
+  icon?: LucideIcon | undefined
 }
 
 export interface ProcessPanelGridProps {
   title?: string | undefined
   subtitle?: string | undefined
   logos: readonly ProcessPanelGridItem[]
+  footer?: string | undefined
 }
 
-export function ProcessPanelGrid({ title, subtitle, logos }: ProcessPanelGridProps) {
+function ProcessPanelMarqueeTrack({
+  logos,
+  direction,
+  className,
+  itemClassName,
+}: {
+  logos: readonly ProcessPanelGridItem[]
+  direction: "left" | "right"
+  className?: string | undefined
+  itemClassName?: string | undefined
+}) {
   return (
-    <Card className="w-full border-3 border-neutral-400 bg-black">
+    <Marquee
+      direction={direction}
+      speed="slow"
+      repeat={2}
+      className={cn(
+        "border-x-0 border-y-3 border-neutral-400 bg-black [contain:paint] select-none",
+        className
+      )}
+    >
+      {logos.map((item) => {
+        const Icon = item.icon
+
+        return (
+          <React.Fragment key={`${direction}-${item.name}`}>
+            <MarqueeItem
+              className={cn(
+                "h-24 min-w-76 gap-5 border-r-3 border-neutral-400 bg-white px-6 text-black shadow-[8px_8px_0_#1D4ED8]",
+                itemClassName
+              )}
+            >
+              <span className="flex h-12 min-w-36 items-center justify-center">{item.logo}</span>
+              {Icon ? (
+                <span
+                  className="flex size-12 items-center justify-center border-3 border-neutral-950 bg-blue-600 text-white shadow-[4px_4px_0_#000]"
+                  aria-label={`${item.name}${item.detail ? `: ${item.detail}` : ""}`}
+                  title={`${item.name}${item.detail ? `: ${item.detail}` : ""}`}
+                >
+                  <Icon className="size-7" strokeWidth={2.4} />
+                </span>
+              ) : (
+                <>
+                  <span className="font-(family-name:--font-display) text-sm leading-none font-black tracking-wide uppercase">
+                    {item.name}
+                  </span>
+                  {item.detail ? (
+                    <span className="font-mono text-xs leading-none font-black text-blue-600 uppercase">
+                      {item.detail}
+                    </span>
+                  ) : null}
+                </>
+              )}
+              {Icon ? (
+                <span className="sr-only">
+                  {item.name}
+                  {item.detail ? ` ${item.detail}` : ""}
+                </span>
+              ) : null}
+            </MarqueeItem>
+            <MarqueeSeparator className="text-4xl text-blue-600">
+              <Handshake className="size-8" strokeWidth={2.4} />
+            </MarqueeSeparator>
+          </React.Fragment>
+        )
+      })}
+    </Marquee>
+  )
+}
+
+export function ProcessPanelGrid({ title, subtitle, logos, footer }: ProcessPanelGridProps) {
+  const reversedLogos = [...logos].reverse()
+
+  return (
+    <Card className="w-full overflow-hidden border-3 border-neutral-400 bg-black shadow-[12px_12px_0_#1D4ED8]">
       {(title || subtitle) && (
-        <CardHeader className="items-center border-b-3 border-neutral-400 px-6 py-6 text-center md:px-8">
+        <CardHeader className="border-b-3 border-neutral-400 px-5 py-6 md:px-8 md:py-8">
           {subtitle ? (
-            <p className="md:base text-sm font-semibold tracking-widest text-blue-600 uppercase">
+            <p className="font-(family-name:--font-display) text-sm font-black tracking-widest text-blue-600 uppercase md:text-base">
               {subtitle}
             </p>
           ) : null}
           {title ? (
             <CardTitle>
-              <h3 className="leading-none font-black tracking-wide text-white">{title}</h3>
+              <span className="block max-w-xl text-2xl leading-none font-black tracking-wide text-white uppercase md:text-4xl">
+                {title}
+              </span>
             </CardTitle>
           ) : null}
         </CardHeader>
       )}
 
-      <CardContent className="grid grid-cols-2 p-0">
-        {logos.map((item, index) => (
-          <div
-            key={item.name}
-            className={[
-              "flex min-h-28 items-center justify-center border-b-3 border-neutral-400 p-6 text-center",
-              index % 2 === 0 ? "border-r-3" : "",
-              index % 4 !== 3 ? "md:border-r-3" : "md:border-r-0",
-              index >= logos.length - 2 ? "border-b-0" : "",
-              index >= logos.length - 4 ? "md:border-b-0" : "",
-            ].join(" ")}
-          >
-            {item.logo}
-          </div>
-        ))}
+      <CardContent className="space-y-5 overflow-hidden p-0 py-5">
+        <ProcessPanelMarqueeTrack logos={logos} direction="left" />
+        <ProcessPanelMarqueeTrack logos={reversedLogos} direction="right" />
       </CardContent>
+
+      {footer ? (
+        <CardFooter className="border-t-3 border-neutral-400 bg-blue-600 px-5 py-5 md:px-8">
+          <h3 className="leading-none font-black tracking-wide text-white">{footer}</h3>
+        </CardFooter>
+      ) : null}
     </Card>
+  )
+}
+
+const authProcessLogos: readonly ProcessPanelGridItem[] = [
+  {
+    name: "Vouch dark",
+    detail: "authenticated",
+    icon: LockKeyhole,
+    logo: (
+      <Image src="/logo-dark.png" alt="Vouch" width={150} height={42} className="h-auto w-36" />
+    ),
+  },
+  {
+    name: "Vouch light",
+    detail: "readiness",
+    icon: BadgeCheck,
+    logo: (
+      <Image src="/logo-light.png" alt="Vouch" width={150} height={42} className="h-auto w-36" />
+    ),
+  },
+  {
+    name: "Stripe Connect",
+    detail: "provider-backed",
+    icon: CreditCard,
+    logo: (
+      <Image
+        src="/Stripe wordmark - Blurple.svg"
+        alt="Stripe"
+        width={120}
+        height={50}
+        className="h-auto w-28"
+      />
+    ),
+  },
+  {
+    name: "Manual capture",
+    detail: "non-custodial",
+    icon: ShieldCheck,
+    logo: (
+      <Image
+        src="/Powered by Stripe - black.svg"
+        alt="Powered by Stripe"
+        width={150}
+        height={34}
+        className="h-auto w-36"
+      />
+    ),
+  },
+  {
+    name: "Presence window",
+    detail: "deterministic",
+    icon: Clock3,
+    logo: <Image src="/icon-192.png" alt="Vouch icon" width={64} height={64} className="size-14" />,
+  },
+]
+
+export function AuthProcessPanelGrid() {
+  const reversedLogos = [...authProcessLogos].reverse()
+
+  return (
+    <div className="flex h-full w-full flex-col justify-between overflow-hidden py-10">
+      <ProcessPanelMarqueeTrack
+        logos={authProcessLogos}
+        direction="left"
+        className="-ml-8 w-[114%]"
+      />
+      <ProcessPanelMarqueeTrack
+        logos={reversedLogos}
+        direction="right"
+        className="-ml-16 w-[128%]"
+        itemClassName="h-32 min-w-96 px-8"
+      />
+      <ProcessPanelMarqueeTrack
+        logos={authProcessLogos}
+        direction="left"
+        className="-ml-8 w-[114%]"
+      />
+    </div>
   )
 }
 

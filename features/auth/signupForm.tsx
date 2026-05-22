@@ -201,7 +201,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
     }
   })
 
-  return (
+  const formContent = (
     <form
       className="flex w-full max-w-full min-w-0 flex-col overflow-hidden bg-black text-white"
       onSubmit={handleSubmit}
@@ -451,5 +451,15 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
         )}
       </UiFieldGroup>
     </form>
+  )
+
+  return (
+    <AuthForms.PageShell
+      eyebrow="Deterministic onboarding"
+      title="Create access with boundaries built in"
+      body="Create an account before funding, accepting, or confirming a Vouch. User agreement acceptance and provider readiness stay separate from payment release."
+    >
+      {formContent}
+    </AuthForms.PageShell>
   )
 }

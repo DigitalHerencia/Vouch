@@ -58,7 +58,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
           className={cn(
             "marquee-content flex shrink-0 items-center gap-8 py-3",
             animationClass,
-            pauseOnHover && "hover:[animation-play-state:paused]"
+            pauseOnHover && "hover:paused"
           )}
         >
           {Array.from({ length: repeat }).map((_, i) => (
@@ -69,7 +69,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
           className={cn(
             "marquee-content flex shrink-0 items-center gap-8 py-3",
             animationClass,
-            pauseOnHover && "hover:[animation-play-state:paused]"
+            pauseOnHover && "hover:paused"
           )}
           aria-hidden="true"
         >

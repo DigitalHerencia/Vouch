@@ -1,12 +1,64 @@
 import * as React from "react"
 import Link from "next/link"
 
+import { AuthProcessPanelGrid } from "@/components/blocks/process-panel"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, Mail, Lock, User, ArrowRight } from "lucide-react"
+import { Eye, Mail, Lock, User, ArrowRight, LoaderCircle } from "lucide-react"
+
+export interface AuthPageShellProps {
+  children: React.ReactNode
+  eyebrow: string
+  title: string
+  body: string
+}
+
+export function AuthPageShell({ children, eyebrow, title, body }: AuthPageShellProps) {
+  return (
+    <main className="h-dvh min-h-0 w-full overflow-hidden">
+      <section className="grid h-full min-h-0 w-full grid-cols-1 overflow-hidden md:grid-cols-2">
+        <div className="hidden min-h-0 md:block">
+          <AuthContentPanel eyebrow={eyebrow} title={title} body={body} />
+        </div>
+
+        <div className="min-h-0">
+          <AuthFormPanel>{children}</AuthFormPanel>
+        </div>
+      </section>
+    </main>
+  )
+}
+
+export interface AuthContentPanelProps {
+  eyebrow: string
+  title: string
+  body: string
+}
+
+export function AuthContentPanel({
+  eyebrow: _eyebrow,
+  title: _title,
+  body: _body,
+}: AuthContentPanelProps) {
+  return (
+    <div className="flex h-full min-h-0 w-full flex-col justify-center overflow-hidden border-r-3 border-neutral-400 bg-transparent">
+      <div className="w-full">
+        <AuthProcessPanelGrid />
+      </div>
+    </div>
+  )
+}
+
+export function AuthFormPanel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden bg-black p-6 pt-24 pb-20 md:p-8">
+      <div className="flex w-full max-w-xl flex-col gap-6">{children}</div>
+    </div>
+  )
+}
 
 // ============================================================================
 // AUTH VARIANT 1: Login Form
@@ -19,6 +71,9 @@ export interface LoginFormProps {
   error?: React.ReactNode
   children?: React.ReactNode
   footer?: React.ReactNode
+  signUpHref?: string | undefined
+  signUpPrompt?: string | undefined
+  signUpLabel?: string | undefined
   onSubmit?: (data: { email: string; password: string; remember: boolean }) => void
   onForgotPassword?: () => void
   onSignUp?: () => void
@@ -33,6 +88,9 @@ export function LoginForm({
   error,
   children,
   footer,
+  signUpHref,
+  signUpPrompt = "Need an account?",
+  signUpLabel = "Create one",
   onForgotPassword,
   onSignUp,
   socialProviders,
@@ -50,7 +108,21 @@ export function LoginForm({
         </div>
       ) : null}
       {children}
-      {footer ? <div className="text-center text-sm text-neutral-400">{footer}</div> : null}
+      {(footer ?? signUpHref) ? (
+        <div className="text-center text-sm text-neutral-400">
+          {footer ?? (
+            <span>
+              {signUpPrompt}{" "}
+              <Link
+                href={signUpHref ?? "#"}
+                className="text-blue-600 underline-offset-4 hover:text-white hover:underline"
+              >
+                {signUpLabel}
+              </Link>
+            </span>
+          )}
+        </div>
+      ) : null}
     </div>
   ) : null
 
@@ -67,114 +139,180 @@ export function LoginForm({
         <CardContent>
           {content ?? (
             <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-xs font-bold uppercase">
-                Email
-              </Label>
-              <div className="relative">
-                <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-                <Input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  className="border-2 border-neutral-400 pl-10"
-                  defaultValue="you@example.com"
-                  readOnly
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-xs font-bold uppercase">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete="current-password"
-                  placeholder="Enter your password"
-                  className="border-2 border-neutral-400 pr-10 pl-10"
-                  defaultValue="password"
-                  readOnly
-                  required
-                />
-                <Button
-                  type="button"
-                  aria-label="Show password"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-1/2 right-3 h-auto w-auto -translate-y-1/2 p-0 text-neutral-400 hover:text-white"
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <Checkbox id="remember" defaultChecked />
-                <Label htmlFor="remember" className="cursor-pointer text-sm font-medium">
-                  Remember me
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-xs font-bold uppercase">
+                  Email
                 </Label>
+                <div className="relative">
+                  <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                  <Input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    className="border-2 border-neutral-400 pl-10"
+                    defaultValue="you@example.com"
+                    readOnly
+                    required
+                  />
+                </div>
               </div>
-              {onForgotPassword && (
-                <Button type="button" variant="link" size="nav" className="text-sm">
-                  Forgot password?
-                </Button>
-              )}
-            </div>
 
-            <Button type="button" className="w-full" size="lg">
-              Sign In
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-
-            {socialProviders && socialProviders.length > 0 && (
-              <>
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t-2 border-neutral-400" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-black px-2 font-bold text-white">Or continue with</span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  {socialProviders.includes("google") && (
-                    <Button variant="outline" type="button">
-                      <ArrowRight className="mr-2 h-4 w-4" />
-                      Google
-                    </Button>
-                  )}
-                  {socialProviders.includes("github") && (
-                    <Button variant="outline" type="button">
-                      <ArrowRight className="mr-2 h-4 w-4" />
-                      GitHub
-                    </Button>
-                  )}
-                </div>
-              </>
-            )}
-
-            {onSignUp && (
-              <p className="mt-4 text-center text-sm text-neutral-400">
-                Don't have an account?{" "}
-                <span>
-                  <Button type="button" variant="link" size="nav">
-                    Sign up
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-xs font-bold uppercase">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                  <Input
+                    id="password"
+                    type="password"
+                    autoComplete="current-password"
+                    placeholder="Enter your password"
+                    className="border-2 border-neutral-400 pr-10 pl-10"
+                    defaultValue="password"
+                    readOnly
+                    required
+                  />
+                  <Button
+                    type="button"
+                    aria-label="Show password"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-1/2 right-3 h-auto w-auto -translate-y-1/2 p-0 text-neutral-400 hover:text-white"
+                  >
+                    <Eye className="h-4 w-4" />
                   </Button>
-                </span>
-              </p>
-            )}
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2">
+                  <Checkbox id="remember" defaultChecked />
+                  <Label htmlFor="remember" className="cursor-pointer text-sm font-medium">
+                    Remember me
+                  </Label>
+                </div>
+                {onForgotPassword && (
+                  <Button type="button" variant="link" size="nav" className="text-sm">
+                    Forgot password?
+                  </Button>
+                )}
+              </div>
+
+              <Button type="button" className="w-full" size="lg">
+                Sign In
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+
+              {socialProviders && socialProviders.length > 0 && (
+                <>
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t-2 border-neutral-400" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-black px-2 font-bold text-white">Or continue with</span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {socialProviders.includes("google") && (
+                      <Button variant="outline" type="button">
+                        <ArrowRight className="mr-2 h-4 w-4" />
+                        Google
+                      </Button>
+                    )}
+                    {socialProviders.includes("github") && (
+                      <Button variant="outline" type="button">
+                        <ArrowRight className="mr-2 h-4 w-4" />
+                        GitHub
+                      </Button>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {onSignUp && (
+                <p className="mt-4 text-center text-sm text-neutral-400">
+                  Don't have an account?{" "}
+                  <span>
+                    <Button type="button" variant="link" size="nav">
+                      Sign up
+                    </Button>
+                  </span>
+                </p>
+              )}
             </div>
           )}
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+export interface LoginFormFieldsProps {
+  emailInputProps: React.ComponentProps<typeof Input>
+  passwordInputProps: React.ComponentProps<typeof Input>
+  emailError?: string | undefined
+  passwordError?: string | undefined
+  passwordDescription?: string | undefined
+  disabled?: boolean
+  isSubmitting?: boolean
+  submitLabel?: string
+}
+
+export function LoginFormFields({
+  emailInputProps,
+  passwordInputProps,
+  emailError,
+  passwordError,
+  passwordDescription = "Use your Vouch account password.",
+  disabled = false,
+  isSubmitting = false,
+  submitLabel = "Sign in",
+}: LoginFormFieldsProps) {
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="email" className="text-xs font-bold uppercase">
+          Email
+        </Label>
+        <Input
+          id="email"
+          type="email"
+          autoComplete="email"
+          placeholder="m@example.com"
+          disabled={disabled}
+          {...emailInputProps}
+          className="h-12 rounded-none border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-none outline-none placeholder:text-neutral-400 focus-visible:border-blue-600 focus-visible:ring-0"
+        />
+        {emailError ? <p className="text-sm text-red-600">{emailError}</p> : null}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="password" className="text-xs font-bold uppercase">
+          Password
+        </Label>
+        <Input
+          id="password"
+          type="password"
+          autoComplete="current-password"
+          placeholder="Enter your password"
+          disabled={disabled}
+          {...passwordInputProps}
+          className="h-12 rounded-none border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-none outline-none placeholder:text-neutral-400 focus-visible:border-blue-600 focus-visible:ring-0"
+        />
+        {passwordDescription ? (
+          <p className="text-sm text-neutral-400">{passwordDescription}</p>
+        ) : null}
+        {passwordError ? <p className="text-sm text-red-600">{passwordError}</p> : null}
+      </div>
+
+      <Button type="submit" disabled={disabled} className="w-full" size="lg">
+        {isSubmitting ? <LoaderCircle className="size-4 animate-spin" /> : null}
+        {submitLabel}
+      </Button>
     </div>
   )
 }
@@ -421,13 +559,20 @@ export interface OTPVerificationFormProps {
   email?: string
   length?: number
   value?: string
+  notice?: React.ReactNode
   error?: string | undefined
+  rootError?: React.ReactNode
   disabled?: boolean
   submitLabel?: string
+  resendLabel?: string
+  backLabel?: string
   onChange?: (otp: string) => void
   onSubmit?: (otp: string) => void
   onResend?: () => void
   onBackToLogin?: () => void
+  isSubmitting?: boolean
+  isResending?: boolean
+  isResetting?: boolean
   actions?: React.ReactNode
 }
 
@@ -438,13 +583,20 @@ export function OTPVerificationForm({
   email,
   length = 6,
   value = "123456",
+  notice,
   error,
+  rootError,
   disabled = false,
   submitLabel = "Verify",
+  resendLabel = "Resend code",
+  backLabel = "Start over",
   onChange,
   onSubmit,
   onResend,
   onBackToLogin,
+  isSubmitting = false,
+  isResending = false,
+  isResetting = false,
   actions,
 }: OTPVerificationFormProps) {
   const digits = value.padEnd(length).slice(0, length).split("")
@@ -463,6 +615,16 @@ export function OTPVerificationForm({
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
+          {notice ? (
+            <div className="border-3 border-blue-600 bg-blue-600/10 px-4 py-3 text-sm text-white">
+              {notice}
+            </div>
+          ) : null}
+          {rootError ? (
+            <div className="border-3 border-red-600 bg-red-600/10 px-4 py-3 text-sm text-white">
+              {rootError}
+            </div>
+          ) : null}
           <div className="flex justify-center gap-2">
             {digits.map((digit, index) => (
               <Input
@@ -487,16 +649,45 @@ export function OTPVerificationForm({
           {error && <p className="text-sm font-medium text-red-600">{error}</p>}
 
           {actions ?? (
-            <Button
-              type="button"
-              className="w-full"
-              size="lg"
-              disabled={disabled || digits.some((digit) => digit.trim() === "")}
-              onClick={() => onSubmit?.(value)}
-            >
-              {submitLabel}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <Button
+                type="submit"
+                className="w-full"
+                size="lg"
+                disabled={disabled || digits.some((digit) => digit.trim() === "")}
+                onClick={() => onSubmit?.(value)}
+              >
+                {isSubmitting ? <LoaderCircle className="size-4 animate-spin" /> : null}
+                {submitLabel}
+              </Button>
+
+              {onResend ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  size="lg"
+                  disabled={disabled}
+                  onClick={onResend}
+                >
+                  {isResending ? <LoaderCircle className="size-4 animate-spin" /> : null}
+                  {resendLabel}
+                </Button>
+              ) : null}
+
+              {onBackToLogin ? (
+                <Button
+                  type="button"
+                  variant="link"
+                  disabled={disabled}
+                  className="sm:col-span-2"
+                  onClick={onBackToLogin}
+                >
+                  {isResetting ? <LoaderCircle className="size-4 animate-spin" /> : null}
+                  {backLabel}
+                </Button>
+              ) : null}
+            </div>
           )}
 
           <div className="space-y-2 text-center">
@@ -557,7 +748,11 @@ export function AuthSplitLayout({
 // Export all variants
 // ============================================================================
 export const AuthForms = {
+  PageShell: AuthPageShell,
+  ContentPanel: AuthContentPanel,
+  FormPanel: AuthFormPanel,
   Login: LoginForm,
+  LoginFields: LoginFormFields,
   SignUp: SignUpForm,
   ForgotPassword: ForgotPasswordForm,
   OTPVerification: OTPVerificationForm,

@@ -9,7 +9,7 @@ export interface AuthShellProps {
 
 export function AuthShell({ children }: AuthShellProps) {
   return (
-    <div className="relative h-dvh overflow-hidden bg-black">
+    <div className="relative h-dvh overflow-hidden">
       <div className="h-full min-h-0 w-full overflow-hidden">{children}</div>
 
       <div className="pointer-events-none absolute inset-x-0 top-0 z-10 grid grid-cols-1 md:grid-cols-2">
