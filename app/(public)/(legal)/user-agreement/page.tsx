@@ -14,7 +14,7 @@ export default function UserAgreementRoute() {
   const CalloutIcon = userAgreementCalloutContent.icon
 
   return (
-    <main className="grid min-h-[calc(100dvh-8rem)] gap-8 sm:gap-10 md:gap-12">
+    <main className="grid min-h-[calc(100dvh-8rem)] gap-8 md:gap-12">
       <HeroSection.Minimal
         title="User Agreement"
         description="Use Vouch only for explicit, lawful, pre-arranged commitments where the confirmation rule is understood before anyone commits."
