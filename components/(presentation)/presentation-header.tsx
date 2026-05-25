@@ -24,9 +24,10 @@ export const defaultPresentationNavItems = [
   { label: "Hero", href: "/hero-section" },
   { label: "Invoice", href: "/invoice" },
   { label: "Panel", href: "/process-panel" },
-  { label: "On", href: "/onboarding-flow" },
+  { label: "Onboarding", href: "/onboarding-flow" },
   { label: "Config", href: "/configuration-page" },
   { label: "Stats", href: "/stats-section" },
+  { label: "Status", href: "/status" },
 ] satisfies readonly PresentationHeaderNavItem[]
 
 export function PresentationHeader({
@@ -34,10 +35,10 @@ export function PresentationHeader({
 }: PresentationHeaderProps) {
   return (
     <header className="sticky top-0 z-50 h-21 border-b-2 border-neutral-400 bg-black">
-      <div className="mx-auto ml-24 flex h-full w-full items-center px-4 py-3">
+      <div className="mx-auto ml-40 flex h-full w-full items-center px-4 py-3">
         <nav className="flex items-center gap-4 lg:gap-8">
           {navItems.map((item) => (
-            <Button key={item.href} variant="outline" size="default" asChild>
+            <Button key={item.href} variant="nav" size="nav" asChild>
               <Link href={item.href}>{item.label}</Link>
             </Button>
           ))}

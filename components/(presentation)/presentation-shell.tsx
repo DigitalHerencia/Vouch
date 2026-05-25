@@ -4,7 +4,7 @@ import type { ReactNode } from "react"
 
 import { PublicMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"
 import { PublicFooter } from "@/components/navigation/public-footer"
-import { PresentationHeader } from "@/components/navigation/presentation-header"
+import { PresentationHeader } from "@/components/(presentation)/presentation-header"
 
 export interface PresentationShellProps {
   children: ReactNode
@@ -18,7 +18,11 @@ export function PresentationShell({
   return (
     <div className="min-h-dvh">
       <PresentationHeader />
-      <main className={withMobileBottomNav ? "mx-auto w-full max-w-7xl" : "mx-auto w-full max-w-7xl pb-0"}>
+      <main
+        className={
+          withMobileBottomNav ? "mx-auto w-full max-w-7xl" : "mx-auto w-full max-w-7xl pb-0"
+        }
+      >
         {children}
       </main>
       <PublicFooter />

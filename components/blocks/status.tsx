@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import {
   AlertCircle,
@@ -19,7 +17,6 @@ import {
   WifiOff,
 } from "lucide-react"
 
-import { Receipt } from "@/components/blocks/invoice"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { EmptyStatePreset } from "@/components/ui/empty-state"
@@ -60,6 +57,14 @@ export interface VouchStatusTimelineItem {
   meta?: string
 }
 
+export interface VouchCountdownProps {
+  label: string
+  expiresAtLabel: string
+  remainingLabel: string
+  percentRemaining?: number
+  tone?: VouchStatusTone
+}
+
 export interface VouchStatusDocumentData {
   title: string
   publicId: string
@@ -85,36 +90,82 @@ export interface VouchStatusDocumentData {
   audit?: Array<{ label: string; value: string }>
 }
 
-export interface VouchStatusDocumentProps {
-  data: VouchStatusDocumentData
+export type VouchCreationDraft = {
+  amountDollars: string
+  appointmentStartsAt: string
+  confirmationOpensAt: string
+  confirmationExpiresAt: string
+  disclaimerAccepted: boolean
+}
+
+export type VouchCreationPreviewData = {
+  amountCents?: number
+  customerTotalCents?: number
+  vouchServiceFeeCents?: number
+  processingFeeOffsetCents?: number
+  detailPath?: string
+  checkoutUrl?: string
+}
+
+export type VouchCreationActionResult =
+  | {
+      ok: true
+      data?: VouchCreationPreviewData
+    }
+  | {
+      ok: false
+      formError?: string
+      fieldErrors?: Record<string, string[]>
+    }
+
+export interface VouchCreationWizardContent {
+  eyebrow: string
+  title: string
+  helper: string
+  progressHint: string
+  amountDescription: string
+  cartTitle: string
+  cartDescription: string
+  immutableAcknowledgement: string
+  steps: readonly { title: string; completeLabel: string; pendingLabel: string }[]
+  protocolTiles: readonly { title: string; body: string }[]
+  cartRail: readonly { label: string; value: string }[]
+}
+
+export interface VouchCreationWizardProps {
+  content: VouchCreationWizardContent
+  currentStep: number
+  optimisticStep: number
+  savedStepIndexes: readonly number[]
+  draft: VouchCreationDraft
+  preview?: VouchCreationPreviewData | undefined
+  fieldErrors?: Record<string, string[]> | undefined
+  formError?: string | null | undefined
+  cartOpen: boolean
+  isPending: boolean
+  onDraftChange: (patch: Partial<VouchCreationDraft>) => void
+  onStepSelect: (stepIndex: number) => void
+  onBack: () => void
+  onSaveAmount: () => void
+  onSaveWindow: () => void
+  onReviewCart: () => void
+  onCartOpenChange: (open: boolean) => void
+  onCreateVouch: () => void
 }
 
 const statusToneConfig: Record<
   VouchStatusTone,
   {
     badge: React.ComponentProps<typeof Badge>["variant"]
-    className: string
     icon: React.ElementType
   }
 > = {
-  active: { badge: "default", className: "border-blue-600 bg-blue-600 text-white", icon: Clock },
-  pending: {
-    badge: "secondary",
-    className: "border-neutral-400 bg-neutral-900 text-white",
-    icon: Clock,
-  },
-  complete: { badge: "success", className: "border-blue-600 bg-blue-600 text-white", icon: Check },
-  failed: {
-    badge: "destructive",
-    className: "border-red-600 bg-red-600 text-white",
-    icon: AlertCircle,
-  },
-  expired: {
-    badge: "outline",
-    className: "border-neutral-400 bg-black text-neutral-300",
-    icon: AlertCircle,
-  },
-  offline: { badge: "warning", className: "border-blue-600 bg-blue-600 text-white", icon: WifiOff },
+  active: { badge: "default", icon: Clock },
+  pending: { badge: "secondary", icon: Clock },
+  complete: { badge: "success", icon: Check },
+  failed: { badge: "destructive", icon: AlertCircle },
+  expired: { badge: "outline", icon: AlertCircle },
+  offline: { badge: "warning", icon: WifiOff },
 }
 
 export function VouchStatusBadge({
@@ -135,14 +186,6 @@ export function VouchStatusBadge({
       {status}
     </Badge>
   )
-}
-
-export interface VouchCountdownProps {
-  label: string
-  expiresAtLabel: string
-  remainingLabel: string
-  percentRemaining?: number
-  tone?: VouchStatusTone
 }
 
 export function VouchCountdown({
@@ -219,7 +262,7 @@ export function VouchStatusTimeline({ items }: { items: VouchStatusTimelineItem[
   )
 }
 
-export function VouchStatusDocument({ data }: VouchStatusDocumentProps) {
+export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData }) {
   const tone = data.statusTone ?? "pending"
 
   return (
@@ -323,7 +366,7 @@ function ConfirmStateTile({ label, confirmed }: { label: string; confirmed: bool
   )
 }
 
-function StatusTile({ label, value }: { label: string; value: string }) {
+export function StatusTile({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 border-2 border-neutral-400 bg-black p-4">
       <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">{label}</p>
@@ -332,7 +375,7 @@ function StatusTile({ label, value }: { label: string; value: string }) {
   )
 }
 
-function StatusRow({ label, value }: { label: string; value: string }) {
+export function StatusRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-center justify-between gap-3 border-b border-neutral-700 pb-2 last:border-0 last:pb-0">
       <span className="text-neutral-400">{label}</span>
@@ -341,183 +384,46 @@ function StatusRow({ label, value }: { label: string; value: string }) {
   )
 }
 
-export type VouchCreationDraft = {
-  amountDollars: string
-  appointmentStartsAt: string
-  confirmationOpensAt: string
-  confirmationExpiresAt: string
-  disclaimerAccepted: boolean
-}
-
-export type VouchCreationActionResult =
-  | {
-      ok: true
-      data?: VouchCreationPreviewData
-    }
-  | {
-      ok: false
-      formError?: string
-      fieldErrors?: Record<string, string[]>
-    }
-
-export type VouchCreationPreviewData = {
-  amountCents?: number
-  customerTotalCents?: number
-  vouchServiceFeeCents?: number
-  processingFeeOffsetCents?: number
-  detailPath?: string
-  checkoutUrl?: string
-}
-
-export interface VouchCreationWizardProps {
-  initialDraft?: Partial<VouchCreationDraft> | undefined
-  onSaveAmount: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
-  onSaveWindow: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
-  onCreateVouch: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
-}
-
-const defaultVouchDraft: VouchCreationDraft = {
-  amountDollars: "50.00",
-  appointmentStartsAt: "",
-  confirmationOpensAt: "",
-  confirmationExpiresAt: "",
-  disclaimerAccepted: false,
-}
-
-function dollarsFromCents(cents?: number): string {
-  if (!Number.isFinite(cents)) return "$0.00"
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format((cents ?? 0) / 100)
-}
-
-function firstFieldError(
-  fieldErrors: Record<string, string[]> | undefined,
-  fields: string[]
-): string | null {
-  for (const field of fields) {
-    const message = fieldErrors?.[field]?.[0]
-    if (message) return message
-  }
-
-  return null
-}
-
-function FieldShell({
-  label,
-  children,
-  description,
-  error,
-}: {
-  label: string
-  children: React.ReactNode
-  description?: string | undefined
-  error?: string | null | undefined
-}) {
-  return (
-    <div className="min-w-0 space-y-2">
-      <Label className="text-[11px] font-black tracking-widest text-neutral-300 uppercase">
-        {label}
-      </Label>
-      {children}
-      {description ? (
-        <p className="text-[12px] leading-5 font-semibold text-neutral-400">{description}</p>
-      ) : null}
-      {error ? <p className="text-[12px] leading-5 font-semibold text-red-600">{error}</p> : null}
-    </div>
-  )
-}
-
 export function VouchCreationWizard({
-  initialDraft,
+  content,
+  currentStep,
+  optimisticStep,
+  savedStepIndexes,
+  draft,
+  preview,
+  fieldErrors,
+  formError,
+  cartOpen,
+  isPending,
+  onDraftChange,
+  onStepSelect,
+  onBack,
   onSaveAmount,
   onSaveWindow,
+  onReviewCart,
+  onCartOpenChange,
   onCreateVouch,
 }: VouchCreationWizardProps) {
-  const [currentStep, setCurrentStep] = React.useState(0)
-  const [draft, setDraft] = React.useState<VouchCreationDraft>({
-    ...defaultVouchDraft,
-    ...initialDraft,
-  })
-  const [savedSteps, setSavedSteps] = React.useState<Set<number>>(() => new Set())
-  const [result, setResult] = React.useState<VouchCreationActionResult | null>(null)
-  const [cartOpen, setCartOpen] = React.useState(false)
-  const [isPending, startTransition] = React.useTransition()
-  const [optimisticStep, setOptimisticStep] = React.useOptimistic(currentStep)
-  const progress = ((optimisticStep + 1) / 3) * 100
-
-  const fieldErrors = result?.ok === false ? result.fieldErrors : undefined
-  const formError = result?.ok === false ? result.formError : null
-  const preview = result?.ok ? result.data : undefined
-  const steps = [
-    { title: "Fee invoice", icon: CircleDollarSign },
-    { title: "Paylink window", icon: CalendarClock },
-    { title: "Immutable create", icon: FileCheck2 },
-  ] as const
-
-  function updateDraft(patch: Partial<VouchCreationDraft>) {
-    setDraft((current) => ({ ...current, ...patch }))
-    setResult(null)
-  }
-
-  function markSaved(stepIndex: number) {
-    setSavedSteps((current) => {
-      const next = new Set(current)
-      next.add(stepIndex)
-      return next
-    })
-  }
-
-  function runStep(action: () => Promise<VouchCreationActionResult>, nextStep?: number) {
-    startTransition(async () => {
-      setResult(null)
-      if (typeof nextStep === "number") setOptimisticStep(nextStep)
-      const nextResult = await action()
-      setResult(nextResult)
-
-      if (!nextResult.ok) return
-
-      markSaved(currentStep)
-
-      if (typeof nextStep === "number") {
-        setCurrentStep(nextStep)
-      } else if (nextResult.data?.checkoutUrl) {
-        window.location.href = nextResult.data.checkoutUrl
-      } else if (nextResult.data?.detailPath) {
-        window.location.href = nextResult.data.detailPath
-      }
-    })
-  }
-
-  function openCart() {
-    setResult(null)
-    setCartOpen(true)
-  }
-
-  function goBack() {
-    const nextStep = Math.max(currentStep - 1, 0)
-    setOptimisticStep(nextStep)
-    setCurrentStep(nextStep)
-    setResult(null)
-  }
+  const progress = ((optimisticStep + 1) / content.steps.length) * 100
+  const savedSteps = new Set(savedStepIndexes)
+  const stepIcons = [CircleDollarSign, CalendarClock, FileCheck2] as const
 
   return (
     <div className="grid h-full min-h-0 w-full gap-4 overflow-hidden lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
       <aside className="flex min-h-0 flex-col border-3 border-neutral-400 bg-black">
         <div className="border-b-3 border-neutral-400 p-4 md:p-5">
           <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
-            New Vouch
+            {content.eyebrow}
           </p>
           <h1 className="mt-2 text-2xl leading-none font-black tracking-wide uppercase md:text-4xl">
-            Create status rail
+            {content.title}
           </h1>
         </div>
 
         <div className="grid flex-1 content-between gap-4 p-4 md:p-5">
           <div className="space-y-3">
-            {steps.map((step, index) => {
-              const Icon = step.icon
+            {content.steps.map((step, index) => {
+              const Icon = stepIcons[index] ?? FileCheck2
               const active = index === optimisticStep
               const complete = savedSteps.has(index)
 
@@ -525,18 +431,12 @@ export function VouchCreationWizard({
                 <button
                   key={step.title}
                   type="button"
-                  onClick={() => {
-                    if (index <= currentStep || savedSteps.has(index - 1)) {
-                      setOptimisticStep(index)
-                      setCurrentStep(index)
-                      setResult(null)
-                    }
-                  }}
+                  onClick={() => onStepSelect(index)}
                   className={[
                     "grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-2 p-3 text-left transition",
                     active
-                      ? "border-blue-600 bg-blue-600 text-white shadow-[5px_5px_0_#000]"
-                      : "border-neutral-400 bg-black text-neutral-300 hover:border-blue-600",
+                      ? "border-blue-600 bg-blue-600 text-white shadow-[5px_5px_0_black]"
+                      : "border-neutral-400 bg-black text-neutral-400 hover:border-blue-600",
                   ].join(" ")}
                 >
                   <span className="flex size-10 items-center justify-center border border-neutral-400 bg-black text-white">
@@ -550,7 +450,9 @@ export function VouchCreationWizard({
                       {step.title}
                     </span>
                   </span>
-                  <span className="font-mono text-xs font-black">{complete ? "OK" : "..."}</span>
+                  <span className="font-mono text-xs font-black">
+                    {complete ? step.completeLabel : step.pendingLabel}
+                  </span>
                 </button>
               )
             })}
@@ -560,7 +462,7 @@ export function VouchCreationWizard({
             <Progress value={progress} className="h-3 shadow-none" />
             <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-bold text-neutral-400">
               <span>{Math.round(progress)}% complete</span>
-              <span className="text-right">Server state owns outcome</span>
+              <span className="text-right">{content.progressHint}</span>
             </div>
           </div>
         </div>
@@ -570,11 +472,10 @@ export function VouchCreationWizard({
         <div className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto]">
           <div className="border-b-3 border-neutral-400 p-4 md:p-5">
             <h2 className="text-xl leading-none font-black tracking-wide uppercase md:text-3xl">
-              {steps[optimisticStep]?.title}
+              {content.steps[optimisticStep]?.title}
             </h2>
             <p className="mt-2 max-w-2xl text-[12px] leading-5 font-semibold text-neutral-400 md:text-sm">
-              UI only: fee math, immutable creation, provider links, idempotency keys, retries, and
-              webhook reconciliation stay on the server.
+              {content.helper}
             </p>
           </div>
 
@@ -584,12 +485,11 @@ export function VouchCreationWizard({
                 {formError}
               </div>
             ) : null}
-
             {optimisticStep === 0 ? (
               <div className="grid h-full min-h-0 content-center gap-4">
                 <FieldShell
                   label="Protected amount"
-                  description="The application fee and provider fee preview are calculated server-side before the Vouch can be created."
+                  description={content.amountDescription}
                   error={firstFieldError(fieldErrors, ["amountCents"])}
                 >
                   <Input
@@ -599,11 +499,10 @@ export function VouchCreationWizard({
                     max="2500"
                     step="0.01"
                     value={draft.amountDollars}
-                    onChange={(event) => updateDraft({ amountDollars: event.target.value })}
+                    onChange={(event) => onDraftChange({ amountDollars: event.target.value })}
                     className="h-14 rounded-none border border-neutral-400 bg-black px-4 text-xl font-black text-white focus-visible:border-blue-600 focus-visible:ring-0"
                   />
                 </FieldShell>
-
                 <div className="grid gap-3 sm:grid-cols-3">
                   <StatusTile label="Protected" value={dollarsFromCents(preview?.amountCents)} />
                   <StatusTile
@@ -617,67 +516,40 @@ export function VouchCreationWizard({
                 </div>
               </div>
             ) : null}
-
             {optimisticStep === 1 ? (
               <div className="grid h-full min-h-0 content-center gap-4">
                 <div className="grid gap-4 md:grid-cols-3">
-                  <FieldShell
+                  <DateField
                     label="Appointment"
+                    value={draft.appointmentStartsAt}
                     error={firstFieldError(fieldErrors, ["appointmentStartsAt"])}
-                  >
-                    <Input
-                      type="datetime-local"
-                      value={draft.appointmentStartsAt}
-                      onChange={(event) => updateDraft({ appointmentStartsAt: event.target.value })}
-                      className="h-12 rounded-none border border-neutral-400 bg-black px-3 text-sm font-bold text-white focus-visible:border-blue-600 focus-visible:ring-0"
-                    />
-                  </FieldShell>
-                  <FieldShell
+                    onChange={(value) => onDraftChange({ appointmentStartsAt: value })}
+                  />
+                  <DateField
                     label="Opens"
+                    value={draft.confirmationOpensAt}
                     error={firstFieldError(fieldErrors, ["confirmationOpensAt"])}
-                  >
-                    <Input
-                      type="datetime-local"
-                      value={draft.confirmationOpensAt}
-                      onChange={(event) => updateDraft({ confirmationOpensAt: event.target.value })}
-                      className="h-12 rounded-none border border-neutral-400 bg-black px-3 text-sm font-bold text-white focus-visible:border-blue-600 focus-visible:ring-0"
-                    />
-                  </FieldShell>
-                  <FieldShell
+                    onChange={(value) => onDraftChange({ confirmationOpensAt: value })}
+                  />
+                  <DateField
                     label="Expires"
+                    value={draft.confirmationExpiresAt}
                     error={firstFieldError(fieldErrors, ["confirmationExpiresAt"])}
-                  >
-                    <Input
-                      type="datetime-local"
-                      value={draft.confirmationExpiresAt}
-                      onChange={(event) =>
-                        updateDraft({ confirmationExpiresAt: event.target.value })
-                      }
-                      className="h-12 rounded-none border border-neutral-400 bg-black px-3 text-sm font-bold text-white focus-visible:border-blue-600 focus-visible:ring-0"
-                    />
-                  </FieldShell>
+                    onChange={(value) => onDraftChange({ confirmationExpiresAt: value })}
+                  />
                 </div>
-
                 <div className="grid gap-3 md:grid-cols-3">
-                  <ProtocolTile
-                    icon={<Link2 />}
-                    title="Paylink"
-                    body="Merchant receives the hosted payment link after fee payment and immutable create."
-                  />
-                  <ProtocolTile
-                    icon={<Database />}
-                    title="Idempotent DB"
-                    body="The feature layer should write transactionally with retry-aware idempotency keys."
-                  />
-                  <ProtocolTile
-                    icon={<RefreshCw />}
-                    title="Webhook sync"
-                    body="Stripe events reconcile payment, authorization, capture, expiration, and refund state."
-                  />
+                  {content.protocolTiles.map((tile, index) => (
+                    <ProtocolTile
+                      key={tile.title}
+                      icon={index === 0 ? <Link2 /> : index === 1 ? <Database /> : <RefreshCw />}
+                      title={tile.title}
+                      body={tile.body}
+                    />
+                  ))}
                 </div>
               </div>
             ) : null}
-
             {optimisticStep === 2 ? (
               <div className="grid h-full min-h-0 content-center gap-4">
                 <div className="grid gap-3 md:grid-cols-3">
@@ -688,18 +560,17 @@ export function VouchCreationWizard({
                   <StatusTile label="Currency" value="USD" />
                   <StatusTile label="Outcome" value="State decides" />
                 </div>
-
                 <label className="flex min-w-0 items-start gap-3 border border-neutral-400 p-4">
                   <input
                     type="checkbox"
                     checked={draft.disclaimerAccepted}
-                    onChange={(event) => updateDraft({ disclaimerAccepted: event.target.checked })}
+                    onChange={(event) =>
+                      onDraftChange({ disclaimerAccepted: event.target.checked })
+                    }
                     className="mt-1 size-5 accent-blue-600"
                   />
-                  <span className="text-sm leading-6 font-semibold text-neutral-300">
-                    I understand this Vouch becomes immutable after creation data is issued. Funds
-                    release only when merchant and customer confirmations are both recorded inside
-                    the confirmation window.
+                  <span className="text-sm leading-6 font-semibold text-neutral-400">
+                    {content.immutableAcknowledgement}
                   </span>
                 </label>
                 {firstFieldError(fieldErrors, ["disclaimerAccepted"]) ? (
@@ -715,40 +586,29 @@ export function VouchCreationWizard({
             <Button
               type="button"
               variant="outline"
-              onClick={goBack}
+              onClick={onBack}
               disabled={currentStep === 0 || isPending}
             >
               <ArrowLeft className="size-4" />
               Back
             </Button>
-
             {currentStep === 0 ? (
-              <Button
-                type="button"
-                disabled={isPending}
-                onClick={() => runStep(() => onSaveAmount(draft), 1)}
-              >
+              <Button type="button" disabled={isPending} onClick={onSaveAmount}>
                 Save fee invoice
                 <ArrowRight className="size-4" />
               </Button>
             ) : null}
-
             {currentStep === 1 ? (
-              <Button
-                type="button"
-                disabled={isPending}
-                onClick={() => runStep(() => onSaveWindow(draft), 2)}
-              >
+              <Button type="button" disabled={isPending} onClick={onSaveWindow}>
                 Save window
                 <ArrowRight className="size-4" />
               </Button>
             ) : null}
-
             {currentStep === 2 ? (
               <Button
                 type="button"
                 disabled={isPending || !draft.disclaimerAccepted}
-                onClick={openCart}
+                onClick={onReviewCart}
               >
                 Review cart
                 <ShoppingCart className="size-4" />
@@ -760,12 +620,81 @@ export function VouchCreationWizard({
 
       <VouchCreationCartSheet
         open={cartOpen}
-        onOpenChange={setCartOpen}
+        onOpenChange={onCartOpenChange}
+        content={content}
         draft={draft}
         preview={preview}
         isPending={isPending}
-        onConfirm={() => runStep(() => onCreateVouch(draft))}
+        onConfirm={onCreateVouch}
       />
+    </div>
+  )
+}
+
+function FieldShell({
+  label,
+  children,
+  description,
+  error,
+}: {
+  label: string
+  children: React.ReactNode
+  description?: string | undefined
+  error?: string | null | undefined
+}) {
+  return (
+    <div className="min-w-0 space-y-2">
+      <Label className="text-[11px] font-black tracking-widest text-neutral-400 uppercase">
+        {label}
+      </Label>
+      {children}
+      {description ? (
+        <p className="text-[12px] leading-5 font-semibold text-neutral-400">{description}</p>
+      ) : null}
+      {error ? <p className="text-[12px] leading-5 font-semibold text-red-600">{error}</p> : null}
+    </div>
+  )
+}
+
+function DateField({
+  label,
+  value,
+  error,
+  onChange,
+}: {
+  label: string
+  value: string
+  error: string | null
+  onChange: (value: string) => void
+}) {
+  return (
+    <FieldShell label={label} error={error}>
+      <Input
+        type="datetime-local"
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        className="h-12 rounded-none border border-neutral-400 bg-black px-3 text-sm font-bold text-white focus-visible:border-blue-600 focus-visible:ring-0"
+      />
+    </FieldShell>
+  )
+}
+
+function ProtocolTile({
+  icon,
+  title,
+  body,
+}: {
+  icon: React.ReactNode
+  title: string
+  body: string
+}) {
+  return (
+    <div className="border border-neutral-400 bg-neutral-900 p-4">
+      <div className="mb-3 flex size-10 items-center justify-center border border-neutral-400 bg-black text-blue-600">
+        {icon}
+      </div>
+      <p className="text-sm font-black uppercase">{title}</p>
+      <p className="mt-2 text-xs leading-5 font-semibold text-neutral-400">{body}</p>
     </div>
   )
 }
@@ -773,6 +702,7 @@ export function VouchCreationWizard({
 function VouchCreationCartSheet({
   open,
   onOpenChange,
+  content,
   draft,
   preview,
   isPending,
@@ -780,6 +710,7 @@ function VouchCreationCartSheet({
 }: {
   open: boolean
   onOpenChange: (open: boolean) => void
+  content: VouchCreationWizardContent
   draft: VouchCreationDraft
   preview?: VouchCreationPreviewData | undefined
   isPending: boolean
@@ -798,74 +729,33 @@ function VouchCreationCartSheet({
       >
         <SheetHeader className="border-b-3 border-neutral-400 p-5 pr-14 text-left">
           <SheetTitle className="text-2xl font-black tracking-wide uppercase">
-            Vouch cart
+            {content.cartTitle}
           </SheetTitle>
-          <SheetDescription className="font-semibold">
-            Confirm the server-owned create request, then continue to the hosted fee invoice.
-          </SheetDescription>
+          <SheetDescription className="font-semibold">{content.cartDescription}</SheetDescription>
         </SheetHeader>
-
         <div className="min-h-0 overflow-auto p-5">
           <div className="grid gap-5">
-            <Receipt
-              data={{
-                receiptNumber: "VOUCH-CREATE",
-                date: "Issued on create",
-                merchant: {
-                  name: "Vouch application fee",
-                  address: "Hosted Stripe invoice",
-                },
-                items: [
-                  {
-                    name: "Vouch service fee",
-                    price: vouchFee,
-                  },
-                  {
-                    name: "Stripe fee offset",
-                    price: processingOffset,
-                  },
-                ],
-                subtotal: feeInvoiceTotal,
-                total: feeInvoiceTotal,
-                paymentMethod: "Stripe hosted invoice",
-              }}
-            />
-
-            <section className="grid gap-3 border-3 border-neutral-400 bg-neutral-900 p-4">
-              <p className="text-sm font-black text-white uppercase">Create sequence</p>
-              <CartRailItem
-                label="1. Idempotent create"
-                value="Feature server action writes Vouch state transactionally with retry-safe keys."
-              />
-              <CartRailItem
-                label="2. Fee invoice"
-                value="Merchant pays application fee and Stripe fee through a hosted one-time invoice."
-              />
-              <CartRailItem
-                label="3. Immutable paylink"
-                value="After paid webhook reconciliation, the destination PaymentIntent link is issued and the Vouch becomes immutable."
-              />
-              <CartRailItem
-                label="4. Bilateral confirmation"
-                value="Merchant and customer DB writes inside the window determine capture; otherwise the intent expires or is voided."
-              />
-            </section>
-
             <section className="grid gap-3 border-3 border-neutral-400 bg-black p-4">
               <StatusRow label="Protected amount" value={formatCurrency(protectedAmount)} />
+              <StatusRow label="Vouch fee" value={formatCurrency(vouchFee)} />
+              <StatusRow label="Processing offset" value={formatCurrency(processingOffset)} />
               <StatusRow label="Fee invoice due now" value={formatCurrency(feeInvoiceTotal)} />
-              <StatusRow
-                label="Confirmation opens"
-                value={draft.confirmationOpensAt || "Not set"}
-              />
-              <StatusRow
-                label="Confirmation expires"
-                value={draft.confirmationExpiresAt || "Not set"}
-              />
+            </section>
+            <section className="grid gap-3 border-3 border-neutral-400 bg-neutral-900 p-4">
+              <p className="text-sm font-black text-white uppercase">Create sequence</p>
+              {content.cartRail.map((item) => (
+                <div key={item.label} className="border border-neutral-400 bg-black p-3">
+                  <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
+                    {item.label}
+                  </p>
+                  <p className="mt-2 text-xs leading-5 font-semibold text-neutral-400">
+                    {item.value}
+                  </p>
+                </div>
+              ))}
             </section>
           </div>
         </div>
-
         <SheetFooter className="gap-3 border-t-3 border-neutral-400 p-5 sm:space-x-0">
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Back to wizard
@@ -880,13 +770,19 @@ function VouchCreationCartSheet({
   )
 }
 
-function CartRailItem({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border border-neutral-400 bg-black p-3">
-      <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">{label}</p>
-      <p className="mt-2 text-xs leading-5 font-semibold text-neutral-400">{value}</p>
-    </div>
-  )
+function firstFieldError(fieldErrors: Record<string, string[]> | undefined, fields: string[]) {
+  for (const field of fields) {
+    const message = fieldErrors?.[field]?.[0]
+    if (message) return message
+  }
+
+  return null
+}
+
+function dollarsFromCents(cents?: number) {
+  if (!Number.isFinite(cents)) return "$0.00"
+
+  return formatCurrency((cents ?? 0) / 100)
 }
 
 function parseCurrencyLabel(value: string) {
@@ -900,30 +796,6 @@ function formatCurrency(value: number) {
     style: "currency",
     currency: "USD",
   }).format(value)
-}
-
-function ProtocolTile({
-  icon,
-  title,
-  body,
-}: {
-  icon: React.ReactNode
-  title: string
-  body: string
-}) {
-  return (
-    <div className="border border-neutral-400 bg-neutral-900 p-4">
-      <div className="mb-3 flex size-10 items-center justify-center border border-neutral-400 bg-black text-blue-600">
-        {React.isValidElement(icon)
-          ? React.cloneElement(icon as React.ReactElement<{ className?: string }>, {
-              className: "size-5",
-            })
-          : icon}
-      </div>
-      <p className="text-sm font-black uppercase">{title}</p>
-      <p className="mt-2 text-xs leading-5 font-semibold text-neutral-400">{body}</p>
-    </div>
-  )
 }
 
 export const StatusBlocks = {

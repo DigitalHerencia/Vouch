@@ -3,7 +3,7 @@
 import type { Metadata, Viewport } from "next"
 import { Archivo_Black, Bebas_Neue, JetBrains_Mono } from "next/font/google"
 import type { ReactNode } from "react"
-import { AppProvider } from "@/components/app/app-providers"
+import { AppProvider } from "@/components/providers/app-providers"
 import "./globals.css"
 
 const archivoBlack = Archivo_Black({

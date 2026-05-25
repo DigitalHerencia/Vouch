@@ -1,43 +1,34 @@
-/* Loads Tailwind CSS v4's CSS-first engine and scans this stylesheet for utilities. */
 @import "tailwindcss";
-
-/* Adds animation utility classes used by shadcn/ui and Radix-style components. */
 @import "tw-animate-css";
-
-/* Loads shadcn's v4 utility layer without defining project theme tokens here. */
 @import "shadcn/tailwind.css";
 
+@page {
+  margin: 0.75in;
+}
+
 @layer base {
-  /* Uses border-box sizing everywhere so padding and borders do not expand layouts. */
   *,
   *::before,
   *::after {
     box-sizing: border-box;
   }
 
-  /* Provides the dark application canvas and fixed brutalist grid background. */
+  html {
+    min-height: 100%;
+    background: black;
+    scroll-behavior: smooth;
+    text-rendering: geometricprecision;
+  }
+
   body {
     min-height: 100vh;
     margin: 0;
     background:
-      linear-gradient(oklch(70.5% 0 0 / 0.05) 1px, oklch(15.5% 0 0 / 0) 1px),
-      linear-gradient(90deg, oklch(70.5% 0 0 / 0.05) 1px, oklch(15.5% 0 0 / 0) 1px),
-      radial-gradient(
-        circle at 0% 0%,
-        oklch(54.6% 0.245 262.881 / 0.22),
-        oklch(10.5% 0 0 / 0.26) 24rem
-      ),
-      radial-gradient(
-        circle at 0% 100%,
-        oklch(54.6% 0.245 262.881 / 0.18),
-        oklch(10.5% 0 0 / 0.34) 20rem
-      ),
-      radial-gradient(
-        circle at 100% 50%,
-        oklch(54.6% 0.245 262.881 / 0.24),
-        oklch(10.5% 0 0 / 0.24) 20rem
-      ),
-      oklch(5.5% 0 0);
+      linear-gradient(var(--color-neutral-700) 1px, black 1px),
+      linear-gradient(90deg, var(--color-neutral-700) 1px, black 1px),
+      radial-gradient(circle at 0% 0%, var(--color-blue-600), black 28rem),
+      radial-gradient(circle at 0% 100%, var(--color-neutral-900), black 30rem),
+      radial-gradient(circle at 100% 50%, var(--color-blue-600), black 24rem), black;
     background-attachment: fixed;
     background-position:
       0 0,
@@ -53,32 +44,32 @@
       auto,
       auto,
       auto;
-    color: oklch(95.5% 0 0);
+    color: white;
+    font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-synthesis-weight: none;
+    overflow-x: clip;
   }
 
-  /* Keeps selected text visible against the dark interface. */
-  *::selection {
-    background: oklch(54.6% 0.245 262.881);
-    color: oklch(95.5% 0 0);
+  ::selection {
+    background: var(--color-blue-600);
+    color: white;
   }
 
-  /* Gives keyboard users one consistent focus treatment across controls. */
-  *:focus-visible {
-    outline: 2px solid oklch(54.6% 0.245 262.881);
+  :focus-visible {
+    outline: 2px solid var(--color-blue-600);
     outline-offset: 3px;
   }
 
-  /* Shows disabled controls as unavailable even when component styles vary. */
-  *:disabled {
+  :disabled,
+  [aria-disabled="true"] {
     cursor: not-allowed;
   }
 
-  /* Makes native buttons feel clickable even before component classes are applied. */
-  button {
+  button,
+  [role="button"] {
     cursor: pointer;
   }
 
-  /* Normalizes form typography so native controls inherit surrounding text styles. */
   input,
   optgroup,
   select,
@@ -86,87 +77,126 @@
     font: inherit;
   }
 
-  /* Makes labels match Vouch's compact uppercase operational language. */
-  label {
-    @apply leading-none tracking-wide uppercase;
-    font-family: var(--font-display), var(--font-mono), ui-monospace, monospace;
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  figure,
+  blockquote {
+    margin: 0;
   }
 
-  /* Removes browser heading margins and gives headings consistent display behavior. */
   h1,
   h2,
   h3,
   h4,
   h5,
   h6 {
-    @apply m-0 text-white uppercase;
+    color: white;
+    font-family: var(--font-display), var(--font-mono), ui-monospace, monospace;
+    font-weight: 900;
+    letter-spacing: 0;
+    text-transform: uppercase;
   }
 
-  /* Block title. */
   h1 {
-    @apply text-4xl leading-none font-black tracking-wide md:text-6xl;
-    font-family: var(--font-brand);
+    font-family: var(--font-brand), var(--font-display), var(--font-mono), ui-monospace, monospace;
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    line-height: 0.9;
   }
 
-  /* Panel title. */
   h2 {
-    @apply text-2xl leading-none font-black tracking-wide md:text-4xl;
-    font-family: var(--font-brand);
+    font-family: var(--font-brand), var(--font-display), var(--font-mono), ui-monospace, monospace;
+    font-size: clamp(2rem, 4.5vw, 3.75rem);
+    line-height: 0.94;
   }
 
-  /* Section and row title. */
   h3 {
-    @apply text-xl leading-tight font-black tracking-normal md:text-2xl;
-    font-family: var(--font-display);
+    font-size: clamp(1.375rem, 2.6vw, 2rem);
+    line-height: 1;
   }
 
-  /* Action text. */
   h4 {
-    @apply text-base leading-tight font-black tracking-wide md:text-lg;
-    font-family: var(--font-brand);
+    font-size: clamp(1rem, 1.7vw, 1.25rem);
+    line-height: 1.1;
   }
 
-  /* Dense metadata headings. */
   h5,
   h6 {
-    @apply text-xs leading-tight font-semibold tracking-wide text-neutral-400 md:text-sm;
-    font-family: var(--font-display);
+    color: var(--color-neutral-400);
+    font-size: 0.8125rem;
+    font-weight: 800;
+    line-height: 1.15;
   }
 
-  /* Body copy. Eyebrows and metadata stay as inline Tailwind overrides on p. */
   p {
-    @apply m-0 text-sm leading-relaxed font-normal text-neutral-100 md:text-base;
-    font-family: var(--font-mono);
+    color: white;
+    font-size: clamp(0.875rem, 1.35vw, 1rem);
+    line-height: 1.65;
   }
 
-  /* Keeps small text readable in dense panels. */
   small {
-    @apply text-xs leading-relaxed text-neutral-400;
-    font-family: var(--font-mono);
+    color: var(--color-neutral-400);
+    font-size: 0.75rem;
+    line-height: 1.55;
   }
 
-  /* Makes emphasized text visually decisive in high-contrast panels. */
   strong {
-    @apply font-extrabold;
+    font-weight: 900;
   }
 
-  /* Resets horizontal rules to a single hard neutral divider. */
+  a {
+    color: white;
+    text-decoration-color: var(--color-neutral-700);
+    text-underline-offset: 0.22em;
+    transition:
+      color 160ms ease,
+      text-decoration-color 160ms ease;
+  }
+
+  a:hover {
+    color: var(--color-blue-600);
+    text-decoration-color: var(--color-blue-600);
+  }
+
   hr {
     height: 1px;
     margin: 0;
     border: 0;
-    background: oklch(5.5% 0 0);
+    background: var(--color-neutral-700);
   }
 
-  /* Prevents icons from shrinking inside compact flex rows. */
   svg {
     flex-shrink: 0;
   }
+}
 
-  /* Applies the uppercase navigation voice to shared navigation regions. */
-  nav {
-    @apply tracking-wide uppercase;
-    font-family: var(--font-mono);
+@scope (body) {
+  @layer components {
+    label,
+    nav {
+      font-family: var(--font-display), var(--font-mono), ui-monospace, monospace;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    code,
+    kbd,
+    samp,
+    pre {
+      font-family:
+        var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-color: var(--color-neutral-700);
+    }
   }
 }
 
@@ -175,6 +205,7 @@
     from {
       transform: translateX(0);
     }
+
     to {
       transform: translateX(-100%);
     }
@@ -184,6 +215,7 @@
     from {
       transform: translateX(-100%);
     }
+
     to {
       transform: translateX(0);
     }
@@ -218,7 +250,6 @@
   }
 }
 
-/* Respects OS-level reduced motion preferences while preserving final UI states. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
