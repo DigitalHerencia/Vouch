@@ -62,7 +62,6 @@ import { participantSafeAuditTimelineItemSelect } from "@/lib/db/selects/audit.s
 
 const DEFAULT_PAGE_SIZE = 20
 
-type VouchCardRecord = Prisma.VouchGetPayload<{ select: typeof vouchCardSelect }>
 type VouchDetailRecord = Prisma.VouchGetPayload<{ select: typeof vouchDetailBaseSelect }>
 type VouchConfirmationRecord = Prisma.VouchGetPayload<{
   select: typeof vouchConfirmationStateSelect

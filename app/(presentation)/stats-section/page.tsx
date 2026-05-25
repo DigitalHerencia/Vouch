@@ -17,7 +17,7 @@ const stats = [
   },
   {
     value: "0",
-    label: "Manual Awards",
+    label: "Override Paths",
     description: "No force-release control",
     trend: "down" as const,
     trendValue: "blocked",
@@ -47,7 +47,7 @@ const statsWithIcons = [
   },
   {
     value: "0",
-    label: "Manual Awards",
+    label: "Override Paths",
     description: "No force-release control",
     icon: <Shield className="h-7 w-7" />,
   },

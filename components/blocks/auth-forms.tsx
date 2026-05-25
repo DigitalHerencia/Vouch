@@ -38,11 +38,9 @@ export interface AuthContentPanelProps {
   body: string
 }
 
-export function AuthContentPanel({
-  eyebrow: _eyebrow,
-  title: _title,
-  body: _body,
-}: AuthContentPanelProps) {
+export function AuthContentPanel(props: AuthContentPanelProps) {
+  void props
+
   return (
     <div className="flex h-full min-h-0 w-full flex-col justify-center overflow-hidden border-r-3 border-neutral-400 bg-transparent">
       <div className="w-full">

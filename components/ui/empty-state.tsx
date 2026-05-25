@@ -9,7 +9,7 @@ import {
   Users,
   ShoppingCart,
   Bell,
-  Image,
+  Image as ImageIcon,
   AlertTriangle,
   WifiOff,
   ShieldX,
@@ -290,7 +290,7 @@ const presetConfig: Record<EmptyStatePresetType, PresetConfig> = {
     description: "You're all caught up! Check back later for updates.",
   },
   "no-images": {
-    icon: <Image />,
+    icon: <ImageIcon />,
     title: "No images",
     description: "There are no images to display. Upload some to get started.",
   },

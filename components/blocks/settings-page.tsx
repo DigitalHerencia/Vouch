@@ -19,7 +19,6 @@ import {
   Save,
   Trash2,
   AlertTriangle,
-  Check,
   Moon,
   Sun,
   Monitor,
@@ -55,7 +54,7 @@ export function ProfileSettings({ user = defaultProfileUser }: ProfileSettingsPr
           <User className="h-12 w-12" />
           Profile Settings
         </CardTitle>
-        <CardDescription>Manage your public profile information</CardDescription>
+        <CardDescription>Manage your account information</CardDescription>
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
@@ -393,11 +392,8 @@ export interface AppearanceSettingsProps {
   onAccentColorChange?: (color: string) => void
 }
 
-const accentColors = [{ name: "Blue", value: "blue-600" }]
-
 export function AppearanceSettings({
   theme = "system",
-  accentColor = "blue-600",
 }: AppearanceSettingsProps) {
   return (
     <Card>

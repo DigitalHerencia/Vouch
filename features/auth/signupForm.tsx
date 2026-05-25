@@ -70,6 +70,10 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
     control: form.control,
     name: "acceptedUserAgreement",
   })
+  const verificationCode = useWatch({
+    control: form.control,
+    name: "verificationCode",
+  })
 
   const nextUrl = sanitizePostAuthRedirect(redirectUrl)
   const isBusy = form.formState.isSubmitting || isResending || isResetting || !fetchStatus
@@ -243,7 +247,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
               title={authVerificationContent.codeLabel}
               description={authVerificationContent.finishSignup}
               length={6}
-              value={form.watch("verificationCode")}
+              value={verificationCode}
               error={form.formState.errors.verificationCode?.message}
               disabled={isBusy}
               submitLabel={authVerificationContent.verifyCode}

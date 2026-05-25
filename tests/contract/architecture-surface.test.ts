@@ -41,7 +41,7 @@ const requiredRouteShells = [
   "app/(tenant)/vouches/new/page.tsx",
   "app/(tenant)/vouches/new/confirm/page.tsx",
   "app/(tenant)/vouches/[vouchId]/page.tsx",
-  "app/api/clerk/webhooks/route.ts",
+  "app/api/clerk/webhook-handler/route.ts",
   "app/api/stripe/webhooks/route.ts",
 ]
 
@@ -126,7 +126,7 @@ const forbiddenRoutePrefixes = [
 ]
 
 const allowedApiRouteFiles = new Set([
-  "app/api/clerk/webhooks/route.ts",
+  "app/api/clerk/webhook-handler/route.ts",
   "app/api/stripe/webhooks/route.ts",
 ])
 
@@ -187,6 +187,21 @@ describe("Vouch architecture surface", () => {
   it("keeps required route shells and architecture directories present", () => {
     for (const path of [...requiredRouteShells, ...requiredArchitectureDirectories]) {
       expect(existsSync(join(root, path)), `Missing required path: ${path}`).toBe(true)
+    }
+  })
+
+  it("keeps forbidden route shells and prefixes absent", () => {
+    for (const path of forbiddenRouteShells) {
+      expect(existsSync(join(root, path)), `Forbidden route shell exists: ${path}`).toBe(false)
+    }
+
+    const appFiles = walk(join(root, "app"))
+
+    for (const prefix of forbiddenRoutePrefixes) {
+      expect(
+        appFiles.some((file) => file.startsWith(prefix)),
+        `Forbidden route prefix exists: ${prefix}`
+      ).toBe(false)
     }
   })
 

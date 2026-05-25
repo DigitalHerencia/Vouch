@@ -4,7 +4,7 @@ import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { safeHref } from "@/lib/utils"
-import { ArrowRight, CheckCircle, CheckCircle2, Mail, Sparkles, Zap } from "lucide-react"
+import { ArrowRight, CheckCircle, Mail } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -194,11 +194,14 @@ export function CTASplit({
   imageAlt = "CTA image",
   imagePosition = "right",
 }: CTASplitProps) {
+  const contentOrder = imagePosition === "right" ? "order-1" : "order-2"
+  const imageOrder = imagePosition === "right" ? "order-2" : "order-1"
+
   return (
     <section className="px-4 py-16 md:px-8">
       <div className="mx-auto max-w-7xl overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
         <div className={"grid md:grid-cols-2"}>
-          <div className="flex flex-col justify-center space-y-6 p-8 md:p-12">
+          <div className={`flex flex-col justify-center space-y-6 p-8 md:p-12 ${contentOrder}`}>
             <h3 className="font-black">{title}</h3>
 
             {description && <p className="font-medium text-white">{description}</p>}
@@ -230,7 +233,7 @@ export function CTASplit({
             </div>
           </div>
 
-          <div className="bg-white">
+          <div className={`bg-white ${imageOrder}`}>
             <Image
               src={imageSrc}
               alt={imageAlt}

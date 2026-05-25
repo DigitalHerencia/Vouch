@@ -253,7 +253,7 @@ function ProcessPanelMarqueeTrack({
       speed="slow"
       repeat={2}
       className={cn(
-        "border-x-0 border-y-3 border-neutral-400 bg-black [contain:paint] select-none",
+        "border-x-0 border-y-3 border-neutral-400 bg-black contain-[paint] select-none",
         className
       )}
     >
