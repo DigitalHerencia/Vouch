@@ -2,7 +2,10 @@
 
 import { Handshake } from "lucide-react"
 
-import type { ContentSectionListItem } from "@/components/shared/content-section-list"
+type ContentSectionListItem = {
+  heading: string
+  body: readonly string[]
+}
 
 export const termsCalloutContent = {
   title: "Back your next appointment with commitment.",

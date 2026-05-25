@@ -17,7 +17,14 @@ import { useState } from "react"
 
 import { UserMenu } from "@/components/navigation/user-menu"
 import { Button } from "@/components/ui/button"
-import { ProtocolDrawer } from "@/components/vouches/protocol-drawer"
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+} from "@/components/ui/drawer"
 import { vouchPageCopy } from "@/content/vouches"
 
 type WarningCopy = {
@@ -133,25 +140,38 @@ export function MobileBottomNav({
         })}
       </nav>
 
-      {pendingAction ? (
-        <ProtocolDrawer
-          open
-          onOpenChange={(open) => {
-            if (!open) setPendingAction(null)
-          }}
-          title={pendingAction.warning.title}
-          consequence={pendingAction.warning.consequence}
-          context={pendingAction.warning.context}
-          finePrint={pendingAction.warning.finePrint}
-          primary={
-            <form action={pendingAction.action}>
-              <Button type="submit" className="w-full">
-                Continue
-              </Button>
-            </form>
-          }
-        />
-      ) : null}
+      <Drawer
+        open={!!pendingAction}
+        onOpenChange={(open) => {
+          if (!open) setPendingAction(null)
+        }}
+      >
+        <DrawerContent>
+          <DrawerHeader className="border-b border-neutral-400 text-left">
+            <DrawerTitle>{pendingAction?.warning.title}</DrawerTitle>
+            <DrawerDescription className="font-semibold">
+              {pendingAction?.warning.consequence}
+            </DrawerDescription>
+          </DrawerHeader>
+          <div className="grid gap-4 p-4">
+            <div className="border border-neutral-400 bg-neutral-900 p-3 text-sm font-semibold text-neutral-300">
+              {pendingAction?.warning.context}
+            </div>
+            <p className="text-xs leading-5 font-semibold text-neutral-400">
+              {pendingAction?.warning.finePrint}
+            </p>
+          </div>
+          {pendingAction ? (
+            <DrawerFooter>
+              <form action={pendingAction.action}>
+                <Button type="submit" className="w-full">
+                  Continue
+                </Button>
+              </form>
+            </DrawerFooter>
+          ) : null}
+        </DrawerContent>
+      </Drawer>
     </>
   )
 }

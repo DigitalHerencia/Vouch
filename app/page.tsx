@@ -1,7 +1,4 @@
-import Link from "next/link"
 import {
-  ArrowDown,
-  ArrowRight,
   CalendarDays,
   Check,
   FileText,
@@ -13,14 +10,12 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
+import { CTAWithBackground } from "@/components/blocks/cta-section"
+import { FeatureGridWithIcons } from "@/components/blocks/feature-grid"
+import { HeroCentered } from "@/components/blocks/hero-section"
+import { ProcessPanel } from "@/components/blocks/process-panel"
+import { StatsCards } from "@/components/blocks/stats-section"
 import { PublicShell } from "@/components/navigation/public-shell"
-import { CalloutPanel } from "@/components/shared/callout-panel"
-import { CardGrid } from "@/components/shared/card-grid"
-import { MetricGrid } from "@/components/shared/metric-grid"
-import { PageHero } from "@/components/shared/page-hero"
-import { ProcessPanel } from "@/components/shared/process-panel"
-import { SectionIntro } from "@/components/shared/section-intro"
-import { Button } from "@/components/ui/button"
 import {
   landingHeroActionsContent,
   landingHeroContent,
@@ -32,104 +27,87 @@ import {
   landingUseCases,
 } from "@/content/marketing"
 
-const processIcons: Record<string, LucideIcon> = {
+const processIcons = {
   file: FileText,
   users: UsersRound,
   check: Check,
   lock: Lock,
-}
+} satisfies Record<(typeof landingProcessSteps)[number]["icon"], LucideIcon>
 
-const useCaseIcons: Record<string, LucideIcon> = {
+const useCaseIcons = {
   calendar: CalendarDays,
   users: UsersRound,
   wrench: Wrench,
   more: MoreHorizontal,
-}
+} satisfies Record<(typeof landingUseCases)[number]["icon"], LucideIcon>
 
 export default function HomePage() {
   return (
     <PublicShell>
-      <section className="mx-auto w-full max-w-7xl px-6 py-12 sm:px-10 lg:px-12 lg:py-16">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-start">
-          <header className="pt-2 lg:pt-8">
-            <PageHero
-              title={landingHeroContent.title}
-              body={landingHeroContent.body}
-              actions={
-                <>
-                  <Button variant="default" size="default" className="min-w-62.5" asChild>
-                    <Link href="/sign-up?return_to=/vouches/new">
-                      <span className="translate-y-px">
-                        {landingHeroActionsContent.primaryLabel}
-                      </span>
-                      <ArrowRight className="size-6" strokeWidth={1.8} />
-                    </Link>
-                  </Button>
+      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-8 lg:px-10 lg:py-12">
+        <section className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.7fr)] lg:items-center">
+          <HeroCentered
+            badge="Vouch"
+            title={landingHeroContent.title}
+            description={landingHeroContent.body}
+            primaryAction={{
+              label: landingHeroActionsContent.primaryLabel,
+              href: "/sign-up?return_to=/vouches/new",
+            }}
+            secondaryAction={{ label: landingHeroActionsContent.secondaryLabel, href: "#process" }}
+          />
 
-                  <Button variant="secondary" size="default" className="min-w-55" asChild>
-                    <Link href="#callout">
-                      <span className="translate-y-px">
-                        {landingHeroActionsContent.secondaryLabel}
-                      </span>
-                      <ArrowDown className="size-5" strokeWidth={1.8} />
-                    </Link>
-                  </Button>
-                </>
-              }
-            />
-          </header>
-
-          <div id="process" className="mx-auto w-full max-w-130 min-w-0 scroll-mt-28 lg:pt-6">
+          <div id="process" className="mx-auto w-full min-w-0 scroll-mt-28">
             <ProcessPanel
               title={landingProcessPanelContent.title}
               steps={landingProcessSteps.map((step) => ({
                 ...step,
-                icon: processIcons[step.icon] ?? FileText,
+                icon: processIcons[step.icon],
               }))}
               footer={landingProcessPanelContent.footer}
             />
           </div>
-        </div>
-
-        <div className="mt-14">
-          <MetricGrid items={landingMetrics} />
-        </div>
-
-        <section className="mt-16">
-          <SectionIntro
-            eyebrow={landingSectionIntroContent.eyebrow}
-            title={landingSectionIntroContent.title}
-            body={landingSectionIntroContent.body}
-          />
-
-          <div className="mt-9">
-            <CardGrid
-              items={landingUseCases.map((item) => ({
-                title: item.title,
-                body: item.body,
-                icon: useCaseIcons[item.icon] ?? MoreHorizontal,
-              }))}
-            />
-          </div>
-
-          <div className="mt-10">
-            <CalloutPanel
-              id="callout"
-              icon={ShieldCheck}
-              title={landingTrustPanelContent.title}
-              body={landingTrustPanelContent.body}
-              actions={
-                <Button variant="default" size="default" className="min-w-72" asChild>
-                  <Link href={landingTrustPanelContent.action}>
-                    <span className="translate-y-px">{landingTrustPanelContent.label}</span>
-                    <ArrowRight className="size-5 sm:size-6" strokeWidth={1.9} />
-                  </Link>
-                </Button>
-              }
-            />
-          </div>
         </section>
-      </section>
+
+        <StatsCards
+          title="Protocol metrics"
+          subtitle="Payment coordination"
+          stats={landingMetrics.map((item) => ({
+            label: item.label,
+            value: item.value,
+            description: item.body,
+          }))}
+        />
+
+        <FeatureGridWithIcons
+          subtitle={landingSectionIntroContent.eyebrow}
+          title={landingSectionIntroContent.title}
+          description={landingSectionIntroContent.body}
+          columns={4}
+          features={landingUseCases.map((item) => {
+            const Icon = useCaseIcons[item.icon]
+
+            return {
+              title: item.title,
+              description: item.body,
+              icon: <Icon className="h-7 w-7 text-white" />,
+            }
+          })}
+        />
+
+        <div id="callout" className="scroll-mt-28">
+          <CTAWithBackground
+            icon={<ShieldCheck className="mx-auto h-12 w-12 text-white" />}
+            title={landingTrustPanelContent.title}
+            description={landingTrustPanelContent.body}
+            primaryAction={{
+              label: landingTrustPanelContent.label,
+              href: landingTrustPanelContent.action,
+            }}
+            backgroundColor="accent"
+          />
+        </div>
+      </main>
     </PublicShell>
   )
 }

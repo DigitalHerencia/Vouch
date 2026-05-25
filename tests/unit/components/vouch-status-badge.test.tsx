@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react"
 import { describe, expect, it } from "vitest"
 
-import { VouchStatusBadge } from "@/components/vouches/vouch-status-badge"
+import { VouchStatusBadge } from "@/components/blocks/status"
 
 describe("VouchStatusBadge", () => {
   it("renders visible text for status", () => {
