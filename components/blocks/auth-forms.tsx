@@ -1,7 +1,4 @@
 import * as React from "react"
-import Link from "next/link"
-
-import { AuthProcessPanelGrid } from "@/components/blocks/process-panel"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -44,12 +41,42 @@ export function AuthContentPanel(props: AuthContentPanelProps) {
   return (
     <div className="flex h-full min-h-0 w-full flex-col justify-center overflow-hidden border-r-3 border-neutral-400 bg-transparent">
       <div className="w-full">
-        <AuthProcessPanelGrid />
+        <AuthProcessPreviewGrid />
       </div>
     </div>
   )
 }
 
+function AuthProcessPreviewGrid() {
+  const items = [
+    { label: "Identity", icon: User },
+    { label: "Provider", icon: Mail },
+    { label: "Protocol", icon: Lock },
+  ]
+
+  return (
+    <div className="grid h-full content-center gap-4 p-8">
+      {items.map((item, index) => {
+        const Icon = item.icon
+
+        return (
+          <div
+            key={item.label}
+            className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 border-3 border-neutral-400 bg-black p-4 shadow-[6px_6px_0_black]"
+          >
+            <span className="flex size-12 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white">
+              <Icon className="size-5" />
+            </span>
+            <span className="font-(family-name:--font-display) text-lg font-black text-white uppercase">
+              {item.label}
+            </span>
+            <span className="font-mono text-xs font-black text-neutral-400">0{index + 1}</span>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 export function AuthFormPanel({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden bg-black p-6 pt-24 pb-20 md:p-8">
@@ -111,12 +138,12 @@ export function LoginForm({
           {footer ?? (
             <span>
               {signUpPrompt}{" "}
-              <Link
+              <a
                 href={signUpHref ?? "#"}
                 className="text-blue-600 underline-offset-4 hover:text-white hover:underline"
               >
                 {signUpLabel}
-              </Link>
+              </a>
             </span>
           )}
         </div>
@@ -422,13 +449,13 @@ export function SignUpForm({
                 <Checkbox id="terms" defaultChecked />
                 <Label htmlFor="terms" className="cursor-pointer text-sm leading-tight">
                   I agree to the{" "}
-                  <Link href={termsUrl} className="font-bold text-blue-600 hover:underline">
+                  <a href={termsUrl} className="font-bold text-blue-600 hover:underline">
                     Terms of Service
-                  </Link>{" "}
+                  </a>{" "}
                   and{" "}
-                  <Link href={privacyUrl} className="font-bold text-blue-600 hover:underline">
+                  <a href={privacyUrl} className="font-bold text-blue-600 hover:underline">
                     Privacy Policy
-                  </Link>
+                  </a>
                 </Label>
               </div>
             </div>

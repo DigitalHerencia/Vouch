@@ -60,7 +60,7 @@ export function ProfileSettings({ user = defaultProfileUser }: ProfileSettingsPr
         <div className="space-y-6">
           <div className="flex items-center gap-6">
             <div className="relative">
-              <Avatar className="h-24 w-24 border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+              <Avatar className="h-24 w-24 border-3 border-neutral-400 shadow-[4px_4px_0px_black]">
                 <AvatarImage src={user.avatar} />
                 <AvatarFallback className="text-2xl font-bold">
                   {user.name
@@ -71,7 +71,7 @@ export function ProfileSettings({ user = defaultProfileUser }: ProfileSettingsPr
               </Avatar>
               <button
                 type="button"
-                className="absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white shadow-[2px_2px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
+                className="absolute -right-1 -bottom-1 flex h-8 w-8 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white shadow-[4px_4px_0px_black] transition-all hover:translate-x-0.5 hover:translate-y-0.5 hover:shadow-none"
               >
                 <Upload className="h-4 w-4" />
               </button>
@@ -225,7 +225,9 @@ const defaultNotifications: NotificationSetting[] = [
   },
 ]
 
-export function NotificationSettings({ notifications = defaultNotifications }: NotificationSettingsProps) {
+export function NotificationSettings({
+  notifications = defaultNotifications,
+}: NotificationSettingsProps) {
   return (
     <Card>
       <CardHeader>
@@ -392,9 +394,7 @@ export interface AppearanceSettingsProps {
   onAccentColorChange?: (color: string) => void
 }
 
-export function AppearanceSettings({
-  theme = "system",
-}: AppearanceSettingsProps) {
+export function AppearanceSettings({ theme = "system" }: AppearanceSettingsProps) {
   return (
     <Card>
       <CardHeader>
@@ -419,8 +419,8 @@ export function AppearanceSettings({
                 type="button"
                 className={
                   theme === value
-                    ? "flex flex-col items-center gap-2 border-3 border-neutral-400 p-4 transition-all bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
-                    : "flex flex-col items-center gap-2 border-3 border-neutral-400 p-4 transition-all bg-black hover:bg-black"
+                    ? "flex flex-col items-center gap-2 border-3 border-neutral-400 bg-blue-600 p-4 text-white shadow-[4px_4px_0px_black] transition-all"
+                    : "flex flex-col items-center gap-2 border-3 border-neutral-400 bg-black p-4 transition-all hover:bg-black"
                 }
               >
                 <Icon className="h-6 w-6" />

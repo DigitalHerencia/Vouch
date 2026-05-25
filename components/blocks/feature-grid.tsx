@@ -1,6 +1,5 @@
 import * as React from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import Image from "next/image"
 
 const featureColors = ["bg-black"]
 
@@ -59,13 +58,13 @@ export function FeatureGridWithIcons({
           {features.map((feature, index) => (
             <Card
               key={feature.title}
-              className={`group transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
+              className={`group transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_black] ${
                 featureColors[index % 6]
               }`}
             >
               <CardHeader>
                 <div
-                  className={`mb-4 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 shadow-[3px_3px_0px_oklch(54.6%_0.245_262.881)] ${
+                  className={`mb-4 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_black] ${
                     iconColors[index % 6]
                   }`}
                 >
@@ -117,13 +116,12 @@ export function FeatureGridWithImages({ title, subtitle, features }: FeatureGrid
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
             <div key={feature.title} className="group">
-              <div className="mb-4 overflow-hidden border-3 border-neutral-400 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)] transition-all group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
-                <Image
-                  src={feature.image}
-                  alt={feature.title}
-                  width={640}
-                  height={360}
-                  className="h-48 w-full object-cover"
+              <div className="mb-4 overflow-hidden border-3 border-neutral-400 shadow-[4px_4px_0px_black] transition-all group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[4px_4px_0px_black]">
+                <span
+                  aria-label={feature.title}
+                  role="img"
+                  className="block h-48 w-full bg-cover bg-center object-cover"
+                  style={{ backgroundImage: `url(${feature.image})` }}
                 />
               </div>
               <h3 className="mb-2 text-xl font-black uppercase">{feature.title}</h3>
@@ -168,7 +166,7 @@ export function FeatureGridAlternating({ features }: FeatureGridAlternatingProps
             >
               <div className="space-y-4">
                 <div
-                  className={`flex h-16 w-16 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
+                  className={`flex h-16 w-16 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_black] ${
                     iconColors[index % 6]
                   }`}
                 >
@@ -179,13 +177,12 @@ export function FeatureGridAlternating({ features }: FeatureGridAlternatingProps
               </div>
 
               <div className="relative">
-                <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]">
-                  <Image
-                    src={feature.image}
-                    alt={feature.title}
-                    width={960}
-                    height={720}
-                    className="h-auto w-full object-cover"
+                <div className="overflow-hidden border-3 border-neutral-400 shadow-[4px_4px_0px_black] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_black]">
+                  <span
+                    aria-label={feature.title}
+                    role="img"
+                    className="block min-h-80 w-full bg-cover bg-center"
+                    style={{ backgroundImage: `url(${feature.image})` }}
                   />
                 </div>
               </div>
@@ -239,13 +236,13 @@ export function FeatureBentoGrid({ title, subtitle, features }: FeatureBentoGrid
             return (
               <Card
                 key={feature.title}
-                className={`group flex flex-col overflow-hidden transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
+                className={`group flex flex-col overflow-hidden transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_black] ${
                   featureColors[index % 6]
                 } ${spanClass}`}
               >
                 <CardHeader className="flex-1">
                   <div
-                    className={`mb-4 flex h-12 w-12 items-center justify-center border-3 border-neutral-400 shadow-[3px_3px_0px_oklch(54.6%_0.245_262.881)] ${
+                    className={`mb-4 flex h-12 w-12 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_black] ${
                       iconColors[index % 6]
                     }`}
                   >

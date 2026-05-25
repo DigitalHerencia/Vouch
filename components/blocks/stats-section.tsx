@@ -69,7 +69,7 @@ export function StatsCards({ title, subtitle, stats }: StatsCardsProps) {
           {stats.map((stat, index) => (
             <div
               key={`stat-${stat.label}`}
-              className={`border-3 border-neutral-400 p-6 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
+              className={`border-3 border-neutral-400 p-6 shadow-[4px_4px_0px_black] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_black] ${
                 cardColors[index % 4]
               }`}
             >
@@ -137,7 +137,7 @@ export function StatsSplit({
           {stats.map((stat) => (
             <div
               key={`stat-${stat.label}`}
-              className="border-3 border-neutral-400 bg-black p-6 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+              className="border-3 border-neutral-400 bg-black p-6 shadow-[4px_4px_0px_black]"
             >
               <div className="text-3xl font-black">{stat.value}</div>
               <div className="mt-1 text-sm font-bold tracking-wide text-neutral-400 uppercase">
@@ -195,7 +195,7 @@ export function StatsWithIcons({ stats }: StatsWithIconsProps) {
         {stats.map((stat, index) => (
           <div key={`stat-${stat.label}`} className="space-y-4 text-center">
             <div
-              className={`mx-auto flex h-16 w-16 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
+              className={`mx-auto flex h-16 w-16 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_black] ${
                 iconColors[index % 4]
               }`}
             >

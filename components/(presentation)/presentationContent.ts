@@ -92,4 +92,34 @@ export const presentationContent = {
         "Merchant and customer DB writes inside the window determine capture; otherwise the intent expires or is voided.",
     },
   ],
+  processPanel: {
+    title: "How Vouch resolves commitment state",
+    footer: "Protocol state and provider state determine the outcome.",
+    steps: [
+      {
+        number: "01",
+        icon: "file",
+        title: "Create immutable terms",
+        body: "The merchant defines amount, appointment time, and the confirmation window before commitment.",
+      },
+      {
+        number: "02",
+        icon: "users",
+        title: "Participants confirm",
+        body: "Merchant and customer each confirm presence once inside the configured window.",
+      },
+      {
+        number: "03",
+        icon: "check",
+        title: "Server checks state",
+        body: "The server reads current workflow and provider state before any capture attempt.",
+      },
+      {
+        number: "04",
+        icon: "lock",
+        title: "Outcome settles",
+        body: "Capture only proceeds when both confirmations and provider state allow it.",
+      },
+    ],
+  },
 } as const

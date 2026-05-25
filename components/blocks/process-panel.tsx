@@ -1,5 +1,4 @@
 import * as React from "react"
-import Image from "next/image"
 import {
   BadgeCheck,
   Clock3,
@@ -11,7 +10,6 @@ import {
 } from "lucide-react"
 import { CardHeader, Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
 import { Marquee, MarqueeItem, MarqueeSeparator } from "@/components/ui/marquee"
-import { cn } from "@/lib/utils"
 
 // ============================================================================
 // Process Panel VARIANT 1: Table with Icons
@@ -252,10 +250,12 @@ function ProcessPanelMarqueeTrack({
       direction={direction}
       speed="slow"
       repeat={2}
-      className={cn(
+      className={[
         "border-x-0 border-y-3 border-neutral-400 bg-black contain-[paint] select-none",
-        className
-      )}
+        className,
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       {logos.map((item) => {
         const Icon = item.icon
@@ -263,10 +263,12 @@ function ProcessPanelMarqueeTrack({
         return (
           <React.Fragment key={`${direction}-${item.name}`}>
             <MarqueeItem
-              className={cn(
+              className={[
                 "h-24 min-w-76 gap-5 border-r-3 border-neutral-400 bg-white px-6 text-black shadow-[8px_8px_0_#1D4ED8]",
-                itemClassName
-              )}
+                itemClassName,
+              ]
+                .filter(Boolean)
+                .join(" ")}
             >
               <span className="flex h-12 min-w-36 items-center justify-center">{item.logo}</span>
               {Icon ? (
@@ -348,7 +350,12 @@ const authProcessLogos: readonly ProcessPanelGridItem[] = [
     detail: "authenticated",
     icon: LockKeyhole,
     logo: (
-      <Image src="/logo-dark.png" alt="Vouch" width={150} height={42} className="h-auto w-36" />
+      <span
+        aria-label="Vouch"
+        role="img"
+        className="block h-10 w-36 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(/logo-dark.png)" }}
+      />
     ),
   },
   {
@@ -356,7 +363,12 @@ const authProcessLogos: readonly ProcessPanelGridItem[] = [
     detail: "readiness",
     icon: BadgeCheck,
     logo: (
-      <Image src="/logo-light.png" alt="Vouch" width={150} height={42} className="h-auto w-36" />
+      <span
+        aria-label="Vouch"
+        role="img"
+        className="block h-10 w-36 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(/logo-light.png)" }}
+      />
     ),
   },
   {
@@ -364,12 +376,11 @@ const authProcessLogos: readonly ProcessPanelGridItem[] = [
     detail: "provider-backed",
     icon: CreditCard,
     logo: (
-      <Image
-        src="/Stripe wordmark - Blurple.svg"
-        alt="Stripe"
-        width={120}
-        height={50}
-        className="h-auto w-28"
+      <span
+        aria-label="Stripe"
+        role="img"
+        className="block h-10 w-28 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(/Stripe wordmark - Blurple.svg)" }}
       />
     ),
   },
@@ -378,12 +389,11 @@ const authProcessLogos: readonly ProcessPanelGridItem[] = [
     detail: "non-custodial",
     icon: ShieldCheck,
     logo: (
-      <Image
-        src="/Powered by Stripe - black.svg"
-        alt="Powered by Stripe"
-        width={150}
-        height={34}
-        className="h-auto w-36"
+      <span
+        aria-label="Powered by Stripe"
+        role="img"
+        className="block h-10 w-36 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(/Powered by Stripe - black.svg)" }}
       />
     ),
   },
@@ -391,7 +401,14 @@ const authProcessLogos: readonly ProcessPanelGridItem[] = [
     name: "Presence window",
     detail: "deterministic",
     icon: Clock3,
-    logo: <Image src="/icon-192.png" alt="Vouch icon" width={64} height={64} className="size-14" />,
+    logo: (
+      <span
+        aria-label="Vouch icon"
+        role="img"
+        className="block size-14 bg-contain bg-center bg-no-repeat"
+        style={{ backgroundImage: "url(/icon-192.png)" }}
+      />
+    ),
   },
 ]
 

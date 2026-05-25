@@ -1,21 +1,57 @@
-"use client"
-
 import * as React from "react"
+import { ArrowRight, CheckCircle, Mail } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { safeHref } from "@/lib/utils"
-import { ArrowRight, CheckCircle, Mail } from "lucide-react"
-import Image from "next/image"
-import Link from "next/link"
 
-// ============================================================================
-// CTA VARIANT 1: Simple Centered
-// ============================================================================
+function safeHref(href: string) {
+  if (href.startsWith("/") || href.startsWith("#") || href.startsWith("mailto:")) return href
+
+  try {
+    const url = new URL(href)
+    return url.protocol === "https:" ? href : "#"
+  } catch {
+    return "#"
+  }
+}
+
+export interface CTAAction {
+  label: string
+  href?: string
+  onClick?: () => void
+}
+
+function CTAButton({
+  action,
+  variant = "default",
+}: {
+  action: CTAAction
+  variant?: "default" | "outline"
+}) {
+  if (action.href) {
+    return (
+      <Button size="lg" variant={variant} asChild>
+        <a href={safeHref(action.href)}>
+          {action.label}
+          {variant === "default" ? <ArrowRight className="ml-2 h-4 w-4" /> : null}
+        </a>
+      </Button>
+    )
+  }
+
+  return (
+    <Button size="lg" variant={variant} onClick={action.onClick}>
+      {action.label}
+      {variant === "default" ? <ArrowRight className="ml-2 h-4 w-4" /> : null}
+    </Button>
+  )
+}
+
 export interface CTASimpleProps {
   title: string
   description?: string
-  primaryAction: { label: string; href?: string; onClick?: () => void }
-  secondaryAction?: { label: string; href?: string; onClick?: () => void }
+  primaryAction: CTAAction
+  secondaryAction?: CTAAction
 }
 
 export function CTASimple({ title, description, primaryAction, secondaryAction }: CTASimpleProps) {
@@ -23,49 +59,23 @@ export function CTASimple({ title, description, primaryAction, secondaryAction }
     <section className="px-4 py-16 md:px-8">
       <div className="mx-auto space-y-6 text-center">
         <h1 className="font-black">{title}</h1>
-
-        {description && (
+        {description ? (
           <p className="mx-auto text-base font-medium text-white md:text-lg">{description}</p>
-        )}
-
+        ) : null}
         <div className="flex flex-col justify-center gap-4 sm:flex-row">
-          {primaryAction.href ? (
-            <Button size="lg" asChild>
-              <a href={safeHref(primaryAction.href)}>
-                {primaryAction.label}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </a>
-            </Button>
-          ) : (
-            <Button size="lg" onClick={primaryAction.onClick}>
-              {primaryAction.label}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          )}
-          {secondaryAction &&
-            (secondaryAction.href ? (
-              <Button size="lg" variant="outline" asChild>
-                <a href={safeHref(secondaryAction.href)}>{secondaryAction.label}</a>
-              </Button>
-            ) : (
-              <Button size="lg" variant="outline" onClick={secondaryAction.onClick}>
-                {secondaryAction.label}
-              </Button>
-            ))}
+          <CTAButton action={primaryAction} />
+          {secondaryAction ? <CTAButton action={secondaryAction} variant="outline" /> : null}
         </div>
       </div>
     </section>
   )
 }
 
-// ============================================================================
-// CTA VARIANT 2: With Background
-// ============================================================================
 export interface CTAWithBackgroundProps {
   icon?: React.ReactNode
   title: string
   description?: string
-  primaryAction: { label: string; href?: string; onClick?: () => void }
+  primaryAction: CTAAction
   backgroundColor?: "primary" | "secondary" | "accent" | "muted"
 }
 
@@ -86,45 +96,29 @@ export function CTAWithBackground({
   return (
     <section className="px-4 py-16 md:px-8 lg:px-16">
       <div
-        className={`mx-auto max-w-5xl border-3 border-neutral-400 p-8 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:p-12 ${bgColors[backgroundColor]}`}
+        className={`mx-auto max-w-5xl border-3 border-neutral-400 p-8 shadow-[8px_8px_0px_black] md:p-12 ${bgColors[backgroundColor]}`}
       >
         <div className="space-y-6 text-center">
-          {icon || <CheckCircle className="mx-auto h-12 w-12" />}
-
+          {icon ?? <CheckCircle className="mx-auto h-12 w-12" />}
           <h1 className="font-black">{title}</h1>
-
-          {description && (
+          {description ? (
             <p className="mx-auto text-base font-medium text-white md:text-lg">{description}</p>
-          )}
-
-          {primaryAction.href ? (
-            <Button size="lg" variant="outline" asChild>
-              <Link href={safeHref(primaryAction.href)}>
-                {primaryAction.label}
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          ) : (
-            <Button size="lg" variant="outline" onClick={primaryAction.onClick}>
-              {primaryAction.label}
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          )}
+          ) : null}
+          <CTAButton action={primaryAction} variant="outline" />
         </div>
       </div>
     </section>
   )
 }
 
-// ============================================================================
-// CTA VARIANT 3: Newsletter
-// ============================================================================
 export interface CTANewsletterProps {
   title: string
   description?: string
   placeholder?: string
   buttonLabel?: string
-  onSubmit?: (email: string) => void
+  email: string
+  onEmailChange: (email: string) => void
+  onSubmit?: () => void
 }
 
 export function CTANewsletter({
@@ -132,31 +126,28 @@ export function CTANewsletter({
   description,
   placeholder = "Enter your email",
   buttonLabel = "Subscribe",
+  email,
+  onEmailChange,
   onSubmit,
 }: CTANewsletterProps) {
-  const [email, setEmail] = React.useState("")
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSubmit?.(email)
-    setEmail("")
-  }
-
   return (
     <section className="px-4 py-16 md:px-8">
       <div className="mx-auto max-w-2xl space-y-6 text-center">
         <Mail className="mx-auto h-16 w-16 text-blue-600" />
-
         <h2 className="font-black">{title}</h2>
-
-        {description && <p className="font-medium text-neutral-400">{description}</p>}
-
-        <form onSubmit={handleSubmit} className="mx-auto flex max-w-2xl flex-col gap-3 md:flex-row">
+        {description ? <p className="font-medium text-neutral-400">{description}</p> : null}
+        <form
+          onSubmit={(event) => {
+            event.preventDefault()
+            onSubmit?.()
+          }}
+          className="mx-auto flex max-w-2xl flex-col gap-3 md:flex-row"
+        >
           <Input
             type="email"
             placeholder={placeholder}
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(event) => onEmailChange(event.target.value)}
             className="flex-1"
             required
           />
@@ -165,21 +156,17 @@ export function CTANewsletter({
             <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </form>
-
         <p className="md:base text-xs text-neutral-400">No spam. Unsubscribe anytime.</p>
       </div>
     </section>
   )
 }
 
-// ============================================================================
-// CTA VARIANT 4: Split with Image
-// ============================================================================
 export interface CTASplitProps {
   title: string
   description?: string
-  primaryAction: { label: string; href?: string; onClick?: () => void }
-  secondaryAction?: { label: string; href?: string; onClick?: () => void }
+  primaryAction: CTAAction
+  secondaryAction?: CTAAction
   imageSrc: string
   imageAlt?: string
   imagePosition?: "left" | "right"
@@ -199,47 +186,22 @@ export function CTASplit({
 
   return (
     <section className="px-4 py-16 md:px-8">
-      <div className="mx-auto max-w-7xl overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
-        <div className={"grid md:grid-cols-2"}>
+      <div className="mx-auto max-w-7xl overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_black]">
+        <div className="grid md:grid-cols-2">
           <div className={`flex flex-col justify-center space-y-6 p-8 md:p-12 ${contentOrder}`}>
             <h3 className="font-black">{title}</h3>
-
-            {description && <p className="font-medium text-white">{description}</p>}
-
+            {description ? <p className="font-medium text-white">{description}</p> : null}
             <div className="flex flex-col gap-3 sm:flex-row">
-              {primaryAction.href ? (
-                <Button size="lg" asChild>
-                  <Link href={safeHref(primaryAction.href)}>
-                    {primaryAction.label}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Link>
-                </Button>
-              ) : (
-                <Button size="lg" onClick={primaryAction.onClick}>
-                  {primaryAction.label}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              )}
-              {secondaryAction &&
-                (secondaryAction.href ? (
-                  <Button size="lg" variant="outline" asChild>
-                    <a href={safeHref(secondaryAction.href)}>{secondaryAction.label}</a>
-                  </Button>
-                ) : (
-                  <Button size="lg" variant="outline" onClick={secondaryAction.onClick}>
-                    {secondaryAction.label}
-                  </Button>
-                ))}
+              <CTAButton action={primaryAction} />
+              {secondaryAction ? <CTAButton action={secondaryAction} variant="outline" /> : null}
             </div>
           </div>
-
           <div className={`bg-white ${imageOrder}`}>
-            <Image
-              src={imageSrc}
-              alt={imageAlt}
-              width={960}
-              height={720}
-              className="h-full object-center"
+            <span
+              aria-label={imageAlt}
+              role="img"
+              className="block h-full min-h-80 w-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${imageSrc})` }}
             />
           </div>
         </div>
@@ -248,13 +210,11 @@ export function CTASplit({
   )
 }
 
-// ============================================================================
-// CTA VARIANT 5: Banner
-// ============================================================================
 export interface CTABannerProps {
   text: string
-  action: { label: string; href?: string; onClick?: () => void }
+  action: CTAAction
   dismissible?: boolean
+  isVisible?: boolean
   onDismiss?: () => void
   variant?: "primary" | "secondary" | "accent" | "warning"
 }
@@ -263,11 +223,10 @@ export function CTABanner({
   text,
   action,
   dismissible = false,
+  isVisible = true,
   onDismiss,
   variant = "primary",
 }: CTABannerProps) {
-  const [isVisible, setIsVisible] = React.useState(true)
-
   const variantStyles = {
     primary: "bg-black text-white",
     secondary: "bg-black text-white",
@@ -294,26 +253,21 @@ export function CTABanner({
             <ArrowRight className="ml-1 h-3 w-3" />
           </Button>
         )}
-        {dismissible && (
+        {dismissible ? (
           <button
+            type="button"
             aria-label="Dismiss"
-            onClick={() => {
-              setIsVisible(false)
-              onDismiss?.()
-            }}
+            onClick={onDismiss}
             className="absolute right-4 text-white opacity-70 hover:opacity-100"
           >
             ×
           </button>
-        )}
+        ) : null}
       </div>
     </div>
   )
 }
 
-// ============================================================================
-// Export all variants
-// ============================================================================
 export const CTASection = {
   Simple: CTASimple,
   WithBackground: CTAWithBackground,

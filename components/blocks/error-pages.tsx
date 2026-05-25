@@ -1,9 +1,6 @@
-"use client"
-
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { safeHref } from "@/lib/utils"
 import {
   Home,
   ArrowLeft,
@@ -18,7 +15,16 @@ import {
   Clock,
   Lock,
 } from "lucide-react"
-import Link from "next/link"
+function safeHref(href: string) {
+  if (href.startsWith("/") || href.startsWith("#") || href.startsWith("mailto:")) return href
+
+  try {
+    const url = new URL(href)
+    return url.protocol === "https:" ? href : "#"
+  } catch {
+    return "#"
+  }
+}
 
 // ============================================================================
 // ERROR PAGE VARIANT 1: 404 Not Found
@@ -27,6 +33,8 @@ export interface NotFoundPageProps {
   title?: string
   description?: string
   showSearch?: boolean
+  searchQuery?: string
+  onSearchQueryChange?: (query: string) => void
   onSearch?: (query: string) => void
   homeHref?: string
   backHref?: string
@@ -36,17 +44,12 @@ export function NotFoundPage({
   title = "404",
   description = "Oops! The page you're looking for doesn't exist or has been moved.",
   showSearch = false,
+  searchQuery = "",
+  onSearchQueryChange,
   onSearch,
   homeHref = "/",
   backHref,
 }: NotFoundPageProps) {
-  const [searchQuery, setSearchQuery] = React.useState("")
-
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault()
-    onSearch?.(searchQuery)
-  }
-
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-lg space-y-8 text-center">
@@ -56,7 +59,7 @@ export function NotFoundPage({
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[6px_6px_0px_black]">
               <FileQuestion className="h-12 w-12 text-white" />
             </div>
           </div>
@@ -68,12 +71,18 @@ export function NotFoundPage({
         </div>
 
         {showSearch && (
-          <form onSubmit={handleSearch} className="mx-auto flex max-w-sm gap-2">
+          <form
+            onSubmit={(event) => {
+              event.preventDefault()
+              onSearch?.(searchQuery)
+            }}
+            className="mx-auto flex max-w-sm gap-2"
+          >
             <Input
               type="search"
               placeholder="Search for pages..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(event) => onSearchQueryChange?.(event.target.value)}
               className="border-2 border-neutral-400"
             />
             <Button type="submit">
@@ -132,7 +141,7 @@ export function ServerErrorPage({
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_black]">
               <ServerCrash className="h-12 w-12 text-white" />
             </div>
           </div>
@@ -156,22 +165,22 @@ export function ServerErrorPage({
             </Button>
           )}
           <Button variant="outline" asChild>
-            <Link href={safeHref(homeHref)}>
+            <a href={safeHref(homeHref)}>
               <Home className="mr-2 h-4 w-4" />
               Back to Home
-            </Link>
+            </a>
           </Button>
         </div>
 
         {supportEmail && (
           <p className="text-sm text-neutral-400">
             Still having issues?{" "}
-            <Link
+            <a
               href={safeHref(`mailto:${supportEmail}`)}
               className="font-bold text-white hover:text-blue-600 hover:underline hover:underline-offset-4"
             >
               Contact support
-            </Link>
+            </a>
           </p>
         )}
       </div>
@@ -200,7 +209,7 @@ export function MaintenancePage({
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-lg space-y-8 text-center">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[6px_6px_0px_black]">
           <Construction className="h-12 w-12 text-white" />
         </div>
 
@@ -261,7 +270,7 @@ export function OfflinePage({
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-md space-y-8 text-center">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[6px_6px_0px_black]">
           <Wifi className="h-12 w-12 text-neutral-400" />
         </div>
 
@@ -271,7 +280,7 @@ export function OfflinePage({
         </div>
 
         <div className="space-y-4">
-          <div className="border-3 border-neutral-400 bg-black p-4 text-left shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+          <div className="border-3 border-neutral-400 bg-black p-4 text-left shadow-[6px_6px_0px_black]">
             <h4 className="font-bold">Things to try:</h4>
             <ul className="mt-2 space-y-1 text-sm text-white md:text-base">
               <li>• Check your Wi-Fi connection</li>
@@ -317,7 +326,7 @@ export function ForbiddenPage({
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_black]">
               <Ban className="h-12 w-12 text-white" />
             </div>
           </div>
@@ -330,10 +339,10 @@ export function ForbiddenPage({
 
         <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
           <Button asChild>
-            <Link href={safeHref(homeHref)}>
+            <a href={safeHref(homeHref)}>
               <Home className="mr-2 h-4 w-4" />
               Back to Home
-            </Link>
+            </a>
           </Button>
           {loginHref && (
             <Button variant="outline" asChild>
@@ -353,10 +362,11 @@ export function ForbiddenPage({
 // ERROR PAGE VARIANT 6: Coming Soon
 // ============================================================================
 
-function getCountdown(launchDate?: Date) {
+export function getErrorPageCountdown(launchDate?: Date) {
   if (!launchDate) return null
   const total = launchDate.getTime() - Date.now()
   if (total <= 0) return null
+
   return {
     days: Math.floor(total / (1000 * 60 * 60 * 24)),
     hours: Math.floor((total / (1000 * 60 * 60)) % 24),
@@ -369,37 +379,25 @@ export interface ComingSoonPageProps {
   description?: string
   launchDate?: Date
   onNotify?: (email: string) => void
+  email?: string
+  onEmailChange?: (email: string) => void
+  submitted?: boolean
+  timeRemaining?: ReturnType<typeof getErrorPageCountdown>
 }
 
 export function ComingSoonPage({
   title = "Coming Soon",
   description = "We're working hard to bring you something amazing. Stay tuned!",
-  launchDate,
   onNotify,
+  email = "",
+  onEmailChange,
+  submitted = false,
+  timeRemaining,
 }: ComingSoonPageProps) {
-  const [email, setEmail] = React.useState("")
-  const [submitted, setSubmitted] = React.useState(false)
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    onNotify?.(email)
-    setSubmitted(true)
-  }
-
-  const [timeRemaining, setTimeRemaining] = React.useState(() => getCountdown(launchDate))
-
-  React.useEffect(() => {
-    if (!launchDate) return
-    const interval = setInterval(() => {
-      setTimeRemaining(getCountdown(launchDate))
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [launchDate])
-
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-lg space-y-8 text-center">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_black]">
           <Clock className="h-16 w-16 text-white" />
         </div>
 
@@ -408,7 +406,7 @@ export function ComingSoonPage({
           <p className="text-base text-white md:text-lg">{description}</p>
         </div>
 
-        {timeRemaining && (
+        {timeRemaining ? (
           <div className="flex justify-center gap-4">
             {[
               { value: timeRemaining.days, label: "Days" },
@@ -417,41 +415,44 @@ export function ComingSoonPage({
             ].map((item) => (
               <div
                 key={`action-${item.label}`}
-                className="w-24 border-3 border-neutral-400 bg-black p-4 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+                className="w-24 border-3 border-neutral-400 bg-black p-4 shadow-[4px_4px_0px_black]"
               >
                 <p className="text-3xl font-black">{item.value}</p>
                 <p className="text-xs font-bold text-neutral-400 uppercase">{item.label}</p>
               </div>
             ))}
           </div>
-        )}
+        ) : null}
 
-        {onNotify && !submitted && (
-          <form onSubmit={handleSubmit} className="mx-auto flex max-w-sm gap-2">
+        {onNotify && !submitted ? (
+          <form
+            onSubmit={(event) => {
+              event.preventDefault()
+              onNotify(email)
+            }}
+            className="mx-auto flex max-w-sm gap-2"
+          >
             <Input
               type="email"
               placeholder="Enter your email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(event) => onEmailChange?.(event.target.value)}
               required
               className="border-2 border-neutral-400"
             />
             <Button type="submit">Notify Me</Button>
           </form>
-        )}
+        ) : null}
 
-        {submitted && (
+        {submitted ? (
           <div className="border-3 border-neutral-400 bg-blue-600/10 p-4">
             <p className="font-bold text-white">Thanks! We'll notify you when we launch.</p>
           </div>
-        )}
+        ) : null}
       </div>
     </div>
   )
 }
-
-// ============================================================================
-// ERROR PAGE VARIANT 7: Generic Error
 // ============================================================================
 export interface GenericErrorPageProps {
   icon?: React.ReactNode
@@ -474,7 +475,7 @@ export function GenericErrorPage({
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-md space-y-8 text-center">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_black]">
           {icon || <AlertTriangle className="h-12 w-12 text-white" />}
         </div>
 
@@ -492,11 +493,7 @@ export function GenericErrorPage({
                 onClick={action.onClick}
                 asChild={!!action.href}
               >
-                {action.href ? (
-                  <Link href={safeHref(action.href)}>{action.label}</Link>
-                ) : (
-                  action.label
-                )}
+                {action.href ? <a href={safeHref(action.href)}>{action.label}</a> : action.label}
               </Button>
             ))}
           </div>

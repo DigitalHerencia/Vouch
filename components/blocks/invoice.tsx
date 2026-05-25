@@ -122,7 +122,7 @@ export function Invoice({ data, logo, onDownload, onPrint, onSendEmail }: Invoic
       </div>
 
       {/* Invoice Document */}
-      <div className="border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] print:border-0 print:shadow-none">
+      <div className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_black] print:border-0 print:shadow-none">
         <div className="p-8 md:p-12">
           {/* Header */}
           <div className="mb-8 flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
@@ -330,7 +330,7 @@ export interface ReceiptProps {
 export function Receipt({ data, logo, onDownload }: ReceiptProps) {
   return (
     <div className="mx-auto min-w-lg">
-      <div className="border-3 border-neutral-400 bg-black shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+      <div className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_black]">
         <div className="space-y-6 p-6">
           {/* Header */}
           <div className="space-y-2 text-center">
@@ -455,7 +455,7 @@ export function InvoiceSummary({
       : statusConfig.pending
 
   return (
-    <div className="border-3 border-neutral-400 bg-black p-4 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+    <div className="border-3 border-neutral-400 bg-black p-4 shadow-[4px_4px_0px_black] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[4px_4px_0px_black]">
       <div className="mb-4 flex items-start justify-between">
         <div>
           <p className="text-lg font-black">{invoiceNumber}</p>

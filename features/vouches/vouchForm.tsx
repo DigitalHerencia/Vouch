@@ -1,8 +1,6 @@
-import Link from "next/link"
-
 import { type VouchCreationActionResult, type VouchCreationDraft } from "@/components/blocks/status"
-import { StatusFeatureClient } from "@/components/blocks/statusFeatureClient"
 import { Button } from "@/components/ui/button"
+import { VouchCreationFeatureClient } from "@/features/vouches/vouchCreationFeatureClient"
 import {
   calculatePlatformFee,
   createVouch,
@@ -74,14 +72,14 @@ export async function VouchForm() {
               </p>
               <div>
                 <Button asChild>
-                  <Link href="/dashboard">Return to dashboard</Link>
+                  <a href="/dashboard">Return to dashboard</a>
                 </Button>
               </div>
             </div>
           </Panel>
         ) : (
           <Panel title="Create Vouch">
-            <StatusFeatureClient
+            <VouchCreationFeatureClient
               onSaveAmount={saveVouchAmountStep}
               onSaveWindow={saveVouchWindowStep}
               onCreateVouch={createVouchWizardStep}

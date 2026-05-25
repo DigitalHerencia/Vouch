@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import {
   Accordion,
@@ -44,7 +42,7 @@ export function FAQAccordion({ title, subtitle, description, items }: FAQAccordi
             <AccordionItem
               key={item.question}
               value={`item-${index}`}
-              className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5 data-[state=open]:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+              className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_black] transition-all data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5 data-[state=open]:shadow-[4px_4px_0px_black]"
             >
               <AccordionTrigger className="px-6 py-8 md:px-8">
                 <h4 className="font-bold tracking-wide">{item.question}</h4>
@@ -118,6 +116,8 @@ export interface FAQWithCategoriesProps {
   subtitle?: string
   description?: string
   categories: FAQCategory[]
+  activeCategory?: number
+  onCategoryChange?: (categoryIndex: number) => void
 }
 
 export function FAQWithCategories({
@@ -125,9 +125,9 @@ export function FAQWithCategories({
   subtitle,
   description,
   categories,
+  activeCategory = 0,
+  onCategoryChange,
 }: FAQWithCategoriesProps) {
-  const [activeCategory, setActiveCategory] = React.useState(0)
-
   if (!categories.length) return null
   const activeItems = categories[activeCategory]?.items ?? []
 
@@ -149,7 +149,7 @@ export function FAQWithCategories({
             <Button
               key={category.name}
               variant={activeCategory === index ? "default" : "outline"}
-              onClick={() => setActiveCategory(index)}
+              onClick={() => onCategoryChange?.(index)}
             >
               {category.name}
             </Button>
@@ -161,7 +161,7 @@ export function FAQWithCategories({
             <AccordionItem
               key={item.question}
               value={`item-${index}`}
-              className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+              className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_black]"
             >
               <AccordionTrigger className="px-6 py-8 md:px-8">
                 <h4 className="font-bold tracking-wide">{item.question}</h4>
@@ -217,7 +217,7 @@ export function FAQWithContact({
             <AccordionItem
               key={item.question}
               value={`item-${index}`}
-              className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+              className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_black]"
             >
               <AccordionTrigger className="px-6 py-8 md:px-8">
                 <h4 className="font-bold tracking-wide">{item.question}</h4>
@@ -229,7 +229,7 @@ export function FAQWithContact({
           ))}
         </Accordion>
 
-        <div className="space-y-4 border-3 border-neutral-400 bg-blue-600/10 p-8 text-center shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className="space-y-4 border-3 border-neutral-400 bg-blue-600/10 p-8 text-center shadow-[4px_4px_0px_black]">
           <HelpCircle className="mx-auto h-12 w-12 text-white" />
           <h3 className="font-black">{contactTitle}</h3>
           <p className="text-base font-medium text-white md:text-lg">{contactDescription}</p>
@@ -273,7 +273,7 @@ export function FAQSimpleList({ title, subtitle, description, items }: FAQSimple
           {items.map((item) => (
             <div
               key={item.question}
-              className="border-3 border-neutral-400 bg-black px-6 py-8 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] md:px-8"
+              className="border-3 border-neutral-400 bg-black px-6 py-8 shadow-[4px_4px_0px_black] md:px-8"
             >
               <h4 className="font-bold tracking-wide">{item.question}</h4>
               <p className="mt-4 text-sm font-medium text-white md:text-base">{item.answer}</p>
@@ -290,7 +290,7 @@ export function FAQSimpleList({ title, subtitle, description, items }: FAQSimple
 // ============================================================================
 function FAQCard({ item, index }: { item: FAQItem; index: number }) {
   return (
-    <div className="border-3 border-neutral-400 bg-black px-6 py-8 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] md:px-8">
+    <div className="border-3 border-neutral-400 bg-black px-6 py-8 shadow-[4px_4px_0px_black] md:px-8">
       <div className="flex gap-4">
         <div className="flex h-8 w-8 shrink-0 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-sm font-black text-white">
           {index + 1}

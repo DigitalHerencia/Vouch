@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Play, Sparkles, Star, Zap } from "lucide-react"
-import Image from "next/image"
 
 // ============================================================================
 // HERO VARIANT 1: Centered with Badge
@@ -150,13 +149,12 @@ export function HeroSplit({
         </div>
 
         <div className={`relative ${imageOrder}`}>
-          <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
-            <Image
-              src={imageSrc}
-              alt={imageAlt}
-              width={1280}
-              height={960}
-              className="h-auto w-full object-cover"
+          <div className="overflow-hidden border-3 border-neutral-400 shadow-[4px_4px_0px_black]">
+            <span
+              aria-label={imageAlt}
+              role="img"
+              className="block min-h-80 w-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${imageSrc})` }}
             />
           </div>
         </div>
@@ -218,7 +216,7 @@ export function HeroWithStats({
           {stats.map((stat) => (
             <div
               key={`stat-${stat.label}`}
-              className="border-3 border-neutral-400 bg-black p-6 text-center shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+              className="border-3 border-neutral-400 bg-black p-6 text-center shadow-[4px_4px_0px_black]"
             >
               <div className="text-3xl font-black md:text-4xl">{stat.value}</div>
               <div className="mt-1 text-sm font-bold tracking-wide text-neutral-400 uppercase">
@@ -335,18 +333,17 @@ export function HeroWithVideo({
         </div>
 
         <div className="group relative cursor-pointer" onClick={onPlayClick}>
-          <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
-            <Image
-              src={videoThumbnail}
-              alt="Video thumbnail"
-              width={1280}
-              height={720}
-              className="aspect-video h-auto w-full object-cover"
+          <div className="overflow-hidden border-3 border-neutral-400 shadow-[4px_4px_0px_black]">
+            <span
+              aria-label="Video thumbnail"
+              role="img"
+              className="block aspect-video w-full bg-cover bg-center"
+              style={{ backgroundImage: `url(${videoThumbnail})` }}
             />
           </div>
           {/* Play button overlay */}
           <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/20 transition-colors group-hover:bg-neutral-400/80">
-            <div className="flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+            <div className="flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_black] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[4px_4px_0px_black]">
               <Play className="h-8 w-8 fill-white" />
             </div>
           </div>
