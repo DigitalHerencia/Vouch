@@ -737,7 +737,7 @@ export async function getVouchPaymentSummary(
     vouchPaymentSummarySelect
   )) as VouchPaymentRecord | null
 
-  return mapPaymentRecordParticipantDTO(vouch?.paymentRecord)
+  return mapPaymentRecordParticipantDTO(vouch?.paymentRecords[0])
 }
 
 export async function getVouchTimeline(vouchId: string): Promise<VouchDetailDTO | null> {

@@ -85,7 +85,7 @@ type VouchBaseRecord = {
   customer?: SafeUserRecord | null
   invitation?: InvitationRecord | null
   presenceConfirmations?: PresenceConfirmationRecord[]
-  paymentRecord?: Parameters<typeof mapPaymentRecordParticipantDTO>[0]
+  paymentRecords?: Parameters<typeof mapPaymentRecordParticipantDTO>[0][]
   refundRecords?: Parameters<typeof mapRefundRecordParticipantDTOs>[0]
 }
 
@@ -273,6 +273,7 @@ export function getWindowState(input: {
 
 export function mapVouchCardDTO(record: VouchBaseRecord): VouchCardDTO {
   const confirmations = (record.presenceConfirmations ?? []).map(mapPresenceConfirmationDTO)
+  const customerAuthorizationRecord = record.paymentRecords?.[0]
   const currency = record.currency ?? "usd"
   const protectedAmountCents = record.protectedAmountCents ?? 0
   const customerTotalCents = record.customerTotalCents ?? protectedAmountCents
@@ -296,7 +297,7 @@ export function mapVouchCardDTO(record: VouchBaseRecord): VouchCardDTO {
     updatedAt: toIso(record.updatedAt),
     merchant: mapSafeUserDTO(record.merchant),
     customer: mapSafeUserDTO(record.customer),
-    paymentRecord: mapPaymentRecordParticipantDTO(record.paymentRecord),
+    paymentRecord: mapPaymentRecordParticipantDTO(customerAuthorizationRecord),
     presenceConfirmations: confirmations,
     aggregateConfirmationStatus: getAggregateConfirmationStatus(confirmations),
   }

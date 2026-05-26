@@ -162,7 +162,9 @@ async function getInvitationByToken(token: string) {
           processingFeeOffsetCents: true,
           applicationFeeAmountCents: true,
           customerTotalCents: true,
-          paymentRecord: {
+          paymentRecords: {
+            where: { purpose: "customer_authorization" },
+            take: 1,
             select: {
               id: true,
               status: true,

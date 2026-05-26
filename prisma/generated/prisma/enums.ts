@@ -119,6 +119,14 @@ export const PaymentProvider = {
 export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
 
 
+export const PaymentRecordPurpose = {
+  merchant_protocol_fee: 'merchant_protocol_fee',
+  customer_authorization: 'customer_authorization'
+} as const
+
+export type PaymentRecordPurpose = (typeof PaymentRecordPurpose)[keyof typeof PaymentRecordPurpose]
+
+
 export const VerificationProvider = {
   stripe_identity: 'stripe_identity'
 } as const

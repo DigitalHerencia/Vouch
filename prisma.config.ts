@@ -1,6 +1,6 @@
 // prisma.config.ts
 import { config } from "dotenv"
-import { defineConfig } from "prisma/config"
+import { defineConfig, type PrismaConfig } from "prisma/config"
 
 config({ path: ".env", quiet: true })
 config({ path: ".env.local", override: true, quiet: true })
@@ -8,15 +8,15 @@ config({ path: ".env.local", override: true, quiet: true })
 const migrationDatabaseUrl =
   process.env.DIRECT_DATABASE_URL ?? process.env.DATABASE_URL_UNPOOLED ?? process.env.DATABASE_URL
 
-if (!migrationDatabaseUrl) {
-  throw new Error("DATABASE_URL or DIRECT_DATABASE_URL is required")
-}
+const datasource: PrismaConfig["datasource"] | undefined = migrationDatabaseUrl
+  ? {
+      url: migrationDatabaseUrl,
+      ...(process.env.SHADOW_DATABASE_URL
+        ? { shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL }
+        : {}),
+    }
+  : undefined
 
 export default defineConfig({
-  datasource: {
-    url: migrationDatabaseUrl,
-    ...(process.env.SHADOW_DATABASE_URL
-      ? { shadowDatabaseUrl: process.env.SHADOW_DATABASE_URL }
-      : {}),
-  },
+  ...(datasource ? { datasource } : {}),
 })

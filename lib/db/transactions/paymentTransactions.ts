@@ -2,6 +2,7 @@ import "server-only"
 
 import type {
   PaymentProvider,
+  PaymentRecordPurpose,
   PaymentStatus,
   Prisma,
   PrismaClient,
@@ -17,6 +18,7 @@ type Tx = Omit<
 
 export type UpsertPaymentRecordTxInput = {
   vouchId: string
+  purpose: PaymentRecordPurpose
   provider?: PaymentProvider
   providerPaymentIntentId?: string | null
   providerCheckoutSessionId?: string | null
@@ -97,9 +99,10 @@ export async function upsertPaymentRecordTx(tx: Tx, input: UpsertPaymentRecordTx
   if (input.failedAt !== undefined) update.failedAt = input.failedAt
 
   return tx.paymentRecord.upsert({
-    where: { vouchId: input.vouchId },
+    where: { vouchId_purpose: { vouchId: input.vouchId, purpose: input.purpose } },
     create: {
       vouchId: input.vouchId,
+      purpose: input.purpose,
       provider: input.provider ?? "stripe",
       providerPaymentIntentId: input.providerPaymentIntentId ?? null,
       providerCheckoutSessionId: input.providerCheckoutSessionId ?? null,

@@ -251,6 +251,7 @@ export const PaymentRecordScalarFieldEnum = {
   id: 'id',
   vouchId: 'vouchId',
   provider: 'provider',
+  purpose: 'purpose',
   providerPaymentIntentId: 'providerPaymentIntentId',
   providerCheckoutSessionId: 'providerCheckoutSessionId',
   providerChargeId: 'providerChargeId',

@@ -62,7 +62,9 @@ export const vouchCardSelect = {
   updatedAt: true,
   merchant: { select: userSafeIdentitySelect },
   customer: { select: userSafeIdentitySelect },
-  paymentRecord: {
+  paymentRecords: {
+    where: { purpose: "customer_authorization" },
+    take: 1,
     select: {
       id: true,
       status: true,
@@ -87,7 +89,11 @@ export const vouchDetailBaseSelect = {
     select: confirmationParticipantSummarySelect,
     orderBy: { createdAt: "asc" },
   },
-  paymentRecord: { select: paymentRecordParticipantSummarySelect },
+  paymentRecords: {
+    where: { purpose: "customer_authorization" },
+    take: 1,
+    select: paymentRecordParticipantSummarySelect,
+  },
   refundRecords: {
     select: refundRecordParticipantSummarySelect,
     orderBy: { createdAt: "desc" },
@@ -115,7 +121,9 @@ export const vouchConfirmationStateSelect = {
   presenceConfirmations: {
     select: confirmationParticipantSummarySelect,
   },
-  paymentRecord: {
+  paymentRecords: {
+    where: { purpose: "customer_authorization" },
+    take: 1,
     select: {
       id: true,
       status: true,
@@ -156,7 +164,11 @@ export const vouchPaymentSummarySelect = {
   processingFeeOffsetCents: true,
   applicationFeeAmountCents: true,
   customerTotalCents: true,
-  paymentRecord: { select: paymentRecordParticipantSummarySelect },
+  paymentRecords: {
+    where: { purpose: "customer_authorization" },
+    take: 1,
+    select: paymentRecordParticipantSummarySelect,
+  },
   refundRecords: {
     select: refundRecordParticipantSummarySelect,
     orderBy: { createdAt: "desc" },
@@ -181,7 +193,11 @@ export const vouchTimelineSelect = {
     select: confirmationParticipantSummarySelect,
     orderBy: { createdAt: "asc" },
   },
-  paymentRecord: { select: paymentRecordParticipantSummarySelect },
+  paymentRecords: {
+    where: { purpose: "customer_authorization" },
+    take: 1,
+    select: paymentRecordParticipantSummarySelect,
+  },
   refundRecords: {
     select: refundRecordParticipantSummarySelect,
     orderBy: { createdAt: "desc" },
@@ -204,7 +220,9 @@ export const vouchRecoveryStateSelect = {
   publicId: true,
   status: true,
   recoveryStatus: true,
-  paymentRecord: {
+  paymentRecords: {
+    where: { purpose: "customer_authorization" },
+    take: 1,
     select: {
       id: true,
       status: true,
@@ -217,7 +235,9 @@ export const vouchRecoveryStateSelect = {
 
 export const whatHappensNextSelect = {
   ...vouchDetailBaseSelect,
-  paymentRecord: {
+  paymentRecords: {
+    where: { purpose: "customer_authorization" },
+    take: 1,
     select: {
       id: true,
       status: true,

@@ -37,6 +37,7 @@ export type PaymentRecordParticipantDTO = {
   id: string
   vouchId: string
   provider: string
+  purpose: string
   status: string
   settlementStatus: string
   amountCents: number
@@ -83,6 +84,7 @@ type PaymentRecordRecord = {
   id: string
   vouchId?: string
   provider?: string
+  purpose?: string
   status: string
   settlementStatus: string
   amountCents?: number
@@ -136,6 +138,7 @@ export function mapPaymentRecordParticipantDTO(
     id: record.id,
     vouchId: record.vouchId ?? "",
     provider: record.provider ?? "stripe",
+    purpose: record.purpose ?? "customer_authorization",
     status: record.status,
     settlementStatus: record.settlementStatus,
     amountCents,

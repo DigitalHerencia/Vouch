@@ -581,6 +581,7 @@ export async function authorizeVouchPayment(
   const paymentRecord = await prisma.$transaction(async (tx) => {
     const record = await upsertPaymentRecordTx(tx, {
       vouchId: vouch.id,
+      purpose: "customer_authorization",
       providerCheckoutSessionId: checkout.id,
       status: "checkout_created",
       settlementStatus: "pending",
@@ -633,7 +634,12 @@ export async function captureConfirmedVouchPayment(
   }
 
   const paymentRecord = await prisma.paymentRecord.findUnique({
-    where: { vouchId: parsed.data.vouchId },
+    where: {
+      vouchId_purpose: {
+        vouchId: parsed.data.vouchId,
+        purpose: "customer_authorization",
+      },
+    },
     select: {
       id: true,
       vouchId: true,
@@ -845,7 +851,14 @@ async function reconcileStripeCheckoutSessionEvent(
       if (event.type === "checkout.session.completed") {
         const vouch = await tx.vouch.findUnique({
           where: { id: vouchId },
-          select: { id: true, status: true, invitation: { select: { id: true } } },
+          select: {
+            id: true,
+            status: true,
+            currency: true,
+            vouchServiceFeeCents: true,
+            processingFeeOffsetCents: true,
+            invitation: { select: { id: true } },
+          },
         })
 
         if (vouch?.status === "draft") {
@@ -854,6 +867,32 @@ async function reconcileStripeCheckoutSessionEvent(
             await markInvitationSentTx(tx, { invitationId: vouch.invitation.id })
           }
         }
+
+        const merchantFeeAmountCents =
+          Number(session.metadata?.merchant_fee_cents) ||
+          session.amount_total ||
+          (vouch ? vouch.vouchServiceFeeCents + vouch.processingFeeOffsetCents : 0)
+
+        await upsertPaymentRecordTx(tx, {
+          vouchId,
+          purpose: "merchant_protocol_fee",
+          providerCheckoutSessionId: session.id,
+          providerPaymentIntentId:
+            typeof session.payment_intent === "string"
+              ? session.payment_intent
+              : session.payment_intent?.id ?? null,
+          status: "captured",
+          settlementStatus: "captured",
+          amountCents: merchantFeeAmountCents,
+          currency: session.currency ?? vouch?.currency ?? "usd",
+          protectedAmountCents: 0,
+          merchantReceivesCents: 0,
+          vouchServiceFeeCents: merchantFeeAmountCents,
+          processingFeeOffsetCents: 0,
+          applicationFeeAmountCents: 0,
+          customerTotalCents: 0,
+          capturedAt: new Date(),
+        })
 
         await tx.auditEvent.create({
           data: {
@@ -938,6 +977,7 @@ async function reconcileStripeCheckoutSessionEvent(
 
   const paymentRecord = await prisma.paymentRecord.findFirst({
     where: {
+      purpose: "customer_authorization",
       OR: [
         { providerCheckoutSessionId: session.id },
         ...(paymentIntentId ? [{ providerPaymentIntentId: paymentIntentId }] : []),
@@ -1052,8 +1092,11 @@ async function reconcileStripePaymentIntentEvent(
   const current = await retrieveStripePaymentIntent({ providerPaymentIntentId: intent.id })
   const timing = mapIntentTiming(current)
 
-  const paymentRecord = await prisma.paymentRecord.findUnique({
-    where: { providerPaymentIntentId: current.id },
+  const paymentRecord = await prisma.paymentRecord.findFirst({
+    where: {
+      providerPaymentIntentId: current.id,
+      purpose: "customer_authorization",
+    },
     select: { id: true, vouchId: true },
   })
 

@@ -2178,6 +2178,7 @@ export const PaymentRecordScalarFieldEnum = {
   id: 'id',
   vouchId: 'vouchId',
   provider: 'provider',
+  purpose: 'purpose',
   providerPaymentIntentId: 'providerPaymentIntentId',
   providerCheckoutSessionId: 'providerCheckoutSessionId',
   providerChargeId: 'providerChargeId',
@@ -2681,6 +2682,20 @@ export type EnumConfirmationMethodFieldRefInput<$PrismaModel> = FieldRefInputTyp
  * Reference to a field of type 'ConfirmationMethod[]'
  */
 export type ListEnumConfirmationMethodFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ConfirmationMethod[]'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentRecordPurpose'
+ */
+export type EnumPaymentRecordPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentRecordPurpose'>
+    
+
+
+/**
+ * Reference to a field of type 'PaymentRecordPurpose[]'
+ */
+export type ListEnumPaymentRecordPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'PaymentRecordPurpose[]'>
     
 
 

@@ -148,7 +148,7 @@ export async function getParticipantSafePaymentSummary(vouchId: string) {
 
   return mapRecord(
     await prisma.paymentRecord.findUnique({
-      where: { vouchId },
+      where: { vouchId_purpose: { vouchId, purpose: "customer_authorization" } },
       select: paymentRecordParticipantSummarySelect,
     })
   )

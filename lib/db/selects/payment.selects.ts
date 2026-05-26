@@ -31,6 +31,7 @@ export const paymentRecordParticipantSummarySelect = {
   id: true,
   vouchId: true,
   provider: true,
+  purpose: true,
   status: true,
   settlementStatus: true,
   amountCents: true,

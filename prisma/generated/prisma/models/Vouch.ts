@@ -416,7 +416,7 @@ export type VouchWhereInput = {
   customer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   invitation?: Prisma.XOR<Prisma.InvitationNullableScalarRelationFilter, Prisma.InvitationWhereInput> | null
   presenceConfirmations?: Prisma.PresenceConfirmationListRelationFilter
-  paymentRecord?: Prisma.XOR<Prisma.PaymentRecordNullableScalarRelationFilter, Prisma.PaymentRecordWhereInput> | null
+  paymentRecords?: Prisma.PaymentRecordListRelationFilter
   refundRecords?: Prisma.RefundRecordListRelationFilter
   notificationEvents?: Prisma.NotificationEventListRelationFilter
   paymentWebhookEvents?: Prisma.PaymentWebhookEventListRelationFilter
@@ -455,7 +455,7 @@ export type VouchOrderByWithRelationInput = {
   customer?: Prisma.UserOrderByWithRelationInput
   invitation?: Prisma.InvitationOrderByWithRelationInput
   presenceConfirmations?: Prisma.PresenceConfirmationOrderByRelationAggregateInput
-  paymentRecord?: Prisma.PaymentRecordOrderByWithRelationInput
+  paymentRecords?: Prisma.PaymentRecordOrderByRelationAggregateInput
   refundRecords?: Prisma.RefundRecordOrderByRelationAggregateInput
   notificationEvents?: Prisma.NotificationEventOrderByRelationAggregateInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventOrderByRelationAggregateInput
@@ -497,7 +497,7 @@ export type VouchWhereUniqueInput = Prisma.AtLeast<{
   customer?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
   invitation?: Prisma.XOR<Prisma.InvitationNullableScalarRelationFilter, Prisma.InvitationWhereInput> | null
   presenceConfirmations?: Prisma.PresenceConfirmationListRelationFilter
-  paymentRecord?: Prisma.XOR<Prisma.PaymentRecordNullableScalarRelationFilter, Prisma.PaymentRecordWhereInput> | null
+  paymentRecords?: Prisma.PaymentRecordListRelationFilter
   refundRecords?: Prisma.RefundRecordListRelationFilter
   notificationEvents?: Prisma.NotificationEventListRelationFilter
   paymentWebhookEvents?: Prisma.PaymentWebhookEventListRelationFilter
@@ -602,7 +602,7 @@ export type VouchCreateInput = {
   customer?: Prisma.UserCreateNestedOneWithoutCustomerVouchesInput
   invitation?: Prisma.InvitationCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutVouchInput
@@ -639,7 +639,7 @@ export type VouchUncheckedCreateInput = {
   updatedAt?: Date | string
   invitation?: Prisma.InvitationUncheckedCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutVouchInput
@@ -676,7 +676,7 @@ export type VouchUpdateInput = {
   customer?: Prisma.UserUpdateOneWithoutCustomerVouchesNestedInput
   invitation?: Prisma.InvitationUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutVouchNestedInput
@@ -713,7 +713,7 @@ export type VouchUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitation?: Prisma.InvitationUncheckedUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
@@ -1082,18 +1082,18 @@ export type VouchUpdateOneRequiredWithoutPresenceConfirmationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.VouchUpdateToOneWithWhereWithoutPresenceConfirmationsInput, Prisma.VouchUpdateWithoutPresenceConfirmationsInput>, Prisma.VouchUncheckedUpdateWithoutPresenceConfirmationsInput>
 }
 
-export type VouchCreateNestedOneWithoutPaymentRecordInput = {
-  create?: Prisma.XOR<Prisma.VouchCreateWithoutPaymentRecordInput, Prisma.VouchUncheckedCreateWithoutPaymentRecordInput>
-  connectOrCreate?: Prisma.VouchCreateOrConnectWithoutPaymentRecordInput
+export type VouchCreateNestedOneWithoutPaymentRecordsInput = {
+  create?: Prisma.XOR<Prisma.VouchCreateWithoutPaymentRecordsInput, Prisma.VouchUncheckedCreateWithoutPaymentRecordsInput>
+  connectOrCreate?: Prisma.VouchCreateOrConnectWithoutPaymentRecordsInput
   connect?: Prisma.VouchWhereUniqueInput
 }
 
-export type VouchUpdateOneRequiredWithoutPaymentRecordNestedInput = {
-  create?: Prisma.XOR<Prisma.VouchCreateWithoutPaymentRecordInput, Prisma.VouchUncheckedCreateWithoutPaymentRecordInput>
-  connectOrCreate?: Prisma.VouchCreateOrConnectWithoutPaymentRecordInput
-  upsert?: Prisma.VouchUpsertWithoutPaymentRecordInput
+export type VouchUpdateOneRequiredWithoutPaymentRecordsNestedInput = {
+  create?: Prisma.XOR<Prisma.VouchCreateWithoutPaymentRecordsInput, Prisma.VouchUncheckedCreateWithoutPaymentRecordsInput>
+  connectOrCreate?: Prisma.VouchCreateOrConnectWithoutPaymentRecordsInput
+  upsert?: Prisma.VouchUpsertWithoutPaymentRecordsInput
   connect?: Prisma.VouchWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.VouchUpdateToOneWithWhereWithoutPaymentRecordInput, Prisma.VouchUpdateWithoutPaymentRecordInput>, Prisma.VouchUncheckedUpdateWithoutPaymentRecordInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.VouchUpdateToOneWithWhereWithoutPaymentRecordsInput, Prisma.VouchUpdateWithoutPaymentRecordsInput>, Prisma.VouchUncheckedUpdateWithoutPaymentRecordsInput>
 }
 
 export type VouchCreateNestedOneWithoutRefundRecordsInput = {
@@ -1171,7 +1171,7 @@ export type VouchCreateWithoutMerchantInput = {
   customer?: Prisma.UserCreateNestedOneWithoutCustomerVouchesInput
   invitation?: Prisma.InvitationCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutVouchInput
@@ -1207,7 +1207,7 @@ export type VouchUncheckedCreateWithoutMerchantInput = {
   updatedAt?: Date | string
   invitation?: Prisma.InvitationUncheckedCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutVouchInput
@@ -1253,7 +1253,7 @@ export type VouchCreateWithoutCustomerInput = {
   merchant: Prisma.UserCreateNestedOneWithoutMerchantVouchesInput
   invitation?: Prisma.InvitationCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutVouchInput
@@ -1289,7 +1289,7 @@ export type VouchUncheckedCreateWithoutCustomerInput = {
   updatedAt?: Date | string
   invitation?: Prisma.InvitationUncheckedCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutVouchInput
@@ -1401,7 +1401,7 @@ export type VouchCreateWithoutRecoverySnapshotInput = {
   customer?: Prisma.UserCreateNestedOneWithoutCustomerVouchesInput
   invitation?: Prisma.InvitationCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutVouchInput
@@ -1437,7 +1437,7 @@ export type VouchUncheckedCreateWithoutRecoverySnapshotInput = {
   updatedAt?: Date | string
   invitation?: Prisma.InvitationUncheckedCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutVouchInput
@@ -1489,7 +1489,7 @@ export type VouchUpdateWithoutRecoverySnapshotInput = {
   customer?: Prisma.UserUpdateOneWithoutCustomerVouchesNestedInput
   invitation?: Prisma.InvitationUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutVouchNestedInput
@@ -1525,7 +1525,7 @@ export type VouchUncheckedUpdateWithoutRecoverySnapshotInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitation?: Prisma.InvitationUncheckedUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
@@ -1560,7 +1560,7 @@ export type VouchCreateWithoutInvitationInput = {
   merchant: Prisma.UserCreateNestedOneWithoutMerchantVouchesInput
   customer?: Prisma.UserCreateNestedOneWithoutCustomerVouchesInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutVouchInput
@@ -1596,7 +1596,7 @@ export type VouchUncheckedCreateWithoutInvitationInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutVouchInput
@@ -1648,7 +1648,7 @@ export type VouchUpdateWithoutInvitationInput = {
   merchant?: Prisma.UserUpdateOneRequiredWithoutMerchantVouchesNestedInput
   customer?: Prisma.UserUpdateOneWithoutCustomerVouchesNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutVouchNestedInput
@@ -1684,7 +1684,7 @@ export type VouchUncheckedUpdateWithoutInvitationInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
@@ -1720,7 +1720,7 @@ export type VouchCreateWithoutPresenceConfirmationsInput = {
   merchant: Prisma.UserCreateNestedOneWithoutMerchantVouchesInput
   customer?: Prisma.UserCreateNestedOneWithoutCustomerVouchesInput
   invitation?: Prisma.InvitationCreateNestedOneWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutVouchInput
@@ -1756,7 +1756,7 @@ export type VouchUncheckedCreateWithoutPresenceConfirmationsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   invitation?: Prisma.InvitationUncheckedCreateNestedOneWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutVouchInput
@@ -1808,7 +1808,7 @@ export type VouchUpdateWithoutPresenceConfirmationsInput = {
   merchant?: Prisma.UserUpdateOneRequiredWithoutMerchantVouchesNestedInput
   customer?: Prisma.UserUpdateOneWithoutCustomerVouchesNestedInput
   invitation?: Prisma.InvitationUpdateOneWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutVouchNestedInput
@@ -1844,14 +1844,14 @@ export type VouchUncheckedUpdateWithoutPresenceConfirmationsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitation?: Prisma.InvitationUncheckedUpdateOneWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUncheckedUpdateOneWithoutVouchNestedInput
 }
 
-export type VouchCreateWithoutPaymentRecordInput = {
+export type VouchCreateWithoutPaymentRecordsInput = {
   id?: string
   publicId: string
   status?: $Enums.VouchStatus
@@ -1887,7 +1887,7 @@ export type VouchCreateWithoutPaymentRecordInput = {
   recoverySnapshot?: Prisma.VouchRecoverySnapshotCreateNestedOneWithoutVouchInput
 }
 
-export type VouchUncheckedCreateWithoutPaymentRecordInput = {
+export type VouchUncheckedCreateWithoutPaymentRecordsInput = {
   id?: string
   publicId: string
   merchantId: string
@@ -1923,23 +1923,23 @@ export type VouchUncheckedCreateWithoutPaymentRecordInput = {
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedOneWithoutVouchInput
 }
 
-export type VouchCreateOrConnectWithoutPaymentRecordInput = {
+export type VouchCreateOrConnectWithoutPaymentRecordsInput = {
   where: Prisma.VouchWhereUniqueInput
-  create: Prisma.XOR<Prisma.VouchCreateWithoutPaymentRecordInput, Prisma.VouchUncheckedCreateWithoutPaymentRecordInput>
+  create: Prisma.XOR<Prisma.VouchCreateWithoutPaymentRecordsInput, Prisma.VouchUncheckedCreateWithoutPaymentRecordsInput>
 }
 
-export type VouchUpsertWithoutPaymentRecordInput = {
-  update: Prisma.XOR<Prisma.VouchUpdateWithoutPaymentRecordInput, Prisma.VouchUncheckedUpdateWithoutPaymentRecordInput>
-  create: Prisma.XOR<Prisma.VouchCreateWithoutPaymentRecordInput, Prisma.VouchUncheckedCreateWithoutPaymentRecordInput>
+export type VouchUpsertWithoutPaymentRecordsInput = {
+  update: Prisma.XOR<Prisma.VouchUpdateWithoutPaymentRecordsInput, Prisma.VouchUncheckedUpdateWithoutPaymentRecordsInput>
+  create: Prisma.XOR<Prisma.VouchCreateWithoutPaymentRecordsInput, Prisma.VouchUncheckedCreateWithoutPaymentRecordsInput>
   where?: Prisma.VouchWhereInput
 }
 
-export type VouchUpdateToOneWithWhereWithoutPaymentRecordInput = {
+export type VouchUpdateToOneWithWhereWithoutPaymentRecordsInput = {
   where?: Prisma.VouchWhereInput
-  data: Prisma.XOR<Prisma.VouchUpdateWithoutPaymentRecordInput, Prisma.VouchUncheckedUpdateWithoutPaymentRecordInput>
+  data: Prisma.XOR<Prisma.VouchUpdateWithoutPaymentRecordsInput, Prisma.VouchUncheckedUpdateWithoutPaymentRecordsInput>
 }
 
-export type VouchUpdateWithoutPaymentRecordInput = {
+export type VouchUpdateWithoutPaymentRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   publicId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
@@ -1975,7 +1975,7 @@ export type VouchUpdateWithoutPaymentRecordInput = {
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUpdateOneWithoutVouchNestedInput
 }
 
-export type VouchUncheckedUpdateWithoutPaymentRecordInput = {
+export type VouchUncheckedUpdateWithoutPaymentRecordsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   publicId?: Prisma.StringFieldUpdateOperationsInput | string
   merchantId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2041,7 +2041,7 @@ export type VouchCreateWithoutRefundRecordsInput = {
   customer?: Prisma.UserCreateNestedOneWithoutCustomerVouchesInput
   invitation?: Prisma.InvitationCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutVouchInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotCreateNestedOneWithoutVouchInput
@@ -2077,7 +2077,7 @@ export type VouchUncheckedCreateWithoutRefundRecordsInput = {
   updatedAt?: Date | string
   invitation?: Prisma.InvitationUncheckedCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedOneWithoutVouchInput
@@ -2129,7 +2129,7 @@ export type VouchUpdateWithoutRefundRecordsInput = {
   customer?: Prisma.UserUpdateOneWithoutCustomerVouchesNestedInput
   invitation?: Prisma.InvitationUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutVouchNestedInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUpdateOneWithoutVouchNestedInput
@@ -2165,7 +2165,7 @@ export type VouchUncheckedUpdateWithoutRefundRecordsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitation?: Prisma.InvitationUncheckedUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUncheckedUpdateOneWithoutVouchNestedInput
@@ -2201,7 +2201,7 @@ export type VouchCreateWithoutPaymentWebhookEventsInput = {
   customer?: Prisma.UserCreateNestedOneWithoutCustomerVouchesInput
   invitation?: Prisma.InvitationCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventCreateNestedManyWithoutVouchInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotCreateNestedOneWithoutVouchInput
@@ -2237,7 +2237,7 @@ export type VouchUncheckedCreateWithoutPaymentWebhookEventsInput = {
   updatedAt?: Date | string
   invitation?: Prisma.InvitationUncheckedCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   notificationEvents?: Prisma.NotificationEventUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedOneWithoutVouchInput
@@ -2289,7 +2289,7 @@ export type VouchUpdateWithoutPaymentWebhookEventsInput = {
   customer?: Prisma.UserUpdateOneWithoutCustomerVouchesNestedInput
   invitation?: Prisma.InvitationUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutVouchNestedInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUpdateOneWithoutVouchNestedInput
@@ -2325,7 +2325,7 @@ export type VouchUncheckedUpdateWithoutPaymentWebhookEventsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitation?: Prisma.InvitationUncheckedUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUncheckedUpdateOneWithoutVouchNestedInput
@@ -2361,7 +2361,7 @@ export type VouchCreateWithoutNotificationEventsInput = {
   customer?: Prisma.UserCreateNestedOneWithoutCustomerVouchesInput
   invitation?: Prisma.InvitationCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutVouchInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotCreateNestedOneWithoutVouchInput
@@ -2397,7 +2397,7 @@ export type VouchUncheckedCreateWithoutNotificationEventsInput = {
   updatedAt?: Date | string
   invitation?: Prisma.InvitationUncheckedCreateNestedOneWithoutVouchInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedCreateNestedManyWithoutVouchInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedCreateNestedOneWithoutVouchInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedCreateNestedManyWithoutVouchInput
   refundRecords?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedOneWithoutVouchInput
@@ -2449,7 +2449,7 @@ export type VouchUpdateWithoutNotificationEventsInput = {
   customer?: Prisma.UserUpdateOneWithoutCustomerVouchesNestedInput
   invitation?: Prisma.InvitationUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutVouchNestedInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUpdateOneWithoutVouchNestedInput
@@ -2485,7 +2485,7 @@ export type VouchUncheckedUpdateWithoutNotificationEventsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitation?: Prisma.InvitationUncheckedUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshot?: Prisma.VouchRecoverySnapshotUncheckedUpdateOneWithoutVouchNestedInput
@@ -2578,7 +2578,7 @@ export type VouchUpdateWithoutMerchantInput = {
   customer?: Prisma.UserUpdateOneWithoutCustomerVouchesNestedInput
   invitation?: Prisma.InvitationUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutVouchNestedInput
@@ -2614,7 +2614,7 @@ export type VouchUncheckedUpdateWithoutMerchantInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitation?: Prisma.InvitationUncheckedUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
@@ -2679,7 +2679,7 @@ export type VouchUpdateWithoutCustomerInput = {
   merchant?: Prisma.UserUpdateOneRequiredWithoutMerchantVouchesNestedInput
   invitation?: Prisma.InvitationUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutVouchNestedInput
@@ -2715,7 +2715,7 @@ export type VouchUncheckedUpdateWithoutCustomerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   invitation?: Prisma.InvitationUncheckedUpdateOneWithoutVouchNestedInput
   presenceConfirmations?: Prisma.PresenceConfirmationUncheckedUpdateManyWithoutVouchNestedInput
-  paymentRecord?: Prisma.PaymentRecordUncheckedUpdateOneWithoutVouchNestedInput
+  paymentRecords?: Prisma.PaymentRecordUncheckedUpdateManyWithoutVouchNestedInput
   refundRecords?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   notificationEvents?: Prisma.NotificationEventUncheckedUpdateManyWithoutVouchNestedInput
   paymentWebhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
@@ -2758,6 +2758,7 @@ export type VouchUncheckedUpdateManyWithoutCustomerInput = {
 
 export type VouchCountOutputType = {
   presenceConfirmations: number
+  paymentRecords: number
   refundRecords: number
   notificationEvents: number
   paymentWebhookEvents: number
@@ -2765,6 +2766,7 @@ export type VouchCountOutputType = {
 
 export type VouchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   presenceConfirmations?: boolean | VouchCountOutputTypeCountPresenceConfirmationsArgs
+  paymentRecords?: boolean | VouchCountOutputTypeCountPaymentRecordsArgs
   refundRecords?: boolean | VouchCountOutputTypeCountRefundRecordsArgs
   notificationEvents?: boolean | VouchCountOutputTypeCountNotificationEventsArgs
   paymentWebhookEvents?: boolean | VouchCountOutputTypeCountPaymentWebhookEventsArgs
@@ -2785,6 +2787,13 @@ export type VouchCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extens
  */
 export type VouchCountOutputTypeCountPresenceConfirmationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.PresenceConfirmationWhereInput
+}
+
+/**
+ * VouchCountOutputType without action
+ */
+export type VouchCountOutputTypeCountPaymentRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PaymentRecordWhereInput
 }
 
 /**
@@ -2841,7 +2850,7 @@ export type VouchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   customer?: boolean | Prisma.Vouch$customerArgs<ExtArgs>
   invitation?: boolean | Prisma.Vouch$invitationArgs<ExtArgs>
   presenceConfirmations?: boolean | Prisma.Vouch$presenceConfirmationsArgs<ExtArgs>
-  paymentRecord?: boolean | Prisma.Vouch$paymentRecordArgs<ExtArgs>
+  paymentRecords?: boolean | Prisma.Vouch$paymentRecordsArgs<ExtArgs>
   refundRecords?: boolean | Prisma.Vouch$refundRecordsArgs<ExtArgs>
   notificationEvents?: boolean | Prisma.Vouch$notificationEventsArgs<ExtArgs>
   paymentWebhookEvents?: boolean | Prisma.Vouch$paymentWebhookEventsArgs<ExtArgs>
@@ -2949,7 +2958,7 @@ export type VouchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   customer?: boolean | Prisma.Vouch$customerArgs<ExtArgs>
   invitation?: boolean | Prisma.Vouch$invitationArgs<ExtArgs>
   presenceConfirmations?: boolean | Prisma.Vouch$presenceConfirmationsArgs<ExtArgs>
-  paymentRecord?: boolean | Prisma.Vouch$paymentRecordArgs<ExtArgs>
+  paymentRecords?: boolean | Prisma.Vouch$paymentRecordsArgs<ExtArgs>
   refundRecords?: boolean | Prisma.Vouch$refundRecordsArgs<ExtArgs>
   notificationEvents?: boolean | Prisma.Vouch$notificationEventsArgs<ExtArgs>
   paymentWebhookEvents?: boolean | Prisma.Vouch$paymentWebhookEventsArgs<ExtArgs>
@@ -2972,7 +2981,7 @@ export type $VouchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     customer: Prisma.$UserPayload<ExtArgs> | null
     invitation: Prisma.$InvitationPayload<ExtArgs> | null
     presenceConfirmations: Prisma.$PresenceConfirmationPayload<ExtArgs>[]
-    paymentRecord: Prisma.$PaymentRecordPayload<ExtArgs> | null
+    paymentRecords: Prisma.$PaymentRecordPayload<ExtArgs>[]
     refundRecords: Prisma.$RefundRecordPayload<ExtArgs>[]
     notificationEvents: Prisma.$NotificationEventPayload<ExtArgs>[]
     paymentWebhookEvents: Prisma.$PaymentWebhookEventPayload<ExtArgs>[]
@@ -3404,7 +3413,7 @@ export interface Prisma__VouchClient<T, Null = never, ExtArgs extends runtime.Ty
   customer<T extends Prisma.Vouch$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$customerArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   invitation<T extends Prisma.Vouch$invitationArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$invitationArgs<ExtArgs>>): Prisma.Prisma__InvitationClient<runtime.Types.Result.GetResult<Prisma.$InvitationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   presenceConfirmations<T extends Prisma.Vouch$presenceConfirmationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$presenceConfirmationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PresenceConfirmationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  paymentRecord<T extends Prisma.Vouch$paymentRecordArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$paymentRecordArgs<ExtArgs>>): Prisma.Prisma__PaymentRecordClient<runtime.Types.Result.GetResult<Prisma.$PaymentRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  paymentRecords<T extends Prisma.Vouch$paymentRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$paymentRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   refundRecords<T extends Prisma.Vouch$refundRecordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$refundRecordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefundRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificationEvents<T extends Prisma.Vouch$notificationEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$notificationEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   paymentWebhookEvents<T extends Prisma.Vouch$paymentWebhookEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$paymentWebhookEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3928,9 +3937,9 @@ export type Vouch$presenceConfirmationsArgs<ExtArgs extends runtime.Types.Extens
 }
 
 /**
- * Vouch.paymentRecord
+ * Vouch.paymentRecords
  */
-export type Vouch$paymentRecordArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Vouch$paymentRecordsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
    * Select specific fields to fetch from the PaymentRecord
    */
@@ -3944,6 +3953,11 @@ export type Vouch$paymentRecordArgs<ExtArgs extends runtime.Types.Extensions.Int
    */
   include?: Prisma.PaymentRecordInclude<ExtArgs> | null
   where?: Prisma.PaymentRecordWhereInput
+  orderBy?: Prisma.PaymentRecordOrderByWithRelationInput | Prisma.PaymentRecordOrderByWithRelationInput[]
+  cursor?: Prisma.PaymentRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PaymentRecordScalarFieldEnum | Prisma.PaymentRecordScalarFieldEnum[]
 }
 
 /**

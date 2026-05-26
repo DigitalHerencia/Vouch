@@ -112,6 +112,11 @@ enum PaymentProvider {
   stripe
 }
 
+enum PaymentRecordPurpose {
+  merchant_protocol_fee
+  customer_authorization
+}
+
 enum VerificationProvider {
   stripe_identity
 }
@@ -405,7 +410,7 @@ model Vouch {
 
   invitation            Invitation?
   presenceConfirmations PresenceConfirmation[]
-  paymentRecord         PaymentRecord?
+  paymentRecords        PaymentRecord[]
   refundRecords         RefundRecord[]
   notificationEvents    NotificationEvent[]
   paymentWebhookEvents  PaymentWebhookEvent[]
@@ -512,9 +517,10 @@ model PresenceConfirmation {
 
 model PaymentRecord {
   id      String @id @default(cuid())
-  vouchId String @unique
+  vouchId String
 
   provider PaymentProvider @default(stripe)
+  purpose  PaymentRecordPurpose
 
   providerPaymentIntentId   String? @unique
   providerCheckoutSessionId String? @unique
@@ -555,6 +561,7 @@ model PaymentRecord {
   webhookEvents PaymentWebhookEvent[]
 
   @@index([provider])
+  @@index([purpose])
   @@index([providerPaymentIntentId])
   @@index([providerCheckoutSessionId])
   @@index([providerChargeId])
@@ -564,6 +571,7 @@ model PaymentRecord {
   @@index([captureBefore])
   @@index([lastProviderSyncAt])
   @@index([vouchId, status])
+  @@unique([vouchId, purpose])
   @@map("payment_records")
 }
 
