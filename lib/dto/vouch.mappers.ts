@@ -6,8 +6,10 @@ import type { AggregateConfirmationStatus, ParticipantRole, VouchStatus } from "
 import {
   mapPaymentRecordParticipantDTO,
   mapRefundRecordParticipantDTOs,
+  type MoneyDTO,
   type PaymentRecordParticipantDTO,
   type RefundRecordParticipantDTO,
+  toMoneyDTO,
 } from "./payment.mappers"
 
 type DateLike = Date | string | null | undefined
@@ -36,7 +38,6 @@ type PresenceConfirmationRecord = {
   serverReceivedAt?: DateLike
   timeBucket?: number | null
   clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
   createdAt: DateLike
 }
 
@@ -106,7 +107,6 @@ export type PresenceConfirmationDTO = {
   serverReceivedAt: ISODateTime | null
   timeBucket: number | null
   clockSkewAccepted: boolean
-  offlinePayloadHash: string | null
   createdAt: ISODateTime | null
 }
 
@@ -131,7 +131,9 @@ export type VouchCardDTO = {
   archiveStatus: string
   currency: string
   protectedAmountCents: number
+  protectedAmount: MoneyDTO
   customerTotalCents: number
+  customerTotal: MoneyDTO
   appointmentStartsAt: ISODateTime | null
   confirmationOpensAt: ISODateTime | null
   confirmationExpiresAt: ISODateTime | null
@@ -147,9 +149,13 @@ export type VouchCardDTO = {
 export type VouchDetailDTO = VouchCardDTO & {
   recoveryStatus: string
   merchantReceivesCents: number
+  merchantReceives: MoneyDTO
   vouchServiceFeeCents: number
+  vouchServiceFee: MoneyDTO
   processingFeeOffsetCents: number
+  processingFeeOffset: MoneyDTO
   applicationFeeAmountCents: number
+  applicationFeeAmount: MoneyDTO
   label: string | null
   committedAt: ISODateTime | null
   sentAt: ISODateTime | null
@@ -209,7 +215,6 @@ function mapPresenceConfirmationDTO(record: PresenceConfirmationRecord): Presenc
     serverReceivedAt: toIso(record.serverReceivedAt),
     timeBucket: record.timeBucket ?? null,
     clockSkewAccepted: record.clockSkewAccepted ?? false,
-    offlinePayloadHash: record.offlinePayloadHash ?? null,
     createdAt: toIso(record.createdAt),
   }
 }
@@ -268,6 +273,9 @@ export function getWindowState(input: {
 
 export function mapVouchCardDTO(record: VouchBaseRecord): VouchCardDTO {
   const confirmations = (record.presenceConfirmations ?? []).map(mapPresenceConfirmationDTO)
+  const currency = record.currency ?? "usd"
+  const protectedAmountCents = record.protectedAmountCents ?? 0
+  const customerTotalCents = record.customerTotalCents ?? protectedAmountCents
 
   return {
     id: record.id,
@@ -276,9 +284,11 @@ export function mapVouchCardDTO(record: VouchBaseRecord): VouchCardDTO {
     customerId: record.customerId ?? null,
     status: record.status,
     archiveStatus: record.archiveStatus ?? "active",
-    currency: record.currency ?? "usd",
-    protectedAmountCents: record.protectedAmountCents ?? 0,
-    customerTotalCents: record.customerTotalCents ?? record.protectedAmountCents ?? 0,
+    currency,
+    protectedAmountCents,
+    protectedAmount: toMoneyDTO(protectedAmountCents, currency),
+    customerTotalCents,
+    customerTotal: toMoneyDTO(customerTotalCents, currency),
     appointmentStartsAt: toIso(record.appointmentStartsAt),
     confirmationOpensAt: toIso(record.confirmationOpensAt),
     confirmationExpiresAt: toIso(record.confirmationExpiresAt),
@@ -294,14 +304,22 @@ export function mapVouchCardDTO(record: VouchBaseRecord): VouchCardDTO {
 
 export function mapVouchDetailDTO(record: VouchBaseRecord): VouchDetailDTO {
   const card = mapVouchCardDTO(record)
+  const merchantReceivesCents = record.merchantReceivesCents ?? record.protectedAmountCents ?? 0
+  const vouchServiceFeeCents = record.vouchServiceFeeCents ?? 0
+  const processingFeeOffsetCents = record.processingFeeOffsetCents ?? 0
+  const applicationFeeAmountCents = record.applicationFeeAmountCents ?? 0
 
   return {
     ...card,
     recoveryStatus: record.recoveryStatus ?? "normal",
-    merchantReceivesCents: record.merchantReceivesCents ?? record.protectedAmountCents ?? 0,
-    vouchServiceFeeCents: record.vouchServiceFeeCents ?? 0,
-    processingFeeOffsetCents: record.processingFeeOffsetCents ?? 0,
-    applicationFeeAmountCents: record.applicationFeeAmountCents ?? 0,
+    merchantReceivesCents,
+    merchantReceives: toMoneyDTO(merchantReceivesCents, card.currency),
+    vouchServiceFeeCents,
+    vouchServiceFee: toMoneyDTO(vouchServiceFeeCents, card.currency),
+    processingFeeOffsetCents,
+    processingFeeOffset: toMoneyDTO(processingFeeOffsetCents, card.currency),
+    applicationFeeAmountCents,
+    applicationFeeAmount: toMoneyDTO(applicationFeeAmountCents, card.currency),
     label: record.label ?? null,
     committedAt: toIso(record.committedAt),
     sentAt: toIso(record.sentAt),

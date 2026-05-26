@@ -10,6 +10,21 @@ function toIso(value: DateLike): ISODateTime | null {
   return value.toISOString()
 }
 
+const unsafeMetadataKeyPattern = /clerk|stripe|webhook|token|identity|card|bank|payload|signature/i
+
+function toParticipantSafeMetadata(value: unknown): Record<string, unknown> | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null
+
+  return Object.fromEntries(
+    Object.entries(value).filter(([key, entry]) => {
+      if (unsafeMetadataKeyPattern.test(key)) return false
+      if (entry === null) return true
+
+      return ["boolean", "number", "string"].includes(typeof entry)
+    })
+  )
+}
+
 export type ParticipantSafeAuditTimelineItemDTO = {
   id: string
   eventName: string
@@ -17,7 +32,7 @@ export type ParticipantSafeAuditTimelineItemDTO = {
   entityType: string
   entityId: string
   participantSafe: boolean
-  metadata: unknown
+  metadata: Record<string, unknown> | null
   createdAt: ISODateTime
 }
 
@@ -42,7 +57,7 @@ export function mapParticipantSafeAuditTimelineItemDTO(
     entityType: record.entityType,
     entityId: record.entityId,
     participantSafe: record.participantSafe,
-    metadata: record.metadata,
+    metadata: toParticipantSafeMetadata(record.metadata),
     createdAt: toIso(record.createdAt) ?? "",
   }
 }

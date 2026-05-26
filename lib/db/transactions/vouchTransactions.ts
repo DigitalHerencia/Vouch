@@ -67,11 +67,6 @@ type VouchIdTxInput = {
   vouchId: string
 }
 
-type VouchStatusTxInput = {
-  vouchId: string
-  status: VouchStatus
-}
-
 type BindCustomerToVouchTxInput = {
   vouchId: string
   customerId: string
@@ -145,6 +140,43 @@ function assertValidWindow(input: {
   }
 }
 
+async function transitionVouchStatusTx(
+  tx: Tx,
+  input: {
+    vouchId: string
+    from: VouchStatus[]
+    data: {
+      status: VouchStatus
+      committedAt?: Date
+      sentAt?: Date
+      authorizedAt?: Date
+      confirmableAt?: Date
+      completedAt?: Date
+      expiredAt?: Date
+    }
+    conflictCode: string
+  }
+): Promise<VouchResult> {
+  const vouchId = assertNonEmptyString(input.vouchId, "vouchId")
+
+  const updated = await tx.vouch.updateMany({
+    where: {
+      id: vouchId,
+      status: { in: input.from },
+    },
+    data: input.data,
+  })
+
+  if (updated.count !== 1) {
+    throw new Error(input.conflictCode)
+  }
+
+  return tx.vouch.findUniqueOrThrow({
+    where: { id: vouchId },
+    select: VOUCH_SELECT,
+  })
+}
+
 export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<VouchResult> {
   assertValidWindow(input)
 
@@ -179,25 +211,18 @@ export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<
   })
 }
 
-export async function updateVouchStatusTx(tx: Tx, input: VouchStatusTxInput): Promise<VouchResult> {
-  return tx.vouch.update({
-    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
-    data: { status: input.status },
-    select: VOUCH_SELECT,
-  })
-}
-
 export async function markVouchSentTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
   const now = new Date()
 
-  return tx.vouch.update({
-    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
+  return transitionVouchStatusTx(tx, {
+    vouchId: input.vouchId,
+    from: ["committed"],
     data: {
       status: "sent",
       committedAt: now,
       sentAt: now,
     },
-    select: VOUCH_SELECT,
+    conflictCode: "VOUCH_SENT_TRANSITION_CONFLICT",
   })
 }
 
@@ -234,46 +259,50 @@ export async function bindCustomerToVouchTx(
 }
 
 export async function markVouchAuthorizedTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return tx.vouch.update({
-    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
+  return transitionVouchStatusTx(tx, {
+    vouchId: input.vouchId,
+    from: ["accepted"],
     data: {
       status: "authorized",
       authorizedAt: new Date(),
     },
-    select: VOUCH_SELECT,
+    conflictCode: "VOUCH_AUTHORIZATION_TRANSITION_CONFLICT",
   })
 }
 
 export async function markVouchConfirmableTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return tx.vouch.update({
-    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
+  return transitionVouchStatusTx(tx, {
+    vouchId: input.vouchId,
+    from: ["authorized"],
     data: {
       status: "confirmable",
       confirmableAt: new Date(),
     },
-    select: VOUCH_SELECT,
+    conflictCode: "VOUCH_CONFIRMABLE_TRANSITION_CONFLICT",
   })
 }
 
 export async function markVouchCompletedTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return tx.vouch.update({
-    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
+  return transitionVouchStatusTx(tx, {
+    vouchId: input.vouchId,
+    from: ["confirmable"],
     data: {
       status: "completed",
       completedAt: new Date(),
     },
-    select: VOUCH_SELECT,
+    conflictCode: "VOUCH_COMPLETION_TRANSITION_CONFLICT",
   })
 }
 
 export async function markVouchExpiredTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return tx.vouch.update({
-    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
+  return transitionVouchStatusTx(tx, {
+    vouchId: input.vouchId,
+    from: ["draft", "committed", "sent", "accepted", "authorized", "confirmable"],
     data: {
       status: "expired",
       expiredAt: new Date(),
     },
-    select: VOUCH_SELECT,
+    conflictCode: "VOUCH_EXPIRATION_TRANSITION_CONFLICT",
   })
 }
 
@@ -312,12 +341,3 @@ export async function expireVouchWithoutCaptureTx(
 ): Promise<VouchResult> {
   return markVouchExpiredTx(tx, input)
 }
-
-/**
- * Compatibility aliases retained only for old imports during Pass 6.
- * Later passes should remove these names.
- */
-export const bindPayeeToVouchTx = bindCustomerToVouchTx
-export const cancelPendingVouchTx = markVouchExpiredTx
-export const markVouchActiveTx = markVouchAuthorizedTx
-export const markResolutionFailureTx = updateVouchRecoveryStatusTx

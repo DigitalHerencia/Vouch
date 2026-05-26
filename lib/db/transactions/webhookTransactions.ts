@@ -7,6 +7,33 @@ type Tx = Omit<
   "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
 >
 
+const unsafeMetadataKeyPattern = /payload|signature|secret|token|card|bank|identity/i
+
+function assertNonEmptyString(value: string, fieldName: string): string {
+  const trimmed = value.trim()
+
+  if (!trimmed) {
+    throw new Error(`INVALID_WEBHOOK_TX_INPUT: ${fieldName} is required`)
+  }
+
+  return trimmed
+}
+
+function toSafeMetadata(
+  metadata: Record<string, unknown> | undefined
+): Prisma.InputJsonObject | undefined {
+  if (!metadata) return undefined
+
+  return Object.fromEntries(
+    Object.entries(metadata).filter(([key, value]) => {
+      if (unsafeMetadataKeyPattern.test(key)) return false
+      if (value === null) return true
+
+      return ["boolean", "number", "string"].includes(typeof value)
+    })
+  ) as Prisma.InputJsonObject
+}
+
 export async function recordProviderWebhookReceivedTx(
   tx: Tx,
   input: {
@@ -16,15 +43,19 @@ export async function recordProviderWebhookReceivedTx(
     safeMetadata?: Record<string, unknown>
   }
 ) {
+  const provider = input.provider ?? "stripe"
+  const providerEventId = assertNonEmptyString(input.providerEventId, "providerEventId")
+
   const data: Prisma.ProviderWebhookEventCreateInput = {
-    provider: input.provider ?? "stripe",
-    providerEventId: input.providerEventId,
-    eventType: input.eventType,
+    provider,
+    providerEventId,
+    eventType: assertNonEmptyString(input.eventType, "eventType"),
     status: "received",
     processed: false,
   }
-  if (input.safeMetadata !== undefined) {
-    data.safeMetadata = input.safeMetadata as Prisma.InputJsonObject
+  const safeMetadata = toSafeMetadata(input.safeMetadata)
+  if (safeMetadata !== undefined) {
+    data.safeMetadata = safeMetadata
   }
 
   try {
@@ -38,8 +69,8 @@ export async function recordProviderWebhookReceivedTx(
     const existing = await tx.providerWebhookEvent.findUnique({
       where: {
         provider_providerEventId: {
-          provider: input.provider ?? "stripe",
-          providerEventId: input.providerEventId,
+          provider,
+          providerEventId,
         },
       },
       select: { id: true, providerEventId: true, eventType: true, processed: true },
@@ -51,8 +82,9 @@ export async function recordProviderWebhookReceivedTx(
 }
 
 export async function markProviderWebhookProcessedTx(tx: Tx, input: { id: string }) {
-  return tx.providerWebhookEvent.update({
-    where: { id: input.id },
+  const id = assertNonEmptyString(input.id, "id")
+  const updated = await tx.providerWebhookEvent.updateMany({
+    where: { id, processed: false },
     data: {
       status: "processed",
       processed: true,
@@ -60,11 +92,18 @@ export async function markProviderWebhookProcessedTx(tx: Tx, input: { id: string
       processingError: null,
     },
   })
+
+  if (updated.count !== 1) {
+    throw new Error("WEBHOOK_ALREADY_PROCESSED")
+  }
+
+  return tx.providerWebhookEvent.findUniqueOrThrow({ where: { id } })
 }
 
 export async function markProviderWebhookIgnoredTx(tx: Tx, input: { id: string; reason?: string }) {
-  return tx.providerWebhookEvent.update({
-    where: { id: input.id },
+  const id = assertNonEmptyString(input.id, "id")
+  const updated = await tx.providerWebhookEvent.updateMany({
+    where: { id, processed: false },
     data: {
       status: "ignored",
       processed: true,
@@ -72,15 +111,21 @@ export async function markProviderWebhookIgnoredTx(tx: Tx, input: { id: string; 
       processingError: input.reason ?? null,
     },
   })
+
+  if (updated.count !== 1) {
+    throw new Error("WEBHOOK_ALREADY_PROCESSED")
+  }
+
+  return tx.providerWebhookEvent.findUniqueOrThrow({ where: { id } })
 }
 
 export async function markProviderWebhookFailedTx(tx: Tx, input: { id: string; error: string }) {
   return tx.providerWebhookEvent.update({
-    where: { id: input.id },
+    where: { id: assertNonEmptyString(input.id, "id") },
     data: {
       status: "failed",
       processed: false,
-      processingError: input.error,
+      processingError: assertNonEmptyString(input.error, "error"),
     },
   })
 }

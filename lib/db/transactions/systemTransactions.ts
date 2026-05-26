@@ -1,6 +1,6 @@
 import "server-only"
 
-import type { PrismaClient } from "@/prisma/generated/prisma/client"
+import type { Prisma, PrismaClient } from "@/prisma/generated/prisma/client"
 
 type Tx = Omit<
   PrismaClient,
@@ -13,6 +13,23 @@ type SystemEventInput = {
   metadata?: Record<string, unknown>
 }
 
+const unsafeMetadataKeyPattern = /payload|signature|secret|token|card|bank|identity/i
+
+function toSafeMetadata(
+  metadata: Record<string, unknown> | undefined
+): Prisma.InputJsonObject | undefined {
+  if (!metadata) return undefined
+
+  return Object.fromEntries(
+    Object.entries(metadata).filter(([key, value]) => {
+      if (unsafeMetadataKeyPattern.test(key)) return false
+      if (value === null) return true
+
+      return ["boolean", "number", "string"].includes(typeof value)
+    })
+  ) as Prisma.InputJsonObject
+}
+
 async function writeSystemAudit(
   tx: Tx,
   input: {
@@ -21,6 +38,8 @@ async function writeSystemAudit(
     metadata?: Record<string, unknown>
   }
 ): Promise<void> {
+  const metadata = toSafeMetadata(input.metadata)
+
   await tx.auditEvent.create({
     data: {
       eventName: input.eventName,
@@ -28,6 +47,7 @@ async function writeSystemAudit(
       entityType: "User",
       entityId: input.entityId,
       participantSafe: false,
+      ...(metadata ? { metadata } : {}),
     },
   })
 }
@@ -39,7 +59,7 @@ export async function recordOperationalErrorTx(tx: Tx, input: SystemEventInput):
     metadata: {
       code: input.code,
       message: input.message,
-      ...(input.metadata ? { metadata: input.metadata } : {}),
+      ...(input.metadata ? toSafeMetadata(input.metadata) : {}),
     },
   })
 }

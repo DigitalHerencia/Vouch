@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { bindPayeeToVouchTx } from "@/lib/db/transactions/vouchTransactions"
+import { bindCustomerToVouchTx } from "@/lib/db/transactions/vouchTransactions"
 
 const vouchRecord = {
   id: "vouch_1",
@@ -42,7 +42,7 @@ describe("vouch transaction helpers", () => {
     }
 
     await expect(
-      bindPayeeToVouchTx(tx as never, { vouchId: "vouch_1", customerId: "customer_1" })
+      bindCustomerToVouchTx(tx as never, { vouchId: "vouch_1", customerId: "customer_1" })
     ).resolves.toMatchObject({ id: "vouch_1", status: "accepted", customerId: "customer_1" })
 
     expect(tx.vouch.updateMany).toHaveBeenCalledWith(
@@ -66,7 +66,7 @@ describe("vouch transaction helpers", () => {
     }
 
     await expect(
-      bindPayeeToVouchTx(tx as never, { vouchId: "vouch_1", customerId: "customer_1" })
+      bindCustomerToVouchTx(tx as never, { vouchId: "vouch_1", customerId: "customer_1" })
     ).rejects.toThrow("VOUCH_ACCEPTANCE_CONFLICT")
 
     expect(tx.vouch.findUniqueOrThrow).not.toHaveBeenCalled()

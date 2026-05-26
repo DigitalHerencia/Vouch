@@ -51,7 +51,6 @@ type PresenceConfirmationResult = {
   serverReceivedAt: Date
   timeBucket: number | null
   clockSkewAccepted: boolean
-  offlinePayloadHash: string | null
   createdAt: Date
 }
 
@@ -66,7 +65,6 @@ const PRESENCE_CONFIRMATION_SELECT = {
   serverReceivedAt: true,
   timeBucket: true,
   clockSkewAccepted: true,
-  offlinePayloadHash: true,
   createdAt: true,
 } as const
 
@@ -84,6 +82,10 @@ function assertCanonicalConfirmationMethod(method: ConfirmationMethod): void {
   if (method !== "code_exchange" && method !== "offline_code_exchange") {
     throw new Error("INVALID_CONFIRMATION_METHOD")
   }
+}
+
+function isUniqueConstraintError(error: unknown): boolean {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "P2002"
 }
 
 export async function assertNoDuplicateConfirmationTx(
@@ -166,21 +168,29 @@ export async function createPresenceConfirmationTx(
     })
   }
 
-  return tx.presenceConfirmation.create({
-    data: {
-      vouchId,
-      userId,
-      participantRole: input.participantRole,
-      status: "confirmed",
-      method: input.method,
-      confirmedAt,
-      serverReceivedAt,
-      timeBucket: input.timeBucket ?? null,
-      clockSkewAccepted: input.clockSkewAccepted ?? false,
-      offlinePayloadHash: input.offlinePayloadHash ?? null,
-    },
-    select: PRESENCE_CONFIRMATION_SELECT,
-  })
+  try {
+    return await tx.presenceConfirmation.create({
+      data: {
+        vouchId,
+        userId,
+        participantRole: input.participantRole,
+        status: "confirmed",
+        method: input.method,
+        confirmedAt,
+        serverReceivedAt,
+        timeBucket: input.timeBucket ?? null,
+        clockSkewAccepted: input.clockSkewAccepted ?? false,
+        offlinePayloadHash: input.offlinePayloadHash ?? null,
+      },
+      select: PRESENCE_CONFIRMATION_SELECT,
+    })
+  } catch (error) {
+    if (isUniqueConstraintError(error)) {
+      throw new Error("DUPLICATE_PRESENCE_CONFIRMATION")
+    }
+
+    throw error
+  }
 }
 
 export async function getAggregateConfirmationStatusTx(

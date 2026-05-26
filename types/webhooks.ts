@@ -1,7 +1,4 @@
-import type {
-  PROVIDER_WEBHOOK_STATUS_VALUES,
-  WEBHOOK_PROVIDER_VALUES,
-} from "@/lib/vouch/constants"
+import type { PROVIDER_WEBHOOK_STATUS_VALUES, WEBHOOK_PROVIDER_VALUES } from "@/lib/vouch/constants"
 
 export type WebhookProviderName = (typeof WEBHOOK_PROVIDER_VALUES)[number]
 

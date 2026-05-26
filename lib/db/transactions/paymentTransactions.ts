@@ -129,7 +129,6 @@ export async function upsertPaymentRecordTx(tx: Tx, input: UpsertPaymentRecordTx
     select: {
       id: true,
       vouchId: true,
-      providerPaymentIntentId: true,
       status: true,
       settlementStatus: true,
     },
@@ -168,7 +167,6 @@ export async function updatePaymentProviderStateTx(
     select: {
       id: true,
       vouchId: true,
-      providerPaymentIntentId: true,
       status: true,
       settlementStatus: true,
     },
@@ -189,7 +187,6 @@ export async function createRefundRecordTx(tx: Tx, input: CreateRefundRecordTxIn
       id: true,
       vouchId: true,
       paymentRecordId: true,
-      providerRefundId: true,
       status: true,
       reason: true,
       amountCents: true,

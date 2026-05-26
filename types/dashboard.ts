@@ -1,11 +1,6 @@
 import type { VouchListSort } from "./vouch"
 
-export type DashboardSectionID =
-  | "action_required"
-  | "active"
-  | "completed"
-  | "expired"
-  | "archived"
+export type DashboardSectionID = "action_required" | "active" | "completed" | "expired" | "archived"
 
 export type DashboardVariant =
   | "empty"
