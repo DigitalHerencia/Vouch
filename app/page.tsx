@@ -44,20 +44,19 @@ const useCaseIcons = {
 export default function HomePage() {
   return (
     <PublicShell>
-      <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-8 lg:px-10 lg:py-12">
-        <section className="grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.7fr)] lg:items-center">
+      <main>
+        <section className="mt-18 grid gap-8 px-12 lg:grid-cols-2">
           <HeroCentered
-            badge="Vouch"
             title={landingHeroContent.title}
             description={landingHeroContent.body}
             primaryAction={{
               label: landingHeroActionsContent.primaryLabel,
               href: "/sign-up?return_to=/vouches/new",
             }}
-            secondaryAction={{ label: landingHeroActionsContent.secondaryLabel, href: "#process" }}
+            secondaryAction={{ label: landingHeroActionsContent.secondaryLabel, href: "/pricing" }}
           />
 
-          <div id="process" className="mx-auto w-full min-w-0 scroll-mt-28">
+          <div id="process">
             <ProcessPanel
               title={landingProcessPanelContent.title}
               steps={landingProcessSteps.map((step) => ({
@@ -68,45 +67,46 @@ export default function HomePage() {
             />
           </div>
         </section>
-
-        <StatsCards
-          title="Protocol metrics"
-          subtitle="Payment coordination"
-          stats={landingMetrics.map((item) => ({
-            label: item.label,
-            value: item.value,
-            description: item.body,
-          }))}
-        />
-
-        <FeatureGridWithIcons
-          subtitle={landingSectionIntroContent.eyebrow}
-          title={landingSectionIntroContent.title}
-          description={landingSectionIntroContent.body}
-          columns={4}
-          features={landingUseCases.map((item) => {
-            const Icon = useCaseIcons[item.icon]
-
-            return {
-              title: item.title,
+        <section>
+          <StatsCards
+            title="Protocol metrics"
+            subtitle="Payment coordination"
+            stats={landingMetrics.map((item) => ({
+              label: item.label,
+              value: item.value,
               description: item.body,
-              icon: <Icon className="h-7 w-7 text-white" />,
-            }
-          })}
-        />
-
-        <div id="callout" className="scroll-mt-28">
-          <CTAWithBackground
-            icon={<ShieldCheck className="mx-auto h-12 w-12 text-white" />}
-            title={landingTrustPanelContent.title}
-            description={landingTrustPanelContent.body}
-            primaryAction={{
-              label: landingTrustPanelContent.label,
-              href: landingTrustPanelContent.action,
-            }}
-            backgroundColor="accent"
+            }))}
           />
-        </div>
+
+          <FeatureGridWithIcons
+            subtitle={landingSectionIntroContent.eyebrow}
+            title={landingSectionIntroContent.title}
+            description={landingSectionIntroContent.body}
+            columns={4}
+            features={landingUseCases.map((item) => {
+              const Icon = useCaseIcons[item.icon]
+
+              return {
+                title: item.title,
+                description: item.body,
+                icon: <Icon className="h-7 w-7 text-white" />,
+              }
+            })}
+          />
+
+          <div id="callout">
+            <CTAWithBackground
+              icon={<ShieldCheck className="mx-auto h-12 w-12 text-white" />}
+              title={landingTrustPanelContent.title}
+              description={landingTrustPanelContent.body}
+              primaryAction={{
+                label: landingTrustPanelContent.label,
+                href: landingTrustPanelContent.action,
+              }}
+              backgroundColor="accent"
+            />
+          </div>
+        </section>
       </main>
     </PublicShell>
   )

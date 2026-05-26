@@ -96,7 +96,7 @@ export function CTAWithBackground({
   return (
     <section className="px-4 py-16 md:px-8 lg:px-16">
       <div
-        className={`mx-auto max-w-5xl border-3 border-neutral-400 p-8 shadow-[8px_8px_0px_black] md:p-12 ${bgColors[backgroundColor]}`}
+        className={`mx-auto max-w-5xl border-3 border-neutral-400 p-8 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:p-12 ${bgColors[backgroundColor]}`}
       >
         <div className="space-y-6 text-center">
           {icon ?? <CheckCircle className="mx-auto h-12 w-12" />}
@@ -186,7 +186,7 @@ export function CTASplit({
 
   return (
     <section className="px-4 py-16 md:px-8">
-      <div className="mx-auto max-w-7xl overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_black]">
+      <div className="mx-auto max-w-7xl overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
         <div className="grid md:grid-cols-2">
           <div className={`flex flex-col justify-center space-y-6 p-8 md:p-12 ${contentOrder}`}>
             <h3 className="font-black">{title}</h3>

@@ -58,13 +58,13 @@ export function FeatureGridWithIcons({
           {features.map((feature, index) => (
             <Card
               key={feature.title}
-              className={`group transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_black] ${
+              className={`group transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
                 featureColors[index % 6]
               }`}
             >
               <CardHeader>
                 <div
-                  className={`mb-4 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_black] ${
+                  className={`mb-4 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
                     iconColors[index % 6]
                   }`}
                 >
@@ -116,7 +116,7 @@ export function FeatureGridWithImages({ title, subtitle, features }: FeatureGrid
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
             <div key={feature.title} className="group">
-              <div className="mb-4 overflow-hidden border-3 border-neutral-400 shadow-[4px_4px_0px_black] transition-all group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[4px_4px_0px_black]">
+              <div className="mb-4 overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
                 <span
                   aria-label={feature.title}
                   role="img"
@@ -166,7 +166,7 @@ export function FeatureGridAlternating({ features }: FeatureGridAlternatingProps
             >
               <div className="space-y-4">
                 <div
-                  className={`flex h-16 w-16 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_black] ${
+                  className={`flex h-16 w-16 items-center justify-center border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
                     iconColors[index % 6]
                   }`}
                 >
@@ -177,7 +177,7 @@ export function FeatureGridAlternating({ features }: FeatureGridAlternatingProps
               </div>
 
               <div className="relative">
-                <div className="overflow-hidden border-3 border-neutral-400 shadow-[4px_4px_0px_black] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_black]">
+                <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
                   <span
                     aria-label={feature.title}
                     role="img"
@@ -236,13 +236,13 @@ export function FeatureBentoGrid({ title, subtitle, features }: FeatureBentoGrid
             return (
               <Card
                 key={feature.title}
-                className={`group flex flex-col overflow-hidden transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[4px_4px_0px_black] ${
+                className={`group flex flex-col overflow-hidden transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
                   featureColors[index % 6]
                 } ${spanClass}`}
               >
                 <CardHeader className="flex-1">
                   <div
-                    className={`mb-4 flex h-12 w-12 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_black] ${
+                    className={`mb-4 flex h-12 w-12 items-center justify-center border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
                       iconColors[index % 6]
                     }`}
                   >

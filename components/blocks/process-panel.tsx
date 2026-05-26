@@ -33,8 +33,8 @@ export function ProcessPanel({ title, steps, footer, id }: ProcessPanelProps) {
   return (
     <Card id={id} className="w-full border-3 border-neutral-400 bg-black">
       <CardHeader className="items-center border-b-3 border-neutral-400 px-6 py-6 text-center md:px-8">
-        <CardTitle>
-          <h3 className="leading-none tracking-wide text-white">{title}</h3>
+        <CardTitle className="text-6xl leading-none font-black tracking-wide text-white">
+          {title}
         </CardTitle>
       </CardHeader>
 
@@ -50,7 +50,7 @@ export function ProcessPanel({ title, steps, footer, id }: ProcessPanelProps) {
               <div className="grid min-h-31 min-w-0 grid-cols-[minmax(0,1fr)_7rem] md:min-h-34 md:grid-cols-[minmax(0,1fr)_140px]">
                 <div className="flex min-w-0 items-center gap-4 px-4 py-5 md:gap-6 md:px-7">
                   <div className="flex size-18 shrink-0 items-center justify-center border-3 border-neutral-400 md:size-22">
-                    <h5 className="font-extrabold">{step.number}</h5>
+                    <h2 className="font-extrabold">{step.number}</h2>
                   </div>
 
                   <div>
@@ -103,9 +103,7 @@ export function ProcessPanelList({ title, items, eyebrow, body, id }: ProcessPan
             {eyebrow}
           </p>
         ) : null}
-        <CardTitle>
-          <h2 className="leading-none tracking-wide text-white">{title}</h2>
-        </CardTitle>
+        <CardTitle className="leading-none tracking-wide text-white">{title}</CardTitle>
         {body ? <p className="font-semibold tracking-tight text-neutral-400">{body}</p> : null}
       </CardHeader>
 
@@ -145,10 +143,7 @@ export function ProcessPanelRuleGrid({ title, items, footer, id }: ProcessPanelR
   return (
     <Card id={id} className="w-full border-3 border-neutral-400 bg-black">
       <CardHeader className="items-center border-b-3 border-neutral-400 px-8 py-8 text-center">
-        <CardTitle>
-          {" "}
-          <h2 className="leading-none font-black tracking-wide text-white">{title}</h2>
-        </CardTitle>
+        <CardTitle className="leading-none font-black tracking-wide text-white">{title}</CardTitle>
       </CardHeader>
 
       <CardContent className="grid p-0 md:grid-cols-2">
@@ -264,7 +259,7 @@ function ProcessPanelMarqueeTrack({
           <React.Fragment key={`${direction}-${item.name}`}>
             <MarqueeItem
               className={[
-                "h-24 min-w-76 gap-5 border-r-3 border-neutral-400 bg-white px-6 text-black shadow-[8px_8px_0_#1D4ED8]",
+                "h-24 min-w-76 gap-5 border-r-3 border-neutral-400 bg-white px-6 text-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]",
                 itemClassName,
               ]
                 .filter(Boolean)
@@ -273,7 +268,7 @@ function ProcessPanelMarqueeTrack({
               <span className="flex h-12 min-w-36 items-center justify-center">{item.logo}</span>
               {Icon ? (
                 <span
-                  className="flex size-12 items-center justify-center border-3 border-neutral-950 bg-blue-600 text-white shadow-[4px_4px_0_#000]"
+                  className="flex size-12 items-center justify-center border-3 border-neutral-950 bg-blue-600 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
                   aria-label={`${item.name}${item.detail ? `: ${item.detail}` : ""}`}
                   title={`${item.name}${item.detail ? `: ${item.detail}` : ""}`}
                 >
@@ -312,7 +307,7 @@ export function ProcessPanelGrid({ title, subtitle, logos, footer }: ProcessPane
   const reversedLogos = [...logos].reverse()
 
   return (
-    <Card className="w-full overflow-hidden border-3 border-neutral-400 bg-black shadow-[12px_12px_0_#1D4ED8]">
+    <Card className="w-full overflow-hidden border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
       {(title || subtitle) && (
         <CardHeader className="border-b-3 border-neutral-400 px-5 py-6 md:px-8 md:py-8">
           {subtitle ? (

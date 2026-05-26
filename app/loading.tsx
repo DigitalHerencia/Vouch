@@ -40,7 +40,7 @@ export default function Loading() {
           </div>
 
           <div className="mt-5 h-4 overflow-hidden border border-neutral-400 bg-black">
-            <div className="h-full w-2/3 animate-[vouch-load_1.15s_ease-in-out_infinite] bg-blue-600 shadow-[0_0_30px_oklch(54.6%_0.245_262.881/0.35)]" />
+            <div className="h-full w-2/3 animate-[vouch-load_1.15s_ease-in-out_infinite] bg-blue-600 shadow-[0_0_30px_oklch(54.6%_0.245_262.881)]" />
           </div>
 
           <div className="mt-5 grid gap-3 sm:grid-cols-3">

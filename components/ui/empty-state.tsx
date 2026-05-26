@@ -27,7 +27,7 @@ const emptyStateVariants = cva("flex items-center justify-center", {
     variant: {
       default: "",
       filled: "border-3 border-dashed border-neutral-400 bg-neutral-900 p-8",
-      card: "border-3 border-neutral-400 bg-black p-8 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
+      card: "border-3 border-neutral-400 bg-black p-8 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]",
     },
     size: {
       compact: "gap-2 p-2",

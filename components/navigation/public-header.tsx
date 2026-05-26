@@ -43,11 +43,11 @@ export function PublicHeader({
         </nav>
 
         <div className="flex items-center gap-4 lg:gap-5">
-          <Button variant="secondary" size="lg" asChild>
+          <Button variant="outline" size="lg" asChild>
             <Link href="/sign-in">Sign in</Link>
           </Button>
 
-          <Button variant="primary" size="lg" className="min-w-40 sm:min-w-44 lg:min-w-48" asChild>
+          <Button variant="outline" size="lg" className="min-w-40 sm:min-w-44 lg:min-w-48" asChild>
             <Link href="/sign-up?return_to=/vouches/new">Get started</Link>
           </Button>
         </div>

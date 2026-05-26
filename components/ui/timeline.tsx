@@ -78,8 +78,8 @@ const timelineDotVariants = cva(
   {
     variants: {
       status: {
-        completed: "bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
-        current: "scale-110 bg-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
+        completed: "bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]",
+        current: "scale-110 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]",
         upcoming: "bg-neutral-900",
       },
       size: {
@@ -218,7 +218,7 @@ const TimelineCard = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
         ref={ref}
         className={cn(
           "border-3 border-neutral-400 bg-black p-4",
-          "shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
+          "shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]",
           className
         )}
         {...props}

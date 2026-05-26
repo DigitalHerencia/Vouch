@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ArrowRight, Play, Sparkles, Star, Zap } from "lucide-react"
+import Link from "next/link"
 
 // ============================================================================
 // HERO VARIANT 1: Centered with Badge
@@ -23,44 +24,31 @@ export function HeroCentered({
   secondaryAction,
 }: HeroCenteredProps) {
   return (
-    <section className="px-4 py-20 md:px-8 lg:px-16">
-      <div className="mx-auto max-w-4xl space-y-8 text-center">
-        {badge && (
-          <Badge variant="outline" className="px-4 py-1 text-sm">
-            <Sparkles className="mr-2 h-3 w-3" />
-            {badge}
-          </Badge>
-        )}
-
-        <h2 className="text-4xl leading-snug font-black uppercase md:text-5xl lg:text-6xl">
+    <section>
+      <div className="space-y-8 text-left">
+        <h2 className="text-5xl leading-16 font-black uppercase md:text-6xl lg:text-7xl">
           {title}{" "}
           {titleHighlight && <span className="bg-blue-600 px-2 text-white">{titleHighlight}</span>}
         </h2>
 
-        <p className="mx-auto max-w-2xl text-lg font-medium text-neutral-400 md:text-xl">
-          {description}
-        </p>
+        <p className="mx-auto text-lg font-medium text-neutral-400 md:text-xl">{description}</p>
 
         {(primaryAction || secondaryAction) && (
-          <div className="flex flex-col justify-center gap-4 sm:flex-row">
+          <div className="flex flex-col gap-4 lg:flex-row">
             {primaryAction &&
               (primaryAction.href ? (
-                <Button size="lg" asChild>
-                  <a href={primaryAction.href}>
-                    {primaryAction.label}
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </a>
+                <Button size="lg" variant="outline" asChild>
+                  <Link href={primaryAction.href}>{primaryAction.label}</Link>
                 </Button>
               ) : (
-                <Button size="lg" onClick={primaryAction.onClick}>
+                <Button size="lg" variant="outline" onClick={primaryAction.onClick}>
                   {primaryAction.label}
-                  <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               ))}
             {secondaryAction &&
               (secondaryAction.href ? (
                 <Button size="lg" variant="outline" asChild>
-                  <a href={secondaryAction.href}>{secondaryAction.label}</a>
+                  <Link href={secondaryAction.href}>{secondaryAction.label}</Link>
                 </Button>
               ) : (
                 <Button size="lg" variant="outline" onClick={secondaryAction.onClick}>
@@ -149,7 +137,7 @@ export function HeroSplit({
         </div>
 
         <div className={`relative ${imageOrder}`}>
-          <div className="overflow-hidden border-3 border-neutral-400 shadow-[4px_4px_0px_black]">
+          <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
             <span
               aria-label={imageAlt}
               role="img"
@@ -216,7 +204,7 @@ export function HeroWithStats({
           {stats.map((stat) => (
             <div
               key={`stat-${stat.label}`}
-              className="border-3 border-neutral-400 bg-black p-6 text-center shadow-[4px_4px_0px_black]"
+              className="border-3 border-neutral-400 bg-black p-6 text-center shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
             >
               <div className="text-3xl font-black md:text-4xl">{stat.value}</div>
               <div className="mt-1 text-sm font-bold tracking-wide text-neutral-400 uppercase">
@@ -333,7 +321,7 @@ export function HeroWithVideo({
         </div>
 
         <div className="group relative cursor-pointer" onClick={onPlayClick}>
-          <div className="overflow-hidden border-3 border-neutral-400 shadow-[4px_4px_0px_black]">
+          <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
             <span
               aria-label="Video thumbnail"
               role="img"
@@ -343,7 +331,7 @@ export function HeroWithVideo({
           </div>
           {/* Play button overlay */}
           <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/20 transition-colors group-hover:bg-neutral-400/80">
-            <div className="flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_black] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[4px_4px_0px_black]">
+            <div className="flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
               <Play className="h-8 w-8 fill-white" />
             </div>
           </div>

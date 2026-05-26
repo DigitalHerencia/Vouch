@@ -107,7 +107,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       className={`${archivoBlack.variable} ${bebasNeue.variable} ${jetBrainsMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="min-h-dvh overflow-x-hidden">
+      <body>
         <AppProvider>{children}</AppProvider>
       </body>
     </html>

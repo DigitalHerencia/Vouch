@@ -62,7 +62,7 @@ function AuthProcessPreviewGrid() {
         return (
           <div
             key={item.label}
-            className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 border-3 border-neutral-400 bg-black p-4 shadow-[6px_6px_0_black]"
+            className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 border-3 border-neutral-400 bg-black p-4 shadow-[8px_8px_0_oklch(54.6%_0.245_262.881)]"
           >
             <span className="flex size-12 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white">
               <Icon className="size-5" />
@@ -79,7 +79,7 @@ function AuthProcessPreviewGrid() {
 }
 export function AuthFormPanel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden bg-black p-6 pt-24 pb-20 md:p-8">
+    <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden p-6 pt-24 pb-20 md:p-8">
       <div className="flex w-full max-w-xl flex-col gap-6">{children}</div>
     </div>
   )

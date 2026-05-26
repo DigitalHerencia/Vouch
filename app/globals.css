@@ -23,31 +23,21 @@
   body {
     min-height: 100vh;
     margin: 0;
-    background:
-      linear-gradient(var(--color-neutral-700) 1px, black 1px),
-      linear-gradient(90deg, var(--color-neutral-700) 1px, black 1px),
-      radial-gradient(circle at 0% 0%, var(--color-blue-600), black 28rem),
-      radial-gradient(circle at 0% 100%, var(--color-neutral-900), black 30rem),
-      radial-gradient(circle at 100% 50%, var(--color-blue-600), black 24rem), black;
-    background-attachment: fixed;
-    background-position:
-      0 0,
-      0 0,
-      0 0,
-      0 100%,
-      100% 50%,
-      0 0;
-    background-size:
-      4rem 4rem,
-      4rem 4rem,
-      auto,
-      auto,
-      auto,
-      auto;
     color: white;
     font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-synthesis-weight: none;
     overflow-x: clip;
+
+    background:
+      linear-gradient(oklch(40% 0 0 / 0.1) 6px, transparent 6px),
+      linear-gradient(90deg, oklch(40% 0 0 / 0.1) 6px, transparent 6px);
+    background-size:
+      8rem 8rem,
+      8rem 8rem;
+    background-position:
+      0 0,
+      30 0;
+    background-attachment: fixed;
   }
 
   ::selection {

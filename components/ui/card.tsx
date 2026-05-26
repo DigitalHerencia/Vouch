@@ -9,7 +9,7 @@ const Card = React.forwardRef<
     ref={ref}
     role={role}
     className={cn(
-      "border-3 border-neutral-400 bg-black text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all duration-200",
+      "border-3 border-neutral-400 bg-black text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.811)] transition-all duration-200",
       interactive &&
         "cursor-pointer hover:translate-x-1 hover:translate-y-1 hover:shadow-none active:translate-x-1 active:translate-y-1 active:shadow-none",
       className

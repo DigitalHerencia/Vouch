@@ -80,7 +80,7 @@ export function OnboardingWizard({
               onClick={() => onStepChange(index)}
               className={
                 index <= currentStep
-                  ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-blue-600 font-bold text-white shadow-[4px_4px_0px_black] transition-all"
+                  ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-blue-600 font-bold text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all"
                   : "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-neutral-900 font-bold text-neutral-400 transition-all"
               }
             >
@@ -98,7 +98,7 @@ export function OnboardingWizard({
       <Card>
         <CardHeader className="text-center">
           {step.icon ? (
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_black]">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
               {step.icon}
             </div>
           ) : null}
@@ -155,7 +155,7 @@ export function WelcomeScreen({
       <Card>
         <CardContent className="space-y-8 pt-8 pb-8">
           {logo ? (
-            <div className="mx-auto flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[6px_6px_0px_black]">
+            <div className="mx-auto flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
               {logo}
             </div>
           ) : null}
@@ -245,7 +245,7 @@ export function ProfileSetup({
   return (
     <Card className="mx-auto w-full max-w-lg">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_black]">
+        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
           <User className="h-7 w-7" />
         </div>
         <CardTitle className="text-2xl font-black uppercase">Set Up Your Profile</CardTitle>
@@ -383,7 +383,7 @@ export function WorkspaceSetup({
   return (
     <Card className="mx-auto w-full max-w-lg">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_black]">
+        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
           <Building className="h-7 w-7" />
         </div>
         <CardTitle className="text-2xl font-black uppercase">{title}</CardTitle>
@@ -485,7 +485,7 @@ export function GoalSelection({
   return (
     <Card className="mx-auto w-full max-w-2xl">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[4px_4px_0px_black]">
+        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
           <Target className="h-7 w-7" />
         </div>
         <CardTitle className="text-2xl font-black uppercase">What are your goals?</CardTitle>
@@ -505,7 +505,7 @@ export function GoalSelection({
                 disabled={!active && selectedGoals.length >= maxSelection}
                 className={
                   active
-                    ? "flex -translate-x-0.5 -translate-y-0.5 items-start gap-4 border-3 border-neutral-400 bg-blue-600 p-4 text-left shadow-[4px_4px_0px_black]"
+                    ? "flex -translate-x-0.5 -translate-y-0.5 items-start gap-4 border-3 border-neutral-400 bg-blue-600 p-4 text-left shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
                     : "flex items-start gap-4 border-3 border-neutral-400 bg-black p-4 text-left hover:bg-neutral-900 disabled:opacity-50"
                 }
               >
@@ -556,7 +556,7 @@ export function CompletionScreen({
   return (
     <Card className="mx-auto w-full max-w-lg">
       <CardContent className="space-y-6 pt-8 pb-8 text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-white shadow-[6px_6px_0px_black]">
+        <div className="mx-auto flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
           <PartyPopper className="h-10 w-10" />
         </div>
         <div className="space-y-2">

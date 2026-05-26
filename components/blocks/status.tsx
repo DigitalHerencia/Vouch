@@ -198,7 +198,7 @@ export function VouchCountdown({
   const clamped = Math.max(0, Math.min(100, percentRemaining))
 
   return (
-    <div className="border-3 border-neutral-400 bg-black p-4 shadow-[4px_4px_0px_black]">
+    <div className="border-3 border-neutral-400 bg-black p-4 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">{label}</p>
@@ -267,7 +267,7 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
 
   return (
     <div className="mx-auto w-full max-w-5xl">
-      <div className="border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_black]">
+      <div className="border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
         <div className="grid gap-6 p-5 md:p-8">
           <header className="grid gap-5 border-b-3 border-neutral-400 pb-6 md:grid-cols-[minmax(0,1fr)_auto]">
             <div className="min-w-0">

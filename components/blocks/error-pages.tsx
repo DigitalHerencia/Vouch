@@ -59,7 +59,7 @@ export function NotFoundPage({
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[6px_6px_0px_black]">
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
               <FileQuestion className="h-12 w-12 text-white" />
             </div>
           </div>
@@ -141,7 +141,7 @@ export function ServerErrorPage({
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_black]">
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
               <ServerCrash className="h-12 w-12 text-white" />
             </div>
           </div>
@@ -209,7 +209,7 @@ export function MaintenancePage({
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-lg space-y-8 text-center">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[6px_6px_0px_black]">
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
           <Construction className="h-12 w-12 text-white" />
         </div>
 
@@ -270,7 +270,7 @@ export function OfflinePage({
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-md space-y-8 text-center">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[6px_6px_0px_black]">
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
           <Wifi className="h-12 w-12 text-neutral-400" />
         </div>
 
@@ -280,7 +280,7 @@ export function OfflinePage({
         </div>
 
         <div className="space-y-4">
-          <div className="border-3 border-neutral-400 bg-black p-4 text-left shadow-[6px_6px_0px_black]">
+          <div className="border-3 border-neutral-400 bg-black p-4 text-left shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
             <h4 className="font-bold">Things to try:</h4>
             <ul className="mt-2 space-y-1 text-sm text-white md:text-base">
               <li>• Check your Wi-Fi connection</li>
@@ -326,7 +326,7 @@ export function ForbiddenPage({
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_black]">
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
               <Ban className="h-12 w-12 text-white" />
             </div>
           </div>
@@ -397,7 +397,7 @@ export function ComingSoonPage({
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-lg space-y-8 text-center">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_black]">
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
           <Clock className="h-16 w-16 text-white" />
         </div>
 
@@ -415,7 +415,7 @@ export function ComingSoonPage({
             ].map((item) => (
               <div
                 key={`action-${item.label}`}
-                className="w-24 border-3 border-neutral-400 bg-black p-4 shadow-[4px_4px_0px_black]"
+                className="w-24 border-3 border-neutral-400 bg-black p-4 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
               >
                 <p className="text-3xl font-black">{item.value}</p>
                 <p className="text-xs font-bold text-neutral-400 uppercase">{item.label}</p>
@@ -475,7 +475,7 @@ export function GenericErrorPage({
   return (
     <div className="flex min-h-screen items-center justify-center p-4">
       <div className="max-w-md space-y-8 text-center">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[6px_6px_0px_black]">
+        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
           {icon || <AlertTriangle className="h-12 w-12 text-white" />}
         </div>
 
