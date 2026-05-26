@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Eye, Mail, Lock, User, ArrowRight, LoaderCircle } from "lucide-react"
+import { Eye, Mail, Lock, User, LoaderCircle } from "lucide-react"
 
 export interface AuthPageShellProps {
   children: React.ReactNode
@@ -107,8 +107,8 @@ export interface LoginFormProps {
 
 export function LoginForm({
   logo,
-  title = "Welcome back",
-  description = "Enter your credentials to access your account",
+  title,
+  description,
   notice,
   error,
   children,
@@ -157,7 +157,9 @@ export function LoginForm({
         <CardHeader className="space-y-4 text-center">
           {logo && <div className="mx-auto">{logo}</div>}
           <div>
-            <CardTitle className="text-2xl font-black uppercase">{title}</CardTitle>
+            <CardTitle className="text-5xl font-black uppercase md:text-6xl lg:text-7xl">
+              {title}
+            </CardTitle>
             <CardDescription className="mt-2">{description}</CardDescription>
           </div>
         </CardHeader>
@@ -227,7 +229,6 @@ export function LoginForm({
 
               <Button type="button" className="w-full" size="lg">
                 Sign In
-                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
 
               {socialProviders && socialProviders.length > 0 && (
@@ -244,13 +245,11 @@ export function LoginForm({
                   <div className="grid grid-cols-2 gap-3">
                     {socialProviders.includes("google") && (
                       <Button variant="outline" type="button">
-                        <ArrowRight className="mr-2 h-4 w-4" />
                         Google
                       </Button>
                     )}
                     {socialProviders.includes("github") && (
                       <Button variant="outline" type="button">
-                        <ArrowRight className="mr-2 h-4 w-4" />
                         GitHub
                       </Button>
                     )}
@@ -371,7 +370,9 @@ export function SignUpForm({
         <CardHeader className="space-y-4 text-center">
           {logo && <div className="mx-auto">{logo}</div>}
           <div>
-            <CardTitle className="text-2xl font-black uppercase">{title}</CardTitle>
+            <CardTitle className="text-4xl font-black uppercase md:text-5xl lg:text-6xl">
+              {title}
+            </CardTitle>
             <CardDescription className="mt-2">{description}</CardDescription>
           </div>
         </CardHeader>
@@ -462,7 +463,6 @@ export function SignUpForm({
 
             <Button type="button" className="w-full" size="lg">
               Create Account
-              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
 
             {socialProviders && socialProviders.length > 0 && (
@@ -481,13 +481,11 @@ export function SignUpForm({
                 <div className="grid grid-cols-2 gap-3">
                   {socialProviders.includes("google") && (
                     <Button variant="outline" type="button">
-                      <ArrowRight className="mr-2 h-4 w-4" />
                       Google
                     </Button>
                   )}
                   {socialProviders.includes("github") && (
                     <Button variant="outline" type="button">
-                      <ArrowRight className="mr-2 h-4 w-4" />
                       GitHub
                     </Button>
                   )}
@@ -533,7 +531,9 @@ export function ForgotPasswordForm({
         <CardHeader className="space-y-4 text-center">
           {logo && <div className="mx-auto">{logo}</div>}
           <div>
-            <CardTitle className="text-2xl font-black uppercase">{title}</CardTitle>
+            <CardTitle className="text-4xl font-black uppercase md:text-5xl lg:text-6xl">
+              {title}
+            </CardTitle>
             <CardDescription className="mt-2">{description}</CardDescription>
           </div>
         </CardHeader>
@@ -559,7 +559,6 @@ export function ForgotPasswordForm({
 
             <Button type="button" className="w-full" size="lg">
               Send Reset Link
-              <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
 
             {onBackToLogin && (
@@ -632,7 +631,9 @@ export function OTPVerificationForm({
         <CardHeader className="space-y-4 text-center">
           {logo && <div className="mx-auto">{logo}</div>}
           <div>
-            <CardTitle className="text-2xl font-black uppercase">{title}</CardTitle>
+            <CardTitle className="text-4xl font-black uppercase md:text-5xl lg:text-6xl">
+              {title}
+            </CardTitle>
             <CardDescription className="mt-2">
               {description ||
                 `We sent a ${length}-digit code to ${email || "your email"}. Enter it below.`}

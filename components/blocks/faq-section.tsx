@@ -37,7 +37,7 @@ export function FAQAccordion({ title, subtitle, description, items }: FAQAccordi
           </div>
         )}
 
-        <Accordion type="single" collapsible className="space-y-4">
+        <Accordion type="single" collapsible className="space-y-8">
           {items.map((item, index) => (
             <AccordionItem
               key={item.question}
@@ -45,7 +45,7 @@ export function FAQAccordion({ title, subtitle, description, items }: FAQAccordi
               className="border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all data-[state=open]:-translate-x-0.5 data-[state=open]:-translate-y-0.5 data-[state=open]:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
             >
               <AccordionTrigger className="px-6 py-8 md:px-8">
-                <h4 className="font-bold tracking-wide">{item.question}</h4>
+                <h3 className="font-bold tracking-wide">{item.question}</h3>
               </AccordionTrigger>
               <AccordionContent className="px-6 pb-4">
                 <p className="text-sm font-medium text-white md:text-base">{item.answer}</p>
@@ -148,7 +148,7 @@ export function FAQWithCategories({
           {categories.map((category, index) => (
             <Button
               key={category.name}
-              variant={activeCategory === index ? "default" : "outline"}
+              variant={activeCategory === index ? "outline" : "outline"}
               onClick={() => onCategoryChange?.(index)}
             >
               {category.name}
@@ -156,7 +156,7 @@ export function FAQWithCategories({
           ))}
         </div>
 
-        <Accordion type="single" collapsible className="space-y-4" key={activeCategory}>
+        <Accordion type="single" collapsible className="space-y-8" key={activeCategory}>
           {activeItems.map((item, index) => (
             <AccordionItem
               key={item.question}
@@ -164,7 +164,7 @@ export function FAQWithCategories({
               className="border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
             >
               <AccordionTrigger className="px-6 py-8 md:px-8">
-                <h4 className="font-bold tracking-wide">{item.question}</h4>
+                <h3 className="font-bold tracking-wide">{item.question}</h3>
               </AccordionTrigger>
               <AccordionContent className="px-6 pb-4">
                 <p className="text-sm font-medium text-white md:text-base">{item.answer}</p>
@@ -203,7 +203,7 @@ export function FAQWithContact({
     <section className="px-4 py-16 md:px-8">
       <div className="mx-auto max-w-6xl">
         {(title || subtitle || description) && (
-          <div className="mb-12 space-y-2 text-center">
+          <div className="mb-12 space-y-4 text-center">
             {subtitle && <p className="text-sm font-bold text-blue-600 uppercase">{subtitle}</p>}
             {title && <h2 className="font-black">{title}</h2>}
             {description && (
@@ -212,7 +212,7 @@ export function FAQWithContact({
           </div>
         )}
 
-        <Accordion type="single" collapsible className="mb-12 space-y-4">
+        <Accordion type="single" collapsible className="mb-12 space-y-8">
           {items.map((item, index) => (
             <AccordionItem
               key={item.question}
@@ -220,7 +220,7 @@ export function FAQWithContact({
               className="border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
             >
               <AccordionTrigger className="px-6 py-8 md:px-8">
-                <h4 className="font-bold tracking-wide">{item.question}</h4>
+                <h3 className="font-bold tracking-wide">{item.question}</h3>
               </AccordionTrigger>
               <AccordionContent className="px-6 pb-4">
                 <p className="text-sm font-medium text-white md:text-base">{item.answer}</p>
@@ -229,9 +229,9 @@ export function FAQWithContact({
           ))}
         </Accordion>
 
-        <div className="space-y-4 border-3 border-neutral-400 bg-blue-600/10 p-8 text-center shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
-          <HelpCircle className="mx-auto h-12 w-12 text-white" />
-          <h3 className="font-black">{contactTitle}</h3>
+        <div className="space-y-4 border-3 border-neutral-400 bg-black p-12 text-center shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+          <HelpCircle className="mx-auto h-16 w-16 text-blue-600" />
+          <h2 className="font-black">{contactTitle}</h2>
           <p className="text-base font-medium text-white md:text-lg">{contactDescription}</p>
           {contactAction && (
             <Button size="lg" onClick={contactAction.onClick}>
@@ -269,13 +269,13 @@ export function FAQSimpleList({ title, subtitle, description, items }: FAQSimple
           </div>
         )}
 
-        <div className="space-y-4">
+        <div className="space-y-8">
           {items.map((item) => (
             <div
               key={item.question}
               className="border-3 border-neutral-400 bg-black px-6 py-8 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:px-8"
             >
-              <h4 className="font-bold tracking-wide">{item.question}</h4>
+              <h3 className="font-bold tracking-wide">{item.question}</h3>
               <p className="mt-4 text-sm font-medium text-white md:text-base">{item.answer}</p>
             </div>
           ))}

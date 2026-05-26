@@ -1,8 +1,6 @@
 import * as React from "react"
 import {
   AlertCircle,
-  ArrowLeft,
-  ArrowRight,
   CalendarClock,
   Check,
   CircleDollarSign,
@@ -274,10 +272,8 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
               <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
                 Vouch status
               </p>
-              <h2 className="mt-2 text-3xl leading-none font-black tracking-wide uppercase md:text-5xl">
-                {data.title}
-              </h2>
-              <p className="mt-3 font-mono text-xs font-bold text-neutral-400 uppercase">
+              <h2 className="mt-2 leading-none font-black tracking-wide uppercase">{data.title}</h2>
+              <p className="mt-3 font-mono text-lg font-bold text-neutral-400 uppercase">
                 {data.publicId}
               </p>
             </div>
@@ -312,9 +308,7 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
 
             <section className="border-3 border-neutral-400 bg-black p-4">
               <div className="mb-4 flex items-center justify-between gap-4 border-b border-neutral-400 pb-3">
-                <h3 className="text-xl font-black tracking-wide uppercase">
-                  Deterministic timeline
-                </h3>
+                <h3 className="font-black tracking-wide uppercase">Deterministic timeline</h3>
                 <ReceiptText className="size-5 text-blue-600" />
               </div>
               <VouchStatusTimeline items={data.timeline} />
@@ -412,7 +406,7 @@ export function VouchCreationWizard({
     <div className="grid h-full min-h-0 w-full gap-4 overflow-hidden lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
       <aside className="flex min-h-0 flex-col border-3 border-neutral-400 bg-black">
         <div className="border-b-3 border-neutral-400 p-4 md:p-5">
-          <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
+          <p className="text-lg font-black tracking-widest text-blue-600 uppercase">
             {content.eyebrow}
           </p>
           <h1 className="mt-2 text-2xl leading-none font-black tracking-wide uppercase md:text-4xl">
@@ -471,10 +465,10 @@ export function VouchCreationWizard({
       <section className="min-h-0 overflow-hidden border-3 border-neutral-400 bg-black">
         <div className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto]">
           <div className="border-b-3 border-neutral-400 p-4 md:p-5">
-            <h2 className="text-xl leading-none font-black tracking-wide uppercase md:text-3xl">
+            <h2 className="leading-none font-black tracking-wide uppercase">
               {content.steps[optimisticStep]?.title}
             </h2>
-            <p className="mt-2 max-w-2xl text-[12px] leading-5 font-semibold text-neutral-400 md:text-sm">
+            <p className="mt-2 max-w-2xl text-lg leading-5 font-semibold text-neutral-400 md:text-sm">
               {content.helper}
             </p>
           </div>
@@ -589,19 +583,16 @@ export function VouchCreationWizard({
               onClick={onBack}
               disabled={currentStep === 0 || isPending}
             >
-              <ArrowLeft className="size-4" />
               Back
             </Button>
             {currentStep === 0 ? (
               <Button type="button" disabled={isPending} onClick={onSaveAmount}>
                 Save fee invoice
-                <ArrowRight className="size-4" />
               </Button>
             ) : null}
             {currentStep === 1 ? (
               <Button type="button" disabled={isPending} onClick={onSaveWindow}>
                 Save window
-                <ArrowRight className="size-4" />
               </Button>
             ) : null}
             {currentStep === 2 ? (
@@ -644,14 +635,14 @@ function FieldShell({
 }) {
   return (
     <div className="min-w-0 space-y-2">
-      <Label className="text-[11px] font-black tracking-widest text-neutral-400 uppercase">
+      <Label className="text-lg font-black tracking-widest text-neutral-400 uppercase">
         {label}
       </Label>
       {children}
       {description ? (
-        <p className="text-[12px] leading-5 font-semibold text-neutral-400">{description}</p>
+        <p className="text-lg leading-tight font-semibold text-neutral-400">{description}</p>
       ) : null}
-      {error ? <p className="text-[12px] leading-5 font-semibold text-red-600">{error}</p> : null}
+      {error ? <p className="text-lg leading-tight font-semibold text-red-600">{error}</p> : null}
     </div>
   )
 }
@@ -762,7 +753,6 @@ function VouchCreationCartSheet({
           </Button>
           <Button type="button" disabled={isPending} onClick={onConfirm}>
             Open hosted fee invoice
-            <ArrowRight className="size-4" />
           </Button>
         </SheetFooter>
       </SheetContent>

@@ -1,11 +1,10 @@
 import * as React from "react"
 import {
-  ArrowRight,
   BadgeCheck,
   Building,
   Check,
+  Handshake,
   PartyPopper,
-  Sparkles,
   Target,
   Upload,
   User,
@@ -80,7 +79,7 @@ export function OnboardingWizard({
               onClick={() => onStepChange(index)}
               className={
                 index <= currentStep
-                  ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-blue-600 font-bold text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all"
+                  ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-blue-600 font-bold text-white transition-all"
                   : "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-neutral-900 font-bold text-neutral-400 transition-all"
               }
             >
@@ -96,16 +95,20 @@ export function OnboardingWizard({
       </div>
 
       <Card>
-        <CardHeader className="text-center">
+        <CardHeader className="space-y-4 text-center">
           {step.icon ? (
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
               {step.icon}
             </div>
           ) : null}
-          <CardTitle className="text-2xl font-black uppercase">{step.title}</CardTitle>
-          {step.description ? <CardDescription>{step.description}</CardDescription> : null}
+          <CardTitle className="text-6xl font-black uppercase">{step.title}</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-2">
+          {step.description ? (
+            <CardDescription className="text-2xl font-black uppercase">
+              {step.description}
+            </CardDescription>
+          ) : null}
           {step.content}
           <div className="flex items-center justify-between pt-4">
             <Button
@@ -123,7 +126,6 @@ export function OnboardingWizard({
               ) : null}
               <Button onClick={goNext}>
                 {currentStep === steps.length - 1 ? "Complete" : "Continue"}
-                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
           </div>
@@ -160,7 +162,7 @@ export function WelcomeScreen({
             </div>
           ) : null}
           <div className="space-y-2">
-            <h2 className="text-3xl font-black tracking-tight uppercase md:text-4xl">{title}</h2>
+            <h3 className="font-black tracking-tight uppercase">{title}</h3>
             <p className="text-lg text-neutral-400">{subtitle}</p>
           </div>
           {features?.length ? (
@@ -183,7 +185,6 @@ export function WelcomeScreen({
             {primaryAction ? (
               <Button size="lg" onClick={primaryAction.onClick}>
                 {primaryAction.label}
-                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             ) : null}
             {secondaryAction ? (
@@ -245,10 +246,10 @@ export function ProfileSetup({
   return (
     <Card className="mx-auto w-full max-w-lg">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
           <User className="h-7 w-7" />
         </div>
-        <CardTitle className="text-2xl font-black uppercase">Set Up Your Profile</CardTitle>
+        <CardTitle className="text-6xl font-black uppercase">Set Up Your Profile</CardTitle>
         <CardDescription>Tell us a bit about yourself</CardDescription>
       </CardHeader>
       <CardContent>
@@ -345,7 +346,6 @@ export function ProfileSetup({
           </div>
           <Button type="submit" className="w-full" size="lg">
             Continue
-            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </form>
       </CardContent>
@@ -383,10 +383,10 @@ export function WorkspaceSetup({
   return (
     <Card className="mx-auto w-full max-w-lg">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
           <Building className="h-7 w-7" />
         </div>
-        <CardTitle className="text-2xl font-black uppercase">{title}</CardTitle>
+        <CardTitle className="text-6xl font-black uppercase">{title}</CardTitle>
         <CardDescription>{description}</CardDescription>
       </CardHeader>
       <CardContent>
@@ -413,7 +413,7 @@ export function WorkspaceSetup({
             <Label htmlFor="invite" className="text-xs font-bold uppercase">
               Invite Team Members <span className="text-neutral-400">(Optional)</span>
             </Label>
-            <div className="flex gap-2">
+            <div className="flex gap-4">
               <Input
                 id="invite"
                 type="email"
@@ -421,7 +421,7 @@ export function WorkspaceSetup({
                 onChange={(event) => onMemberEmailChange(event.target.value)}
                 className="border-2 border-neutral-400"
               />
-              <Button type="button" variant="outline" onClick={onAddMember}>
+              <Button type="button" variant="outline" size="default" onClick={onAddMember}>
                 Add
               </Button>
             </div>
@@ -454,10 +454,7 @@ export function WorkspaceSetup({
                 Skip for Now
               </Button>
             ) : null}
-            <Button type="submit" className="flex-1">
-              Create Workspace
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+            <Button type="submit">Create</Button>
           </div>
         </form>
       </CardContent>
@@ -485,10 +482,10 @@ export function GoalSelection({
   return (
     <Card className="mx-auto w-full max-w-2xl">
       <CardHeader className="text-center">
-        <div className="mx-auto mb-2 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
           <Target className="h-7 w-7" />
         </div>
-        <CardTitle className="text-2xl font-black uppercase">What are your goals?</CardTitle>
+        <CardTitle className="text-6xl font-black uppercase">What are your goals?</CardTitle>
         <CardDescription>
           Select up to {maxSelection} goals to personalize your experience
         </CardDescription>
@@ -505,8 +502,8 @@ export function GoalSelection({
                 disabled={!active && selectedGoals.length >= maxSelection}
                 className={
                   active
-                    ? "flex -translate-x-0.5 -translate-y-0.5 items-start gap-4 border-3 border-neutral-400 bg-blue-600 p-4 text-left shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
-                    : "flex items-start gap-4 border-3 border-neutral-400 bg-black p-4 text-left hover:bg-neutral-900 disabled:opacity-50"
+                    ? "flex items-start gap-4 border-3 border-neutral-400 bg-blue-600 p-4 text-left"
+                    : "flex items-start gap-4 border-3 border-neutral-400 bg-black p-4 text-left disabled:opacity-50"
                 }
               >
                 <div
@@ -533,7 +530,6 @@ export function GoalSelection({
           disabled={selectedGoals.length < minSelection}
         >
           Continue with {selectedGoals.length} goal{selectedGoals.length !== 1 ? "s" : ""}
-          <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </CardContent>
     </Card>
@@ -556,8 +552,8 @@ export function CompletionScreen({
   return (
     <Card className="mx-auto w-full max-w-lg">
       <CardContent className="space-y-6 pt-8 pb-8 text-center">
-        <div className="mx-auto flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
-          <PartyPopper className="h-10 w-10" />
+        <div className="mx-auto flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-black text-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+          <Handshake className="h-10 w-10" />
         </div>
         <div className="space-y-2">
           <h2 className="text-3xl font-black tracking-tight uppercase">{title}</h2>
@@ -583,7 +579,6 @@ export function CompletionScreen({
         ) : null}
         {primaryAction ? (
           <Button size="lg" className="w-full" onClick={primaryAction.onClick}>
-            <Sparkles className="mr-2 h-4 w-4" />
             {primaryAction.label}
           </Button>
         ) : null}

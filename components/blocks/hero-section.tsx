@@ -22,16 +22,18 @@ export function HeroCentered({
 }: HeroCenteredProps) {
   return (
     <section>
-      <div className="space-y-8 text-left">
-        <h2 className="text-5xl leading-16 font-black uppercase md:text-6xl lg:text-7xl">
+      <div className="flex flex-col items-center space-y-8">
+        <h1 className="text-center leading-tight font-black uppercase">
           {title}{" "}
           {titleHighlight && <span className="bg-blue-600 px-2 text-white">{titleHighlight}</span>}
-        </h2>
+        </h1>
 
-        <p className="mx-auto text-lg font-medium text-neutral-400 md:text-xl">{description}</p>
+        <p className="mx-auto text-center text-lg font-medium text-neutral-400 md:text-xl">
+          {description}
+        </p>
 
         {(primaryAction || secondaryAction) && (
-          <div className="flex flex-col gap-4 lg:flex-row">
+          <div className="flex justify-items-center gap-4">
             {primaryAction &&
               (primaryAction.href ? (
                 <Button size="lg" variant="outline" asChild>
@@ -201,7 +203,7 @@ export function HeroWithStats({
           {stats.map((stat) => (
             <div
               key={`stat-${stat.label}`}
-              className="border-3 border-neutral-400 bg-black p-6 text-center shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
+              className="border-3 border-neutral-400 bg-black p-6 text-center shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
             >
               <div className="text-3xl font-black md:text-4xl">{stat.value}</div>
               <div className="mt-1 text-sm font-bold tracking-wide text-neutral-400 uppercase">

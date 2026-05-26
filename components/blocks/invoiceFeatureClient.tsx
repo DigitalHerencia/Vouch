@@ -99,6 +99,7 @@ export function InvoiceFeatureClient() {
           dueDate="May 27, 2026"
           amount={1000}
           status="pending"
+          href="/vouches/demo-vouch"
           onView={() => undefined}
           onDownload={() => undefined}
         />

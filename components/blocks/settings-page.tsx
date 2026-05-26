@@ -50,7 +50,7 @@ export function ProfileSettings({ user = defaultProfileUser }: ProfileSettingsPr
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-black uppercase">
+        <CardTitle className="flex items-center gap-2 text-5xl font-black uppercase">
           <User className="h-12 w-12" />
           Profile Settings
         </CardTitle>
@@ -60,7 +60,7 @@ export function ProfileSettings({ user = defaultProfileUser }: ProfileSettingsPr
         <div className="space-y-6">
           <div className="flex items-center gap-6">
             <div className="relative">
-              <Avatar className="h-24 w-24 border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+              <Avatar className="h-24 w-24 border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
                 <AvatarImage src={user.avatar} />
                 <AvatarFallback className="text-2xl font-bold">
                   {user.name
@@ -231,7 +231,7 @@ export function NotificationSettings({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-black uppercase">
+        <CardTitle className="flex items-center gap-2 text-6xl font-black uppercase">
           <Bell className="h-12 w-12" />
           Notifications
         </CardTitle>
@@ -250,7 +250,7 @@ export function NotificationSettings({
               className="flex items-center justify-between border-3 border-neutral-400 bg-black p-4"
             >
               <div>
-                <p className="font-bold">{setting.title}</p>
+                <p className="text-2xl font-bold">{setting.title}</p>
                 <p className="text-sm text-neutral-400">{setting.description}</p>
               </div>
               <div className="flex items-center gap-6">
@@ -302,7 +302,7 @@ export function SecuritySettings({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-black uppercase">
+        <CardTitle className="flex items-center gap-2 text-6xl font-black uppercase">
           <Shield className="h-12 w-12" />
           Security
         </CardTitle>
@@ -316,7 +316,7 @@ export function SecuritySettings({
               <Key className="h-5 w-5" />
             </div>
             <div>
-              <p className="font-bold">Password</p>
+              <p className="text-2xl font-bold">Password</p>
               <p className="text-sm text-neutral-400">Last changed 30 days ago</p>
             </div>
           </div>
@@ -332,7 +332,7 @@ export function SecuritySettings({
               <Shield className="h-5 w-5" />
             </div>
             <div>
-              <p className="font-bold">Two-Factor Authentication</p>
+              <p className="text-2xl font-bold">Two-Factor Authentication</p>
               <p className="text-sm text-neutral-400">
                 {twoFactorEnabled
                   ? "Enabled - Your account is more secure"
@@ -348,7 +348,7 @@ export function SecuritySettings({
           <>
             <Separator />
             <div>
-              <h4 className="mb-4 text-sm font-bold uppercase">Active Sessions</h4>
+              <h3 className="mb-4 font-bold uppercase">Active Sessions</h3>
               <div className="space-y-3">
                 {sessions.map((session) => (
                   <div
@@ -398,7 +398,7 @@ export function AppearanceSettings({ theme = "system" }: AppearanceSettingsProps
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-black uppercase">
+        <CardTitle className="flex items-center gap-2 text-6xl font-black uppercase">
           <Palette className="h-12 w-12" />
           Appearance
         </CardTitle>
@@ -407,7 +407,7 @@ export function AppearanceSettings({ theme = "system" }: AppearanceSettingsProps
       <CardContent className="space-y-6">
         {/* Theme Selection */}
         <div className="space-y-3">
-          <Label className="text-xs font-bold uppercase">Theme</Label>
+          <Label className="text-2xl font-bold uppercase">Theme</Label>
           <div className="grid grid-cols-3 gap-3">
             {[
               { value: "light", label: "Light", icon: Sun },
@@ -419,7 +419,7 @@ export function AppearanceSettings({ theme = "system" }: AppearanceSettingsProps
                 type="button"
                 className={
                   theme === value
-                    ? "flex flex-col items-center gap-2 border-3 border-neutral-400 bg-blue-600 p-4 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all"
+                    ? "flex flex-col items-center gap-2 border-3 border-neutral-400 bg-blue-600 p-4 text-white transition-all"
                     : "flex flex-col items-center gap-2 border-3 border-neutral-400 bg-black p-4 transition-all hover:bg-black"
                 }
               >
@@ -447,7 +447,7 @@ export function DangerZone({}: DangerZoneProps) {
   return (
     <Card className="border-red-600">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2 font-black text-red-600 uppercase">
+        <CardTitle className="flex items-center gap-2 text-6xl font-black text-red-600 uppercase">
           <AlertTriangle className="h-12 w-12" />
           Danger Zone
         </CardTitle>
@@ -456,7 +456,7 @@ export function DangerZone({}: DangerZoneProps) {
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between border-2 border-neutral-400 p-4">
           <div>
-            <p className="font-bold">Export Data</p>
+            <p className="text-xl font-bold">Export Data</p>
             <p className="text-sm text-neutral-400">Download all your data in JSON format</p>
           </div>
           <Button type="button" variant="outline">
@@ -466,7 +466,7 @@ export function DangerZone({}: DangerZoneProps) {
 
         <div className="flex items-center justify-between border-2 border-neutral-400 p-4">
           <div>
-            <p className="font-bold">Deactivate Account</p>
+            <p className="text-xl font-bold">Deactivate Account</p>
             <p className="text-sm text-neutral-400">Temporarily disable your account</p>
           </div>
           <Button type="button" variant="outline">
@@ -476,7 +476,7 @@ export function DangerZone({}: DangerZoneProps) {
 
         <div className="flex items-center justify-between border-2 border-red-600 bg-red-600/10 p-4">
           <div>
-            <p className="font-bold text-red-600">Delete Account</p>
+            <p className="text-xl font-bold text-red-600">Delete Account</p>
             <p className="text-sm text-neutral-400">Permanently delete your account and all data</p>
           </div>
           <Button type="button" variant="destructive">
@@ -500,7 +500,7 @@ export function SettingsPage({ defaultTab = "profile" }: SettingsPageProps) {
   return (
     <div className="mx-auto max-w-4xl px-4 py-8">
       <div className="mb-8">
-        <h3 className="text-3xl font-black uppercase">Settings</h3>
+        <h2 className="font-black uppercase">Settings</h2>
         <p className="mt-1 text-neutral-400">Manage your account settings and preferences</p>
       </div>
 

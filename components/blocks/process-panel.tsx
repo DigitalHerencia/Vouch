@@ -97,25 +97,22 @@ export interface ProcessPanelListProps {
 export function ProcessPanelList({ title, items, eyebrow, body, id }: ProcessPanelListProps) {
   return (
     <Card id={id} className="w-full border-3 border-neutral-400 bg-black">
-      <CardHeader className="border-b-3 border-neutral-400 px-6 py-6 md:px-8">
+      <CardHeader className="border-b-3 border-neutral-400 px-12 py-6">
         {eyebrow ? (
-          <p className="text-sm font-black tracking-widest text-blue-600 uppercase md:text-base">
+          <p className="text-lg font-black tracking-widest text-blue-600 uppercase md:text-base">
             {eyebrow}
           </p>
         ) : null}
-        <CardTitle className="leading-none tracking-wide text-white">{title}</CardTitle>
+        <CardTitle className="text-6xl leading-none tracking-wide text-white">{title}</CardTitle>
         {body ? <p className="font-semibold tracking-tight text-neutral-400">{body}</p> : null}
       </CardHeader>
 
-      <CardContent className="p-0">
+      <CardContent>
         {items.map((item) => (
-          <section
-            key={`${item.number}-${item.title}`}
-            className="border-b-3 border-neutral-400 px-6 py-7 last:border-b-0 md:px-8 md:py-8"
-          >
-            <h4 className="tracking-normal text-white">
+          <section key={`${item.number}-${item.title}`} className="px-6 py-6">
+            <h3 className="tracking-normal text-white">
               {item.number}. {item.title}
-            </h4>
+            </h3>
             <p className="font-semibold text-neutral-400">{item.body}</p>
           </section>
         ))}
@@ -142,8 +139,8 @@ export interface ProcessPanelRuleGridProps {
 export function ProcessPanelRuleGrid({ title, items, footer, id }: ProcessPanelRuleGridProps) {
   return (
     <Card id={id} className="w-full border-3 border-neutral-400 bg-black">
-      <CardHeader className="items-center border-b-3 border-neutral-400 px-8 py-8 text-center">
-        <CardTitle className="leading-none font-black tracking-wide text-white">{title}</CardTitle>
+      <CardHeader className="items-center border-b-3 border-neutral-400 px-6 py-6 text-center">
+        <CardTitle className="text-6xl font-black tracking-wide text-white">{title}</CardTitle>
       </CardHeader>
 
       <CardContent className="grid p-0 md:grid-cols-2">
@@ -160,7 +157,7 @@ export function ProcessPanelRuleGrid({ title, items, footer, id }: ProcessPanelR
             <p className="md:texy-base text-sm font-semibold tracking-widest text-blue-600 uppercase">
               {item.label}
             </p>
-            <h4 className="tracking-normal text-white">{item.value}</h4>
+            <h3 className="tracking-normal text-white">{item.value}</h3>
           </section>
         ))}
       </CardContent>

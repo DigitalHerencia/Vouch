@@ -29,17 +29,28 @@
     overflow-x: clip;
 
     background:
-      linear-gradient(oklch(40% 0 0 / 0.1) 6px, transparent 6px),
-      linear-gradient(90deg, oklch(40% 0 0 / 0.1) 6px, transparent 6px);
-    background-size:
-      8rem 8rem,
-      8rem 8rem;
-    background-position:
-      0 0,
-      30 0;
-    background-attachment: fixed;
-  }
+  radial-gradient(
+    ellipse 70% 45% at 50% 100%,
+    oklch(62% 0.24 260 / 0.52) 0%,
+    oklch(55% 0.22 263 / 0.34) 35%,
+    oklch(44% 0.17 264 / 0.16) 62%,
+    transparent 82%
+  ),
+  linear-gradient(oklch(40% 0 0 / 0.1) 6px, transparent 6px),
+  linear-gradient(90deg, oklch(40% 0 0 / 0.1) 6px, transparent 6px);
 
+background-size:
+  auto,
+  8rem 8rem,
+  8rem 8rem;
+
+background-position:
+  50% 100%,
+  0 0,
+  0 0;
+
+background-attachment: fixed;
+  }
   ::selection {
     background: var(--color-blue-600);
     color: white;

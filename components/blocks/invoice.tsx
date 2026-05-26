@@ -2,6 +2,7 @@ import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Download, Printer, Mail, Check, Clock, AlertCircle } from "lucide-react"
+import Link from "next/link"
 
 // ============================================================================
 // Common Types
@@ -98,7 +99,7 @@ export function Invoice({ data, logo, onDownload, onPrint, onSendEmail }: Invoic
     <div className="mx-auto max-w-4xl">
       {/* Actions Bar */}
       <div className="mb-6 flex items-center justify-between print:hidden">
-        <h2 className="text-2xl font-black uppercase">Invoice</h2>
+        <h2 className="font-black uppercase">Invoice</h2>
         <div className="flex gap-2">
           {onSendEmail && (
             <Button variant="outline" size="sm" onClick={onSendEmail}>
@@ -335,7 +336,7 @@ export function Receipt({ data, logo, onDownload }: ReceiptProps) {
           {/* Header */}
           <div className="space-y-2 text-center">
             {logo && <div className="mb-4 flex justify-center">{logo}</div>}
-            <h2 className="text-xl font-black uppercase">{data.merchant.name}</h2>
+            <h2 className="font-black uppercase">{data.merchant.name}</h2>
             {data.merchant.address && (
               <p className="text-sm text-neutral-400">{data.merchant.address}</p>
             )}
@@ -426,7 +427,7 @@ export interface InvoiceSummaryProps {
   amount: number
   amountLabel?: string
   status: "paid" | "pending" | "overdue" | string
-  href?: string
+  href: string
   onView?: () => void
   onDownload?: () => void
 }
@@ -455,20 +456,8 @@ export function InvoiceSummary({
       : statusConfig.pending
 
   return (
-    <div className="border-3 border-neutral-400 bg-black p-4 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
-      <div className="mb-4 flex items-start justify-between">
-        <div>
-          <p className="text-lg font-black">{invoiceNumber}</p>
-          <p className="text-sm text-neutral-400">{clientName}</p>
-        </div>
-        <div
-          className={`border-2 px-2 py-1 text-xs font-bold uppercase ${statusStyle.bg} ${statusStyle.border} ${statusStyle.text}`}
-        >
-          {status}
-        </div>
-      </div>
-
-      <div className="mb-4 grid grid-cols-2 gap-4 text-sm">
+    <div className="mx-auto grid min-w-3xl grid-cols-3 border-3 border-neutral-400 bg-black p-4 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]">
+      <div className="space-y-2 text-sm">
         <div>
           <p className="text-xs font-bold text-neutral-400 uppercase">Issued</p>
           <p className="font-medium">{issueDate}</p>
@@ -479,20 +468,25 @@ export function InvoiceSummary({
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <p className="font-mono text-2xl font-black">{amountLabel ?? `$${amount.toFixed(2)}`}</p>
-        <div className="flex gap-2">
-          {onDownload && (
-            <Button variant="ghost" size="sm" onClick={onDownload}>
-              <Download className="h-4 w-4" />
-            </Button>
-          )}
-          {(onView || href) && (
-            <Button size="sm" onClick={onView} asChild={!!href}>
-              {href ? <a href={href}>View</a> : "View"}
-            </Button>
-          )}
+      <div className="flex flex-col items-center justify-between">
+        <div>
+          <p className="text-3xl font-black text-neutral-400">{clientName}</p>
         </div>
+        <p className="mx-2 font-mono text-2xl font-black">
+          {amountLabel ?? `$${amount.toFixed(2)}`}
+        </p>
+        <p className="text-sm font-bold">{invoiceNumber}</p>
+      </div>
+
+      <div className="mr-2 flex flex-col items-end justify-between">
+        <div
+          className={`w-18 border-2 px-2 py-1 text-xs font-bold uppercase ${statusStyle.bg} ${statusStyle.border} ${statusStyle.text}`}
+        >
+          {status}
+        </div>
+        <Button variant="link" size="nav">
+          <Link href={href}>View</Link>
+        </Button>
       </div>
     </div>
   )
@@ -526,14 +520,14 @@ export function InvoiceList({ invoices, onView, onDownload }: InvoiceListProps) 
   return (
     <div className="border-3 border-neutral-400 bg-black">
       {/* Header */}
-      <div className="grid grid-cols-12 gap-2 border-b-3 border-neutral-400 bg-black p-4 text-xs font-bold uppercase">
+      <h3 className="grid grid-cols-12 gap-2 border-b-3 border-neutral-400 bg-blue-600 p-4 font-black text-white uppercase">
         <div className="col-span-2">Invoice</div>
         <div className="col-span-3">Client</div>
         <div className="col-span-2">Date</div>
         <div className="col-span-2 text-right">Amount</div>
-        <div className="col-span-2 text-right">Status</div>
         <div className="col-span-1" />
-      </div>
+        <div className="col-span-2 text-right">Status</div>
+      </h3>
 
       {/* Rows */}
       {invoices.map((invoice) => (
@@ -547,34 +541,17 @@ export function InvoiceList({ invoices, onView, onDownload }: InvoiceListProps) 
           <div className="col-span-2 text-right font-mono font-bold">
             ${invoice.amount.toFixed(2)}
           </div>
-          <div className="col-span-2 flex justify-end">
+          <div className="col-span-2 flex justify-center">
+            <Button variant="link" size="nav">
+              <Link href="/">View</Link>
+            </Button>
+          </div>
+          <div className="col-span-1 flex justify-end">
             <span
               className={`px-2 py-0.5 text-xs font-bold whitespace-nowrap uppercase ${statusConfig[invoice.status]}`}
             >
               {invoice.status}
             </span>
-          </div>
-          <div className="col-span-1 flex items-center justify-end gap-1">
-            {onDownload && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 w-7 p-0"
-                onClick={() => onDownload(invoice.id)}
-              >
-                <Download className="h-3 w-3" />
-              </Button>
-            )}
-            {onView && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 w-7 p-0"
-                onClick={() => onView(invoice.id)}
-              >
-                →
-              </Button>
-            )}
           </div>
         </div>
       ))}

@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 const featureColors = ["bg-black"]
 
-const iconColors = ["bg-blue-600", "bg-blue-600", "bg-blue-600", "bg-blue-600", "bg-blue-600"]
+const iconColors = ["bg-black", "bg-black", "bg-black", "bg-black", "bg-black"]
 
 // ============================================================================
 // FEATURE GRID VARIANT 1: With Icons
@@ -41,11 +41,11 @@ export function FeatureGridWithIcons({
         {(title || subtitle || description) && (
           <div className="mb-12 space-y-4 text-center">
             {subtitle && (
-              <p className="text-sm font-bold tracking-widest text-blue-600 uppercase">
+              <p className="text-lg font-bold tracking-widest text-blue-600 uppercase">
                 {subtitle}
               </p>
             )}
-            {title && <h2 className="text-3xl font-black uppercase md:text-4xl">{title}</h2>}
+            {title && <h2 className="font-black uppercase">{title}</h2>}
             {description && (
               <p className="mx-auto max-w-2xl text-lg font-medium text-neutral-400">
                 {description}
@@ -54,17 +54,17 @@ export function FeatureGridWithIcons({
           </div>
         )}
 
-        <div className={`grid gap-6 ${gridCols[columns]}`}>
+        <div className={`grid gap-8 ${gridCols[columns]}`}>
           {features.map((feature, index) => (
             <Card
               key={feature.title}
-              className={`group transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
+              className={`group transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)] ${
                 featureColors[index % 6]
               }`}
             >
               <CardHeader>
                 <div
-                  className={`mb-4 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
+                  className={`mb-4 flex h-14 w-14 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
                     iconColors[index % 6]
                   }`}
                 >
@@ -105,18 +105,18 @@ export function FeatureGridWithImages({ title, subtitle, features }: FeatureGrid
         {(title || subtitle) && (
           <div className="mb-12 space-y-4 text-center">
             {subtitle && (
-              <p className="text-sm font-bold tracking-widest text-neutral-400 uppercase">
+              <p className="text-lg font-bold tracking-widest text-blue-600 uppercase">
                 {subtitle}
               </p>
             )}
-            {title && <h2 className="text-3xl font-black uppercase md:text-4xl">{title}</h2>}
+            {title && <h2 className="font-black uppercase">{title}</h2>}
           </div>
         )}
 
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature) => (
             <div key={feature.title} className="group">
-              <div className="mb-4 overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+              <div className="mb-8 overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]">
                 <span
                   aria-label={feature.title}
                   role="img"
@@ -124,8 +124,8 @@ export function FeatureGridWithImages({ title, subtitle, features }: FeatureGrid
                   style={{ backgroundImage: `url(${feature.image})` }}
                 />
               </div>
-              <h3 className="mb-2 text-xl font-black uppercase">{feature.title}</h3>
-              <p className="font-medium text-neutral-400">{feature.description}</p>
+              <h3 className="mb-2 font-black uppercase">{feature.title}</h3>
+              <p className="leading-tight font-medium text-neutral-400">{feature.description}</p>
             </div>
           ))}
         </div>
@@ -166,22 +166,24 @@ export function FeatureGridAlternating({ features }: FeatureGridAlternatingProps
             >
               <div className="space-y-4">
                 <div
-                  className={`flex h-16 w-16 items-center justify-center border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
+                  className={`flex h-16 w-16 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
                     iconColors[index % 6]
                   }`}
                 >
                   {feature.icon}
                 </div>
-                <h3 className="text-2xl font-black uppercase md:text-3xl">{feature.title}</h3>
-                <p className="text-lg font-medium text-neutral-400">{feature.description}</p>
+                <div className="space-y-2">
+                  <h2 className="font-black uppercase">{feature.title}</h2>
+                  <p className="text-lg font-medium text-neutral-400">{feature.description}</p>
+                </div>
               </div>
 
               <div className="relative">
-                <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+                <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]">
                   <span
                     aria-label={feature.title}
                     role="img"
-                    className="block min-h-80 w-full bg-cover bg-center"
+                    className="block min-h-80 bg-cover bg-center"
                     style={{ backgroundImage: `url(${feature.image})` }}
                   />
                 </div>
@@ -217,15 +219,15 @@ export function FeatureBentoGrid({ title, subtitle, features }: FeatureBentoGrid
         {(title || subtitle) && (
           <div className="mb-12 space-y-4 text-center">
             {subtitle && (
-              <p className="inline-block border-2 border-neutral-400 bg-blue-600 px-3 py-1 text-sm font-bold tracking-widest text-white uppercase">
+              <p className="mb-6 inline-block border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-blue-600 uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
                 {subtitle}
               </p>
             )}
-            {title && <h2 className="text-3xl font-black uppercase md:text-4xl">{title}</h2>}
+            {title && <h2 className="font-black uppercase">{title}</h2>}
           </div>
         )}
 
-        <div className="grid auto-rows-[200px] gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid auto-rows-[200px] gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => {
             const spanClass = {
               normal: "",
@@ -236,19 +238,19 @@ export function FeatureBentoGrid({ title, subtitle, features }: FeatureBentoGrid
             return (
               <Card
                 key={feature.title}
-                className={`group flex flex-col overflow-hidden transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
+                className={`group flex flex-col overflow-hidden transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)] ${
                   featureColors[index % 6]
                 } ${spanClass}`}
               >
                 <CardHeader className="flex-1">
                   <div
-                    className={`mb-4 flex h-12 w-12 items-center justify-center border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] ${
+                    className={`mb-4 flex h-12 w-12 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
                       iconColors[index % 6]
                     }`}
                   >
                     {feature.icon}
                   </div>
-                  <CardTitle className="text-lg uppercase">{feature.title}</CardTitle>
+                  <CardTitle className="text-2xl uppercase">{feature.title}</CardTitle>
                   <CardDescription className="line-clamp-3 text-base">
                     {feature.description}
                   </CardDescription>

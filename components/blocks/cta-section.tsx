@@ -1,8 +1,9 @@
 import * as React from "react"
-import { ArrowRight, CheckCircle, Mail } from "lucide-react"
+import { CheckCircle, Mail } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import Link from "next/link"
 
 function safeHref(href: string) {
   if (href.startsWith("/") || href.startsWith("#") || href.startsWith("mailto:")) return href
@@ -30,19 +31,15 @@ function CTAButton({
 }) {
   if (action.href) {
     return (
-      <Button size="lg" variant={variant} asChild>
-        <a href={safeHref(action.href)}>
-          {action.label}
-          {variant === "default" ? <ArrowRight className="ml-2 h-4 w-4" /> : null}
-        </a>
+      <Button size="lg" variant="outline" asChild>
+        <Link href={safeHref(action.href)}>{action.label}</Link>
       </Button>
     )
   }
 
   return (
-    <Button size="lg" variant={variant} onClick={action.onClick}>
+    <Button size="lg" variant="outline" onClick={action.onClick}>
       {action.label}
-      {variant === "default" ? <ArrowRight className="ml-2 h-4 w-4" /> : null}
     </Button>
   )
 }
@@ -153,7 +150,6 @@ export function CTANewsletter({
           />
           <Button type="submit" size="lg">
             {buttonLabel}
-            <ArrowRight className="ml-2 h-4 w-4" />
           </Button>
         </form>
         <p className="md:base text-xs text-neutral-400">No spam. Unsubscribe anytime.</p>
@@ -186,7 +182,7 @@ export function CTASplit({
 
   return (
     <section className="px-4 py-16 md:px-8">
-      <div className="mx-auto max-w-7xl overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+      <div className="mx-auto max-w-7xl overflow-hidden border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
         <div className="grid md:grid-cols-2">
           <div className={`flex flex-col justify-center space-y-6 p-8 md:p-12 ${contentOrder}`}>
             <h3 className="font-black">{title}</h3>
@@ -242,15 +238,11 @@ export function CTABanner({
         <p className="text-sm font-bold">{text}</p>
         {action.href ? (
           <Button size="sm" variant="outline" className="shrink-0" asChild>
-            <a href={safeHref(action.href)}>
-              {action.label}
-              <ArrowRight className="ml-1 h-3 w-3" />
-            </a>
+            <Link href={safeHref(action.href)}>{action.label}</Link>
           </Button>
         ) : (
           <Button size="sm" variant="outline" className="shrink-0" onClick={action.onClick}>
             {action.label}
-            <ArrowRight className="ml-1 h-3 w-3" />
           </Button>
         )}
         {dismissible ? (

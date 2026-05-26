@@ -9,24 +9,24 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-blue-600 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+          "bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         outline:
-          "bg-black text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+          "bg-black text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         link: "border-none text-white shadow-none hover:scale-110 hover:text-blue-600 hover:underline hover:underline-offset-4",
         nav: "border-none text-white shadow-none hover:scale-110 hover:text-blue-600 hover:underline hover:underline-offset-4",
         destructive:
-          "bg-red-600 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+          "bg-red-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         ghost:
           "border-none bg-transparent text-white shadow-none hover:text-blue-600 hover:underline hover:underline-offset-4",
         primary:
-          "bg-blue-600 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+          "bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         secondary:
-          "bg-black text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+          "bg-black text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         accent:
-          "bg-neutral-400 text-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+          "bg-neutral-400 text-blue-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         noShadow: "bg-blue-600 text-white",
         reverse:
-          "bg-blue-600 text-white hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.811)]",
+          "bg-blue-600 text-white hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[4px_4px_0px_oklch(54.6%_0.245_262.811)]",
       },
       size: {
         default: "h-11 px-5 py-2",
@@ -46,8 +46,8 @@ const buttonVariants = cva(
       },
     },
     defaultVariants: {
-      variant: "default",
-      size: "default",
+      variant: "outline",
+      size: "lg",
       animation: "none",
     },
   }
