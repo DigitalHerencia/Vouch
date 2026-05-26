@@ -1,4 +1,4 @@
-// app/api/clerk/webhook-handler/route.ts
+// app/api/clerk/webhooks/route.ts
 
 import { NextResponse, type NextRequest } from "next/server"
 

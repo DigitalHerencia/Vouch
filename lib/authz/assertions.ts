@@ -31,8 +31,8 @@ export function assertActiveAccount(user: Pick<CurrentUser, "status">): void {
   }
 }
 
-export function assertNotSelfAcceptance(input: { userId: string; payerId: string }): void {
-  if (input.userId === input.payerId) {
-    deny("Payer may not accept their own Vouch")
+export function assertNotSelfAcceptance(input: { userId: string; merchantId: string }): void {
+  if (input.userId === input.merchantId) {
+    deny("Merchant may not accept their own Vouch")
   }
 }

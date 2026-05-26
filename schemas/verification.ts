@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { VERIFICATION_PROVIDER_VALUES } from "@/lib/vouch/constants"
 import { internalReturnToPathSchema, optionalTrimmedStringSchema, userIdSchema } from "./common"
 
 export const verificationStatusSchema = z.enum([
@@ -11,7 +12,7 @@ export const verificationStatusSchema = z.enum([
 ])
 
 export const verificationKindSchema = z.enum(["identity", "adult"])
-export const verificationProviderSchema = z.enum(["stripe_identity"])
+export const verificationProviderSchema = z.enum(VERIFICATION_PROVIDER_VALUES)
 
 export const sanitizedVerificationProviderReferenceSchema = optionalTrimmedStringSchema
 export const sanitizedVerificationFailureCodeSchema = optionalTrimmedStringSchema

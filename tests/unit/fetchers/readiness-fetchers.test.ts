@@ -35,6 +35,8 @@ vi.mock("@/lib/integrations/stripe/connect", () => ({
 }))
 
 function readinessRecord(input: {
+  identityStatus?: "unstarted" | "pending" | "verified" | "rejected" | "requires_action" | "expired"
+  adultStatus?: "unstarted" | "pending" | "verified" | "rejected" | "requires_action" | "expired"
   paymentReadiness?: "not_started" | "requires_action" | "ready"
   payoutReadiness?: "not_started" | "requires_action" | "ready"
   termsAccepted?: boolean
@@ -43,8 +45,8 @@ function readinessRecord(input: {
     id: "user_1",
     status: "active",
     verificationProfile: {
-      identityStatus: "unstarted",
-      adultStatus: "unstarted",
+      identityStatus: input.identityStatus ?? "verified",
+      adultStatus: input.adultStatus ?? "verified",
     },
     paymentCustomer: {
       providerCustomerId: "cus_123",

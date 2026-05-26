@@ -4,6 +4,7 @@ import { unstable_noStore as noStore } from "next/cache"
 
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
+import { canCreateVouch, canAcceptVouch } from "@/lib/authz/policies"
 import { prisma } from "@/lib/db/prisma"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { getStripeCustomerPaymentReadiness } from "@/lib/integrations/stripe/customers"
@@ -34,7 +35,7 @@ function normalizeReadiness(record: ReadinessRecord | null) {
 
   const state = {
     userId: record?.id ?? null,
-    userStatus: record?.status ?? "disabled",
+    userStatus: record?.status === "active" ? ("active" as const) : ("disabled" as const),
     identityStatus: verification?.identityStatus ?? "unstarted",
     adultStatus: verification?.adultStatus ?? "unstarted",
     paymentReadiness: paymentCustomer?.readiness ?? "not_started",
@@ -48,10 +49,15 @@ function normalizeReadiness(record: ReadinessRecord | null) {
 
   return {
     ...state,
-    createReady:
-      state.userStatus === "active" && state.payoutReadiness === "ready" && state.termsAccepted,
-    acceptReady:
-      state.userStatus === "active" && state.paymentReadiness === "ready" && state.termsAccepted,
+    createReady: canCreateVouch(state),
+    acceptReady: canAcceptVouch({
+      ...state,
+      userId: state.userId,
+      merchantId: "",
+      existingCustomerId: null,
+      status: "sent",
+      inviteValid: true,
+    }),
     confirmReady: state.userStatus === "active",
   }
 }
@@ -113,6 +119,8 @@ function blockersFor(
   const blockers: string[] = []
 
   if (readiness.userStatus !== "active") blockers.push("account_inactive")
+  if (readiness.identityStatus !== "verified") blockers.push("identity_verification_required")
+  if (readiness.adultStatus !== "verified") blockers.push("adult_verification_required")
   if (kind === "create" && readiness.payoutReadiness !== "ready") {
     blockers.push("payout_method_required")
   }

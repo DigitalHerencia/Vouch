@@ -4,9 +4,9 @@ import { vouchListSortSchema } from "./vouch"
 export const dashboardSectionIdSchema = z.enum([
   "action_required",
   "active",
-  "pending",
   "completed",
-  "expired_refunded",
+  "expired",
+  "archived",
 ])
 
 export const dashboardVariantSchema = z.enum([
@@ -14,8 +14,8 @@ export const dashboardVariantSchema = z.enum([
   "action_required",
   "active_vouches",
   "mixed_vouch_states",
-  "payer_focused",
-  "payee_focused",
+  "merchant_focused",
+  "customer_focused",
   "loading",
   "error",
 ])
@@ -34,9 +34,7 @@ export const dashboardSearchParamsSchema = z.object({
 })
 
 export const dashboardPreferencesSchema = z.object({
-  status: z
-    .enum(["action_required", "active", "pending", "completed", "expired", "refunded"])
-    .optional(),
+  status: dashboardSectionIdSchema.optional(),
   sort: vouchListSortSchema.optional(),
   page: z.coerce.number().int().min(1).optional(),
 })

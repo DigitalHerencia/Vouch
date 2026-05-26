@@ -35,8 +35,6 @@ export const paymentRecordParticipantSummarySelect = {
   id: true,
   vouchId: true,
   provider: true,
-  providerPaymentIntentId: true,
-  providerCheckoutSessionId: true,
   status: true,
   settlementStatus: true,
   amountCents: true,
@@ -64,54 +62,9 @@ export const refundRecordParticipantSummarySelect = {
   id: true,
   vouchId: true,
   paymentRecordId: true,
-  providerRefundId: true,
   status: true,
   reason: true,
   amountCents: true,
   createdAt: true,
   updatedAt: true,
 } as const satisfies Prisma.RefundRecordSelect
-
-export const paymentStatusCardSelect = paymentRecordParticipantSummarySelect
-export const refundStatusCardSelect = refundRecordParticipantSummarySelect
-
-export const paymentWebhookEventListItemSelect = {
-  id: true,
-  provider: true,
-  providerEventId: true,
-  eventType: true,
-  providerWebhookEventId: true,
-  vouchId: true,
-  paymentRecordId: true,
-  refundRecordId: true,
-  processed: true,
-  receivedAt: true,
-  processedAt: true,
-  processingError: true,
-} as const satisfies Prisma.PaymentWebhookEventSelect
-
-export const paymentWebhookEventDetailSelect = {
-  ...paymentWebhookEventListItemSelect,
-  safeMetadata: true,
-  providerWebhookEvent: {
-    select: {
-      id: true,
-      provider: true,
-      providerEventId: true,
-      eventType: true,
-      status: true,
-      processed: true,
-      receivedAt: true,
-      processedAt: true,
-      processingError: true,
-      safeMetadata: true,
-    },
-  },
-} as const satisfies Prisma.PaymentWebhookEventSelect
-
-/**
- * Compatibility aliases retained temporarily for older imports.
- * These do not imply settings pages exist.
- */
-export const paymentSettingsSelect = paymentCustomerReadinessSelect
-export const payoutSettingsSelect = connectedAccountReadinessSelect

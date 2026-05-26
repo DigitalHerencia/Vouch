@@ -3,17 +3,17 @@ import type { VouchListSort } from "./vouch"
 export type DashboardSectionID =
   | "action_required"
   | "active"
-  | "pending"
   | "completed"
-  | "expired_refunded"
+  | "expired"
+  | "archived"
 
 export type DashboardVariant =
   | "empty"
   | "action_required"
   | "active_vouches"
   | "mixed_vouch_states"
-  | "payer_focused"
-  | "payee_focused"
+  | "merchant_focused"
+  | "customer_focused"
   | "loading"
   | "error"
 

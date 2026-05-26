@@ -9,6 +9,17 @@ export const VOUCH_STATUS_VALUES = [
   "expired",
 ] as const
 
+export const TERMINAL_VOUCH_STATUS_VALUES = ["completed", "expired"] as const
+
+export const OPEN_VOUCH_STATUS_VALUES = [
+  "draft",
+  "committed",
+  "sent",
+  "accepted",
+  "authorized",
+  "confirmable",
+] as const
+
 export const INVITATION_STATUS_VALUES = [
   "created",
   "sent",

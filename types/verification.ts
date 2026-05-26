@@ -1,3 +1,5 @@
+import type { VERIFICATION_PROVIDER_VALUES } from "@/lib/vouch/constants"
+
 import type { UserID } from "./common"
 
 export type VerificationStatus =
@@ -16,7 +18,7 @@ export interface VerificationStartInput {
 }
 
 export interface VerificationProviderReturnInput {
-  provider: "stripe_identity"
+  provider: (typeof VERIFICATION_PROVIDER_VALUES)[number]
   sessionId?: string
   returnTo?: string
 }

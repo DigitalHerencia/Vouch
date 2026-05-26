@@ -15,7 +15,7 @@ function hasCreateReadiness(input: VouchReadinessInput): boolean {
     isActive(input) &&
     input.identityStatus === "verified" &&
     input.adultStatus === "verified" &&
-    input.paymentReadiness === "ready" &&
+    input.payoutReadiness === "ready" &&
     input.termsAccepted === true
   )
 }
@@ -29,7 +29,7 @@ function hasAcceptReadiness(input: VouchReadinessInput & { eligible?: boolean })
     isActive(input) &&
     input.identityStatus === "verified" &&
     input.adultStatus === "verified" &&
-    input.payoutReadiness === "ready" &&
+    input.paymentReadiness === "ready" &&
     input.termsAccepted === true
   )
 }
@@ -41,8 +41,8 @@ export function canViewVouch(input: VouchAccessInput): boolean {
 
   return (
     input.isAdmin === true ||
-    input.userId === input.payerId ||
-    input.userId === input.payeeId ||
+    input.userId === input.merchantId ||
+    input.userId === input.customerId ||
     input.inviteValid === true
   )
 }
@@ -55,9 +55,9 @@ export function canAcceptVouch(input: AcceptVouchAuthzInput): boolean {
   return (
     Boolean(input.userId) &&
     isActive(input) &&
-    input.status === "pending" &&
-    !input.existingPayeeId &&
-    input.userId !== input.payerId &&
+    (input.status === "committed" || input.status === "sent") &&
+    !input.existingCustomerId &&
+    input.userId !== input.merchantId &&
     input.inviteValid &&
     hasAcceptReadiness(input)
   )
@@ -65,25 +65,26 @@ export function canAcceptVouch(input: AcceptVouchAuthzInput): boolean {
 
 export function canDeclineVouch(input: {
   userId?: string | null
-  payerId: string
+  merchantId: string
   status: string
   inviteValid: boolean
 }): boolean {
   return (
     Boolean(input.userId) &&
-    input.status === "pending" &&
-    input.userId !== input.payerId &&
+    (input.status === "committed" || input.status === "sent") &&
+    input.userId !== input.merchantId &&
     input.inviteValid
   )
 }
 
 export function canConfirmPresence(input: ConfirmPresenceAuthzInput): boolean {
   const isParticipant =
-    Boolean(input.userId) && (input.userId === input.payerId || input.userId === input.payeeId)
+    Boolean(input.userId) &&
+    (input.userId === input.merchantId || input.userId === input.customerId)
   return (
     isParticipant &&
     input.userStatus !== "disabled" &&
-    input.status === "active" &&
+    (input.status === "authorized" || input.status === "confirmable") &&
     input.windowOpen &&
     !input.alreadyConfirmed
   )

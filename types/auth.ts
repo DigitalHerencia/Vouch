@@ -2,7 +2,11 @@ import type { ComponentProps } from "react"
 
 export const BASE_ROLE_VALUES = ["anonymous", "authenticated_user", "admin", "system"] as const
 
-export const CONTEXTUAL_ROLE_VALUES = ["payer", "payee", "invited_payee_candidate"] as const
+export const CONTEXTUAL_ROLE_VALUES = [
+  "merchant",
+  "customer",
+  "invited_customer_candidate",
+] as const
 
 export const USER_STATUS_VALUES = ["active", "disabled"] as const
 
@@ -55,8 +59,8 @@ export type AdminCapability = Extract<
 
 export type VouchAccessInput = {
   userId?: string | null
-  payerId: string
-  payeeId?: string | null
+  merchantId: string
+  customerId?: string | null
   isAdmin?: boolean
   inviteValid?: boolean
 }
@@ -72,8 +76,8 @@ export type VouchReadinessInput = {
 
 export type AcceptVouchAuthzInput = VouchReadinessInput & {
   userId?: string | null
-  payerId: string
-  existingPayeeId?: string | null
+  merchantId: string
+  existingCustomerId?: string | null
   status: string
   inviteValid: boolean
   eligible?: boolean
@@ -81,8 +85,8 @@ export type AcceptVouchAuthzInput = VouchReadinessInput & {
 
 export type ConfirmPresenceAuthzInput = {
   userId?: string | null
-  payerId: string
-  payeeId?: string | null
+  merchantId: string
+  customerId?: string | null
   status: string
   windowOpen: boolean
   alreadyConfirmed: boolean

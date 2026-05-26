@@ -6,6 +6,7 @@ import { redirect } from "next/navigation"
 import { unstable_noStore as noStore } from "next/cache"
 
 import { getCurrentClerkAuth } from "@/lib/auth/clerk"
+import { canAcceptVouch, canCreateVouch } from "@/lib/authz/policies"
 import { prisma } from "@/lib/db/prisma"
 import {
   currentUserAuthSelect,
@@ -223,18 +224,31 @@ export async function getUserAuthzSnapshot(userId: string) {
   return {
     userId,
     active: setup?.status === "active",
-    canCreateVouch:
-      setup?.status === "active" &&
-      setup.readiness.identityStatus === "verified" &&
-      setup.readiness.adultStatus === "verified" &&
-      setup.readiness.paymentReadiness === "ready" &&
-      setup.readiness.termsAccepted,
-    canAcceptVouch:
-      setup?.status === "active" &&
-      setup.readiness.identityStatus === "verified" &&
-      setup.readiness.adultStatus === "verified" &&
-      setup.readiness.payoutReadiness === "ready" &&
-      setup.readiness.termsAccepted,
+    canCreateVouch: setup
+      ? canCreateVouch({
+          userStatus: setup.status,
+          identityStatus: setup.readiness.identityStatus,
+          adultStatus: setup.readiness.adultStatus,
+          paymentReadiness: setup.readiness.paymentReadiness,
+          payoutReadiness: setup.readiness.payoutReadiness,
+          termsAccepted: setup.readiness.termsAccepted,
+        })
+      : false,
+    canAcceptVouch: setup
+      ? canAcceptVouch({
+          userId,
+          merchantId: "",
+          existingCustomerId: null,
+          status: "sent",
+          inviteValid: true,
+          userStatus: setup.status,
+          identityStatus: setup.readiness.identityStatus,
+          adultStatus: setup.readiness.adultStatus,
+          paymentReadiness: setup.readiness.paymentReadiness,
+          payoutReadiness: setup.readiness.payoutReadiness,
+          termsAccepted: setup.readiness.termsAccepted,
+        })
+      : false,
     canConfirmPresence: setup?.status === "active",
     setup,
   }

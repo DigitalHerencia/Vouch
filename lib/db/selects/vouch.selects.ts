@@ -230,16 +230,3 @@ export const whatHappensNextSelect = {
     },
   },
 } as const satisfies Prisma.VouchSelect
-
-/**
- * Compatibility aliases retained for older imports during the migration.
- * These aliases must not be used to reintroduce payer/payee language.
- */
-export const payerVouchListItemSelect = merchantVouchListItemSelect
-export const payeeVouchListItemSelect = customerVouchListItemSelect
-export const vouchDetailPendingPayerSelect = vouchDetailCommittedSelect
-export const vouchDetailPendingInviteSentSelect = vouchDetailSentSelect
-export const vouchDetailActiveBeforeWindowSelect = vouchDetailAuthorizedSelect
-export const vouchDetailActiveWindowOpenSelect = vouchDetailConfirmableSelect
-export const vouchDetailRefundedSelect = vouchDetailExpiredSelect
-export const vouchDetailFailedSelect = vouchDetailProviderFailureSelect

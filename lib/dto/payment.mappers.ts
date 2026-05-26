@@ -84,7 +84,7 @@ type RefundRecordRecord = {
   id: string
   vouchId: string
   paymentRecordId: string
-  providerRefundId: string | null
+  providerRefundId?: string | null
   status: string
   reason: string | null
   amountCents: number
@@ -136,7 +136,7 @@ export function mapRefundRecordParticipantDTO(
     id: record.id,
     vouchId: record.vouchId,
     paymentRecordId: record.paymentRecordId,
-    providerRefundId: record.providerRefundId,
+    providerRefundId: record.providerRefundId ?? null,
     status: record.status,
     reason: record.reason,
     amountCents: record.amountCents,

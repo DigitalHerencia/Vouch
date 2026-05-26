@@ -1,11 +1,16 @@
-export type WebhookProviderName = "clerk" | "stripe" | "stripe_identity"
+import type {
+  PROVIDER_WEBHOOK_STATUS_VALUES,
+  WEBHOOK_PROVIDER_VALUES,
+} from "@/lib/vouch/constants"
+
+export type WebhookProviderName = (typeof WEBHOOK_PROVIDER_VALUES)[number]
 
 export type ProviderWebhookStatusInput = {
   processed: boolean
   processingError: string | null
 }
 
-export type NormalizedProviderWebhookStatus = "received" | "processed" | "failed"
+export type NormalizedProviderWebhookStatus = (typeof PROVIDER_WEBHOOK_STATUS_VALUES)[number]
 
 export type ProviderWebhookLedgerInput = {
   provider: WebhookProviderName

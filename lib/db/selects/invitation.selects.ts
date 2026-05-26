@@ -16,7 +16,6 @@ export const invitationSummarySelect = {
 
 export const invitationTokenLookupSelect = {
   ...invitationSummarySelect,
-  tokenHash: true,
   recipientEmail: true,
   vouch: {
     select: {

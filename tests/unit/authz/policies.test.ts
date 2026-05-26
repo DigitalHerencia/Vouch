@@ -3,12 +3,12 @@ import { describe, expect, it } from "vitest"
 import { canAccessVouch, canAcceptVouch, canConfirmVouch } from "@/lib/authz/policies"
 
 describe("authz policies", () => {
-  it("allows payer to access own Vouch", () => {
+  it("allows merchant to access own Vouch", () => {
     expect(
       canAccessVouch({
-        userId: "user_payer",
-        payerId: "user_payer",
-        payeeId: "user_payee",
+        userId: "user_merchant",
+        merchantId: "user_merchant",
+        customerId: "user_customer",
         isAdmin: false,
       })
     ).toBe(true)
@@ -18,8 +18,8 @@ describe("authz policies", () => {
     expect(
       canAccessVouch({
         userId: "unrelated",
-        payerId: "user_payer",
-        payeeId: "user_payee",
+        merchantId: "user_merchant",
+        customerId: "user_customer",
         isAdmin: false,
       })
     ).toBe(false)
@@ -29,8 +29,8 @@ describe("authz policies", () => {
     expect(
       canAccessVouch({
         userId: null,
-        payerId: "user_payer",
-        payeeId: "user_payee",
+        merchantId: "user_merchant",
+        customerId: "user_customer",
         isAdmin: false,
       })
     ).toBe(false)
@@ -39,10 +39,10 @@ describe("authz policies", () => {
   it("blocks self-acceptance", () => {
     expect(
       canAcceptVouch({
-        userId: "user_payer",
-        payerId: "user_payer",
-        existingPayeeId: null,
-        status: "pending",
+        userId: "user_merchant",
+        merchantId: "user_merchant",
+        existingCustomerId: null,
+        status: "sent",
         inviteValid: true,
         eligible: true,
       })
@@ -52,10 +52,10 @@ describe("authz policies", () => {
   it("blocks disabled users", () => {
     expect(
       canAcceptVouch({
-        userId: "user_payee",
-        payerId: "user_payer",
-        existingPayeeId: null,
-        status: "pending",
+        userId: "user_customer",
+        merchantId: "user_merchant",
+        existingCustomerId: null,
+        status: "sent",
         inviteValid: true,
         eligible: true,
         userStatus: "disabled",
@@ -66,10 +66,10 @@ describe("authz policies", () => {
   it("requires active participant for confirmation", () => {
     expect(
       canConfirmVouch({
-        userId: "user_payee",
-        payerId: "user_payer",
-        payeeId: "user_payee",
-        status: "active",
+        userId: "user_customer",
+        merchantId: "user_merchant",
+        customerId: "user_customer",
+        status: "confirmable",
         windowOpen: true,
         alreadyConfirmed: false,
       })

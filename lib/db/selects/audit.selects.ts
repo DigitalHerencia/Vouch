@@ -12,15 +12,3 @@ export const participantSafeAuditTimelineItemSelect = {
   metadata: true,
   createdAt: true,
 } as const satisfies Prisma.AuditEventSelect
-
-export const providerAuditEventSelect = {
-  id: true,
-  eventName: true,
-  actorType: true,
-  entityType: true,
-  entityId: true,
-  requestId: true,
-  participantSafe: true,
-  metadata: true,
-  createdAt: true,
-} as const satisfies Prisma.AuditEventSelect
