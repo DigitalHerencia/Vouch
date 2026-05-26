@@ -74,12 +74,12 @@ otherwise -> refund, void, or non-capture
 
 Vouch does not decide who was right. It checks authenticated state, provider-backed payment state, and the confirmation window.
 
-| Confirmation outcome         | Payment outcome                            |
-| ---------------------------- | ------------------------------------------ |
-| Both parties confirm in time | Funds release                              |
-| Only one party confirms      | Refund, void, or non-capture               |
-| Neither party confirms       | Refund, void, or non-capture               |
-| Confirmation window expires  | Refund, void, or non-capture               |
+| Confirmation outcome         | Payment outcome                                  |
+| ---------------------------- | ------------------------------------------------ |
+| Both parties confirm in time | Funds release                                    |
+| Only one party confirms      | Refund, void, or non-capture                     |
+| Neither party confirms       | Refund, void, or non-capture                     |
+| Confirmation window expires  | Refund, void, or non-capture                     |
 | Payment provider fails       | Payment failed, release failed, or refund failed |
 
 One-sided confirmation never releases funds.

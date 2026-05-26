@@ -25,9 +25,8 @@ describe("createStripeCheckoutAuthorization", () => {
   })
 
   it("creates a manual-capture destination Checkout Session with pricing metadata", async () => {
-    const { createStripeCheckoutAuthorization } = await import(
-      "@/lib/integrations/stripe/checkout-sessions"
-    )
+    const { createStripeCheckoutAuthorization } =
+      await import("@/lib/integrations/stripe/checkout-sessions")
 
     await createStripeCheckoutAuthorization({
       vouchId: "vouch_123",

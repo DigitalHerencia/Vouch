@@ -1,9 +1,9 @@
 // app/layout.tsx
 
 import type { Metadata, Viewport } from "next"
+import { ClerkProvider } from "@clerk/nextjs"
 import { Archivo_Black, Bebas_Neue, JetBrains_Mono } from "next/font/google"
 import type { ReactNode } from "react"
-import { AppProvider } from "@/components/providers/app-providers"
 import "./globals.css"
 
 const archivoBlack = Archivo_Black({
@@ -108,7 +108,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       suppressHydrationWarning
     >
       <body>
-        <AppProvider>{children}</AppProvider>
+        <ClerkProvider>{children}</ClerkProvider>
       </body>
     </html>
   )

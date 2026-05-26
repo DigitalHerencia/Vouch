@@ -1,3 +1,5 @@
+// lib/auth/clerk-webhook-helpers.ts
+
 import type { ClerkWebhookEvent, ClerkWebhookUserData } from "@/types/auth"
 import { clerkWebhookEventSchema } from "@/schemas/auth"
 

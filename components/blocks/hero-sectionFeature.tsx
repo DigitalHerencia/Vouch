@@ -11,7 +11,6 @@ export function HeroSectionFeature() {
     <main className="p-8 md:p-12">
       <section className="grid gap-8 md:gap-16">
         <HeroCentered
-          badge="New"
           title="Welcome to Our Site"
           titleHighlight="Experience"
           description="Discover the best products and services tailored just for you."

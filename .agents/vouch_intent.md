@@ -161,4 +161,3 @@ The launch target is a secure, deterministic, auditable, provider-backed MVP tha
 No stories. No screenshots. No appeals. No mediation. No subjective judgment. No manual settlement surface. No unilateral action forces release. No provider state is assumed locally. No important transition is unaudited.
 
 Protocol is final. Outcome follows system state.
-

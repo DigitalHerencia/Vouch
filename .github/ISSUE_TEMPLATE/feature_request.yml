@@ -1,0 +1,53 @@
+name: Feature request
+description: Propose a scoped product or implementation change.
+title: "[Feature]: "
+labels:
+  - enhancement
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: Feature requests must preserve Vouch's product boundaries.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+      description: What should change?
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - auth
+        - setup
+        - payments
+        - vouches
+        - confirmation
+        - dashboard
+        - admin operations
+        - UI
+        - docs
+        - testing
+        - other
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Product boundaries
+      options:
+        - label: This is not a marketplace, profile, listing, discovery, rating, review, message, or dispute feature.
+          required: true
+        - label: This does not allow one-sided confirmation to release funds.
+          required: true
+        - label: This does not create manual admin fund-award or confirmation-rewrite powers.
+          required: true

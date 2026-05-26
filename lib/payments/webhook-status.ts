@@ -1,7 +1,4 @@
-import type {
-  NormalizedProviderWebhookStatus,
-  ProviderWebhookStatusInput,
-} from "@/types/webhooks"
+import type { NormalizedProviderWebhookStatus, ProviderWebhookStatusInput } from "@/types/webhooks"
 
 export function normalizeProviderWebhookStatus(
   input: ProviderWebhookStatusInput

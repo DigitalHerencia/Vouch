@@ -1,6 +1,5 @@
 import "server-only"
 
-import { auth } from "@clerk/nextjs/server"
 import { unstable_noStore as noStore } from "next/cache"
 
 import type { Prisma, VouchStatus } from "@/prisma/generated/prisma/client"
@@ -34,6 +33,7 @@ import {
 } from "@/lib/vouch/fees"
 import { deriveConfirmationCode } from "@/lib/vouch/confirmation-codes"
 import { prisma } from "@/lib/db/prisma"
+import { getCurrentClerkUserId } from "@/lib/auth/clerk"
 import { hashInvitationToken } from "@/lib/invitations/tokens"
 import {
   getAcceptVouchReadinessGate,
@@ -110,11 +110,11 @@ function calculateFee(amountCents: number) {
 }
 
 async function getOptionalCurrentUserId() {
-  const session = await auth()
-  if (!session.userId) return null
+  const clerkUserId = await getCurrentClerkUserId()
+  if (!clerkUserId) return null
 
   const user = await prisma.user.findUnique({
-    where: { clerkUserId: session.userId },
+    where: { clerkUserId },
     select: { id: true },
   })
 

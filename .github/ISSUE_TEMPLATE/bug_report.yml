@@ -1,0 +1,74 @@
+name: Bug report
+description: Report a reproducible defect.
+title: "[Bug]: "
+labels:
+  - bug
+  - triage
+body:
+  - type: markdown
+    attributes:
+      value: Use this for implementation defects only. Do not report security vulnerabilities here.
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What is broken?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - auth
+        - setup
+        - payments
+        - vouches
+        - confirmation
+        - dashboard
+        - admin
+        - database
+        - UI
+        - tests
+        - docs
+        - other
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs / screenshots
+      description: Remove secrets, tokens, webhook signatures, and provider payloads.
+    validations:
+      required: false
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope confirmation
+      options:
+        - label: This does not request marketplace, messaging, reviews, or dispute-resolution features.
+          required: true
+        - label: This does not disclose secrets or security vulnerabilities.
+          required: true

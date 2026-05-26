@@ -1,3 +1,5 @@
+// lib/db/selects/auth.selects.ts
+
 import "server-only"
 
 import type { Prisma } from "@/prisma/generated/prisma/client"

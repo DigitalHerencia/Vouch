@@ -162,10 +162,7 @@ function stripAllowedCompatibilityRoleAliases(file: string, content: string): st
   let normalized = content
 
   if (file === "lib/vouch/constants.ts") {
-    normalized = normalized.replace(
-      /export const PAYMENT_ROLE_MAP = \{[\s\S]*?\} as const\s*/m,
-      ""
-    )
+    normalized = normalized.replace(/export const PAYMENT_ROLE_MAP = \{[\s\S]*?\} as const\s*/m, "")
   }
 
   return normalized.replace(/\/\*\*[\s\S]*?compat[\s\S]*?\*\//gi, "").replace(/^.*compat.*$/gim, "")
@@ -195,9 +192,10 @@ describe("Vouch source conformance", () => {
       ).toLowerCase()
 
       for (const value of forbiddenProductTerms) {
-        expect(content, `Forbidden product framing: ${file} must not contain ${value}`).not.toContain(
-          value.toLowerCase()
-        )
+        expect(
+          content,
+          `Forbidden product framing: ${file} must not contain ${value}`
+        ).not.toContain(value.toLowerCase())
       }
     }
   })
@@ -241,7 +239,10 @@ describe("Vouch source conformance", () => {
     )
 
     for (const file of files) {
-      const content = stripAllowedCompatibilityRoleAliases(file, readProjectFile(file)).toLowerCase()
+      const content = stripAllowedCompatibilityRoleAliases(
+        file,
+        readProjectFile(file)
+      ).toLowerCase()
 
       for (const value of forbiddenParticipantRoles) {
         expect(

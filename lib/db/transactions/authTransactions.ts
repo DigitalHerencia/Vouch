@@ -1,3 +1,5 @@
+// lib/db/transactions/authTransactions.ts
+
 import "server-only"
 
 import type { PrismaClient } from "@/prisma/generated/prisma/client"
@@ -76,34 +78,48 @@ export async function ensureUserSetupRecordsTx(tx: Tx, input: { userId: string }
   return createDefaultVerificationProfileTx(tx, input)
 }
 
-export async function recordClerkWebhookProcessedTx(tx: Tx, input: { webhookEventId: string }) {
-  return tx.providerWebhookEvent.update({
-    where: { id: input.webhookEventId },
-    data: { status: "processed", processed: true, processedAt: new Date(), processingError: null },
-  })
-}
-
-export async function recordClerkWebhookIgnoredTx(
+export async function recordTermsAcceptanceTx(
   tx: Tx,
-  input: { webhookEventId: string; reason: string }
+  input: {
+    userId: string
+    termsVersion: string
+    acceptedAt: Date
+    ipHash?: string | null
+    userAgentHash?: string | null
+    requestId?: string | null
+  }
 ) {
-  return tx.providerWebhookEvent.update({
-    where: { id: input.webhookEventId },
+  const acceptance = await tx.termsAcceptance.upsert({
+    where: {
+      userId_termsVersion: {
+        userId: input.userId,
+        termsVersion: input.termsVersion,
+      },
+    },
+    create: {
+      userId: input.userId,
+      termsVersion: input.termsVersion,
+      acceptedAt: input.acceptedAt,
+      ipHash: input.ipHash ?? null,
+      userAgentHash: input.userAgentHash ?? null,
+    },
+    update: {},
+  })
+
+  await tx.auditEvent.create({
     data: {
-      status: "ignored",
-      processed: true,
-      processedAt: new Date(),
-      processingError: input.reason,
+      eventName: "user.terms.accepted",
+      actorType: "user",
+      actorUserId: input.userId,
+      entityType: "TermsAcceptance",
+      entityId: acceptance.id,
+      requestId: input.requestId ?? null,
+      metadata: {
+        terms_version: input.termsVersion,
+        source: "signup",
+      },
     },
   })
-}
 
-export async function recordClerkWebhookFailedTx(
-  tx: Tx,
-  input: { webhookEventId: string; error: string }
-) {
-  return tx.providerWebhookEvent.update({
-    where: { id: input.webhookEventId },
-    data: { status: "failed", processed: false, processingError: input.error },
-  })
+  return acceptance
 }

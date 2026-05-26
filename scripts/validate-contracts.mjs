@@ -8,21 +8,14 @@ import YAML from "yaml"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 
-const contractFiles = [
-  "domain-model.yaml",
-  "integrations.yaml",
-  "product.yaml",
-  "quality-gates.yaml",
-  "routes.yaml",
+const yamlContractFiles = [".agents/vouch_governance.yaml"]
+
+const markdownContractFiles = [
+  ".agents/vouch_intent.md",
+  ".agents/vouch_stripe_payment_architecture.md",
 ]
 
-const executionFiles = [
-  "backlog.json",
-  "decisions.json",
-  "handoff.json",
-  "progress.json",
-  "validation.json",
-]
+const executionFiles = [".agents/vouch_execution.json"]
 
 const errors = []
 
@@ -68,12 +61,25 @@ function validateJson(relativePath) {
   }
 }
 
-for (const file of contractFiles) {
-  validateYaml(join(".agents", "contracts", file))
+function validateMarkdown(relativePath) {
+  const content = readRequired(relativePath)
+  if (content === null) return
+
+  if (content.trim().length === 0) {
+    errors.push(`Contract must not be empty: ${relativePath}`)
+  }
+}
+
+for (const file of yamlContractFiles) {
+  validateYaml(file)
+}
+
+for (const file of markdownContractFiles) {
+  validateMarkdown(file)
 }
 
 for (const file of executionFiles) {
-  validateJson(join(".agents", "execution", file))
+  validateJson(file)
 }
 
 if (errors.length > 0) {
@@ -85,5 +91,7 @@ if (errors.length > 0) {
 }
 
 console.log(
-  `Contract validation passed: ${contractFiles.length} contracts and ${executionFiles.length} execution files.`
+  `Contract validation passed: ${
+    yamlContractFiles.length + markdownContractFiles.length
+  } contracts and ${executionFiles.length} execution files.`
 )

@@ -469,7 +469,6 @@ export async function declineVouch(input: unknown): Promise<ActionResult<{ vouch
         participantSafe: true,
       },
     })
-
   })
 
   await revalidateVouchSurfaces(invitation.vouch.id, [invitation.vouch.merchantId, user.id])

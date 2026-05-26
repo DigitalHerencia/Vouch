@@ -21,13 +21,13 @@ The customer is not responsible for Vouch platform fees or Stripe fees associate
 
 ## Actor Payment Responsibility
 
-| Money item | Paid by | Stripe object | Timing | Refundable by default |
-|---|---|---|---|---|
-| Vouch protocol issuance fee | Merchant | Platform Checkout Session or platform PaymentIntent | Before Draft becomes Committed | No |
-| Protected amount authorization | Customer | Checkout Session with manual-capture PaymentIntent | After Vouch is Committed and authorization link is opened | Not captured unless both confirm |
-| Merchant settlement | Captured customer authorization | Connect destination charge or equivalent platform-orchestrated Connect settlement | Only after bilateral confirmation and provider capturability | N/A |
-| Stripe fee on merchant fee | Merchant economics | Platform charge | At merchant fee payment | No |
-| Stripe fee on customer captured payment | Provider/platform accounting | Captured customer PaymentIntent | Only if captured | Provider/platform decision |
+| Money item                              | Paid by                         | Stripe object                                                                     | Timing                                                       | Refundable by default            |
+| --------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------ | -------------------------------- |
+| Vouch protocol issuance fee             | Merchant                        | Platform Checkout Session or platform PaymentIntent                               | Before Draft becomes Committed                               | No                               |
+| Protected amount authorization          | Customer                        | Checkout Session with manual-capture PaymentIntent                                | After Vouch is Committed and authorization link is opened    | Not captured unless both confirm |
+| Merchant settlement                     | Captured customer authorization | Connect destination charge or equivalent platform-orchestrated Connect settlement | Only after bilateral confirmation and provider capturability | N/A                              |
+| Stripe fee on merchant fee              | Merchant economics              | Platform charge                                                                   | At merchant fee payment                                      | No                               |
+| Stripe fee on customer captured payment | Provider/platform accounting    | Captured customer PaymentIntent                                                   | Only if captured                                             | Provider/platform decision       |
 
 ## Flow 1: Merchant Pays Protocol Fee
 
@@ -311,4 +311,3 @@ Do not collect the merchant fee from the customer PaymentIntent. Do not capture 
 ## Final Invariant
 
 Merchant pays to issue the Vouch. Customer authorizes the protected amount. Both confirm in-window, or no capture happens. Stripe owns payment truth. Vouch owns workflow truth. Outcome follows system state.
-

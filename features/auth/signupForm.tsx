@@ -26,6 +26,7 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Field, FieldError, FieldGroup as UiFieldGroup } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { authVerificationContent } from "@/content/auth"
+import { completeSignUpWithTermsAcceptance } from "@/lib/actions/authActions"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { signupSchema, verificationSchema } from "@/schemas/auth"
 import { type SignupFormProps, type SignupFormValues } from "@/types/auth"
@@ -85,6 +86,20 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
     if (finalizeResult.error) {
       form.setError("root", {
         message: finalizeResult.error.message || "Unable to finalize sign-up.",
+      })
+      return false
+    }
+
+    const termsResult = await completeSignUpWithTermsAcceptance({
+      acceptedUserAgreement: form.getValues("acceptedUserAgreement"),
+    })
+
+    if (!termsResult.ok) {
+      form.setError("root", {
+        message:
+          "message" in termsResult
+            ? termsResult.message
+            : "Unable to record User Agreement acceptance.",
       })
       return false
     }

@@ -15,7 +15,11 @@ export function PublicShell({ children, withMobileBottomNav = true }: PublicShel
   return (
     <div className="min-h-dvh">
       <PublicHeader />
-      <main className={withMobileBottomNav ? "mx-auto w-full max-w-7xl" : "mx-auto w-full max-w-7xl pb-0"}>
+      <main
+        className={
+          withMobileBottomNav ? "mx-auto w-full max-w-7xl" : "mx-auto w-full max-w-7xl pb-0"
+        }
+      >
         {children}
       </main>
       <PublicFooter />

@@ -1,6 +1,8 @@
+// lib/auth/clerk.ts
+
 import "server-only"
 
-import type { User as ClerkUser } from "@clerk/nextjs/server"
+import { auth, currentUser, type User as ClerkUser } from "@clerk/nextjs/server"
 
 export type ClerkUserLike = {
   id: string
@@ -18,6 +20,19 @@ export type LocalUserSyncInput = {
   email?: string
   phone?: string
   displayName?: string
+}
+
+export async function getCurrentClerkAuth() {
+  return auth()
+}
+
+export async function getCurrentClerkUserId() {
+  const session = await getCurrentClerkAuth()
+  return session.userId
+}
+
+export async function getCurrentClerkUser() {
+  return currentUser()
 }
 
 export function extractPrimaryEmailFromClerkUser(

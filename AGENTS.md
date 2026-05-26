@@ -359,4 +359,3 @@ dashboard/detail reflect final state
 ## 20. Final Agent Rule
 
 Do not widen the product. Do not invent human judgment surfaces. Do not move money from stories. Move money only from protocol truth plus provider truth.
-

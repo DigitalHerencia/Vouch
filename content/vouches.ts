@@ -88,14 +88,12 @@ export const vouchPageCopy = {
         "You are leaving Vouch for a Stripe-hosted payment method flow. Stripe owns payment method collection and billing details.",
       context:
         "Vouch will use provider-backed readiness after Stripe returns or webhooks reconcile. This page does not create or confirm a Vouch payment.",
-      finePrint:
-        "Vouch does not host raw card forms or store raw card, bank, or identity data.",
+      finePrint: "Vouch does not host raw card forms or store raw card, bank, or identity data.",
     },
   },
   confirm: {
     eyebrow: "Presence confirmation",
-    body:
-      "Confirm that you were present. Both parties must confirm within the window for funds to release.",
+    body: "Confirm that you were present. Both parties must confirm within the window for funds to release.",
     labels: {
       vouchStatus: "Vouch status",
       created: "Created",
@@ -119,16 +117,14 @@ export const vouchPageCopy = {
     countdownPlaceholder: "01 : 23 : 47",
     deadlineConsequence:
       "If you don't confirm by the deadline, payment is refunded according to provider state.",
-    confirmationBody:
-      "By confirming, you state that you were present during the meeting window.",
+    confirmationBody: "By confirming, you state that you were present during the meeting window.",
     confirmAction: "Confirm I was present",
     irreversible: "This action cannot be undone",
   },
   share: {
     eyebrow: "Invite",
     title: "Share this Vouch",
-    body:
-      "Invite the other party to accept this commitment. They'll need to sign in or create an account.",
+    body: "Invite the other party to accept this commitment. They'll need to sign in or create an account.",
     inviteLinkTitle: "Invite link",
     inviteLinkBody: "Anyone with this link can view and accept this Vouch.",
     copyLink: "Copy link",
@@ -140,8 +136,7 @@ export const vouchPageCopy = {
     pending: "Pending",
     amountCurrency: "USD",
     inviteUrl: "https://vouch.com/invite/abc123xyz789",
-    rule:
-      "Funds release only after both parties confirm presence within the window.",
+    rule: "Funds release only after both parties confirm presence within the window.",
     summaryRows: [
       ["From", "jordan@client.com"],
       ["For", "you"],
@@ -158,15 +153,13 @@ export const vouchPageCopy = {
     emptyBody:
       "Create a Vouch to back an appointment or in-person agreement with a clear payment commitment. Both parties confirm presence; otherwise refund, void, or non-capture.",
     nextAction: "Next action",
-    emptyActionBody:
-      "Start with amount, meeting window, confirmation deadline, and recipient.",
+    emptyActionBody: "Start with amount, meeting window, confirmation deadline, and recipient.",
   },
   invite: {
     invalidTitle: "This invite is no longer available.",
     eyebrow: "Customer invite",
     title: "You've been invited",
-    body:
-      "Review the Vouch details below. Finish setup and accept to lock in this commitment.",
+    body: "Review the Vouch details below. Finish setup and accept to lock in this commitment.",
     secureTitle: "Secure and neutral",
     secureBody:
       "Payments are processed by Stripe. Vouch does not hold funds and does not judge outcomes.",
@@ -184,7 +177,12 @@ export const vouchPageCopy = {
       title: "Ready to accept",
       body: "Both parties must confirm presence after acceptance.",
     },
-    readinessItems: ["Identity verification", "18+ verification", "Payout setup", "Terms acceptance"],
+    readinessItems: [
+      "Identity verification",
+      "18+ verification",
+      "Payout setup",
+      "Terms acceptance",
+    ],
     verified: "Verified",
     reviewTerms: "Review terms",
     nextTitle: "What happens next?",

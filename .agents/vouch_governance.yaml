@@ -124,16 +124,50 @@ architecture:
   layers:
     app:
       paths: [app/**]
-      owns: [route_surface, layout_selection, metadata, thin_page_wrappers, suspense_fallback_selection, provider_webhook_ingress]
-      forbids: [prisma_queries, stripe_sdk_calls, provider_business_logic, authz_implementation, dto_shaping, domain_mutation, settlement_logic, complex_forms]
+      owns:
+        [
+          route_surface,
+          layout_selection,
+          metadata,
+          thin_page_wrappers,
+          suspense_fallback_selection,
+          provider_webhook_ingress,
+        ]
+      forbids:
+        [
+          prisma_queries,
+          stripe_sdk_calls,
+          provider_business_logic,
+          authz_implementation,
+          dto_shaping,
+          domain_mutation,
+          settlement_logic,
+          complex_forms,
+        ]
     features:
       paths: [features/**]
-      owns: [route_level_orchestration, fetcher_calls, action_handoff, dto_branching, suspense_boundaries, layout_glue]
-      forbids: [raw_sql, prisma_queries, provider_sdk_business_logic, hidden_workflow_rules, discretionary_settlement_behavior]
+      owns:
+        [
+          route_level_orchestration,
+          fetcher_calls,
+          action_handoff,
+          dto_branching,
+          suspense_boundaries,
+          layout_glue,
+        ]
+      forbids:
+        [
+          raw_sql,
+          prisma_queries,
+          provider_sdk_business_logic,
+          hidden_workflow_rules,
+          discretionary_settlement_behavior,
+        ]
     components:
       paths: [components/**]
       owns: [pure_ui_rendering, props_to_markup, local_presentational_state]
-      forbids: [database_access, provider_sdks, protected_fetchers, authz, domain_truth, settlement_logic]
+      forbids:
+        [database_access, provider_sdks, protected_fetchers, authz, domain_truth, settlement_logic]
     primitives:
       paths: [components/ui/**]
       owns: [accessible_control_behavior, variants, primitive_styling_contract]
@@ -141,16 +175,55 @@ architecture:
       modification_requires_confirmation: true
     actions:
       paths: [lib/actions/**]
-      sequence: [authenticate, authorize, zod_validate, transaction_or_provider_operation, audit_event, revalidate_or_redirect, typed_result]
-      forbids: [raw_provider_return_to_ui, raw_db_model_return_to_ui, skipped_authz, client_fee_authority, browser_return_as_truth, manual_settlement]
+      sequence:
+        [
+          authenticate,
+          authorize,
+          zod_validate,
+          transaction_or_provider_operation,
+          audit_event,
+          revalidate_or_redirect,
+          typed_result,
+        ]
+      forbids:
+        [
+          raw_provider_return_to_ui,
+          raw_db_model_return_to_ui,
+          skipped_authz,
+          client_fee_authority,
+          browser_return_as_truth,
+          manual_settlement,
+        ]
     fetchers:
       paths: [lib/fetchers/**]
-      sequence: [authenticate, authorize, minimal_select, dto_mapper, cache_policy, transport_safe_return]
-      forbids: [mutation, server_action_calls, provider_reconciliation, raw_prisma_return, raw_provider_return]
+      sequence:
+        [authenticate, authorize, minimal_select, dto_mapper, cache_policy, transport_safe_return]
+      forbids:
+        [
+          mutation,
+          server_action_calls,
+          provider_reconciliation,
+          raw_prisma_return,
+          raw_provider_return,
+        ]
     webhooks:
       paths: [app/api/**/route.ts]
-      sequence: [read_raw_body, verify_signature, parse_event_envelope, delegate_processing, provider_compatible_response]
-      forbids: [browser_user_session_dependency, inline_business_workflow_logic, inline_prisma_mutations, inline_settlement_decisions, non_idempotent_writes]
+      sequence:
+        [
+          read_raw_body,
+          verify_signature,
+          parse_event_envelope,
+          delegate_processing,
+          provider_compatible_response,
+        ]
+      forbids:
+        [
+          browser_user_session_dependency,
+          inline_business_workflow_logic,
+          inline_prisma_mutations,
+          inline_settlement_decisions,
+          non_idempotent_writes,
+        ]
     integrations:
       paths: [lib/integrations/**]
       owns: [external_sdk_adaptation, provider_payload_normalization, provider_status_mapping]
@@ -195,10 +268,12 @@ routes:
 
 state_model:
   vouch_lifecycle:
-    canonical_values: [draft, committed, sent, accepted, authorized, confirmable, completed, expired]
+    canonical_values:
+      [draft, committed, sent, accepted, authorized, confirmable, completed, expired]
     terminal_values: [completed, expired]
     immutable_from: committed
-    forbidden_values: [pending, active, refunded, canceled, failed, voided, settled, provider_restricted, archived]
+    forbidden_values:
+      [pending, active, refunded, canceled, failed, voided, settled, provider_restricted, archived]
   participant_roles:
     canonical_values: [merchant, customer]
     aliases:
@@ -213,10 +288,33 @@ state_model:
     settlement_eligible_only_when: both_confirmed
   payment_status:
     separate_from_vouch_lifecycle: true
-    values: [not_started, checkout_created, requires_payment_method, requires_capture, authorized, capture_processing, captured, canceled, expired, failed]
+    values:
+      [
+        not_started,
+        checkout_created,
+        requires_payment_method,
+        requires_capture,
+        authorized,
+        capture_processing,
+        captured,
+        canceled,
+        expired,
+        failed,
+      ]
   settlement_status:
     separate_from_vouch_lifecycle: true
-    values: [pending, non_capture_pending, non_captured, capture_pending, captured, refund_pending, refunded, provider_blocked, failed]
+    values:
+      [
+        pending,
+        non_capture_pending,
+        non_captured,
+        capture_pending,
+        captured,
+        refund_pending,
+        refunded,
+        provider_blocked,
+        failed,
+      ]
   archive_status:
     separate_from_vouch_lifecycle: true
     values: [active, archived]
@@ -258,14 +356,66 @@ stripe:
     connect:
       - account.updated
   retrieve_before: [capture, cancel, void, refund, provider_retry, settlement_reconciliation]
-  idempotency_required_for: [connected_account_creation, checkout_session_creation, payment_intent_creation, payment_intent_capture, payment_intent_cancel, refund_creation, webhook_event_persistence, audit_transition_write, confirmation_write]
-  metadata_allowed: [vouchId, publicVouchId, paymentRecordId, merchantUserId, customerUserId, settlementRuleVersion, feeRuleVersion, confirmationWindowOpensAt, confirmationWindowExpiresAt, environment]
-  metadata_forbidden: [meeting_purpose, private_notes, message_content, legal_conclusions, identity_document_details, raw_location_data, user_allegations, dispute_language, sensitive_personal_context, raw_confirmation_codes]
+  idempotency_required_for:
+    [
+      connected_account_creation,
+      checkout_session_creation,
+      payment_intent_creation,
+      payment_intent_capture,
+      payment_intent_cancel,
+      refund_creation,
+      webhook_event_persistence,
+      audit_transition_write,
+      confirmation_write,
+    ]
+  metadata_allowed:
+    [
+      vouchId,
+      publicVouchId,
+      paymentRecordId,
+      merchantUserId,
+      customerUserId,
+      settlementRuleVersion,
+      feeRuleVersion,
+      confirmationWindowOpensAt,
+      confirmationWindowExpiresAt,
+      environment,
+    ]
+  metadata_forbidden:
+    [
+      meeting_purpose,
+      private_notes,
+      message_content,
+      legal_conclusions,
+      identity_document_details,
+      raw_location_data,
+      user_allegations,
+      dispute_language,
+      sensitive_personal_context,
+      raw_confirmation_codes,
+    ]
 
 audit:
   model: append_only_ledger
-  not_for: [dispute_resolution, evidence_review, participant_visible_activity_feed_by_default, support_judgment]
-  metadata_forbidden: [raw_stripe_object, raw_clerk_payload, raw_identity_document_data, raw_bank_card_data, message_content, evidence_text, screenshots, subjective_accusations, support_judgment]
+  not_for:
+    [
+      dispute_resolution,
+      evidence_review,
+      participant_visible_activity_feed_by_default,
+      support_judgment,
+    ]
+  metadata_forbidden:
+    [
+      raw_stripe_object,
+      raw_clerk_payload,
+      raw_identity_document_data,
+      raw_bank_card_data,
+      message_content,
+      evidence_text,
+      screenshots,
+      subjective_accusations,
+      support_judgment,
+    ]
 
 validation:
   commands:

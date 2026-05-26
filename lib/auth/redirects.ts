@@ -1,3 +1,5 @@
+// lib/auth/redirects.ts
+
 const DEFAULT_AUTHENTICATED_REDIRECT = "/dashboard"
 
 export function isInternalPath(value: string | null | undefined): value is string {

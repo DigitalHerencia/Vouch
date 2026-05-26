@@ -1,13 +1,11 @@
 import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { ArrowRight, Play, Sparkles, Star, Zap } from "lucide-react"
+import { ArrowRight, Play, Zap } from "lucide-react"
 import Link from "next/link"
 
 // ============================================================================
-// HERO VARIANT 1: Centered with Badge
+// HERO VARIANT 1: Centered
 // ============================================================================
 export interface HeroCenteredProps {
-  badge?: string
   title: string
   titleHighlight?: string
   description: string
@@ -16,7 +14,6 @@ export interface HeroCenteredProps {
 }
 
 export function HeroCentered({
-  badge,
   title,
   titleHighlight,
   description,
@@ -264,7 +261,6 @@ export function HeroMinimal({ title, description, primaryAction }: HeroMinimalPr
 // HERO VARIANT 5: With Video
 // ============================================================================
 export interface HeroWithVideoProps {
-  badge?: string
   title: string
   titleHighlight?: string
   description: string
@@ -274,7 +270,6 @@ export interface HeroWithVideoProps {
 }
 
 export function HeroWithVideo({
-  badge,
   title,
   titleHighlight,
   description,
@@ -286,13 +281,6 @@ export function HeroWithVideo({
     <section className="px-4 py-16 md:px-8 lg:px-16">
       <div className="mx-auto max-w-6xl space-y-12">
         <div className="space-y-6 text-center">
-          {badge && (
-            <Badge variant="secondary" className="px-4 py-1 text-sm">
-              <Star className="mr-2 h-3 w-3" />
-              {badge}
-            </Badge>
-          )}
-
           <h2 className="text-4xl font-black uppercase md:text-5xl">
             {title}{" "}
             {titleHighlight && (

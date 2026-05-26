@@ -1,9 +1,11 @@
+// lib/fetchers/authFetchers.ts
+
 import "server-only"
 
-import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
 import { unstable_noStore as noStore } from "next/cache"
 
+import { getCurrentClerkAuth } from "@/lib/auth/clerk"
 import { prisma } from "@/lib/db/prisma"
 import {
   currentUserAuthSelect,
@@ -107,7 +109,7 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
 export async function getCurrentUser() {
   noStore()
 
-  const session = await auth()
+  const session = await getCurrentClerkAuth()
   if (!session.userId) return null
 
   const user = await prisma.user.findUnique({

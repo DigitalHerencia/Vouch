@@ -53,12 +53,7 @@ function codeForBucket(input: ConfirmationCodeInput & { bucket: number }): strin
   const byte2 = digest[offset + 2]
   const byte3 = digest[offset + 3]
 
-  if (
-    byte0 === undefined ||
-    byte1 === undefined ||
-    byte2 === undefined ||
-    byte3 === undefined
-  ) {
+  if (byte0 === undefined || byte1 === undefined || byte2 === undefined || byte3 === undefined) {
     throw new Error("CONFIRMATION_CODE_DIGEST_INVALID")
   }
 

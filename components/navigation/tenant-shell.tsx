@@ -24,7 +24,11 @@ export function TenantShell({
   return (
     <div className="min-h-dvh">
       <TenantHeader connectAction={connectAction} paymentAction={paymentAction} />
-      <main className={withMobileBottomNav ? "mx-auto w-full max-w-7xl" : "mx-auto w-full max-w-7xl pb-0"}>
+      <main
+        className={
+          withMobileBottomNav ? "mx-auto w-full max-w-7xl" : "mx-auto w-full max-w-7xl pb-0"
+        }
+      >
         {children}
       </main>
       <TenantFooter connectAction={connectAction} paymentAction={paymentAction} />

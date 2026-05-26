@@ -104,7 +104,6 @@ export async function DashboardFeature() {
       <section className="px-4 py-16 md:px-6 md:py-24 lg:px-8">
         <div className="grid gap-8 md:gap-12">
           <HeroCentered
-            badge={dashboardContent.hero.eyebrow}
             title={dashboardContent.hero.title}
             description={dashboardContent.hero.body}
             primaryAction={{ label: dashboardContent.actions.create, href: "/vouches/new" }}

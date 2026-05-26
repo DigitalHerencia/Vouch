@@ -1,22 +1,29 @@
+// lib/actions/authActions.ts
+
 "use server"
 
-import { currentUser as getClerkCurrentUser } from "@clerk/nextjs/server"
 import { revalidatePath } from "next/cache"
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
-import { mapClerkUserToLocalInput, type LocalUserSyncInput } from "@/lib/auth/clerk"
+import {
+  getCurrentClerkUser,
+  mapClerkUserToLocalInput,
+  type LocalUserSyncInput,
+} from "@/lib/auth/clerk"
 import { getPostAuthRedirect } from "@/lib/auth/redirects"
 import { prisma } from "@/lib/db/prisma"
 import {
   createDefaultVerificationProfileTx,
+  recordTermsAcceptanceTx,
   upsertUserFromClerkTx,
 } from "@/lib/db/transactions/authTransactions"
+import { getClientIpHash, getRequestId, getUserAgentHash } from "@/lib/security/request"
 import {
-  markProviderWebhookFailed,
-  markProviderWebhookIgnored,
-  markProviderWebhookProcessed,
-  recordProviderWebhookReceived,
-} from "@/lib/actions/paymentActions"
+  markProviderWebhookFailedTx,
+  markProviderWebhookIgnoredTx,
+  markProviderWebhookProcessedTx,
+  recordProviderWebhookReceivedTx,
+} from "@/lib/db/transactions/webhookTransactions"
 import {
   extractClerkDisplayName,
   extractClerkUserEmail,
@@ -31,19 +38,6 @@ export async function syncClerkUser(input: LocalUserSyncInput) {
   const user = await prisma.$transaction(async (tx) => {
     const syncedUser = await upsertUserFromClerkTx(tx, input)
     await createDefaultVerificationProfileTx(tx, { userId: syncedUser.id })
-    await tx.termsAcceptance.upsert({
-      where: {
-        userId_termsVersion: {
-          userId: syncedUser.id,
-          termsVersion: CURRENT_TERMS_VERSION,
-        },
-      },
-      create: {
-        userId: syncedUser.id,
-        termsVersion: CURRENT_TERMS_VERSION,
-      },
-      update: {},
-    })
     await tx.auditEvent.create({
       data: {
         eventName: "user.synced",
@@ -58,6 +52,40 @@ export async function syncClerkUser(input: LocalUserSyncInput) {
 
   revalidatePath("/dashboard")
   return { ok: true as const, data: { userId: user.id } }
+}
+
+export async function completeSignUpWithTermsAcceptance(input: { acceptedUserAgreement: boolean }) {
+  if (input.acceptedUserAgreement !== true) {
+    return {
+      ok: false as const,
+      code: "TERMS_ACCEPTANCE_REQUIRED" as const,
+      message: "You must accept the User Agreement before creating an account.",
+    }
+  }
+
+  const localUser = await ensureLocalUserForSession()
+  if (!localUser.ok) return localUser
+
+  const acceptedAt = new Date()
+  const [requestId, ipHash, userAgentHash] = await Promise.all([
+    getRequestId(),
+    getClientIpHash(),
+    getUserAgentHash(),
+  ])
+
+  await prisma.$transaction((tx) =>
+    recordTermsAcceptanceTx(tx, {
+      userId: localUser.data.userId,
+      termsVersion: CURRENT_TERMS_VERSION,
+      acceptedAt,
+      ipHash,
+      userAgentHash,
+      requestId,
+    })
+  )
+
+  revalidatePath("/dashboard")
+  return { ok: true as const, data: { userId: localUser.data.userId } }
 }
 
 function safeClerkMetadata(event: ClerkWebhookEvent): Prisma.InputJsonObject {
@@ -105,22 +133,6 @@ async function upsertLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
       create: { userId: user.id },
       update: {},
     })
-
-    if (event.type === "user.created") {
-      await tx.termsAcceptance.upsert({
-        where: {
-          userId_termsVersion: {
-            userId: user.id,
-            termsVersion: CURRENT_TERMS_VERSION,
-          },
-        },
-        create: {
-          userId: user.id,
-          termsVersion: CURRENT_TERMS_VERSION,
-        },
-        update: {},
-      })
-    }
 
     await tx.auditEvent.create({
       data: {
@@ -299,12 +311,14 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
   const parsed = clerkWebhookEventSchema.parse(event) as ClerkWebhookEvent
   const providerEventId = svixId
 
-  const ledger = await recordProviderWebhookReceived({
-    provider: "clerk",
-    providerEventId,
-    eventType: parsed.type,
-    safeMetadata: safeClerkMetadata(parsed),
-  })
+  const ledger = await prisma.$transaction((tx) =>
+    recordProviderWebhookReceivedTx(tx, {
+      provider: "clerk",
+      providerEventId,
+      eventType: parsed.type,
+      safeMetadata: safeClerkMetadata(parsed),
+    })
+  )
 
   if (ledger.duplicate && ledger.event.processed) {
     return { ok: true as const, status: "duplicate" as const, ignored: true as const }
@@ -313,7 +327,12 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
   try {
     const supported = supportedClerkWebhookEventTypeSchema.safeParse(parsed.type)
     if (!supported.success) {
-      await markProviderWebhookIgnored(ledger.event.id, "Unsupported Clerk event type.")
+      await prisma.$transaction((tx) =>
+        markProviderWebhookIgnoredTx(tx, {
+          id: ledger.event.id,
+          reason: "Unsupported Clerk event type.",
+        })
+      )
       return {
         ok: true as const,
         status: "ignored" as const,
@@ -323,11 +342,13 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
     }
 
     await processSupportedClerkEvent(parsed, svixId)
-    await markProviderWebhookProcessed(ledger.event.id)
+    await prisma.$transaction((tx) => markProviderWebhookProcessedTx(tx, { id: ledger.event.id }))
     return { ok: true as const, status: "processed" as const, ignored: false as const }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Clerk webhook processing failed."
-    await markProviderWebhookFailed(ledger.event.id, message)
+    await prisma.$transaction((tx) =>
+      markProviderWebhookFailedTx(tx, { id: ledger.event.id, error: message })
+    )
     return { ok: false as const, status: "failed" as const, message }
   }
 }
@@ -337,7 +358,7 @@ export async function handleClerkWebhook(event: unknown, svixId: string) {
 }
 
 export async function ensureLocalUserForSession() {
-  const clerkUser = await getClerkCurrentUser()
+  const clerkUser = await getCurrentClerkUser()
   if (!clerkUser) {
     return { ok: false as const, code: "UNAUTHENTICATED" }
   }

@@ -25,7 +25,7 @@ export const defaultPresentationNavItems = [
   { label: "Invoice", href: "/invoice" },
   { label: "Panel", href: "/process-panel" },
   { label: "Onboarding", href: "/onboarding-flow" },
-  { label: "Config", href: "/settings-page" },
+  { label: "Config", href: "/config-page" },
   { label: "Stats", href: "/stats-section" },
   { label: "Status", href: "/status" },
 ] satisfies readonly PresentationHeaderNavItem[]

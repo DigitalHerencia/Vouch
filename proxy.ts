@@ -41,10 +41,9 @@ function getRequestedRedirect(req: Request): string | null {
 }
 
 export default clerkMiddleware(async (auth, req) => {
-  const { userId } = await auth()
-  const { pathname, search } = req.nextUrl
+  const authObject = await auth()
 
-  if (isAuthRoute(req) && userId) {
+  if (isAuthRoute(req) && authObject.userId) {
     return NextResponse.redirect(new URL(getRequestedRedirect(req) ?? "/dashboard", req.url))
   }
 
@@ -52,11 +51,7 @@ export default clerkMiddleware(async (auth, req) => {
     return NextResponse.next()
   }
 
-  if (!userId) {
-    const signInUrl = new URL("/sign-in", req.url)
-    signInUrl.searchParams.set("return_to", `${pathname}${search}`)
-    return NextResponse.redirect(signInUrl)
-  }
+  await auth.protect()
 
   return NextResponse.next()
 })

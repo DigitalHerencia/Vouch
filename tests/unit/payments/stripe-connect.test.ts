@@ -93,9 +93,7 @@ describe("Stripe Connect Accounts v2", () => {
   })
 
   it("creates onboarding links for recipient and merchant configurations", async () => {
-    const { createStripeConnectOnboardingLink } = await import(
-      "@/lib/integrations/stripe/connect"
-    )
+    const { createStripeConnectOnboardingLink } = await import("@/lib/integrations/stripe/connect")
 
     await createStripeConnectOnboardingLink({
       providerAccountId: "acct_connected",

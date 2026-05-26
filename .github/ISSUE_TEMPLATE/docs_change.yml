@@ -1,0 +1,28 @@
+name: Documentation change
+description: Request or propose documentation changes.
+title: "[Docs]: "
+labels:
+  - documentation
+  - triage
+body:
+  - type: textarea
+    id: docs_area
+    attributes:
+      label: Documentation area
+      description: Which doc, section, or concept needs attention?
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Requested change
+      description: What should be clarified, added, corrected, or removed?
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source of truth
+      description: Link or reference the relevant `.agents` source, contract, or code.
+    validations:
+      required: false

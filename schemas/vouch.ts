@@ -70,7 +70,10 @@ export const confirmCreateVouchSchema = createVouchDraftSchema.extend({
 
 export const confirmPresenceSchema = z.object({
   vouchId: vouchIdSchema,
-  submittedCode: z.string().trim().regex(/^\d{6}$/, "Confirmation code must be 6 digits."),
+  submittedCode: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Confirmation code must be 6 digits."),
   method: confirmationMethodSchema.default("code_exchange"),
 })
 

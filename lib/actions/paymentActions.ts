@@ -10,13 +10,15 @@ import { getAggregateConfirmationStatusTx } from "@/lib/db/transactions/confirma
 import { markInvitationSentTx } from "@/lib/db/transactions/invitationTransactions"
 import {
   createRefundRecordTx,
+  updatePaymentProviderStateTx,
+  upsertPaymentRecordTx,
+} from "@/lib/db/transactions/paymentTransactions"
+import {
   markProviderWebhookFailedTx,
   markProviderWebhookIgnoredTx,
   markProviderWebhookProcessedTx,
   recordProviderWebhookReceivedTx,
-  updatePaymentProviderStateTx,
-  upsertPaymentRecordTx,
-} from "@/lib/db/transactions/paymentTransactions"
+} from "@/lib/db/transactions/webhookTransactions"
 import {
   markVouchAuthorizedTx,
   markVouchCompletedTx,
@@ -958,8 +960,9 @@ export async function markProviderWebhookProcessed(id: string) {
 }
 
 export async function markProviderWebhookIgnored(id: string, reason?: string) {
-  void reason
-  return prisma.$transaction((tx) => markProviderWebhookIgnoredTx(tx, { id }))
+  const input: Parameters<typeof markProviderWebhookIgnoredTx>[1] = { id }
+  if (reason !== undefined) input.reason = reason
+  return prisma.$transaction((tx) => markProviderWebhookIgnoredTx(tx, input))
 }
 
 export async function markProviderWebhookFailed(id: string, error: string) {

@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import {
-  archiveVouchSchema,
-  confirmPresenceSchema,
-  createVouchSchema,
-} from "@/schemas/vouch"
+import { archiveVouchSchema, confirmPresenceSchema, createVouchSchema } from "@/schemas/vouch"
 
 describe("vouch schemas", () => {
   it("accepts a valid create Vouch payload", () => {

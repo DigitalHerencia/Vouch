@@ -4,13 +4,13 @@ test.describe("public marketing routes", () => {
   test("landing page loads without auth", async ({ page }) => {
     await page.goto("/")
 
-    await expect(page.getByText(/commitment-backed payments/i)).toBeVisible()
+    await expect(page.getByText(/deterministic commitment layer/i)).toBeVisible()
   })
 
   test("pricing loads without auth", async ({ page }) => {
     await page.goto("/pricing")
 
-    await expect(page.getByRole("heading", { name: /explicit confirmation/i })).toBeVisible()
+    await expect(page.getByText(/merchant pays the Vouch fee at commitment/i)).toBeVisible()
   })
 
   test("faq loads without auth", async ({ page }) => {
