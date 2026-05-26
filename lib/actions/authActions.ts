@@ -15,6 +15,7 @@ import { prisma } from "@/lib/db/prisma"
 import {
   createDefaultVerificationProfileTx,
   recordTermsAcceptanceTx,
+  softDisableUserFromClerkDeletedTx,
   upsertUserFromClerkTx,
 } from "@/lib/db/transactions/authTransactions"
 import { getClientIpHash, getRequestId, getUserAgentHash } from "@/lib/security/request"
@@ -34,7 +35,7 @@ import { clerkWebhookEventSchema, supportedClerkWebhookEventTypeSchema } from "@
 
 const CURRENT_TERMS_VERSION = "2026-05-22"
 
-export async function syncClerkUser(input: LocalUserSyncInput) {
+async function syncClerkUser(input: LocalUserSyncInput) {
   const user = await prisma.$transaction(async (tx) => {
     const syncedUser = await upsertUserFromClerkTx(tx, input)
     await createDefaultVerificationProfileTx(tx, { userId: syncedUser.id })
@@ -111,28 +112,14 @@ async function upsertLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
   const displayName = extractClerkDisplayName(event.data)
 
   await prisma.$transaction(async (tx) => {
-    const user = await tx.user.upsert({
-      where: { clerkUserId: event.data.id },
-      create: {
-        clerkUserId: event.data.id,
-        email: email ?? null,
-        phone: phone ?? null,
-        displayName: displayName ?? null,
-        status: "active",
-      },
-      update: {
-        email: email ?? null,
-        phone: phone ?? null,
-        displayName: displayName ?? null,
-        status: "active",
-      },
+    const user = await upsertUserFromClerkTx(tx, {
+      clerkUserId: event.data.id,
+      email: email ?? null,
+      phone: phone ?? null,
+      displayName: displayName ?? null,
     })
 
-    await tx.verificationProfile.upsert({
-      where: { userId: user.id },
-      create: { userId: user.id },
-      update: {},
-    })
+    await createDefaultVerificationProfileTx(tx, { userId: user.id })
 
     await tx.auditEvent.create({
       data: {
@@ -150,10 +137,7 @@ async function upsertLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
 
 async function disableLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
   await prisma.$transaction(async (tx) => {
-    const updated = await tx.user.updateMany({
-      where: { clerkUserId: event.data.id },
-      data: { status: "disabled" },
-    })
+    const updated = await softDisableUserFromClerkDeletedTx(tx, { clerkUserId: event.data.id })
 
     const user = await tx.user.findUnique({
       where: { clerkUserId: event.data.id },
@@ -353,11 +337,7 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
   }
 }
 
-export async function handleClerkWebhook(event: unknown, svixId: string) {
-  return processClerkWebhookEvent(event as ClerkWebhookEvent, svixId)
-}
-
-export async function ensureLocalUserForSession() {
+async function ensureLocalUserForSession() {
   const clerkUser = await getCurrentClerkUser()
   if (!clerkUser) {
     return { ok: false as const, code: "UNAUTHENTICATED" }

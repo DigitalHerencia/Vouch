@@ -3,11 +3,6 @@ export const CACHE_TAGS = {
   payments: "payments",
   dashboard: "dashboard",
   notifications: "notifications",
-  adminVouches: "admin:vouches",
-  adminUsers: "admin:users",
-  adminPayments: "admin:payments",
-  adminWebhooks: "admin:webhooks",
-  adminAudit: "admin:audit",
 } as const
 
 export function vouchTag(vouchId: string) {

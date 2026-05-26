@@ -33,8 +33,8 @@ export const INVITATION_STATUS_VALUES = [
 export const PARTICIPANT_ROLE_VALUES = ["merchant", "customer"] as const
 
 export const PAYMENT_ROLE_MAP = {
-  merchant: "payee",
-  customer: "payer",
+  merchant: "merchant",
+  customer: "customer",
 } as const
 
 export const CONFIRMATION_STATUS_VALUES = ["pending", "confirmed", "rejected"] as const

@@ -2,11 +2,7 @@ import "server-only"
 
 import type Stripe from "stripe"
 
-import type {
-  PaymentStatus,
-  RefundStatus,
-  SettlementStatus,
-} from "@/prisma/generated/prisma/client"
+import type { PaymentStatus, RefundStatus, SettlementStatus } from "@/types/payment"
 
 export function mapStripePaymentIntentStatus(status: Stripe.PaymentIntent.Status): PaymentStatus {
   switch (status) {

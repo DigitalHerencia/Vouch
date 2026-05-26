@@ -10,7 +10,6 @@ const prismaMock = vi.hoisted(() => ({
   user: {
     findUnique: vi.fn(),
   },
-  $transaction: vi.fn(),
 }))
 
 vi.mock("@/lib/db/prisma", () => ({
@@ -19,19 +18,6 @@ vi.mock("@/lib/db/prisma", () => ({
 
 vi.mock("@/lib/fetchers/authFetchers", () => ({
   requireActiveUser: vi.fn().mockResolvedValue({ id: "user_1", status: "active" }),
-}))
-
-vi.mock("@/lib/integrations/stripe/customers", () => ({
-  getStripeCustomerPaymentReadiness: vi.fn().mockResolvedValue({ readiness: "ready" }),
-}))
-
-vi.mock("@/lib/integrations/stripe/connect", () => ({
-  refreshStripeConnectReadiness: vi.fn().mockResolvedValue({
-    readiness: "ready",
-    chargesEnabled: true,
-    payoutsEnabled: true,
-    detailsSubmitted: true,
-  }),
 }))
 
 function readinessRecord(input: {
@@ -49,11 +35,9 @@ function readinessRecord(input: {
       adultStatus: input.adultStatus ?? "verified",
     },
     paymentCustomer: {
-      providerCustomerId: "cus_123",
       readiness: input.paymentReadiness ?? "not_started",
     },
     connectedAccount: {
-      providerAccountId: "acct_123",
       readiness: input.payoutReadiness ?? "not_started",
     },
     termsAcceptances: input.termsAccepted
@@ -63,18 +47,7 @@ function readinessRecord(input: {
 }
 
 function queueReadiness(record: ReturnType<typeof readinessRecord>) {
-  prismaMock.user.findUnique
-    .mockResolvedValueOnce({
-      paymentCustomer: { providerCustomerId: "cus_123" },
-      connectedAccount: { providerAccountId: "acct_123" },
-    })
-    .mockResolvedValueOnce(record)
-  prismaMock.$transaction.mockImplementation(async (callback) =>
-    callback({
-      paymentCustomer: { updateMany: vi.fn() },
-      connectedAccount: { updateMany: vi.fn() },
-    })
-  )
+  prismaMock.user.findUnique.mockResolvedValueOnce(record)
 }
 
 describe("readiness capability gates", () => {

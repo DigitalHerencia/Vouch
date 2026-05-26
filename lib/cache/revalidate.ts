@@ -17,31 +17,6 @@ export async function revalidateDashboard(): Promise<void> {
   revalidatePath("/dashboard")
 }
 
-export async function revalidateAdminOperationalViews(): Promise<void> {
-  revalidateTag("admin", "max")
-  revalidatePath("/admin")
-}
-
-export async function revalidatePayment(paymentId: string): Promise<void> {
-  revalidateTag(`payment:${paymentId}`, "max")
-  revalidatePath("/admin/payments")
-}
-
-export async function revalidateAdminPayments(): Promise<void> {
-  revalidateTag("admin:payments", "max")
-  revalidatePath("/admin/payments")
-}
-
-export async function revalidateAdminUsers(): Promise<void> {
-  revalidateTag("admin:users", "max")
-  revalidatePath("/admin/users")
-}
-
-export async function revalidateAdminWebhooks(): Promise<void> {
-  revalidateTag("admin:webhooks", "max")
-  revalidatePath("/admin/webhooks")
-}
-
 export async function revalidateNotifications(input: {
   userId?: string | null
   vouchId?: string | null

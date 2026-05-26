@@ -63,7 +63,6 @@ export type PaymentRecordParticipantDTO = {
   failedAt: ISODateTime | null
   lastProviderSyncAt: ISODateTime | null
   lastErrorCode?: string | null
-  lastErrorMessage: string | null
   createdAt: ISODateTime
   updatedAt: ISODateTime
 }
@@ -102,7 +101,6 @@ type PaymentRecordRecord = {
   failedAt?: DateLike
   lastProviderSyncAt?: DateLike
   lastErrorCode?: string | null
-  lastErrorMessage?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -164,7 +162,6 @@ export function mapPaymentRecordParticipantDTO(
     failedAt: toIso(record.failedAt),
     lastProviderSyncAt: toIso(record.lastProviderSyncAt),
     lastErrorCode: record.lastErrorCode ?? null,
-    lastErrorMessage: record.lastErrorMessage ?? null,
     createdAt: toIso(record.createdAt) ?? "",
     updatedAt: toIso(record.updatedAt) ?? "",
   }

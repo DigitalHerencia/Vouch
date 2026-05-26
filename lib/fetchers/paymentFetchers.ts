@@ -14,8 +14,6 @@ import {
 const iso = (v: Date | null | undefined) => (v ? v.toISOString() : null)
 
 type PaymentReadRecord = Record<string, unknown> & {
-  providerCustomerId?: string | null
-  providerAccountId?: string | null
   createdAt?: Date | null
   updatedAt?: Date | null
 }
@@ -25,12 +23,6 @@ function mapRecord<T extends PaymentReadRecord | null>(record: T) {
 
   return {
     ...record,
-    providerCustomerId: record.providerCustomerId
-      ? `cus_${String(record.providerCustomerId).slice(-6)}`
-      : undefined,
-    providerAccountId: record.providerAccountId
-      ? `acct_${String(record.providerAccountId).slice(-6)}`
-      : undefined,
     createdAt: iso(record.createdAt),
     updatedAt: iso(record.updatedAt),
   }
@@ -61,7 +53,7 @@ export async function getPaymentReadiness(userId: string) {
   return getPaymentMethodReadiness(userId)
 }
 
-export async function getPaymentSettingsPageState(userId: string) {
+export async function getPaymentManagementPageState(userId: string) {
   const readiness = await getPaymentMethodReadiness(userId)
   return {
     variant: readiness?.readiness === "ready" ? "ready" : "setup_required",
@@ -89,10 +81,6 @@ export async function getPaymentMethodReadyState(userId: string) {
   return { variant: "ready", readiness: await getPaymentMethodReadiness(userId) }
 }
 
-export async function getPaymentMethodFailedState(userId: string) {
-  return { variant: "failed", readiness: await getPaymentMethodReadiness(userId) }
-}
-
 export async function getPayoutReadiness(userId: string) {
   noStore()
   if (!(await assertSelf(userId))) return null
@@ -109,7 +97,7 @@ export async function getPayoutReadiness(userId: string) {
   }
 }
 
-export async function getPayoutSettingsPageState(userId: string) {
+export async function getPayoutManagementPageState(userId: string) {
   const readiness = await getPayoutReadiness(userId)
   return {
     variant: readiness?.readiness === "ready" ? "ready" : "setup_required",
@@ -138,10 +126,6 @@ export async function getPayoutReadyState(userId: string) {
 
 export async function getPayoutRestrictedState(userId: string) {
   return { variant: "restricted", readiness: await getPayoutReadiness(userId) }
-}
-
-export async function getPayoutSetupFailedState(userId: string) {
-  return { variant: "failed", readiness: await getPayoutReadiness(userId) }
 }
 
 async function assertParticipantForVouch(vouchId: string) {

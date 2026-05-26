@@ -13,6 +13,7 @@ import {
   contextualParticipantRoleSelect,
   inviteCandidateAuthSelect,
 } from "@/lib/db/selects/auth.selects"
+import { hashInvitationToken } from "@/lib/invitations/tokens"
 
 type CurrentUserAuthRecord = {
   id: string
@@ -277,7 +278,7 @@ export async function getInvitePreservedAuthContext(token: string) {
   noStore()
 
   const invitation = await prisma.invitation.findFirst({
-    where: { tokenHash: token },
+    where: { tokenHash: await hashInvitationToken(token) },
     select: inviteCandidateAuthSelect,
   })
 

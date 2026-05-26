@@ -201,11 +201,3 @@ export async function getDashboardErrorState(input: { message?: string }) {
     message: input.message ?? "Dashboard could not be loaded.",
   }
 }
-
-/**
- * Compatibility aliases retained only for older imports during migration.
- */
-export const getPendingVouches = getActiveVouches
-export const getExpiredRefundedVouches = getExpiredVouches
-export const getPayerDashboardSummary = getMerchantDashboardSummary
-export const getPayeeDashboardSummary = getCustomerDashboardSummary

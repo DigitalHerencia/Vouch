@@ -42,11 +42,6 @@ function pricingMetadata(input: { vouchId: string; pricing: VouchPricing }) {
     vouch_id: input.vouchId,
     payment_role: "customer_commitment",
     protected_amount_cents: String(input.pricing.protectedAmountCents),
-    merchant_receives_cents: String(input.pricing.merchantReceivesCents),
-    vouch_service_fee_cents: String(input.pricing.vouchServiceFeeCents),
-    processing_fee_offset_cents: String(input.pricing.processingFeeOffsetCents),
-    application_fee_amount_cents: String(input.pricing.applicationFeeAmountCents),
-    customer_total_cents: String(input.pricing.customerTotalCents),
   }
 }
 
@@ -125,7 +120,7 @@ export async function createStripeCheckoutAuthorization(
             product_data: {
               name: "Vouch protected appointment",
             },
-            unit_amount: input.pricing.customerTotalCents,
+            unit_amount: input.pricing.protectedAmountCents,
           },
           quantity: 1,
         },
@@ -133,9 +128,6 @@ export async function createStripeCheckoutAuthorization(
       mode: "payment",
       payment_intent_data: {
         capture_method: "manual",
-        ...(input.pricing.applicationFeeAmountCents > 0
-          ? { application_fee_amount: input.pricing.applicationFeeAmountCents }
-          : {}),
         transfer_data: {
           destination: input.connectedAccountId,
         },

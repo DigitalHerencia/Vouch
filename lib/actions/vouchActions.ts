@@ -24,8 +24,8 @@ import {
   bindCustomerToVouchTx,
   createVouchTx,
   expireVouchWithoutCaptureTx,
-  markVouchAuthorizedTx,
   updateVouchArchiveStatusTx,
+  updateVouchRecoveryStatusTx,
 } from "@/lib/db/transactions/vouchTransactions"
 import { getRuntimeEnv } from "@/lib/env"
 import { createStripeMerchantCreationFeeCheckout } from "@/lib/integrations/stripe/checkout-sessions"
@@ -69,6 +69,11 @@ type CreatedVouchResult = {
   vouchId: string
   invitationId: string
   detailPath: string
+  checkoutUrl?: string
+}
+
+type AcceptedVouchResult = {
+  vouchId: string
   checkoutUrl?: string
 }
 
@@ -330,7 +335,7 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
   })
 }
 
-export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
+export async function acceptVouch(input: unknown): Promise<ActionResult<AcceptedVouchResult>> {
   const user = await requireActiveUser()
   const readinessFailure = await mapReadinessFailure(assertAcceptVouchReadinessReady(user.id))
   if (readinessFailure) return readinessFailure
@@ -392,10 +397,9 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
 
   if (!payment.ok) {
     await prisma.$transaction(async (tx) => {
-      await tx.vouch.update({
-        where: { id: accepted.id },
-        data: { recoveryStatus: "recovery_required" },
-        select: { id: true },
+      await updateVouchRecoveryStatusTx(tx, {
+        vouchId: accepted.id,
+        recoveryStatus: "recovery_required",
       })
 
       await tx.auditEvent.create({
@@ -417,22 +421,11 @@ export async function acceptVouch(input: unknown): Promise<ActionResult<{ vouchI
     )
   }
 
-  await prisma.$transaction(async (tx) => {
-    await markVouchAuthorizedTx(tx, { vouchId: accepted.id })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.authorized",
-        actorType: "system",
-        entityType: "Vouch",
-        entityId: accepted.id,
-        participantSafe: true,
-      },
-    })
-  })
-
   await revalidateVouchSurfaces(accepted.id, [accepted.merchantId, user.id])
-  return actionSuccess({ vouchId: accepted.id })
+  return actionSuccess({
+    vouchId: accepted.id,
+    ...(payment.data.redirectTo ? { checkoutUrl: payment.data.redirectTo } : {}),
+  })
 }
 
 export async function declineVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
@@ -725,5 +718,4 @@ export async function startPaymentRedirect(input?: unknown) {
 export const createVouchAction = createVouch
 export const acceptVouchAction = acceptVouch
 export const declineVouchAction = declineVouch
-export const cancelPendingVouch = archiveVouch
 export const preventDuplicateConfirmation = async () => actionSuccess({ ok: true as const })

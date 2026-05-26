@@ -210,7 +210,6 @@ export const vouchRecoveryStateSelect = {
       status: true,
       settlementStatus: true,
       lastErrorCode: true,
-      lastErrorMessage: true,
       lastProviderSyncAt: true,
     },
   },
@@ -226,7 +225,6 @@ export const whatHappensNextSelect = {
       captureBefore: true,
       amountCapturableCents: true,
       lastErrorCode: true,
-      lastErrorMessage: true,
     },
   },
 } as const satisfies Prisma.VouchSelect

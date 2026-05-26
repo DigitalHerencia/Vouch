@@ -253,10 +253,6 @@ export async function getCreateVouchPaymentProcessingState(vouchId: string) {
   return readParticipantVouchByState(vouchId, "payment_processing", vouchPaymentSummarySelect)
 }
 
-export async function getCreateVouchPaymentFailedState(vouchId: string) {
-  return readParticipantVouchByState(vouchId, "payment_failed", vouchDetailProviderFailureSelect)
-}
-
 export async function getInviteLandingState(token: string) {
   const userId = await getOptionalCurrentUserId()
 
@@ -869,19 +865,3 @@ export async function getWhatHappensNextState(vouchId: string) {
     message: "Review the current Vouch status.",
   }
 }
-
-/**
- * Compatibility aliases retained only for older imports during migration.
- */
-export const listPayerVouches = listMerchantVouches
-export const listPayeeVouches = listCustomerVouches
-export const getVouchDetailPendingPayerState = getVouchDetailCommittedState
-export const getVouchDetailPendingInviteSentState = getVouchDetailSentState
-export const getVouchDetailActiveBeforeWindowState = getVouchDetailAuthorizedState
-export const getVouchDetailActiveWindowOpenState = getVouchDetailConfirmableState
-export const getVouchDetailPayerConfirmedState = getVouchDetailMerchantConfirmedState
-export const getVouchDetailPayeeConfirmedState = getVouchDetailCustomerConfirmedState
-export const getVouchDetailProcessingReleaseState = getVouchDetailProcessingCaptureState
-export const getVouchDetailRefundedState = getVouchDetailExpiredState
-export const getConfirmPresencePayerState = getConfirmPresenceMerchantState
-export const getConfirmPresencePayeeState = getConfirmPresenceCustomerState

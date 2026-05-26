@@ -4,12 +4,12 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import type Stripe from "stripe"
 
+import { getParticipantRoleForVouch } from "@/lib/authz/participants"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
 import { getAggregateConfirmationStatusTx } from "@/lib/db/transactions/confirmationTransactions"
 import { markInvitationSentTx } from "@/lib/db/transactions/invitationTransactions"
 import {
-  createRefundRecordTx,
   updatePaymentProviderStateTx,
   upsertPaymentRecordTx,
 } from "@/lib/db/transactions/paymentTransactions"
@@ -22,7 +22,6 @@ import {
 import {
   markVouchAuthorizedTx,
   markVouchCompletedTx,
-  markVouchExpiredTx,
   markVouchSentTx,
 } from "@/lib/db/transactions/vouchTransactions"
 import {
@@ -40,13 +39,13 @@ import {
   setStripeCustomerDefaultPaymentMethod,
 } from "@/lib/integrations/stripe/customers"
 import {
-  cancelStripeAuthorization,
   captureStripePayment,
-  createStripePaymentAuthorization,
-  refundStripePayment,
   retrieveStripePaymentIntent,
 } from "@/lib/integrations/stripe/payment-intents"
-import { createStripePaymentMethodSetupCheckout } from "@/lib/integrations/stripe/checkout-sessions"
+import {
+  createStripeCheckoutAuthorization,
+  createStripePaymentMethodSetupCheckout,
+} from "@/lib/integrations/stripe/checkout-sessions"
 import {
   getPaymentIntentCaptureBefore,
   getPaymentIntentLatestChargeId,
@@ -65,10 +64,8 @@ import {
 } from "@/lib/integrations/stripe/webhook-events"
 import {
   authorizeVouchPaymentInputSchema,
-  cancelUnconfirmedVouchPaymentInputSchema,
   captureConfirmedVouchPaymentInputSchema,
   paymentProviderReturnInputSchema,
-  refundCapturedVouchPaymentInputSchema,
   startStripeConnectInputSchema,
   startStripePaymentManagementInputSchema,
 } from "@/schemas/payment"
@@ -89,6 +86,7 @@ type PaymentActionResult = {
   vouchId: string
   status: string
   settlementStatus: string
+  redirectTo?: string
 }
 
 type WebhookProcessResult = {
@@ -504,6 +502,7 @@ export async function refreshPayoutReadiness(
 export async function authorizeVouchPayment(
   input: unknown
 ): Promise<ActionResult<PaymentActionResult>> {
+  const user = await requireActiveUser()
   const parsed = authorizeVouchPaymentInputSchema.safeParse(input)
 
   if (!parsed.success) {
@@ -541,6 +540,9 @@ export async function authorizeVouchPayment(
   })
 
   if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
+  if (vouch.customerId !== user.id) {
+    return actionFailure("AUTHZ_DENIED", "Customer access required.")
+  }
   if (!vouch.customerId) return actionFailure("CUSTOMER_REQUIRED", "Customer is required.")
   if (!vouch.customer?.paymentCustomer?.providerCustomerId) {
     return actionFailure("PAYMENT_CUSTOMER_REQUIRED", "Customer payment setup is required.")
@@ -557,32 +559,32 @@ export async function authorizeVouchPayment(
     return actionFailure("PAYMENT_METHOD_REQUIRED", "Customer payment setup is required.")
   }
 
-  const intent = await createStripePaymentAuthorization({
+  const appUrl = getAppUrl()
+  const checkout = await createStripeCheckoutAuthorization({
     vouchId: vouch.id,
-    customerTotalCents: vouch.customerTotalCents,
+    pricing: {
+      protectedAmountCents: vouch.protectedAmountCents,
+      merchantReceivesCents: vouch.merchantReceivesCents,
+      vouchServiceFeeCents: vouch.vouchServiceFeeCents,
+      processingFeeOffsetCents: vouch.processingFeeOffsetCents,
+      applicationFeeAmountCents: vouch.applicationFeeAmountCents,
+      customerTotalCents: vouch.customerTotalCents,
+    },
     currency: vouch.currency,
-    applicationFeeAmountCents: vouch.applicationFeeAmountCents,
-    protectedAmountCents: vouch.protectedAmountCents,
-    merchantReceivesCents: vouch.merchantReceivesCents,
-    vouchServiceFeeCents: vouch.vouchServiceFeeCents,
-    processingFeeOffsetCents: vouch.processingFeeOffsetCents,
     providerCustomerId: vouch.customer.paymentCustomer.providerCustomerId,
-    providerPaymentMethodId: customerPaymentReadiness.defaultPaymentMethodId,
     connectedAccountId: vouch.merchant.connectedAccount.providerAccountId,
-    confirmOffSession: true,
+    successUrl: `${appUrl}/vouches/${vouch.id}?stripe_authorization_return=1`,
+    cancelUrl: `${appUrl}/vouches/${vouch.id}?stripe_authorization_canceled=1`,
     idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${vouch.id}:authorize`,
   })
-
-  const timing = mapIntentTiming(intent)
 
   const paymentRecord = await prisma.$transaction(async (tx) => {
     const record = await upsertPaymentRecordTx(tx, {
       vouchId: vouch.id,
-      providerPaymentIntentId: intent.id,
-      providerChargeId: getPaymentIntentLatestChargeId(intent),
-      status: timing.status,
-      settlementStatus: timing.settlementStatus,
-      amountCents: vouch.customerTotalCents,
+      providerCheckoutSessionId: checkout.id,
+      status: "checkout_created",
+      settlementStatus: "pending",
+      amountCents: vouch.protectedAmountCents,
       currency: vouch.currency,
       protectedAmountCents: vouch.protectedAmountCents,
       merchantReceivesCents: vouch.merchantReceivesCents,
@@ -590,31 +592,22 @@ export async function authorizeVouchPayment(
       processingFeeOffsetCents: vouch.processingFeeOffsetCents,
       applicationFeeAmountCents: vouch.applicationFeeAmountCents,
       customerTotalCents: vouch.customerTotalCents,
-      amountCapturableCents: timing.amountCapturableCents,
-      captureBefore: timing.captureBefore,
-      authorizedAt: timing.authorizedAt,
-      capturedAt: timing.capturedAt,
-      canceledAt: timing.canceledAt,
-      failedAt: timing.failedAt,
+      amountCapturableCents: 0,
     })
 
     await tx.auditEvent.create({
       data: {
-        eventName: "payment.authorized",
+        eventName: "payment.authorization_checkout_created",
         actorType: "stripe",
         entityType: "PaymentRecord",
         entityId: record.id,
         participantSafe: true,
         metadata: {
-          provider_payment_intent_id: intent.id,
-          stripe_status: intent.status,
+          checkout_session_id: checkout.id,
+          payment_role: "customer_commitment",
         },
       },
     })
-
-    if (intent.status === "requires_capture") {
-      await markVouchAuthorizedTx(tx, { vouchId: vouch.id })
-    }
 
     return record
   })
@@ -625,12 +618,14 @@ export async function authorizeVouchPayment(
     vouchId: paymentRecord.vouchId,
     status: paymentRecord.status,
     settlementStatus: paymentRecord.settlementStatus,
+    ...(checkout.url ? { redirectTo: checkout.url } : {}),
   })
 }
 
 export async function captureConfirmedVouchPayment(
   input: unknown
 ): Promise<ActionResult<PaymentActionResult>> {
+  const user = await requireActiveUser()
   const parsed = captureConfirmedVouchPaymentInputSchema.safeParse(input)
 
   if (!parsed.success) {
@@ -661,6 +656,16 @@ export async function captureConfirmedVouchPayment(
 
   if (!paymentRecord?.providerPaymentIntentId) {
     return actionFailure("PAYMENT_RECORD_NOT_FOUND", "Payment record is missing.")
+  }
+
+  const participantRole = getParticipantRoleForVouch({
+    userId: user.id,
+    merchantId: paymentRecord.vouch.merchantId,
+    customerId: paymentRecord.vouch.customerId,
+  })
+
+  if (!participantRole) {
+    return actionFailure("AUTHZ_DENIED", "Participant access required.")
   }
 
   const aggregate = await prisma.$transaction((tx) =>
@@ -753,138 +758,6 @@ export async function captureConfirmedVouchPayment(
   })
 }
 
-export async function cancelUnconfirmedVouchPayment(
-  input: unknown
-): Promise<ActionResult<PaymentActionResult>> {
-  const parsed = cancelUnconfirmedVouchPaymentInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure("VALIDATION_FAILED", "Check the cancel fields.")
-  }
-
-  const paymentRecord = await prisma.paymentRecord.findUnique({
-    where: { vouchId: parsed.data.vouchId },
-    select: {
-      id: true,
-      vouchId: true,
-      providerPaymentIntentId: true,
-    },
-  })
-
-  if (!paymentRecord?.providerPaymentIntentId) {
-    return actionFailure("PAYMENT_RECORD_NOT_FOUND", "Payment record is missing.")
-  }
-
-  const canceled = await cancelStripeAuthorization({
-    providerPaymentIntentId: paymentRecord.providerPaymentIntentId,
-    idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${paymentRecord.vouchId}:cancel`,
-  })
-
-  const timing = mapIntentTiming(canceled)
-
-  const updated = await prisma.$transaction(async (tx) => {
-    const record = await updatePaymentProviderStateTx(tx, {
-      paymentRecordId: paymentRecord.id,
-      providerPaymentIntentId: canceled.id,
-      providerChargeId: getPaymentIntentLatestChargeId(canceled),
-      status: timing.status,
-      settlementStatus: "non_captured",
-      amountCapturableCents: timing.amountCapturableCents,
-      captureBefore: timing.captureBefore,
-      canceledAt: timing.canceledAt ?? new Date(),
-    })
-
-    await markVouchExpiredTx(tx, { vouchId: paymentRecord.vouchId })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payment.non_captured",
-        actorType: "stripe",
-        entityType: "PaymentRecord",
-        entityId: paymentRecord.id,
-        participantSafe: true,
-        metadata: { stripe_status: canceled.status },
-      },
-    })
-
-    return record
-  })
-
-  await revalidatePaymentSurfaces({ vouchId: paymentRecord.vouchId })
-  return actionSuccess({
-    paymentRecordId: updated.id,
-    vouchId: updated.vouchId,
-    status: updated.status,
-    settlementStatus: updated.settlementStatus,
-  })
-}
-
-export async function refundCapturedVouchPayment(
-  input: unknown
-): Promise<ActionResult<{ refundRecordId: string; vouchId: string; status: string }>> {
-  const parsed = refundCapturedVouchPaymentInputSchema.safeParse(input)
-
-  if (!parsed.success) {
-    return actionFailure("VALIDATION_FAILED", "Check the refund fields.")
-  }
-
-  const paymentRecord = await prisma.paymentRecord.findUnique({
-    where: { vouchId: parsed.data.vouchId },
-    select: {
-      id: true,
-      vouchId: true,
-      providerPaymentIntentId: true,
-      amountCents: true,
-    },
-  })
-
-  if (!paymentRecord?.providerPaymentIntentId) {
-    return actionFailure("PAYMENT_RECORD_NOT_FOUND", "Payment record is missing.")
-  }
-
-  const refund = await refundStripePayment({
-    providerPaymentIntentId: paymentRecord.providerPaymentIntentId,
-    idempotencyKey: parsed.data.idempotencyKey ?? `vouch:${paymentRecord.vouchId}:refund`,
-  })
-
-  const record = await prisma.$transaction(async (tx) => {
-    await updatePaymentProviderStateTx(tx, {
-      paymentRecordId: paymentRecord.id,
-      status: "captured",
-      settlementStatus: "refund_pending",
-    })
-
-    const refundRecord = await createRefundRecordTx(tx, {
-      vouchId: paymentRecord.vouchId,
-      paymentRecordId: paymentRecord.id,
-      providerRefundId: refund.id,
-      status: mapStripeRefundStatus(refund.status),
-      reason: "captured_reversal_required",
-      amountCents: refund.amount ?? paymentRecord.amountCents,
-    })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "payment.refund_created",
-        actorType: "stripe",
-        entityType: "RefundRecord",
-        entityId: refundRecord.id,
-        participantSafe: true,
-        metadata: { stripe_status: refund.status },
-      },
-    })
-
-    return refundRecord
-  })
-
-  await revalidatePaymentSurfaces({ vouchId: paymentRecord.vouchId })
-  return actionSuccess({
-    refundRecordId: record.id,
-    vouchId: record.vouchId,
-    status: record.status,
-  })
-}
-
 export async function processStripeWebhookEvent(
   event: StripeWebhookEvent
 ): Promise<ActionResult<WebhookProcessResult>> {
@@ -937,36 +810,6 @@ export async function processStripeWebhookEvent(
 
     return actionFailure("WEBHOOK_PROCESSING_FAILED", "Stripe webhook processing failed.")
   }
-}
-
-export async function recordProviderWebhookReceived(input: {
-  provider: "clerk" | "stripe" | "stripe_identity"
-  providerEventId: string
-  eventType: string
-  safeMetadata?: Record<string, unknown>
-}) {
-  const eventInput: Parameters<typeof recordProviderWebhookReceivedTx>[1] = {
-    provider: input.provider,
-    providerEventId: input.providerEventId,
-    eventType: input.eventType,
-  }
-  if (input.safeMetadata !== undefined) eventInput.safeMetadata = input.safeMetadata
-
-  return prisma.$transaction((tx) => recordProviderWebhookReceivedTx(tx, eventInput))
-}
-
-export async function markProviderWebhookProcessed(id: string) {
-  return prisma.$transaction((tx) => markProviderWebhookProcessedTx(tx, { id }))
-}
-
-export async function markProviderWebhookIgnored(id: string, reason?: string) {
-  const input: Parameters<typeof markProviderWebhookIgnoredTx>[1] = { id }
-  if (reason !== undefined) input.reason = reason
-  return prisma.$transaction((tx) => markProviderWebhookIgnoredTx(tx, input))
-}
-
-export async function markProviderWebhookFailed(id: string, error: string) {
-  return prisma.$transaction((tx) => markProviderWebhookFailedTx(tx, { id, error }))
 }
 
 async function reconcileStripeCheckoutSessionEvent(
@@ -1362,16 +1205,11 @@ async function reconcileStripeAccountEvent(
 /**
  * Compatibility aliases retained temporarily.
  */
-export const startPaymentMethodSetup = startStripePaymentManagement
-export const startPaymentMethodSetupAction = startStripePaymentManagement
 export const startPayoutOnboarding = startStripeConnectOnboarding
-export const startPayoutSetupAction = startStripeConnectOnboarding
 export const openPayoutDashboard = openStripeConnectDashboard
 export const openPaymentMethodDashboard = openStripePaymentMethodDashboard
 export const createStripeAccountSessionAction = openStripeConnectDashboard
 export const initializeVouchPayment = authorizeVouchPayment
 export const initializeStripePaymentForVouch = authorizeVouchPayment
 export const releaseStripePaymentForCompletedVouch = captureConfirmedVouchPayment
-export const refundOrVoidStripePaymentForVouch = cancelUnconfirmedVouchPayment
 export const captureOrReleaseVouchPayment = captureConfirmedVouchPayment
-export const refundOrVoidVouchPayment = cancelUnconfirmedVouchPayment
