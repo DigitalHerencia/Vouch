@@ -8,7 +8,7 @@
 
   <p>
     Create a Vouch. Accept the commitment. Confirm presence.<br />
-    Both confirm in time and funds release. Otherwise, refund, void, or non-capture.
+    Both confirm in time and Stripe captures. Otherwise, cancel, refund, or non-capture.
   </p>
 
   <p>
@@ -25,7 +25,7 @@
 
   <p>
     <img alt="MIT License" src="https://img.shields.io/badge/license-MIT-1D4ED8?style=for-the-badge&labelColor=000000" />
-    <img alt="Status" src="https://img.shields.io/badge/status-active%20development-1D4ED8?style=for-the-badge&labelColor=000000" />
+    <img alt="Status" src="https://img.shields.io/badge/status-MVP%20development-1D4ED8?style=for-the-badge&labelColor=000000" />
     <img alt="Product" src="https://img.shields.io/badge/product-payment%20coordination-1D4ED8?style=for-the-badge&labelColor=000000" />
     <img alt="Not Escrow" src="https://img.shields.io/badge/not-escrow-1D4ED8?style=for-the-badge&labelColor=000000" />
     <img alt="Not Marketplace" src="https://img.shields.io/badge/not-marketplace-1D4ED8?style=for-the-badge&labelColor=000000" />
@@ -51,8 +51,8 @@
 
 It is built around one deterministic rule:
 
-> **Both parties confirm presence within the confirmation window -> funds release.**
-> **Otherwise -> refund, void, or non-capture.**
+> **Both parties confirm presence within the confirmation window -> capture proceeds.**
+> **Otherwise -> cancel, refund, or non-capture according to provider state.**
 
 Outcome follows system state.
 
@@ -68,19 +68,19 @@ No dispute, evidence, or appeal surface exists.
 ## Core Rule
 
 ```txt
-both parties confirm presence within the confirmation window -> funds release
-otherwise -> refund, void, or non-capture
+both parties confirm presence within the confirmation window -> capture proceeds
+otherwise -> cancel, refund, or non-capture according to provider state
 ```
 
 Vouch does not decide who was right. It checks authenticated state, provider-backed payment state, and the confirmation window.
 
 | Confirmation outcome         | Payment outcome                                  |
 | ---------------------------- | ------------------------------------------------ |
-| Both parties confirm in time | Funds release                                    |
-| Only one party confirms      | Refund, void, or non-capture                     |
-| Neither party confirms       | Refund, void, or non-capture                     |
-| Confirmation window expires  | Refund, void, or non-capture                     |
-| Payment provider fails       | Payment failed, release failed, or refund failed |
+| Both parties confirm in time | Stripe capture proceeds                          |
+| Only one party confirms      | Cancel, refund, or non-capture                   |
+| Neither party confirms       | Cancel, refund, or non-capture                   |
+| Confirmation window expires  | Cancel, refund, or non-capture                   |
+| Payment provider fails       | Payment failed, capture failed, or refund failed |
 
 One-sided confirmation never releases funds.
 
@@ -90,11 +90,11 @@ One-sided confirmation never releases funds.
 
 ### 1. Create
 
-The payer creates or funds a Vouch with an amount and confirmation window.
+The merchant creates a Vouch with an amount and confirmation window, then pays the protocol fee.
 
 ### 2. Accept
 
-The payee reviews the Vouch and accepts only when payout readiness requirements are satisfied.
+The customer reviews the Vouch and accepts before authorizing the protected amount.
 
 ### 3. Confirm
 
@@ -102,9 +102,9 @@ Both participants independently confirm presence inside the confirmation window.
 
 ### 4. Resolve
 
-If both confirmations happen in time and the PaymentIntent is capturable, Vouch releases funds through provider-backed settlement.
+If both confirmations happen in time and the customer PaymentIntent is capturable, Vouch captures through provider-backed settlement.
 
-Anything else resolves to refund, void, or non-capture according to current provider state.
+Anything else resolves to cancel, refund, or non-capture according to current provider state.
 
 ---
 
@@ -112,16 +112,15 @@ Anything else resolves to refund, void, or non-capture according to current prov
 
 Vouch coordinates payment state through Stripe and Stripe Connect.
 
-Vouch uses manual-capture PaymentIntents:
+Vouch uses two separate Stripe flows:
 
 ```txt
-amount = customer total amount in cents
-capture_method = manual
-application_fee_amount = calculated Vouch fee
-transfer_data.destination = payee connected account id when destination charge is used
+merchant protocol fee = platform-owned Checkout Session or PaymentIntent
+customer protected amount = Checkout Session that creates a manual-capture PaymentIntent
+capture_method = manual for the customer protected amount only
 ```
 
-Before settlement, Vouch retrieves current provider state. Capture, cancel/void, refund, webhook reconciliation, and operational retries are idempotent.
+Before settlement, Vouch retrieves current provider state. Capture, cancel, refund, webhook reconciliation, and operational retries are idempotent.
 
 Vouch does not directly custody funds and does not store raw card data, raw bank data, raw identity documents, full provider payloads, or sensitive KYC details.
 
@@ -129,16 +128,7 @@ Vouch does not directly custody funds and does not store raw card data, raw bank
 
 ## Readiness
 
-Payer readiness is required for creating or funding a Vouch:
-
-- authenticated user
-- active Vouch account
-- required identity/adult readiness
-- accepted terms
-- Stripe customer/payment method setup
-- provider-backed payment readiness stored in Vouch DB
-
-Payee readiness is required for accepting or becoming bound as payee:
+Merchant readiness is required for creating a Vouch:
 
 - authenticated user
 - active Vouch account
@@ -148,7 +138,16 @@ Payee readiness is required for accepting or becoming bound as payee:
 - Stripe payout capability/readiness is active or sufficient
 - provider-backed payout readiness stored in Vouch DB
 
-Payer payment setup and payee payout setup are separate tracks.
+Customer readiness is required for accepting and authorizing a Vouch:
+
+- authenticated user
+- active Vouch account
+- required identity/adult readiness
+- accepted terms
+- Stripe customer/payment method setup
+- provider-backed payment readiness stored in Vouch DB
+
+Merchant payout readiness and customer payment readiness are separate tracks.
 
 ---
 
@@ -219,7 +218,7 @@ Vouch uses a dark brutalist operational SaaS interface:
 
 ## Status
 
-Vouch is in active development.
+Vouch is in MVP development.
 
 The public repository exists to build the product openly while preserving the product’s narrow operating boundaries.
 

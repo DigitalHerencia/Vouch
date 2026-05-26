@@ -11,8 +11,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  quality-gates:
-    name: Quality Gates
+  validate:
+    name: Validate
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -20,14 +20,16 @@ jobs:
       CI: true
       NODE_ENV: test
       NEXT_TELEMETRY_DISABLED: 1
-      DATABASE_URL: ${{ secrets.DATABASE_URL }}
-      DATABASE_URL_UNPOOLED: ${{ secrets.DATABASE_URL_UNPOOLED }}
-      VOUCH_HASH_SECRET: ${{ secrets.VOUCH_HASH_SECRET }}
-      CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
-      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-      STRIPE_SECRET_KEY: ${{ secrets.STRIPE_SECRET_KEY }}
-      STRIPE_WEBHOOK_SECRET: ${{ secrets.STRIPE_WEBHOOK_SECRET }}
-      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+      DATABASE_URL: postgresql://vouch:vouch@127.0.0.1:5432/vouch_ci
+      DIRECT_DATABASE_URL: postgresql://vouch:vouch@127.0.0.1:5432/vouch_ci
+      CONFIRMATION_CODE_SECRET: ci-confirmation-secret
+      CLERK_SECRET_KEY: sk_test_ci
+      CLERK_WEBHOOK_SECRET: whsec_ci_clerk
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci
+      STRIPE_SECRET_KEY: sk_test_ci
+      STRIPE_WEBHOOK_SECRET: whsec_ci_stripe
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_ci
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
 
     steps:
       - name: Checkout
@@ -50,14 +52,53 @@ jobs:
       - name: Generate Prisma client
         run: pnpm prisma:generate
 
-      - name: Lint
-        run: pnpm lint
+      - name: Validate
+        run: pnpm validate
 
-      - name: Prisma validate
-        run: pnpm prisma:validate
+  e2e:
+    name: Playwright
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: validate
 
-      - name: Typecheck
-        run: pnpm typecheck
+    env:
+      CI: true
+      NODE_ENV: test
+      NEXT_TELEMETRY_DISABLED: 1
+      DATABASE_URL: postgresql://vouch:vouch@127.0.0.1:5432/vouch_ci
+      DIRECT_DATABASE_URL: postgresql://vouch:vouch@127.0.0.1:5432/vouch_ci
+      CONFIRMATION_CODE_SECRET: ci-confirmation-secret
+      CLERK_SECRET_KEY: sk_test_ci
+      CLERK_WEBHOOK_SECRET: whsec_ci_clerk
+      NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_ci
+      STRIPE_SECRET_KEY: sk_test_ci
+      STRIPE_WEBHOOK_SECRET: whsec_ci_stripe
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: pk_test_ci
+      NEXT_PUBLIC_APP_URL: http://127.0.0.1:3000
 
-      - name: Unit tests
-        run: pnpm test
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma client
+        run: pnpm prisma:generate
+
+      - name: Install Playwright browser
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Playwright tests
+        run: pnpm test:e2e

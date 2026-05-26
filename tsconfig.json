@@ -31,8 +31,7 @@
       "@/components/*": ["./components/*"],
       "@/lib/*": ["./lib/*"],
       "@/schemas/*": ["./schemas/*"],
-      "@/types/*": ["./types/*"],
-      "@/generated/prisma/*": ["./src/generated/prisma/*"]
+      "@/types/*": ["./types/*"]
     }
   },
   "include": [

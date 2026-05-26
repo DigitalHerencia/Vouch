@@ -5,8 +5,8 @@ import "server-only"
 import { verifyWebhook as verifyClerkRequestWebhook } from "@clerk/nextjs/webhooks"
 import type { NextRequest } from "next/server"
 
-import { processClerkWebhookEvent } from "@/lib/actions/authActions"
 import { getRequiredEnv } from "@/lib/env"
+import { processClerkWebhookEvent } from "@/lib/webhooks/clerk"
 import type { ClerkWebhookEvent } from "@/types/auth"
 
 export async function verifyClerkWebhook(request: NextRequest): Promise<unknown> {
