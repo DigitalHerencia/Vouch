@@ -48,7 +48,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
       <div
         ref={ref}
         className={cn(
-          "flex overflow-hidden",
+          "flex overflow-hidden contain-[layout_paint] will-change-transform",
           bordered && "border-3 border-neutral-400 bg-black",
           className
         )}
@@ -56,7 +56,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
       >
         <div
           className={cn(
-            "marquee-content flex shrink-0 items-center gap-8 py-3",
+            "marquee-content flex shrink-0 items-center gap-8 py-3 will-change-transform",
             animationClass,
             pauseOnHover && "hover:paused"
           )}
@@ -67,7 +67,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
         </div>
         <div
           className={cn(
-            "marquee-content flex shrink-0 items-center gap-8 py-3",
+            "marquee-content flex shrink-0 items-center gap-8 py-3 will-change-transform",
             animationClass,
             pauseOnHover && "hover:paused"
           )}

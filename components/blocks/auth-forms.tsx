@@ -1,10 +1,13 @@
 import * as React from "react"
+import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Eye, Mail, Lock, User, LoaderCircle } from "lucide-react"
+import { LogoLockup } from "@/components/brand/logo-lockup"
+import { AuthProcessPanelGrid } from "@/components/blocks/process-panel"
 
 export interface AuthPageShellProps {
   children: React.ReactNode
@@ -15,16 +18,11 @@ export interface AuthPageShellProps {
 
 export function AuthPageShell({ children, eyebrow, title, body }: AuthPageShellProps) {
   return (
-    <main className="h-dvh min-h-0 w-full overflow-hidden">
-      <section className="grid h-full min-h-0 w-full grid-cols-1 overflow-hidden md:grid-cols-2">
-        <div className="hidden min-h-0 md:block">
-          <AuthContentPanel eyebrow={eyebrow} title={title} body={body} />
-        </div>
-
-        <div className="min-h-0">
-          <AuthFormPanel>{children}</AuthFormPanel>
-        </div>
-      </section>
+    <main className="relative h-dvh min-h-0 w-full overflow-hidden">
+      <div className="absolute inset-0 z-0 hidden lg:block">
+        <AuthContentPanel eyebrow={eyebrow} title={title} body={body} />
+      </div>
+      <AuthFormPanel>{children}</AuthFormPanel>
     </main>
   )
 }
@@ -39,48 +37,25 @@ export function AuthContentPanel(props: AuthContentPanelProps) {
   void props
 
   return (
-    <div className="flex h-full min-h-0 w-full flex-col justify-center overflow-hidden border-r-3 border-neutral-400 bg-transparent">
-      <div className="w-full">
-        <AuthProcessPreviewGrid />
-      </div>
+    <div className="flex h-full min-h-0 w-full flex-col justify-center overflow-hidden bg-transparent">
+      <AuthProcessPanelGrid />
     </div>
   )
 }
 
-function AuthProcessPreviewGrid() {
-  const items = [
-    { label: "Identity", icon: User },
-    { label: "Provider", icon: Mail },
-    { label: "Protocol", icon: Lock },
-  ]
-
-  return (
-    <div className="grid h-full content-center gap-4 p-8">
-      {items.map((item, index) => {
-        const Icon = item.icon
-
-        return (
-          <div
-            key={item.label}
-            className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 border-3 border-neutral-400 bg-black p-4 shadow-[8px_8px_0_oklch(54.6%_0.245_262.881)]"
-          >
-            <span className="flex size-12 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white">
-              <Icon className="size-5" />
-            </span>
-            <span className="font-(family-name:--font-display) text-lg font-black text-white uppercase">
-              {item.label}
-            </span>
-            <span className="font-mono text-xs font-black text-neutral-400">0{index + 1}</span>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
 export function AuthFormPanel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden p-6 pt-24 pb-20 md:p-8">
-      <div className="flex w-full max-w-xl flex-col gap-6">{children}</div>
+    <div className="relative z-10 flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden bg-transparent p-6 py-16 md:p-8">
+      <div className="flex w-full max-w-xl flex-col items-center gap-5">
+        <Link href="/" aria-label="Go to Vouch home" className="inline-flex">
+          <LogoLockup
+            className="justify-center"
+            iconClassName="size-10 sm:size-12"
+            textClassName="text-[38px] sm:text-[48px] lg:text-[54px]"
+          />
+        </Link>
+        {children}
+      </div>
     </div>
   )
 }
@@ -157,7 +132,7 @@ export function LoginForm({
         <CardHeader className="space-y-4 text-center">
           {logo && <div className="mx-auto">{logo}</div>}
           <div>
-            <CardTitle className="text-5xl font-black uppercase md:text-6xl lg:text-7xl">
+            <CardTitle className="text-4xl font-black uppercase md:text-5xl lg:text-6xl">
               {title}
             </CardTitle>
             <CardDescription className="mt-2">{description}</CardDescription>
@@ -348,6 +323,13 @@ export interface SignUpFormProps {
   logo?: React.ReactNode
   title?: string
   description?: string
+  notice?: React.ReactNode
+  error?: React.ReactNode
+  children?: React.ReactNode
+  footer?: React.ReactNode
+  signInHref?: string | undefined
+  signInPrompt?: string | undefined
+  signInLabel?: string | undefined
   onSubmit?: (data: { name: string; email: string; password: string; terms: boolean }) => void
   onSignIn?: () => void
   socialProviders?: Array<"google" | "github">
@@ -359,11 +341,49 @@ export function SignUpForm({
   logo,
   title = "Create an account",
   description = "Enter your details to get started",
+  notice,
+  error,
+  children,
+  footer,
+  signInHref,
+  signInPrompt = "Already have an account?",
+  signInLabel = "Sign in",
   onSignIn,
   socialProviders,
   termsUrl = "#",
   privacyUrl = "#",
 }: SignUpFormProps) {
+  const content = children ? (
+    <div className="space-y-4">
+      {notice ? (
+        <div className="border-3 border-blue-600 bg-blue-600/10 px-4 py-3 text-sm text-white">
+          {notice}
+        </div>
+      ) : null}
+      {error ? (
+        <div className="border-3 border-red-600 bg-red-600/10 px-4 py-3 text-sm text-white">
+          {error}
+        </div>
+      ) : null}
+      {children}
+      {(footer ?? signInHref) ? (
+        <div className="text-center text-sm text-neutral-400">
+          {footer ?? (
+            <span>
+              {signInPrompt}{" "}
+              <a
+                href={signInHref ?? "#"}
+                className="text-blue-600 underline-offset-4 hover:text-white hover:underline"
+              >
+                {signInLabel}
+              </a>
+            </span>
+          )}
+        </div>
+      ) : null}
+    </div>
+  ) : null
+
   return (
     <div className="mx-auto w-full max-w-md">
       <Card>
@@ -377,7 +397,8 @@ export function SignUpForm({
           </div>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          {content ?? (
+            <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name" className="text-xs font-bold uppercase">
                 Full Name
@@ -502,8 +523,140 @@ export function SignUpForm({
               </p>
             )}
           </div>
+          )}
         </CardContent>
       </Card>
+    </div>
+  )
+}
+
+export interface SignUpFormFieldsProps {
+  firstNameInputProps: React.ComponentProps<typeof Input>
+  lastNameInputProps: React.ComponentProps<typeof Input>
+  emailInputProps: React.ComponentProps<typeof Input>
+  passwordInputProps: React.ComponentProps<typeof Input>
+  firstNameError?: string | undefined
+  lastNameError?: string | undefined
+  emailError?: string | undefined
+  passwordError?: string | undefined
+  agreementError?: string | undefined
+  agreementChecked: boolean
+  agreementLabel: React.ReactNode
+  onAgreementChange: (checked: boolean) => void
+  disabled?: boolean
+  isSubmitting?: boolean
+  submitLabel?: string
+  captcha?: React.ReactNode
+}
+
+export function SignUpFormFields({
+  firstNameInputProps,
+  lastNameInputProps,
+  emailInputProps,
+  passwordInputProps,
+  firstNameError,
+  lastNameError,
+  emailError,
+  passwordError,
+  agreementError,
+  agreementChecked,
+  agreementLabel,
+  onAgreementChange,
+  disabled = false,
+  isSubmitting = false,
+  submitLabel = "Create account",
+  captcha,
+}: SignUpFormFieldsProps) {
+  const inputClassName =
+    "h-12 rounded-none border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-none outline-none placeholder:text-neutral-400 focus-visible:border-blue-600 focus-visible:ring-0"
+
+  return (
+    <div className="space-y-4">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="space-y-2">
+          <Label htmlFor="firstName" className="text-xs font-bold uppercase">
+            First name
+          </Label>
+          <Input
+            id="firstName"
+            type="text"
+            autoComplete="given-name"
+            disabled={disabled}
+            {...firstNameInputProps}
+            className={inputClassName}
+          />
+          {firstNameError ? <p className="text-sm text-red-600">{firstNameError}</p> : null}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="lastName" className="text-xs font-bold uppercase">
+            Last name
+          </Label>
+          <Input
+            id="lastName"
+            type="text"
+            autoComplete="family-name"
+            disabled={disabled}
+            {...lastNameInputProps}
+            className={inputClassName}
+          />
+          {lastNameError ? <p className="text-sm text-red-600">{lastNameError}</p> : null}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="signup-email" className="text-xs font-bold uppercase">
+          Email
+        </Label>
+        <Input
+          id="signup-email"
+          type="email"
+          autoComplete="email"
+          placeholder="m@example.com"
+          disabled={disabled}
+          {...emailInputProps}
+          className={inputClassName}
+        />
+        {emailError ? <p className="text-sm text-red-600">{emailError}</p> : null}
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="signup-password" className="text-xs font-bold uppercase">
+          Password
+        </Label>
+        <Input
+          id="signup-password"
+          type="password"
+          autoComplete="new-password"
+          placeholder="At least 8 characters"
+          disabled={disabled}
+          {...passwordInputProps}
+          className={inputClassName}
+        />
+        <p className="text-sm text-neutral-400">Use a strong password you have not used elsewhere.</p>
+        {passwordError ? <p className="text-sm text-red-600">{passwordError}</p> : null}
+      </div>
+
+      <div className="space-y-2">
+        <label className="flex items-start gap-3 border-3 border-neutral-400 bg-black p-3">
+          <Checkbox
+            className="mt-1 shrink-0 rounded-none"
+            checked={agreementChecked}
+            aria-invalid={Boolean(agreementError)}
+            disabled={disabled}
+            onCheckedChange={(checked) => onAgreementChange(checked === true)}
+          />
+          <span className="text-xs leading-5 font-semibold text-neutral-400">{agreementLabel}</span>
+        </label>
+        {agreementError ? <p className="text-sm text-red-600">{agreementError}</p> : null}
+      </div>
+
+      {captcha}
+
+      <Button type="submit" disabled={disabled} className="w-full" size="lg">
+        {isSubmitting ? <LoaderCircle className="size-4 animate-spin" /> : null}
+        {submitLabel}
+      </Button>
     </div>
   )
 }
@@ -627,7 +780,7 @@ export function OTPVerificationForm({
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <Card>
+      <Card className="rounded-none border-3 border-neutral-400 bg-transparent shadow-none">
         <CardHeader className="space-y-4 text-center">
           {logo && <div className="mx-auto">{logo}</div>}
           <div>
@@ -716,21 +869,6 @@ export function OTPVerificationForm({
             </div>
           )}
 
-          <div className="space-y-2 text-center">
-            {onResend && (
-              <p className="text-sm text-neutral-400">
-                Didn't receive a code?{" "}
-                <Button type="button" variant="link" size="nav">
-                  Resend
-                </Button>
-              </p>
-            )}
-            {onBackToLogin && (
-              <Button type="button" variant="ghost" size="sm">
-                Back to login
-              </Button>
-            )}
-          </div>
         </CardContent>
       </Card>
     </div>
@@ -780,6 +918,7 @@ export const AuthForms = {
   Login: LoginForm,
   LoginFields: LoginFormFields,
   SignUp: SignUpForm,
+  SignUpFields: SignUpFormFields,
   ForgotPassword: ForgotPasswordForm,
   OTPVerification: OTPVerificationForm,
   SplitLayout: AuthSplitLayout,

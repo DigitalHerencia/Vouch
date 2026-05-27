@@ -5,7 +5,12 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
-import { AuthForms } from "@/components/blocks/auth-forms"
+import {
+  AuthPageShell,
+  LoginForm as LoginBlock,
+  LoginFormFields,
+  OTPVerificationForm,
+} from "@/components/blocks/auth-forms"
 import { authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { loginSchema, verificationSchema } from "@/schemas/auth"
@@ -50,7 +55,8 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
   })
 
   const nextUrl = sanitizePostAuthRedirect(redirectUrl)
-  const isBusy = form.formState.isSubmitting || isResending || isResetting || !fetchStatus
+  const isBusy =
+    form.formState.isSubmitting || isResending || isResetting || fetchStatus === "fetching"
   const rootError = form.formState.errors.root?.message
 
   async function finalizeAndRedirect(): Promise<boolean> {
@@ -228,14 +234,14 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
   })
 
   return (
-    <AuthForms.PageShell
+    <AuthPageShell
       eyebrow="Authenticated protocol"
       title="Commitment-backed access"
       body="Sign in before creating, accepting, or confirming Vouches. Account state stays tied to authenticated users and provider-backed readiness."
     >
       <form onSubmit={handleSubmit} noValidate {...props}>
         {awaitingSecondFactor ? (
-          <AuthForms.OTPVerification
+          <OTPVerificationForm
             title={authVerificationContent.codeLabel}
             description={
               secondFactorMethod === "phone_code"
@@ -282,7 +288,7 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
             }}
           />
         ) : (
-          <AuthForms.Login
+          <LoginBlock
             title="Back your commitment."
             description="Sign in to manage Vouches, confirm presence, and keep payment-backed commitments on track."
             notice={notice}
@@ -291,7 +297,7 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
               redirectUrl ? `/sign-up?redirect_url=${encodeURIComponent(redirectUrl)}` : "/sign-up"
             }
           >
-            <AuthForms.LoginFields
+            <LoginFormFields
               emailInputProps={form.register("email", {
                 setValueAs: (value: string) =>
                   typeof value === "string" ? value.trim().toLowerCase() : "",
@@ -303,9 +309,9 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
               isSubmitting={form.formState.isSubmitting}
               submitLabel="Sign in"
             />
-          </AuthForms.Login>
+          </LoginBlock>
         )}
       </form>
-    </AuthForms.PageShell>
+    </AuthPageShell>
   )
 }

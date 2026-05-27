@@ -1,14 +1,12 @@
 import * as React from "react"
 import {
-  BadgeCheck,
-  Clock3,
-  CreditCard,
-  Handshake,
+  CheckCircle2,
   LockKeyhole,
   ShieldCheck,
   type LucideIcon,
 } from "lucide-react"
 import { CardHeader, Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
+import { LogoLockup } from "@/components/brand/logo-lockup"
 import { Marquee, MarqueeItem, MarqueeSeparator } from "@/components/ui/marquee"
 
 // ============================================================================
@@ -231,67 +229,54 @@ function ProcessPanelMarqueeTrack({
   direction,
   className,
   itemClassName,
+  separatorIcons,
 }: {
   logos: readonly ProcessPanelGridItem[]
   direction: "left" | "right"
   className?: string | undefined
   itemClassName?: string | undefined
+  separatorIcons?: readonly LucideIcon[] | undefined
 }) {
+  const icons = separatorIcons ?? [LockKeyhole, ShieldCheck, CheckCircle2]
+
   return (
     <Marquee
       direction={direction}
       speed="slow"
-      repeat={2}
+      pauseOnHover={false}
+      repeat={1}
       className={[
-        "border-x-0 border-y-3 border-neutral-400 bg-black contain-[paint] select-none",
+        "relative z-0 border-x-0 border-y-3 border-neutral-400 bg-black select-none",
         className,
       ]
         .filter(Boolean)
         .join(" ")}
     >
-      {logos.map((item) => {
-        const Icon = item.icon
+      {logos.map((item, index) => {
+        const SeparatorIcon = icons[index % icons.length] ?? LockKeyhole
 
         return (
           <React.Fragment key={`${direction}-${item.name}`}>
             <MarqueeItem
               className={[
-                "h-24 min-w-76 gap-5 border-r-3 border-neutral-400 bg-white px-6 text-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]",
+                "h-24 min-w-76 gap-5 border-3 border-neutral-400 bg-white px-6 text-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]",
                 itemClassName,
               ]
                 .filter(Boolean)
                 .join(" ")}
             >
               <span className="flex h-12 min-w-36 items-center justify-center">{item.logo}</span>
-              {Icon ? (
-                <span
-                  className="flex size-12 items-center justify-center border-3 border-neutral-950 bg-blue-600 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
-                  aria-label={`${item.name}${item.detail ? `: ${item.detail}` : ""}`}
-                  title={`${item.name}${item.detail ? `: ${item.detail}` : ""}`}
-                >
-                  <Icon className="size-7" strokeWidth={2.4} />
-                </span>
-              ) : (
-                <>
-                  <span className="font-(family-name:--font-display) text-sm leading-none font-black tracking-wide uppercase">
-                    {item.name}
-                  </span>
-                  {item.detail ? (
-                    <span className="font-mono text-xs leading-none font-black text-blue-600 uppercase">
-                      {item.detail}
-                    </span>
-                  ) : null}
-                </>
-              )}
-              {Icon ? (
-                <span className="sr-only">
-                  {item.name}
-                  {item.detail ? ` ${item.detail}` : ""}
+              <span className="font-(family-name:--font-display) text-sm leading-none font-black tracking-wide text-black uppercase">
+                {item.name}
+              </span>
+              {item.detail ? (
+                <span className="font-mono text-xs leading-none font-black text-blue-600 uppercase">
+                  {item.detail}
                 </span>
               ) : null}
             </MarqueeItem>
-            <MarqueeSeparator className="text-4xl text-blue-600">
-              <Handshake className="size-8" strokeWidth={2.4} />
+            <MarqueeSeparator className="flex size-14 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+              <SeparatorIcon className="size-8" strokeWidth={2.4} />
             </MarqueeSeparator>
           </React.Fragment>
         )
@@ -338,22 +323,18 @@ export function ProcessPanelGrid({ title, subtitle, logos, footer }: ProcessPane
 
 const authProcessLogos: readonly ProcessPanelGridItem[] = [
   {
-    name: "Vouch dark",
+    name: "Vouch",
     detail: "authenticated",
-    icon: LockKeyhole,
     logo: (
-      <span
-        aria-label="Vouch"
-        role="img"
-        className="block h-10 w-36 bg-contain bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/logo-dark.png)" }}
+      <LogoLockup
+        iconClassName="size-7 text-blue-600"
+        textClassName="text-[22px] text-black"
       />
     ),
   },
   {
-    name: "Vouch light",
+    name: "Vouch mark",
     detail: "readiness",
-    icon: BadgeCheck,
     logo: (
       <span
         aria-label="Vouch"
@@ -366,7 +347,6 @@ const authProcessLogos: readonly ProcessPanelGridItem[] = [
   {
     name: "Stripe Connect",
     detail: "provider-backed",
-    icon: CreditCard,
     logo: (
       <span
         aria-label="Stripe"
@@ -377,28 +357,24 @@ const authProcessLogos: readonly ProcessPanelGridItem[] = [
     ),
   },
   {
-    name: "Manual capture",
-    detail: "non-custodial",
-    icon: ShieldCheck,
+    name: "Powered by Stripe",
+    detail: "manual capture",
     logo: (
       <span
         aria-label="Powered by Stripe"
         role="img"
         className="block h-10 w-36 bg-contain bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/Powered by Stripe - black.svg)" }}
+        style={{ backgroundImage: "url(/Powered by Stripe - blurple.svg)" }}
       />
     ),
   },
   {
     name: "Presence window",
     detail: "deterministic",
-    icon: Clock3,
     logo: (
-      <span
-        aria-label="Vouch icon"
-        role="img"
-        className="block size-14 bg-contain bg-center bg-no-repeat"
-        style={{ backgroundImage: "url(/icon-192.png)" }}
+      <LogoLockup
+        iconClassName="size-7 text-blue-600"
+        textClassName="text-[22px] text-black"
       />
     ),
   },
@@ -408,22 +384,24 @@ export function AuthProcessPanelGrid() {
   const reversedLogos = [...authProcessLogos].reverse()
 
   return (
-    <div className="flex h-full w-full flex-col justify-between overflow-hidden py-10">
+    <div className="flex h-full w-full flex-col justify-center gap-5 overflow-hidden py-10">
       <ProcessPanelMarqueeTrack
         logos={authProcessLogos}
-        direction="left"
-        className="-ml-8 w-[114%]"
+        direction="right"
+        className="-ml-10 w-[120%]"
+        itemClassName="h-20 min-w-72"
       />
       <ProcessPanelMarqueeTrack
         logos={reversedLogos}
-        direction="right"
-        className="-ml-16 w-[128%]"
+        direction="left"
+        className="-ml-16 w-[132%]"
         itemClassName="h-32 min-w-96 px-8"
       />
       <ProcessPanelMarqueeTrack
         logos={authProcessLogos}
-        direction="left"
-        className="-ml-8 w-[114%]"
+        direction="right"
+        className="-ml-10 w-[120%]"
+        itemClassName="h-20 min-w-72"
       />
     </div>
   )

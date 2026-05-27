@@ -105,6 +105,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
     <html
       lang="en"
       className={`${archivoBlack.variable} ${bebasNeue.variable} ${jetBrainsMono.variable}`}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
       <body>
