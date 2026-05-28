@@ -1,10 +1,5 @@
 import * as React from "react"
-import {
-  CheckCircle2,
-  LockKeyhole,
-  ShieldCheck,
-  type LucideIcon,
-} from "lucide-react"
+import { CheckCircle2, LockKeyhole, ShieldCheck, type LucideIcon } from "lucide-react"
 import { CardHeader, Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
 import { LogoLockup } from "@/components/brand/logo-lockup"
 import { Marquee, MarqueeItem, MarqueeSeparator } from "@/components/ui/marquee"
@@ -326,10 +321,7 @@ const authProcessLogos: readonly ProcessPanelGridItem[] = [
     name: "Vouch",
     detail: "authenticated",
     logo: (
-      <LogoLockup
-        iconClassName="size-7 text-blue-600"
-        textClassName="text-[22px] text-black"
-      />
+      <LogoLockup iconClassName="size-7 text-blue-600" textClassName="text-[22px] text-black" />
     ),
   },
   {
@@ -372,10 +364,7 @@ const authProcessLogos: readonly ProcessPanelGridItem[] = [
     name: "Presence window",
     detail: "deterministic",
     logo: (
-      <LogoLockup
-        iconClassName="size-7 text-blue-600"
-        textClassName="text-[22px] text-black"
-      />
+      <LogoLockup iconClassName="size-7 text-blue-600" textClassName="text-[22px] text-black" />
     ),
   },
 ]

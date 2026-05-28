@@ -1,5 +1,7 @@
 import * as React from "react"
 import { TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { stat } from "fs"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 
 export interface StatItem {
   value: string
@@ -109,6 +111,7 @@ export function StatsCards({ title, subtitle, stats }: StatsCardsProps) {
 // STATS VARIANT 3: Split with Content
 // ============================================================================
 export interface StatsSplitProps {
+  subtitle?: string
   title: string
   description: string
   stats: StatItem[]
@@ -116,39 +119,47 @@ export interface StatsSplitProps {
 }
 
 export function StatsSplit({
+  subtitle,
   title,
   description,
   stats,
   contentPosition = "left",
 }: StatsSplitProps) {
   return (
-    <section className="px-4 py-16 md:px-8 lg:px-16">
-      <div
-        className={
-          contentPosition === "right"
-            ? "mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2 md:[&>*:first-child]:order-2"
-            : "mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2"
-        }
-      >
-        <div className="space-y-6">
-          <h2 className="font-black uppercase">{title}</h2>
-          <p className="text-lg font-medium text-neutral-400">{description}</p>
-        </div>
+    <section className="px-4 py-16">
+      {subtitle && (
+        <div
+          className={
+            contentPosition === "right"
+              ? "mx-auto grid max-w-6xl items-center gap-8 md:grid-cols-2 md:[&>*:first-child]:order-2"
+              : "mx-auto grid max-w-6xl items-center gap-8 md:grid-cols-2"
+          }
+        >
+          <div className="space-y-6">
+            <p className="mb-6 inline-block border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-blue-600 uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+              {subtitle}
+            </p>
+            <div className="text-7xl font-black uppercase">{title}</div>
+            <p className="text-lg font-medium text-neutral-400">{description}</p>
+          </div>
 
-        <div className="grid grid-cols-2 gap-8">
-          {stats.map((stat) => (
-            <div
-              key={`stat-${stat.label}`}
-              className="border-3 border-neutral-400 bg-black p-6 text-center shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
-            >
-              <div className="text-4xl font-black text-blue-600">{stat.value}</div>
-              <div className="mt-1 text-lg font-bold tracking-wide text-neutral-400 uppercase">
-                {stat.label}
-              </div>
-            </div>
-          ))}
+          <div className="grid grid-cols-2 gap-6">
+            {stats.map((stat) => (
+              <Card
+                key={`stat-${stat.label}`}
+                className={`group flex flex-col overflow-hidden bg-black transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]`}
+              >
+                <CardContent className="space-y-2">
+                  <div className="leading text-lg leading-tight text-blue-600 uppercase">
+                    {stat.label}
+                  </div>
+                  <div className="text-sm">{stat.value}</div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </section>
   )
 }

@@ -101,7 +101,20 @@ export function CTAWithBackground({
           {description ? (
             <p className="mx-auto text-base font-medium text-white md:text-lg">{description}</p>
           ) : null}
-          <CTAButton action={primaryAction} variant="outline" />
+          {primaryAction && (
+            <div>
+              {primaryAction &&
+                (primaryAction.href ? (
+                  <Button size="lg" variant="default" asChild>
+                    <Link href={primaryAction.href}>{primaryAction.label}</Link>
+                  </Button>
+                ) : (
+                  <Button size="lg" variant="default" onClick={primaryAction.onClick}>
+                    {primaryAction.label}
+                  </Button>
+                ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

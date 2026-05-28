@@ -210,14 +210,20 @@ export interface FeatureBentoGridProps {
   title?: string
   subtitle?: string
   features: BentoFeatureItem[]
+  align?: "center" | "left"
 }
 
-export function FeatureBentoGrid({ title, subtitle, features }: FeatureBentoGridProps) {
+export function FeatureBentoGrid({
+  title,
+  subtitle,
+  features,
+  align = "center",
+}: FeatureBentoGridProps) {
   return (
     <section className="px-4 py-16 md:px-8 lg:px-16">
       <div className="mx-auto max-w-7xl">
         {(title || subtitle) && (
-          <div className="mb-12 space-y-4 text-center">
+          <div className={`mb-12 space-y-4 ${align === "left" ? "text-left" : "text-center"}`}>
             {subtitle && (
               <p className="mb-6 inline-block border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-blue-600 uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
                 {subtitle}
@@ -227,7 +233,7 @@ export function FeatureBentoGrid({ title, subtitle, features }: FeatureBentoGrid
           </div>
         )}
 
-        <div className="grid auto-rows-[200px] gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <div className="grid auto-rows-auto gap-6 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, index) => {
             const spanClass = {
               normal: "",
@@ -251,9 +257,7 @@ export function FeatureBentoGrid({ title, subtitle, features }: FeatureBentoGrid
                     {feature.icon}
                   </div>
                   <CardTitle className="text-2xl uppercase">{feature.title}</CardTitle>
-                  <CardDescription className="line-clamp-3 text-base">
-                    {feature.description}
-                  </CardDescription>
+                  <CardDescription className="text-base">{feature.description}</CardDescription>
                 </CardHeader>
               </Card>
             )

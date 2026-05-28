@@ -1,31 +1,32 @@
 import {
-  CalendarDays,
+  BadgeDollarSign,
+  CalendarClock,
   Check,
+  Clock3,
   FileText,
+  Handshake,
   Lock,
-  MoreHorizontal,
   ShieldCheck,
   UsersRound,
-  Wrench,
   type LucideIcon,
 } from "lucide-react"
 
 import { CTAWithBackground } from "@/components/blocks/cta-section"
-import { FeatureGridWithIcons } from "@/components/blocks/feature-grid"
-import { HeroCentered } from "@/components/blocks/hero-section"
-import { ProcessPanel } from "@/components/blocks/process-panel"
-import { StatsCards } from "@/components/blocks/stats-section"
+import { FeatureBentoGrid } from "@/components/blocks/feature-grid"
+import { StatsCards, StatsSplit } from "@/components/blocks/stats-section"
 import { PublicShell } from "@/components/navigation/public-shell"
 import {
+  landingAudienceFeatures,
+  landingCalloutContent,
+  landingFeatureCards,
   landingHeroActionsContent,
   landingHeroContent,
   landingMetrics,
   landingProcessPanelContent,
   landingProcessSteps,
-  landingSectionIntroContent,
-  landingTrustPanelContent,
-  landingUseCases,
+  landingProofStats,
 } from "@/content/marketing"
+import { HeroSplitPanel } from "@/components/blocks/hero-section"
 
 const processIcons = {
   file: FileText,
@@ -34,80 +35,82 @@ const processIcons = {
   lock: Lock,
 } satisfies Record<(typeof landingProcessSteps)[number]["icon"], LucideIcon>
 
-const useCaseIcons = {
-  calendar: CalendarDays,
-  users: UsersRound,
-  wrench: Wrench,
-  more: MoreHorizontal,
-} satisfies Record<(typeof landingUseCases)[number]["icon"], LucideIcon>
+const ruleIcons = {
+  confirmation: Check,
+  window: Clock3,
+  rules: ShieldCheck,
+  payment: BadgeDollarSign,
+  immutable: Lock,
+} satisfies Record<(typeof landingFeatureCards)[number]["icon"], LucideIcon>
+
+const audienceIcon = {
+  money: BadgeDollarSign,
+  calendar: CalendarClock,
+  handshake: Handshake,
+  rules: Lock,
+} satisfies Record<(typeof landingAudienceFeatures)[number]["icon"], LucideIcon>
 
 export default function HomePage() {
   return (
     <PublicShell>
-      <main>
-        <section className="mt-18 grid gap-8 px-12 lg:grid-cols-2">
-          <HeroCentered
-            title={landingHeroContent.title}
-            description={landingHeroContent.body}
-            primaryAction={{
-              label: landingHeroActionsContent.primaryLabel,
-              href: "/sign-up?return_to=/vouches/new",
-            }}
-            secondaryAction={{ label: landingHeroActionsContent.secondaryLabel, href: "/pricing" }}
-          />
+      <HeroSplitPanel
+        eyebrow={landingHeroContent.eyebrow}
+        title={landingHeroContent.title}
+        titleHighlight={landingHeroContent.titleHighlight}
+        description={landingHeroContent.body}
+        primaryAction={{
+          label: landingHeroActionsContent.primaryLabel,
+          href: "/sign-up?return_to=/vouches/new",
+        }}
+        secondaryAction={{
+          label: landingHeroActionsContent.secondaryLabel,
+          href: "#how-it-works",
+        }}
+        panelId="how-it-works"
+        panelTitle={landingProcessPanelContent.title}
+        panelSteps={landingProcessSteps.map((step) => ({
+          ...step,
+          icon: processIcons[step.icon],
+        }))}
+        panelFooter={landingProcessPanelContent.footer}
+      />
 
-          <div id="process">
-            <ProcessPanel
-              title={landingProcessPanelContent.title}
-              steps={landingProcessSteps.map((step) => ({
-                ...step,
-                icon: processIcons[step.icon],
-              }))}
-              footer={landingProcessPanelContent.footer}
-            />
-          </div>
-        </section>
-        <section>
-          <StatsCards
-            title="Protocol metrics"
-            subtitle="Payment coordination"
-            stats={landingMetrics.map((item) => ({
-              label: item.label,
-              value: item.value,
-              description: item.body,
-            }))}
-          />
+      <FeatureBentoGrid
+        align="left"
+        subtitle="Clear Rules"
+        title="Fair for Everyone"
+        features={landingFeatureCards.map((feature) => {
+          const Icon = ruleIcons[feature.icon]
 
-          <FeatureGridWithIcons
-            subtitle={landingSectionIntroContent.eyebrow}
-            title={landingSectionIntroContent.title}
-            description={landingSectionIntroContent.body}
-            columns={4}
-            features={landingUseCases.map((item) => {
-              const Icon = useCaseIcons[item.icon]
+          return {
+            title: feature.title,
+            description: feature.body,
+            span: feature.span,
+            icon: <Icon className="size-7 text-white" strokeWidth={1.8} />,
+          }
+        })}
+      />
 
-              return {
-                title: item.title,
-                description: item.body,
-                icon: <Icon className="h-7 w-7 text-white" />,
-              }
-            })}
-          />
+      <StatsSplit
+        subtitle="Built for Real Commitment"
+        title="No-shows cost everyone."
+        description="A missed appointment wastes money, preparation, travel, and opportunity. Vouch puts something behind the promise before either side gives up time."
+        stats={landingProofStats.map((stat) => ({
+          value: stat.value,
+          label: stat.label,
+        }))}
+      />
 
-          <div id="callout">
-            <CTAWithBackground
-              icon={<ShieldCheck className="mx-auto h-12 w-12 text-white" />}
-              title={landingTrustPanelContent.title}
-              description={landingTrustPanelContent.body}
-              primaryAction={{
-                label: landingTrustPanelContent.label,
-                href: landingTrustPanelContent.action,
-              }}
-              backgroundColor="accent"
-            />
-          </div>
-        </section>
-      </main>
+      <CTAWithBackground
+        icon={<Handshake className="mx-auto size-12 text-white" strokeWidth={1.8} />}
+        title={landingCalloutContent.title}
+        description={landingCalloutContent.body}
+        primaryAction={{
+          label: landingCalloutContent.label,
+          href: landingCalloutContent.action,
+        }}
+        backgroundColor="accent"
+      />
     </PublicShell>
   )
 }

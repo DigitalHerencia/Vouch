@@ -9,7 +9,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
+          "bg-black text-white shadow-[4px_4px_0px_oklch(0%_0_0)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         outline:
           "bg-black text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.811)] hover:translate-x-[4px] hover:translate-y-[4px] hover:shadow-none active:translate-x-[4px] active:translate-y-[4px] active:shadow-none",
         link: "border-none text-white shadow-none hover:scale-110 hover:text-blue-600 hover:underline hover:underline-offset-4",

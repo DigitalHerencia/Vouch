@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button"
-import { ArrowRight, Play, Zap } from "lucide-react"
+import { Zap, type LucideIcon } from "lucide-react"
 import Link from "next/link"
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 // ============================================================================
 // HERO VARIANT 1: Centered
@@ -106,28 +107,20 @@ export function HeroSplit({
               {primaryAction &&
                 (primaryAction.href ? (
                   <Button size="lg" asChild>
-                    <a href={primaryAction.href}>
-                      {primaryAction.label}
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </a>
+                    <a href={primaryAction.href}>{primaryAction.label}</a>
                   </Button>
                 ) : (
                   <Button size="lg" onClick={primaryAction.onClick}>
                     {primaryAction.label}
-                    <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
                 ))}
               {secondaryAction &&
                 (secondaryAction.href ? (
                   <Button size="lg" variant="outline" asChild>
-                    <a href={secondaryAction.href}>
-                      <Play className="mr-2 h-4 w-4" />
-                      {secondaryAction.label}
-                    </a>
+                    <a href={secondaryAction.href}>{secondaryAction.label}</a>
                   </Button>
                 ) : (
                   <Button size="lg" variant="outline" onClick={secondaryAction.onClick}>
-                    <Play className="mr-2 h-4 w-4" />
                     {secondaryAction.label}
                   </Button>
                 ))}
@@ -145,6 +138,156 @@ export function HeroSplit({
             />
           </div>
         </div>
+      </div>
+    </section>
+  )
+}
+
+// ============================================================================
+// HERO VARIANT 2 Duplicate: Split with Process Panel
+// ============================================================================
+export interface HeroSplitPanelProps {
+  eyebrow?: string
+  title: string
+  titleHighlight?: string
+  description: string
+  primaryAction?: { label: string; href?: string; onClick?: () => void }
+  secondaryAction?: { label: string; href?: string; onClick?: () => void }
+
+  panelTitle: string
+  panelSteps: readonly {
+    number: string
+    title: string
+    body: string
+    icon: LucideIcon
+  }[]
+  panelFooter?: string | undefined
+  panelId?: string | undefined
+
+  panelPosition?: "left" | "right"
+}
+
+export function HeroSplitPanel({
+  eyebrow,
+  title,
+  titleHighlight,
+  description,
+  primaryAction,
+  secondaryAction,
+  panelTitle,
+  panelSteps,
+  panelFooter,
+  panelId,
+  panelPosition = "right",
+}: HeroSplitPanelProps) {
+  const contentOrder = panelPosition === "right" ? "order-1" : "order-2"
+  const panelOrder = panelPosition === "right" ? "order-2" : "order-1"
+  const titleWords = title.split(" ")
+
+  return (
+    <section className="px-4 py-12 md:px-8 lg:px-16">
+      <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-2 lg:items-stretch">
+        <div className={`flex min-h-full flex-col justify-between ${contentOrder}`}>
+          <div className="space-y-16">
+            <div className="space-y-8">
+              {eyebrow ? (
+                <p className="w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-blue-600 uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+                  {eyebrow}
+                </p>
+              ) : null}
+
+              <h1 className="text-6xl leading-none font-black uppercase md:text-[96px]">
+                {titleWords.map((word) => (
+                  <span
+                    key={word}
+                    className={[
+                      "block",
+                      word === titleHighlight ? "bg-blue-600 px-2 text-white" : "",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </h1>
+
+              <p className="max-w-xl text-lg font-medium text-neutral-400 md:text-xl">
+                {description}
+              </p>
+            </div>
+            {(primaryAction || secondaryAction) && (
+              <div className="flex flex-col gap-4 sm:flex-row">
+                {primaryAction &&
+                  (primaryAction.href ? (
+                    <Button size="lg" asChild>
+                      <a href={primaryAction.href}>{primaryAction.label}</a>
+                    </Button>
+                  ) : (
+                    <Button size="lg" onClick={primaryAction.onClick}>
+                      {primaryAction.label}
+                    </Button>
+                  ))}
+                {secondaryAction &&
+                  (secondaryAction.href ? (
+                    <Button size="lg" variant="outline" asChild>
+                      <Link href={secondaryAction.href}>{secondaryAction.label}</Link>
+                    </Button>
+                  ) : (
+                    <Button size="lg" variant="outline" onClick={secondaryAction.onClick}>
+                      {secondaryAction.label}
+                    </Button>
+                  ))}
+              </div>
+            )}
+          </div>
+        </div>
+        <Card
+          id={panelId}
+          className={`flex min-h-full w-full flex-col border-3 border-neutral-400 bg-black ${panelOrder}`}
+        >
+          <CardHeader className="items-center border-b-3 border-neutral-400 px-6 py-6 text-center md:px-8">
+            <CardTitle className="text-6xl leading-none font-black tracking-wide text-white">
+              {panelTitle}
+            </CardTitle>
+          </CardHeader>
+
+          <CardContent className="flex-1 p-0">
+            {panelSteps.map((step) => {
+              const Icon = step.icon
+
+              return (
+                <section
+                  key={`${step.number}-${step.title}`}
+                  className="border-b-3 border-neutral-400 last:border-b-0"
+                >
+                  <div className="grid min-h-31 min-w-0 grid-cols-[minmax(0,1fr)_7rem] md:min-h-34 md:grid-cols-[minmax(0,1fr)_140px]">
+                    <div className="flex min-w-0 items-center gap-4 px-4 py-5 md:gap-6 md:px-7">
+                      <div className="flex size-18 shrink-0 items-center justify-center border-3 border-neutral-400 md:size-22">
+                        <h2 className="font-extrabold">{step.number}</h2>
+                      </div>
+
+                      <div>
+                        <h3 className="tracking-normal text-white">{step.title}</h3>
+                        <p className="font-semibold text-neutral-400">{step.body}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-center border-l-3 border-neutral-400">
+                      <Icon className="size-14 text-white md:size-16" strokeWidth={1.8} />
+                    </div>
+                  </div>
+                </section>
+              )
+            })}
+          </CardContent>
+
+          {panelFooter ? (
+            <CardFooter className="justify-center bg-blue-600 px-6 py-6 text-center">
+              <h3 className="font-black tracking-wide text-white">{panelFooter}</h3>
+            </CardFooter>
+          ) : null}
+        </Card>
       </div>
     </section>
   )
@@ -240,15 +383,11 @@ export function HeroMinimal({ title, description, primaryAction }: HeroMinimalPr
           {primaryAction &&
             (primaryAction.href ? (
               <Button size="lg" className="shrink-0" asChild>
-                <a href={primaryAction.href}>
-                  {primaryAction.label}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </a>
+                <a href={primaryAction.href}>{primaryAction.label}</a>
               </Button>
             ) : (
               <Button size="lg" className="shrink-0" onClick={primaryAction.onClick}>
                 {primaryAction.label}
-                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             ))}
         </div>
@@ -297,15 +436,11 @@ export function HeroWithVideo({
           {primaryAction &&
             (primaryAction.href ? (
               <Button size="lg" asChild>
-                <a href={primaryAction.href}>
-                  {primaryAction.label}
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </a>
+                <a href={primaryAction.href}>{primaryAction.label}</a>
               </Button>
             ) : (
               <Button size="lg" onClick={primaryAction.onClick}>
                 {primaryAction.label}
-                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             ))}
         </div>
@@ -321,9 +456,7 @@ export function HeroWithVideo({
           </div>
           {/* Play button overlay */}
           <div className="absolute inset-0 flex items-center justify-center bg-neutral-900/20 transition-colors group-hover:bg-neutral-400/80">
-            <div className="flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
-              <Play className="h-8 w-8 fill-white" />
-            </div>
+            <div className="flex h-20 w-20 items-center justify-center border-3 border-neutral-400 bg-blue-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all group-hover:-translate-x-1 group-hover:-translate-y-1 group-hover:shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"></div>
           </div>
         </div>
       </div>
@@ -337,6 +470,7 @@ export function HeroWithVideo({
 export const HeroSection = {
   Centered: HeroCentered,
   Split: HeroSplit,
+  SplitPanel: HeroSplitPanel,
   WithStats: HeroWithStats,
   Minimal: HeroMinimal,
   WithVideo: HeroWithVideo,
