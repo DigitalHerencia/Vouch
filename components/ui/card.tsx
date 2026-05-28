@@ -9,9 +9,9 @@ const Card = React.forwardRef<
     ref={ref}
     role={role}
     className={cn(
-      "border-3 border-neutral-400 bg-black text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.811)] transition-all duration-200",
+      "border-3 border-neutral-400 bg-black text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.811)] transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.811)]",
       interactive &&
-        "cursor-pointer hover:translate-x-1 hover:translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.811)] active:translate-x-1 active:translate-y-1 active:shadow-none",
+        "cursor-pointer transition-all active:translate-x-1 active:translate-y-1 active:shadow-none",
       className
     )}
     {...props}

@@ -3,6 +3,15 @@ import { Zap, type LucideIcon } from "lucide-react"
 import Link from "next/link"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
+const subtitleMotion =
+  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+const headingWordMotion =
+  "block w-fit transition-all duration-300 [-webkit-text-stroke:4px_oklch(25.5%_0_0)] text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+const bodyTextMotion =
+  "transition-all duration-200 text-shadow-[2px_2px_5px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[4px_4px_4px_oklch(54.6%_0.245_262.881)]"
+const panelMotion =
+  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
+
 // ============================================================================
 // HERO VARIANT 1: Centered
 // ============================================================================
@@ -191,28 +200,39 @@ export function HeroSplitPanel({
           <div className="space-y-16">
             <div className="space-y-8">
               {eyebrow ? (
-                <p className="w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-blue-600 uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+                <p
+                  className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+                >
                   {eyebrow}
                 </p>
               ) : null}
 
-              <h1 className="text-6xl leading-none font-black uppercase md:text-[96px]">
-                {titleWords.map((word) => (
-                  <span
-                    key={word}
-                    className={[
-                      "block",
-                      word === titleHighlight ? "bg-blue-600 px-2 text-white" : "",
-                    ]
-                      .filter(Boolean)
-                      .join(" ")}
-                  >
-                    {word}
-                  </span>
-                ))}
+              <h1 className="group text-6xl font-black text-white uppercase md:text-[96px]">
+                {titleWords.map((word, i) => {
+                  const isHighlighted = word === titleHighlight
+
+                  return (
+                    <span
+                      key={`${word}-${i}`}
+                      className={[
+                        headingWordMotion,
+                        isHighlighted
+                          ? "border-3 border-neutral-200 bg-blue-600 px-2 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] group-hover:shadow-[10px_10px_0px_oklch(54.6%_0.245_262.881)]"
+                          : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      style={{ transitionDelay: `${i * 75}ms` }}
+                    >
+                      {word}
+                    </span>
+                  )
+                })}
               </h1>
 
-              <p className="max-w-xl text-lg font-medium text-neutral-400 md:text-xl">
+              <p
+                className={`max-w-xl text-lg font-medium text-neutral-400 md:text-xl ${bodyTextMotion}`}
+              >
                 {description}
               </p>
             </div>
@@ -244,7 +264,7 @@ export function HeroSplitPanel({
         </div>
         <Card
           id={panelId}
-          className={`flex min-h-full w-full flex-col border-3 border-neutral-400 bg-black ${panelOrder}`}
+          className={`flex min-h-full w-full flex-col border-3 border-neutral-400 bg-black ${panelMotion} ${panelOrder}`}
         >
           <CardHeader className="items-center border-b-3 border-neutral-400 px-6 py-6 text-center md:px-8">
             <CardTitle className="text-6xl leading-none font-black tracking-wide text-white">

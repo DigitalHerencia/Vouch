@@ -3,6 +3,15 @@ import { TrendingUp, TrendingDown, Minus } from "lucide-react"
 import { stat } from "fs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 
+const subtitleMotion =
+  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+const headingMotion =
+  "transition-all duration-300 text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+const bodyTextMotion =
+  "transition-all duration-200 text-shadow-[2px_2px_5px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[4px_4px_4px_oklch(54.6%_0.245_262.881)]"
+const cardMotion =
+  "group flex flex-col overflow-hidden bg-black transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
+
 export interface StatItem {
   value: string
   label: string
@@ -136,19 +145,20 @@ export function StatsSplit({
           }
         >
           <div className="space-y-6">
-            <p className="mb-6 inline-block border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-blue-600 uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+            <p
+              className={`mb-6 inline-block border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-blue-600 uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+            >
               {subtitle}
             </p>
-            <div className="text-7xl font-black uppercase">{title}</div>
-            <p className="text-lg font-medium text-neutral-400">{description}</p>
+            <div className={`text-7xl font-black uppercase ${headingMotion}`}>{title}</div>
+            <p className={`text-lg font-medium text-neutral-400 ${bodyTextMotion}`}>
+              {description}
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-6">
             {stats.map((stat) => (
-              <Card
-                key={`stat-${stat.label}`}
-                className={`group flex flex-col overflow-hidden bg-black transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]`}
-              >
+              <Card key={`stat-${stat.label}`} className={cardMotion}>
                 <CardContent className="space-y-2">
                   <div className="leading text-lg leading-tight text-blue-600 uppercase">
                     {stat.label}

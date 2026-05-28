@@ -1,7 +1,7 @@
 export const landingHeroContent = {
   eyebrow: "Put something behind the promise",
-  title: "Create. Accept. Meet. Confirm.",
-  titleHighlight: "Confirm.",
+  title: "Create Share Meet Confirm",
+  titleHighlight: "Confirm",
   body: "Vouch turns a verbal commitment into a financial commitment using clear rules both people accept before the appointment happens.",
 } as const
 

@@ -4,6 +4,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 const featureColors = ["bg-black"]
 
 const iconColors = ["bg-black", "bg-black", "bg-black", "bg-black", "bg-black"]
+const subtitleMotion =
+  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+const headingWordMotion =
+  "inline-block text-white transition-all duration-300 [-webkit-text-stroke:2px_oklch(25.5%_0_0)] text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+const cardMotion =
+  "group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
 
 // ============================================================================
 // FEATURE GRID VARIANT 1: With Icons
@@ -225,11 +231,30 @@ export function FeatureBentoGrid({
         {(title || subtitle) && (
           <div className={`mb-12 space-y-4 ${align === "left" ? "text-left" : "text-center"}`}>
             {subtitle && (
-              <p className="mb-6 inline-block border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-blue-600 uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+              <p
+                className={`mb-6 inline-block border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+              >
                 {subtitle}
               </p>
             )}
-            {title && <h2 className="font-black uppercase">{title}</h2>}
+
+            {title && (
+              <h1
+                className={`group flex flex-wrap gap-x-4 font-black uppercase ${
+                  align === "left" ? "justify-start" : "justify-center"
+                }`}
+              >
+                {title.split(" ").map((word, i) => (
+                  <span
+                    key={`${word}-${i}`}
+                    className={headingWordMotion}
+                    style={{ transitionDelay: `${i * 75}ms` }}
+                  >
+                    {word}
+                  </span>
+                ))}
+              </h1>
+            )}
           </div>
         )}
 
@@ -244,9 +269,7 @@ export function FeatureBentoGrid({
             return (
               <Card
                 key={feature.title}
-                className={`group flex flex-col overflow-hidden transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)] ${
-                  featureColors[index % 6]
-                } ${spanClass}`}
+                className={`${cardMotion} ${featureColors[index % 6]} ${spanClass}`}
               >
                 <CardHeader className="flex-1">
                   <div

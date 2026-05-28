@@ -93,7 +93,7 @@ export default function HomePage() {
 
       <StatsSplit
         subtitle="Built for Real Commitment"
-        title="No-shows cost everyone."
+        title="No-shows cost everyone"
         description="A missed appointment wastes money, preparation, travel, and opportunity. Vouch puts something behind the promise before either side gives up time."
         stats={landingProofStats.map((stat) => ({
           value: stat.value,
