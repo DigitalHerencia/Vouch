@@ -4,6 +4,8 @@ import { CTAWithBackground } from "@/components/blocks/cta-section"
 import { FAQAccordion } from "@/components/blocks/faq-section"
 import { HeroMinimal } from "@/components/blocks/hero-section"
 import { faqCalloutContent, faqSections } from "@/content/faq"
+import { Handshake } from "lucide-react"
+import { landingCalloutContent } from "@/content/marketing"
 
 export default function FaqRoute() {
   const CalloutIcon = faqCalloutContent.icon
@@ -19,10 +21,14 @@ export default function FaqRoute() {
         }))}
       />
       <CTAWithBackground
-        icon={<CalloutIcon className="size-8" />}
-        title={faqCalloutContent.title}
-        description={faqCalloutContent.body}
-        primaryAction={{ label: faqCalloutContent.label, href: faqCalloutContent.action }}
+        icon={<Handshake className="mx-auto size-12 text-white" strokeWidth={1.8} />}
+        title={landingCalloutContent.title}
+        description={landingCalloutContent.body}
+        primaryAction={{
+          label: landingCalloutContent.label,
+          href: landingCalloutContent.action,
+        }}
+        backgroundColor="primary"
       />
     </main>
   )

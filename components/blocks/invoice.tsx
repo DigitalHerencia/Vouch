@@ -1,8 +1,14 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Download, Printer, Mail, Check, Clock, AlertCircle } from "lucide-react"
+import { Download, Printer, Mail, Check, Clock, AlertCircle, CalendarClock } from "lucide-react"
 import Link from "next/link"
+import {
+  VouchCountdown,
+  VouchStatusBadge,
+  type VouchCountdownProps,
+  type VouchStatusTone,
+} from "@/components/blocks/status"
 
 // ============================================================================
 // Common Types
@@ -426,8 +432,14 @@ export interface InvoiceSummaryProps {
   dueDate: string
   amount: number
   amountLabel?: string
-  status: "paid" | "pending" | "overdue" | string
+  status: string
+  statusTone?: VouchStatusTone
   href: string
+  vouchId?: string
+  appointmentLabel?: string
+  confirmationWindowLabel?: string
+  protectedAmountLabel?: string
+  countdown?: VouchCountdownProps | undefined
   onView?: () => void
   onDownload?: () => void
 }
@@ -440,54 +452,81 @@ export function InvoiceSummary({
   amount,
   amountLabel,
   status,
+  statusTone = "pending",
   href,
-  onView,
-  onDownload,
+  vouchId,
+  appointmentLabel,
+  confirmationWindowLabel,
+  protectedAmountLabel,
+  countdown,
 }: InvoiceSummaryProps) {
-  const statusConfig = {
-    paid: { bg: "bg-blue-600", border: "border-blue-600", text: "text-white" },
-    pending: { bg: "bg-blue-600", border: "border-blue-600", text: "text-white" },
-    overdue: { bg: "bg-red-600", border: "border-red-600", text: "text-red-600" },
-  }
-
-  const statusStyle =
-    status in statusConfig
-      ? statusConfig[status as keyof typeof statusConfig]
-      : statusConfig.pending
-
   return (
-    <div className="mx-auto grid min-w-3xl grid-cols-3 border-3 border-neutral-400 bg-black p-4 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]">
-      <div className="space-y-2 text-sm">
-        <div>
-          <p className="text-xs font-bold text-neutral-400 uppercase">Issued</p>
-          <p className="font-medium">{issueDate}</p>
+    <Link
+      href={href}
+      className="grid gap-4 border-3 border-neutral-400 bg-black p-4 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 md:grid-cols-[minmax(0,1fr)_20rem]"
+    >
+      <div className="grid min-w-0 gap-4">
+        <div className="flex flex-wrap items-start justify-between gap-3 border-b-3 border-neutral-400 pb-4">
+          <div className="min-w-0">
+            <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
+              Vouch invoice
+            </p>
+            <h3 className="mt-2 truncate text-2xl font-black tracking-wide text-white uppercase">
+              {invoiceNumber}
+            </h3>
+            {vouchId ? (
+              <p className="mt-1 truncate font-mono text-xs font-bold text-neutral-400 uppercase">
+                {vouchId}
+              </p>
+            ) : null}
+          </div>
+          <VouchStatusBadge status={status} tone={statusTone} />
         </div>
-        <div>
-          <p className="text-xs font-bold text-neutral-400 uppercase">Due</p>
-          <p className="font-medium">{dueDate}</p>
+
+        <div className="grid gap-3 md:grid-cols-3">
+          <InvoiceSummaryMetric label="Participant" value={clientName} />
+          <InvoiceSummaryMetric
+            label="Protected"
+            value={protectedAmountLabel ?? amountLabel ?? `$${amount.toFixed(2)}`}
+          />
+          <InvoiceSummaryMetric
+            label="Customer total"
+            value={amountLabel ?? `$${amount.toFixed(2)}`}
+          />
+        </div>
+
+        <div className="grid gap-3 md:grid-cols-3">
+          <InvoiceSummaryMetric label="Created" value={issueDate} />
+          <InvoiceSummaryMetric label="Appointment" value={appointmentLabel ?? dueDate} />
+          <InvoiceSummaryMetric
+            label="Confirmation window"
+            value={confirmationWindowLabel ?? dueDate}
+          />
         </div>
       </div>
 
-      <div className="flex flex-col items-center justify-between">
-        <div>
-          <p className="text-3xl font-black text-neutral-400">{clientName}</p>
-        </div>
-        <p className="mx-2 font-mono text-2xl font-black">
-          {amountLabel ?? `$${amount.toFixed(2)}`}
+      <div className="grid content-between gap-4">
+        {countdown ? (
+          <VouchCountdown {...countdown} />
+        ) : (
+          <div className="flex min-h-32 items-center gap-3 border-3 border-neutral-400 bg-neutral-900 p-4">
+            <CalendarClock className="size-6 text-blue-600" />
+            <p className="text-sm font-black text-neutral-400 uppercase">No appointment time</p>
+          </div>
+        )}
+        <p className="text-right text-xs font-black tracking-widest text-blue-600 uppercase">
+          Open detail
         </p>
-        <p className="text-sm font-bold">{invoiceNumber}</p>
       </div>
+    </Link>
+  )
+}
 
-      <div className="mr-2 flex flex-col items-end justify-between">
-        <div
-          className={`w-18 border-2 px-2 py-1 text-xs font-bold uppercase ${statusStyle.bg} ${statusStyle.border} ${statusStyle.text}`}
-        >
-          {status}
-        </div>
-        <Button variant="link" size="nav">
-          <Link href={href}>View</Link>
-        </Button>
-      </div>
+function InvoiceSummaryMetric({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="min-w-0 border border-neutral-400 bg-neutral-900 p-3">
+      <p className="text-[11px] font-black tracking-widest text-neutral-400 uppercase">{label}</p>
+      <p className="mt-2 truncate font-mono text-sm font-black text-white uppercase">{value}</p>
     </div>
   )
 }
@@ -510,7 +549,7 @@ export interface InvoiceListProps {
   onDownload?: (id: string) => void
 }
 
-export function InvoiceList({ invoices, onView, onDownload }: InvoiceListProps) {
+export function InvoiceList({ invoices }: InvoiceListProps) {
   const statusConfig = {
     paid: "bg-blue-600 text-white",
     pending: "bg-blue-600 text-white",

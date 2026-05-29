@@ -7,12 +7,6 @@ import Link from "next/link"
 
 const cardMotion =
   "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
-const iconMotion =
-  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:drop-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
-const headingMotion =
-  "transition-all duration-300 text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
-const bodyTextMotion =
-  "transition-all duration-200 text-shadow-[2px_2px_5px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[4px_4px_4px_oklch(54.6%_0.245_262.881)]"
 
 function safeHref(href: string) {
   if (href.startsWith("/") || href.startsWith("#") || href.startsWith("mailto:")) return href
@@ -105,19 +99,13 @@ export function CTAWithBackground({
     <main>
       <section className="px-4 py-16 md:px-8 lg:px-16">
         <div
-          className={`border-3 border-neutral-400 p-8 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:p-12 ${cardMotion} ${bgColors[backgroundColor]}`}
+          className={`border-3 border-neutral-400 p-8 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] backdrop-blur-3xl md:p-12 ${cardMotion} ${bgColors[backgroundColor]}`}
         >
           <div className="space-y-6 text-center">
-            <div className={iconMotion}>
-              {icon ?? <CheckCircle className="mx-auto h-12 w-12" />}
-            </div>
-            <h1 className={`font-black ${headingMotion}`}>{title}</h1>
+            <div>{icon ?? <CheckCircle className="mx-auto h-12 w-12" />}</div>
+            <h1 className="font-black">{title}</h1>
             {description ? (
-              <p
-                className={`mx-auto text-base font-medium text-white md:text-lg ${bodyTextMotion}`}
-              >
-                {description}
-              </p>
+              <p className="mx-auto text-base font-medium text-white md:text-lg">{description}</p>
             ) : null}
             {primaryAction && (
               <div>

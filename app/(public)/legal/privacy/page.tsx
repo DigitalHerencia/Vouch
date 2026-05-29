@@ -4,6 +4,8 @@ import { CTAWithBackground } from "@/components/blocks/cta-section"
 import { FAQSimpleList } from "@/components/blocks/faq-section"
 import { HeroMinimal } from "@/components/blocks/hero-section"
 import { privacyCalloutContent, privacySections } from "@/content/legal"
+import { landingCalloutContent } from "@/content/marketing"
+import { Handshake } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Privacy | Vouch",
@@ -14,29 +16,25 @@ export default function PrivacyRoute() {
   const CalloutIcon = privacyCalloutContent.icon
 
   return (
-    <main className="grid min-h-[calc(100dvh-8rem)] gap-8 sm:gap-10 md:gap-12">
-      <HeroMinimal
-        title="Privacy"
-        description="Vouch stores operational state needed to coordinate provider-backed payments and confirmation windows."
+    <main>
+      <FAQSimpleList
+        subtitle="Legal"
+        title="Privacy Policy"
+        items={privacySections.map((section) => ({
+          question: section.heading,
+          answer: section.body.join(" "),
+        }))}
       />
-      <section className="grid min-h-0 gap-8 md:grid-cols-[minmax(0,1fr)_24rem]">
-        <FAQSimpleList
-          title="Privacy Policy"
-          items={privacySections.map((section) => ({
-            question: section.heading,
-            answer: section.body.join(" "),
-          }))}
-        />
-        <CTAWithBackground
-          icon={<CalloutIcon className="size-8" />}
-          title={privacyCalloutContent.title}
-          description={privacyCalloutContent.body}
-          primaryAction={{
-            label: privacyCalloutContent.label,
-            href: privacyCalloutContent.action,
-          }}
-        />
-      </section>
+      <CTAWithBackground
+        icon={<Handshake className="mx-auto size-12 text-white" strokeWidth={1.8} />}
+        title={landingCalloutContent.title}
+        description={landingCalloutContent.body}
+        primaryAction={{
+          label: landingCalloutContent.label,
+          href: landingCalloutContent.action,
+        }}
+        backgroundColor="primary"
+      />
     </main>
   )
 }

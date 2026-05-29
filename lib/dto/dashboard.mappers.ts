@@ -15,6 +15,7 @@ export type DashboardFiltersDTO = {
 export type DashboardSummaryDTO = {
   userId: string
   counts: {
+    drafts: number
     actionRequired: number
     active: number
     completed: number
@@ -22,6 +23,7 @@ export type DashboardSummaryDTO = {
     archived: number
   }
   sections: {
+    drafts: VouchCardDTO[]
     actionRequired: VouchCardDTO[]
     active: VouchCardDTO[]
     completed: VouchCardDTO[]
@@ -70,12 +72,14 @@ export function mapDashboardVouchCards(records: DashboardVouchRecord[]): VouchCa
 
 export function mapDashboardSummaryDTO(input: {
   userId: string
+  drafts: DashboardVouchRecord[]
   actionRequired: DashboardVouchRecord[]
   active: DashboardVouchRecord[]
   completed: DashboardVouchRecord[]
   expired: DashboardVouchRecord[]
   archived: DashboardVouchRecord[]
 }): DashboardSummaryDTO {
+  const drafts = mapDashboardVouchCards(input.drafts)
   const actionRequired = mapDashboardVouchCards(input.actionRequired)
   const active = mapDashboardVouchCards(input.active)
   const completed = mapDashboardVouchCards(input.completed)
@@ -85,6 +89,7 @@ export function mapDashboardSummaryDTO(input: {
   return {
     userId: input.userId,
     counts: {
+      drafts: drafts.length,
       actionRequired: actionRequired.length,
       active: active.length,
       completed: completed.length,
@@ -92,6 +97,7 @@ export function mapDashboardSummaryDTO(input: {
       archived: archived.length,
     },
     sections: {
+      drafts,
       actionRequired,
       active,
       completed,

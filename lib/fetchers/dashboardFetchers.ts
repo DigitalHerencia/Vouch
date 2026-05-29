@@ -66,7 +66,8 @@ export async function getDashboardSummary(userId: string): Promise<DashboardSumm
 
   const now = new Date()
 
-  const [actionRequired, active, completed, expired, archived] = await Promise.all([
+  const [drafts, actionRequired, active, completed, expired, archived] = await Promise.all([
+    getDraftVouches({ userId }),
     getActionRequiredVouches({ userId }),
     getActiveVouches({ userId }),
     getCompletedVouches({ userId }),
@@ -76,11 +77,19 @@ export async function getDashboardSummary(userId: string): Promise<DashboardSumm
 
   return mapDashboardSummaryDTO({
     userId,
+    drafts,
     actionRequired,
     active,
     completed,
     expired: expired.filter((vouch) => vouch.confirmationExpiresAt <= now),
     archived,
+  })
+}
+
+export async function getDraftVouches(input: { userId: string }): Promise<VouchCardRecord[]> {
+  return listForUser(input.userId, {
+    archiveStatus: "active",
+    status: "draft" satisfies VouchStatus,
   })
 }
 

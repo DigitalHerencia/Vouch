@@ -7,7 +7,11 @@ const iconColors = ["bg-black", "bg-black", "bg-black", "bg-black", "bg-black"]
 const subtitleMotion =
   "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
 const headingWordMotion =
-  "inline-block text-white transition-all duration-300 [-webkit-text-stroke:2px_oklch(25.5%_0_0)] text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+  "inline-block text-white transition-all duration-300 text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+const headingMotion =
+  "transition-all duration-300 text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+const bodyTextMotion =
+  "transition-all duration-200 text-shadow-[2px_2px_5px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[4px_4px_4px_oklch(54.6%_0.245_262.881)]"
 const cardMotion =
   "group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
 
@@ -177,13 +181,15 @@ export function FeatureGridAlternating({ features }: FeatureGridAlternatingProps
               >
                 <div className="space-y-4">
                   <div className="space-y-2">
-                    <h2 className="font-black uppercase">{feature.title}</h2>
-                    <p className="text-lg font-medium text-neutral-400">{feature.description}</p>
+                    <h2 className={`font-black uppercase ${headingMotion}`}>{feature.title}</h2>
+                    <p className={`text-lg font-medium text-neutral-400 ${bodyTextMotion}`}>
+                      {feature.description}
+                    </p>
                   </div>
                 </div>
 
                 <div className="relative">
-                  <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]">
+                  <div className="overflow-hidden border-3 border-neutral-400 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]">
                     <div
                       aria-label={feature.title}
                       className={`flex min-h-80 items-center justify-center bg-black text-white [&_svg]:size-32 md:[&_svg]:size-40 ${
@@ -231,10 +237,10 @@ export function FeatureBentoGrid({
       <section className="px-4 py-16 md:px-8 lg:px-16">
         <div>
           {(title || subtitle) && (
-            <div className={`mb-12 space-y-4 ${align === "left" ? "text-left" : "text-center"}`}>
+            <div className={`mb-12 space-y-8 ${align === "left" ? "text-left" : "text-center"}`}>
               {subtitle && (
                 <p
-                  className={`mb-6 inline-block border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+                  className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
                 >
                   {subtitle}
                 </p>
@@ -274,14 +280,18 @@ export function FeatureBentoGrid({
                   className={`${cardMotion} ${featureColors[index % 6]} ${spanClass}`}
                 >
                   <CardHeader className="flex-1">
-                    <div
-                      className={`mb-4 flex h-12 w-12 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
-                        iconColors[index % 6]
-                      }`}
-                    >
-                      {feature.icon}
+                    <div className="mb-4 flex items-start gap-4">
+                      <div
+                        className={`flex h-12 w-12 shrink-0 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
+                          iconColors[index % 6]
+                        }`}
+                      >
+                        {feature.icon}
+                      </div>
+                      <CardTitle className="text-2xl leading-none uppercase">
+                        {feature.title}
+                      </CardTitle>
                     </div>
-                    <CardTitle className="text-2xl uppercase">{feature.title}</CardTitle>
                     <CardDescription className="text-base">{feature.description}</CardDescription>
                   </CardHeader>
                 </Card>

@@ -4,6 +4,9 @@ import { CardHeader, Card, CardContent, CardFooter, CardTitle } from "@/componen
 import { LogoLockup } from "@/components/brand/logo-lockup"
 import { Marquee, MarqueeItem, MarqueeSeparator } from "@/components/ui/marquee"
 
+const panelMotion =
+  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
+
 // ============================================================================
 // Process Panel VARIANT 1: Table with Icons
 // ============================================================================
@@ -143,7 +146,7 @@ export function ProcessPanelRuleGrid({ title, items, footer, id }: ProcessPanelR
   return (
     <main>
       <section className="px-4 py-16 md:px-8 lg:px-16">
-        <Card id={id} className="w-full border-3 border-neutral-400 bg-black">
+        <Card id={id} className={`w-full border-3 border-neutral-400 bg-black ${panelMotion}`}>
           <CardHeader className="items-center border-b-3 border-neutral-400 px-6 py-6 text-center">
             <CardTitle className="text-6xl font-black tracking-wide text-white">{title}</CardTitle>
           </CardHeader>
@@ -159,7 +162,7 @@ export function ProcessPanelRuleGrid({ title, items, footer, id }: ProcessPanelR
                   index === items.length - 1 ? "border-b-0" : "",
                 ].join(" ")}
               >
-                <p className="md:texy-base text-sm font-semibold tracking-widest text-blue-600 uppercase">
+                <p className="text-sm font-semibold tracking-widest text-blue-600 uppercase">
                   {item.label}
                 </p>
                 <h3 className="tracking-normal text-white">{item.value}</h3>

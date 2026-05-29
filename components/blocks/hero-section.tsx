@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button"
-import { Zap, type LucideIcon } from "lucide-react"
+import { type LucideIcon } from "lucide-react"
 import Link from "next/link"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 const subtitleMotion =
   "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
 const headingWordMotion =
-  "block w-fit transition-all duration-300 [-webkit-text-stroke:4px_oklch(25.5%_0_0)] text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+  "block w-fit transition-all duration-300 text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
 const bodyTextMotion =
   "transition-all duration-200 text-shadow-[2px_2px_5px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[4px_4px_4px_oklch(54.6%_0.245_262.881)]"
 const panelMotion =
@@ -16,34 +16,56 @@ const panelMotion =
 // HERO VARIANT 1: Centered
 // ============================================================================
 export interface HeroCenteredProps {
+  eyebrow?: string
   title: string
   titleHighlight?: string
   description: string
   primaryAction?: { label: string; href?: string; onClick?: () => void }
   secondaryAction?: { label: string; href?: string; onClick?: () => void }
+  align?: "center" | "left"
 }
 
 export function HeroCentered({
+  eyebrow,
   title,
   titleHighlight,
   description,
   primaryAction,
   secondaryAction,
+  align = "center",
 }: HeroCenteredProps) {
+  const isLeftAligned = align === "left"
+
   return (
     <main>
       <section className="px-4 py-16 md:px-8 lg:px-16">
-        <div className="flex flex-col items-center space-y-8">
-          <h1 className="text-center leading-tight font-black uppercase">
+        <div
+          className={`flex flex-col space-y-8 ${isLeftAligned ? "items-start" : "items-center"}`}
+        >
+          {eyebrow ? (
+            <p
+              className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+            >
+              {eyebrow}
+            </p>
+          ) : null}
+
+          <h1
+            className={`leading-tight font-black uppercase ${isLeftAligned ? "text-left" : "text-center"}`}
+          >
             {title}{" "}
             {titleHighlight && (
               <span className="bg-blue-600 px-2 text-white">{titleHighlight}</span>
             )}
           </h1>
 
-          <p className="mx-auto text-center text-lg font-medium text-neutral-400 md:text-xl">
-            {description}
-          </p>
+          {description ? (
+            <p
+              className={`text-lg font-medium text-neutral-400 md:text-xl ${isLeftAligned ? "text-left" : "mx-auto text-center"}`}
+            >
+              {description}
+            </p>
+          ) : null}
 
           {(primaryAction || secondaryAction) && (
             <div className="flex justify-items-center gap-4">
@@ -202,47 +224,45 @@ export function HeroSplitPanel({
   return (
     <main>
       <section className="px-4 py-16 md:px-8 lg:px-16">
-        <div className="gridl gap-8 lg:grid-cols-2 lg:items-stretch">
+        <div className="grid gap-8 lg:grid-cols-2 lg:items-stretch">
           <div className={`flex min-h-full flex-col justify-between ${contentOrder}`}>
-            <div className="space-y-16">
-              <div className="space-y-8">
-                {eyebrow ? (
-                  <p
-                    className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
-                  >
-                    {eyebrow}
-                  </p>
-                ) : null}
-
-                <h1 className="group text-6xl font-black text-white uppercase md:text-[96px]">
-                  {titleWords.map((word, i) => {
-                    const isHighlighted = word === titleHighlight
-
-                    return (
-                      <span
-                        key={`${word}-${i}`}
-                        className={[
-                          headingWordMotion,
-                          isHighlighted
-                            ? "border-3 border-neutral-200 bg-blue-600 px-2 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] group-hover:shadow-[10px_10px_0px_oklch(54.6%_0.245_262.881)]"
-                            : "",
-                        ]
-                          .filter(Boolean)
-                          .join(" ")}
-                        style={{ transitionDelay: `${i * 75}ms` }}
-                      >
-                        {word}
-                      </span>
-                    )
-                  })}
-                </h1>
-
+            <div className="space-y-8">
+              {eyebrow ? (
                 <p
-                  className={`max-w-xl text-lg font-medium text-neutral-400 md:text-xl ${bodyTextMotion}`}
+                  className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
                 >
-                  {description}
+                  {eyebrow}
                 </p>
-              </div>
+              ) : null}
+
+              <h1 className="group text-6xl font-black text-white uppercase md:text-[96px]">
+                {titleWords.map((word, i) => {
+                  const isHighlighted = word === titleHighlight
+
+                  return (
+                    <span
+                      key={`${word}-${i}`}
+                      className={[
+                        headingWordMotion,
+                        isHighlighted
+                          ? "border-3 border-neutral-200 bg-blue-600 px-2 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] group-hover:shadow-[10px_10px_0px_oklch(54.6%_0.245_262.881)]"
+                          : "",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                      style={{ transitionDelay: `${i * 75}ms` }}
+                    >
+                      {word}
+                    </span>
+                  )
+                })}
+              </h1>
+
+              <p
+                className={`max-w-xl text-lg font-medium text-neutral-400 md:text-xl ${bodyTextMotion}`}
+              >
+                {description}
+              </p>
               {(primaryAction || secondaryAction) && (
                 <div className="flex flex-col gap-4 sm:flex-row">
                   {primaryAction &&
@@ -273,8 +293,8 @@ export function HeroSplitPanel({
             id={panelId}
             className={`flex min-h-full w-full flex-col border-3 border-neutral-400 bg-black ${panelMotion} ${panelOrder}`}
           >
-            <CardHeader className="items-center border-b-3 border-neutral-400 px-6 py-6 text-center md:px-8">
-              <CardTitle className="text-6xl leading-none font-black tracking-wide text-white">
+            <CardHeader className="items-center border-b-3 border-neutral-400 px-5 py-4 text-center md:px-6">
+              <CardTitle className="text-4xl leading-none font-black tracking-wide text-white md:text-5xl">
                 {panelTitle}
               </CardTitle>
             </CardHeader>
@@ -288,20 +308,24 @@ export function HeroSplitPanel({
                     key={`${step.number}-${step.title}`}
                     className="border-b-3 border-neutral-400 last:border-b-0"
                   >
-                    <div className="grid min-h-31 min-w-0 grid-cols-[minmax(0,1fr)_7rem] md:min-h-34 md:grid-cols-[minmax(0,1fr)_140px]">
-                      <div className="flex min-w-0 items-center gap-4 px-4 py-5 md:gap-6 md:px-7">
-                        <div className="flex size-18 shrink-0 items-center justify-center border-3 border-neutral-400 md:size-22">
-                          <h2 className="font-extrabold">{step.number}</h2>
+                    <div className="grid min-h-24 min-w-0 grid-cols-[minmax(0,1fr)_5.5rem] md:min-h-27 md:grid-cols-[minmax(0,1fr)_112px]">
+                      <div className="flex min-w-0 items-center gap-3 px-4 py-3 md:gap-4 md:px-6">
+                        <div className="flex size-14 shrink-0 items-center justify-center border-3 border-neutral-400 md:size-16">
+                          <h2 className="text-2xl font-extrabold md:text-3xl">{step.number}</h2>
                         </div>
 
                         <div>
-                          <h3 className="tracking-normal text-white">{step.title}</h3>
-                          <p className="font-semibold text-neutral-400">{step.body}</p>
+                          <h3 className="text-xl tracking-normal text-white md:text-2xl">
+                            {step.title}
+                          </h3>
+                          <p className="text-sm leading-tight font-semibold text-neutral-400 md:text-base">
+                            {step.body}
+                          </p>
                         </div>
                       </div>
 
                       <div className="flex items-center justify-center border-l-3 border-neutral-400">
-                        <Icon className="size-14 text-white md:size-16" strokeWidth={1.8} />
+                        <Icon className="size-10 text-white md:size-12" strokeWidth={1.8} />
                       </div>
                     </div>
                   </section>
@@ -310,8 +334,10 @@ export function HeroSplitPanel({
             </CardContent>
 
             {panelFooter ? (
-              <CardFooter className="justify-center bg-blue-600 px-6 py-6 text-center">
-                <h3 className="font-black tracking-wide text-white">{panelFooter}</h3>
+              <CardFooter className="justify-center bg-blue-600 px-5 py-4 text-center">
+                <h3 className="text-xl font-black tracking-wide text-white md:text-2xl">
+                  {panelFooter}
+                </h3>
               </CardFooter>
             ) : null}
           </Card>
@@ -339,7 +365,6 @@ export function HeroWithStats({
   title,
   titleHighlight,
   description,
-  primaryAction,
   stats,
   align = "center",
 }: HeroWithStatsProps) {
@@ -348,62 +373,59 @@ export function HeroWithStats({
   return (
     <main>
       <section className="px-4 py-16 md:px-8 lg:px-16">
-        <div className={`mb-16 space-y-6 ${isLeftAligned ? "text-left" : "text-center"}`}>
+        <div className={`mb-12 space-y-8 ${isLeftAligned ? "text-left" : "text-center"}`}>
           {subtitle ? (
             <p
-              className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${isLeftAligned ? "" : "mx-auto"}`}
+              className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion} ${isLeftAligned ? "" : "mx-auto"}`}
             >
               {subtitle}
             </p>
           ) : null}
 
-          <h2 className="text-4xl font-black uppercase md:text-5xl lg:text-6xl">
-            {title}{" "}
+          <h2
+            className={`group flex flex-wrap gap-x-4 leading-tight font-black uppercase ${
+              isLeftAligned ? "justify-start" : "justify-center"
+            }`}
+          >
+            {title.split(" ").map((word, i) => (
+              <span
+                key={`${word}-${i}`}
+                className={headingWordMotion}
+                style={{ transitionDelay: `${i * 75}ms` }}
+              >
+                {word}
+              </span>
+            ))}
             {titleHighlight && (
-              <span className="bg-neutral-900 px-2 text-white">{titleHighlight}</span>
+              <span className="border-3 border-neutral-200 bg-blue-600 px-2 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all duration-300 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[10px_10px_0px_oklch(54.6%_0.245_262.881)]">
+                {titleHighlight}
+              </span>
             )}
           </h2>
 
-          <div
-            className={`flex flex-col gap-6 md:flex-row md:items-end md:justify-between ${isLeftAligned ? "" : "mx-auto max-w-4xl"}`}
+          <p
+            className={`max-w-4xl text-lg font-medium text-neutral-400 md:text-xl ${bodyTextMotion} ${isLeftAligned ? "" : "mx-auto"}`}
           >
-            <p
-              className={`max-w-2xl text-lg font-medium text-neutral-400 md:text-xl ${isLeftAligned ? "" : "mx-auto"}`}
-            >
-              {description}
-            </p>
-
-            {primaryAction &&
-              (primaryAction.href ? (
-                <Button size="lg" className="shrink-0" asChild>
-                  <a href={primaryAction.href}>
-                    {primaryAction.label}
-                    <Zap className="ml-2 h-4 w-4" />
-                  </a>
-                </Button>
-              ) : (
-                <Button size="lg" className="shrink-0" onClick={primaryAction.onClick}>
-                  {primaryAction.label}
-                  <Zap className="ml-2 h-4 w-4" />
-                </Button>
-              ))}
-          </div>
+            {description}
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="grid grid-cols-2 gap-6 md:grid-cols-4">
           {stats.map((stat) => (
             <div
               key={`stat-${stat.label}`}
-              className="border-3 border-neutral-400 bg-black p-6 text-left shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+              className="border-3 border-neutral-400 bg-black p-6 text-left shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
             >
-              <div className="flex items-baseline gap-3">
-                <div className="text-3xl font-black md:text-4xl">{stat.value}</div>
-                <div className="text-sm font-bold tracking-wide text-neutral-400 uppercase">
+              <div className="flex items-center gap-2 border-b-3 border-neutral-400 pb-3">
+                <div className="border-2 border-neutral-400 px-4 py-2 text-3xl font-black text-white md:text-4xl">
+                  {stat.value}
+                </div>
+                <div className="text-lg leading-tight font-bold text-blue-600 uppercase">
                   {stat.label}
                 </div>
               </div>
               {stat.body ? (
-                <p className="mt-3 text-sm font-medium text-neutral-400">{stat.body}</p>
+                <p className="mt-3 text-sm font-medium text-white">{stat.body}</p>
               ) : null}
             </div>
           ))}

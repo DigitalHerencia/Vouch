@@ -109,7 +109,7 @@ export default function HomePage() {
           label: landingCalloutContent.label,
           href: landingCalloutContent.action,
         }}
-        backgroundColor="accent"
+        backgroundColor="primary"
       />
     </PublicShell>
   )

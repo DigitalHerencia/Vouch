@@ -1,6 +1,6 @@
-import { CTABanner, CTASplit } from "@/components/blocks/cta-section"
+import type { VouchStatusTone } from "@/components/blocks/status"
 import { HeroCentered } from "@/components/blocks/hero-section"
-import { InvoiceList, type InvoiceListItem } from "@/components/blocks/invoice"
+import { InvoiceSummary, type InvoiceSummaryProps } from "@/components/blocks/invoice"
 import { StatsCards, type StatItem } from "@/components/blocks/stats-section"
 import { dashboardContent } from "@/content/dashboard"
 import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
@@ -16,6 +16,17 @@ function formatDate(value: string | null) {
   }).format(new Date(value))
 }
 
+function formatDateTime(value: string | null) {
+  if (!value) return dashboardContent.fallbackDeadline
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
+  }).format(new Date(value))
+}
+
 function formatClientName(vouch: VouchCardDTO) {
   return (
     vouch.customer?.displayName ??
@@ -26,26 +37,65 @@ function formatClientName(vouch: VouchCardDTO) {
   )
 }
 
-function mapInvoiceStatus(
-  section: "actionRequired" | "active" | "completed" | "expired"
-): InvoiceListItem["status"] {
-  if (section === "completed") return "paid"
-  if (section === "expired") return "overdue"
+function formatCurrency(cents: number, currency: string) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.toUpperCase(),
+  }).format(cents / 100)
+}
+
+function mapStatusTone(status: VouchCardDTO["status"]): VouchStatusTone {
+  if (status === "completed") return "complete"
+  if (status === "expired") return "expired"
+  if (status === "confirmable" || status === "authorized") return "active"
 
   return "pending"
 }
 
-function mapVouchToInvoice(
-  vouch: VouchCardDTO,
-  section: "actionRequired" | "active" | "completed" | "expired"
-): InvoiceListItem {
+function getCountdown(vouch: VouchCardDTO): InvoiceSummaryProps["countdown"] {
+  if (!vouch.appointmentStartsAt) return undefined
+
+  const now = Date.now()
+  const createdAt = vouch.createdAt ? new Date(vouch.createdAt).getTime() : now
+  const appointmentAt = new Date(vouch.appointmentStartsAt).getTime()
+  const total = Math.max(appointmentAt - createdAt, 1)
+  const remaining = appointmentAt - now
+  const percentRemaining = Math.max(0, Math.min(100, (remaining / total) * 100))
+  const remainingLabel =
+    remaining <= 0
+      ? "Due now"
+      : new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(
+          Math.ceil(remaining / 3_600_000),
+          "hour"
+        )
+
   return {
-    id: vouch.id,
+    label: "Appointment countdown",
+    expiresAtLabel: formatDateTime(vouch.appointmentStartsAt),
+    remainingLabel,
+    percentRemaining,
+    tone: mapStatusTone(vouch.status),
+  }
+}
+
+function mapVouchToInvoice(vouch: VouchCardDTO): InvoiceSummaryProps {
+  return {
     invoiceNumber: vouch.publicId,
     clientName: formatClientName(vouch),
-    date: formatDate(vouch.confirmationExpiresAt ?? vouch.appointmentStartsAt),
+    issueDate: formatDate(vouch.createdAt),
+    dueDate: formatDate(vouch.appointmentStartsAt ?? vouch.confirmationExpiresAt),
     amount: vouch.customerTotalCents / 100,
-    status: mapInvoiceStatus(section),
+    amountLabel: formatCurrency(vouch.customerTotalCents, vouch.currency),
+    status: vouch.status,
+    statusTone: mapStatusTone(vouch.status),
+    href: `/vouches/${vouch.id}`,
+    vouchId: vouch.id,
+    appointmentLabel: formatDateTime(vouch.appointmentStartsAt),
+    confirmationWindowLabel: `${formatDateTime(vouch.confirmationOpensAt)} - ${formatDateTime(
+      vouch.confirmationExpiresAt
+    )}`,
+    protectedAmountLabel: formatCurrency(vouch.protectedAmountCents, vouch.currency),
+    countdown: getCountdown(vouch),
   }
 }
 
@@ -53,73 +103,63 @@ export async function DashboardFeature() {
   const state = await getDashboardPageState()
   const sections = state.summary?.sections
 
+  const drafts = sections?.drafts ?? []
   const actionRequired = sections?.actionRequired ?? []
   const active = sections?.active ?? []
   const completed = sections?.completed ?? []
   const expired = sections?.expired ?? []
 
-  const invoices: InvoiceListItem[] = [
-    ...actionRequired.map((vouch) => mapVouchToInvoice(vouch, "actionRequired")),
-    ...active.map((vouch) => mapVouchToInvoice(vouch, "active")),
-    ...completed.map((vouch) => mapVouchToInvoice(vouch, "completed")),
-    ...expired.map((vouch) => mapVouchToInvoice(vouch, "expired")),
+  const invoices: InvoiceSummaryProps[] = [
+    ...drafts.map(mapVouchToInvoice),
+    ...actionRequired.map(mapVouchToInvoice),
+    ...active.map(mapVouchToInvoice),
+    ...completed.map(mapVouchToInvoice),
+    ...expired.map(mapVouchToInvoice),
   ]
 
   const counts = state.summary?.counts
+  const draftCount = counts?.drafts ?? drafts.length
   const activeCount = counts?.active ?? active.length
   const completedCount = counts?.completed ?? completed.length
   const actionRequiredCount = counts?.actionRequired ?? actionRequired.length
-  const readinessComplete = state.variant !== "empty"
 
   const metrics: StatItem[] = [
     {
-      label: dashboardContent.metrics.activeVouches.label,
+      label: "Drafts",
+      value: String(draftCount),
+    },
+    {
+      label: "Active",
       value: String(activeCount),
-      description: dashboardContent.metrics.activeVouches.body,
     },
     {
-      label: dashboardContent.metrics.pastVouches.label,
-      value: String(completedCount),
-      description: dashboardContent.metrics.pastVouches.body,
-    },
-    {
-      label: dashboardContent.metrics.actionRequired.label,
+      label: "Pending",
       value: String(actionRequiredCount),
-      description: dashboardContent.metrics.actionRequired.body,
+    },
+    {
+      label: "Completed",
+      value: String(completedCount),
     },
   ]
 
   return (
     <main>
-      {!readinessComplete ? (
-        <div className="sticky top-18 z-40 w-full">
-          <CTABanner
-            text={dashboardContent.readiness.body}
-            action={{ label: dashboardContent.readiness.cta, href: "/vouches/new" }}
-            dismissible
-          />
-        </div>
-      ) : null}
-
       <section className="px-4 py-16 md:px-6 md:py-24 lg:px-8">
         <div className="grid gap-8 md:gap-12">
           <HeroCentered
+            eyebrow={dashboardContent.hero.eyebrow}
             title={dashboardContent.hero.title}
-            description={dashboardContent.hero.body}
-            primaryAction={{ label: dashboardContent.actions.create, href: "/vouches/new" }}
+            description=""
+            align="left"
           />
 
-          <StatsCards title="Coordination Metrics" subtitle="Vouch" stats={metrics} />
+          <StatsCards stats={metrics} />
 
-          <InvoiceList invoices={invoices} />
-
-          <CTASplit
-            title={dashboardContent.cta.title}
-            description={dashboardContent.cta.body}
-            imageSrc="/logo-light.png"
-            imageAlt="Vouch"
-            primaryAction={{ label: dashboardContent.cta.label, href: "/vouches/new" }}
-          />
+          <section className="grid gap-6">
+            {invoices.map((invoice) => (
+              <InvoiceSummary key={invoice.vouchId ?? invoice.invoiceNumber} {...invoice} />
+            ))}
+          </section>
         </div>
       </section>
     </main>

@@ -1,5 +1,5 @@
 import * as React from "react"
-import { TrendingUp, TrendingDown, Minus } from "lucide-react"
+import { TrendingUp, TrendingDown, Minus, Check, CheckSquare } from "lucide-react"
 import { stat } from "fs"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
 
@@ -149,9 +149,9 @@ export function StatsSplit({
                 : "grid items-center gap-8 md:grid-cols-2"
             }
           >
-            <div className="space-y-6">
+            <div className="space-y-8">
               <p
-                className={`mb-6 inline-block border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-blue-600 uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+                className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
               >
                 {subtitle}
               </p>
@@ -165,10 +165,12 @@ export function StatsSplit({
               {stats.map((stat) => (
                 <Card key={`stat-${stat.label}`} className={cardMotion}>
                   <CardContent className="space-y-2">
-                    <div className="leading text-lg leading-tight text-blue-600 uppercase">
-                      {stat.label}
+                    <div className="flex items-start gap-2 border-b-3 border-neutral-400 pb-3">
+                      <CheckSquare className="h-8 w-8" />
+
+                      <h3 className="text-blue-600 uppercase">{stat.label}</h3>
                     </div>
-                    <div className="text-sm">{stat.value}</div>
+                    <p className="text-sm">{stat.value}</p>
                   </CardContent>
                 </Card>
               ))}

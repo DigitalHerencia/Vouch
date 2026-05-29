@@ -30,6 +30,7 @@ import {
   pricingStats,
   pricingTrustContent,
 } from "@/content/pricing"
+import { landingCalloutContent } from "@/content/marketing"
 
 const pricingFlowIcons = {
   amount: BadgeDollarSign,
@@ -85,10 +86,15 @@ export default function PricingPage() {
         footer="Customer authorizes only the protected amount"
       />
 
-      <HeroMinimal
-        title="Pay for the protocol. Capture only on confirmation."
-        description="The merchant buys the Vouch. The customer authorizes the protected amount. Both confirm in-window, or no capture happens."
-        primaryAction={{ label: "Create a Vouch", href: "/sign-up?return_to=/vouches/new" }}
+      <CTAWithBackground
+        icon={<Handshake className="mx-auto size-12 text-white" strokeWidth={1.8} />}
+        title={landingCalloutContent.title}
+        description={landingCalloutContent.body}
+        primaryAction={{
+          label: landingCalloutContent.label,
+          href: landingCalloutContent.action,
+        }}
+        backgroundColor="primary"
       />
     </main>
   )
