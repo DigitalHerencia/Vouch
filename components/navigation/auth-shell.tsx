@@ -9,9 +9,8 @@ export interface AuthShellProps {
 export function AuthShell({ children }: AuthShellProps) {
   return (
     <div className="relative h-dvh overflow-hidden">
-      <div className="h-full min-h-0 w-full overflow-hidden">{children}</div>
-
-      <div className="pointer-events-auto absolute inset-x-0 bottom-0 z-10">
+      <main>{children}</main>
+      <div className="absolute inset-x-0 bottom-0 z-10">
         <AuthFooter />
       </div>
     </div>

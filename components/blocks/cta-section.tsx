@@ -62,18 +62,20 @@ export interface CTASimpleProps {
 
 export function CTASimple({ title, description, primaryAction, secondaryAction }: CTASimpleProps) {
   return (
-    <section className="px-4 py-16 md:px-8">
-      <div className="mx-auto space-y-6 text-center">
-        <h1 className="font-black">{title}</h1>
-        {description ? (
-          <p className="mx-auto text-base font-medium text-white md:text-lg">{description}</p>
-        ) : null}
-        <div className="flex flex-col justify-center gap-4 sm:flex-row">
-          <CTAButton action={primaryAction} />
-          {secondaryAction ? <CTAButton action={secondaryAction} variant="outline" /> : null}
+    <main>
+      <section className="px-4 py-16 md:px-8 lg:px-16">
+        <div className="space-y-6 text-center">
+          <h1 className="font-black">{title}</h1>
+          {description ? (
+            <p className="mx-auto text-base font-medium text-white md:text-lg">{description}</p>
+          ) : null}
+          <div className="flex flex-col justify-center gap-4 sm:flex-row">
+            <CTAButton action={primaryAction} />
+            {secondaryAction ? <CTAButton action={secondaryAction} variant="outline" /> : null}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
   )
 }
 
@@ -100,35 +102,41 @@ export function CTAWithBackground({
   }
 
   return (
-    <section className="px-4 py-16 md:px-8 lg:px-16">
-      <div
-        className={`mx-auto max-w-5xl border-3 border-neutral-400 p-8 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:p-12 ${cardMotion} ${bgColors[backgroundColor]}`}
-      >
-        <div className="space-y-6 text-center">
-          <div className={iconMotion}>{icon ?? <CheckCircle className="mx-auto h-12 w-12" />}</div>
-          <h1 className={`font-black ${headingMotion}`}>{title}</h1>
-          {description ? (
-            <p className={`mx-auto text-base font-medium text-white md:text-lg ${bodyTextMotion}`}>
-              {description}
-            </p>
-          ) : null}
-          {primaryAction && (
-            <div>
-              {primaryAction &&
-                (primaryAction.href ? (
-                  <Button size="lg" variant="default" asChild>
-                    <Link href={primaryAction.href}>{primaryAction.label}</Link>
-                  </Button>
-                ) : (
-                  <Button size="lg" variant="default" onClick={primaryAction.onClick}>
-                    {primaryAction.label}
-                  </Button>
-                ))}
+    <main>
+      <section className="px-4 py-16 md:px-8 lg:px-16">
+        <div
+          className={`border-3 border-neutral-400 p-8 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:p-12 ${cardMotion} ${bgColors[backgroundColor]}`}
+        >
+          <div className="space-y-6 text-center">
+            <div className={iconMotion}>
+              {icon ?? <CheckCircle className="mx-auto h-12 w-12" />}
             </div>
-          )}
+            <h1 className={`font-black ${headingMotion}`}>{title}</h1>
+            {description ? (
+              <p
+                className={`mx-auto text-base font-medium text-white md:text-lg ${bodyTextMotion}`}
+              >
+                {description}
+              </p>
+            ) : null}
+            {primaryAction && (
+              <div>
+                {primaryAction &&
+                  (primaryAction.href ? (
+                    <Button size="lg" variant="default" asChild>
+                      <Link href={primaryAction.href}>{primaryAction.label}</Link>
+                    </Button>
+                  ) : (
+                    <Button size="lg" variant="default" onClick={primaryAction.onClick}>
+                      {primaryAction.label}
+                    </Button>
+                  ))}
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
   )
 }
 
@@ -152,33 +160,35 @@ export function CTANewsletter({
   onSubmit,
 }: CTANewsletterProps) {
   return (
-    <section className="px-4 py-16 md:px-8">
-      <div className="mx-auto max-w-2xl space-y-6 text-center">
-        <Mail className="mx-auto h-16 w-16 text-blue-600" />
-        <h2 className="font-black">{title}</h2>
-        {description ? <p className="font-medium text-neutral-400">{description}</p> : null}
-        <form
-          onSubmit={(event) => {
-            event.preventDefault()
-            onSubmit?.()
-          }}
-          className="mx-auto flex max-w-2xl flex-col gap-3 md:flex-row"
-        >
-          <Input
-            type="email"
-            placeholder={placeholder}
-            value={email}
-            onChange={(event) => onEmailChange(event.target.value)}
-            className="flex-1"
-            required
-          />
-          <Button type="submit" size="lg">
-            {buttonLabel}
-          </Button>
-        </form>
-        <p className="md:base text-xs text-neutral-400">No spam. Unsubscribe anytime.</p>
-      </div>
-    </section>
+    <main>
+      <section className="px-4 py-16 md:px-8 lg:px-16">
+        <div className="space-y-6 text-center">
+          <Mail className="mx-auto h-16 w-16 text-blue-600" />
+          <h2 className="font-black">{title}</h2>
+          {description ? <p className="font-medium text-neutral-400">{description}</p> : null}
+          <form
+            onSubmit={(event) => {
+              event.preventDefault()
+              onSubmit?.()
+            }}
+            className="mx-auto flex max-w-2xl flex-col gap-3 md:flex-row"
+          >
+            <Input
+              type="email"
+              placeholder={placeholder}
+              value={email}
+              onChange={(event) => onEmailChange(event.target.value)}
+              className="flex-1"
+              required
+            />
+            <Button type="submit" size="lg">
+              {buttonLabel}
+            </Button>
+          </form>
+          <p className="md:base text-xs text-neutral-400">No spam. Unsubscribe anytime.</p>
+        </div>
+      </section>
+    </main>
   )
 }
 
@@ -205,28 +215,30 @@ export function CTASplit({
   const imageOrder = imagePosition === "right" ? "order-2" : "order-1"
 
   return (
-    <section className="px-4 py-16 md:px-8">
-      <div className="mx-auto max-w-7xl overflow-hidden border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
-        <div className="grid md:grid-cols-2">
-          <div className={`flex flex-col justify-center space-y-6 p-8 md:p-12 ${contentOrder}`}>
-            <h3 className="font-black">{title}</h3>
-            {description ? <p className="font-medium text-white">{description}</p> : null}
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <CTAButton action={primaryAction} />
-              {secondaryAction ? <CTAButton action={secondaryAction} variant="outline" /> : null}
+    <main>
+      <section className="px-4 py-16 md:px-8 lg:px-16">
+        <div className="overflow-hidden border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+          <div className="grid md:grid-cols-2">
+            <div className={`flex flex-col justify-center space-y-6 p-8 md:p-12 ${contentOrder}`}>
+              <h3 className="font-black">{title}</h3>
+              {description ? <p className="font-medium text-white">{description}</p> : null}
+              <div className="flex flex-col gap-3 sm:flex-row">
+                <CTAButton action={primaryAction} />
+                {secondaryAction ? <CTAButton action={secondaryAction} variant="outline" /> : null}
+              </div>
+            </div>
+            <div className={`bg-white ${imageOrder}`}>
+              <span
+                aria-label={imageAlt}
+                role="img"
+                className="block h-full min-h-80 w-full bg-cover bg-center"
+                style={{ backgroundImage: `url(${imageSrc})` }}
+              />
             </div>
           </div>
-          <div className={`bg-white ${imageOrder}`}>
-            <span
-              aria-label={imageAlt}
-              role="img"
-              className="block h-full min-h-80 w-full bg-cover bg-center"
-              style={{ backgroundImage: `url(${imageSrc})` }}
-            />
-          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </main>
   )
 }
 
@@ -257,30 +269,36 @@ export function CTABanner({
   if (!isVisible) return null
 
   return (
-    <div className={`relative border-b-3 border-neutral-400 px-4 py-3 ${variantStyles[variant]}`}>
-      <div className="flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:text-left">
-        <p className="text-sm font-bold">{text}</p>
-        {action.href ? (
-          <Button size="sm" variant="outline" className="shrink-0" asChild>
-            <Link href={safeHref(action.href)}>{action.label}</Link>
-          </Button>
-        ) : (
-          <Button size="sm" variant="outline" className="shrink-0" onClick={action.onClick}>
-            {action.label}
-          </Button>
-        )}
-        {dismissible ? (
-          <button
-            type="button"
-            aria-label="Dismiss"
-            onClick={onDismiss}
-            className="absolute right-4 text-white opacity-70 hover:opacity-100"
-          >
-            ×
-          </button>
-        ) : null}
-      </div>
-    </div>
+    <main>
+      <section className="px-4 py-16 md:px-8 lg:px-16">
+        <div
+          className={`relative border-b-3 border-neutral-400 px-4 py-3 ${variantStyles[variant]}`}
+        >
+          <div className="flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:text-left">
+            <p className="text-sm font-bold">{text}</p>
+            {action.href ? (
+              <Button size="sm" variant="outline" className="shrink-0" asChild>
+                <Link href={safeHref(action.href)}>{action.label}</Link>
+              </Button>
+            ) : (
+              <Button size="sm" variant="outline" className="shrink-0" onClick={action.onClick}>
+                {action.label}
+              </Button>
+            )}
+            {dismissible ? (
+              <button
+                type="button"
+                aria-label="Dismiss"
+                onClick={onDismiss}
+                className="absolute right-4 text-white opacity-70 hover:opacity-100"
+              >
+                ×
+              </button>
+            ) : null}
+          </div>
+        </div>
+      </section>
+    </main>
   )
 }
 

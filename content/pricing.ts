@@ -34,24 +34,24 @@ export const pricingFlowSteps = [
 
 export const pricingStats = [
   {
-    label: "Platform fee",
-    value: "5%",
-    body: "Merchant-paid protocol issuance fee shown before commitment.",
+    label: "Set amount",
+    value: "1",
+    body: "Choose the protected amount before either side commits.",
   },
   {
-    label: "Minimum fee",
-    value: "$5",
-    body: "Minimum Vouch fee for each committed protocol instance.",
+    label: "Merchant pays Vouch fee",
+    value: "2",
+    body: "The fee is shown up front and paid through hosted Stripe checkout.",
   },
   {
-    label: "Customer fee",
-    value: "$0",
-    body: "Customer authorizes the protected amount, not the merchant's Vouch fee.",
+    label: "Customer authorizes",
+    value: "3",
+    body: "The customer authorizes the protected amount through Stripe manual capture.",
   },
   {
-    label: "Release rule",
-    value: "Both",
-    body: "Dual confirmation is required before capture.",
+    label: "Release requires confirmation",
+    value: "4",
+    body: "Both people confirm inside the window before capture can proceed.",
   },
 ] as const
 

@@ -51,6 +51,7 @@ export default function PricingPage() {
   return (
     <main>
       <HeroWithStats
+        subtitle="Trust the Process"
         title={PricingHeroContent.title}
         titleHighlight={PricingHeroContent.titleHighlight}
         description={PricingHeroContent.body}
@@ -58,27 +59,22 @@ export default function PricingPage() {
           label: PricingHeroContent.primaryLabel,
           href: "/sign-up?return_to=/vouches/new",
         }}
-        stats={pricingStats.map((stat) => ({ value: stat.value, label: stat.label }))}
-      />
-
-      <ProcessPanel
-        title="How pricing works"
-        steps={pricingFlowSteps.map((step) => ({
-          ...step,
-          icon: pricingFlowIcons[step.icon],
+        stats={pricingStats.map((stat) => ({
+          value: stat.value,
+          label: stat.label,
+          body: stat.body,
         }))}
-        footer="Merchant fee is paid before commitment"
+        align="left"
       />
 
       <FeatureGridAlternating
-        features={pricingNotes.map((feature, index) => {
+        features={pricingNotes.map((feature) => {
           const Icon = pricingFeatureIcons[feature.icon]
 
           return {
-            icon: <Icon className="size-8 text-white" strokeWidth={1.8} />,
+            icon: <Icon className="text-white" strokeWidth={1.8} />,
             title: feature.title,
             description: feature.body,
-            image: index % 2 === 0 ? "/logo-light.png" : "/logo-dark.png",
           }
         })}
       />

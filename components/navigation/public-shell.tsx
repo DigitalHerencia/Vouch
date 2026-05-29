@@ -2,9 +2,9 @@
 
 import type { ReactNode } from "react"
 
-import { PublicMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"
-import { PublicFooter } from "@/components/navigation/public-footer"
 import { PublicHeader } from "@/components/navigation/public-header"
+import { PublicFooter } from "@/components/navigation/public-footer"
+import { PublicMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"
 
 export interface PublicShellProps {
   children: ReactNode

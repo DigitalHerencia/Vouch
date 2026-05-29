@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react"
 
-import { TenantFooter } from "@/components/navigation/tenant-footer"
 import { TenantHeader } from "@/components/navigation/tenant-header"
+import { TenantFooter } from "@/components/navigation/tenant-footer"
 import { TenantMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"
 
 type TenantProviderAction = (formData: FormData) => void | Promise<void>

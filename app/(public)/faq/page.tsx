@@ -5,37 +5,25 @@ import { FAQAccordion } from "@/components/blocks/faq-section"
 import { HeroMinimal } from "@/components/blocks/hero-section"
 import { faqCalloutContent, faqSections } from "@/content/faq"
 
-export const metadata: Metadata = {
-  title: "FAQ | Vouch",
-  description:
-    "Answers about how Vouch coordinates commitment-backed payments through deterministic confirmation state.",
-}
-
 export default function FaqRoute() {
   const CalloutIcon = faqCalloutContent.icon
 
   return (
-    <main className="grid min-h-[calc(100dvh-8rem)] gap-8 sm:gap-10 md:gap-12">
-      <HeroMinimal
-        title="Precise answers"
-        description="Vouch is the commitment layer for deterministic confirmation and provider-backed payment coordination."
+    <main>
+      <FAQAccordion
+        subtitle="FAQ"
+        title="Frequently Asked Questions"
+        items={faqSections.map((section) => ({
+          question: section.heading,
+          answer: section.body.join(" "),
+        }))}
       />
-
-      <section className="grid min-h-0 gap-8 md:grid-cols-[minmax(0,1fr)_24rem]">
-        <FAQAccordion
-          subtitle="FAQ"
-          items={faqSections.map((section) => ({
-            question: section.heading,
-            answer: section.body.join(" "),
-          }))}
-        />
-        <CTAWithBackground
-          icon={<CalloutIcon className="size-8" />}
-          title={faqCalloutContent.title}
-          description={faqCalloutContent.body}
-          primaryAction={{ label: faqCalloutContent.label, href: faqCalloutContent.action }}
-        />
-      </section>
+      <CTAWithBackground
+        icon={<CalloutIcon className="size-8" />}
+        title={faqCalloutContent.title}
+        description={faqCalloutContent.body}
+        primaryAction={{ label: faqCalloutContent.label, href: faqCalloutContent.action }}
+      />
     </main>
   )
 }

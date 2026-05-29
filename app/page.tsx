@@ -10,6 +10,7 @@ import {
   UsersRound,
   type LucideIcon,
 } from "lucide-react"
+import { createElement } from "react"
 
 import { CTAWithBackground } from "@/components/blocks/cta-section"
 import { FeatureBentoGrid } from "@/components/blocks/feature-grid"
@@ -79,16 +80,15 @@ export default function HomePage() {
         align="left"
         subtitle="Clear Rules"
         title="Fair for Everyone"
-        features={landingFeatureCards.map((feature) => {
-          const Icon = ruleIcons[feature.icon]
-
-          return {
-            title: feature.title,
-            description: feature.body,
-            span: feature.span,
-            icon: <Icon className="size-7 text-white" strokeWidth={1.8} />,
-          }
-        })}
+        features={landingFeatureCards.map((feature) => ({
+          title: feature.title,
+          description: feature.body,
+          span: feature.span,
+          icon: createElement(ruleIcons[feature.icon], {
+            className: "size-7 text-white",
+            strokeWidth: 1.8,
+          }),
+        }))}
       />
 
       <StatsSplit
