@@ -1,0 +1,148 @@
+version: 1
+status: active
+supersedes:
+  - old .codex governance
+  - marketplace-style settlement assumptions
+  - destination-charge deposit assumptions
+  - application-fee deposit assumptions
+
+truth_order:
+  - .agents/docs/*.md
+  - .agents/contracts/*.yaml
+  - .agents/instructions/*.instructions.md
+  - existing code
+  - implementation judgment
+
+product:
+  category: b2b_saas_protocol
+  launch_region: US
+  platform_customer: business
+  connected_merchant: business
+  customer_deposit_owner: connected_business
+  platform_handles_deposit_funds: false
+  platform_mediates_service_disputes: false
+
+stripe:
+  account_api_generation: accounts_v2
+  connected_account_configurations:
+    - merchant
+    - customer
+  onboarding: stripe_hosted
+  dashboard_access: full
+  service_agreement: full
+  charge_type_for_customer_deposit: direct_charge
+  capture_method_for_customer_deposit: manual
+  platform_fee_model: separate_one_time_non_refundable_protocol_fee
+  platform_fee_account: platform
+  deposit_account: connected_account
+  application_fee_on_deposit: forbidden
+  transfer_data_destination_on_deposit: forbidden
+  destination_charges_for_deposit: forbidden
+  separate_charges_and_transfers_for_deposit: forbidden
+  payouts: automatic
+  verification: upfront
+  pricing: stripe_owned
+
+clerk:
+  owns:
+    - authentication
+    - sessions
+    - identity_events
+  does_not_own:
+    - product_state
+    - payment_state
+    - deposit_state
+    - confirmation_state
+    - authorization_state
+  local_user_sync_required: true
+  webhook_verification: svix
+  organizations_default: false
+  metadata_as_source_of_truth: forbidden
+
+database:
+  owns:
+    - local_users
+    - merchants
+    - memberships
+    - roles
+    - stripe_ids
+    - platform_fee_state
+    - deposit_state
+    - confirmation_state
+    - webhook_idempotency
+    - idempotency_keys
+  prisma_models_leak_to_ui: forbidden
+
+server_action_order:
+  - authenticate
+  - authorize
+  - zod_parse
+  - transaction_or_provider_write
+  - audit_or_log
+  - revalidate_or_redirect
+
+forbidden_product_surfaces:
+  - scheduling
+  - marketplace
+  - browse
+  - provider_directory
+  - public_profiles
+  - messaging
+  - reviews
+  - ratings
+  - reputation
+  - disputes
+  - appeals
+  - evidence_uploads
+  - manual_release_overrides
+  - admin_fund_awards
+
+forbidden_routes:
+  - /browse
+  - /providers
+  - /messages
+  - /reviews
+  - /categories
+  - /disputes
+
+architecture_boundaries:
+  app:
+    allowed:
+      - route_shells
+      - metadata
+      - suspense_composition
+    forbidden:
+      - prisma
+      - stripe_sdk
+      - business_logic
+  features:
+    allowed:
+      - view_orchestration
+      - form_assembly
+      - fetcher_action_handoff
+  components:
+    allowed:
+      - presentational_ui
+    forbidden:
+      - protected_fetching
+      - prisma
+      - stripe_sdk
+      - clerk_server_helpers
+      - domain_truth
+  lib:
+    allowed:
+      - auth
+      - authz
+      - db
+      - actions
+      - fetchers
+      - integrations
+      - webhooks
+      - cache
+      - audit
+
+validation_policy:
+  package_manager: pnpm
+  default_for_agents: narrowest_relevant
+  do_not_run_when_user_says_no_validation: true
+
