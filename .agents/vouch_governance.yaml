@@ -1,0 +1,430 @@
+version: 2
+id: vouch.governance
+project: Vouch
+authority: source-of-truth
+updated: 2026-05-24
+purpose: Machine-readable governance contract for agent implementation, audit, and validation of the Vouch MVP.
+
+product:
+  definition: deterministic payment coordination infrastructure for real-world commitments
+  core_rule: both_participants_confirm_inside_window_before_capture
+  final_invariant: outcome_follows_system_state
+  service_boundary:
+    merchant_fee_due: before_commit
+    merchant_fee_refundable_by_default: false
+    customer_authorization_hosted_by: stripe_checkout
+    customer_payment_object: manual_capture_payment_intent
+    payout_hosted_by: stripe_connect
+  forbidden_product_surfaces:
+    - marketplace
+    - broker
+    - scheduler
+    - messaging
+    - chat
+    - public_profiles
+    - provider_discovery
+    - service_listings
+    - categories
+    - search
+    - browse
+    - ratings
+    - reviews
+    - disputes
+    - claims
+    - appeals
+    - evidence
+    - screenshots_as_proof
+    - arbitration
+    - mediation
+    - manual_settlement
+    - manual_release
+    - manual_refund_award
+    - manual_confirmation_rewrite
+    - support_override
+    - admin_outcome_decision
+    - force_release
+    - force_refund
+    - alternate_payout_rail
+
+source_order:
+  - .agents/contracts/*.yaml
+  - .agents/contracts/*.yml
+  - .agents/docs/*.md
+  - .agents/instructions/*.md
+  - .agents/execution/*.json
+  - existing_repo_code
+  - agent_judgment
+
+conflict_policy:
+  code_conflicts_with_contracts: contracts_win
+  docs_conflict_with_contracts: stop_and_report
+  requested_feature_conflicts_with_product_boundary: stop_and_report
+  provider_docs_conflict_with_local_memory: current_provider_docs_win
+  unknown_context_available_to_tools: inspect_before_asking_user
+
+authorities:
+  clerk:
+    owns:
+      - authentication_truth
+      - sign_in
+      - sign_up
+      - sessions
+      - auth_provider_lifecycle_events
+    does_not_own:
+      - workflow_truth
+      - payment_truth
+      - settlement_eligibility
+      - vouch_terms_acceptance_source_of_truth
+  stripe:
+    owns:
+      - payment_truth
+      - checkout
+      - payment_method_collection
+      - manual_capture_payment_intents
+      - authorization_state
+      - capturability
+      - capture_result
+      - cancellation_state
+      - refund_state
+      - connect_onboarding
+      - kyc_compliance_collection
+      - payout_capability_state
+      - payout_execution
+      - provider_payment_state
+    does_not_own:
+      - workflow_truth
+      - presence_confirmation_truth
+      - vouch_lifecycle_meaning
+  vouch:
+    owns:
+      - workflow_truth
+      - local_user_record
+      - terms_acceptance_record
+      - vouch_lifecycle_state
+      - participant_role_state
+      - appointment_timestamp
+      - confirmation_window
+      - bilateral_confirmation_truth
+      - settlement_eligibility_decision
+      - safe_provider_reference_mirror
+      - audit_ledger
+      - archive_visibility
+      - internal_recovery_state
+    does_not_own:
+      - raw_payment_credentials
+      - raw_bank_data
+      - raw_identity_documents
+      - raw_provider_truth
+      - marketplace_discovery
+      - user_messaging
+      - dispute_resolution
+
+architecture:
+  primary_rule: each_file_has_one_primary_architectural_role
+  layers:
+    app:
+      paths: [app/**]
+      owns:
+        [
+          route_surface,
+          layout_selection,
+          metadata,
+          thin_page_wrappers,
+          suspense_fallback_selection,
+          provider_webhook_ingress,
+        ]
+      forbids:
+        [
+          prisma_queries,
+          stripe_sdk_calls,
+          provider_business_logic,
+          authz_implementation,
+          dto_shaping,
+          domain_mutation,
+          settlement_logic,
+          complex_forms,
+        ]
+    features:
+      paths: [features/**]
+      owns:
+        [
+          route_level_orchestration,
+          fetcher_calls,
+          action_handoff,
+          dto_branching,
+          suspense_boundaries,
+          layout_glue,
+        ]
+      forbids:
+        [
+          raw_sql,
+          prisma_queries,
+          provider_sdk_business_logic,
+          hidden_workflow_rules,
+          discretionary_settlement_behavior,
+        ]
+    components:
+      paths: [components/**]
+      owns: [pure_ui_rendering, props_to_markup, local_presentational_state]
+      forbids:
+        [database_access, provider_sdks, protected_fetchers, authz, domain_truth, settlement_logic]
+    primitives:
+      paths: [components/ui/**]
+      owns: [accessible_control_behavior, variants, primitive_styling_contract]
+      forbids: [domain_language, business_rules, protected_data]
+      modification_requires_confirmation: true
+    actions:
+      paths: [lib/actions/**]
+      sequence:
+        [
+          authenticate,
+          authorize,
+          zod_validate,
+          transaction_or_provider_operation,
+          audit_event,
+          revalidate_or_redirect,
+          typed_result,
+        ]
+      forbids:
+        [
+          raw_provider_return_to_ui,
+          raw_db_model_return_to_ui,
+          skipped_authz,
+          client_fee_authority,
+          browser_return_as_truth,
+          manual_settlement,
+        ]
+    fetchers:
+      paths: [lib/fetchers/**]
+      sequence:
+        [authenticate, authorize, minimal_select, dto_mapper, cache_policy, transport_safe_return]
+      forbids:
+        [
+          mutation,
+          server_action_calls,
+          provider_reconciliation,
+          raw_prisma_return,
+          raw_provider_return,
+        ]
+    webhooks:
+      paths: [app/api/**/route.ts]
+      sequence:
+        [
+          read_raw_body,
+          verify_signature,
+          parse_event_envelope,
+          delegate_processing,
+          provider_compatible_response,
+        ]
+      forbids:
+        [
+          browser_user_session_dependency,
+          inline_business_workflow_logic,
+          inline_prisma_mutations,
+          inline_settlement_decisions,
+          non_idempotent_writes,
+        ]
+    integrations:
+      paths: [lib/integrations/**]
+      owns: [external_sdk_adaptation, provider_payload_normalization, provider_status_mapping]
+      forbids: [react_rendering, route_chrome, raw_payload_ui_return]
+    schemas:
+      paths: [schemas/**]
+      owns: [zod_validation, input_sanitation]
+      forbids: [database_queries, provider_calls, authorization, mutation]
+    types:
+      paths: [types/**]
+      owns: [dto_types, action_results, safe_provider_summaries, unions]
+      forbids: [runtime_logic, raw_sensitive_payload_contracts]
+
+routes:
+  canonical:
+    public: ["/", "/pricing", "/faq", "/legal/terms", "/legal/privacy", "/checkout/success"]
+    auth: ["/sign-in", "/sign-up"]
+    tenant: ["/dashboard", "/vouches/new", "/vouches/new/confirm", "/vouches/[vouchId]"]
+    api: ["/api/clerk/webhooks", "/api/stripe/webhooks"]
+  forbidden:
+    - /setup
+    - /settings
+    - /settings/payment
+    - /settings/payout
+    - /settings/verification
+    - /readiness
+    - /account
+    - /profile
+    - /admin
+    - /admin/settlement
+    - /messages
+    - /disputes
+    - /claims
+    - /appeals
+    - /evidence
+    - /reviews
+    - /ratings
+    - /search
+    - /browse
+    - /providers
+    - /marketplace
+
+state_model:
+  vouch_lifecycle:
+    canonical_values:
+      [draft, committed, sent, accepted, authorized, confirmable, completed, expired]
+    terminal_values: [completed, expired]
+    immutable_from: committed
+    forbidden_values:
+      [pending, active, refunded, canceled, failed, voided, settled, provider_restricted, archived]
+  participant_roles:
+    canonical_values: [merchant, customer]
+    aliases:
+      merchant: payee
+      customer: payer
+    rule: roles_are_scoped_to_vouch_not_global_account_type
+  confirmation:
+    methods:
+      allowed: [code_exchange, offline_code_exchange]
+      forbidden: [gps, manual, system, admin, support, screenshot, evidence]
+    aggregate_statuses: [none_confirmed, merchant_confirmed, customer_confirmed, both_confirmed]
+    settlement_eligible_only_when: both_confirmed
+  payment_status:
+    separate_from_vouch_lifecycle: true
+    values:
+      [
+        not_started,
+        checkout_created,
+        requires_payment_method,
+        requires_capture,
+        authorized,
+        capture_processing,
+        captured,
+        canceled,
+        expired,
+        failed,
+      ]
+  settlement_status:
+    separate_from_vouch_lifecycle: true
+    values:
+      [
+        pending,
+        non_capture_pending,
+        non_captured,
+        capture_pending,
+        captured,
+        refund_pending,
+        refunded,
+        provider_blocked,
+        failed,
+      ]
+  archive_status:
+    separate_from_vouch_lifecycle: true
+    values: [active, archived]
+  recovery_status:
+    internal_only: true
+    values: [normal, recovery_required, recovery_in_progress, recovered, recovery_failed]
+
+stripe:
+  sdk_allowed_paths: [lib/integrations/stripe/**]
+  canonical_authorization_surface:
+    internal_name: stripe_checkout_session_url
+    product_name: authorization_link
+    not_stripe_payment_links: true
+  merchant_fee_flow:
+    provider_account: platform
+    object: checkout_session_or_payment_intent
+    connect_destination_charge: false
+    application_fee_amount_for_fee: false
+    required_before_lifecycle: committed
+  customer_authorization_flow:
+    object: payment_intent
+    hosted_by: checkout_session
+    capture_method: manual
+    amount_includes_merchant_fee: false
+    capture_only_after: bilateral_confirmation_and_provider_retrieval
+  webhook_events:
+    merchant_fee:
+      - checkout.session.completed
+      - checkout.session.expired
+      - payment_intent.succeeded
+      - payment_intent.payment_failed
+    customer_authorization:
+      - checkout.session.completed
+      - checkout.session.expired
+      - payment_intent.succeeded
+      - payment_intent.canceled
+      - payment_intent.payment_failed
+      - payment_intent.amount_capturable_updated
+    connect:
+      - account.updated
+  retrieve_before: [capture, cancel, void, refund, provider_retry, settlement_reconciliation]
+  idempotency_required_for:
+    [
+      connected_account_creation,
+      checkout_session_creation,
+      payment_intent_creation,
+      payment_intent_capture,
+      payment_intent_cancel,
+      refund_creation,
+      webhook_event_persistence,
+      audit_transition_write,
+      confirmation_write,
+    ]
+  metadata_allowed:
+    [
+      vouchId,
+      publicVouchId,
+      paymentRecordId,
+      merchantUserId,
+      customerUserId,
+      settlementRuleVersion,
+      feeRuleVersion,
+      confirmationWindowOpensAt,
+      confirmationWindowExpiresAt,
+      environment,
+    ]
+  metadata_forbidden:
+    [
+      meeting_purpose,
+      private_notes,
+      message_content,
+      legal_conclusions,
+      identity_document_details,
+      raw_location_data,
+      user_allegations,
+      dispute_language,
+      sensitive_personal_context,
+      raw_confirmation_codes,
+    ]
+
+audit:
+  model: append_only_ledger
+  not_for:
+    [
+      dispute_resolution,
+      evidence_review,
+      participant_visible_activity_feed_by_default,
+      support_judgment,
+    ]
+  metadata_forbidden:
+    [
+      raw_stripe_object,
+      raw_clerk_payload,
+      raw_identity_document_data,
+      raw_bank_card_data,
+      message_content,
+      evidence_text,
+      screenshots,
+      subjective_accusations,
+      support_judgment,
+    ]
+
+validation:
+  commands:
+    contracts: pnpm validate:contracts
+    prisma_validate: pnpm prisma:validate
+    lint: pnpm lint
+    typecheck: pnpm typecheck
+    unit_tests: pnpm test
+    e2e: pnpm test:e2e
+    full: pnpm validate
+    full_all: pnpm validate:all
+  report_rule: never_claim_validation_ran_unless_it_ran

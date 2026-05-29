@@ -51,4 +51,3 @@ Use `.agents/conflict-check.md` for known non-blocking source issues.
 - Prisma owns product state.
 - Clerk metadata is not a source of truth for payments, deposits, confirmations, Stripe state, roles, or tenant access.
 - Server-side auth and tenant authorization are mandatory for protected reads and writes.
-
