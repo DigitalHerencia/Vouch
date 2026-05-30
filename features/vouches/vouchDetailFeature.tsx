@@ -146,8 +146,8 @@ function VouchDetailView({
   })
 
   return (
-    <main className="grid min-h-[calc(100dvh-8rem)] gap-4 sm:gap-6 md:gap-8">
-      <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-[0.85fr_1.15fr] md:gap-8">
+    <main>
+      <section className="px-4 py-16 md:px-8 lg:px-16">
         <StatusBlocks.Full
           data={{
             title: copy.termsTitle,

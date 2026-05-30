@@ -96,6 +96,11 @@ function mapVouchToInvoice(vouch: VouchCardDTO): InvoiceSummaryProps {
     )}`,
     protectedAmountLabel: formatCurrency(vouch.protectedAmountCents, vouch.currency),
     countdown: getCountdown(vouch),
+    label: formatDateTime(vouch.appointmentStartsAt),
+    expiresAtLabel: formatDate(vouch.confirmationExpiresAt),
+    remainingLabel: formatDateTime(vouch.confirmationOpensAt),
+    percentRemaining: 0,
+    tone: "active",
   }
 }
 
@@ -143,25 +148,19 @@ export async function DashboardFeature() {
   ]
 
   return (
-    <main>
-      <section className="px-4 py-16 md:px-6 md:py-24 lg:px-8">
-        <div className="grid gap-8 md:gap-12">
-          <HeroCentered
-            eyebrow={dashboardContent.hero.eyebrow}
-            title={dashboardContent.hero.title}
-            description=""
-            align="left"
-          />
+    <main className="mb-16">
+      <HeroCentered
+        eyebrow={dashboardContent.hero.eyebrow}
+        title={dashboardContent.hero.title}
+        description=""
+        align="left"
+      />
 
-          <StatsCards stats={metrics} />
+      <StatsCards stats={metrics} />
 
-          <section className="grid gap-6">
-            {invoices.map((invoice) => (
-              <InvoiceSummary key={invoice.vouchId ?? invoice.invoiceNumber} {...invoice} />
-            ))}
-          </section>
-        </div>
-      </section>
+      {invoices.map((invoice) => (
+        <InvoiceSummary key={invoice.vouchId ?? invoice.invoiceNumber} {...invoice} />
+      ))}
     </main>
   )
 }

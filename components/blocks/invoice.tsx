@@ -9,6 +9,7 @@ import {
   type VouchCountdownProps,
   type VouchStatusTone,
 } from "@/components/blocks/status"
+import { Progress } from "../ui/progress"
 
 // ============================================================================
 // Common Types
@@ -440,6 +441,11 @@ export interface InvoiceSummaryProps {
   confirmationWindowLabel?: string
   protectedAmountLabel?: string
   countdown?: VouchCountdownProps | undefined
+  label: string
+  expiresAtLabel: string
+  remainingLabel: string
+  percentRemaining?: number
+  tone?: VouchStatusTone
   onView?: () => void
   onDownload?: () => void
 }
@@ -458,76 +464,83 @@ export function InvoiceSummary({
   appointmentLabel,
   confirmationWindowLabel,
   protectedAmountLabel,
-  countdown,
+  label,
+  expiresAtLabel,
+  remainingLabel,
+  percentRemaining = 0,
+  tone = "active",
 }: InvoiceSummaryProps) {
+  const clamped = Math.max(0, Math.min(100, percentRemaining))
+
   return (
-    <Link
-      href={href}
-      className="grid gap-4 border-3 border-neutral-400 bg-black p-4 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 md:grid-cols-[minmax(0,1fr)_20rem]"
-    >
-      <div className="grid min-w-0 gap-4">
-        <div className="flex flex-wrap items-start justify-between gap-3 border-b-3 border-neutral-400 pb-4">
-          <div className="min-w-0">
-            <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
-              Vouch invoice
-            </p>
-            <h3 className="mt-2 truncate text-2xl font-black tracking-wide text-white uppercase">
-              {invoiceNumber}
-            </h3>
-            {vouchId ? (
-              <p className="mt-1 truncate font-mono text-xs font-bold text-neutral-400 uppercase">
-                {vouchId}
+    <Link href={href}>
+      <section className="border-3 border-neutral-400 bg-black px-12 py-16 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className="grid gap-4">
+          <div className="flex flex-wrap items-start justify-between gap-3 pb-4">
+            <div>
+              <p className="text-xl font-black tracking-widest text-blue-600 uppercase">
+                Vouch Summary
               </p>
-            ) : null}
+              <h2 className="font-black text-white uppercase">{clientName}</h2>
+              {vouchId ? (
+                <p className="mt-2 font-mono text-sm font-bold text-neutral-400 uppercase">
+                  {invoiceNumber}
+                </p>
+              ) : null}
+            </div>
+            <div className="flex flex-col justify-items-center space-y-2">
+              <VouchStatusBadge status={tone} tone={tone} />
+              <h3>{protectedAmountLabel ?? amountLabel ?? `$${amount.toFixed(2)}`}</h3>
+            </div>
           </div>
-          <VouchStatusBadge status={status} tone={statusTone} />
         </div>
 
-        <div className="grid gap-3 md:grid-cols-3">
-          <InvoiceSummaryMetric label="Participant" value={clientName} />
-          <InvoiceSummaryMetric
-            label="Protected"
-            value={protectedAmountLabel ?? amountLabel ?? `$${amount.toFixed(2)}`}
-          />
-          <InvoiceSummaryMetric
-            label="Customer total"
-            value={amountLabel ?? `$${amount.toFixed(2)}`}
-          />
-        </div>
-
-        <div className="grid gap-3 md:grid-cols-3">
-          <InvoiceSummaryMetric label="Created" value={issueDate} />
-          <InvoiceSummaryMetric label="Appointment" value={appointmentLabel ?? dueDate} />
-          <InvoiceSummaryMetric
-            label="Confirmation window"
-            value={confirmationWindowLabel ?? dueDate}
-          />
-        </div>
-      </div>
-
-      <div className="grid content-between gap-4">
-        {countdown ? (
-          <VouchCountdown {...countdown} />
-        ) : (
-          <div className="flex min-h-32 items-center gap-3 border-3 border-neutral-400 bg-neutral-900 p-4">
-            <CalendarClock className="size-6 text-blue-600" />
-            <p className="text-sm font-black text-neutral-400 uppercase">No appointment time</p>
+        <div className="grid content-between gap-4 border-3 border-neutral-400 bg-black p-6">
+          <div className="mb-4 flex items-start justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
+                {label}
+              </p>
+              <p className="mt-2 font-mono text-3xl leading-none font-black text-white uppercase">
+                {remainingLabel}
+              </p>
+            </div>
           </div>
-        )}
-        <p className="text-right text-xs font-black tracking-widest text-blue-600 uppercase">
-          Open detail
-        </p>
-      </div>
+          <Progress value={clamped} className="h-4 shadow-none" />
+          <p className="mt-3 text-xs leading-5 font-bold text-neutral-400 uppercase">
+            Expires {expiresAtLabel}
+          </p>
+        </div>
+      </section>
     </Link>
   )
 }
 
-function InvoiceSummaryMetric({ label, value }: { label: string; value: string }) {
+export function VouchCard({
+  label,
+  expiresAtLabel,
+  remainingLabel,
+  percentRemaining = 0,
+  tone = "active",
+}: VouchCountdownProps) {
+  const clamped = Math.max(0, Math.min(100, percentRemaining))
+
   return (
-    <div className="min-w-0 border border-neutral-400 bg-neutral-900 p-3">
-      <p className="text-[11px] font-black tracking-widest text-neutral-400 uppercase">{label}</p>
-      <p className="mt-2 truncate font-mono text-sm font-black text-white uppercase">{value}</p>
-    </div>
+    <main>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">{label}</p>
+          <p className="mt-2 font-mono text-3xl leading-none font-black text-white uppercase">
+            {remainingLabel}
+          </p>
+        </div>
+        <VouchStatusBadge status={tone} tone={tone} />
+      </div>
+      <Progress value={clamped} className="h-4 shadow-none" />
+      <p className="mt-3 text-xs leading-5 font-bold text-neutral-400 uppercase">
+        Expires {expiresAtLabel}
+      </p>
+    </main>
   )
 }
 

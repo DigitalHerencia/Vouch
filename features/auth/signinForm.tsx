@@ -6,7 +6,6 @@ import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
 import {
-  AuthPageShell,
   LoginForm as LoginBlock,
   LoginFormFields,
   OTPVerificationForm,
@@ -15,6 +14,9 @@ import { authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { loginSchema, verificationSchema } from "@/schemas/auth"
 import { type LoginFormProps, type LoginFormValues } from "@/types/auth"
+import { AuthProcessPanelGrid } from "@/components/blocks/process-panel"
+import Link from "next/link"
+import { LogoLockup } from "@/components/brand/logo-lockup"
 
 function getErrorMessage(error: unknown, fallback: string): string {
   const clerkError = error as { errors?: Array<{ message?: string }> }
@@ -234,63 +236,59 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
   })
 
   return (
-    <AuthPageShell
-      eyebrow="Authenticated protocol"
-      title="Commitment-backed access"
-      body="Sign in before creating, accepting, or confirming Vouches. Account state stays tied to authenticated users and provider-backed readiness."
-    >
-      <form onSubmit={handleSubmit} noValidate {...props}>
-        {awaitingSecondFactor ? (
-          <OTPVerificationForm
-            title={authVerificationContent.codeLabel}
-            description={
-              secondFactorMethod === "phone_code"
-                ? authVerificationContent.latestCodePhone
-                : authVerificationContent.latestCodeEmail
-            }
-            length={6}
-            value={verificationCode}
-            notice={notice}
-            error={form.formState.errors.verificationCode?.message}
-            rootError={rootError}
-            disabled={isBusy}
-            submitLabel={authVerificationContent.verifyCode}
-            resendLabel={authVerificationContent.resendCode}
-            backLabel={authVerificationContent.startOver}
-            isSubmitting={form.formState.isSubmitting}
-            isResending={isResending}
-            isResetting={isResetting}
-            onChange={(code) =>
-              form.setValue("verificationCode", code, {
-                shouldDirty: true,
-                shouldValidate: code.length === 6,
+    <form onSubmit={handleSubmit} noValidate {...props}>
+      {awaitingSecondFactor ? (
+        <OTPVerificationForm
+          title={authVerificationContent.codeLabel}
+          description={
+            secondFactorMethod === "phone_code"
+              ? authVerificationContent.latestCodePhone
+              : authVerificationContent.latestCodeEmail
+          }
+          length={6}
+          value={verificationCode}
+          notice={notice}
+          error={form.formState.errors.verificationCode?.message}
+          rootError={rootError}
+          disabled={isBusy}
+          submitLabel={authVerificationContent.verifyCode}
+          resendLabel={authVerificationContent.resendCode}
+          backLabel={authVerificationContent.startOver}
+          isSubmitting={form.formState.isSubmitting}
+          isResending={isResending}
+          isResetting={isResetting}
+          onChange={(code) =>
+            form.setValue("verificationCode", code, {
+              shouldDirty: true,
+              shouldValidate: code.length === 6,
+            })
+          }
+          onResend={() => {
+            startResending(async () => {
+              form.clearErrors("root")
+              setNotice(null)
+              await sendSecondFactorCode()
+            })
+          }}
+          onBackToLogin={() => {
+            startResetting(async () => {
+              await signIn.reset()
+              setAwaitingSecondFactor(false)
+              setSecondFactorMethod(null)
+              setNotice(null)
+              form.reset({
+                email: form.getValues("email"),
+                password: "",
+                verificationCode: "",
               })
-            }
-            onResend={() => {
-              startResending(async () => {
-                form.clearErrors("root")
-                setNotice(null)
-                await sendSecondFactorCode()
-              })
-            }}
-            onBackToLogin={() => {
-              startResetting(async () => {
-                await signIn.reset()
-                setAwaitingSecondFactor(false)
-                setSecondFactorMethod(null)
-                setNotice(null)
-                form.reset({
-                  email: form.getValues("email"),
-                  password: "",
-                  verificationCode: "",
-                })
-              })
-            }}
-          />
-        ) : (
+            })
+          }}
+        />
+      ) : (
+        <main className="mt-36">
           <LoginBlock
             title="Back your commitment."
-            description="Sign in to manage Vouches, confirm presence, and keep payment-backed commitments on track."
+            description="Sign in to manage your account"
             notice={notice}
             error={rootError}
             signUpHref={
@@ -310,8 +308,8 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
               submitLabel="Sign in"
             />
           </LoginBlock>
-        )}
-      </form>
-    </AuthPageShell>
+        </main>
+      )}
+    </form>
   )
 }

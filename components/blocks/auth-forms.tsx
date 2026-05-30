@@ -9,57 +9,6 @@ import { Eye, Mail, Lock, User, LoaderCircle } from "lucide-react"
 import { LogoLockup } from "@/components/brand/logo-lockup"
 import { AuthProcessPanelGrid } from "@/components/blocks/process-panel"
 
-export interface AuthPageShellProps {
-  children: React.ReactNode
-  eyebrow: string
-  title: string
-  body: string
-}
-
-export function AuthPageShell({ children, eyebrow, title, body }: AuthPageShellProps) {
-  return (
-    <main className="relative h-dvh min-h-0 w-full overflow-hidden">
-      <div className="absolute inset-0 z-0 hidden lg:block">
-        <AuthContentPanel eyebrow={eyebrow} title={title} body={body} />
-      </div>
-      <AuthFormPanel>{children}</AuthFormPanel>
-    </main>
-  )
-}
-
-export interface AuthContentPanelProps {
-  eyebrow: string
-  title: string
-  body: string
-}
-
-export function AuthContentPanel(props: AuthContentPanelProps) {
-  void props
-
-  return (
-    <div className="flex h-full min-h-0 w-full flex-col justify-center overflow-hidden bg-transparent">
-      <AuthProcessPanelGrid />
-    </div>
-  )
-}
-
-export function AuthFormPanel({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative z-10 flex h-full min-h-0 w-full flex-col items-center justify-center overflow-hidden bg-transparent p-6 py-16 md:p-8">
-      <div className="flex w-full max-w-xl flex-col items-center gap-5">
-        <Link href="/" aria-label="Go to Vouch home" className="inline-flex">
-          <LogoLockup
-            className="justify-center"
-            iconClassName="size-10 sm:size-12"
-            textClassName="text-[38px] sm:text-[48px] lg:text-[54px]"
-          />
-        </Link>
-        {children}
-      </div>
-    </div>
-  )
-}
-
 // ============================================================================
 // AUTH VARIANT 1: Login Form
 // ============================================================================
@@ -130,11 +79,14 @@ export function LoginForm({
     <div className="mx-auto w-full max-w-md">
       <Card>
         <CardHeader className="space-y-4 text-center">
-          {logo && <div className="mx-auto">{logo}</div>}
           <div>
-            <CardTitle className="text-4xl font-black uppercase md:text-5xl lg:text-6xl">
-              {title}
-            </CardTitle>
+            <Link href="/" aria-label="Go to Vouch home" className="inline-flex">
+              <LogoLockup
+                className="justify-center"
+                iconClassName="size-10 sm:size-12"
+                textClassName="text-[38px] sm:text-[48px] lg:text-[54px]"
+              />
+            </Link>
             <CardDescription className="mt-2">{description}</CardDescription>
           </div>
         </CardHeader>
@@ -399,130 +351,130 @@ export function SignUpForm({
         <CardContent>
           {content ?? (
             <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-xs font-bold uppercase">
-                Full Name
-              </Label>
-              <div className="relative">
-                <User className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-                <Input
-                  id="name"
-                  type="text"
-                  autoComplete="name"
-                  placeholder="John Doe"
-                  className="border-2 border-neutral-400 pl-10"
-                  defaultValue="John Doe"
-                  readOnly
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="signup-email" className="text-xs font-bold uppercase">
-                Email
-              </Label>
-              <div className="relative">
-                <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-                <Input
-                  id="signup-email"
-                  type="email"
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                  className="border-2 border-neutral-400 pl-10"
-                  defaultValue="you@example.com"
-                  readOnly
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="signup-password" className="text-xs font-bold uppercase">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-                <Input
-                  id="signup-password"
-                  type="password"
-                  autoComplete="new-password"
-                  placeholder="Create a password"
-                  className="border-2 border-neutral-400 pr-10 pl-10"
-                  defaultValue="password"
-                  readOnly
-                  required
-                />
-                <Button
-                  type="button"
-                  aria-label="Show password"
-                  variant="ghost"
-                  size="icon"
-                  className="absolute top-1/2 right-3 h-auto w-auto -translate-y-1/2 p-0 text-neutral-400 hover:text-white"
-                >
-                  <Eye className="h-4 w-4" />
-                </Button>
-              </div>
-              <p className="text-xs text-neutral-400">Must be at least 8 characters</p>
-            </div>
-
-            <div className="space-y-1">
-              <div className="flex items-start space-x-2">
-                <Checkbox id="terms" defaultChecked />
-                <Label htmlFor="terms" className="cursor-pointer text-sm leading-tight">
-                  I agree to the{" "}
-                  <a href={termsUrl} className="font-bold text-blue-600 hover:underline">
-                    Terms of Service
-                  </a>{" "}
-                  and{" "}
-                  <a href={privacyUrl} className="font-bold text-blue-600 hover:underline">
-                    Privacy Policy
-                  </a>
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-xs font-bold uppercase">
+                  Full Name
                 </Label>
+                <div className="relative">
+                  <User className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                  <Input
+                    id="name"
+                    type="text"
+                    autoComplete="name"
+                    placeholder="John Doe"
+                    className="border-2 border-neutral-400 pl-10"
+                    defaultValue="John Doe"
+                    readOnly
+                    required
+                  />
+                </div>
               </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signup-email" className="text-xs font-bold uppercase">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                  <Input
+                    id="signup-email"
+                    type="email"
+                    autoComplete="email"
+                    placeholder="you@example.com"
+                    className="border-2 border-neutral-400 pl-10"
+                    defaultValue="you@example.com"
+                    readOnly
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="signup-password" className="text-xs font-bold uppercase">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                  <Input
+                    id="signup-password"
+                    type="password"
+                    autoComplete="new-password"
+                    placeholder="Create a password"
+                    className="border-2 border-neutral-400 pr-10 pl-10"
+                    defaultValue="password"
+                    readOnly
+                    required
+                  />
+                  <Button
+                    type="button"
+                    aria-label="Show password"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-1/2 right-3 h-auto w-auto -translate-y-1/2 p-0 text-neutral-400 hover:text-white"
+                  >
+                    <Eye className="h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-neutral-400">Must be at least 8 characters</p>
+              </div>
+
+              <div className="space-y-1">
+                <div className="flex items-start space-x-2">
+                  <Checkbox id="terms" defaultChecked />
+                  <Label htmlFor="terms" className="cursor-pointer text-sm leading-tight">
+                    I agree to the{" "}
+                    <a href={termsUrl} className="font-bold text-blue-600 hover:underline">
+                      Terms of Service
+                    </a>{" "}
+                    and{" "}
+                    <a href={privacyUrl} className="font-bold text-blue-600 hover:underline">
+                      Privacy Policy
+                    </a>
+                  </Label>
+                </div>
+              </div>
+
+              <Button type="button" className="w-full" size="lg">
+                Create Account
+              </Button>
+
+              {socialProviders && socialProviders.length > 0 && (
+                <>
+                  <div className="relative my-6">
+                    <div className="absolute inset-0 flex items-center">
+                      <div className="w-full border-t-2 border-neutral-400" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-black px-2 font-bold text-neutral-400">
+                        Or continue with
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    {socialProviders.includes("google") && (
+                      <Button variant="outline" type="button">
+                        Google
+                      </Button>
+                    )}
+                    {socialProviders.includes("github") && (
+                      <Button variant="outline" type="button">
+                        GitHub
+                      </Button>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {onSignIn && (
+                <p className="mt-4 text-center text-sm text-neutral-400">
+                  Already have an account?{" "}
+                  <Button type="button" variant="link" size="nav">
+                    Sign in
+                  </Button>
+                </p>
+              )}
             </div>
-
-            <Button type="button" className="w-full" size="lg">
-              Create Account
-            </Button>
-
-            {socialProviders && socialProviders.length > 0 && (
-              <>
-                <div className="relative my-6">
-                  <div className="absolute inset-0 flex items-center">
-                    <div className="w-full border-t-2 border-neutral-400" />
-                  </div>
-                  <div className="relative flex justify-center text-xs uppercase">
-                    <span className="bg-black px-2 font-bold text-neutral-400">
-                      Or continue with
-                    </span>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  {socialProviders.includes("google") && (
-                    <Button variant="outline" type="button">
-                      Google
-                    </Button>
-                  )}
-                  {socialProviders.includes("github") && (
-                    <Button variant="outline" type="button">
-                      GitHub
-                    </Button>
-                  )}
-                </div>
-              </>
-            )}
-
-            {onSignIn && (
-              <p className="mt-4 text-center text-sm text-neutral-400">
-                Already have an account?{" "}
-                <Button type="button" variant="link" size="nav">
-                  Sign in
-                </Button>
-              </p>
-            )}
-          </div>
           )}
         </CardContent>
       </Card>
@@ -633,7 +585,9 @@ export function SignUpFormFields({
           {...passwordInputProps}
           className={inputClassName}
         />
-        <p className="text-sm text-neutral-400">Use a strong password you have not used elsewhere.</p>
+        <p className="text-sm text-neutral-400">
+          Use a strong password you have not used elsewhere.
+        </p>
         {passwordError ? <p className="text-sm text-red-600">{passwordError}</p> : null}
       </div>
 
@@ -868,7 +822,6 @@ export function OTPVerificationForm({
               ) : null}
             </div>
           )}
-
         </CardContent>
       </Card>
     </div>
@@ -912,9 +865,6 @@ export function AuthSplitLayout({
 // Export all variants
 // ============================================================================
 export const AuthForms = {
-  PageShell: AuthPageShell,
-  ContentPanel: AuthContentPanel,
-  FormPanel: AuthFormPanel,
   Login: LoginForm,
   LoginFields: LoginFormFields,
   SignUp: SignUpForm,
