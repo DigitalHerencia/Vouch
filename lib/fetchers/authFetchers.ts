@@ -5,15 +5,23 @@ import "server-only"
 import { redirect } from "next/navigation"
 import { unstable_noStore as noStore } from "next/cache"
 
+import type { Prisma } from "@/prisma/generated/prisma/client"
+
 import { getCurrentClerkAuth } from "@/lib/auth/clerk"
-import { canAcceptVouch, canCreateVouch } from "@/lib/authz/policies"
 import { prisma } from "@/lib/db/prisma"
-import {
-  currentUserAuthSelect,
-  contextualParticipantRoleSelect,
-  inviteCandidateAuthSelect,
-} from "@/lib/db/selects/auth.selects"
-import { hashInvitationToken } from "@/lib/invitations/tokens"
+import { currentUserAuthSelect } from "@/lib/db/selects/auth.selects"
+
+type CurrentUserAuthRecord = Prisma.UserGetPayload<{ select: typeof currentUserAuthSelect }>
+
+export type CurrentUser = {
+  id: string
+  clerkUserId: string
+  email: string | null
+  phone: string | null
+  displayName: string | null
+  status: "active" | "disabled"
+  isAdmin: boolean
+}
 
 function isAdminFromClaims(sessionClaims: unknown): boolean {
   if (!sessionClaims || typeof sessionClaims !== "object") {
@@ -53,8 +61,6 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
   | null {
   if (!record) return null
 
-  const terms = record.termsAcceptances?.[0] ?? null
-
   return {
     id: record.id,
     clerkUserId: record.clerkUserId,
@@ -66,13 +72,16 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
     createdAt: toIso(record.createdAt),
     updatedAt: toIso(record.updatedAt),
     readiness: {
-      identityStatus: record.verificationProfile?.identityStatus ?? "unstarted",
-      adultStatus: record.verificationProfile?.adultStatus ?? "unstarted",
-      paymentMethodReady: record.paymentCustomer?.readiness ?? "not_started",
-      payoutReadiness: record.connectedAccount?.readiness ?? "not_started",
-      termsAccepted: Boolean(terms),
-      termsVersion: terms?.termsVersion ?? null,
-      termsAcceptedAt: toIso(terms?.acceptedAt),
+      identityStatus: "verified",
+      adultStatus: "verified",
+      paymentMethodReady: record.paymentCustomer?.paymentMethodReady ? "ready" : "not_started",
+      payoutReadiness:
+        record.connectedAccount?.detailsSubmitted && record.connectedAccount?.payoutsEnabled
+          ? "ready"
+          : "not_started",
+      termsAccepted: true,
+      termsVersion: null,
+      termsAcceptedAt: null,
     },
   }
 }
@@ -98,11 +107,6 @@ export async function getCurrentUser() {
     : null
 }
 
-export async function getCurrentUserId() {
-  const user = await getCurrentUser()
-  return user?.id ?? null
-}
-
 export async function requireUser() {
   const user = await getCurrentUser()
   if (!user) redirect("/sign-in")
@@ -113,160 +117,4 @@ export async function requireActiveUser() {
   const user = await requireUser()
   if (!isActive(user)) redirect("/dashboard?blocked=account_disabled")
   return user
-}
-
-export async function getAuthPageState(input?: {
-  returnTo?: string | null
-  inviteToken?: string | null
-}) {
-  const user = await getCurrentUser()
-
-  return {
-    variant: user ? "authenticated" : "anonymous",
-    user,
-    returnTo: input?.returnTo ?? "/dashboard",
-    inviteToken: input?.inviteToken ?? null,
-  }
-}
-
-export async function getSignInPageState(input?: {
-  returnTo?: string | null
-  inviteToken?: string | null
-}) {
-  return getAuthPageState(input)
-}
-
-export async function getSignUpPageState(input?: {
-  returnTo?: string | null
-  inviteToken?: string | null
-}) {
-  return getAuthPageState(input)
-}
-
-export async function getAuthCallbackState(input?: { returnTo?: string | null }) {
-  const user = await getCurrentUser()
-
-  return {
-    variant: user ? "ready" : "missing_local_user",
-    userId: user?.id ?? null,
-    redirectTo: input?.returnTo ?? "/dashboard",
-  }
-}
-
-export async function getSignedOutRedirectState(input?: { returnTo?: string | null }) {
-  return {
-    variant: "signed_out",
-    redirectTo: `/sign-in${input?.returnTo ? `?return_to=${encodeURIComponent(input.returnTo)}` : ""}`,
-  }
-}
-
-export async function getUserSetupStatus(userId: string) {
-  noStore()
-
-  const user = await prisma.user.findUnique({
-    where: { id: userId },
-    select: currentUserAuthSelect,
-  })
-
-  const mapped = mapCurrentUser(user)
-  if (!mapped) return null
-
-  const missing: string[] = []
-  if (mapped.status !== "active") missing.push("account_active")
-  if (mapped.readiness.identityStatus !== "verified") missing.push("identity_verified")
-  if (mapped.readiness.adultStatus !== "verified") missing.push("adult_verified")
-  if (mapped.readiness.paymentMethodReady !== "ready") missing.push("payment_ready")
-  if (mapped.readiness.payoutReadiness !== "ready") missing.push("payout_ready")
-  if (!mapped.readiness.termsAccepted) missing.push("terms_accepted")
-
-  return {
-    userId: mapped.id,
-    status: mapped.status,
-    readiness: mapped.readiness,
-    missing,
-    complete: missing.length === 0,
-  }
-}
-
-export async function getUserAuthzSnapshot(userId: string) {
-  const setup = await getUserSetupStatus(userId)
-
-  return {
-    userId,
-    active: setup?.status === "active",
-    canCreateVouch: setup
-      ? canCreateVouch({
-          userStatus: setup.status,
-          identityStatus: setup.readiness.identityStatus,
-          adultStatus: setup.readiness.adultStatus,
-          paymentMethodReady: setup.readiness.paymentMethodReady,
-          payoutReadiness: setup.readiness.payoutReadiness,
-          termsAccepted: setup.readiness.termsAccepted,
-        })
-      : false,
-    canAcceptVouch: setup
-      ? canAcceptVouch({
-          userId,
-          merchantId: "",
-          existingCustomerId: null,
-          status: "sent",
-          inviteValid: true,
-          userStatus: setup.status,
-          identityStatus: setup.readiness.identityStatus,
-          adultStatus: setup.readiness.adultStatus,
-          paymentMethodReady: setup.readiness.paymentMethodReady,
-          payoutReadiness: setup.readiness.payoutReadiness,
-          termsAccepted: setup.readiness.termsAccepted,
-        })
-      : false,
-    canConfirmPresence: setup?.status === "active",
-    setup,
-  }
-}
-
-export async function getContextualParticipantRole(input: { vouchId: string; userId?: string }) {
-  noStore()
-
-  const userId = input.userId ?? (await getCurrentUserId())
-  if (!userId) return { role: null, authorized: false }
-
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: input.vouchId },
-    select: contextualParticipantRoleSelect,
-  })
-
-  if (!vouch) return { role: null, authorized: false }
-
-  if (vouch.merchantId === userId) return { role: "merchant" as const, authorized: true }
-  if (vouch.customerId === userId) return { role: "customer" as const, authorized: true }
-
-  return { role: null, authorized: false }
-}
-
-export async function getInvitePreservedAuthContext(token: string) {
-  noStore()
-
-  const invitation = await prisma.invitation.findFirst({
-    where: { tokenHash: await hashInvitationToken(token) },
-    select: inviteCandidateAuthSelect,
-  })
-
-  if (!invitation) {
-    return { variant: "invalid", token }
-  }
-
-  const now = new Date()
-  if (invitation.expiresAt <= now) {
-    return { variant: "expired", token, invitationId: invitation.id }
-  }
-
-  return {
-    variant: "valid",
-    token,
-    invitationId: invitation.id,
-    recipientEmail: invitation.recipientEmail,
-    vouchId: invitation.vouchId,
-    vouchStatus: invitation.vouch.status,
-    returnTo: `/vouches/invite/${token}`,
-  }
 }

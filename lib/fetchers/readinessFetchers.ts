@@ -8,39 +8,34 @@ import { canCreateVouch, canAcceptVouch } from "@/lib/authz/policies"
 import { prisma } from "@/lib/db/prisma"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 
-const iso = (value: Date | null | undefined) => (value ? value.toISOString() : null)
-
 const readinessSelect = {
   id: true,
   status: true,
-  verificationProfile: { select: { identityStatus: true, adultStatus: true } },
-  paymentCustomer: { select: { readiness: true } },
-  connectedAccount: { select: { readiness: true } },
-  termsAcceptances: {
-    orderBy: { acceptedAt: "desc" },
-    take: 1,
-    select: { termsVersion: true, acceptedAt: true },
-  },
+  paymentCustomer: { select: { paymentMethodReady: true } },
+  connectedAccount: { select: { detailsSubmitted: true, payoutsEnabled: true } },
 } satisfies Prisma.UserSelect
 
+type ReadinessRecord = Prisma.UserGetPayload<{ select: typeof readinessSelect }>
+
 function normalizeReadiness(record: ReadinessRecord | null) {
-  const terms = record?.termsAcceptances?.[0] ?? null
-  const verification = record?.verificationProfile ?? null
   const paymentCustomer = record?.paymentCustomer ?? null
   const connectedAccount = record?.connectedAccount ?? null
 
   const state = {
     userId: record?.id ?? null,
     userStatus: record?.status === "active" ? ("active" as const) : ("disabled" as const),
-    identityStatus: verification?.identityStatus ?? "unstarted",
-    adultStatus: verification?.adultStatus ?? "unstarted",
-    paymentMethodReady: paymentCustomer?.readiness ?? "not_started",
-    payoutReadiness: connectedAccount?.readiness ?? "not_started",
+    identityStatus: "verified",
+    adultStatus: "verified",
+    paymentMethodReady: paymentCustomer?.paymentMethodReady ? "ready" : "not_started",
+    payoutReadiness:
+      connectedAccount?.detailsSubmitted && connectedAccount.payoutsEnabled
+        ? "ready"
+        : "not_started",
     hasPaymentCustomer: Boolean(paymentCustomer),
     hasConnectedAccount: Boolean(connectedAccount),
-    termsAccepted: Boolean(terms),
-    termsVersion: terms?.termsVersion ?? null,
-    termsAcceptedAt: iso(terms?.acceptedAt),
+    termsAccepted: true,
+    termsVersion: null,
+    termsAcceptedAt: null,
   }
 
   return {
