@@ -52,26 +52,22 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
-  VerificationProfile: 'VerificationProfile',
   PaymentCustomer: 'PaymentCustomer',
   ConnectedAccount: 'ConnectedAccount',
-  TermsAcceptance: 'TermsAcceptance',
   Vouch: 'Vouch',
-  VouchRecoverySnapshot: 'VouchRecoverySnapshot',
-  Invitation: 'Invitation',
   PresenceConfirmation: 'PresenceConfirmation',
-  PaymentRecord: 'PaymentRecord',
+  PresenceConfirmationAttempt: 'PresenceConfirmationAttempt',
+  PaymentIntentRecord: 'PaymentIntentRecord',
+  ChargeRecord: 'ChargeRecord',
   RefundRecord: 'RefundRecord',
+  PayoutRecord: 'PayoutRecord',
   ProviderWebhookEvent: 'ProviderWebhookEvent',
-  ClerkSession: 'ClerkSession',
-  ClerkEmail: 'ClerkEmail',
-  ClerkSms: 'ClerkSms',
-  ClerkInvitation: 'ClerkInvitation',
-  PaymentWebhookEvent: 'PaymentWebhookEvent',
+  StripeWebhookEvent: 'StripeWebhookEvent',
   AuditEvent: 'AuditEvent',
-  NotificationEvent: 'NotificationEvent',
-  AnalyticsEvent: 'AnalyticsEvent',
-  OperationalRetry: 'OperationalRetry'
+  VouchEvent: 'VouchEvent',
+  OperationalRetry: 'OperationalRetry',
+  VouchRecoverySnapshot: 'VouchRecoverySnapshot',
+  AnalyticsEvent: 'AnalyticsEvent'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -104,29 +100,16 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
-export const VerificationProfileScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  identityStatus: 'identityStatus',
-  adultStatus: 'adultStatus',
-  provider: 'provider',
-  providerReference: 'providerReference',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type VerificationProfileScalarFieldEnum = (typeof VerificationProfileScalarFieldEnum)[keyof typeof VerificationProfileScalarFieldEnum]
-
-
 export const PaymentCustomerScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  provider: 'provider',
-  providerCustomerId: 'providerCustomerId',
-  readiness: 'readiness',
-  lastProviderSyncAt: 'lastProviderSyncAt',
-  lastErrorCode: 'lastErrorCode',
-  lastErrorMessage: 'lastErrorMessage',
+  stripeCustomerId: 'stripeCustomerId',
+  defaultPaymentMethodId: 'defaultPaymentMethodId',
+  paymentMethodReady: 'paymentMethodReady',
+  lastSetupIntentId: 'lastSetupIntentId',
+  lastCustomerPortalSession: 'lastCustomerPortalSession',
+  lastStripeEventId: 'lastStripeEventId',
+  syncedAt: 'syncedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -137,15 +120,17 @@ export type PaymentCustomerScalarFieldEnum = (typeof PaymentCustomerScalarFieldE
 export const ConnectedAccountScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
-  provider: 'provider',
-  providerAccountId: 'providerAccountId',
-  readiness: 'readiness',
+  stripeAccountId: 'stripeAccountId',
   chargesEnabled: 'chargesEnabled',
   payoutsEnabled: 'payoutsEnabled',
   detailsSubmitted: 'detailsSubmitted',
-  lastProviderSyncAt: 'lastProviderSyncAt',
-  lastErrorCode: 'lastErrorCode',
-  lastErrorMessage: 'lastErrorMessage',
+  requirementsCurrentlyDue: 'requirementsCurrentlyDue',
+  requirementsEventuallyDue: 'requirementsEventuallyDue',
+  disabledReason: 'disabledReason',
+  lastAccountLinkId: 'lastAccountLinkId',
+  lastLoginLinkId: 'lastLoginLinkId',
+  lastStripeEventId: 'lastStripeEventId',
+  syncedAt: 'syncedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -153,44 +138,26 @@ export const ConnectedAccountScalarFieldEnum = {
 export type ConnectedAccountScalarFieldEnum = (typeof ConnectedAccountScalarFieldEnum)[keyof typeof ConnectedAccountScalarFieldEnum]
 
 
-export const TermsAcceptanceScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  termsVersion: 'termsVersion',
-  acceptedAt: 'acceptedAt',
-  ipHash: 'ipHash',
-  userAgentHash: 'userAgentHash'
-} as const
-
-export type TermsAcceptanceScalarFieldEnum = (typeof TermsAcceptanceScalarFieldEnum)[keyof typeof TermsAcceptanceScalarFieldEnum]
-
-
 export const VouchScalarFieldEnum = {
   id: 'id',
   publicId: 'publicId',
   merchantId: 'merchantId',
   customerId: 'customerId',
-  status: 'status',
-  archiveStatus: 'archiveStatus',
-  recoveryStatus: 'recoveryStatus',
+  amountCents: 'amountCents',
   currency: 'currency',
-  protectedAmountCents: 'protectedAmountCents',
-  merchantReceivesCents: 'merchantReceivesCents',
-  vouchServiceFeeCents: 'vouchServiceFeeCents',
-  processingFeeOffsetCents: 'processingFeeOffsetCents',
-  applicationFeeAmountCents: 'applicationFeeAmountCents',
-  customerTotalCents: 'customerTotalCents',
-  label: 'label',
-  appointmentStartsAt: 'appointmentStartsAt',
+  appointmentAt: 'appointmentAt',
   confirmationOpensAt: 'confirmationOpensAt',
   confirmationExpiresAt: 'confirmationExpiresAt',
-  committedAt: 'committedAt',
-  sentAt: 'sentAt',
-  acceptedAt: 'acceptedAt',
+  merchantCodeHash: 'merchantCodeHash',
+  customerCodeHash: 'customerCodeHash',
+  status: 'status',
+  protocolFeePaidAt: 'protocolFeePaidAt',
   authorizedAt: 'authorizedAt',
-  confirmableAt: 'confirmableAt',
-  completedAt: 'completedAt',
+  capturedAt: 'capturedAt',
+  voidedAt: 'voidedAt',
   expiredAt: 'expiredAt',
+  archived: 'archived',
+  archivedAt: 'archivedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -198,103 +165,137 @@ export const VouchScalarFieldEnum = {
 export type VouchScalarFieldEnum = (typeof VouchScalarFieldEnum)[keyof typeof VouchScalarFieldEnum]
 
 
-export const VouchRecoverySnapshotScalarFieldEnum = {
-  id: 'id',
-  vouchId: 'vouchId',
-  snapshotVersion: 'snapshotVersion',
-  originalTermsJson: 'originalTermsJson',
-  pricingSnapshotJson: 'pricingSnapshotJson',
-  providerReferencesJson: 'providerReferencesJson',
-  settlementRulesJson: 'settlementRulesJson',
-  createdAt: 'createdAt'
-} as const
-
-export type VouchRecoverySnapshotScalarFieldEnum = (typeof VouchRecoverySnapshotScalarFieldEnum)[keyof typeof VouchRecoverySnapshotScalarFieldEnum]
-
-
-export const InvitationScalarFieldEnum = {
-  id: 'id',
-  vouchId: 'vouchId',
-  tokenHash: 'tokenHash',
-  recipientEmail: 'recipientEmail',
-  status: 'status',
-  expiresAt: 'expiresAt',
-  openedAt: 'openedAt',
-  acceptedAt: 'acceptedAt',
-  declinedAt: 'declinedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type InvitationScalarFieldEnum = (typeof InvitationScalarFieldEnum)[keyof typeof InvitationScalarFieldEnum]
-
-
 export const PresenceConfirmationScalarFieldEnum = {
   id: 'id',
   vouchId: 'vouchId',
-  userId: 'userId',
-  participantRole: 'participantRole',
   status: 'status',
-  method: 'method',
-  confirmedAt: 'confirmedAt',
-  serverReceivedAt: 'serverReceivedAt',
-  timeBucket: 'timeBucket',
-  clockSkewAccepted: 'clockSkewAccepted',
-  offlinePayloadHash: 'offlinePayloadHash',
-  createdAt: 'createdAt'
+  windowOpensAt: 'windowOpensAt',
+  windowClosesAt: 'windowClosesAt',
+  merchantConfirmedAt: 'merchantConfirmedAt',
+  customerConfirmedAt: 'customerConfirmedAt',
+  canCaptureAt: 'canCaptureAt',
+  voidedAt: 'voidedAt',
+  merchantCodeVerified: 'merchantCodeVerified',
+  customerCodeVerified: 'customerCodeVerified',
+  resolutionSource: 'resolutionSource',
+  failureReason: 'failureReason',
+  retryUntil: 'retryUntil',
+  lastRetryAt: 'lastRetryAt',
+  retryCount: 'retryCount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 } as const
 
 export type PresenceConfirmationScalarFieldEnum = (typeof PresenceConfirmationScalarFieldEnum)[keyof typeof PresenceConfirmationScalarFieldEnum]
 
 
-export const PaymentRecordScalarFieldEnum = {
+export const PresenceConfirmationAttemptScalarFieldEnum = {
+  id: 'id',
+  presenceConfirmationId: 'presenceConfirmationId',
+  participantRole: 'participantRole',
+  submittedAt: 'submittedAt',
+  confirmedAt: 'confirmedAt',
+  submissionMode: 'submissionMode',
+  payloadHash: 'payloadHash',
+  nonce: 'nonce',
+  accepted: 'accepted',
+  rejectedReason: 'rejectedReason'
+} as const
+
+export type PresenceConfirmationAttemptScalarFieldEnum = (typeof PresenceConfirmationAttemptScalarFieldEnum)[keyof typeof PresenceConfirmationAttemptScalarFieldEnum]
+
+
+export const PaymentIntentRecordScalarFieldEnum = {
   id: 'id',
   vouchId: 'vouchId',
-  provider: 'provider',
   purpose: 'purpose',
-  providerPaymentIntentId: 'providerPaymentIntentId',
-  providerCheckoutSessionId: 'providerCheckoutSessionId',
-  providerChargeId: 'providerChargeId',
-  providerTransferId: 'providerTransferId',
-  status: 'status',
-  settlementStatus: 'settlementStatus',
+  participantRole: 'participantRole',
+  stripePaymentIntentId: 'stripePaymentIntentId',
+  stripeCheckoutSessionId: 'stripeCheckoutSessionId',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeAccountId: 'stripeAccountId',
   amountCents: 'amountCents',
   currency: 'currency',
-  protectedAmountCents: 'protectedAmountCents',
-  merchantReceivesCents: 'merchantReceivesCents',
-  vouchServiceFeeCents: 'vouchServiceFeeCents',
-  processingFeeOffsetCents: 'processingFeeOffsetCents',
-  applicationFeeAmountCents: 'applicationFeeAmountCents',
-  customerTotalCents: 'customerTotalCents',
-  amountCapturableCents: 'amountCapturableCents',
+  status: 'status',
+  captureMethod: 'captureMethod',
   captureBefore: 'captureBefore',
   authorizedAt: 'authorizedAt',
-  capturedAt: 'capturedAt',
   canceledAt: 'canceledAt',
   failedAt: 'failedAt',
-  lastProviderSyncAt: 'lastProviderSyncAt',
-  lastErrorCode: 'lastErrorCode',
-  lastErrorMessage: 'lastErrorMessage',
+  succeededAt: 'succeededAt',
+  lastStripeEventId: 'lastStripeEventId',
+  syncedAt: 'syncedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
-export type PaymentRecordScalarFieldEnum = (typeof PaymentRecordScalarFieldEnum)[keyof typeof PaymentRecordScalarFieldEnum]
+export type PaymentIntentRecordScalarFieldEnum = (typeof PaymentIntentRecordScalarFieldEnum)[keyof typeof PaymentIntentRecordScalarFieldEnum]
+
+
+export const ChargeRecordScalarFieldEnum = {
+  id: 'id',
+  vouchId: 'vouchId',
+  paymentIntentRecordId: 'paymentIntentRecordId',
+  stripeChargeId: 'stripeChargeId',
+  stripePaymentIntentId: 'stripePaymentIntentId',
+  stripeCustomerId: 'stripeCustomerId',
+  stripeBalanceTransactionId: 'stripeBalanceTransactionId',
+  amountCents: 'amountCents',
+  currency: 'currency',
+  status: 'status',
+  captured: 'captured',
+  paid: 'paid',
+  refunded: 'refunded',
+  disputed: 'disputed',
+  capturedAt: 'capturedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ChargeRecordScalarFieldEnum = (typeof ChargeRecordScalarFieldEnum)[keyof typeof ChargeRecordScalarFieldEnum]
 
 
 export const RefundRecordScalarFieldEnum = {
   id: 'id',
   vouchId: 'vouchId',
-  paymentRecordId: 'paymentRecordId',
-  providerRefundId: 'providerRefundId',
-  status: 'status',
-  reason: 'reason',
+  chargeRecordId: 'chargeRecordId',
+  paymentIntentRecordId: 'paymentIntentRecordId',
+  stripeRefundId: 'stripeRefundId',
+  stripePaymentIntentId: 'stripePaymentIntentId',
+  stripeChargeId: 'stripeChargeId',
   amountCents: 'amountCents',
+  currency: 'currency',
+  reason: 'reason',
+  status: 'status',
+  lastStripeEventId: 'lastStripeEventId',
+  syncedAt: 'syncedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type RefundRecordScalarFieldEnum = (typeof RefundRecordScalarFieldEnum)[keyof typeof RefundRecordScalarFieldEnum]
+
+
+export const PayoutRecordScalarFieldEnum = {
+  id: 'id',
+  connectedAccountId: 'connectedAccountId',
+  stripePayoutId: 'stripePayoutId',
+  stripeAccountId: 'stripeAccountId',
+  amountCents: 'amountCents',
+  currency: 'currency',
+  status: 'status',
+  arrivalDate: 'arrivalDate',
+  paidAt: 'paidAt',
+  failedAt: 'failedAt',
+  failureCode: 'failureCode',
+  failureMessage: 'failureMessage',
+  lastStripeEventId: 'lastStripeEventId',
+  syncedAt: 'syncedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PayoutRecordScalarFieldEnum = (typeof PayoutRecordScalarFieldEnum)[keyof typeof PayoutRecordScalarFieldEnum]
 
 
 export const ProviderWebhookEventScalarFieldEnum = {
@@ -303,104 +304,43 @@ export const ProviderWebhookEventScalarFieldEnum = {
   providerEventId: 'providerEventId',
   eventType: 'eventType',
   status: 'status',
-  processed: 'processed',
+  payload: 'payload',
   receivedAt: 'receivedAt',
   processedAt: 'processedAt',
-  processingError: 'processingError',
-  safeMetadata: 'safeMetadata'
+  failedAt: 'failedAt',
+  failureReason: 'failureReason'
 } as const
 
 export type ProviderWebhookEventScalarFieldEnum = (typeof ProviderWebhookEventScalarFieldEnum)[keyof typeof ProviderWebhookEventScalarFieldEnum]
 
 
-export const ClerkSessionScalarFieldEnum = {
+export const StripeWebhookEventScalarFieldEnum = {
   id: 'id',
-  clerkUserId: 'clerkUserId',
-  status: 'status',
-  lastEventType: 'lastEventType',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  endedAt: 'endedAt',
-  removedAt: 'removedAt',
-  revokedAt: 'revokedAt',
-  deletedAt: 'deletedAt'
-} as const
-
-export type ClerkSessionScalarFieldEnum = (typeof ClerkSessionScalarFieldEnum)[keyof typeof ClerkSessionScalarFieldEnum]
-
-
-export const ClerkEmailScalarFieldEnum = {
-  id: 'id',
-  clerkUserId: 'clerkUserId',
-  status: 'status',
-  toEmail: 'toEmail',
-  lastEventType: 'lastEventType',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
-} as const
-
-export type ClerkEmailScalarFieldEnum = (typeof ClerkEmailScalarFieldEnum)[keyof typeof ClerkEmailScalarFieldEnum]
-
-
-export const ClerkSmsScalarFieldEnum = {
-  id: 'id',
-  clerkUserId: 'clerkUserId',
-  status: 'status',
-  toPhone: 'toPhone',
-  lastEventType: 'lastEventType',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
-} as const
-
-export type ClerkSmsScalarFieldEnum = (typeof ClerkSmsScalarFieldEnum)[keyof typeof ClerkSmsScalarFieldEnum]
-
-
-export const ClerkInvitationScalarFieldEnum = {
-  id: 'id',
-  clerkUserId: 'clerkUserId',
-  emailAddress: 'emailAddress',
-  status: 'status',
-  lastEventType: 'lastEventType',
-  acceptedAt: 'acceptedAt',
-  revokedAt: 'revokedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
-} as const
-
-export type ClerkInvitationScalarFieldEnum = (typeof ClerkInvitationScalarFieldEnum)[keyof typeof ClerkInvitationScalarFieldEnum]
-
-
-export const PaymentWebhookEventScalarFieldEnum = {
-  id: 'id',
-  provider: 'provider',
-  providerEventId: 'providerEventId',
-  eventType: 'eventType',
   providerWebhookEventId: 'providerWebhookEventId',
+  stripeEventId: 'stripeEventId',
+  eventType: 'eventType',
   vouchId: 'vouchId',
-  paymentRecordId: 'paymentRecordId',
+  paymentIntentRecordId: 'paymentIntentRecordId',
+  chargeRecordId: 'chargeRecordId',
   refundRecordId: 'refundRecordId',
-  processed: 'processed',
-  receivedAt: 'receivedAt',
-  processedAt: 'processedAt',
-  processingError: 'processingError',
-  safeMetadata: 'safeMetadata'
+  payoutRecordId: 'payoutRecordId',
+  accountId: 'accountId',
+  livemode: 'livemode',
+  createdAt: 'createdAt'
 } as const
 
-export type PaymentWebhookEventScalarFieldEnum = (typeof PaymentWebhookEventScalarFieldEnum)[keyof typeof PaymentWebhookEventScalarFieldEnum]
+export type StripeWebhookEventScalarFieldEnum = (typeof StripeWebhookEventScalarFieldEnum)[keyof typeof StripeWebhookEventScalarFieldEnum]
 
 
 export const AuditEventScalarFieldEnum = {
   id: 'id',
-  eventName: 'eventName',
-  actorType: 'actorType',
   actorUserId: 'actorUserId',
+  actorType: 'actorType',
   entityType: 'entityType',
   entityId: 'entityId',
-  requestId: 'requestId',
-  participantSafe: 'participantSafe',
+  eventName: 'eventName',
+  before: 'before',
+  after: 'after',
   metadata: 'metadata',
   createdAt: 'createdAt'
 } as const
@@ -408,55 +348,87 @@ export const AuditEventScalarFieldEnum = {
 export type AuditEventScalarFieldEnum = (typeof AuditEventScalarFieldEnum)[keyof typeof AuditEventScalarFieldEnum]
 
 
-export const NotificationEventScalarFieldEnum = {
+export const VouchEventScalarFieldEnum = {
   id: 'id',
-  eventName: 'eventName',
-  channel: 'channel',
-  status: 'status',
-  recipientUserId: 'recipientUserId',
   vouchId: 'vouchId',
-  providerMessageId: 'providerMessageId',
-  errorCode: 'errorCode',
-  createdAt: 'createdAt',
-  sentAt: 'sentAt',
-  failedAt: 'failedAt'
+  type: 'type',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
 } as const
 
-export type NotificationEventScalarFieldEnum = (typeof NotificationEventScalarFieldEnum)[keyof typeof NotificationEventScalarFieldEnum]
-
-
-export const AnalyticsEventScalarFieldEnum = {
-  id: 'id',
-  eventName: 'eventName',
-  eventGroup: 'eventGroup',
-  environment: 'environment',
-  userId: 'userId',
-  sessionId: 'sessionId',
-  requestId: 'requestId',
-  occurredAt: 'occurredAt',
-  createdAt: 'createdAt',
-  properties: 'properties'
-} as const
-
-export type AnalyticsEventScalarFieldEnum = (typeof AnalyticsEventScalarFieldEnum)[keyof typeof AnalyticsEventScalarFieldEnum]
+export type VouchEventScalarFieldEnum = (typeof VouchEventScalarFieldEnum)[keyof typeof VouchEventScalarFieldEnum]
 
 
 export const OperationalRetryScalarFieldEnum = {
   id: 'id',
+  vouchId: 'vouchId',
   operation: 'operation',
   status: 'status',
   entityType: 'entityType',
   entityId: 'entityId',
-  userId: 'userId',
-  reason: 'reason',
-  errorCode: 'errorCode',
-  startedAt: 'startedAt',
+  attemptCount: 'attemptCount',
+  maxAttempts: 'maxAttempts',
+  nextAttemptAt: 'nextAttemptAt',
+  lastAttemptAt: 'lastAttemptAt',
+  lockedAt: 'lockedAt',
   completedAt: 'completedAt',
+  failedAt: 'failedAt',
+  failureReason: 'failureReason',
+  metadata: 'metadata',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type OperationalRetryScalarFieldEnum = (typeof OperationalRetryScalarFieldEnum)[keyof typeof OperationalRetryScalarFieldEnum]
+
+
+export const VouchRecoverySnapshotScalarFieldEnum = {
+  id: 'id',
+  vouchId: 'vouchId',
+  publicId: 'publicId',
+  reason: 'reason',
+  merchantId: 'merchantId',
+  customerId: 'customerId',
+  amountCents: 'amountCents',
+  currency: 'currency',
+  appointmentAt: 'appointmentAt',
+  confirmationOpensAt: 'confirmationOpensAt',
+  confirmationExpiresAt: 'confirmationExpiresAt',
+  status: 'status',
+  protocolFeePaidAt: 'protocolFeePaidAt',
+  authorizedAt: 'authorizedAt',
+  capturedAt: 'capturedAt',
+  voidedAt: 'voidedAt',
+  expiredAt: 'expiredAt',
+  archived: 'archived',
+  presenceStatus: 'presenceStatus',
+  presenceCanCaptureAt: 'presenceCanCaptureAt',
+  presenceVoidedAt: 'presenceVoidedAt',
+  merchantCodeHash: 'merchantCodeHash',
+  customerCodeHash: 'customerCodeHash',
+  stripePaymentIntentId: 'stripePaymentIntentId',
+  stripeCheckoutSessionId: 'stripeCheckoutSessionId',
+  stripeChargeId: 'stripeChargeId',
+  stripeBalanceTransactionId: 'stripeBalanceTransactionId',
+  lastStripeEventId: 'lastStripeEventId',
+  sourceVersion: 'sourceVersion',
+  checksumHash: 'checksumHash',
+  createdAt: 'createdAt'
+} as const
+
+export type VouchRecoverySnapshotScalarFieldEnum = (typeof VouchRecoverySnapshotScalarFieldEnum)[keyof typeof VouchRecoverySnapshotScalarFieldEnum]
+
+
+export const AnalyticsEventScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  eventName: 'eventName',
+  eventGroup: 'eventGroup',
+  properties: 'properties',
+  createdAt: 'createdAt'
+} as const
+
+export type AnalyticsEventScalarFieldEnum = (typeof AnalyticsEventScalarFieldEnum)[keyof typeof AnalyticsEventScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -465,13 +437,6 @@ export const SortOrder = {
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
 
 
 export const NullableJsonNullValueInput = {

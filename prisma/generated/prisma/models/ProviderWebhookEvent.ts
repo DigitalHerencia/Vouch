@@ -14,11 +14,7 @@ import type * as Prisma from "../internal/prismaNamespace"
 
 /**
  * Model ProviderWebhookEvent
- * *
- *  * Generic provider webhook ledger.
- *  *
- *  * Use this for Clerk and Stripe idempotency.
- *  * Do not store full provider payloads here.
+ * 
  */
 export type ProviderWebhookEventModel = runtime.Types.Result.DefaultSelection<Prisma.$ProviderWebhookEventPayload>
 
@@ -33,11 +29,11 @@ export type ProviderWebhookEventMinAggregateOutputType = {
   provider: $Enums.WebhookProvider | null
   providerEventId: string | null
   eventType: string | null
-  status: $Enums.ProviderWebhookStatus | null
-  processed: boolean | null
+  status: $Enums.WebhookProcessingStatus | null
   receivedAt: Date | null
   processedAt: Date | null
-  processingError: string | null
+  failedAt: Date | null
+  failureReason: string | null
 }
 
 export type ProviderWebhookEventMaxAggregateOutputType = {
@@ -45,11 +41,11 @@ export type ProviderWebhookEventMaxAggregateOutputType = {
   provider: $Enums.WebhookProvider | null
   providerEventId: string | null
   eventType: string | null
-  status: $Enums.ProviderWebhookStatus | null
-  processed: boolean | null
+  status: $Enums.WebhookProcessingStatus | null
   receivedAt: Date | null
   processedAt: Date | null
-  processingError: string | null
+  failedAt: Date | null
+  failureReason: string | null
 }
 
 export type ProviderWebhookEventCountAggregateOutputType = {
@@ -58,11 +54,11 @@ export type ProviderWebhookEventCountAggregateOutputType = {
   providerEventId: number
   eventType: number
   status: number
-  processed: number
+  payload: number
   receivedAt: number
   processedAt: number
-  processingError: number
-  safeMetadata: number
+  failedAt: number
+  failureReason: number
   _all: number
 }
 
@@ -73,10 +69,10 @@ export type ProviderWebhookEventMinAggregateInputType = {
   providerEventId?: true
   eventType?: true
   status?: true
-  processed?: true
   receivedAt?: true
   processedAt?: true
-  processingError?: true
+  failedAt?: true
+  failureReason?: true
 }
 
 export type ProviderWebhookEventMaxAggregateInputType = {
@@ -85,10 +81,10 @@ export type ProviderWebhookEventMaxAggregateInputType = {
   providerEventId?: true
   eventType?: true
   status?: true
-  processed?: true
   receivedAt?: true
   processedAt?: true
-  processingError?: true
+  failedAt?: true
+  failureReason?: true
 }
 
 export type ProviderWebhookEventCountAggregateInputType = {
@@ -97,11 +93,11 @@ export type ProviderWebhookEventCountAggregateInputType = {
   providerEventId?: true
   eventType?: true
   status?: true
-  processed?: true
+  payload?: true
   receivedAt?: true
   processedAt?: true
-  processingError?: true
-  safeMetadata?: true
+  failedAt?: true
+  failureReason?: true
   _all?: true
 }
 
@@ -182,12 +178,12 @@ export type ProviderWebhookEventGroupByOutputType = {
   provider: $Enums.WebhookProvider
   providerEventId: string
   eventType: string
-  status: $Enums.ProviderWebhookStatus
-  processed: boolean
+  status: $Enums.WebhookProcessingStatus
+  payload: runtime.JsonValue | null
   receivedAt: Date
   processedAt: Date | null
-  processingError: string | null
-  safeMetadata: runtime.JsonValue | null
+  failedAt: Date | null
+  failureReason: string | null
   _count: ProviderWebhookEventCountAggregateOutputType | null
   _min: ProviderWebhookEventMinAggregateOutputType | null
   _max: ProviderWebhookEventMaxAggregateOutputType | null
@@ -216,13 +212,13 @@ export type ProviderWebhookEventWhereInput = {
   provider?: Prisma.EnumWebhookProviderFilter<"ProviderWebhookEvent"> | $Enums.WebhookProvider
   providerEventId?: Prisma.StringFilter<"ProviderWebhookEvent"> | string
   eventType?: Prisma.StringFilter<"ProviderWebhookEvent"> | string
-  status?: Prisma.EnumProviderWebhookStatusFilter<"ProviderWebhookEvent"> | $Enums.ProviderWebhookStatus
-  processed?: Prisma.BoolFilter<"ProviderWebhookEvent"> | boolean
+  status?: Prisma.EnumWebhookProcessingStatusFilter<"ProviderWebhookEvent"> | $Enums.WebhookProcessingStatus
+  payload?: Prisma.JsonNullableFilter<"ProviderWebhookEvent">
   receivedAt?: Prisma.DateTimeFilter<"ProviderWebhookEvent"> | Date | string
   processedAt?: Prisma.DateTimeNullableFilter<"ProviderWebhookEvent"> | Date | string | null
-  processingError?: Prisma.StringNullableFilter<"ProviderWebhookEvent"> | string | null
-  safeMetadata?: Prisma.JsonNullableFilter<"ProviderWebhookEvent">
-  paymentWebhookEvent?: Prisma.XOR<Prisma.PaymentWebhookEventNullableScalarRelationFilter, Prisma.PaymentWebhookEventWhereInput> | null
+  failedAt?: Prisma.DateTimeNullableFilter<"ProviderWebhookEvent"> | Date | string | null
+  failureReason?: Prisma.StringNullableFilter<"ProviderWebhookEvent"> | string | null
+  stripeEvent?: Prisma.XOR<Prisma.StripeWebhookEventNullableScalarRelationFilter, Prisma.StripeWebhookEventWhereInput> | null
 }
 
 export type ProviderWebhookEventOrderByWithRelationInput = {
@@ -231,12 +227,12 @@ export type ProviderWebhookEventOrderByWithRelationInput = {
   providerEventId?: Prisma.SortOrder
   eventType?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  processed?: Prisma.SortOrder
+  payload?: Prisma.SortOrderInput | Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   processedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  processingError?: Prisma.SortOrderInput | Prisma.SortOrder
-  safeMetadata?: Prisma.SortOrderInput | Prisma.SortOrder
-  paymentWebhookEvent?: Prisma.PaymentWebhookEventOrderByWithRelationInput
+  failedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeEvent?: Prisma.StripeWebhookEventOrderByWithRelationInput
 }
 
 export type ProviderWebhookEventWhereUniqueInput = Prisma.AtLeast<{
@@ -248,13 +244,13 @@ export type ProviderWebhookEventWhereUniqueInput = Prisma.AtLeast<{
   provider?: Prisma.EnumWebhookProviderFilter<"ProviderWebhookEvent"> | $Enums.WebhookProvider
   providerEventId?: Prisma.StringFilter<"ProviderWebhookEvent"> | string
   eventType?: Prisma.StringFilter<"ProviderWebhookEvent"> | string
-  status?: Prisma.EnumProviderWebhookStatusFilter<"ProviderWebhookEvent"> | $Enums.ProviderWebhookStatus
-  processed?: Prisma.BoolFilter<"ProviderWebhookEvent"> | boolean
+  status?: Prisma.EnumWebhookProcessingStatusFilter<"ProviderWebhookEvent"> | $Enums.WebhookProcessingStatus
+  payload?: Prisma.JsonNullableFilter<"ProviderWebhookEvent">
   receivedAt?: Prisma.DateTimeFilter<"ProviderWebhookEvent"> | Date | string
   processedAt?: Prisma.DateTimeNullableFilter<"ProviderWebhookEvent"> | Date | string | null
-  processingError?: Prisma.StringNullableFilter<"ProviderWebhookEvent"> | string | null
-  safeMetadata?: Prisma.JsonNullableFilter<"ProviderWebhookEvent">
-  paymentWebhookEvent?: Prisma.XOR<Prisma.PaymentWebhookEventNullableScalarRelationFilter, Prisma.PaymentWebhookEventWhereInput> | null
+  failedAt?: Prisma.DateTimeNullableFilter<"ProviderWebhookEvent"> | Date | string | null
+  failureReason?: Prisma.StringNullableFilter<"ProviderWebhookEvent"> | string | null
+  stripeEvent?: Prisma.XOR<Prisma.StripeWebhookEventNullableScalarRelationFilter, Prisma.StripeWebhookEventWhereInput> | null
 }, "id" | "provider_providerEventId">
 
 export type ProviderWebhookEventOrderByWithAggregationInput = {
@@ -263,11 +259,11 @@ export type ProviderWebhookEventOrderByWithAggregationInput = {
   providerEventId?: Prisma.SortOrder
   eventType?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  processed?: Prisma.SortOrder
+  payload?: Prisma.SortOrderInput | Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   processedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  processingError?: Prisma.SortOrderInput | Prisma.SortOrder
-  safeMetadata?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ProviderWebhookEventCountOrderByAggregateInput
   _max?: Prisma.ProviderWebhookEventMaxOrderByAggregateInput
   _min?: Prisma.ProviderWebhookEventMinOrderByAggregateInput
@@ -281,12 +277,12 @@ export type ProviderWebhookEventScalarWhereWithAggregatesInput = {
   provider?: Prisma.EnumWebhookProviderWithAggregatesFilter<"ProviderWebhookEvent"> | $Enums.WebhookProvider
   providerEventId?: Prisma.StringWithAggregatesFilter<"ProviderWebhookEvent"> | string
   eventType?: Prisma.StringWithAggregatesFilter<"ProviderWebhookEvent"> | string
-  status?: Prisma.EnumProviderWebhookStatusWithAggregatesFilter<"ProviderWebhookEvent"> | $Enums.ProviderWebhookStatus
-  processed?: Prisma.BoolWithAggregatesFilter<"ProviderWebhookEvent"> | boolean
+  status?: Prisma.EnumWebhookProcessingStatusWithAggregatesFilter<"ProviderWebhookEvent"> | $Enums.WebhookProcessingStatus
+  payload?: Prisma.JsonNullableWithAggregatesFilter<"ProviderWebhookEvent">
   receivedAt?: Prisma.DateTimeWithAggregatesFilter<"ProviderWebhookEvent"> | Date | string
   processedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProviderWebhookEvent"> | Date | string | null
-  processingError?: Prisma.StringNullableWithAggregatesFilter<"ProviderWebhookEvent"> | string | null
-  safeMetadata?: Prisma.JsonNullableWithAggregatesFilter<"ProviderWebhookEvent">
+  failedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProviderWebhookEvent"> | Date | string | null
+  failureReason?: Prisma.StringNullableWithAggregatesFilter<"ProviderWebhookEvent"> | string | null
 }
 
 export type ProviderWebhookEventCreateInput = {
@@ -294,13 +290,13 @@ export type ProviderWebhookEventCreateInput = {
   provider: $Enums.WebhookProvider
   providerEventId: string
   eventType: string
-  status?: $Enums.ProviderWebhookStatus
-  processed?: boolean
+  status?: $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Date | string
   processedAt?: Date | string | null
-  processingError?: string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  paymentWebhookEvent?: Prisma.PaymentWebhookEventCreateNestedOneWithoutProviderWebhookEventInput
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  stripeEvent?: Prisma.StripeWebhookEventCreateNestedOneWithoutProviderWebhookEventInput
 }
 
 export type ProviderWebhookEventUncheckedCreateInput = {
@@ -308,13 +304,13 @@ export type ProviderWebhookEventUncheckedCreateInput = {
   provider: $Enums.WebhookProvider
   providerEventId: string
   eventType: string
-  status?: $Enums.ProviderWebhookStatus
-  processed?: boolean
+  status?: $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Date | string
   processedAt?: Date | string | null
-  processingError?: string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  paymentWebhookEvent?: Prisma.PaymentWebhookEventUncheckedCreateNestedOneWithoutProviderWebhookEventInput
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  stripeEvent?: Prisma.StripeWebhookEventUncheckedCreateNestedOneWithoutProviderWebhookEventInput
 }
 
 export type ProviderWebhookEventUpdateInput = {
@@ -322,13 +318,13 @@ export type ProviderWebhookEventUpdateInput = {
   provider?: Prisma.EnumWebhookProviderFieldUpdateOperationsInput | $Enums.WebhookProvider
   providerEventId?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumProviderWebhookStatusFieldUpdateOperationsInput | $Enums.ProviderWebhookStatus
-  processed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookProcessingStatusFieldUpdateOperationsInput | $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  processingError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  paymentWebhookEvent?: Prisma.PaymentWebhookEventUpdateOneWithoutProviderWebhookEventNestedInput
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeEvent?: Prisma.StripeWebhookEventUpdateOneWithoutProviderWebhookEventNestedInput
 }
 
 export type ProviderWebhookEventUncheckedUpdateInput = {
@@ -336,13 +332,13 @@ export type ProviderWebhookEventUncheckedUpdateInput = {
   provider?: Prisma.EnumWebhookProviderFieldUpdateOperationsInput | $Enums.WebhookProvider
   providerEventId?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumProviderWebhookStatusFieldUpdateOperationsInput | $Enums.ProviderWebhookStatus
-  processed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookProcessingStatusFieldUpdateOperationsInput | $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  processingError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
-  paymentWebhookEvent?: Prisma.PaymentWebhookEventUncheckedUpdateOneWithoutProviderWebhookEventNestedInput
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeEvent?: Prisma.StripeWebhookEventUncheckedUpdateOneWithoutProviderWebhookEventNestedInput
 }
 
 export type ProviderWebhookEventCreateManyInput = {
@@ -350,12 +346,12 @@ export type ProviderWebhookEventCreateManyInput = {
   provider: $Enums.WebhookProvider
   providerEventId: string
   eventType: string
-  status?: $Enums.ProviderWebhookStatus
-  processed?: boolean
+  status?: $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Date | string
   processedAt?: Date | string | null
-  processingError?: string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  failedAt?: Date | string | null
+  failureReason?: string | null
 }
 
 export type ProviderWebhookEventUpdateManyMutationInput = {
@@ -363,12 +359,12 @@ export type ProviderWebhookEventUpdateManyMutationInput = {
   provider?: Prisma.EnumWebhookProviderFieldUpdateOperationsInput | $Enums.WebhookProvider
   providerEventId?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumProviderWebhookStatusFieldUpdateOperationsInput | $Enums.ProviderWebhookStatus
-  processed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookProcessingStatusFieldUpdateOperationsInput | $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  processingError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProviderWebhookEventUncheckedUpdateManyInput = {
@@ -376,12 +372,12 @@ export type ProviderWebhookEventUncheckedUpdateManyInput = {
   provider?: Prisma.EnumWebhookProviderFieldUpdateOperationsInput | $Enums.WebhookProvider
   providerEventId?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumProviderWebhookStatusFieldUpdateOperationsInput | $Enums.ProviderWebhookStatus
-  processed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookProcessingStatusFieldUpdateOperationsInput | $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  processingError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type ProviderWebhookEventProviderProviderEventIdCompoundUniqueInput = {
@@ -395,11 +391,11 @@ export type ProviderWebhookEventCountOrderByAggregateInput = {
   providerEventId?: Prisma.SortOrder
   eventType?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  processed?: Prisma.SortOrder
+  payload?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
-  processingError?: Prisma.SortOrder
-  safeMetadata?: Prisma.SortOrder
+  failedAt?: Prisma.SortOrder
+  failureReason?: Prisma.SortOrder
 }
 
 export type ProviderWebhookEventMaxOrderByAggregateInput = {
@@ -408,10 +404,10 @@ export type ProviderWebhookEventMaxOrderByAggregateInput = {
   providerEventId?: Prisma.SortOrder
   eventType?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  processed?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
-  processingError?: Prisma.SortOrder
+  failedAt?: Prisma.SortOrder
+  failureReason?: Prisma.SortOrder
 }
 
 export type ProviderWebhookEventMinOrderByAggregateInput = {
@@ -420,107 +416,105 @@ export type ProviderWebhookEventMinOrderByAggregateInput = {
   providerEventId?: Prisma.SortOrder
   eventType?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  processed?: Prisma.SortOrder
   receivedAt?: Prisma.SortOrder
   processedAt?: Prisma.SortOrder
-  processingError?: Prisma.SortOrder
+  failedAt?: Prisma.SortOrder
+  failureReason?: Prisma.SortOrder
 }
 
-export type ProviderWebhookEventNullableScalarRelationFilter = {
-  is?: Prisma.ProviderWebhookEventWhereInput | null
-  isNot?: Prisma.ProviderWebhookEventWhereInput | null
+export type ProviderWebhookEventScalarRelationFilter = {
+  is?: Prisma.ProviderWebhookEventWhereInput
+  isNot?: Prisma.ProviderWebhookEventWhereInput
 }
 
 export type EnumWebhookProviderFieldUpdateOperationsInput = {
   set?: $Enums.WebhookProvider
 }
 
-export type EnumProviderWebhookStatusFieldUpdateOperationsInput = {
-  set?: $Enums.ProviderWebhookStatus
+export type EnumWebhookProcessingStatusFieldUpdateOperationsInput = {
+  set?: $Enums.WebhookProcessingStatus
 }
 
-export type ProviderWebhookEventCreateNestedOneWithoutPaymentWebhookEventInput = {
-  create?: Prisma.XOR<Prisma.ProviderWebhookEventCreateWithoutPaymentWebhookEventInput, Prisma.ProviderWebhookEventUncheckedCreateWithoutPaymentWebhookEventInput>
-  connectOrCreate?: Prisma.ProviderWebhookEventCreateOrConnectWithoutPaymentWebhookEventInput
+export type ProviderWebhookEventCreateNestedOneWithoutStripeEventInput = {
+  create?: Prisma.XOR<Prisma.ProviderWebhookEventCreateWithoutStripeEventInput, Prisma.ProviderWebhookEventUncheckedCreateWithoutStripeEventInput>
+  connectOrCreate?: Prisma.ProviderWebhookEventCreateOrConnectWithoutStripeEventInput
   connect?: Prisma.ProviderWebhookEventWhereUniqueInput
 }
 
-export type ProviderWebhookEventUpdateOneWithoutPaymentWebhookEventNestedInput = {
-  create?: Prisma.XOR<Prisma.ProviderWebhookEventCreateWithoutPaymentWebhookEventInput, Prisma.ProviderWebhookEventUncheckedCreateWithoutPaymentWebhookEventInput>
-  connectOrCreate?: Prisma.ProviderWebhookEventCreateOrConnectWithoutPaymentWebhookEventInput
-  upsert?: Prisma.ProviderWebhookEventUpsertWithoutPaymentWebhookEventInput
-  disconnect?: Prisma.ProviderWebhookEventWhereInput | boolean
-  delete?: Prisma.ProviderWebhookEventWhereInput | boolean
+export type ProviderWebhookEventUpdateOneRequiredWithoutStripeEventNestedInput = {
+  create?: Prisma.XOR<Prisma.ProviderWebhookEventCreateWithoutStripeEventInput, Prisma.ProviderWebhookEventUncheckedCreateWithoutStripeEventInput>
+  connectOrCreate?: Prisma.ProviderWebhookEventCreateOrConnectWithoutStripeEventInput
+  upsert?: Prisma.ProviderWebhookEventUpsertWithoutStripeEventInput
   connect?: Prisma.ProviderWebhookEventWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.ProviderWebhookEventUpdateToOneWithWhereWithoutPaymentWebhookEventInput, Prisma.ProviderWebhookEventUpdateWithoutPaymentWebhookEventInput>, Prisma.ProviderWebhookEventUncheckedUpdateWithoutPaymentWebhookEventInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ProviderWebhookEventUpdateToOneWithWhereWithoutStripeEventInput, Prisma.ProviderWebhookEventUpdateWithoutStripeEventInput>, Prisma.ProviderWebhookEventUncheckedUpdateWithoutStripeEventInput>
 }
 
-export type ProviderWebhookEventCreateWithoutPaymentWebhookEventInput = {
+export type ProviderWebhookEventCreateWithoutStripeEventInput = {
   id?: string
   provider: $Enums.WebhookProvider
   providerEventId: string
   eventType: string
-  status?: $Enums.ProviderWebhookStatus
-  processed?: boolean
+  status?: $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Date | string
   processedAt?: Date | string | null
-  processingError?: string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  failedAt?: Date | string | null
+  failureReason?: string | null
 }
 
-export type ProviderWebhookEventUncheckedCreateWithoutPaymentWebhookEventInput = {
+export type ProviderWebhookEventUncheckedCreateWithoutStripeEventInput = {
   id?: string
   provider: $Enums.WebhookProvider
   providerEventId: string
   eventType: string
-  status?: $Enums.ProviderWebhookStatus
-  processed?: boolean
+  status?: $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Date | string
   processedAt?: Date | string | null
-  processingError?: string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  failedAt?: Date | string | null
+  failureReason?: string | null
 }
 
-export type ProviderWebhookEventCreateOrConnectWithoutPaymentWebhookEventInput = {
+export type ProviderWebhookEventCreateOrConnectWithoutStripeEventInput = {
   where: Prisma.ProviderWebhookEventWhereUniqueInput
-  create: Prisma.XOR<Prisma.ProviderWebhookEventCreateWithoutPaymentWebhookEventInput, Prisma.ProviderWebhookEventUncheckedCreateWithoutPaymentWebhookEventInput>
+  create: Prisma.XOR<Prisma.ProviderWebhookEventCreateWithoutStripeEventInput, Prisma.ProviderWebhookEventUncheckedCreateWithoutStripeEventInput>
 }
 
-export type ProviderWebhookEventUpsertWithoutPaymentWebhookEventInput = {
-  update: Prisma.XOR<Prisma.ProviderWebhookEventUpdateWithoutPaymentWebhookEventInput, Prisma.ProviderWebhookEventUncheckedUpdateWithoutPaymentWebhookEventInput>
-  create: Prisma.XOR<Prisma.ProviderWebhookEventCreateWithoutPaymentWebhookEventInput, Prisma.ProviderWebhookEventUncheckedCreateWithoutPaymentWebhookEventInput>
+export type ProviderWebhookEventUpsertWithoutStripeEventInput = {
+  update: Prisma.XOR<Prisma.ProviderWebhookEventUpdateWithoutStripeEventInput, Prisma.ProviderWebhookEventUncheckedUpdateWithoutStripeEventInput>
+  create: Prisma.XOR<Prisma.ProviderWebhookEventCreateWithoutStripeEventInput, Prisma.ProviderWebhookEventUncheckedCreateWithoutStripeEventInput>
   where?: Prisma.ProviderWebhookEventWhereInput
 }
 
-export type ProviderWebhookEventUpdateToOneWithWhereWithoutPaymentWebhookEventInput = {
+export type ProviderWebhookEventUpdateToOneWithWhereWithoutStripeEventInput = {
   where?: Prisma.ProviderWebhookEventWhereInput
-  data: Prisma.XOR<Prisma.ProviderWebhookEventUpdateWithoutPaymentWebhookEventInput, Prisma.ProviderWebhookEventUncheckedUpdateWithoutPaymentWebhookEventInput>
+  data: Prisma.XOR<Prisma.ProviderWebhookEventUpdateWithoutStripeEventInput, Prisma.ProviderWebhookEventUncheckedUpdateWithoutStripeEventInput>
 }
 
-export type ProviderWebhookEventUpdateWithoutPaymentWebhookEventInput = {
+export type ProviderWebhookEventUpdateWithoutStripeEventInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumWebhookProviderFieldUpdateOperationsInput | $Enums.WebhookProvider
   providerEventId?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumProviderWebhookStatusFieldUpdateOperationsInput | $Enums.ProviderWebhookStatus
-  processed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookProcessingStatusFieldUpdateOperationsInput | $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  processingError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
-export type ProviderWebhookEventUncheckedUpdateWithoutPaymentWebhookEventInput = {
+export type ProviderWebhookEventUncheckedUpdateWithoutStripeEventInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumWebhookProviderFieldUpdateOperationsInput | $Enums.WebhookProvider
   providerEventId?: Prisma.StringFieldUpdateOperationsInput | string
   eventType?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumProviderWebhookStatusFieldUpdateOperationsInput | $Enums.ProviderWebhookStatus
-  processed?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  status?: Prisma.EnumWebhookProcessingStatusFieldUpdateOperationsInput | $Enums.WebhookProcessingStatus
+  payload?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   receivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  processingError?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  safeMetadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -531,12 +525,12 @@ export type ProviderWebhookEventSelect<ExtArgs extends runtime.Types.Extensions.
   providerEventId?: boolean
   eventType?: boolean
   status?: boolean
-  processed?: boolean
+  payload?: boolean
   receivedAt?: boolean
   processedAt?: boolean
-  processingError?: boolean
-  safeMetadata?: boolean
-  paymentWebhookEvent?: boolean | Prisma.ProviderWebhookEvent$paymentWebhookEventArgs<ExtArgs>
+  failedAt?: boolean
+  failureReason?: boolean
+  stripeEvent?: boolean | Prisma.ProviderWebhookEvent$stripeEventArgs<ExtArgs>
 }, ExtArgs["result"]["providerWebhookEvent"]>
 
 export type ProviderWebhookEventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -545,11 +539,11 @@ export type ProviderWebhookEventSelectCreateManyAndReturn<ExtArgs extends runtim
   providerEventId?: boolean
   eventType?: boolean
   status?: boolean
-  processed?: boolean
+  payload?: boolean
   receivedAt?: boolean
   processedAt?: boolean
-  processingError?: boolean
-  safeMetadata?: boolean
+  failedAt?: boolean
+  failureReason?: boolean
 }, ExtArgs["result"]["providerWebhookEvent"]>
 
 export type ProviderWebhookEventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -558,11 +552,11 @@ export type ProviderWebhookEventSelectUpdateManyAndReturn<ExtArgs extends runtim
   providerEventId?: boolean
   eventType?: boolean
   status?: boolean
-  processed?: boolean
+  payload?: boolean
   receivedAt?: boolean
   processedAt?: boolean
-  processingError?: boolean
-  safeMetadata?: boolean
+  failedAt?: boolean
+  failureReason?: boolean
 }, ExtArgs["result"]["providerWebhookEvent"]>
 
 export type ProviderWebhookEventSelectScalar = {
@@ -571,16 +565,16 @@ export type ProviderWebhookEventSelectScalar = {
   providerEventId?: boolean
   eventType?: boolean
   status?: boolean
-  processed?: boolean
+  payload?: boolean
   receivedAt?: boolean
   processedAt?: boolean
-  processingError?: boolean
-  safeMetadata?: boolean
+  failedAt?: boolean
+  failureReason?: boolean
 }
 
-export type ProviderWebhookEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "provider" | "providerEventId" | "eventType" | "status" | "processed" | "receivedAt" | "processedAt" | "processingError" | "safeMetadata", ExtArgs["result"]["providerWebhookEvent"]>
+export type ProviderWebhookEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "provider" | "providerEventId" | "eventType" | "status" | "payload" | "receivedAt" | "processedAt" | "failedAt" | "failureReason", ExtArgs["result"]["providerWebhookEvent"]>
 export type ProviderWebhookEventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  paymentWebhookEvent?: boolean | Prisma.ProviderWebhookEvent$paymentWebhookEventArgs<ExtArgs>
+  stripeEvent?: boolean | Prisma.ProviderWebhookEvent$stripeEventArgs<ExtArgs>
 }
 export type ProviderWebhookEventIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
 export type ProviderWebhookEventIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -588,19 +582,19 @@ export type ProviderWebhookEventIncludeUpdateManyAndReturn<ExtArgs extends runti
 export type $ProviderWebhookEventPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProviderWebhookEvent"
   objects: {
-    paymentWebhookEvent: Prisma.$PaymentWebhookEventPayload<ExtArgs> | null
+    stripeEvent: Prisma.$StripeWebhookEventPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     provider: $Enums.WebhookProvider
     providerEventId: string
     eventType: string
-    status: $Enums.ProviderWebhookStatus
-    processed: boolean
+    status: $Enums.WebhookProcessingStatus
+    payload: runtime.JsonValue | null
     receivedAt: Date
     processedAt: Date | null
-    processingError: string | null
-    safeMetadata: runtime.JsonValue | null
+    failedAt: Date | null
+    failureReason: string | null
   }, ExtArgs["result"]["providerWebhookEvent"]>
   composites: {}
 }
@@ -995,7 +989,7 @@ readonly fields: ProviderWebhookEventFieldRefs;
  */
 export interface Prisma__ProviderWebhookEventClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  paymentWebhookEvent<T extends Prisma.ProviderWebhookEvent$paymentWebhookEventArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProviderWebhookEvent$paymentWebhookEventArgs<ExtArgs>>): Prisma.Prisma__PaymentWebhookEventClient<runtime.Types.Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  stripeEvent<T extends Prisma.ProviderWebhookEvent$stripeEventArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProviderWebhookEvent$stripeEventArgs<ExtArgs>>): Prisma.Prisma__StripeWebhookEventClient<runtime.Types.Result.GetResult<Prisma.$StripeWebhookEventPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1029,12 +1023,12 @@ export interface ProviderWebhookEventFieldRefs {
   readonly provider: Prisma.FieldRef<"ProviderWebhookEvent", 'WebhookProvider'>
   readonly providerEventId: Prisma.FieldRef<"ProviderWebhookEvent", 'String'>
   readonly eventType: Prisma.FieldRef<"ProviderWebhookEvent", 'String'>
-  readonly status: Prisma.FieldRef<"ProviderWebhookEvent", 'ProviderWebhookStatus'>
-  readonly processed: Prisma.FieldRef<"ProviderWebhookEvent", 'Boolean'>
+  readonly status: Prisma.FieldRef<"ProviderWebhookEvent", 'WebhookProcessingStatus'>
+  readonly payload: Prisma.FieldRef<"ProviderWebhookEvent", 'Json'>
   readonly receivedAt: Prisma.FieldRef<"ProviderWebhookEvent", 'DateTime'>
   readonly processedAt: Prisma.FieldRef<"ProviderWebhookEvent", 'DateTime'>
-  readonly processingError: Prisma.FieldRef<"ProviderWebhookEvent", 'String'>
-  readonly safeMetadata: Prisma.FieldRef<"ProviderWebhookEvent", 'Json'>
+  readonly failedAt: Prisma.FieldRef<"ProviderWebhookEvent", 'DateTime'>
+  readonly failureReason: Prisma.FieldRef<"ProviderWebhookEvent", 'String'>
 }
     
 
@@ -1428,22 +1422,22 @@ export type ProviderWebhookEventDeleteManyArgs<ExtArgs extends runtime.Types.Ext
 }
 
 /**
- * ProviderWebhookEvent.paymentWebhookEvent
+ * ProviderWebhookEvent.stripeEvent
  */
-export type ProviderWebhookEvent$paymentWebhookEventArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type ProviderWebhookEvent$stripeEventArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the PaymentWebhookEvent
+   * Select specific fields to fetch from the StripeWebhookEvent
    */
-  select?: Prisma.PaymentWebhookEventSelect<ExtArgs> | null
+  select?: Prisma.StripeWebhookEventSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the PaymentWebhookEvent
+   * Omit specific fields from the StripeWebhookEvent
    */
-  omit?: Prisma.PaymentWebhookEventOmit<ExtArgs> | null
+  omit?: Prisma.StripeWebhookEventOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.PaymentWebhookEventInclude<ExtArgs> | null
-  where?: Prisma.PaymentWebhookEventWhereInput
+  include?: Prisma.StripeWebhookEventInclude<ExtArgs> | null
+  where?: Prisma.StripeWebhookEventWhereInput
 }
 
 /**

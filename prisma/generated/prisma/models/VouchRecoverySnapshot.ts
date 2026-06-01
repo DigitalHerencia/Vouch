@@ -20,59 +20,235 @@ export type VouchRecoverySnapshotModel = runtime.Types.Result.DefaultSelection<P
 
 export type AggregateVouchRecoverySnapshot = {
   _count: VouchRecoverySnapshotCountAggregateOutputType | null
+  _avg: VouchRecoverySnapshotAvgAggregateOutputType | null
+  _sum: VouchRecoverySnapshotSumAggregateOutputType | null
   _min: VouchRecoverySnapshotMinAggregateOutputType | null
   _max: VouchRecoverySnapshotMaxAggregateOutputType | null
+}
+
+export type VouchRecoverySnapshotAvgAggregateOutputType = {
+  amountCents: number | null
+  sourceVersion: number | null
+}
+
+export type VouchRecoverySnapshotSumAggregateOutputType = {
+  amountCents: number | null
+  sourceVersion: number | null
 }
 
 export type VouchRecoverySnapshotMinAggregateOutputType = {
   id: string | null
   vouchId: string | null
-  snapshotVersion: string | null
+  publicId: string | null
+  reason: $Enums.VouchRecoverySnapshotReason | null
+  merchantId: string | null
+  customerId: string | null
+  amountCents: number | null
+  currency: string | null
+  appointmentAt: Date | null
+  confirmationOpensAt: Date | null
+  confirmationExpiresAt: Date | null
+  status: $Enums.VouchStatus | null
+  protocolFeePaidAt: Date | null
+  authorizedAt: Date | null
+  capturedAt: Date | null
+  voidedAt: Date | null
+  expiredAt: Date | null
+  archived: boolean | null
+  presenceStatus: $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt: Date | null
+  presenceVoidedAt: Date | null
+  merchantCodeHash: string | null
+  customerCodeHash: string | null
+  stripePaymentIntentId: string | null
+  stripeCheckoutSessionId: string | null
+  stripeChargeId: string | null
+  stripeBalanceTransactionId: string | null
+  lastStripeEventId: string | null
+  sourceVersion: number | null
+  checksumHash: string | null
   createdAt: Date | null
 }
 
 export type VouchRecoverySnapshotMaxAggregateOutputType = {
   id: string | null
   vouchId: string | null
-  snapshotVersion: string | null
+  publicId: string | null
+  reason: $Enums.VouchRecoverySnapshotReason | null
+  merchantId: string | null
+  customerId: string | null
+  amountCents: number | null
+  currency: string | null
+  appointmentAt: Date | null
+  confirmationOpensAt: Date | null
+  confirmationExpiresAt: Date | null
+  status: $Enums.VouchStatus | null
+  protocolFeePaidAt: Date | null
+  authorizedAt: Date | null
+  capturedAt: Date | null
+  voidedAt: Date | null
+  expiredAt: Date | null
+  archived: boolean | null
+  presenceStatus: $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt: Date | null
+  presenceVoidedAt: Date | null
+  merchantCodeHash: string | null
+  customerCodeHash: string | null
+  stripePaymentIntentId: string | null
+  stripeCheckoutSessionId: string | null
+  stripeChargeId: string | null
+  stripeBalanceTransactionId: string | null
+  lastStripeEventId: string | null
+  sourceVersion: number | null
+  checksumHash: string | null
   createdAt: Date | null
 }
 
 export type VouchRecoverySnapshotCountAggregateOutputType = {
   id: number
   vouchId: number
-  snapshotVersion: number
-  originalTermsJson: number
-  pricingSnapshotJson: number
-  providerReferencesJson: number
-  settlementRulesJson: number
+  publicId: number
+  reason: number
+  merchantId: number
+  customerId: number
+  amountCents: number
+  currency: number
+  appointmentAt: number
+  confirmationOpensAt: number
+  confirmationExpiresAt: number
+  status: number
+  protocolFeePaidAt: number
+  authorizedAt: number
+  capturedAt: number
+  voidedAt: number
+  expiredAt: number
+  archived: number
+  presenceStatus: number
+  presenceCanCaptureAt: number
+  presenceVoidedAt: number
+  merchantCodeHash: number
+  customerCodeHash: number
+  stripePaymentIntentId: number
+  stripeCheckoutSessionId: number
+  stripeChargeId: number
+  stripeBalanceTransactionId: number
+  lastStripeEventId: number
+  sourceVersion: number
+  checksumHash: number
   createdAt: number
   _all: number
 }
 
 
+export type VouchRecoverySnapshotAvgAggregateInputType = {
+  amountCents?: true
+  sourceVersion?: true
+}
+
+export type VouchRecoverySnapshotSumAggregateInputType = {
+  amountCents?: true
+  sourceVersion?: true
+}
+
 export type VouchRecoverySnapshotMinAggregateInputType = {
   id?: true
   vouchId?: true
-  snapshotVersion?: true
+  publicId?: true
+  reason?: true
+  merchantId?: true
+  customerId?: true
+  amountCents?: true
+  currency?: true
+  appointmentAt?: true
+  confirmationOpensAt?: true
+  confirmationExpiresAt?: true
+  status?: true
+  protocolFeePaidAt?: true
+  authorizedAt?: true
+  capturedAt?: true
+  voidedAt?: true
+  expiredAt?: true
+  archived?: true
+  presenceStatus?: true
+  presenceCanCaptureAt?: true
+  presenceVoidedAt?: true
+  merchantCodeHash?: true
+  customerCodeHash?: true
+  stripePaymentIntentId?: true
+  stripeCheckoutSessionId?: true
+  stripeChargeId?: true
+  stripeBalanceTransactionId?: true
+  lastStripeEventId?: true
+  sourceVersion?: true
+  checksumHash?: true
   createdAt?: true
 }
 
 export type VouchRecoverySnapshotMaxAggregateInputType = {
   id?: true
   vouchId?: true
-  snapshotVersion?: true
+  publicId?: true
+  reason?: true
+  merchantId?: true
+  customerId?: true
+  amountCents?: true
+  currency?: true
+  appointmentAt?: true
+  confirmationOpensAt?: true
+  confirmationExpiresAt?: true
+  status?: true
+  protocolFeePaidAt?: true
+  authorizedAt?: true
+  capturedAt?: true
+  voidedAt?: true
+  expiredAt?: true
+  archived?: true
+  presenceStatus?: true
+  presenceCanCaptureAt?: true
+  presenceVoidedAt?: true
+  merchantCodeHash?: true
+  customerCodeHash?: true
+  stripePaymentIntentId?: true
+  stripeCheckoutSessionId?: true
+  stripeChargeId?: true
+  stripeBalanceTransactionId?: true
+  lastStripeEventId?: true
+  sourceVersion?: true
+  checksumHash?: true
   createdAt?: true
 }
 
 export type VouchRecoverySnapshotCountAggregateInputType = {
   id?: true
   vouchId?: true
-  snapshotVersion?: true
-  originalTermsJson?: true
-  pricingSnapshotJson?: true
-  providerReferencesJson?: true
-  settlementRulesJson?: true
+  publicId?: true
+  reason?: true
+  merchantId?: true
+  customerId?: true
+  amountCents?: true
+  currency?: true
+  appointmentAt?: true
+  confirmationOpensAt?: true
+  confirmationExpiresAt?: true
+  status?: true
+  protocolFeePaidAt?: true
+  authorizedAt?: true
+  capturedAt?: true
+  voidedAt?: true
+  expiredAt?: true
+  archived?: true
+  presenceStatus?: true
+  presenceCanCaptureAt?: true
+  presenceVoidedAt?: true
+  merchantCodeHash?: true
+  customerCodeHash?: true
+  stripePaymentIntentId?: true
+  stripeCheckoutSessionId?: true
+  stripeChargeId?: true
+  stripeBalanceTransactionId?: true
+  lastStripeEventId?: true
+  sourceVersion?: true
+  checksumHash?: true
   createdAt?: true
   _all?: true
 }
@@ -115,6 +291,18 @@ export type VouchRecoverySnapshotAggregateArgs<ExtArgs extends runtime.Types.Ext
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: VouchRecoverySnapshotAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: VouchRecoverySnapshotSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: VouchRecoverySnapshotMinAggregateInputType
@@ -145,6 +333,8 @@ export type VouchRecoverySnapshotGroupByArgs<ExtArgs extends runtime.Types.Exten
   take?: number
   skip?: number
   _count?: VouchRecoverySnapshotCountAggregateInputType | true
+  _avg?: VouchRecoverySnapshotAvgAggregateInputType
+  _sum?: VouchRecoverySnapshotSumAggregateInputType
   _min?: VouchRecoverySnapshotMinAggregateInputType
   _max?: VouchRecoverySnapshotMaxAggregateInputType
 }
@@ -152,13 +342,38 @@ export type VouchRecoverySnapshotGroupByArgs<ExtArgs extends runtime.Types.Exten
 export type VouchRecoverySnapshotGroupByOutputType = {
   id: string
   vouchId: string
-  snapshotVersion: string
-  originalTermsJson: runtime.JsonValue
-  pricingSnapshotJson: runtime.JsonValue
-  providerReferencesJson: runtime.JsonValue
-  settlementRulesJson: runtime.JsonValue
+  publicId: string
+  reason: $Enums.VouchRecoverySnapshotReason
+  merchantId: string
+  customerId: string | null
+  amountCents: number
+  currency: string
+  appointmentAt: Date
+  confirmationOpensAt: Date
+  confirmationExpiresAt: Date
+  status: $Enums.VouchStatus
+  protocolFeePaidAt: Date | null
+  authorizedAt: Date | null
+  capturedAt: Date | null
+  voidedAt: Date | null
+  expiredAt: Date | null
+  archived: boolean
+  presenceStatus: $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt: Date | null
+  presenceVoidedAt: Date | null
+  merchantCodeHash: string
+  customerCodeHash: string | null
+  stripePaymentIntentId: string | null
+  stripeCheckoutSessionId: string | null
+  stripeChargeId: string | null
+  stripeBalanceTransactionId: string | null
+  lastStripeEventId: string | null
+  sourceVersion: number
+  checksumHash: string | null
   createdAt: Date
   _count: VouchRecoverySnapshotCountAggregateOutputType | null
+  _avg: VouchRecoverySnapshotAvgAggregateOutputType | null
+  _sum: VouchRecoverySnapshotSumAggregateOutputType | null
   _min: VouchRecoverySnapshotMinAggregateOutputType | null
   _max: VouchRecoverySnapshotMaxAggregateOutputType | null
 }
@@ -184,11 +399,34 @@ export type VouchRecoverySnapshotWhereInput = {
   NOT?: Prisma.VouchRecoverySnapshotWhereInput | Prisma.VouchRecoverySnapshotWhereInput[]
   id?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
   vouchId?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
-  snapshotVersion?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
-  originalTermsJson?: Prisma.JsonFilter<"VouchRecoverySnapshot">
-  pricingSnapshotJson?: Prisma.JsonFilter<"VouchRecoverySnapshot">
-  providerReferencesJson?: Prisma.JsonFilter<"VouchRecoverySnapshot">
-  settlementRulesJson?: Prisma.JsonFilter<"VouchRecoverySnapshot">
+  publicId?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonFilter<"VouchRecoverySnapshot"> | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  customerId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  amountCents?: Prisma.IntFilter<"VouchRecoverySnapshot"> | number
+  currency?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  appointmentAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
+  confirmationOpensAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
+  status?: Prisma.EnumVouchStatusFilter<"VouchRecoverySnapshot"> | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  authorizedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  capturedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  expiredAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  archived?: Prisma.BoolFilter<"VouchRecoverySnapshot"> | boolean
+  presenceStatus?: Prisma.EnumPresenceConfirmationStatusNullableFilter<"VouchRecoverySnapshot"> | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  presenceVoidedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  merchantCodeHash?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  customerCodeHash?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeCheckoutSessionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeChargeId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeBalanceTransactionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  lastStripeEventId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  sourceVersion?: Prisma.IntFilter<"VouchRecoverySnapshot"> | number
+  checksumHash?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   createdAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
 }
@@ -196,42 +434,113 @@ export type VouchRecoverySnapshotWhereInput = {
 export type VouchRecoverySnapshotOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  snapshotVersion?: Prisma.SortOrder
-  originalTermsJson?: Prisma.SortOrder
-  pricingSnapshotJson?: Prisma.SortOrder
-  providerReferencesJson?: Prisma.SortOrder
-  settlementRulesJson?: Prisma.SortOrder
+  publicId?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  merchantId?: Prisma.SortOrder
+  customerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  amountCents?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  appointmentAt?: Prisma.SortOrder
+  confirmationOpensAt?: Prisma.SortOrder
+  confirmationExpiresAt?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  protocolFeePaidAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  authorizedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  capturedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  expiredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  archived?: Prisma.SortOrder
+  presenceStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  presenceCanCaptureAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  presenceVoidedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  merchantCodeHash?: Prisma.SortOrder
+  customerCodeHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeChargeId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeBalanceTransactionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceVersion?: Prisma.SortOrder
+  checksumHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   vouch?: Prisma.VouchOrderByWithRelationInput
 }
 
 export type VouchRecoverySnapshotWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  vouchId?: string
   AND?: Prisma.VouchRecoverySnapshotWhereInput | Prisma.VouchRecoverySnapshotWhereInput[]
   OR?: Prisma.VouchRecoverySnapshotWhereInput[]
   NOT?: Prisma.VouchRecoverySnapshotWhereInput | Prisma.VouchRecoverySnapshotWhereInput[]
-  snapshotVersion?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
-  originalTermsJson?: Prisma.JsonFilter<"VouchRecoverySnapshot">
-  pricingSnapshotJson?: Prisma.JsonFilter<"VouchRecoverySnapshot">
-  providerReferencesJson?: Prisma.JsonFilter<"VouchRecoverySnapshot">
-  settlementRulesJson?: Prisma.JsonFilter<"VouchRecoverySnapshot">
+  vouchId?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  publicId?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonFilter<"VouchRecoverySnapshot"> | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  customerId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  amountCents?: Prisma.IntFilter<"VouchRecoverySnapshot"> | number
+  currency?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  appointmentAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
+  confirmationOpensAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
+  status?: Prisma.EnumVouchStatusFilter<"VouchRecoverySnapshot"> | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  authorizedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  capturedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  expiredAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  archived?: Prisma.BoolFilter<"VouchRecoverySnapshot"> | boolean
+  presenceStatus?: Prisma.EnumPresenceConfirmationStatusNullableFilter<"VouchRecoverySnapshot"> | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  presenceVoidedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  merchantCodeHash?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  customerCodeHash?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeCheckoutSessionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeChargeId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeBalanceTransactionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  lastStripeEventId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  sourceVersion?: Prisma.IntFilter<"VouchRecoverySnapshot"> | number
+  checksumHash?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   createdAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
-}, "id" | "vouchId">
+}, "id">
 
 export type VouchRecoverySnapshotOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  snapshotVersion?: Prisma.SortOrder
-  originalTermsJson?: Prisma.SortOrder
-  pricingSnapshotJson?: Prisma.SortOrder
-  providerReferencesJson?: Prisma.SortOrder
-  settlementRulesJson?: Prisma.SortOrder
+  publicId?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  merchantId?: Prisma.SortOrder
+  customerId?: Prisma.SortOrderInput | Prisma.SortOrder
+  amountCents?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  appointmentAt?: Prisma.SortOrder
+  confirmationOpensAt?: Prisma.SortOrder
+  confirmationExpiresAt?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  protocolFeePaidAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  authorizedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  capturedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  expiredAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  archived?: Prisma.SortOrder
+  presenceStatus?: Prisma.SortOrderInput | Prisma.SortOrder
+  presenceCanCaptureAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  presenceVoidedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  merchantCodeHash?: Prisma.SortOrder
+  customerCodeHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeChargeId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeBalanceTransactionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrderInput | Prisma.SortOrder
+  sourceVersion?: Prisma.SortOrder
+  checksumHash?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.VouchRecoverySnapshotCountOrderByAggregateInput
+  _avg?: Prisma.VouchRecoverySnapshotAvgOrderByAggregateInput
   _max?: Prisma.VouchRecoverySnapshotMaxOrderByAggregateInput
   _min?: Prisma.VouchRecoverySnapshotMinOrderByAggregateInput
+  _sum?: Prisma.VouchRecoverySnapshotSumOrderByAggregateInput
 }
 
 export type VouchRecoverySnapshotScalarWhereWithAggregatesInput = {
@@ -240,169 +549,509 @@ export type VouchRecoverySnapshotScalarWhereWithAggregatesInput = {
   NOT?: Prisma.VouchRecoverySnapshotScalarWhereWithAggregatesInput | Prisma.VouchRecoverySnapshotScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"VouchRecoverySnapshot"> | string
   vouchId?: Prisma.StringWithAggregatesFilter<"VouchRecoverySnapshot"> | string
-  snapshotVersion?: Prisma.StringWithAggregatesFilter<"VouchRecoverySnapshot"> | string
-  originalTermsJson?: Prisma.JsonWithAggregatesFilter<"VouchRecoverySnapshot">
-  pricingSnapshotJson?: Prisma.JsonWithAggregatesFilter<"VouchRecoverySnapshot">
-  providerReferencesJson?: Prisma.JsonWithAggregatesFilter<"VouchRecoverySnapshot">
-  settlementRulesJson?: Prisma.JsonWithAggregatesFilter<"VouchRecoverySnapshot">
+  publicId?: Prisma.StringWithAggregatesFilter<"VouchRecoverySnapshot"> | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonWithAggregatesFilter<"VouchRecoverySnapshot"> | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringWithAggregatesFilter<"VouchRecoverySnapshot"> | string
+  customerId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
+  amountCents?: Prisma.IntWithAggregatesFilter<"VouchRecoverySnapshot"> | number
+  currency?: Prisma.StringWithAggregatesFilter<"VouchRecoverySnapshot"> | string
+  appointmentAt?: Prisma.DateTimeWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string
+  confirmationOpensAt?: Prisma.DateTimeWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string
+  status?: Prisma.EnumVouchStatusWithAggregatesFilter<"VouchRecoverySnapshot"> | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string | null
+  authorizedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string | null
+  capturedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string | null
+  expiredAt?: Prisma.DateTimeNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string | null
+  archived?: Prisma.BoolWithAggregatesFilter<"VouchRecoverySnapshot"> | boolean
+  presenceStatus?: Prisma.EnumPresenceConfirmationStatusNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.DateTimeNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string | null
+  presenceVoidedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string | null
+  merchantCodeHash?: Prisma.StringWithAggregatesFilter<"VouchRecoverySnapshot"> | string
+  customerCodeHash?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
+  stripeCheckoutSessionId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
+  stripeChargeId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
+  stripeBalanceTransactionId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
+  lastStripeEventId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
+  sourceVersion?: Prisma.IntWithAggregatesFilter<"VouchRecoverySnapshot"> | number
+  checksumHash?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"VouchRecoverySnapshot"> | Date | string
 }
 
 export type VouchRecoverySnapshotCreateInput = {
   id?: string
-  snapshotVersion?: string
-  originalTermsJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId: string
+  reason?: $Enums.VouchRecoverySnapshotReason
+  merchantId: string
+  customerId?: string | null
+  amountCents: number
+  currency: string
+  appointmentAt: Date | string
+  confirmationOpensAt: Date | string
+  confirmationExpiresAt: Date | string
+  status: $Enums.VouchStatus
+  protocolFeePaidAt?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  expiredAt?: Date | string | null
+  archived: boolean
+  presenceStatus?: $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Date | string | null
+  presenceVoidedAt?: Date | string | null
+  merchantCodeHash: string
+  customerCodeHash?: string | null
+  stripePaymentIntentId?: string | null
+  stripeCheckoutSessionId?: string | null
+  stripeChargeId?: string | null
+  stripeBalanceTransactionId?: string | null
+  lastStripeEventId?: string | null
+  sourceVersion?: number
+  checksumHash?: string | null
   createdAt?: Date | string
-  vouch: Prisma.VouchCreateNestedOneWithoutRecoverySnapshotInput
+  vouch: Prisma.VouchCreateNestedOneWithoutRecoverySnapshotsInput
 }
 
 export type VouchRecoverySnapshotUncheckedCreateInput = {
   id?: string
   vouchId: string
-  snapshotVersion?: string
-  originalTermsJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId: string
+  reason?: $Enums.VouchRecoverySnapshotReason
+  merchantId: string
+  customerId?: string | null
+  amountCents: number
+  currency: string
+  appointmentAt: Date | string
+  confirmationOpensAt: Date | string
+  confirmationExpiresAt: Date | string
+  status: $Enums.VouchStatus
+  protocolFeePaidAt?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  expiredAt?: Date | string | null
+  archived: boolean
+  presenceStatus?: $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Date | string | null
+  presenceVoidedAt?: Date | string | null
+  merchantCodeHash: string
+  customerCodeHash?: string | null
+  stripePaymentIntentId?: string | null
+  stripeCheckoutSessionId?: string | null
+  stripeChargeId?: string | null
+  stripeBalanceTransactionId?: string | null
+  lastStripeEventId?: string | null
+  sourceVersion?: number
+  checksumHash?: string | null
   createdAt?: Date | string
 }
 
 export type VouchRecoverySnapshotUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  snapshotVersion?: Prisma.StringFieldUpdateOperationsInput | string
-  originalTermsJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonFieldUpdateOperationsInput | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  appointmentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presenceStatus?: Prisma.NullableEnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  presenceVoidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
+  customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  checksumHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vouch?: Prisma.VouchUpdateOneRequiredWithoutRecoverySnapshotNestedInput
+  vouch?: Prisma.VouchUpdateOneRequiredWithoutRecoverySnapshotsNestedInput
 }
 
 export type VouchRecoverySnapshotUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  snapshotVersion?: Prisma.StringFieldUpdateOperationsInput | string
-  originalTermsJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonFieldUpdateOperationsInput | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  appointmentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presenceStatus?: Prisma.NullableEnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  presenceVoidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
+  customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  checksumHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type VouchRecoverySnapshotCreateManyInput = {
   id?: string
   vouchId: string
-  snapshotVersion?: string
-  originalTermsJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId: string
+  reason?: $Enums.VouchRecoverySnapshotReason
+  merchantId: string
+  customerId?: string | null
+  amountCents: number
+  currency: string
+  appointmentAt: Date | string
+  confirmationOpensAt: Date | string
+  confirmationExpiresAt: Date | string
+  status: $Enums.VouchStatus
+  protocolFeePaidAt?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  expiredAt?: Date | string | null
+  archived: boolean
+  presenceStatus?: $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Date | string | null
+  presenceVoidedAt?: Date | string | null
+  merchantCodeHash: string
+  customerCodeHash?: string | null
+  stripePaymentIntentId?: string | null
+  stripeCheckoutSessionId?: string | null
+  stripeChargeId?: string | null
+  stripeBalanceTransactionId?: string | null
+  lastStripeEventId?: string | null
+  sourceVersion?: number
+  checksumHash?: string | null
   createdAt?: Date | string
 }
 
 export type VouchRecoverySnapshotUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  snapshotVersion?: Prisma.StringFieldUpdateOperationsInput | string
-  originalTermsJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonFieldUpdateOperationsInput | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  appointmentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presenceStatus?: Prisma.NullableEnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  presenceVoidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
+  customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  checksumHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type VouchRecoverySnapshotUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  snapshotVersion?: Prisma.StringFieldUpdateOperationsInput | string
-  originalTermsJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonFieldUpdateOperationsInput | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  appointmentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presenceStatus?: Prisma.NullableEnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  presenceVoidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
+  customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  checksumHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type VouchRecoverySnapshotNullableScalarRelationFilter = {
-  is?: Prisma.VouchRecoverySnapshotWhereInput | null
-  isNot?: Prisma.VouchRecoverySnapshotWhereInput | null
+export type VouchRecoverySnapshotListRelationFilter = {
+  every?: Prisma.VouchRecoverySnapshotWhereInput
+  some?: Prisma.VouchRecoverySnapshotWhereInput
+  none?: Prisma.VouchRecoverySnapshotWhereInput
+}
+
+export type VouchRecoverySnapshotOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type VouchRecoverySnapshotCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  snapshotVersion?: Prisma.SortOrder
-  originalTermsJson?: Prisma.SortOrder
-  pricingSnapshotJson?: Prisma.SortOrder
-  providerReferencesJson?: Prisma.SortOrder
-  settlementRulesJson?: Prisma.SortOrder
+  publicId?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  merchantId?: Prisma.SortOrder
+  customerId?: Prisma.SortOrder
+  amountCents?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  appointmentAt?: Prisma.SortOrder
+  confirmationOpensAt?: Prisma.SortOrder
+  confirmationExpiresAt?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  protocolFeePaidAt?: Prisma.SortOrder
+  authorizedAt?: Prisma.SortOrder
+  capturedAt?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  expiredAt?: Prisma.SortOrder
+  archived?: Prisma.SortOrder
+  presenceStatus?: Prisma.SortOrder
+  presenceCanCaptureAt?: Prisma.SortOrder
+  presenceVoidedAt?: Prisma.SortOrder
+  merchantCodeHash?: Prisma.SortOrder
+  customerCodeHash?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
+  stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeChargeId?: Prisma.SortOrder
+  stripeBalanceTransactionId?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrder
+  sourceVersion?: Prisma.SortOrder
+  checksumHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+}
+
+export type VouchRecoverySnapshotAvgOrderByAggregateInput = {
+  amountCents?: Prisma.SortOrder
+  sourceVersion?: Prisma.SortOrder
 }
 
 export type VouchRecoverySnapshotMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  snapshotVersion?: Prisma.SortOrder
+  publicId?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  merchantId?: Prisma.SortOrder
+  customerId?: Prisma.SortOrder
+  amountCents?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  appointmentAt?: Prisma.SortOrder
+  confirmationOpensAt?: Prisma.SortOrder
+  confirmationExpiresAt?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  protocolFeePaidAt?: Prisma.SortOrder
+  authorizedAt?: Prisma.SortOrder
+  capturedAt?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  expiredAt?: Prisma.SortOrder
+  archived?: Prisma.SortOrder
+  presenceStatus?: Prisma.SortOrder
+  presenceCanCaptureAt?: Prisma.SortOrder
+  presenceVoidedAt?: Prisma.SortOrder
+  merchantCodeHash?: Prisma.SortOrder
+  customerCodeHash?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
+  stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeChargeId?: Prisma.SortOrder
+  stripeBalanceTransactionId?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrder
+  sourceVersion?: Prisma.SortOrder
+  checksumHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type VouchRecoverySnapshotMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  snapshotVersion?: Prisma.SortOrder
+  publicId?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  merchantId?: Prisma.SortOrder
+  customerId?: Prisma.SortOrder
+  amountCents?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  appointmentAt?: Prisma.SortOrder
+  confirmationOpensAt?: Prisma.SortOrder
+  confirmationExpiresAt?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  protocolFeePaidAt?: Prisma.SortOrder
+  authorizedAt?: Prisma.SortOrder
+  capturedAt?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  expiredAt?: Prisma.SortOrder
+  archived?: Prisma.SortOrder
+  presenceStatus?: Prisma.SortOrder
+  presenceCanCaptureAt?: Prisma.SortOrder
+  presenceVoidedAt?: Prisma.SortOrder
+  merchantCodeHash?: Prisma.SortOrder
+  customerCodeHash?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
+  stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeChargeId?: Prisma.SortOrder
+  stripeBalanceTransactionId?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrder
+  sourceVersion?: Prisma.SortOrder
+  checksumHash?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
-export type VouchRecoverySnapshotCreateNestedOneWithoutVouchInput = {
-  create?: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput>
-  connectOrCreate?: Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput
-  connect?: Prisma.VouchRecoverySnapshotWhereUniqueInput
+export type VouchRecoverySnapshotSumOrderByAggregateInput = {
+  amountCents?: Prisma.SortOrder
+  sourceVersion?: Prisma.SortOrder
 }
 
-export type VouchRecoverySnapshotUncheckedCreateNestedOneWithoutVouchInput = {
-  create?: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput>
-  connectOrCreate?: Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput
-  connect?: Prisma.VouchRecoverySnapshotWhereUniqueInput
+export type VouchRecoverySnapshotCreateNestedManyWithoutVouchInput = {
+  create?: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput> | Prisma.VouchRecoverySnapshotCreateWithoutVouchInput[] | Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput | Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput[]
+  createMany?: Prisma.VouchRecoverySnapshotCreateManyVouchInputEnvelope
+  connect?: Prisma.VouchRecoverySnapshotWhereUniqueInput | Prisma.VouchRecoverySnapshotWhereUniqueInput[]
 }
 
-export type VouchRecoverySnapshotUpdateOneWithoutVouchNestedInput = {
-  create?: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput>
-  connectOrCreate?: Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput
-  upsert?: Prisma.VouchRecoverySnapshotUpsertWithoutVouchInput
-  disconnect?: Prisma.VouchRecoverySnapshotWhereInput | boolean
-  delete?: Prisma.VouchRecoverySnapshotWhereInput | boolean
-  connect?: Prisma.VouchRecoverySnapshotWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.VouchRecoverySnapshotUpdateToOneWithWhereWithoutVouchInput, Prisma.VouchRecoverySnapshotUpdateWithoutVouchInput>, Prisma.VouchRecoverySnapshotUncheckedUpdateWithoutVouchInput>
+export type VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput = {
+  create?: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput> | Prisma.VouchRecoverySnapshotCreateWithoutVouchInput[] | Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput | Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput[]
+  createMany?: Prisma.VouchRecoverySnapshotCreateManyVouchInputEnvelope
+  connect?: Prisma.VouchRecoverySnapshotWhereUniqueInput | Prisma.VouchRecoverySnapshotWhereUniqueInput[]
 }
 
-export type VouchRecoverySnapshotUncheckedUpdateOneWithoutVouchNestedInput = {
-  create?: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput>
-  connectOrCreate?: Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput
-  upsert?: Prisma.VouchRecoverySnapshotUpsertWithoutVouchInput
-  disconnect?: Prisma.VouchRecoverySnapshotWhereInput | boolean
-  delete?: Prisma.VouchRecoverySnapshotWhereInput | boolean
-  connect?: Prisma.VouchRecoverySnapshotWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.VouchRecoverySnapshotUpdateToOneWithWhereWithoutVouchInput, Prisma.VouchRecoverySnapshotUpdateWithoutVouchInput>, Prisma.VouchRecoverySnapshotUncheckedUpdateWithoutVouchInput>
+export type VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput = {
+  create?: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput> | Prisma.VouchRecoverySnapshotCreateWithoutVouchInput[] | Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput | Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput[]
+  upsert?: Prisma.VouchRecoverySnapshotUpsertWithWhereUniqueWithoutVouchInput | Prisma.VouchRecoverySnapshotUpsertWithWhereUniqueWithoutVouchInput[]
+  createMany?: Prisma.VouchRecoverySnapshotCreateManyVouchInputEnvelope
+  set?: Prisma.VouchRecoverySnapshotWhereUniqueInput | Prisma.VouchRecoverySnapshotWhereUniqueInput[]
+  disconnect?: Prisma.VouchRecoverySnapshotWhereUniqueInput | Prisma.VouchRecoverySnapshotWhereUniqueInput[]
+  delete?: Prisma.VouchRecoverySnapshotWhereUniqueInput | Prisma.VouchRecoverySnapshotWhereUniqueInput[]
+  connect?: Prisma.VouchRecoverySnapshotWhereUniqueInput | Prisma.VouchRecoverySnapshotWhereUniqueInput[]
+  update?: Prisma.VouchRecoverySnapshotUpdateWithWhereUniqueWithoutVouchInput | Prisma.VouchRecoverySnapshotUpdateWithWhereUniqueWithoutVouchInput[]
+  updateMany?: Prisma.VouchRecoverySnapshotUpdateManyWithWhereWithoutVouchInput | Prisma.VouchRecoverySnapshotUpdateManyWithWhereWithoutVouchInput[]
+  deleteMany?: Prisma.VouchRecoverySnapshotScalarWhereInput | Prisma.VouchRecoverySnapshotScalarWhereInput[]
+}
+
+export type VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput = {
+  create?: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput> | Prisma.VouchRecoverySnapshotCreateWithoutVouchInput[] | Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput | Prisma.VouchRecoverySnapshotCreateOrConnectWithoutVouchInput[]
+  upsert?: Prisma.VouchRecoverySnapshotUpsertWithWhereUniqueWithoutVouchInput | Prisma.VouchRecoverySnapshotUpsertWithWhereUniqueWithoutVouchInput[]
+  createMany?: Prisma.VouchRecoverySnapshotCreateManyVouchInputEnvelope
+  set?: Prisma.VouchRecoverySnapshotWhereUniqueInput | Prisma.VouchRecoverySnapshotWhereUniqueInput[]
+  disconnect?: Prisma.VouchRecoverySnapshotWhereUniqueInput | Prisma.VouchRecoverySnapshotWhereUniqueInput[]
+  delete?: Prisma.VouchRecoverySnapshotWhereUniqueInput | Prisma.VouchRecoverySnapshotWhereUniqueInput[]
+  connect?: Prisma.VouchRecoverySnapshotWhereUniqueInput | Prisma.VouchRecoverySnapshotWhereUniqueInput[]
+  update?: Prisma.VouchRecoverySnapshotUpdateWithWhereUniqueWithoutVouchInput | Prisma.VouchRecoverySnapshotUpdateWithWhereUniqueWithoutVouchInput[]
+  updateMany?: Prisma.VouchRecoverySnapshotUpdateManyWithWhereWithoutVouchInput | Prisma.VouchRecoverySnapshotUpdateManyWithWhereWithoutVouchInput[]
+  deleteMany?: Prisma.VouchRecoverySnapshotScalarWhereInput | Prisma.VouchRecoverySnapshotScalarWhereInput[]
+}
+
+export type EnumVouchRecoverySnapshotReasonFieldUpdateOperationsInput = {
+  set?: $Enums.VouchRecoverySnapshotReason
+}
+
+export type NullableEnumPresenceConfirmationStatusFieldUpdateOperationsInput = {
+  set?: $Enums.PresenceConfirmationStatus | null
 }
 
 export type VouchRecoverySnapshotCreateWithoutVouchInput = {
   id?: string
-  snapshotVersion?: string
-  originalTermsJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId: string
+  reason?: $Enums.VouchRecoverySnapshotReason
+  merchantId: string
+  customerId?: string | null
+  amountCents: number
+  currency: string
+  appointmentAt: Date | string
+  confirmationOpensAt: Date | string
+  confirmationExpiresAt: Date | string
+  status: $Enums.VouchStatus
+  protocolFeePaidAt?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  expiredAt?: Date | string | null
+  archived: boolean
+  presenceStatus?: $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Date | string | null
+  presenceVoidedAt?: Date | string | null
+  merchantCodeHash: string
+  customerCodeHash?: string | null
+  stripePaymentIntentId?: string | null
+  stripeCheckoutSessionId?: string | null
+  stripeChargeId?: string | null
+  stripeBalanceTransactionId?: string | null
+  lastStripeEventId?: string | null
+  sourceVersion?: number
+  checksumHash?: string | null
   createdAt?: Date | string
 }
 
 export type VouchRecoverySnapshotUncheckedCreateWithoutVouchInput = {
   id?: string
-  snapshotVersion?: string
-  originalTermsJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId: string
+  reason?: $Enums.VouchRecoverySnapshotReason
+  merchantId: string
+  customerId?: string | null
+  amountCents: number
+  currency: string
+  appointmentAt: Date | string
+  confirmationOpensAt: Date | string
+  confirmationExpiresAt: Date | string
+  status: $Enums.VouchStatus
+  protocolFeePaidAt?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  expiredAt?: Date | string | null
+  archived: boolean
+  presenceStatus?: $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Date | string | null
+  presenceVoidedAt?: Date | string | null
+  merchantCodeHash: string
+  customerCodeHash?: string | null
+  stripePaymentIntentId?: string | null
+  stripeCheckoutSessionId?: string | null
+  stripeChargeId?: string | null
+  stripeBalanceTransactionId?: string | null
+  lastStripeEventId?: string | null
+  sourceVersion?: number
+  checksumHash?: string | null
   createdAt?: Date | string
 }
 
@@ -411,34 +1060,193 @@ export type VouchRecoverySnapshotCreateOrConnectWithoutVouchInput = {
   create: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput>
 }
 
-export type VouchRecoverySnapshotUpsertWithoutVouchInput = {
-  update: Prisma.XOR<Prisma.VouchRecoverySnapshotUpdateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedUpdateWithoutVouchInput>
-  create: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput>
-  where?: Prisma.VouchRecoverySnapshotWhereInput
+export type VouchRecoverySnapshotCreateManyVouchInputEnvelope = {
+  data: Prisma.VouchRecoverySnapshotCreateManyVouchInput | Prisma.VouchRecoverySnapshotCreateManyVouchInput[]
+  skipDuplicates?: boolean
 }
 
-export type VouchRecoverySnapshotUpdateToOneWithWhereWithoutVouchInput = {
-  where?: Prisma.VouchRecoverySnapshotWhereInput
+export type VouchRecoverySnapshotUpsertWithWhereUniqueWithoutVouchInput = {
+  where: Prisma.VouchRecoverySnapshotWhereUniqueInput
+  update: Prisma.XOR<Prisma.VouchRecoverySnapshotUpdateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedUpdateWithoutVouchInput>
+  create: Prisma.XOR<Prisma.VouchRecoverySnapshotCreateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedCreateWithoutVouchInput>
+}
+
+export type VouchRecoverySnapshotUpdateWithWhereUniqueWithoutVouchInput = {
+  where: Prisma.VouchRecoverySnapshotWhereUniqueInput
   data: Prisma.XOR<Prisma.VouchRecoverySnapshotUpdateWithoutVouchInput, Prisma.VouchRecoverySnapshotUncheckedUpdateWithoutVouchInput>
+}
+
+export type VouchRecoverySnapshotUpdateManyWithWhereWithoutVouchInput = {
+  where: Prisma.VouchRecoverySnapshotScalarWhereInput
+  data: Prisma.XOR<Prisma.VouchRecoverySnapshotUpdateManyMutationInput, Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchInput>
+}
+
+export type VouchRecoverySnapshotScalarWhereInput = {
+  AND?: Prisma.VouchRecoverySnapshotScalarWhereInput | Prisma.VouchRecoverySnapshotScalarWhereInput[]
+  OR?: Prisma.VouchRecoverySnapshotScalarWhereInput[]
+  NOT?: Prisma.VouchRecoverySnapshotScalarWhereInput | Prisma.VouchRecoverySnapshotScalarWhereInput[]
+  id?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  vouchId?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  publicId?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonFilter<"VouchRecoverySnapshot"> | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  customerId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  amountCents?: Prisma.IntFilter<"VouchRecoverySnapshot"> | number
+  currency?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  appointmentAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
+  confirmationOpensAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
+  status?: Prisma.EnumVouchStatusFilter<"VouchRecoverySnapshot"> | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  authorizedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  capturedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  expiredAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  archived?: Prisma.BoolFilter<"VouchRecoverySnapshot"> | boolean
+  presenceStatus?: Prisma.EnumPresenceConfirmationStatusNullableFilter<"VouchRecoverySnapshot"> | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  presenceVoidedAt?: Prisma.DateTimeNullableFilter<"VouchRecoverySnapshot"> | Date | string | null
+  merchantCodeHash?: Prisma.StringFilter<"VouchRecoverySnapshot"> | string
+  customerCodeHash?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeCheckoutSessionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeChargeId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeBalanceTransactionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  lastStripeEventId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  sourceVersion?: Prisma.IntFilter<"VouchRecoverySnapshot"> | number
+  checksumHash?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  createdAt?: Prisma.DateTimeFilter<"VouchRecoverySnapshot"> | Date | string
+}
+
+export type VouchRecoverySnapshotCreateManyVouchInput = {
+  id?: string
+  publicId: string
+  reason?: $Enums.VouchRecoverySnapshotReason
+  merchantId: string
+  customerId?: string | null
+  amountCents: number
+  currency: string
+  appointmentAt: Date | string
+  confirmationOpensAt: Date | string
+  confirmationExpiresAt: Date | string
+  status: $Enums.VouchStatus
+  protocolFeePaidAt?: Date | string | null
+  authorizedAt?: Date | string | null
+  capturedAt?: Date | string | null
+  voidedAt?: Date | string | null
+  expiredAt?: Date | string | null
+  archived: boolean
+  presenceStatus?: $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Date | string | null
+  presenceVoidedAt?: Date | string | null
+  merchantCodeHash: string
+  customerCodeHash?: string | null
+  stripePaymentIntentId?: string | null
+  stripeCheckoutSessionId?: string | null
+  stripeChargeId?: string | null
+  stripeBalanceTransactionId?: string | null
+  lastStripeEventId?: string | null
+  sourceVersion?: number
+  checksumHash?: string | null
+  createdAt?: Date | string
 }
 
 export type VouchRecoverySnapshotUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  snapshotVersion?: Prisma.StringFieldUpdateOperationsInput | string
-  originalTermsJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonFieldUpdateOperationsInput | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  appointmentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presenceStatus?: Prisma.NullableEnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  presenceVoidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
+  customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  checksumHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type VouchRecoverySnapshotUncheckedUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  snapshotVersion?: Prisma.StringFieldUpdateOperationsInput | string
-  originalTermsJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  pricingSnapshotJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  providerReferencesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
-  settlementRulesJson?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonFieldUpdateOperationsInput | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  appointmentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presenceStatus?: Prisma.NullableEnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  presenceVoidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
+  customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  checksumHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicId?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.EnumVouchRecoverySnapshotReasonFieldUpdateOperationsInput | $Enums.VouchRecoverySnapshotReason
+  merchantId?: Prisma.StringFieldUpdateOperationsInput | string
+  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  appointmentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  confirmationExpiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  presenceStatus?: Prisma.NullableEnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus | null
+  presenceCanCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  presenceVoidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
+  customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  sourceVersion?: Prisma.IntFieldUpdateOperationsInput | number
+  checksumHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -447,11 +1255,34 @@ export type VouchRecoverySnapshotUncheckedUpdateWithoutVouchInput = {
 export type VouchRecoverySnapshotSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   vouchId?: boolean
-  snapshotVersion?: boolean
-  originalTermsJson?: boolean
-  pricingSnapshotJson?: boolean
-  providerReferencesJson?: boolean
-  settlementRulesJson?: boolean
+  publicId?: boolean
+  reason?: boolean
+  merchantId?: boolean
+  customerId?: boolean
+  amountCents?: boolean
+  currency?: boolean
+  appointmentAt?: boolean
+  confirmationOpensAt?: boolean
+  confirmationExpiresAt?: boolean
+  status?: boolean
+  protocolFeePaidAt?: boolean
+  authorizedAt?: boolean
+  capturedAt?: boolean
+  voidedAt?: boolean
+  expiredAt?: boolean
+  archived?: boolean
+  presenceStatus?: boolean
+  presenceCanCaptureAt?: boolean
+  presenceVoidedAt?: boolean
+  merchantCodeHash?: boolean
+  customerCodeHash?: boolean
+  stripePaymentIntentId?: boolean
+  stripeCheckoutSessionId?: boolean
+  stripeChargeId?: boolean
+  stripeBalanceTransactionId?: boolean
+  lastStripeEventId?: boolean
+  sourceVersion?: boolean
+  checksumHash?: boolean
   createdAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vouchRecoverySnapshot"]>
@@ -459,11 +1290,34 @@ export type VouchRecoverySnapshotSelect<ExtArgs extends runtime.Types.Extensions
 export type VouchRecoverySnapshotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   vouchId?: boolean
-  snapshotVersion?: boolean
-  originalTermsJson?: boolean
-  pricingSnapshotJson?: boolean
-  providerReferencesJson?: boolean
-  settlementRulesJson?: boolean
+  publicId?: boolean
+  reason?: boolean
+  merchantId?: boolean
+  customerId?: boolean
+  amountCents?: boolean
+  currency?: boolean
+  appointmentAt?: boolean
+  confirmationOpensAt?: boolean
+  confirmationExpiresAt?: boolean
+  status?: boolean
+  protocolFeePaidAt?: boolean
+  authorizedAt?: boolean
+  capturedAt?: boolean
+  voidedAt?: boolean
+  expiredAt?: boolean
+  archived?: boolean
+  presenceStatus?: boolean
+  presenceCanCaptureAt?: boolean
+  presenceVoidedAt?: boolean
+  merchantCodeHash?: boolean
+  customerCodeHash?: boolean
+  stripePaymentIntentId?: boolean
+  stripeCheckoutSessionId?: boolean
+  stripeChargeId?: boolean
+  stripeBalanceTransactionId?: boolean
+  lastStripeEventId?: boolean
+  sourceVersion?: boolean
+  checksumHash?: boolean
   createdAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vouchRecoverySnapshot"]>
@@ -471,11 +1325,34 @@ export type VouchRecoverySnapshotSelectCreateManyAndReturn<ExtArgs extends runti
 export type VouchRecoverySnapshotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   vouchId?: boolean
-  snapshotVersion?: boolean
-  originalTermsJson?: boolean
-  pricingSnapshotJson?: boolean
-  providerReferencesJson?: boolean
-  settlementRulesJson?: boolean
+  publicId?: boolean
+  reason?: boolean
+  merchantId?: boolean
+  customerId?: boolean
+  amountCents?: boolean
+  currency?: boolean
+  appointmentAt?: boolean
+  confirmationOpensAt?: boolean
+  confirmationExpiresAt?: boolean
+  status?: boolean
+  protocolFeePaidAt?: boolean
+  authorizedAt?: boolean
+  capturedAt?: boolean
+  voidedAt?: boolean
+  expiredAt?: boolean
+  archived?: boolean
+  presenceStatus?: boolean
+  presenceCanCaptureAt?: boolean
+  presenceVoidedAt?: boolean
+  merchantCodeHash?: boolean
+  customerCodeHash?: boolean
+  stripePaymentIntentId?: boolean
+  stripeCheckoutSessionId?: boolean
+  stripeChargeId?: boolean
+  stripeBalanceTransactionId?: boolean
+  lastStripeEventId?: boolean
+  sourceVersion?: boolean
+  checksumHash?: boolean
   createdAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["vouchRecoverySnapshot"]>
@@ -483,15 +1360,38 @@ export type VouchRecoverySnapshotSelectUpdateManyAndReturn<ExtArgs extends runti
 export type VouchRecoverySnapshotSelectScalar = {
   id?: boolean
   vouchId?: boolean
-  snapshotVersion?: boolean
-  originalTermsJson?: boolean
-  pricingSnapshotJson?: boolean
-  providerReferencesJson?: boolean
-  settlementRulesJson?: boolean
+  publicId?: boolean
+  reason?: boolean
+  merchantId?: boolean
+  customerId?: boolean
+  amountCents?: boolean
+  currency?: boolean
+  appointmentAt?: boolean
+  confirmationOpensAt?: boolean
+  confirmationExpiresAt?: boolean
+  status?: boolean
+  protocolFeePaidAt?: boolean
+  authorizedAt?: boolean
+  capturedAt?: boolean
+  voidedAt?: boolean
+  expiredAt?: boolean
+  archived?: boolean
+  presenceStatus?: boolean
+  presenceCanCaptureAt?: boolean
+  presenceVoidedAt?: boolean
+  merchantCodeHash?: boolean
+  customerCodeHash?: boolean
+  stripePaymentIntentId?: boolean
+  stripeCheckoutSessionId?: boolean
+  stripeChargeId?: boolean
+  stripeBalanceTransactionId?: boolean
+  lastStripeEventId?: boolean
+  sourceVersion?: boolean
+  checksumHash?: boolean
   createdAt?: boolean
 }
 
-export type VouchRecoverySnapshotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "snapshotVersion" | "originalTermsJson" | "pricingSnapshotJson" | "providerReferencesJson" | "settlementRulesJson" | "createdAt", ExtArgs["result"]["vouchRecoverySnapshot"]>
+export type VouchRecoverySnapshotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "publicId" | "reason" | "merchantId" | "customerId" | "amountCents" | "currency" | "appointmentAt" | "confirmationOpensAt" | "confirmationExpiresAt" | "status" | "protocolFeePaidAt" | "authorizedAt" | "capturedAt" | "voidedAt" | "expiredAt" | "archived" | "presenceStatus" | "presenceCanCaptureAt" | "presenceVoidedAt" | "merchantCodeHash" | "customerCodeHash" | "stripePaymentIntentId" | "stripeCheckoutSessionId" | "stripeChargeId" | "stripeBalanceTransactionId" | "lastStripeEventId" | "sourceVersion" | "checksumHash" | "createdAt", ExtArgs["result"]["vouchRecoverySnapshot"]>
 export type VouchRecoverySnapshotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
 }
@@ -510,11 +1410,34 @@ export type $VouchRecoverySnapshotPayload<ExtArgs extends runtime.Types.Extensio
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     vouchId: string
-    snapshotVersion: string
-    originalTermsJson: runtime.JsonValue
-    pricingSnapshotJson: runtime.JsonValue
-    providerReferencesJson: runtime.JsonValue
-    settlementRulesJson: runtime.JsonValue
+    publicId: string
+    reason: $Enums.VouchRecoverySnapshotReason
+    merchantId: string
+    customerId: string | null
+    amountCents: number
+    currency: string
+    appointmentAt: Date
+    confirmationOpensAt: Date
+    confirmationExpiresAt: Date
+    status: $Enums.VouchStatus
+    protocolFeePaidAt: Date | null
+    authorizedAt: Date | null
+    capturedAt: Date | null
+    voidedAt: Date | null
+    expiredAt: Date | null
+    archived: boolean
+    presenceStatus: $Enums.PresenceConfirmationStatus | null
+    presenceCanCaptureAt: Date | null
+    presenceVoidedAt: Date | null
+    merchantCodeHash: string
+    customerCodeHash: string | null
+    stripePaymentIntentId: string | null
+    stripeCheckoutSessionId: string | null
+    stripeChargeId: string | null
+    stripeBalanceTransactionId: string | null
+    lastStripeEventId: string | null
+    sourceVersion: number
+    checksumHash: string | null
     createdAt: Date
   }, ExtArgs["result"]["vouchRecoverySnapshot"]>
   composites: {}
@@ -942,11 +1865,34 @@ export interface Prisma__VouchRecoverySnapshotClient<T, Null = never, ExtArgs ex
 export interface VouchRecoverySnapshotFieldRefs {
   readonly id: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
   readonly vouchId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
-  readonly snapshotVersion: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
-  readonly originalTermsJson: Prisma.FieldRef<"VouchRecoverySnapshot", 'Json'>
-  readonly pricingSnapshotJson: Prisma.FieldRef<"VouchRecoverySnapshot", 'Json'>
-  readonly providerReferencesJson: Prisma.FieldRef<"VouchRecoverySnapshot", 'Json'>
-  readonly settlementRulesJson: Prisma.FieldRef<"VouchRecoverySnapshot", 'Json'>
+  readonly publicId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly reason: Prisma.FieldRef<"VouchRecoverySnapshot", 'VouchRecoverySnapshotReason'>
+  readonly merchantId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly customerId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly amountCents: Prisma.FieldRef<"VouchRecoverySnapshot", 'Int'>
+  readonly currency: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly appointmentAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
+  readonly confirmationOpensAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
+  readonly confirmationExpiresAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
+  readonly status: Prisma.FieldRef<"VouchRecoverySnapshot", 'VouchStatus'>
+  readonly protocolFeePaidAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
+  readonly authorizedAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
+  readonly capturedAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
+  readonly voidedAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
+  readonly expiredAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
+  readonly archived: Prisma.FieldRef<"VouchRecoverySnapshot", 'Boolean'>
+  readonly presenceStatus: Prisma.FieldRef<"VouchRecoverySnapshot", 'PresenceConfirmationStatus'>
+  readonly presenceCanCaptureAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
+  readonly presenceVoidedAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
+  readonly merchantCodeHash: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly customerCodeHash: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly stripePaymentIntentId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly stripeCheckoutSessionId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly stripeChargeId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly stripeBalanceTransactionId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly lastStripeEventId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly sourceVersion: Prisma.FieldRef<"VouchRecoverySnapshot", 'Int'>
+  readonly checksumHash: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
   readonly createdAt: Prisma.FieldRef<"VouchRecoverySnapshot", 'DateTime'>
 }
     

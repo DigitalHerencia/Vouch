@@ -49,7 +49,7 @@ export async function getPaymentMethodReadiness(userId: string) {
   }
 }
 
-export async function getPaymentReadiness(userId: string) {
+export async function getpaymentMethodReady(userId: string) {
   return getPaymentMethodReadiness(userId)
 }
 

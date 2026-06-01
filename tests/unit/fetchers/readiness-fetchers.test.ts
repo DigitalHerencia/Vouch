@@ -23,7 +23,7 @@ vi.mock("@/lib/fetchers/authFetchers", () => ({
 function readinessRecord(input: {
   identityStatus?: "unstarted" | "pending" | "verified" | "rejected" | "requires_action" | "expired"
   adultStatus?: "unstarted" | "pending" | "verified" | "rejected" | "requires_action" | "expired"
-  paymentReadiness?: "not_started" | "requires_action" | "ready"
+  paymentMethodReady?: "not_started" | "requires_action" | "ready"
   payoutReadiness?: "not_started" | "requires_action" | "ready"
   termsAccepted?: boolean
 }) {
@@ -35,7 +35,7 @@ function readinessRecord(input: {
       adultStatus: input.adultStatus ?? "verified",
     },
     paymentCustomer: {
-      readiness: input.paymentReadiness ?? "not_started",
+      readiness: input.paymentMethodReady ?? "not_started",
     },
     connectedAccount: {
       readiness: input.payoutReadiness ?? "not_started",
@@ -60,7 +60,7 @@ describe("readiness capability gates", () => {
 
     queueReadiness(
       readinessRecord({
-        paymentReadiness: "not_started",
+        paymentMethodReady: "not_started",
         payoutReadiness: "ready",
         termsAccepted: true,
       })
@@ -77,7 +77,7 @@ describe("readiness capability gates", () => {
 
     queueReadiness(
       readinessRecord({
-        paymentReadiness: "not_started",
+        paymentMethodReady: "not_started",
         payoutReadiness: "ready",
         termsAccepted: true,
       })
@@ -94,7 +94,7 @@ describe("readiness capability gates", () => {
 
     queueReadiness(
       readinessRecord({
-        paymentReadiness: "ready",
+        paymentMethodReady: "ready",
         payoutReadiness: "not_started",
         termsAccepted: true,
       })

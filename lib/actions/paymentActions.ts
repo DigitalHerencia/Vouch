@@ -23,7 +23,7 @@ import {
   createStripeCustomer,
   createStripeCustomerPortalSession,
   createStripeSetupIntent,
-  getStripeCustomerPaymentReadiness,
+  getStripeCustomerpaymentMethodReady,
   retrieveStripeSetupIntent,
   setStripeCustomerDefaultPaymentMethod,
 } from "@/lib/integrations/stripe/customers"
@@ -211,7 +211,7 @@ export async function handlePaymentMethodSetupReturn(
 
   const readiness =
     setupIntent.providerCustomerId && setupIntent.status === "succeeded"
-      ? (await getStripeCustomerPaymentReadiness(setupIntent.providerCustomerId)).readiness
+      ? (await getStripeCustomerpaymentMethodReady(setupIntent.providerCustomerId)).readiness
       : "requires_action"
 
   await prisma.$transaction(async (tx) => {
@@ -373,7 +373,7 @@ export async function openStripePaymentMethodDashboard(): Promise<never> {
       })
     ).providerCustomerId
 
-  const readiness = await getStripeCustomerPaymentReadiness(providerCustomerId)
+  const readiness = await getStripeCustomerpaymentMethodReady(providerCustomerId)
 
   await prisma.$transaction(async (tx) => {
     await tx.paymentCustomer.upsert({
@@ -523,11 +523,11 @@ export async function authorizeVouchPayment(
     return actionFailure("CONNECTED_ACCOUNT_REQUIRED", "Merchant connected account is required.")
   }
 
-  const customerPaymentReadiness = await getStripeCustomerPaymentReadiness(
+  const customerpaymentMethodReady = await getStripeCustomerpaymentMethodReady(
     vouch.customer.paymentCustomer.providerCustomerId
   )
 
-  if (!customerPaymentReadiness.defaultPaymentMethodId) {
+  if (!customerpaymentMethodReady.defaultPaymentMethodId) {
     return actionFailure("PAYMENT_METHOD_REQUIRED", "Customer payment setup is required.")
   }
 

@@ -37,11 +37,17 @@ export type RefundRecordSumAggregateOutputType = {
 export type RefundRecordMinAggregateOutputType = {
   id: string | null
   vouchId: string | null
-  paymentRecordId: string | null
-  providerRefundId: string | null
-  status: $Enums.RefundStatus | null
-  reason: $Enums.RefundReason | null
+  chargeRecordId: string | null
+  paymentIntentRecordId: string | null
+  stripeRefundId: string | null
+  stripePaymentIntentId: string | null
+  stripeChargeId: string | null
   amountCents: number | null
+  currency: string | null
+  reason: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus | null
+  lastStripeEventId: string | null
+  syncedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -49,11 +55,17 @@ export type RefundRecordMinAggregateOutputType = {
 export type RefundRecordMaxAggregateOutputType = {
   id: string | null
   vouchId: string | null
-  paymentRecordId: string | null
-  providerRefundId: string | null
-  status: $Enums.RefundStatus | null
-  reason: $Enums.RefundReason | null
+  chargeRecordId: string | null
+  paymentIntentRecordId: string | null
+  stripeRefundId: string | null
+  stripePaymentIntentId: string | null
+  stripeChargeId: string | null
   amountCents: number | null
+  currency: string | null
+  reason: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus | null
+  lastStripeEventId: string | null
+  syncedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -61,11 +73,17 @@ export type RefundRecordMaxAggregateOutputType = {
 export type RefundRecordCountAggregateOutputType = {
   id: number
   vouchId: number
-  paymentRecordId: number
-  providerRefundId: number
-  status: number
-  reason: number
+  chargeRecordId: number
+  paymentIntentRecordId: number
+  stripeRefundId: number
+  stripePaymentIntentId: number
+  stripeChargeId: number
   amountCents: number
+  currency: number
+  reason: number
+  status: number
+  lastStripeEventId: number
+  syncedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -83,11 +101,17 @@ export type RefundRecordSumAggregateInputType = {
 export type RefundRecordMinAggregateInputType = {
   id?: true
   vouchId?: true
-  paymentRecordId?: true
-  providerRefundId?: true
-  status?: true
-  reason?: true
+  chargeRecordId?: true
+  paymentIntentRecordId?: true
+  stripeRefundId?: true
+  stripePaymentIntentId?: true
+  stripeChargeId?: true
   amountCents?: true
+  currency?: true
+  reason?: true
+  status?: true
+  lastStripeEventId?: true
+  syncedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -95,11 +119,17 @@ export type RefundRecordMinAggregateInputType = {
 export type RefundRecordMaxAggregateInputType = {
   id?: true
   vouchId?: true
-  paymentRecordId?: true
-  providerRefundId?: true
-  status?: true
-  reason?: true
+  chargeRecordId?: true
+  paymentIntentRecordId?: true
+  stripeRefundId?: true
+  stripePaymentIntentId?: true
+  stripeChargeId?: true
   amountCents?: true
+  currency?: true
+  reason?: true
+  status?: true
+  lastStripeEventId?: true
+  syncedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -107,11 +137,17 @@ export type RefundRecordMaxAggregateInputType = {
 export type RefundRecordCountAggregateInputType = {
   id?: true
   vouchId?: true
-  paymentRecordId?: true
-  providerRefundId?: true
-  status?: true
-  reason?: true
+  chargeRecordId?: true
+  paymentIntentRecordId?: true
+  stripeRefundId?: true
+  stripePaymentIntentId?: true
+  stripeChargeId?: true
   amountCents?: true
+  currency?: true
+  reason?: true
+  status?: true
+  lastStripeEventId?: true
+  syncedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -205,12 +241,18 @@ export type RefundRecordGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 
 export type RefundRecordGroupByOutputType = {
   id: string
-  vouchId: string
-  paymentRecordId: string
-  providerRefundId: string | null
-  status: $Enums.RefundStatus
-  reason: $Enums.RefundReason | null
+  vouchId: string | null
+  chargeRecordId: string | null
+  paymentIntentRecordId: string | null
+  stripeRefundId: string
+  stripePaymentIntentId: string | null
+  stripeChargeId: string | null
   amountCents: number
+  currency: string
+  reason: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId: string | null
+  syncedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: RefundRecordCountAggregateOutputType | null
@@ -240,60 +282,84 @@ export type RefundRecordWhereInput = {
   OR?: Prisma.RefundRecordWhereInput[]
   NOT?: Prisma.RefundRecordWhereInput | Prisma.RefundRecordWhereInput[]
   id?: Prisma.StringFilter<"RefundRecord"> | string
-  vouchId?: Prisma.StringFilter<"RefundRecord"> | string
-  paymentRecordId?: Prisma.StringFilter<"RefundRecord"> | string
-  providerRefundId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
-  status?: Prisma.EnumRefundStatusFilter<"RefundRecord"> | $Enums.RefundStatus
-  reason?: Prisma.EnumRefundReasonNullableFilter<"RefundRecord"> | $Enums.RefundReason | null
+  vouchId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  chargeRecordId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  paymentIntentRecordId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  stripeRefundId?: Prisma.StringFilter<"RefundRecord"> | string
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  stripeChargeId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
   amountCents?: Prisma.IntFilter<"RefundRecord"> | number
+  currency?: Prisma.StringFilter<"RefundRecord"> | string
+  reason?: Prisma.EnumRefundReasonNullableFilter<"RefundRecord"> | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFilter<"RefundRecord"> | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  syncedAt?: Prisma.DateTimeNullableFilter<"RefundRecord"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"RefundRecord"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RefundRecord"> | Date | string
-  vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
-  paymentRecord?: Prisma.XOR<Prisma.PaymentRecordScalarRelationFilter, Prisma.PaymentRecordWhereInput>
-  webhookEvents?: Prisma.PaymentWebhookEventListRelationFilter
+  vouch?: Prisma.XOR<Prisma.VouchNullableScalarRelationFilter, Prisma.VouchWhereInput> | null
+  charge?: Prisma.XOR<Prisma.ChargeRecordNullableScalarRelationFilter, Prisma.ChargeRecordWhereInput> | null
+  paymentIntent?: Prisma.XOR<Prisma.PaymentIntentRecordNullableScalarRelationFilter, Prisma.PaymentIntentRecordWhereInput> | null
 }
 
 export type RefundRecordOrderByWithRelationInput = {
   id?: Prisma.SortOrder
-  vouchId?: Prisma.SortOrder
-  paymentRecordId?: Prisma.SortOrder
-  providerRefundId?: Prisma.SortOrderInput | Prisma.SortOrder
-  status?: Prisma.SortOrder
-  reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  vouchId?: Prisma.SortOrderInput | Prisma.SortOrder
+  chargeRecordId?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentIntentRecordId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeRefundId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeChargeId?: Prisma.SortOrderInput | Prisma.SortOrder
   amountCents?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  status?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrderInput | Prisma.SortOrder
+  syncedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   vouch?: Prisma.VouchOrderByWithRelationInput
-  paymentRecord?: Prisma.PaymentRecordOrderByWithRelationInput
-  webhookEvents?: Prisma.PaymentWebhookEventOrderByRelationAggregateInput
+  charge?: Prisma.ChargeRecordOrderByWithRelationInput
+  paymentIntent?: Prisma.PaymentIntentRecordOrderByWithRelationInput
 }
 
 export type RefundRecordWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  providerRefundId?: string
+  stripeRefundId?: string
   AND?: Prisma.RefundRecordWhereInput | Prisma.RefundRecordWhereInput[]
   OR?: Prisma.RefundRecordWhereInput[]
   NOT?: Prisma.RefundRecordWhereInput | Prisma.RefundRecordWhereInput[]
-  vouchId?: Prisma.StringFilter<"RefundRecord"> | string
-  paymentRecordId?: Prisma.StringFilter<"RefundRecord"> | string
-  status?: Prisma.EnumRefundStatusFilter<"RefundRecord"> | $Enums.RefundStatus
-  reason?: Prisma.EnumRefundReasonNullableFilter<"RefundRecord"> | $Enums.RefundReason | null
+  vouchId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  chargeRecordId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  paymentIntentRecordId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  stripeChargeId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
   amountCents?: Prisma.IntFilter<"RefundRecord"> | number
+  currency?: Prisma.StringFilter<"RefundRecord"> | string
+  reason?: Prisma.EnumRefundReasonNullableFilter<"RefundRecord"> | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFilter<"RefundRecord"> | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  syncedAt?: Prisma.DateTimeNullableFilter<"RefundRecord"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"RefundRecord"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RefundRecord"> | Date | string
-  vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
-  paymentRecord?: Prisma.XOR<Prisma.PaymentRecordScalarRelationFilter, Prisma.PaymentRecordWhereInput>
-  webhookEvents?: Prisma.PaymentWebhookEventListRelationFilter
-}, "id" | "providerRefundId">
+  vouch?: Prisma.XOR<Prisma.VouchNullableScalarRelationFilter, Prisma.VouchWhereInput> | null
+  charge?: Prisma.XOR<Prisma.ChargeRecordNullableScalarRelationFilter, Prisma.ChargeRecordWhereInput> | null
+  paymentIntent?: Prisma.XOR<Prisma.PaymentIntentRecordNullableScalarRelationFilter, Prisma.PaymentIntentRecordWhereInput> | null
+}, "id" | "stripeRefundId">
 
 export type RefundRecordOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
-  vouchId?: Prisma.SortOrder
-  paymentRecordId?: Prisma.SortOrder
-  providerRefundId?: Prisma.SortOrderInput | Prisma.SortOrder
-  status?: Prisma.SortOrder
-  reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  vouchId?: Prisma.SortOrderInput | Prisma.SortOrder
+  chargeRecordId?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentIntentRecordId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeRefundId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeChargeId?: Prisma.SortOrderInput | Prisma.SortOrder
   amountCents?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  status?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrderInput | Prisma.SortOrder
+  syncedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.RefundRecordCountOrderByAggregateInput
@@ -308,98 +374,141 @@ export type RefundRecordScalarWhereWithAggregatesInput = {
   OR?: Prisma.RefundRecordScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RefundRecordScalarWhereWithAggregatesInput | Prisma.RefundRecordScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"RefundRecord"> | string
-  vouchId?: Prisma.StringWithAggregatesFilter<"RefundRecord"> | string
-  paymentRecordId?: Prisma.StringWithAggregatesFilter<"RefundRecord"> | string
-  providerRefundId?: Prisma.StringNullableWithAggregatesFilter<"RefundRecord"> | string | null
-  status?: Prisma.EnumRefundStatusWithAggregatesFilter<"RefundRecord"> | $Enums.RefundStatus
-  reason?: Prisma.EnumRefundReasonNullableWithAggregatesFilter<"RefundRecord"> | $Enums.RefundReason | null
+  vouchId?: Prisma.StringNullableWithAggregatesFilter<"RefundRecord"> | string | null
+  chargeRecordId?: Prisma.StringNullableWithAggregatesFilter<"RefundRecord"> | string | null
+  paymentIntentRecordId?: Prisma.StringNullableWithAggregatesFilter<"RefundRecord"> | string | null
+  stripeRefundId?: Prisma.StringWithAggregatesFilter<"RefundRecord"> | string
+  stripePaymentIntentId?: Prisma.StringNullableWithAggregatesFilter<"RefundRecord"> | string | null
+  stripeChargeId?: Prisma.StringNullableWithAggregatesFilter<"RefundRecord"> | string | null
   amountCents?: Prisma.IntWithAggregatesFilter<"RefundRecord"> | number
+  currency?: Prisma.StringWithAggregatesFilter<"RefundRecord"> | string
+  reason?: Prisma.EnumRefundReasonNullableWithAggregatesFilter<"RefundRecord"> | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusWithAggregatesFilter<"RefundRecord"> | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.StringNullableWithAggregatesFilter<"RefundRecord"> | string | null
+  syncedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"RefundRecord"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"RefundRecord"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"RefundRecord"> | Date | string
 }
 
 export type RefundRecordCreateInput = {
   id?: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  vouch: Prisma.VouchCreateNestedOneWithoutRefundRecordsInput
-  paymentRecord: Prisma.PaymentRecordCreateNestedOneWithoutRefundRecordsInput
-  webhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutRefundRecordInput
+  vouch?: Prisma.VouchCreateNestedOneWithoutRefundsInput
+  charge?: Prisma.ChargeRecordCreateNestedOneWithoutRefundsInput
+  paymentIntent?: Prisma.PaymentIntentRecordCreateNestedOneWithoutRefundsInput
 }
 
 export type RefundRecordUncheckedCreateInput = {
   id?: string
-  vouchId: string
-  paymentRecordId: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  vouchId?: string | null
+  chargeRecordId?: string | null
+  paymentIntentRecordId?: string | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  webhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutRefundRecordInput
 }
 
 export type RefundRecordUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vouch?: Prisma.VouchUpdateOneRequiredWithoutRefundRecordsNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneRequiredWithoutRefundRecordsNestedInput
-  webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutRefundRecordNestedInput
+  vouch?: Prisma.VouchUpdateOneWithoutRefundsNestedInput
+  charge?: Prisma.ChargeRecordUpdateOneWithoutRefundsNestedInput
+  paymentIntent?: Prisma.PaymentIntentRecordUpdateOneWithoutRefundsNestedInput
 }
 
 export type RefundRecordUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  paymentRecordId?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chargeRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentIntentRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  webhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutRefundRecordNestedInput
 }
 
 export type RefundRecordCreateManyInput = {
   id?: string
-  vouchId: string
-  paymentRecordId: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  vouchId?: string | null
+  chargeRecordId?: string | null
+  paymentIntentRecordId?: string | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type RefundRecordUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type RefundRecordUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  paymentRecordId?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chargeRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentIntentRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -417,11 +526,17 @@ export type RefundRecordOrderByRelationAggregateInput = {
 export type RefundRecordCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  paymentRecordId?: Prisma.SortOrder
-  providerRefundId?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
+  chargeRecordId?: Prisma.SortOrder
+  paymentIntentRecordId?: Prisma.SortOrder
+  stripeRefundId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
+  stripeChargeId?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrder
+  syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -433,11 +548,17 @@ export type RefundRecordAvgOrderByAggregateInput = {
 export type RefundRecordMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  paymentRecordId?: Prisma.SortOrder
-  providerRefundId?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
+  chargeRecordId?: Prisma.SortOrder
+  paymentIntentRecordId?: Prisma.SortOrder
+  stripeRefundId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
+  stripeChargeId?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrder
+  syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -445,22 +566,23 @@ export type RefundRecordMaxOrderByAggregateInput = {
 export type RefundRecordMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  paymentRecordId?: Prisma.SortOrder
-  providerRefundId?: Prisma.SortOrder
-  status?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
+  chargeRecordId?: Prisma.SortOrder
+  paymentIntentRecordId?: Prisma.SortOrder
+  stripeRefundId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrder
+  stripeChargeId?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
+  reason?: Prisma.SortOrder
+  status?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrder
+  syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type RefundRecordSumOrderByAggregateInput = {
   amountCents?: Prisma.SortOrder
-}
-
-export type RefundRecordNullableScalarRelationFilter = {
-  is?: Prisma.RefundRecordWhereInput | null
-  isNot?: Prisma.RefundRecordWhereInput | null
 }
 
 export type RefundRecordCreateNestedManyWithoutVouchInput = {
@@ -505,94 +627,130 @@ export type RefundRecordUncheckedUpdateManyWithoutVouchNestedInput = {
   deleteMany?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
 }
 
-export type RefundRecordCreateNestedManyWithoutPaymentRecordInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput> | Prisma.RefundRecordCreateWithoutPaymentRecordInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput[]
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput[]
-  createMany?: Prisma.RefundRecordCreateManyPaymentRecordInputEnvelope
+export type RefundRecordCreateNestedManyWithoutPaymentIntentInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentIntentInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentIntentInput> | Prisma.RefundRecordCreateWithoutPaymentIntentInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentIntentInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentIntentInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentIntentInput[]
+  createMany?: Prisma.RefundRecordCreateManyPaymentIntentInputEnvelope
   connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
 }
 
-export type RefundRecordUncheckedCreateNestedManyWithoutPaymentRecordInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput> | Prisma.RefundRecordCreateWithoutPaymentRecordInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput[]
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput[]
-  createMany?: Prisma.RefundRecordCreateManyPaymentRecordInputEnvelope
+export type RefundRecordUncheckedCreateNestedManyWithoutPaymentIntentInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentIntentInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentIntentInput> | Prisma.RefundRecordCreateWithoutPaymentIntentInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentIntentInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentIntentInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentIntentInput[]
+  createMany?: Prisma.RefundRecordCreateManyPaymentIntentInputEnvelope
   connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
 }
 
-export type RefundRecordUpdateManyWithoutPaymentRecordNestedInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput> | Prisma.RefundRecordCreateWithoutPaymentRecordInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput[]
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput[]
-  upsert?: Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentRecordInput | Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentRecordInput[]
-  createMany?: Prisma.RefundRecordCreateManyPaymentRecordInputEnvelope
+export type RefundRecordUpdateManyWithoutPaymentIntentNestedInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentIntentInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentIntentInput> | Prisma.RefundRecordCreateWithoutPaymentIntentInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentIntentInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentIntentInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentIntentInput[]
+  upsert?: Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentIntentInput | Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentIntentInput[]
+  createMany?: Prisma.RefundRecordCreateManyPaymentIntentInputEnvelope
   set?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
   disconnect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
   delete?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
   connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
-  update?: Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentRecordInput | Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentRecordInput[]
-  updateMany?: Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentRecordInput | Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentRecordInput[]
+  update?: Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentIntentInput | Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentIntentInput[]
+  updateMany?: Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentIntentInput | Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentIntentInput[]
   deleteMany?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
 }
 
-export type RefundRecordUncheckedUpdateManyWithoutPaymentRecordNestedInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput> | Prisma.RefundRecordCreateWithoutPaymentRecordInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput[]
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentRecordInput[]
-  upsert?: Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentRecordInput | Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentRecordInput[]
-  createMany?: Prisma.RefundRecordCreateManyPaymentRecordInputEnvelope
+export type RefundRecordUncheckedUpdateManyWithoutPaymentIntentNestedInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentIntentInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentIntentInput> | Prisma.RefundRecordCreateWithoutPaymentIntentInput[] | Prisma.RefundRecordUncheckedCreateWithoutPaymentIntentInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutPaymentIntentInput | Prisma.RefundRecordCreateOrConnectWithoutPaymentIntentInput[]
+  upsert?: Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentIntentInput | Prisma.RefundRecordUpsertWithWhereUniqueWithoutPaymentIntentInput[]
+  createMany?: Prisma.RefundRecordCreateManyPaymentIntentInputEnvelope
   set?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
   disconnect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
   delete?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
   connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
-  update?: Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentRecordInput | Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentRecordInput[]
-  updateMany?: Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentRecordInput | Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentRecordInput[]
+  update?: Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentIntentInput | Prisma.RefundRecordUpdateWithWhereUniqueWithoutPaymentIntentInput[]
+  updateMany?: Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentIntentInput | Prisma.RefundRecordUpdateManyWithWhereWithoutPaymentIntentInput[]
   deleteMany?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
 }
 
-export type EnumRefundStatusFieldUpdateOperationsInput = {
-  set?: $Enums.RefundStatus
+export type RefundRecordCreateNestedManyWithoutChargeInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutChargeInput, Prisma.RefundRecordUncheckedCreateWithoutChargeInput> | Prisma.RefundRecordCreateWithoutChargeInput[] | Prisma.RefundRecordUncheckedCreateWithoutChargeInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutChargeInput | Prisma.RefundRecordCreateOrConnectWithoutChargeInput[]
+  createMany?: Prisma.RefundRecordCreateManyChargeInputEnvelope
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+}
+
+export type RefundRecordUncheckedCreateNestedManyWithoutChargeInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutChargeInput, Prisma.RefundRecordUncheckedCreateWithoutChargeInput> | Prisma.RefundRecordCreateWithoutChargeInput[] | Prisma.RefundRecordUncheckedCreateWithoutChargeInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutChargeInput | Prisma.RefundRecordCreateOrConnectWithoutChargeInput[]
+  createMany?: Prisma.RefundRecordCreateManyChargeInputEnvelope
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+}
+
+export type RefundRecordUpdateManyWithoutChargeNestedInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutChargeInput, Prisma.RefundRecordUncheckedCreateWithoutChargeInput> | Prisma.RefundRecordCreateWithoutChargeInput[] | Prisma.RefundRecordUncheckedCreateWithoutChargeInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutChargeInput | Prisma.RefundRecordCreateOrConnectWithoutChargeInput[]
+  upsert?: Prisma.RefundRecordUpsertWithWhereUniqueWithoutChargeInput | Prisma.RefundRecordUpsertWithWhereUniqueWithoutChargeInput[]
+  createMany?: Prisma.RefundRecordCreateManyChargeInputEnvelope
+  set?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  disconnect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  delete?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  update?: Prisma.RefundRecordUpdateWithWhereUniqueWithoutChargeInput | Prisma.RefundRecordUpdateWithWhereUniqueWithoutChargeInput[]
+  updateMany?: Prisma.RefundRecordUpdateManyWithWhereWithoutChargeInput | Prisma.RefundRecordUpdateManyWithWhereWithoutChargeInput[]
+  deleteMany?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
+}
+
+export type RefundRecordUncheckedUpdateManyWithoutChargeNestedInput = {
+  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutChargeInput, Prisma.RefundRecordUncheckedCreateWithoutChargeInput> | Prisma.RefundRecordCreateWithoutChargeInput[] | Prisma.RefundRecordUncheckedCreateWithoutChargeInput[]
+  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutChargeInput | Prisma.RefundRecordCreateOrConnectWithoutChargeInput[]
+  upsert?: Prisma.RefundRecordUpsertWithWhereUniqueWithoutChargeInput | Prisma.RefundRecordUpsertWithWhereUniqueWithoutChargeInput[]
+  createMany?: Prisma.RefundRecordCreateManyChargeInputEnvelope
+  set?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  disconnect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  delete?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  connect?: Prisma.RefundRecordWhereUniqueInput | Prisma.RefundRecordWhereUniqueInput[]
+  update?: Prisma.RefundRecordUpdateWithWhereUniqueWithoutChargeInput | Prisma.RefundRecordUpdateWithWhereUniqueWithoutChargeInput[]
+  updateMany?: Prisma.RefundRecordUpdateManyWithWhereWithoutChargeInput | Prisma.RefundRecordUpdateManyWithWhereWithoutChargeInput[]
+  deleteMany?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
 }
 
 export type NullableEnumRefundReasonFieldUpdateOperationsInput = {
   set?: $Enums.RefundReason | null
 }
 
-export type RefundRecordCreateNestedOneWithoutWebhookEventsInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutWebhookEventsInput, Prisma.RefundRecordUncheckedCreateWithoutWebhookEventsInput>
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutWebhookEventsInput
-  connect?: Prisma.RefundRecordWhereUniqueInput
-}
-
-export type RefundRecordUpdateOneWithoutWebhookEventsNestedInput = {
-  create?: Prisma.XOR<Prisma.RefundRecordCreateWithoutWebhookEventsInput, Prisma.RefundRecordUncheckedCreateWithoutWebhookEventsInput>
-  connectOrCreate?: Prisma.RefundRecordCreateOrConnectWithoutWebhookEventsInput
-  upsert?: Prisma.RefundRecordUpsertWithoutWebhookEventsInput
-  disconnect?: Prisma.RefundRecordWhereInput | boolean
-  delete?: Prisma.RefundRecordWhereInput | boolean
-  connect?: Prisma.RefundRecordWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.RefundRecordUpdateToOneWithWhereWithoutWebhookEventsInput, Prisma.RefundRecordUpdateWithoutWebhookEventsInput>, Prisma.RefundRecordUncheckedUpdateWithoutWebhookEventsInput>
+export type EnumStripeRefundStatusFieldUpdateOperationsInput = {
+  set?: $Enums.StripeRefundStatus
 }
 
 export type RefundRecordCreateWithoutVouchInput = {
   id?: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  paymentRecord: Prisma.PaymentRecordCreateNestedOneWithoutRefundRecordsInput
-  webhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutRefundRecordInput
+  charge?: Prisma.ChargeRecordCreateNestedOneWithoutRefundsInput
+  paymentIntent?: Prisma.PaymentIntentRecordCreateNestedOneWithoutRefundsInput
 }
 
 export type RefundRecordUncheckedCreateWithoutVouchInput = {
   id?: string
-  paymentRecordId: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  chargeRecordId?: string | null
+  paymentIntentRecordId?: string | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  webhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutRefundRecordInput
 }
 
 export type RefundRecordCreateOrConnectWithoutVouchInput = {
@@ -626,340 +784,467 @@ export type RefundRecordScalarWhereInput = {
   OR?: Prisma.RefundRecordScalarWhereInput[]
   NOT?: Prisma.RefundRecordScalarWhereInput | Prisma.RefundRecordScalarWhereInput[]
   id?: Prisma.StringFilter<"RefundRecord"> | string
-  vouchId?: Prisma.StringFilter<"RefundRecord"> | string
-  paymentRecordId?: Prisma.StringFilter<"RefundRecord"> | string
-  providerRefundId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
-  status?: Prisma.EnumRefundStatusFilter<"RefundRecord"> | $Enums.RefundStatus
-  reason?: Prisma.EnumRefundReasonNullableFilter<"RefundRecord"> | $Enums.RefundReason | null
+  vouchId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  chargeRecordId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  paymentIntentRecordId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  stripeRefundId?: Prisma.StringFilter<"RefundRecord"> | string
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  stripeChargeId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
   amountCents?: Prisma.IntFilter<"RefundRecord"> | number
+  currency?: Prisma.StringFilter<"RefundRecord"> | string
+  reason?: Prisma.EnumRefundReasonNullableFilter<"RefundRecord"> | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFilter<"RefundRecord"> | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.StringNullableFilter<"RefundRecord"> | string | null
+  syncedAt?: Prisma.DateTimeNullableFilter<"RefundRecord"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"RefundRecord"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"RefundRecord"> | Date | string
 }
 
-export type RefundRecordCreateWithoutPaymentRecordInput = {
+export type RefundRecordCreateWithoutPaymentIntentInput = {
   id?: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  vouch: Prisma.VouchCreateNestedOneWithoutRefundRecordsInput
-  webhookEvents?: Prisma.PaymentWebhookEventCreateNestedManyWithoutRefundRecordInput
+  vouch?: Prisma.VouchCreateNestedOneWithoutRefundsInput
+  charge?: Prisma.ChargeRecordCreateNestedOneWithoutRefundsInput
 }
 
-export type RefundRecordUncheckedCreateWithoutPaymentRecordInput = {
+export type RefundRecordUncheckedCreateWithoutPaymentIntentInput = {
   id?: string
-  vouchId: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  vouchId?: string | null
+  chargeRecordId?: string | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  webhookEvents?: Prisma.PaymentWebhookEventUncheckedCreateNestedManyWithoutRefundRecordInput
 }
 
-export type RefundRecordCreateOrConnectWithoutPaymentRecordInput = {
+export type RefundRecordCreateOrConnectWithoutPaymentIntentInput = {
   where: Prisma.RefundRecordWhereUniqueInput
-  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput>
+  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentIntentInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentIntentInput>
 }
 
-export type RefundRecordCreateManyPaymentRecordInputEnvelope = {
-  data: Prisma.RefundRecordCreateManyPaymentRecordInput | Prisma.RefundRecordCreateManyPaymentRecordInput[]
+export type RefundRecordCreateManyPaymentIntentInputEnvelope = {
+  data: Prisma.RefundRecordCreateManyPaymentIntentInput | Prisma.RefundRecordCreateManyPaymentIntentInput[]
   skipDuplicates?: boolean
 }
 
-export type RefundRecordUpsertWithWhereUniqueWithoutPaymentRecordInput = {
+export type RefundRecordUpsertWithWhereUniqueWithoutPaymentIntentInput = {
   where: Prisma.RefundRecordWhereUniqueInput
-  update: Prisma.XOR<Prisma.RefundRecordUpdateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedUpdateWithoutPaymentRecordInput>
-  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentRecordInput>
+  update: Prisma.XOR<Prisma.RefundRecordUpdateWithoutPaymentIntentInput, Prisma.RefundRecordUncheckedUpdateWithoutPaymentIntentInput>
+  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutPaymentIntentInput, Prisma.RefundRecordUncheckedCreateWithoutPaymentIntentInput>
 }
 
-export type RefundRecordUpdateWithWhereUniqueWithoutPaymentRecordInput = {
+export type RefundRecordUpdateWithWhereUniqueWithoutPaymentIntentInput = {
   where: Prisma.RefundRecordWhereUniqueInput
-  data: Prisma.XOR<Prisma.RefundRecordUpdateWithoutPaymentRecordInput, Prisma.RefundRecordUncheckedUpdateWithoutPaymentRecordInput>
+  data: Prisma.XOR<Prisma.RefundRecordUpdateWithoutPaymentIntentInput, Prisma.RefundRecordUncheckedUpdateWithoutPaymentIntentInput>
 }
 
-export type RefundRecordUpdateManyWithWhereWithoutPaymentRecordInput = {
+export type RefundRecordUpdateManyWithWhereWithoutPaymentIntentInput = {
   where: Prisma.RefundRecordScalarWhereInput
-  data: Prisma.XOR<Prisma.RefundRecordUpdateManyMutationInput, Prisma.RefundRecordUncheckedUpdateManyWithoutPaymentRecordInput>
+  data: Prisma.XOR<Prisma.RefundRecordUpdateManyMutationInput, Prisma.RefundRecordUncheckedUpdateManyWithoutPaymentIntentInput>
 }
 
-export type RefundRecordCreateWithoutWebhookEventsInput = {
+export type RefundRecordCreateWithoutChargeInput = {
   id?: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  vouch: Prisma.VouchCreateNestedOneWithoutRefundRecordsInput
-  paymentRecord: Prisma.PaymentRecordCreateNestedOneWithoutRefundRecordsInput
+  vouch?: Prisma.VouchCreateNestedOneWithoutRefundsInput
+  paymentIntent?: Prisma.PaymentIntentRecordCreateNestedOneWithoutRefundsInput
 }
 
-export type RefundRecordUncheckedCreateWithoutWebhookEventsInput = {
+export type RefundRecordUncheckedCreateWithoutChargeInput = {
   id?: string
-  vouchId: string
-  paymentRecordId: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  vouchId?: string | null
+  paymentIntentRecordId?: string | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
-export type RefundRecordCreateOrConnectWithoutWebhookEventsInput = {
+export type RefundRecordCreateOrConnectWithoutChargeInput = {
   where: Prisma.RefundRecordWhereUniqueInput
-  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutWebhookEventsInput, Prisma.RefundRecordUncheckedCreateWithoutWebhookEventsInput>
+  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutChargeInput, Prisma.RefundRecordUncheckedCreateWithoutChargeInput>
 }
 
-export type RefundRecordUpsertWithoutWebhookEventsInput = {
-  update: Prisma.XOR<Prisma.RefundRecordUpdateWithoutWebhookEventsInput, Prisma.RefundRecordUncheckedUpdateWithoutWebhookEventsInput>
-  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutWebhookEventsInput, Prisma.RefundRecordUncheckedCreateWithoutWebhookEventsInput>
-  where?: Prisma.RefundRecordWhereInput
+export type RefundRecordCreateManyChargeInputEnvelope = {
+  data: Prisma.RefundRecordCreateManyChargeInput | Prisma.RefundRecordCreateManyChargeInput[]
+  skipDuplicates?: boolean
 }
 
-export type RefundRecordUpdateToOneWithWhereWithoutWebhookEventsInput = {
-  where?: Prisma.RefundRecordWhereInput
-  data: Prisma.XOR<Prisma.RefundRecordUpdateWithoutWebhookEventsInput, Prisma.RefundRecordUncheckedUpdateWithoutWebhookEventsInput>
+export type RefundRecordUpsertWithWhereUniqueWithoutChargeInput = {
+  where: Prisma.RefundRecordWhereUniqueInput
+  update: Prisma.XOR<Prisma.RefundRecordUpdateWithoutChargeInput, Prisma.RefundRecordUncheckedUpdateWithoutChargeInput>
+  create: Prisma.XOR<Prisma.RefundRecordCreateWithoutChargeInput, Prisma.RefundRecordUncheckedCreateWithoutChargeInput>
 }
 
-export type RefundRecordUpdateWithoutWebhookEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
-  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vouch?: Prisma.VouchUpdateOneRequiredWithoutRefundRecordsNestedInput
-  paymentRecord?: Prisma.PaymentRecordUpdateOneRequiredWithoutRefundRecordsNestedInput
+export type RefundRecordUpdateWithWhereUniqueWithoutChargeInput = {
+  where: Prisma.RefundRecordWhereUniqueInput
+  data: Prisma.XOR<Prisma.RefundRecordUpdateWithoutChargeInput, Prisma.RefundRecordUncheckedUpdateWithoutChargeInput>
 }
 
-export type RefundRecordUncheckedUpdateWithoutWebhookEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  paymentRecordId?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
-  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+export type RefundRecordUpdateManyWithWhereWithoutChargeInput = {
+  where: Prisma.RefundRecordScalarWhereInput
+  data: Prisma.XOR<Prisma.RefundRecordUpdateManyMutationInput, Prisma.RefundRecordUncheckedUpdateManyWithoutChargeInput>
 }
 
 export type RefundRecordCreateManyVouchInput = {
   id?: string
-  paymentRecordId: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  chargeRecordId?: string | null
+  paymentIntentRecordId?: string | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type RefundRecordUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  paymentRecord?: Prisma.PaymentRecordUpdateOneRequiredWithoutRefundRecordsNestedInput
-  webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutRefundRecordNestedInput
+  charge?: Prisma.ChargeRecordUpdateOneWithoutRefundsNestedInput
+  paymentIntent?: Prisma.PaymentIntentRecordUpdateOneWithoutRefundsNestedInput
 }
 
 export type RefundRecordUncheckedUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  paymentRecordId?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  chargeRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentIntentRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  webhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutRefundRecordNestedInput
 }
 
 export type RefundRecordUncheckedUpdateManyWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  paymentRecordId?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  chargeRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentIntentRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type RefundRecordCreateManyPaymentRecordInput = {
+export type RefundRecordCreateManyPaymentIntentInput = {
   id?: string
-  vouchId: string
-  providerRefundId?: string | null
-  status?: $Enums.RefundStatus
-  reason?: $Enums.RefundReason | null
+  vouchId?: string | null
+  chargeRecordId?: string | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
   amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
-export type RefundRecordUpdateWithoutPaymentRecordInput = {
+export type RefundRecordUpdateWithoutPaymentIntentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vouch?: Prisma.VouchUpdateOneRequiredWithoutRefundRecordsNestedInput
-  webhookEvents?: Prisma.PaymentWebhookEventUpdateManyWithoutRefundRecordNestedInput
+  vouch?: Prisma.VouchUpdateOneWithoutRefundsNestedInput
+  charge?: Prisma.ChargeRecordUpdateOneWithoutRefundsNestedInput
 }
 
-export type RefundRecordUncheckedUpdateWithoutPaymentRecordInput = {
+export type RefundRecordUncheckedUpdateWithoutPaymentIntentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
-  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chargeRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  webhookEvents?: Prisma.PaymentWebhookEventUncheckedUpdateManyWithoutRefundRecordNestedInput
-}
-
-export type RefundRecordUncheckedUpdateManyWithoutPaymentRecordInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  providerRefundId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumRefundStatusFieldUpdateOperationsInput | $Enums.RefundStatus
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
-  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-
-/**
- * Count Type RefundRecordCountOutputType
- */
-
-export type RefundRecordCountOutputType = {
-  webhookEvents: number
+export type RefundRecordUncheckedUpdateManyWithoutPaymentIntentInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chargeRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type RefundRecordCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  webhookEvents?: boolean | RefundRecordCountOutputTypeCountWebhookEventsArgs
+export type RefundRecordCreateManyChargeInput = {
+  id?: string
+  vouchId?: string | null
+  paymentIntentRecordId?: string | null
+  stripeRefundId: string
+  stripePaymentIntentId?: string | null
+  stripeChargeId?: string | null
+  amountCents: number
+  currency?: string
+  reason?: $Enums.RefundReason | null
+  status: $Enums.StripeRefundStatus
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
-/**
- * RefundRecordCountOutputType without action
- */
-export type RefundRecordCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the RefundRecordCountOutputType
-   */
-  select?: Prisma.RefundRecordCountOutputTypeSelect<ExtArgs> | null
+export type RefundRecordUpdateWithoutChargeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vouch?: Prisma.VouchUpdateOneWithoutRefundsNestedInput
+  paymentIntent?: Prisma.PaymentIntentRecordUpdateOneWithoutRefundsNestedInput
 }
 
-/**
- * RefundRecordCountOutputType without action
- */
-export type RefundRecordCountOutputTypeCountWebhookEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.PaymentWebhookEventWhereInput
+export type RefundRecordUncheckedUpdateWithoutChargeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentIntentRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
+
+export type RefundRecordUncheckedUpdateManyWithoutChargeInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentIntentRecordId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeRefundId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  reason?: Prisma.NullableEnumRefundReasonFieldUpdateOperationsInput | $Enums.RefundReason | null
+  status?: Prisma.EnumStripeRefundStatusFieldUpdateOperationsInput | $Enums.StripeRefundStatus
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
 
 
 export type RefundRecordSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   vouchId?: boolean
-  paymentRecordId?: boolean
-  providerRefundId?: boolean
-  status?: boolean
-  reason?: boolean
+  chargeRecordId?: boolean
+  paymentIntentRecordId?: boolean
+  stripeRefundId?: boolean
+  stripePaymentIntentId?: boolean
+  stripeChargeId?: boolean
   amountCents?: boolean
+  currency?: boolean
+  reason?: boolean
+  status?: boolean
+  lastStripeEventId?: boolean
+  syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  paymentRecord?: boolean | Prisma.PaymentRecordDefaultArgs<ExtArgs>
-  webhookEvents?: boolean | Prisma.RefundRecord$webhookEventsArgs<ExtArgs>
-  _count?: boolean | Prisma.RefundRecordCountOutputTypeDefaultArgs<ExtArgs>
+  vouch?: boolean | Prisma.RefundRecord$vouchArgs<ExtArgs>
+  charge?: boolean | Prisma.RefundRecord$chargeArgs<ExtArgs>
+  paymentIntent?: boolean | Prisma.RefundRecord$paymentIntentArgs<ExtArgs>
 }, ExtArgs["result"]["refundRecord"]>
 
 export type RefundRecordSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   vouchId?: boolean
-  paymentRecordId?: boolean
-  providerRefundId?: boolean
-  status?: boolean
-  reason?: boolean
+  chargeRecordId?: boolean
+  paymentIntentRecordId?: boolean
+  stripeRefundId?: boolean
+  stripePaymentIntentId?: boolean
+  stripeChargeId?: boolean
   amountCents?: boolean
+  currency?: boolean
+  reason?: boolean
+  status?: boolean
+  lastStripeEventId?: boolean
+  syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  paymentRecord?: boolean | Prisma.PaymentRecordDefaultArgs<ExtArgs>
+  vouch?: boolean | Prisma.RefundRecord$vouchArgs<ExtArgs>
+  charge?: boolean | Prisma.RefundRecord$chargeArgs<ExtArgs>
+  paymentIntent?: boolean | Prisma.RefundRecord$paymentIntentArgs<ExtArgs>
 }, ExtArgs["result"]["refundRecord"]>
 
 export type RefundRecordSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   vouchId?: boolean
-  paymentRecordId?: boolean
-  providerRefundId?: boolean
-  status?: boolean
-  reason?: boolean
+  chargeRecordId?: boolean
+  paymentIntentRecordId?: boolean
+  stripeRefundId?: boolean
+  stripePaymentIntentId?: boolean
+  stripeChargeId?: boolean
   amountCents?: boolean
+  currency?: boolean
+  reason?: boolean
+  status?: boolean
+  lastStripeEventId?: boolean
+  syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  paymentRecord?: boolean | Prisma.PaymentRecordDefaultArgs<ExtArgs>
+  vouch?: boolean | Prisma.RefundRecord$vouchArgs<ExtArgs>
+  charge?: boolean | Prisma.RefundRecord$chargeArgs<ExtArgs>
+  paymentIntent?: boolean | Prisma.RefundRecord$paymentIntentArgs<ExtArgs>
 }, ExtArgs["result"]["refundRecord"]>
 
 export type RefundRecordSelectScalar = {
   id?: boolean
   vouchId?: boolean
-  paymentRecordId?: boolean
-  providerRefundId?: boolean
-  status?: boolean
-  reason?: boolean
+  chargeRecordId?: boolean
+  paymentIntentRecordId?: boolean
+  stripeRefundId?: boolean
+  stripePaymentIntentId?: boolean
+  stripeChargeId?: boolean
   amountCents?: boolean
+  currency?: boolean
+  reason?: boolean
+  status?: boolean
+  lastStripeEventId?: boolean
+  syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type RefundRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "paymentRecordId" | "providerRefundId" | "status" | "reason" | "amountCents" | "createdAt" | "updatedAt", ExtArgs["result"]["refundRecord"]>
+export type RefundRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "chargeRecordId" | "paymentIntentRecordId" | "stripeRefundId" | "stripePaymentIntentId" | "stripeChargeId" | "amountCents" | "currency" | "reason" | "status" | "lastStripeEventId" | "syncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["refundRecord"]>
 export type RefundRecordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  paymentRecord?: boolean | Prisma.PaymentRecordDefaultArgs<ExtArgs>
-  webhookEvents?: boolean | Prisma.RefundRecord$webhookEventsArgs<ExtArgs>
-  _count?: boolean | Prisma.RefundRecordCountOutputTypeDefaultArgs<ExtArgs>
+  vouch?: boolean | Prisma.RefundRecord$vouchArgs<ExtArgs>
+  charge?: boolean | Prisma.RefundRecord$chargeArgs<ExtArgs>
+  paymentIntent?: boolean | Prisma.RefundRecord$paymentIntentArgs<ExtArgs>
 }
 export type RefundRecordIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  paymentRecord?: boolean | Prisma.PaymentRecordDefaultArgs<ExtArgs>
+  vouch?: boolean | Prisma.RefundRecord$vouchArgs<ExtArgs>
+  charge?: boolean | Prisma.RefundRecord$chargeArgs<ExtArgs>
+  paymentIntent?: boolean | Prisma.RefundRecord$paymentIntentArgs<ExtArgs>
 }
 export type RefundRecordIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  paymentRecord?: boolean | Prisma.PaymentRecordDefaultArgs<ExtArgs>
+  vouch?: boolean | Prisma.RefundRecord$vouchArgs<ExtArgs>
+  charge?: boolean | Prisma.RefundRecord$chargeArgs<ExtArgs>
+  paymentIntent?: boolean | Prisma.RefundRecord$paymentIntentArgs<ExtArgs>
 }
 
 export type $RefundRecordPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "RefundRecord"
   objects: {
-    vouch: Prisma.$VouchPayload<ExtArgs>
-    paymentRecord: Prisma.$PaymentRecordPayload<ExtArgs>
-    webhookEvents: Prisma.$PaymentWebhookEventPayload<ExtArgs>[]
+    vouch: Prisma.$VouchPayload<ExtArgs> | null
+    charge: Prisma.$ChargeRecordPayload<ExtArgs> | null
+    paymentIntent: Prisma.$PaymentIntentRecordPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
-    vouchId: string
-    paymentRecordId: string
-    providerRefundId: string | null
-    status: $Enums.RefundStatus
-    reason: $Enums.RefundReason | null
+    vouchId: string | null
+    chargeRecordId: string | null
+    paymentIntentRecordId: string | null
+    stripeRefundId: string
+    stripePaymentIntentId: string | null
+    stripeChargeId: string | null
     amountCents: number
+    currency: string
+    reason: $Enums.RefundReason | null
+    status: $Enums.StripeRefundStatus
+    lastStripeEventId: string | null
+    syncedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["refundRecord"]>
@@ -1356,9 +1641,9 @@ readonly fields: RefundRecordFieldRefs;
  */
 export interface Prisma__RefundRecordClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  vouch<T extends Prisma.VouchDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VouchDefaultArgs<ExtArgs>>): Prisma.Prisma__VouchClient<runtime.Types.Result.GetResult<Prisma.$VouchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  paymentRecord<T extends Prisma.PaymentRecordDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PaymentRecordDefaultArgs<ExtArgs>>): Prisma.Prisma__PaymentRecordClient<runtime.Types.Result.GetResult<Prisma.$PaymentRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  webhookEvents<T extends Prisma.RefundRecord$webhookEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RefundRecord$webhookEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PaymentWebhookEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  vouch<T extends Prisma.RefundRecord$vouchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RefundRecord$vouchArgs<ExtArgs>>): Prisma.Prisma__VouchClient<runtime.Types.Result.GetResult<Prisma.$VouchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  charge<T extends Prisma.RefundRecord$chargeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RefundRecord$chargeArgs<ExtArgs>>): Prisma.Prisma__ChargeRecordClient<runtime.Types.Result.GetResult<Prisma.$ChargeRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  paymentIntent<T extends Prisma.RefundRecord$paymentIntentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.RefundRecord$paymentIntentArgs<ExtArgs>>): Prisma.Prisma__PaymentIntentRecordClient<runtime.Types.Result.GetResult<Prisma.$PaymentIntentRecordPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1390,11 +1675,17 @@ export interface Prisma__RefundRecordClient<T, Null = never, ExtArgs extends run
 export interface RefundRecordFieldRefs {
   readonly id: Prisma.FieldRef<"RefundRecord", 'String'>
   readonly vouchId: Prisma.FieldRef<"RefundRecord", 'String'>
-  readonly paymentRecordId: Prisma.FieldRef<"RefundRecord", 'String'>
-  readonly providerRefundId: Prisma.FieldRef<"RefundRecord", 'String'>
-  readonly status: Prisma.FieldRef<"RefundRecord", 'RefundStatus'>
-  readonly reason: Prisma.FieldRef<"RefundRecord", 'RefundReason'>
+  readonly chargeRecordId: Prisma.FieldRef<"RefundRecord", 'String'>
+  readonly paymentIntentRecordId: Prisma.FieldRef<"RefundRecord", 'String'>
+  readonly stripeRefundId: Prisma.FieldRef<"RefundRecord", 'String'>
+  readonly stripePaymentIntentId: Prisma.FieldRef<"RefundRecord", 'String'>
+  readonly stripeChargeId: Prisma.FieldRef<"RefundRecord", 'String'>
   readonly amountCents: Prisma.FieldRef<"RefundRecord", 'Int'>
+  readonly currency: Prisma.FieldRef<"RefundRecord", 'String'>
+  readonly reason: Prisma.FieldRef<"RefundRecord", 'RefundReason'>
+  readonly status: Prisma.FieldRef<"RefundRecord", 'StripeRefundStatus'>
+  readonly lastStripeEventId: Prisma.FieldRef<"RefundRecord", 'String'>
+  readonly syncedAt: Prisma.FieldRef<"RefundRecord", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"RefundRecord", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"RefundRecord", 'DateTime'>
 }
@@ -1798,27 +2089,60 @@ export type RefundRecordDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
- * RefundRecord.webhookEvents
+ * RefundRecord.vouch
  */
-export type RefundRecord$webhookEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type RefundRecord$vouchArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the PaymentWebhookEvent
+   * Select specific fields to fetch from the Vouch
    */
-  select?: Prisma.PaymentWebhookEventSelect<ExtArgs> | null
+  select?: Prisma.VouchSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the PaymentWebhookEvent
+   * Omit specific fields from the Vouch
    */
-  omit?: Prisma.PaymentWebhookEventOmit<ExtArgs> | null
+  omit?: Prisma.VouchOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.PaymentWebhookEventInclude<ExtArgs> | null
-  where?: Prisma.PaymentWebhookEventWhereInput
-  orderBy?: Prisma.PaymentWebhookEventOrderByWithRelationInput | Prisma.PaymentWebhookEventOrderByWithRelationInput[]
-  cursor?: Prisma.PaymentWebhookEventWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.PaymentWebhookEventScalarFieldEnum | Prisma.PaymentWebhookEventScalarFieldEnum[]
+  include?: Prisma.VouchInclude<ExtArgs> | null
+  where?: Prisma.VouchWhereInput
+}
+
+/**
+ * RefundRecord.charge
+ */
+export type RefundRecord$chargeArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ChargeRecord
+   */
+  select?: Prisma.ChargeRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ChargeRecord
+   */
+  omit?: Prisma.ChargeRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ChargeRecordInclude<ExtArgs> | null
+  where?: Prisma.ChargeRecordWhereInput
+}
+
+/**
+ * RefundRecord.paymentIntent
+ */
+export type RefundRecord$paymentIntentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PaymentIntentRecord
+   */
+  select?: Prisma.PaymentIntentRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PaymentIntentRecord
+   */
+  omit?: Prisma.PaymentIntentRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PaymentIntentRecordInclude<ExtArgs> | null
+  where?: Prisma.PaymentIntentRecordWhereInput
 }
 
 /**

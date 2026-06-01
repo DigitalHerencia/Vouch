@@ -66,7 +66,7 @@ export async function setStripeCustomerDefaultPaymentMethod(input: {
   })
 }
 
-export async function getStripeCustomerPaymentReadiness(providerCustomerId: string): Promise<{
+export async function getStripeCustomerpaymentMethodReady(providerCustomerId: string): Promise<{
   readiness: "requires_action" | "ready" | "failed"
   defaultPaymentMethodId: string | null
 }> {

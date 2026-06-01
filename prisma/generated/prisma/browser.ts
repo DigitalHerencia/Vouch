@@ -23,11 +23,6 @@ export * from './enums';
  */
 export type User = Prisma.UserModel
 /**
- * Model VerificationProfile
- * 
- */
-export type VerificationProfile = Prisma.VerificationProfileModel
-/**
  * Model PaymentCustomer
  * 
  */
@@ -38,95 +33,72 @@ export type PaymentCustomer = Prisma.PaymentCustomerModel
  */
 export type ConnectedAccount = Prisma.ConnectedAccountModel
 /**
- * Model TermsAcceptance
- * 
- */
-export type TermsAcceptance = Prisma.TermsAcceptanceModel
-/**
  * Model Vouch
  * 
  */
 export type Vouch = Prisma.VouchModel
-/**
- * Model VouchRecoverySnapshot
- * 
- */
-export type VouchRecoverySnapshot = Prisma.VouchRecoverySnapshotModel
-/**
- * Model Invitation
- * 
- */
-export type Invitation = Prisma.InvitationModel
 /**
  * Model PresenceConfirmation
  * 
  */
 export type PresenceConfirmation = Prisma.PresenceConfirmationModel
 /**
- * Model PaymentRecord
+ * Model PresenceConfirmationAttempt
  * 
  */
-export type PaymentRecord = Prisma.PaymentRecordModel
+export type PresenceConfirmationAttempt = Prisma.PresenceConfirmationAttemptModel
+/**
+ * Model PaymentIntentRecord
+ * 
+ */
+export type PaymentIntentRecord = Prisma.PaymentIntentRecordModel
+/**
+ * Model ChargeRecord
+ * 
+ */
+export type ChargeRecord = Prisma.ChargeRecordModel
 /**
  * Model RefundRecord
  * 
  */
 export type RefundRecord = Prisma.RefundRecordModel
 /**
+ * Model PayoutRecord
+ * 
+ */
+export type PayoutRecord = Prisma.PayoutRecordModel
+/**
  * Model ProviderWebhookEvent
- * *
- *  * Generic provider webhook ledger.
- *  *
- *  * Use this for Clerk and Stripe idempotency.
- *  * Do not store full provider payloads here.
+ * 
  */
 export type ProviderWebhookEvent = Prisma.ProviderWebhookEventModel
 /**
- * Model ClerkSession
+ * Model StripeWebhookEvent
  * 
  */
-export type ClerkSession = Prisma.ClerkSessionModel
-/**
- * Model ClerkEmail
- * 
- */
-export type ClerkEmail = Prisma.ClerkEmailModel
-/**
- * Model ClerkSms
- * 
- */
-export type ClerkSms = Prisma.ClerkSmsModel
-/**
- * Model ClerkInvitation
- * 
- */
-export type ClerkInvitation = Prisma.ClerkInvitationModel
-/**
- * Model PaymentWebhookEvent
- * *
- *  * Stripe/payment-specific webhook projection.
- *  *
- *  * ProviderWebhookEvent handles generic idempotency across Clerk/Stripe.
- *  * PaymentWebhookEvent is the Stripe/payment projection only.
- */
-export type PaymentWebhookEvent = Prisma.PaymentWebhookEventModel
+export type StripeWebhookEvent = Prisma.StripeWebhookEventModel
 /**
  * Model AuditEvent
  * 
  */
 export type AuditEvent = Prisma.AuditEventModel
 /**
- * Model NotificationEvent
+ * Model VouchEvent
  * 
  */
-export type NotificationEvent = Prisma.NotificationEventModel
-/**
- * Model AnalyticsEvent
- * 
- */
-export type AnalyticsEvent = Prisma.AnalyticsEventModel
+export type VouchEvent = Prisma.VouchEventModel
 /**
  * Model OperationalRetry
  * 
  */
 export type OperationalRetry = Prisma.OperationalRetryModel
+/**
+ * Model VouchRecoverySnapshot
+ * 
+ */
+export type VouchRecoverySnapshot = Prisma.VouchRecoverySnapshotModel
+/**
+ * Model AnalyticsEvent
+ * 
+ */
+export type AnalyticsEvent = Prisma.AnalyticsEventModel

@@ -29,7 +29,7 @@ function hasAcceptReadiness(input: VouchReadinessInput & { eligible?: boolean })
     isActive(input) &&
     input.identityStatus === "verified" &&
     input.adultStatus === "verified" &&
-    input.paymentReadiness === "ready" &&
+    input.paymentMethodReady === "ready" &&
     input.termsAccepted === true
   )
 }

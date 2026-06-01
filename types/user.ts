@@ -1,6 +1,6 @@
 import type { UserID } from "./common"
 
-export type UserStatus = "active" | "disabled"
+export type UserStatus = "active" | "disabled" | "suspended"
 
 export interface UserSafeIdentity {
   userId: UserID

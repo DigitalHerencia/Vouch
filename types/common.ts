@@ -2,7 +2,6 @@ export type ID = string
 export type PublicID = string
 export type UserID = string
 export type VouchID = string
-export type InvitationToken = string
 export type ISODateTime = string
 export type CurrencyCode = "usd"
 export type MoneyCents = number

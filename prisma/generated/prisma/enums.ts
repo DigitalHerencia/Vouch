@@ -11,70 +11,11 @@
 
 export const UserStatus = {
   active: 'active',
+  suspended: 'suspended',
   disabled: 'disabled'
 } as const
 
 export type UserStatus = (typeof UserStatus)[keyof typeof UserStatus]
-
-
-export const VerificationStatus = {
-  unstarted: 'unstarted',
-  pending: 'pending',
-  verified: 'verified',
-  rejected: 'rejected',
-  requires_action: 'requires_action',
-  expired: 'expired'
-} as const
-
-export type VerificationStatus = (typeof VerificationStatus)[keyof typeof VerificationStatus]
-
-
-export const PaymentReadinessStatus = {
-  not_started: 'not_started',
-  requires_action: 'requires_action',
-  ready: 'ready',
-  failed: 'failed'
-} as const
-
-export type PaymentReadinessStatus = (typeof PaymentReadinessStatus)[keyof typeof PaymentReadinessStatus]
-
-
-export const PayoutReadinessStatus = {
-  not_started: 'not_started',
-  requires_action: 'requires_action',
-  ready: 'ready',
-  restricted: 'restricted',
-  failed: 'failed'
-} as const
-
-export type PayoutReadinessStatus = (typeof PayoutReadinessStatus)[keyof typeof PayoutReadinessStatus]
-
-
-export const VouchStatus = {
-  draft: 'draft',
-  committed: 'committed',
-  sent: 'sent',
-  accepted: 'accepted',
-  authorized: 'authorized',
-  confirmable: 'confirmable',
-  completed: 'completed',
-  expired: 'expired'
-} as const
-
-export type VouchStatus = (typeof VouchStatus)[keyof typeof VouchStatus]
-
-
-export const InvitationStatus = {
-  created: 'created',
-  sent: 'sent',
-  opened: 'opened',
-  accepted: 'accepted',
-  declined: 'declined',
-  expired: 'expired',
-  invalidated: 'invalidated'
-} as const
-
-export type InvitationStatus = (typeof InvitationStatus)[keyof typeof InvitationStatus]
 
 
 export const ParticipantRole = {
@@ -85,210 +26,209 @@ export const ParticipantRole = {
 export type ParticipantRole = (typeof ParticipantRole)[keyof typeof ParticipantRole]
 
 
-export const ConfirmationStatus = {
-  pending: 'pending',
-  confirmed: 'confirmed',
-  rejected: 'rejected'
+export const VouchStatus = {
+  draft: 'draft',
+  active: 'active',
+  authorized: 'authorized',
+  can_capture: 'can_capture',
+  captured: 'captured',
+  expired: 'expired',
+  archived: 'archived'
 } as const
 
-export type ConfirmationStatus = (typeof ConfirmationStatus)[keyof typeof ConfirmationStatus]
+export type VouchStatus = (typeof VouchStatus)[keyof typeof VouchStatus]
 
 
-export const AggregateConfirmationStatus = {
-  none_confirmed: 'none_confirmed',
+export const PresenceConfirmationStatus = {
+  pending: 'pending',
   merchant_confirmed: 'merchant_confirmed',
   customer_confirmed: 'customer_confirmed',
-  both_confirmed: 'both_confirmed'
+  can_capture: 'can_capture',
+  void: 'void',
+  sync_pending: 'sync_pending',
+  auto_void: 'auto_void'
 } as const
 
-export type AggregateConfirmationStatus = (typeof AggregateConfirmationStatus)[keyof typeof AggregateConfirmationStatus]
+export type PresenceConfirmationStatus = (typeof PresenceConfirmationStatus)[keyof typeof PresenceConfirmationStatus]
 
 
-export const ConfirmationMethod = {
-  code_exchange: 'code_exchange',
-  offline_code_exchange: 'offline_code_exchange'
+export const ConfirmationSubmissionMode = {
+  online: 'online',
+  offline_sync: 'offline_sync'
 } as const
 
-export type ConfirmationMethod = (typeof ConfirmationMethod)[keyof typeof ConfirmationMethod]
+export type ConfirmationSubmissionMode = (typeof ConfirmationSubmissionMode)[keyof typeof ConfirmationSubmissionMode]
 
 
-export const PaymentProvider = {
-  stripe: 'stripe'
+export const PresenceResolutionSource = {
+  online: 'online',
+  offline_sync: 'offline_sync',
+  server_reconciliation: 'server_reconciliation',
+  auto_void: 'auto_void'
 } as const
 
-export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
+export type PresenceResolutionSource = (typeof PresenceResolutionSource)[keyof typeof PresenceResolutionSource]
 
 
-export const PaymentRecordPurpose = {
+export const PaymentIntentPurpose = {
   merchant_protocol_fee: 'merchant_protocol_fee',
-  customer_authorization: 'customer_authorization'
+  customer_deposit_authorization: 'customer_deposit_authorization'
 } as const
 
-export type PaymentRecordPurpose = (typeof PaymentRecordPurpose)[keyof typeof PaymentRecordPurpose]
+export type PaymentIntentPurpose = (typeof PaymentIntentPurpose)[keyof typeof PaymentIntentPurpose]
 
 
-export const VerificationProvider = {
-  stripe_identity: 'stripe_identity'
-} as const
-
-export type VerificationProvider = (typeof VerificationProvider)[keyof typeof VerificationProvider]
-
-
-export const WebhookProvider = {
-  clerk: 'clerk',
-  stripe: 'stripe',
-  stripe_identity: 'stripe_identity'
-} as const
-
-export type WebhookProvider = (typeof WebhookProvider)[keyof typeof WebhookProvider]
-
-
-export const ProviderWebhookStatus = {
-  received: 'received',
-  processed: 'processed',
-  ignored: 'ignored',
-  failed: 'failed'
-} as const
-
-export type ProviderWebhookStatus = (typeof ProviderWebhookStatus)[keyof typeof ProviderWebhookStatus]
-
-
-export const PaymentStatus = {
-  not_started: 'not_started',
-  checkout_created: 'checkout_created',
+export const StripePaymentIntentStatus = {
   requires_payment_method: 'requires_payment_method',
   requires_confirmation: 'requires_confirmation',
   requires_action: 'requires_action',
-  requires_capture: 'requires_capture',
-  authorized: 'authorized',
   processing: 'processing',
-  capture_processing: 'capture_processing',
-  captured: 'captured',
+  requires_capture: 'requires_capture',
   canceled: 'canceled',
-  expired: 'expired',
-  failed: 'failed'
+  succeeded: 'succeeded'
 } as const
 
-export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+export type StripePaymentIntentStatus = (typeof StripePaymentIntentStatus)[keyof typeof StripePaymentIntentStatus]
 
 
-export const SettlementStatus = {
-  pending: 'pending',
-  non_capture_pending: 'non_capture_pending',
-  non_captured: 'non_captured',
-  capture_pending: 'capture_pending',
-  captured: 'captured',
-  refund_pending: 'refund_pending',
-  refunded: 'refunded',
-  provider_blocked: 'provider_blocked',
-  failed: 'failed'
+export const StripeCaptureMethod = {
+  automatic: 'automatic',
+  manual: 'manual'
 } as const
 
-export type SettlementStatus = (typeof SettlementStatus)[keyof typeof SettlementStatus]
+export type StripeCaptureMethod = (typeof StripeCaptureMethod)[keyof typeof StripeCaptureMethod]
 
 
-export const RefundStatus = {
-  not_required: 'not_required',
-  pending: 'pending',
+export const StripeChargeStatus = {
   succeeded: 'succeeded',
+  pending: 'pending',
   failed: 'failed'
 } as const
 
-export type RefundStatus = (typeof RefundStatus)[keyof typeof RefundStatus]
+export type StripeChargeStatus = (typeof StripeChargeStatus)[keyof typeof StripeChargeStatus]
 
 
 export const RefundReason = {
-  confirmation_incomplete: 'confirmation_incomplete',
-  provider_required: 'provider_required',
-  captured_reversal_required: 'captured_reversal_required',
-  payment_failure: 'payment_failure'
+  duplicate: 'duplicate',
+  fraudulent: 'fraudulent',
+  requested_by_customer: 'requested_by_customer',
+  expired_uncaptured_authorization: 'expired_uncaptured_authorization',
+  provider_reconciliation: 'provider_reconciliation'
 } as const
 
 export type RefundReason = (typeof RefundReason)[keyof typeof RefundReason]
 
 
-export const ArchiveStatus = {
-  active: 'active',
-  archived: 'archived'
+export const StripeRefundStatus = {
+  pending: 'pending',
+  requires_action: 'requires_action',
+  succeeded: 'succeeded',
+  failed: 'failed',
+  canceled: 'canceled'
 } as const
 
-export type ArchiveStatus = (typeof ArchiveStatus)[keyof typeof ArchiveStatus]
+export type StripeRefundStatus = (typeof StripeRefundStatus)[keyof typeof StripeRefundStatus]
 
 
-export const RecoveryStatus = {
-  normal: 'normal',
-  recovery_required: 'recovery_required',
-  recovery_in_progress: 'recovery_in_progress',
-  recovered: 'recovered',
-  recovery_failed: 'recovery_failed'
+export const StripePayoutStatus = {
+  pending: 'pending',
+  in_transit: 'in_transit',
+  paid: 'paid',
+  failed: 'failed',
+  canceled: 'canceled'
 } as const
 
-export type RecoveryStatus = (typeof RecoveryStatus)[keyof typeof RecoveryStatus]
+export type StripePayoutStatus = (typeof StripePayoutStatus)[keyof typeof StripePayoutStatus]
+
+
+export const WebhookProvider = {
+  stripe: 'stripe',
+  clerk: 'clerk'
+} as const
+
+export type WebhookProvider = (typeof WebhookProvider)[keyof typeof WebhookProvider]
+
+
+export const WebhookProcessingStatus = {
+  received: 'received',
+  processing: 'processing',
+  processed: 'processed',
+  ignored: 'ignored',
+  failed: 'failed'
+} as const
+
+export type WebhookProcessingStatus = (typeof WebhookProcessingStatus)[keyof typeof WebhookProcessingStatus]
 
 
 export const AuditActorType = {
   user: 'user',
   system: 'system',
-  stripe: 'stripe',
-  clerk: 'clerk'
+  clerk: 'clerk',
+  stripe: 'stripe'
 } as const
 
 export type AuditActorType = (typeof AuditActorType)[keyof typeof AuditActorType]
 
 
-export const NotificationChannel = {
-  email: 'email'
+export const VouchTransitionType = {
+  protocol_fee_paid: 'protocol_fee_paid',
+  deposit_authorization_created: 'deposit_authorization_created',
+  deposit_authorization_requires_capture: 'deposit_authorization_requires_capture',
+  merchant_confirmed: 'merchant_confirmed',
+  customer_confirmed: 'customer_confirmed',
+  presence_can_capture: 'presence_can_capture',
+  presence_void: 'presence_void',
+  capture_succeeded: 'capture_succeeded',
+  authorization_released: 'authorization_released',
+  expired: 'expired',
+  archived: 'archived'
 } as const
 
-export type NotificationChannel = (typeof NotificationChannel)[keyof typeof NotificationChannel]
-
-
-export const NotificationStatus = {
-  queued: 'queued',
-  sent: 'sent',
-  failed: 'failed',
-  skipped: 'skipped'
-} as const
-
-export type NotificationStatus = (typeof NotificationStatus)[keyof typeof NotificationStatus]
-
-
-export const AnalyticsEventGroup = {
-  acquisition: 'acquisition',
-  vouch: 'vouch',
-  payment: 'payment',
-  notification: 'notification',
-  system: 'system'
-} as const
-
-export type AnalyticsEventGroup = (typeof AnalyticsEventGroup)[keyof typeof AnalyticsEventGroup]
-
-
-export const Environment = {
-  development: 'development',
-  preview: 'preview',
-  production: 'production'
-} as const
-
-export type Environment = (typeof Environment)[keyof typeof Environment]
+export type VouchTransitionType = (typeof VouchTransitionType)[keyof typeof VouchTransitionType]
 
 
 export const OperationalRetryOperation = {
-  retry_notification_send: 'retry_notification_send',
-  retry_provider_reconciliation: 'retry_provider_reconciliation',
-  retry_webhook_processing: 'retry_webhook_processing',
-  retry_refund_status_sync: 'retry_refund_status_sync',
-  retry_capture_status_sync: 'retry_capture_status_sync'
+  sync_offline_confirmation: 'sync_offline_confirmation',
+  reconcile_payment_intent: 'reconcile_payment_intent',
+  reconcile_charge: 'reconcile_charge',
+  reconcile_payout: 'reconcile_payout',
+  auto_void_confirmation: 'auto_void_confirmation',
+  create_recovery_snapshot: 'create_recovery_snapshot'
 } as const
 
 export type OperationalRetryOperation = (typeof OperationalRetryOperation)[keyof typeof OperationalRetryOperation]
 
 
 export const OperationalRetryStatus = {
-  started: 'started',
-  completed: 'completed',
+  pending: 'pending',
+  processing: 'processing',
+  succeeded: 'succeeded',
   failed: 'failed',
-  skipped: 'skipped'
+  abandoned: 'abandoned'
 } as const
 
 export type OperationalRetryStatus = (typeof OperationalRetryStatus)[keyof typeof OperationalRetryStatus]
+
+
+export const VouchRecoverySnapshotReason = {
+  created: 'created',
+  before_capture: 'before_capture',
+  offline_confirmation_synced: 'offline_confirmation_synced',
+  presence_auto_void: 'presence_auto_void',
+  webhook_reconciliation: 'webhook_reconciliation',
+  provider_reconciliation: 'provider_reconciliation'
+} as const
+
+export type VouchRecoverySnapshotReason = (typeof VouchRecoverySnapshotReason)[keyof typeof VouchRecoverySnapshotReason]
+
+
+export const AnalyticsEventGroup = {
+  auth: 'auth',
+  onboarding: 'onboarding',
+  vouch: 'vouch',
+  payment: 'payment',
+  dashboard: 'dashboard',
+  system: 'system'
+} as const
+
+export type AnalyticsEventGroup = (typeof AnalyticsEventGroup)[keyof typeof AnalyticsEventGroup]

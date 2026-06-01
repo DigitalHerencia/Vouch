@@ -74,7 +74,7 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
       readiness: {
         identityStatus: string
         adultStatus: string
-        paymentReadiness: string
+        paymentMethodReady: string
         payoutReadiness: string
         termsAccepted: boolean
         termsVersion: string | null
@@ -99,7 +99,7 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
     readiness: {
       identityStatus: record.verificationProfile?.identityStatus ?? "unstarted",
       adultStatus: record.verificationProfile?.adultStatus ?? "unstarted",
-      paymentReadiness: record.paymentCustomer?.readiness ?? "not_started",
+      paymentMethodReady: record.paymentCustomer?.readiness ?? "not_started",
       payoutReadiness: record.connectedAccount?.readiness ?? "not_started",
       termsAccepted: Boolean(terms),
       termsVersion: terms?.termsVersion ?? null,
@@ -206,7 +206,7 @@ export async function getUserSetupStatus(userId: string) {
   if (mapped.status !== "active") missing.push("account_active")
   if (mapped.readiness.identityStatus !== "verified") missing.push("identity_verified")
   if (mapped.readiness.adultStatus !== "verified") missing.push("adult_verified")
-  if (mapped.readiness.paymentReadiness !== "ready") missing.push("payment_ready")
+  if (mapped.readiness.paymentMethodReady !== "ready") missing.push("payment_ready")
   if (mapped.readiness.payoutReadiness !== "ready") missing.push("payout_ready")
   if (!mapped.readiness.termsAccepted) missing.push("terms_accepted")
 
@@ -230,7 +230,7 @@ export async function getUserAuthzSnapshot(userId: string) {
           userStatus: setup.status,
           identityStatus: setup.readiness.identityStatus,
           adultStatus: setup.readiness.adultStatus,
-          paymentReadiness: setup.readiness.paymentReadiness,
+          paymentMethodReady: setup.readiness.paymentMethodReady,
           payoutReadiness: setup.readiness.payoutReadiness,
           termsAccepted: setup.readiness.termsAccepted,
         })
@@ -245,7 +245,7 @@ export async function getUserAuthzSnapshot(userId: string) {
           userStatus: setup.status,
           identityStatus: setup.readiness.identityStatus,
           adultStatus: setup.readiness.adultStatus,
-          paymentReadiness: setup.readiness.paymentReadiness,
+          paymentMethodReady: setup.readiness.paymentMethodReady,
           payoutReadiness: setup.readiness.payoutReadiness,
           termsAccepted: setup.readiness.termsAccepted,
         })

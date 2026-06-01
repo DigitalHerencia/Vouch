@@ -26,78 +26,54 @@ export type AggregateAnalyticsEvent = {
 
 export type AnalyticsEventMinAggregateOutputType = {
   id: string | null
+  userId: string | null
   eventName: string | null
   eventGroup: $Enums.AnalyticsEventGroup | null
-  environment: $Enums.Environment | null
-  userId: string | null
-  sessionId: string | null
-  requestId: string | null
-  occurredAt: Date | null
   createdAt: Date | null
 }
 
 export type AnalyticsEventMaxAggregateOutputType = {
   id: string | null
+  userId: string | null
   eventName: string | null
   eventGroup: $Enums.AnalyticsEventGroup | null
-  environment: $Enums.Environment | null
-  userId: string | null
-  sessionId: string | null
-  requestId: string | null
-  occurredAt: Date | null
   createdAt: Date | null
 }
 
 export type AnalyticsEventCountAggregateOutputType = {
   id: number
+  userId: number
   eventName: number
   eventGroup: number
-  environment: number
-  userId: number
-  sessionId: number
-  requestId: number
-  occurredAt: number
-  createdAt: number
   properties: number
+  createdAt: number
   _all: number
 }
 
 
 export type AnalyticsEventMinAggregateInputType = {
   id?: true
+  userId?: true
   eventName?: true
   eventGroup?: true
-  environment?: true
-  userId?: true
-  sessionId?: true
-  requestId?: true
-  occurredAt?: true
   createdAt?: true
 }
 
 export type AnalyticsEventMaxAggregateInputType = {
   id?: true
+  userId?: true
   eventName?: true
   eventGroup?: true
-  environment?: true
-  userId?: true
-  sessionId?: true
-  requestId?: true
-  occurredAt?: true
   createdAt?: true
 }
 
 export type AnalyticsEventCountAggregateInputType = {
   id?: true
+  userId?: true
   eventName?: true
   eventGroup?: true
-  environment?: true
-  userId?: true
-  sessionId?: true
-  requestId?: true
-  occurredAt?: true
-  createdAt?: true
   properties?: true
+  createdAt?: true
   _all?: true
 }
 
@@ -175,15 +151,11 @@ export type AnalyticsEventGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 
 export type AnalyticsEventGroupByOutputType = {
   id: string
+  userId: string | null
   eventName: string
   eventGroup: $Enums.AnalyticsEventGroup
-  environment: $Enums.Environment
-  userId: string | null
-  sessionId: string | null
-  requestId: string | null
-  occurredAt: Date
-  createdAt: Date
   properties: runtime.JsonValue | null
+  createdAt: Date
   _count: AnalyticsEventCountAggregateOutputType | null
   _min: AnalyticsEventMinAggregateOutputType | null
   _max: AnalyticsEventMaxAggregateOutputType | null
@@ -209,29 +181,21 @@ export type AnalyticsEventWhereInput = {
   OR?: Prisma.AnalyticsEventWhereInput[]
   NOT?: Prisma.AnalyticsEventWhereInput | Prisma.AnalyticsEventWhereInput[]
   id?: Prisma.StringFilter<"AnalyticsEvent"> | string
+  userId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
   eventName?: Prisma.StringFilter<"AnalyticsEvent"> | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupFilter<"AnalyticsEvent"> | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentFilter<"AnalyticsEvent"> | $Enums.Environment
-  userId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
-  sessionId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
-  requestId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
-  occurredAt?: Prisma.DateTimeFilter<"AnalyticsEvent"> | Date | string
-  createdAt?: Prisma.DateTimeFilter<"AnalyticsEvent"> | Date | string
   properties?: Prisma.JsonNullableFilter<"AnalyticsEvent">
+  createdAt?: Prisma.DateTimeFilter<"AnalyticsEvent"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }
 
 export type AnalyticsEventOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   eventName?: Prisma.SortOrder
   eventGroup?: Prisma.SortOrder
-  environment?: Prisma.SortOrder
-  userId?: Prisma.SortOrderInput | Prisma.SortOrder
-  sessionId?: Prisma.SortOrderInput | Prisma.SortOrder
-  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
-  occurredAt?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
   properties?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
 }
 
@@ -240,29 +204,21 @@ export type AnalyticsEventWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.AnalyticsEventWhereInput | Prisma.AnalyticsEventWhereInput[]
   OR?: Prisma.AnalyticsEventWhereInput[]
   NOT?: Prisma.AnalyticsEventWhereInput | Prisma.AnalyticsEventWhereInput[]
+  userId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
   eventName?: Prisma.StringFilter<"AnalyticsEvent"> | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupFilter<"AnalyticsEvent"> | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentFilter<"AnalyticsEvent"> | $Enums.Environment
-  userId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
-  sessionId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
-  requestId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
-  occurredAt?: Prisma.DateTimeFilter<"AnalyticsEvent"> | Date | string
-  createdAt?: Prisma.DateTimeFilter<"AnalyticsEvent"> | Date | string
   properties?: Prisma.JsonNullableFilter<"AnalyticsEvent">
+  createdAt?: Prisma.DateTimeFilter<"AnalyticsEvent"> | Date | string
   user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
 }, "id">
 
 export type AnalyticsEventOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  userId?: Prisma.SortOrderInput | Prisma.SortOrder
   eventName?: Prisma.SortOrder
   eventGroup?: Prisma.SortOrder
-  environment?: Prisma.SortOrder
-  userId?: Prisma.SortOrderInput | Prisma.SortOrder
-  sessionId?: Prisma.SortOrderInput | Prisma.SortOrder
-  requestId?: Prisma.SortOrderInput | Prisma.SortOrder
-  occurredAt?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
   properties?: Prisma.SortOrderInput | Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
   _count?: Prisma.AnalyticsEventCountOrderByAggregateInput
   _max?: Prisma.AnalyticsEventMaxOrderByAggregateInput
   _min?: Prisma.AnalyticsEventMinOrderByAggregateInput
@@ -273,105 +229,73 @@ export type AnalyticsEventScalarWhereWithAggregatesInput = {
   OR?: Prisma.AnalyticsEventScalarWhereWithAggregatesInput[]
   NOT?: Prisma.AnalyticsEventScalarWhereWithAggregatesInput | Prisma.AnalyticsEventScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"AnalyticsEvent"> | string
+  userId?: Prisma.StringNullableWithAggregatesFilter<"AnalyticsEvent"> | string | null
   eventName?: Prisma.StringWithAggregatesFilter<"AnalyticsEvent"> | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupWithAggregatesFilter<"AnalyticsEvent"> | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentWithAggregatesFilter<"AnalyticsEvent"> | $Enums.Environment
-  userId?: Prisma.StringNullableWithAggregatesFilter<"AnalyticsEvent"> | string | null
-  sessionId?: Prisma.StringNullableWithAggregatesFilter<"AnalyticsEvent"> | string | null
-  requestId?: Prisma.StringNullableWithAggregatesFilter<"AnalyticsEvent"> | string | null
-  occurredAt?: Prisma.DateTimeWithAggregatesFilter<"AnalyticsEvent"> | Date | string
-  createdAt?: Prisma.DateTimeWithAggregatesFilter<"AnalyticsEvent"> | Date | string
   properties?: Prisma.JsonNullableWithAggregatesFilter<"AnalyticsEvent">
+  createdAt?: Prisma.DateTimeWithAggregatesFilter<"AnalyticsEvent"> | Date | string
 }
 
 export type AnalyticsEventCreateInput = {
   id?: string
   eventName: string
   eventGroup: $Enums.AnalyticsEventGroup
-  environment?: $Enums.Environment
-  sessionId?: string | null
-  requestId?: string | null
-  occurredAt?: Date | string
-  createdAt?: Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
   user?: Prisma.UserCreateNestedOneWithoutAnalyticsEventsInput
 }
 
 export type AnalyticsEventUncheckedCreateInput = {
   id?: string
+  userId?: string | null
   eventName: string
   eventGroup: $Enums.AnalyticsEventGroup
-  environment?: $Enums.Environment
-  userId?: string | null
-  sessionId?: string | null
-  requestId?: string | null
-  occurredAt?: Date | string
-  createdAt?: Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
 }
 
 export type AnalyticsEventUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventName?: Prisma.StringFieldUpdateOperationsInput | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupFieldUpdateOperationsInput | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentFieldUpdateOperationsInput | $Enums.Environment
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneWithoutAnalyticsEventsNestedInput
 }
 
 export type AnalyticsEventUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eventName?: Prisma.StringFieldUpdateOperationsInput | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupFieldUpdateOperationsInput | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentFieldUpdateOperationsInput | $Enums.Environment
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AnalyticsEventCreateManyInput = {
   id?: string
+  userId?: string | null
   eventName: string
   eventGroup: $Enums.AnalyticsEventGroup
-  environment?: $Enums.Environment
-  userId?: string | null
-  sessionId?: string | null
-  requestId?: string | null
-  occurredAt?: Date | string
-  createdAt?: Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
 }
 
 export type AnalyticsEventUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventName?: Prisma.StringFieldUpdateOperationsInput | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupFieldUpdateOperationsInput | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentFieldUpdateOperationsInput | $Enums.Environment
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AnalyticsEventUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   eventName?: Prisma.StringFieldUpdateOperationsInput | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupFieldUpdateOperationsInput | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentFieldUpdateOperationsInput | $Enums.Environment
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AnalyticsEventListRelationFilter = {
@@ -386,38 +310,26 @@ export type AnalyticsEventOrderByRelationAggregateInput = {
 
 export type AnalyticsEventCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   eventName?: Prisma.SortOrder
   eventGroup?: Prisma.SortOrder
-  environment?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  sessionId?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
-  occurredAt?: Prisma.SortOrder
-  createdAt?: Prisma.SortOrder
   properties?: Prisma.SortOrder
+  createdAt?: Prisma.SortOrder
 }
 
 export type AnalyticsEventMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   eventName?: Prisma.SortOrder
   eventGroup?: Prisma.SortOrder
-  environment?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  sessionId?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
-  occurredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type AnalyticsEventMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  userId?: Prisma.SortOrder
   eventName?: Prisma.SortOrder
   eventGroup?: Prisma.SortOrder
-  environment?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  sessionId?: Prisma.SortOrder
-  requestId?: Prisma.SortOrder
-  occurredAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -467,32 +379,20 @@ export type EnumAnalyticsEventGroupFieldUpdateOperationsInput = {
   set?: $Enums.AnalyticsEventGroup
 }
 
-export type EnumEnvironmentFieldUpdateOperationsInput = {
-  set?: $Enums.Environment
-}
-
 export type AnalyticsEventCreateWithoutUserInput = {
   id?: string
   eventName: string
   eventGroup: $Enums.AnalyticsEventGroup
-  environment?: $Enums.Environment
-  sessionId?: string | null
-  requestId?: string | null
-  occurredAt?: Date | string
-  createdAt?: Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
 }
 
 export type AnalyticsEventUncheckedCreateWithoutUserInput = {
   id?: string
   eventName: string
   eventGroup: $Enums.AnalyticsEventGroup
-  environment?: $Enums.Environment
-  sessionId?: string | null
-  requestId?: string | null
-  occurredAt?: Date | string
-  createdAt?: Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
 }
 
 export type AnalyticsEventCreateOrConnectWithoutUserInput = {
@@ -526,123 +426,87 @@ export type AnalyticsEventScalarWhereInput = {
   OR?: Prisma.AnalyticsEventScalarWhereInput[]
   NOT?: Prisma.AnalyticsEventScalarWhereInput | Prisma.AnalyticsEventScalarWhereInput[]
   id?: Prisma.StringFilter<"AnalyticsEvent"> | string
+  userId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
   eventName?: Prisma.StringFilter<"AnalyticsEvent"> | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupFilter<"AnalyticsEvent"> | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentFilter<"AnalyticsEvent"> | $Enums.Environment
-  userId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
-  sessionId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
-  requestId?: Prisma.StringNullableFilter<"AnalyticsEvent"> | string | null
-  occurredAt?: Prisma.DateTimeFilter<"AnalyticsEvent"> | Date | string
-  createdAt?: Prisma.DateTimeFilter<"AnalyticsEvent"> | Date | string
   properties?: Prisma.JsonNullableFilter<"AnalyticsEvent">
+  createdAt?: Prisma.DateTimeFilter<"AnalyticsEvent"> | Date | string
 }
 
 export type AnalyticsEventCreateManyUserInput = {
   id?: string
   eventName: string
   eventGroup: $Enums.AnalyticsEventGroup
-  environment?: $Enums.Environment
-  sessionId?: string | null
-  requestId?: string | null
-  occurredAt?: Date | string
-  createdAt?: Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
 }
 
 export type AnalyticsEventUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventName?: Prisma.StringFieldUpdateOperationsInput | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupFieldUpdateOperationsInput | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentFieldUpdateOperationsInput | $Enums.Environment
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AnalyticsEventUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventName?: Prisma.StringFieldUpdateOperationsInput | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupFieldUpdateOperationsInput | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentFieldUpdateOperationsInput | $Enums.Environment
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type AnalyticsEventUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   eventName?: Prisma.StringFieldUpdateOperationsInput | string
   eventGroup?: Prisma.EnumAnalyticsEventGroupFieldUpdateOperationsInput | $Enums.AnalyticsEventGroup
-  environment?: Prisma.EnumEnvironmentFieldUpdateOperationsInput | $Enums.Environment
-  sessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  requestId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  occurredAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   properties?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 
 
 export type AnalyticsEventSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  userId?: boolean
   eventName?: boolean
   eventGroup?: boolean
-  environment?: boolean
-  userId?: boolean
-  sessionId?: boolean
-  requestId?: boolean
-  occurredAt?: boolean
-  createdAt?: boolean
   properties?: boolean
+  createdAt?: boolean
   user?: boolean | Prisma.AnalyticsEvent$userArgs<ExtArgs>
 }, ExtArgs["result"]["analyticsEvent"]>
 
 export type AnalyticsEventSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  userId?: boolean
   eventName?: boolean
   eventGroup?: boolean
-  environment?: boolean
-  userId?: boolean
-  sessionId?: boolean
-  requestId?: boolean
-  occurredAt?: boolean
-  createdAt?: boolean
   properties?: boolean
+  createdAt?: boolean
   user?: boolean | Prisma.AnalyticsEvent$userArgs<ExtArgs>
 }, ExtArgs["result"]["analyticsEvent"]>
 
 export type AnalyticsEventSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  userId?: boolean
   eventName?: boolean
   eventGroup?: boolean
-  environment?: boolean
-  userId?: boolean
-  sessionId?: boolean
-  requestId?: boolean
-  occurredAt?: boolean
-  createdAt?: boolean
   properties?: boolean
+  createdAt?: boolean
   user?: boolean | Prisma.AnalyticsEvent$userArgs<ExtArgs>
 }, ExtArgs["result"]["analyticsEvent"]>
 
 export type AnalyticsEventSelectScalar = {
   id?: boolean
+  userId?: boolean
   eventName?: boolean
   eventGroup?: boolean
-  environment?: boolean
-  userId?: boolean
-  sessionId?: boolean
-  requestId?: boolean
-  occurredAt?: boolean
-  createdAt?: boolean
   properties?: boolean
+  createdAt?: boolean
 }
 
-export type AnalyticsEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "eventName" | "eventGroup" | "environment" | "userId" | "sessionId" | "requestId" | "occurredAt" | "createdAt" | "properties", ExtArgs["result"]["analyticsEvent"]>
+export type AnalyticsEventOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "eventName" | "eventGroup" | "properties" | "createdAt", ExtArgs["result"]["analyticsEvent"]>
 export type AnalyticsEventInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.AnalyticsEvent$userArgs<ExtArgs>
 }
@@ -660,15 +524,11 @@ export type $AnalyticsEventPayload<ExtArgs extends runtime.Types.Extensions.Inte
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    userId: string | null
     eventName: string
     eventGroup: $Enums.AnalyticsEventGroup
-    environment: $Enums.Environment
-    userId: string | null
-    sessionId: string | null
-    requestId: string | null
-    occurredAt: Date
-    createdAt: Date
     properties: runtime.JsonValue | null
+    createdAt: Date
   }, ExtArgs["result"]["analyticsEvent"]>
   composites: {}
 }
@@ -1094,15 +954,11 @@ export interface Prisma__AnalyticsEventClient<T, Null = never, ExtArgs extends r
  */
 export interface AnalyticsEventFieldRefs {
   readonly id: Prisma.FieldRef<"AnalyticsEvent", 'String'>
+  readonly userId: Prisma.FieldRef<"AnalyticsEvent", 'String'>
   readonly eventName: Prisma.FieldRef<"AnalyticsEvent", 'String'>
   readonly eventGroup: Prisma.FieldRef<"AnalyticsEvent", 'AnalyticsEventGroup'>
-  readonly environment: Prisma.FieldRef<"AnalyticsEvent", 'Environment'>
-  readonly userId: Prisma.FieldRef<"AnalyticsEvent", 'String'>
-  readonly sessionId: Prisma.FieldRef<"AnalyticsEvent", 'String'>
-  readonly requestId: Prisma.FieldRef<"AnalyticsEvent", 'String'>
-  readonly occurredAt: Prisma.FieldRef<"AnalyticsEvent", 'DateTime'>
-  readonly createdAt: Prisma.FieldRef<"AnalyticsEvent", 'DateTime'>
   readonly properties: Prisma.FieldRef<"AnalyticsEvent", 'Json'>
+  readonly createdAt: Prisma.FieldRef<"AnalyticsEvent", 'DateTime'>
 }
     
 

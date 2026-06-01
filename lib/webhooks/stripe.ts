@@ -16,7 +16,7 @@ import {
 } from "@/lib/db/transactions/webhookTransactions"
 import { markVouchAuthorizedTx, markVouchSentTx } from "@/lib/db/transactions/vouchTransactions"
 import { refreshStripeConnectReadiness } from "@/lib/integrations/stripe/connect"
-import { getStripeCustomerPaymentReadiness } from "@/lib/integrations/stripe/customers"
+import { getStripeCustomerpaymentMethodReady } from "@/lib/integrations/stripe/customers"
 import { retrieveStripePaymentIntent } from "@/lib/integrations/stripe/payment-intents"
 import {
   getPaymentIntentCaptureBefore,
@@ -241,7 +241,7 @@ async function reconcileStripeCheckoutSessionEvent(
   if (paymentRole === "customer_payment_method_setup") {
     const customerId =
       typeof session.customer === "string" ? session.customer : session.customer?.id
-    const readiness = customerId ? await getStripeCustomerPaymentReadiness(customerId) : null
+    const readiness = customerId ? await getStripeCustomerpaymentMethodReady(customerId) : null
 
     await prisma.$transaction(async (tx) => {
       if (customerId && readiness) {
@@ -503,7 +503,7 @@ async function reconcileStripeSetupIntentEvent(
     return
   }
 
-  const readiness = await getStripeCustomerPaymentReadiness(customerId)
+  const readiness = await getStripeCustomerpaymentMethodReady(customerId)
 
   await prisma.$transaction(async (tx) => {
     await tx.paymentCustomer.updateMany({

@@ -21,7 +21,7 @@ import {
 
 export const paymentProviderSchema = z.enum(PAYMENT_PROVIDER_VALUES)
 export const verificationProviderSchema = z.enum(VERIFICATION_PROVIDER_VALUES)
-export const paymentReadinessStatusSchema = z.enum(PAYMENT_READINESS_STATUS_VALUES)
+export const paymentMethodReadyStatusSchema = z.enum(PAYMENT_READINESS_STATUS_VALUES)
 export const payoutReadinessStatusSchema = z.enum(PAYOUT_READINESS_STATUS_VALUES)
 export const paymentStatusSchema = z.enum(PAYMENT_STATUS_VALUES)
 export const settlementStatusSchema = z.enum(SETTLEMENT_STATUS_VALUES)
@@ -89,7 +89,7 @@ export const paymentWebhookProcessInputSchema = z.object({
   idempotencyKey: idempotencyKeySchema.optional(),
 })
 
-export const paymentReadinessInputSchema = z.object({
+export const paymentMethodReadyInputSchema = z.object({
   userId: z.string().trim().min(1).optional(),
 })
 

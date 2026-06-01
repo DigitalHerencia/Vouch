@@ -20,11 +20,12 @@
 
 Follow this order:
 
+1. The user is the source of truth.
 1. `.agents/docs/*.md` for product and architecture intent.
-2. `.agents/contracts/*.yaml` for deterministic rules.
-3. `.agents/instructions/*.instructions.md` for implementation guidance.
-4. Existing code.
-5. Implementation judgment.
+1. `.agents/contracts/*.yaml` for deterministic rules.
+1. `.agents/instructions/*.instructions.md` for implementation guidance.
+1. Existing code.
+1. Implementation judgment.
 
 If these conflict, stop and report the exact conflict before editing code.
 
@@ -91,45 +92,16 @@ types/**
 /faq
 /legal/terms
 /legal/privacy
+/legal/discalimer
+/legal/user-agreement
 /checkout/success
 /sign-in
 /sign-up
 /dashboard
 /vouches/new
-/vouches/new/confirm
 /vouches/[vouchId]
 /api/clerk/webhooks
 /api/stripe/webhooks
 ```
 
 Do not add settings, setup, marketplace, messaging, disputes, reviews, search, browse, admin settlement, or manual override routes unless a later redesign document explicitly changes scope.
-
-## State Model
-
-Use a narrow lifecycle status:
-
-```txt
-draft
-pending_authorization
-requires_capture
-succeeded
-canceled
-expired
-```
-
-Track provider facts and workflow axes separately:
-
-- `stripeCustomerId` exists or missing
-- `stripeConnectedAccountId` exists or missing
-- `stripeAccountChargesEnabled` true or false
-- `stripeAccountPayoutsEnabled` true or false
-- `stripeAccountDetailsSubmitted` true or false
-- `EuaAcceptedAt` exists or missing
-- `paymentStatus`
-- `settlementStatus`
-- `archiveStatus`
-- `recoveryStatus`
-- `webhookStatus`
-
-Do not put `refunded`, `failed`, `voided`, `settled`, `provider_blocked`, or `archived` inside the core lifecycle status.
-

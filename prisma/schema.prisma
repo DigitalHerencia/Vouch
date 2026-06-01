@@ -8,365 +8,83 @@ datasource db {
   provider = "postgresql"
 }
 
-/**
- * Vouch intentionally does not model:
- * - public profiles
- * - service listings
- * - marketplace categories
- * - reviews / ratings
- * - messages
- * - dispute cases
- * - evidence uploads
- * - manual award/release controls
- * - support-confirmation overrides
- *
- * Product model:
- * - merchant = creator / intended recipient / Stripe Connect account owner
- * - customer = paying participant / Stripe customer / payment authorizer
- *
- * Money model:
- * customerTotalCents = protectedAmountCents.
- * merchantReceivesCents = protectedAmountCents.
- * merchant protocol fee = vouchServiceFeeCents + processingFeeOffsetCents, charged at Vouch creation.
- * applicationFeeAmountCents applies only to customer authorization when explicitly needed.
- */
-
-/* ================================
-   Enums
-================================ */
-
-enum UserStatus {
-  active
-  disabled
-}
-
-enum VerificationStatus {
-  unstarted
-  pending
-  verified
-  rejected
-  requires_action
-  expired
-}
-
-enum PaymentReadinessStatus {
-  not_started
-  requires_action
-  ready
-  failed
-}
-
-enum PayoutReadinessStatus {
-  not_started
-  requires_action
-  ready
-  restricted
-  failed
-}
-
-enum VouchStatus {
-  draft
-  committed
-  sent
-  accepted
-  authorized
-  confirmable
-  completed
-  expired
-}
-
-enum InvitationStatus {
-  created
-  sent
-  opened
-  accepted
-  declined
-  expired
-  invalidated
-}
-
-enum ParticipantRole {
-  merchant
-  customer
-}
-
-enum ConfirmationStatus {
-  pending
-  confirmed
-  rejected
-}
-
-enum AggregateConfirmationStatus {
-  none_confirmed
-  merchant_confirmed
-  customer_confirmed
-  both_confirmed
-}
-
-enum ConfirmationMethod {
-  code_exchange
-  offline_code_exchange
-}
-
-enum PaymentProvider {
-  stripe
-}
-
-enum PaymentRecordPurpose {
-  merchant_protocol_fee
-  customer_authorization
-}
-
-enum VerificationProvider {
-  stripe_identity
-}
-
-enum WebhookProvider {
-  clerk
-  stripe
-  stripe_identity
-}
-
-enum ProviderWebhookStatus {
-  received
-  processed
-  ignored
-  failed
-}
-
-enum PaymentStatus {
-  not_started
-  checkout_created
-  requires_payment_method
-  requires_confirmation
-  requires_action
-  requires_capture
-  authorized
-  processing
-  capture_processing
-  captured
-  canceled
-  expired
-  failed
-}
-
-enum SettlementStatus {
-  pending
-  non_capture_pending
-  non_captured
-  capture_pending
-  captured
-  refund_pending
-  refunded
-  provider_blocked
-  failed
-}
-
-enum RefundStatus {
-  not_required
-  pending
-  succeeded
-  failed
-}
-
-enum RefundReason {
-  confirmation_incomplete
-  provider_required
-  captured_reversal_required
-  payment_failure
-}
-
-enum ArchiveStatus {
-  active
-  archived
-}
-
-enum RecoveryStatus {
-  normal
-  recovery_required
-  recovery_in_progress
-  recovered
-  recovery_failed
-}
-
-enum AuditActorType {
-  user
-  system
-  stripe
-  clerk
-}
-
-enum NotificationChannel {
-  email
-}
-
-enum NotificationStatus {
-  queued
-  sent
-  failed
-  skipped
-}
-
-enum AnalyticsEventGroup {
-  acquisition
-  vouch
-  payment
-  notification
-  system
-}
-
-enum Environment {
-  development
-  preview
-  production
-}
-
-enum OperationalRetryOperation {
-  retry_notification_send
-  retry_provider_reconciliation
-  retry_webhook_processing
-  retry_refund_status_sync
-  retry_capture_status_sync
-}
-
-enum OperationalRetryStatus {
-  started
-  completed
-  failed
-  skipped
-}
-
-/* ================================
-   Users / Auth / Readiness
-================================ */
+/// Vouch stores product state, provider IDs, and recovery metadata.
+/// Clerk owns authentication. Stripe owns payment, balance, and payout truth.
 
 model User {
   id          String     @id @default(cuid())
-  clerkUserId String    @unique
-  email       String?   @db.VarChar(320)
-  phone       String?   @db.VarChar(32)
-  displayName String?   @db.VarChar(120)
+  clerkUserId String     @unique
+  email       String?    @db.VarChar(320)
+  phone       String?    @db.VarChar(32)
+  displayName String?    @db.VarChar(120)
   status      UserStatus @default(active)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  verificationProfile VerificationProfile?
-  paymentCustomer     PaymentCustomer?
-  connectedAccount    ConnectedAccount?
-
-  termsAcceptances TermsAcceptance[]
+  paymentCustomer  PaymentCustomer?
+  connectedAccount ConnectedAccount?
 
   merchantVouches Vouch[] @relation("VouchMerchant")
   customerVouches Vouch[] @relation("VouchCustomer")
 
-  presenceConfirmations PresenceConfirmation[]
-
-  auditEvents AuditEvent[] @relation("AuditActorUser")
-
-  notificationEvents NotificationEvent[] @relation("NotificationRecipient")
-
+  auditEvents     AuditEvent[]
   analyticsEvents AnalyticsEvent[]
 
-  operationalRetries OperationalRetry[] @relation("OperationalRetryUser")
-
-  @@index([status])
   @@index([email])
-  @@map("users")
-}
-
-model VerificationProfile {
-  id     String @id @default(cuid())
-  userId String @unique
-
-  identityStatus VerificationStatus @default(unstarted)
-  adultStatus    VerificationStatus @default(unstarted)
-
-  provider          VerificationProvider?
-  providerReference String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
-
-  @@index([identityStatus])
-  @@index([adultStatus])
-  @@map("verification_profiles")
+  @@index([status])
 }
 
 model PaymentCustomer {
   id     String @id @default(cuid())
   userId String @unique
 
-  provider           PaymentProvider         @default(stripe)
-  providerCustomerId String                  @unique
-  readiness          PaymentReadinessStatus  @default(not_started)
+  stripeCustomerId       String  @unique
+  defaultPaymentMethodId String?
+  paymentMethodReady     Boolean @default(false)
 
-  lastProviderSyncAt DateTime?
-  lastErrorCode      String?
-  lastErrorMessage   String?
+  lastSetupIntentId         String?
+  lastCustomerPortalSession String?
+  lastStripeEventId         String?
+  syncedAt                  DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
-  @@index([provider])
-  @@index([readiness])
-  @@index([lastProviderSyncAt])
-  @@map("payment_customers")
+  @@index([paymentMethodReady])
+  @@index([defaultPaymentMethodId])
 }
 
 model ConnectedAccount {
   id     String @id @default(cuid())
   userId String @unique
 
-  provider          PaymentProvider @default(stripe)
-  providerAccountId String          @unique
+  stripeAccountId String @unique
 
-  readiness        PayoutReadinessStatus @default(not_started)
-  chargesEnabled   Boolean               @default(false)
-  payoutsEnabled   Boolean               @default(false)
-  detailsSubmitted Boolean               @default(false)
+  chargesEnabled   Boolean @default(false)
+  payoutsEnabled   Boolean @default(false)
+  detailsSubmitted Boolean @default(false)
 
-  lastProviderSyncAt DateTime?
-  lastErrorCode      String?
-  lastErrorMessage   String?
+  requirementsCurrentlyDue  Json?
+  requirementsEventuallyDue Json?
+  disabledReason            String?
+
+  lastAccountLinkId String?
+  lastLoginLinkId   String?
+  lastStripeEventId String?
+  syncedAt          DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
-  @@index([provider])
-  @@index([readiness])
-  @@index([chargesEnabled])
-  @@index([payoutsEnabled])
-  @@index([lastProviderSyncAt])
-  @@map("connected_accounts")
+  payouts PayoutRecord[]
+
+  @@index([chargesEnabled, payoutsEnabled])
 }
-
-model TermsAcceptance {
-  id     String @id @default(cuid())
-  userId String
-
-  termsVersion String   @db.VarChar(64)
-  acceptedAt   DateTime @default(now())
-
-  ipHash        String?
-  userAgentHash String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
-
-  @@unique([userId, termsVersion])
-  @@index([userId, acceptedAt])
-  @@map("terms_acceptances")
-}
-
-/* ================================
-   Vouch Lifecycle
-================================ */
 
 model Vouch {
   id       String @id @default(cuid())
@@ -375,32 +93,26 @@ model Vouch {
   merchantId String
   customerId String?
 
-  status         VouchStatus    @default(draft)
-  archiveStatus  ArchiveStatus  @default(active)
-  recoveryStatus RecoveryStatus @default(normal)
+  amountCents Int
+  currency    String @default("usd") @db.VarChar(3)
 
-  currency String @default("usd") @db.VarChar(3)
+  appointmentAt         DateTime
+  confirmationOpensAt   DateTime
+  confirmationExpiresAt DateTime
 
-  protectedAmountCents      Int @default(0)
-  merchantReceivesCents     Int @default(0)
-  vouchServiceFeeCents      Int @default(0)
-  processingFeeOffsetCents  Int @default(0)
-  applicationFeeAmountCents Int @default(0)
-  customerTotalCents        Int @default(0)
+  merchantCodeHash String
+  customerCodeHash String?
 
-  label String? @db.VarChar(120)
+  status VouchStatus @default(draft)
 
-  appointmentStartsAt    DateTime
-  confirmationOpensAt    DateTime
-  confirmationExpiresAt  DateTime
+  protocolFeePaidAt DateTime?
+  authorizedAt      DateTime?
+  capturedAt        DateTime?
+  voidedAt          DateTime?
+  expiredAt         DateTime?
 
-  committedAt    DateTime?
-  sentAt         DateTime?
-  acceptedAt     DateTime?
-  authorizedAt   DateTime?
-  confirmableAt  DateTime?
-  completedAt    DateTime?
-  expiredAt      DateTime?
+  archived   Boolean   @default(false)
+  archivedAt DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -408,471 +120,566 @@ model Vouch {
   merchant User  @relation("VouchMerchant", fields: [merchantId], references: [id], onDelete: Restrict)
   customer User? @relation("VouchCustomer", fields: [customerId], references: [id], onDelete: Restrict)
 
-  invitation            Invitation?
-  presenceConfirmations PresenceConfirmation[]
-  paymentRecords        PaymentRecord[]
-  refundRecords         RefundRecord[]
-  notificationEvents    NotificationEvent[]
-  paymentWebhookEvents  PaymentWebhookEvent[]
-  recoverySnapshot      VouchRecoverySnapshot?
+  presenceConfirmation PresenceConfirmation?
+  paymentIntents       PaymentIntentRecord[]
+  charges              ChargeRecord[]
+  refunds              RefundRecord[]
+  recoverySnapshots    VouchRecoverySnapshot[]
+  events               VouchEvent[]
+  webhookEvents        StripeWebhookEvent[]
+  retries              OperationalRetry[]
 
-  @@index([merchantId])
-  @@index([customerId])
-  @@index([status])
-  @@index([archiveStatus])
-  @@index([recoveryStatus])
-  @@index([confirmationExpiresAt])
-  @@index([merchantId, status, confirmationExpiresAt])
-  @@index([customerId, status, confirmationExpiresAt])
-  @@index([merchantId, createdAt])
-  @@index([customerId, createdAt])
-  @@index([status, confirmationExpiresAt])
-  @@index([protectedAmountCents])
-  @@index([customerTotalCents])
-  @@map("vouches")
-}
-
-model VouchRecoverySnapshot {
-  id      String @id @default(cuid())
-  vouchId String @unique
-
-  snapshotVersion String @default("v1") @db.VarChar(32)
-
-  originalTermsJson      Json
-  pricingSnapshotJson    Json
-  providerReferencesJson Json
-  settlementRulesJson    Json
-
-  createdAt DateTime @default(now())
-
-  vouch Vouch @relation(fields: [vouchId], references: [id], onDelete: Restrict)
-
-  @@index([vouchId])
-  @@index([createdAt])
-  @@map("vouch_recovery_snapshots")
-}
-
-model Invitation {
-  id      String @id @default(cuid())
-  vouchId String @unique
-
-  tokenHash      String  @unique
-  recipientEmail String? @db.VarChar(320)
-
-  status    InvitationStatus @default(created)
-  expiresAt DateTime
-
-  openedAt   DateTime?
-  acceptedAt DateTime?
-  declinedAt DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  vouch Vouch @relation(fields: [vouchId], references: [id], onDelete: Restrict)
-
-  @@index([tokenHash])
-  @@index([status])
-  @@index([expiresAt])
-  @@index([recipientEmail])
-  @@map("invitations")
+  @@index([merchantId, archived, appointmentAt])
+  @@index([customerId, archived, appointmentAt])
+  @@index([status, archived])
+  @@index([appointmentAt])
+  @@index([expiredAt])
 }
 
 model PresenceConfirmation {
   id      String @id @default(cuid())
-  vouchId String
-  userId  String
+  vouchId String @unique
 
-  participantRole ParticipantRole
-  status          ConfirmationStatus @default(pending)
-  method          ConfirmationMethod @default(code_exchange)
+  status PresenceConfirmationStatus @default(pending)
 
-  confirmedAt       DateTime?
-  serverReceivedAt  DateTime @default(now())
-  timeBucket        Int?
-  clockSkewAccepted Boolean  @default(false)
-  offlinePayloadHash String?
+  windowOpensAt  DateTime
+  windowClosesAt DateTime
+
+  merchantConfirmedAt DateTime?
+  customerConfirmedAt DateTime?
+  canCaptureAt        DateTime?
+  voidedAt            DateTime?
+
+  merchantCodeVerified Boolean @default(false)
+  customerCodeVerified Boolean @default(false)
+
+  resolutionSource PresenceResolutionSource?
+  failureReason    String?
+
+  retryUntil  DateTime?
+  lastRetryAt DateTime?
+  retryCount  Int       @default(0)
 
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  vouch Vouch @relation(fields: [vouchId], references: [id], onDelete: Restrict)
-  user  User  @relation(fields: [userId], references: [id], onDelete: Restrict)
+  vouch    Vouch                         @relation(fields: [vouchId], references: [id], onDelete: Restrict)
+  attempts PresenceConfirmationAttempt[]
 
-  @@unique([vouchId, participantRole])
-  @@unique([vouchId, userId])
-  @@index([vouchId])
-  @@index([userId])
-  @@index([participantRole])
-  @@index([status])
-  @@index([method])
-  @@index([confirmedAt])
-  @@index([serverReceivedAt])
-  @@index([timeBucket])
-  @@map("presence_confirmations")
+  @@index([status, windowClosesAt])
+  @@index([retryUntil, status])
 }
 
-/* ================================
-   Payments / Refunds / Webhooks
-================================ */
+model PresenceConfirmationAttempt {
+  id String @id @default(cuid())
 
-model PaymentRecord {
-  id      String @id @default(cuid())
-  vouchId String
+  presenceConfirmationId String
+  participantRole        ParticipantRole
 
-  provider PaymentProvider @default(stripe)
-  purpose  PaymentRecordPurpose
+  submittedAt DateTime @default(now())
+  confirmedAt DateTime
 
-  providerPaymentIntentId   String? @unique
-  providerCheckoutSessionId String? @unique
-  providerChargeId          String?
-  providerTransferId        String?
+  submissionMode ConfirmationSubmissionMode @default(online)
 
-  status           PaymentStatus    @default(not_started)
-  settlementStatus SettlementStatus @default(pending)
+  payloadHash String?
+  nonce       String
+
+  accepted       Boolean @default(false)
+  rejectedReason String?
+
+  presenceConfirmation PresenceConfirmation @relation(fields: [presenceConfirmationId], references: [id], onDelete: Restrict)
+
+  @@unique([presenceConfirmationId, participantRole, nonce])
+  @@index([presenceConfirmationId, participantRole])
+  @@index([submittedAt])
+}
+
+model PaymentIntentRecord {
+  id      String  @id @default(cuid())
+  vouchId String?
+
+  purpose         PaymentIntentPurpose
+  participantRole ParticipantRole?
+
+  stripePaymentIntentId   String  @unique
+  stripeCheckoutSessionId String? @unique
+  stripeCustomerId        String?
+  stripeAccountId         String?
 
   amountCents Int
   currency    String @default("usd") @db.VarChar(3)
 
-  protectedAmountCents      Int @default(0)
-  merchantReceivesCents     Int @default(0)
-  vouchServiceFeeCents      Int @default(0)
-  processingFeeOffsetCents  Int @default(0)
-  applicationFeeAmountCents Int @default(0)
-  customerTotalCents        Int @default(0)
-
-  amountCapturableCents Int @default(0)
-  captureBefore         DateTime?
+  status        StripePaymentIntentStatus
+  captureMethod StripeCaptureMethod?
+  captureBefore DateTime?
 
   authorizedAt DateTime?
-  capturedAt   DateTime?
   canceledAt   DateTime?
   failedAt     DateTime?
+  succeededAt  DateTime?
 
-  lastProviderSyncAt DateTime?
-  lastErrorCode      String?
-  lastErrorMessage   String?
+  lastStripeEventId String?
+  syncedAt          DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  vouch         Vouch          @relation(fields: [vouchId], references: [id], onDelete: Restrict)
-  refundRecords RefundRecord[]
+  vouch   Vouch?         @relation(fields: [vouchId], references: [id], onDelete: Restrict)
+  charges ChargeRecord[]
+  refunds RefundRecord[]
 
-  webhookEvents PaymentWebhookEvent[]
-
-  @@index([provider])
-  @@index([purpose])
-  @@index([providerPaymentIntentId])
-  @@index([providerCheckoutSessionId])
-  @@index([providerChargeId])
-  @@index([providerTransferId])
+  @@index([vouchId, purpose])
+  @@index([purpose, status])
+  @@index([participantRole])
+  @@index([stripeAccountId])
   @@index([status])
-  @@index([settlementStatus])
-  @@index([captureBefore])
-  @@index([lastProviderSyncAt])
-  @@index([vouchId, status])
-  @@unique([vouchId, purpose])
-  @@map("payment_records")
+}
+
+model ChargeRecord {
+  id                    String  @id @default(cuid())
+  vouchId               String?
+  paymentIntentRecordId String?
+
+  stripeChargeId             String  @unique
+  stripePaymentIntentId      String?
+  stripeCustomerId           String?
+  stripeBalanceTransactionId String?
+
+  amountCents Int
+  currency    String @default("usd") @db.VarChar(3)
+
+  status   StripeChargeStatus?
+  captured Boolean             @default(false)
+  paid     Boolean             @default(false)
+  refunded Boolean             @default(false)
+  disputed Boolean             @default(false)
+
+  capturedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  vouch         Vouch?               @relation(fields: [vouchId], references: [id], onDelete: Restrict)
+  paymentIntent PaymentIntentRecord? @relation(fields: [paymentIntentRecordId], references: [id], onDelete: Restrict)
+  refunds       RefundRecord[]
+
+  @@index([vouchId])
+  @@index([paymentIntentRecordId])
+  @@index([stripePaymentIntentId])
+  @@index([stripeBalanceTransactionId])
+  @@index([captured, paid])
 }
 
 model RefundRecord {
-  id              String @id @default(cuid())
-  vouchId          String
-  paymentRecordId  String
+  id                    String  @id @default(cuid())
+  vouchId               String?
+  chargeRecordId        String?
+  paymentIntentRecordId String?
 
-  providerRefundId String? @unique
-
-  status RefundStatus @default(not_required)
-  reason RefundReason?
+  stripeRefundId        String  @unique
+  stripePaymentIntentId String?
+  stripeChargeId        String?
 
   amountCents Int
+  currency    String @default("usd") @db.VarChar(3)
+
+  reason RefundReason?
+  status StripeRefundStatus
+
+  lastStripeEventId String?
+  syncedAt          DateTime?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  vouch         Vouch         @relation(fields: [vouchId], references: [id], onDelete: Restrict)
-  paymentRecord PaymentRecord @relation(fields: [paymentRecordId], references: [id], onDelete: Restrict)
-
-  webhookEvents PaymentWebhookEvent[]
+  vouch         Vouch?               @relation(fields: [vouchId], references: [id], onDelete: Restrict)
+  charge        ChargeRecord?        @relation(fields: [chargeRecordId], references: [id], onDelete: Restrict)
+  paymentIntent PaymentIntentRecord? @relation(fields: [paymentIntentRecordId], references: [id], onDelete: Restrict)
 
   @@index([vouchId])
-  @@index([paymentRecordId])
+  @@index([chargeRecordId])
+  @@index([paymentIntentRecordId])
   @@index([status])
-  @@index([reason])
-  @@index([providerRefundId])
-  @@map("refund_records")
 }
 
-/**
- * Generic provider webhook ledger.
- *
- * Use this for Clerk and Stripe idempotency.
- * Do not store full provider payloads here.
- */
+model PayoutRecord {
+  id                 String  @id @default(cuid())
+  connectedAccountId String?
+
+  stripePayoutId  String  @unique
+  stripeAccountId String?
+
+  amountCents Int
+  currency    String @default("usd") @db.VarChar(3)
+
+  status         StripePayoutStatus
+  arrivalDate    DateTime?
+  paidAt         DateTime?
+  failedAt       DateTime?
+  failureCode    String?
+  failureMessage String?
+
+  lastStripeEventId String?
+  syncedAt          DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  connectedAccount ConnectedAccount? @relation(fields: [connectedAccountId], references: [id], onDelete: Restrict)
+
+  @@index([connectedAccountId, status])
+  @@index([stripeAccountId])
+  @@index([arrivalDate])
+}
+
 model ProviderWebhookEvent {
   id String @id @default(cuid())
 
   provider        WebhookProvider
   providerEventId String
   eventType       String
+  status          WebhookProcessingStatus @default(received)
 
-  status    ProviderWebhookStatus @default(received)
-  processed Boolean               @default(false)
+  payload       Json?
+  receivedAt    DateTime  @default(now())
+  processedAt   DateTime?
+  failedAt      DateTime?
+  failureReason String?
 
-  receivedAt  DateTime  @default(now())
-  processedAt DateTime?
-
-  processingError String?
-  safeMetadata    Json?
-
-  paymentWebhookEvent PaymentWebhookEvent?
+  stripeEvent StripeWebhookEvent?
 
   @@unique([provider, providerEventId])
-  @@index([provider])
-  @@index([providerEventId])
-  @@index([eventType])
-  @@index([status])
-  @@index([processed])
-  @@index([receivedAt])
-  @@index([processedAt])
-  @@map("provider_webhook_events")
+  @@index([provider, eventType])
+  @@index([status, receivedAt])
 }
 
-model ClerkSession {
-  id            String    @id
-  clerkUserId   String?
-  status        String
-  lastEventType String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  endedAt       DateTime?
-  removedAt     DateTime?
-  revokedAt     DateTime?
-  deletedAt     DateTime?
+model StripeWebhookEvent {
+  id                     String @id @default(cuid())
+  providerWebhookEventId String @unique
 
-  @@index([clerkUserId])
-  @@index([status])
-  @@map("clerk_sessions")
-}
+  stripeEventId String @unique
+  eventType     String
 
-model ClerkEmail {
-  id            String    @id
-  clerkUserId   String?
-  status        String?
-  toEmail       String?   @db.VarChar(320)
-  lastEventType String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime?
+  vouchId               String?
+  paymentIntentRecordId String?
+  chargeRecordId        String?
+  refundRecordId        String?
+  payoutRecordId        String?
 
-  @@index([clerkUserId])
-  @@index([status])
-  @@map("clerk_emails")
-}
+  accountId String?
+  livemode  Boolean @default(false)
 
-model ClerkSms {
-  id            String    @id
-  clerkUserId   String?
-  status        String?
-  toPhone       String?   @db.VarChar(32)
-  lastEventType String
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime?
+  createdAt DateTime @default(now())
 
-  @@index([clerkUserId])
-  @@index([status])
-  @@map("clerk_sms")
-}
+  providerWebhookEvent ProviderWebhookEvent @relation(fields: [providerWebhookEventId], references: [id], onDelete: Restrict)
+  vouch                Vouch?               @relation(fields: [vouchId], references: [id], onDelete: Restrict)
 
-model ClerkInvitation {
-  id            String    @id
-  clerkUserId   String?
-  emailAddress  String?   @db.VarChar(320)
-  status        String
-  lastEventType String
-  acceptedAt    DateTime?
-  revokedAt     DateTime?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  deletedAt     DateTime?
-
-  @@index([clerkUserId])
-  @@index([emailAddress])
-  @@index([status])
-  @@map("clerk_invitations")
-}
-
-/**
- * Stripe/payment-specific webhook projection.
- *
- * ProviderWebhookEvent handles generic idempotency across Clerk/Stripe.
- * PaymentWebhookEvent is the Stripe/payment projection only.
- */
-model PaymentWebhookEvent {
-  id String @id @default(cuid())
-
-  provider        PaymentProvider @default(stripe)
-  providerEventId String          @unique
-  eventType       String
-
-  providerWebhookEventId String? @unique
-
-  vouchId         String?
-  paymentRecordId String?
-  refundRecordId  String?
-
-  processed Boolean @default(false)
-
-  receivedAt  DateTime  @default(now())
-  processedAt DateTime?
-
-  processingError String?
-  safeMetadata    Json?
-
-  providerWebhookEvent ProviderWebhookEvent? @relation(fields: [providerWebhookEventId], references: [id], onDelete: SetNull)
-
-  vouch         Vouch?         @relation(fields: [vouchId], references: [id], onDelete: SetNull)
-  paymentRecord PaymentRecord? @relation(fields: [paymentRecordId], references: [id], onDelete: SetNull)
-  refundRecord  RefundRecord?  @relation(fields: [refundRecordId], references: [id], onDelete: SetNull)
-
-  @@index([provider])
-  @@index([providerEventId])
-  @@index([eventType])
-  @@index([processed])
-  @@index([receivedAt])
-  @@index([processedAt])
+  @@index([eventType, createdAt])
   @@index([vouchId])
-  @@index([paymentRecordId])
+  @@index([paymentIntentRecordId])
+  @@index([chargeRecordId])
   @@index([refundRecordId])
-  @@map("payment_webhook_events")
+  @@index([payoutRecordId])
+  @@index([accountId])
 }
-
-/* ================================
-   Audit / Notifications / Analytics
-================================ */
 
 model AuditEvent {
   id String @id @default(cuid())
 
-  eventName String
-  actorType AuditActorType
-
   actorUserId String?
+  actorType   AuditActorType @default(system)
 
   entityType String
   entityId   String
+  eventName     String
 
-  requestId String?
-
-  participantSafe Boolean @default(false)
-
+  before   Json?
+  after    Json?
   metadata Json?
 
   createdAt DateTime @default(now())
 
-  actorUser User? @relation("AuditActorUser", fields: [actorUserId], references: [id], onDelete: SetNull)
+  actorUser User? @relation(fields: [actorUserId], references: [id], onDelete: Restrict)
 
-  @@index([eventName])
-  @@index([actorType])
-  @@index([actorUserId])
-  @@index([entityType, entityId])
+  @@index([actorUserId, createdAt])
   @@index([entityType, entityId, createdAt])
-  @@index([participantSafe])
-  @@index([createdAt])
-  @@map("audit_events")
+  @@index([eventName, createdAt])
 }
 
-model NotificationEvent {
-  id String @id @default(cuid())
+model VouchEvent {
+  id      String @id @default(cuid())
+  vouchId String
 
-  eventName String
-  channel NotificationChannel @default(email)
-  status  NotificationStatus  @default(queued)
-
-  recipientUserId String
-  vouchId         String?
-
-  providerMessageId String?
-  errorCode         String?
+  type     VouchTransitionType
+  metadata Json?
 
   createdAt DateTime @default(now())
-  sentAt    DateTime?
-  failedAt  DateTime?
 
-  recipient User   @relation("NotificationRecipient", fields: [recipientUserId], references: [id], onDelete: Restrict)
-  vouch     Vouch? @relation(fields: [vouchId], references: [id], onDelete: SetNull)
+  vouch Vouch @relation(fields: [vouchId], references: [id], onDelete: Restrict)
 
-  @@index([recipientUserId])
+  @@index([vouchId, createdAt])
+  @@index([type])
+}
+
+model OperationalRetry {
+  id String @id @default(cuid())
+
+  vouchId String?
+
+  operation OperationalRetryOperation
+  status    OperationalRetryStatus    @default(pending)
+
+  entityType String
+  entityId   String
+
+  attemptCount Int @default(0)
+  maxAttempts  Int @default(24)
+
+  nextAttemptAt DateTime?
+  lastAttemptAt DateTime?
+  lockedAt      DateTime?
+  completedAt   DateTime?
+  failedAt      DateTime?
+
+  failureReason String?
+  metadata      Json?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vouch Vouch? @relation(fields: [vouchId], references: [id], onDelete: Restrict)
+
+  @@index([status, nextAttemptAt])
+  @@index([operation, status])
+  @@index([entityType, entityId])
   @@index([vouchId])
-  @@index([vouchId, status])
-  @@index([eventName])
-  @@index([channel])
-  @@index([status])
-  @@index([errorCode])
+}
+
+model VouchRecoverySnapshot {
+  id       String @id @default(cuid())
+  vouchId  String
+  publicId String
+
+  reason VouchRecoverySnapshotReason @default(created)
+
+  merchantId String
+  customerId String?
+
+  amountCents Int
+  currency    String @db.VarChar(3)
+
+  appointmentAt         DateTime
+  confirmationOpensAt   DateTime
+  confirmationExpiresAt DateTime
+
+  status VouchStatus
+
+  protocolFeePaidAt DateTime?
+  authorizedAt      DateTime?
+  capturedAt        DateTime?
+  voidedAt          DateTime?
+  expiredAt         DateTime?
+  archived          Boolean
+
+  presenceStatus       PresenceConfirmationStatus?
+  presenceCanCaptureAt DateTime?
+  presenceVoidedAt     DateTime?
+
+  merchantCodeHash String
+  customerCodeHash String?
+
+  stripePaymentIntentId      String?
+  stripeCheckoutSessionId    String?
+  stripeChargeId             String?
+  stripeBalanceTransactionId String?
+  lastStripeEventId          String?
+
+  sourceVersion Int      @default(1)
+  checksumHash  String?
+  createdAt     DateTime @default(now())
+
+  vouch Vouch @relation(fields: [vouchId], references: [id], onDelete: Restrict)
+
+  @@index([vouchId, createdAt])
+  @@index([publicId])
+  @@index([reason])
   @@index([createdAt])
-  @@map("notification_events")
 }
 
 model AnalyticsEvent {
   id String @id @default(cuid())
 
+  userId String?
+
   eventName  String
   eventGroup AnalyticsEventGroup
-
-  environment Environment @default(development)
-
-  userId    String?
-  sessionId String?
-  requestId String?
-
-  occurredAt DateTime @default(now())
-  createdAt  DateTime @default(now())
-
   properties Json?
+
+  createdAt DateTime @default(now())
 
   user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-  @@index([eventName])
-  @@index([eventGroup])
-  @@index([environment])
-  @@index([userId])
-  @@index([sessionId])
-  @@index([requestId])
-  @@index([occurredAt])
-  @@map("analytics_events")
+  @@index([userId, createdAt])
+  @@index([eventGroup, eventName, createdAt])
 }
 
-/* ================================
-   Operational Retry
-================================ */
+enum UserStatus {
+  active
+  suspended
+  disabled
+}
 
-model OperationalRetry {
-  id String @id @default(cuid())
+enum ParticipantRole {
+  merchant
+  customer
+}
 
-  operation OperationalRetryOperation
-  status    OperationalRetryStatus @default(started)
+enum VouchStatus {
+  draft
+  active
+  authorized
+  can_capture
+  captured
+  expired
+  archived
+}
 
-  entityType String
-  entityId   String
+enum PresenceConfirmationStatus {
+  pending
+  merchant_confirmed
+  customer_confirmed
+  can_capture
+  void
+  sync_pending
+  auto_void
+}
 
-  userId String?
+enum ConfirmationSubmissionMode {
+  online
+  offline_sync
+}
 
-  reason    String?
-  errorCode String?
+enum PresenceResolutionSource {
+  online
+  offline_sync
+  server_reconciliation
+  auto_void
+}
 
-  startedAt   DateTime  @default(now())
-  completedAt DateTime?
+enum PaymentIntentPurpose {
+  merchant_protocol_fee
+  customer_deposit_authorization
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+enum StripePaymentIntentStatus {
+  requires_payment_method
+  requires_confirmation
+  requires_action
+  processing
+  requires_capture
+  canceled
+  succeeded
+}
 
-  user User? @relation("OperationalRetryUser", fields: [userId], references: [id], onDelete: SetNull)
+enum StripeCaptureMethod {
+  automatic
+  manual
+}
 
-  @@index([operation])
-  @@index([status])
-  @@index([entityType, entityId])
-  @@index([userId])
-  @@index([startedAt])
-  @@map("operational_retries")
+enum StripeChargeStatus {
+  succeeded
+  pending
+  failed
+}
+
+enum RefundReason {
+  duplicate
+  fraudulent
+  requested_by_customer
+  expired_uncaptured_authorization
+  provider_reconciliation
+}
+
+enum StripeRefundStatus {
+  pending
+  requires_action
+  succeeded
+  failed
+  canceled
+}
+
+enum StripePayoutStatus {
+  pending
+  in_transit
+  paid
+  failed
+  canceled
+}
+
+enum WebhookProvider {
+  stripe
+  clerk
+}
+
+enum WebhookProcessingStatus {
+  received
+  processing
+  processed
+  ignored
+  failed
+}
+
+enum AuditActorType {
+  user
+  system
+  clerk
+  stripe
+}
+
+enum VouchTransitionType {
+  protocol_fee_paid
+  deposit_authorization_created
+  deposit_authorization_requires_capture
+  merchant_confirmed
+  customer_confirmed
+  presence_can_capture
+  presence_void
+  capture_succeeded
+  authorization_released
+  expired
+  archived
+}
+
+enum OperationalRetryOperation {
+  sync_offline_confirmation
+  reconcile_payment_intent
+  reconcile_charge
+  reconcile_payout
+  auto_void_confirmation
+  create_recovery_snapshot
+}
+
+enum OperationalRetryStatus {
+  pending
+  processing
+  succeeded
+  failed
+  abandoned
+}
+
+enum VouchRecoverySnapshotReason {
+  created
+  before_capture
+  offline_confirmation_synced
+  presence_auto_void
+  webhook_reconciliation
+  provider_reconciliation
+}
+
+enum AnalyticsEventGroup {
+  auth
+  onboarding
+  vouch
+  payment
+  dashboard
+  system
 }

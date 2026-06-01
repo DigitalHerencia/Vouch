@@ -36,7 +36,7 @@ function normalizeReadiness(record: ReadinessRecord | null) {
     userStatus: record?.status === "active" ? ("active" as const) : ("disabled" as const),
     identityStatus: verification?.identityStatus ?? "unstarted",
     adultStatus: verification?.adultStatus ?? "unstarted",
-    paymentReadiness: paymentCustomer?.readiness ?? "not_started",
+    paymentMethodReady: paymentCustomer?.readiness ?? "not_started",
     payoutReadiness: connectedAccount?.readiness ?? "not_started",
     hasPaymentCustomer: Boolean(paymentCustomer),
     hasConnectedAccount: Boolean(connectedAccount),
@@ -82,7 +82,7 @@ function blockersFor(
   if (kind === "create" && !readiness.termsAccepted) {
     blockers.push("terms_acceptance_required")
   }
-  if (kind === "accept" && readiness.paymentReadiness !== "ready") {
+  if (kind === "accept" && readiness.paymentMethodReady !== "ready") {
     blockers.push("payment_method_required")
   }
   if (kind === "accept" && !readiness.termsAccepted) {

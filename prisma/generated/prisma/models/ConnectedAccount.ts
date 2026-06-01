@@ -27,15 +27,15 @@ export type AggregateConnectedAccount = {
 export type ConnectedAccountMinAggregateOutputType = {
   id: string | null
   userId: string | null
-  provider: $Enums.PaymentProvider | null
-  providerAccountId: string | null
-  readiness: $Enums.PayoutReadinessStatus | null
+  stripeAccountId: string | null
   chargesEnabled: boolean | null
   payoutsEnabled: boolean | null
   detailsSubmitted: boolean | null
-  lastProviderSyncAt: Date | null
-  lastErrorCode: string | null
-  lastErrorMessage: string | null
+  disabledReason: string | null
+  lastAccountLinkId: string | null
+  lastLoginLinkId: string | null
+  lastStripeEventId: string | null
+  syncedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -43,15 +43,15 @@ export type ConnectedAccountMinAggregateOutputType = {
 export type ConnectedAccountMaxAggregateOutputType = {
   id: string | null
   userId: string | null
-  provider: $Enums.PaymentProvider | null
-  providerAccountId: string | null
-  readiness: $Enums.PayoutReadinessStatus | null
+  stripeAccountId: string | null
   chargesEnabled: boolean | null
   payoutsEnabled: boolean | null
   detailsSubmitted: boolean | null
-  lastProviderSyncAt: Date | null
-  lastErrorCode: string | null
-  lastErrorMessage: string | null
+  disabledReason: string | null
+  lastAccountLinkId: string | null
+  lastLoginLinkId: string | null
+  lastStripeEventId: string | null
+  syncedAt: Date | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -59,15 +59,17 @@ export type ConnectedAccountMaxAggregateOutputType = {
 export type ConnectedAccountCountAggregateOutputType = {
   id: number
   userId: number
-  provider: number
-  providerAccountId: number
-  readiness: number
+  stripeAccountId: number
   chargesEnabled: number
   payoutsEnabled: number
   detailsSubmitted: number
-  lastProviderSyncAt: number
-  lastErrorCode: number
-  lastErrorMessage: number
+  requirementsCurrentlyDue: number
+  requirementsEventuallyDue: number
+  disabledReason: number
+  lastAccountLinkId: number
+  lastLoginLinkId: number
+  lastStripeEventId: number
+  syncedAt: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -77,15 +79,15 @@ export type ConnectedAccountCountAggregateOutputType = {
 export type ConnectedAccountMinAggregateInputType = {
   id?: true
   userId?: true
-  provider?: true
-  providerAccountId?: true
-  readiness?: true
+  stripeAccountId?: true
   chargesEnabled?: true
   payoutsEnabled?: true
   detailsSubmitted?: true
-  lastProviderSyncAt?: true
-  lastErrorCode?: true
-  lastErrorMessage?: true
+  disabledReason?: true
+  lastAccountLinkId?: true
+  lastLoginLinkId?: true
+  lastStripeEventId?: true
+  syncedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -93,15 +95,15 @@ export type ConnectedAccountMinAggregateInputType = {
 export type ConnectedAccountMaxAggregateInputType = {
   id?: true
   userId?: true
-  provider?: true
-  providerAccountId?: true
-  readiness?: true
+  stripeAccountId?: true
   chargesEnabled?: true
   payoutsEnabled?: true
   detailsSubmitted?: true
-  lastProviderSyncAt?: true
-  lastErrorCode?: true
-  lastErrorMessage?: true
+  disabledReason?: true
+  lastAccountLinkId?: true
+  lastLoginLinkId?: true
+  lastStripeEventId?: true
+  syncedAt?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -109,15 +111,17 @@ export type ConnectedAccountMaxAggregateInputType = {
 export type ConnectedAccountCountAggregateInputType = {
   id?: true
   userId?: true
-  provider?: true
-  providerAccountId?: true
-  readiness?: true
+  stripeAccountId?: true
   chargesEnabled?: true
   payoutsEnabled?: true
   detailsSubmitted?: true
-  lastProviderSyncAt?: true
-  lastErrorCode?: true
-  lastErrorMessage?: true
+  requirementsCurrentlyDue?: true
+  requirementsEventuallyDue?: true
+  disabledReason?: true
+  lastAccountLinkId?: true
+  lastLoginLinkId?: true
+  lastStripeEventId?: true
+  syncedAt?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -198,15 +202,17 @@ export type ConnectedAccountGroupByArgs<ExtArgs extends runtime.Types.Extensions
 export type ConnectedAccountGroupByOutputType = {
   id: string
   userId: string
-  provider: $Enums.PaymentProvider
-  providerAccountId: string
-  readiness: $Enums.PayoutReadinessStatus
+  stripeAccountId: string
   chargesEnabled: boolean
   payoutsEnabled: boolean
   detailsSubmitted: boolean
-  lastProviderSyncAt: Date | null
-  lastErrorCode: string | null
-  lastErrorMessage: string | null
+  requirementsCurrentlyDue: runtime.JsonValue | null
+  requirementsEventuallyDue: runtime.JsonValue | null
+  disabledReason: string | null
+  lastAccountLinkId: string | null
+  lastLoginLinkId: string | null
+  lastStripeEventId: string | null
+  syncedAt: Date | null
   createdAt: Date
   updatedAt: Date
   _count: ConnectedAccountCountAggregateOutputType | null
@@ -235,69 +241,80 @@ export type ConnectedAccountWhereInput = {
   NOT?: Prisma.ConnectedAccountWhereInput | Prisma.ConnectedAccountWhereInput[]
   id?: Prisma.StringFilter<"ConnectedAccount"> | string
   userId?: Prisma.StringFilter<"ConnectedAccount"> | string
-  provider?: Prisma.EnumPaymentProviderFilter<"ConnectedAccount"> | $Enums.PaymentProvider
-  providerAccountId?: Prisma.StringFilter<"ConnectedAccount"> | string
-  readiness?: Prisma.EnumPayoutReadinessStatusFilter<"ConnectedAccount"> | $Enums.PayoutReadinessStatus
+  stripeAccountId?: Prisma.StringFilter<"ConnectedAccount"> | string
   chargesEnabled?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
   payoutsEnabled?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
   detailsSubmitted?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
-  lastProviderSyncAt?: Prisma.DateTimeNullableFilter<"ConnectedAccount"> | Date | string | null
-  lastErrorCode?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
-  lastErrorMessage?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  requirementsCurrentlyDue?: Prisma.JsonNullableFilter<"ConnectedAccount">
+  requirementsEventuallyDue?: Prisma.JsonNullableFilter<"ConnectedAccount">
+  disabledReason?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  lastAccountLinkId?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  lastLoginLinkId?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  lastStripeEventId?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  syncedAt?: Prisma.DateTimeNullableFilter<"ConnectedAccount"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ConnectedAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ConnectedAccount"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  payouts?: Prisma.PayoutRecordListRelationFilter
 }
 
 export type ConnectedAccountOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  provider?: Prisma.SortOrder
-  providerAccountId?: Prisma.SortOrder
-  readiness?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   chargesEnabled?: Prisma.SortOrder
   payoutsEnabled?: Prisma.SortOrder
   detailsSubmitted?: Prisma.SortOrder
-  lastProviderSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  requirementsCurrentlyDue?: Prisma.SortOrderInput | Prisma.SortOrder
+  requirementsEventuallyDue?: Prisma.SortOrderInput | Prisma.SortOrder
+  disabledReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastAccountLinkId?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastLoginLinkId?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrderInput | Prisma.SortOrder
+  syncedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  payouts?: Prisma.PayoutRecordOrderByRelationAggregateInput
 }
 
 export type ConnectedAccountWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   userId?: string
-  providerAccountId?: string
+  stripeAccountId?: string
   AND?: Prisma.ConnectedAccountWhereInput | Prisma.ConnectedAccountWhereInput[]
   OR?: Prisma.ConnectedAccountWhereInput[]
   NOT?: Prisma.ConnectedAccountWhereInput | Prisma.ConnectedAccountWhereInput[]
-  provider?: Prisma.EnumPaymentProviderFilter<"ConnectedAccount"> | $Enums.PaymentProvider
-  readiness?: Prisma.EnumPayoutReadinessStatusFilter<"ConnectedAccount"> | $Enums.PayoutReadinessStatus
   chargesEnabled?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
   payoutsEnabled?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
   detailsSubmitted?: Prisma.BoolFilter<"ConnectedAccount"> | boolean
-  lastProviderSyncAt?: Prisma.DateTimeNullableFilter<"ConnectedAccount"> | Date | string | null
-  lastErrorCode?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
-  lastErrorMessage?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  requirementsCurrentlyDue?: Prisma.JsonNullableFilter<"ConnectedAccount">
+  requirementsEventuallyDue?: Prisma.JsonNullableFilter<"ConnectedAccount">
+  disabledReason?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  lastAccountLinkId?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  lastLoginLinkId?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  lastStripeEventId?: Prisma.StringNullableFilter<"ConnectedAccount"> | string | null
+  syncedAt?: Prisma.DateTimeNullableFilter<"ConnectedAccount"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"ConnectedAccount"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"ConnectedAccount"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id" | "userId" | "providerAccountId">
+  payouts?: Prisma.PayoutRecordListRelationFilter
+}, "id" | "userId" | "stripeAccountId">
 
 export type ConnectedAccountOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  provider?: Prisma.SortOrder
-  providerAccountId?: Prisma.SortOrder
-  readiness?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   chargesEnabled?: Prisma.SortOrder
   payoutsEnabled?: Prisma.SortOrder
   detailsSubmitted?: Prisma.SortOrder
-  lastProviderSyncAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  lastErrorCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  lastErrorMessage?: Prisma.SortOrderInput | Prisma.SortOrder
+  requirementsCurrentlyDue?: Prisma.SortOrderInput | Prisma.SortOrder
+  requirementsEventuallyDue?: Prisma.SortOrderInput | Prisma.SortOrder
+  disabledReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastAccountLinkId?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastLoginLinkId?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrderInput | Prisma.SortOrder
+  syncedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.ConnectedAccountCountOrderByAggregateInput
@@ -311,110 +328,128 @@ export type ConnectedAccountScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ConnectedAccountScalarWhereWithAggregatesInput | Prisma.ConnectedAccountScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ConnectedAccount"> | string
   userId?: Prisma.StringWithAggregatesFilter<"ConnectedAccount"> | string
-  provider?: Prisma.EnumPaymentProviderWithAggregatesFilter<"ConnectedAccount"> | $Enums.PaymentProvider
-  providerAccountId?: Prisma.StringWithAggregatesFilter<"ConnectedAccount"> | string
-  readiness?: Prisma.EnumPayoutReadinessStatusWithAggregatesFilter<"ConnectedAccount"> | $Enums.PayoutReadinessStatus
+  stripeAccountId?: Prisma.StringWithAggregatesFilter<"ConnectedAccount"> | string
   chargesEnabled?: Prisma.BoolWithAggregatesFilter<"ConnectedAccount"> | boolean
   payoutsEnabled?: Prisma.BoolWithAggregatesFilter<"ConnectedAccount"> | boolean
   detailsSubmitted?: Prisma.BoolWithAggregatesFilter<"ConnectedAccount"> | boolean
-  lastProviderSyncAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ConnectedAccount"> | Date | string | null
-  lastErrorCode?: Prisma.StringNullableWithAggregatesFilter<"ConnectedAccount"> | string | null
-  lastErrorMessage?: Prisma.StringNullableWithAggregatesFilter<"ConnectedAccount"> | string | null
+  requirementsCurrentlyDue?: Prisma.JsonNullableWithAggregatesFilter<"ConnectedAccount">
+  requirementsEventuallyDue?: Prisma.JsonNullableWithAggregatesFilter<"ConnectedAccount">
+  disabledReason?: Prisma.StringNullableWithAggregatesFilter<"ConnectedAccount"> | string | null
+  lastAccountLinkId?: Prisma.StringNullableWithAggregatesFilter<"ConnectedAccount"> | string | null
+  lastLoginLinkId?: Prisma.StringNullableWithAggregatesFilter<"ConnectedAccount"> | string | null
+  lastStripeEventId?: Prisma.StringNullableWithAggregatesFilter<"ConnectedAccount"> | string | null
+  syncedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ConnectedAccount"> | Date | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ConnectedAccount"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ConnectedAccount"> | Date | string
 }
 
 export type ConnectedAccountCreateInput = {
   id?: string
-  provider?: $Enums.PaymentProvider
-  providerAccountId: string
-  readiness?: $Enums.PayoutReadinessStatus
+  stripeAccountId: string
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
-  lastProviderSyncAt?: Date | string | null
-  lastErrorCode?: string | null
-  lastErrorMessage?: string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: string | null
+  lastAccountLinkId?: string | null
+  lastLoginLinkId?: string | null
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutConnectedAccountInput
+  payouts?: Prisma.PayoutRecordCreateNestedManyWithoutConnectedAccountInput
 }
 
 export type ConnectedAccountUncheckedCreateInput = {
   id?: string
   userId: string
-  provider?: $Enums.PaymentProvider
-  providerAccountId: string
-  readiness?: $Enums.PayoutReadinessStatus
+  stripeAccountId: string
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
-  lastProviderSyncAt?: Date | string | null
-  lastErrorCode?: string | null
-  lastErrorMessage?: string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: string | null
+  lastAccountLinkId?: string | null
+  lastLoginLinkId?: string | null
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  payouts?: Prisma.PayoutRecordUncheckedCreateNestedManyWithoutConnectedAccountInput
 }
 
 export type ConnectedAccountUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  readiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
+  stripeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAccountLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutConnectedAccountNestedInput
+  payouts?: Prisma.PayoutRecordUpdateManyWithoutConnectedAccountNestedInput
 }
 
 export type ConnectedAccountUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  readiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
+  stripeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAccountLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  payouts?: Prisma.PayoutRecordUncheckedUpdateManyWithoutConnectedAccountNestedInput
 }
 
 export type ConnectedAccountCreateManyInput = {
   id?: string
   userId: string
-  provider?: $Enums.PaymentProvider
-  providerAccountId: string
-  readiness?: $Enums.PayoutReadinessStatus
+  stripeAccountId: string
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
-  lastProviderSyncAt?: Date | string | null
-  lastErrorCode?: string | null
-  lastErrorMessage?: string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: string | null
+  lastAccountLinkId?: string | null
+  lastLoginLinkId?: string | null
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
 export type ConnectedAccountUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  readiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
+  stripeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAccountLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -422,15 +457,17 @@ export type ConnectedAccountUpdateManyMutationInput = {
 export type ConnectedAccountUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
-  provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  readiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
+  stripeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAccountLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -443,15 +480,17 @@ export type ConnectedAccountNullableScalarRelationFilter = {
 export type ConnectedAccountCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  provider?: Prisma.SortOrder
-  providerAccountId?: Prisma.SortOrder
-  readiness?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   chargesEnabled?: Prisma.SortOrder
   payoutsEnabled?: Prisma.SortOrder
   detailsSubmitted?: Prisma.SortOrder
-  lastProviderSyncAt?: Prisma.SortOrder
-  lastErrorCode?: Prisma.SortOrder
-  lastErrorMessage?: Prisma.SortOrder
+  requirementsCurrentlyDue?: Prisma.SortOrder
+  requirementsEventuallyDue?: Prisma.SortOrder
+  disabledReason?: Prisma.SortOrder
+  lastAccountLinkId?: Prisma.SortOrder
+  lastLoginLinkId?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrder
+  syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -459,15 +498,15 @@ export type ConnectedAccountCountOrderByAggregateInput = {
 export type ConnectedAccountMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  provider?: Prisma.SortOrder
-  providerAccountId?: Prisma.SortOrder
-  readiness?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   chargesEnabled?: Prisma.SortOrder
   payoutsEnabled?: Prisma.SortOrder
   detailsSubmitted?: Prisma.SortOrder
-  lastProviderSyncAt?: Prisma.SortOrder
-  lastErrorCode?: Prisma.SortOrder
-  lastErrorMessage?: Prisma.SortOrder
+  disabledReason?: Prisma.SortOrder
+  lastAccountLinkId?: Prisma.SortOrder
+  lastLoginLinkId?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrder
+  syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -475,15 +514,15 @@ export type ConnectedAccountMaxOrderByAggregateInput = {
 export type ConnectedAccountMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
-  provider?: Prisma.SortOrder
-  providerAccountId?: Prisma.SortOrder
-  readiness?: Prisma.SortOrder
+  stripeAccountId?: Prisma.SortOrder
   chargesEnabled?: Prisma.SortOrder
   payoutsEnabled?: Prisma.SortOrder
   detailsSubmitted?: Prisma.SortOrder
-  lastProviderSyncAt?: Prisma.SortOrder
-  lastErrorCode?: Prisma.SortOrder
-  lastErrorMessage?: Prisma.SortOrder
+  disabledReason?: Prisma.SortOrder
+  lastAccountLinkId?: Prisma.SortOrder
+  lastLoginLinkId?: Prisma.SortOrder
+  lastStripeEventId?: Prisma.SortOrder
+  syncedAt?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -520,42 +559,56 @@ export type ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ConnectedAccountUpdateToOneWithWhereWithoutUserInput, Prisma.ConnectedAccountUpdateWithoutUserInput>, Prisma.ConnectedAccountUncheckedUpdateWithoutUserInput>
 }
 
-export type EnumPayoutReadinessStatusFieldUpdateOperationsInput = {
-  set?: $Enums.PayoutReadinessStatus
+export type ConnectedAccountCreateNestedOneWithoutPayoutsInput = {
+  create?: Prisma.XOR<Prisma.ConnectedAccountCreateWithoutPayoutsInput, Prisma.ConnectedAccountUncheckedCreateWithoutPayoutsInput>
+  connectOrCreate?: Prisma.ConnectedAccountCreateOrConnectWithoutPayoutsInput
+  connect?: Prisma.ConnectedAccountWhereUniqueInput
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
+export type ConnectedAccountUpdateOneWithoutPayoutsNestedInput = {
+  create?: Prisma.XOR<Prisma.ConnectedAccountCreateWithoutPayoutsInput, Prisma.ConnectedAccountUncheckedCreateWithoutPayoutsInput>
+  connectOrCreate?: Prisma.ConnectedAccountCreateOrConnectWithoutPayoutsInput
+  upsert?: Prisma.ConnectedAccountUpsertWithoutPayoutsInput
+  disconnect?: Prisma.ConnectedAccountWhereInput | boolean
+  delete?: Prisma.ConnectedAccountWhereInput | boolean
+  connect?: Prisma.ConnectedAccountWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ConnectedAccountUpdateToOneWithWhereWithoutPayoutsInput, Prisma.ConnectedAccountUpdateWithoutPayoutsInput>, Prisma.ConnectedAccountUncheckedUpdateWithoutPayoutsInput>
 }
 
 export type ConnectedAccountCreateWithoutUserInput = {
   id?: string
-  provider?: $Enums.PaymentProvider
-  providerAccountId: string
-  readiness?: $Enums.PayoutReadinessStatus
+  stripeAccountId: string
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
-  lastProviderSyncAt?: Date | string | null
-  lastErrorCode?: string | null
-  lastErrorMessage?: string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: string | null
+  lastAccountLinkId?: string | null
+  lastLoginLinkId?: string | null
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  payouts?: Prisma.PayoutRecordCreateNestedManyWithoutConnectedAccountInput
 }
 
 export type ConnectedAccountUncheckedCreateWithoutUserInput = {
   id?: string
-  provider?: $Enums.PaymentProvider
-  providerAccountId: string
-  readiness?: $Enums.PayoutReadinessStatus
+  stripeAccountId: string
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
-  lastProviderSyncAt?: Date | string | null
-  lastErrorCode?: string | null
-  lastErrorMessage?: string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: string | null
+  lastAccountLinkId?: string | null
+  lastLoginLinkId?: string | null
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  payouts?: Prisma.PayoutRecordUncheckedCreateNestedManyWithoutConnectedAccountInput
 }
 
 export type ConnectedAccountCreateOrConnectWithoutUserInput = {
@@ -576,65 +629,194 @@ export type ConnectedAccountUpdateToOneWithWhereWithoutUserInput = {
 
 export type ConnectedAccountUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  readiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
+  stripeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAccountLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  payouts?: Prisma.PayoutRecordUpdateManyWithoutConnectedAccountNestedInput
 }
 
 export type ConnectedAccountUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
-  providerAccountId?: Prisma.StringFieldUpdateOperationsInput | string
-  readiness?: Prisma.EnumPayoutReadinessStatusFieldUpdateOperationsInput | $Enums.PayoutReadinessStatus
+  stripeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
   chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
   detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastProviderSyncAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastErrorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  lastErrorMessage?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAccountLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  payouts?: Prisma.PayoutRecordUncheckedUpdateManyWithoutConnectedAccountNestedInput
+}
+
+export type ConnectedAccountCreateWithoutPayoutsInput = {
+  id?: string
+  stripeAccountId: string
+  chargesEnabled?: boolean
+  payoutsEnabled?: boolean
+  detailsSubmitted?: boolean
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: string | null
+  lastAccountLinkId?: string | null
+  lastLoginLinkId?: string | null
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutConnectedAccountInput
+}
+
+export type ConnectedAccountUncheckedCreateWithoutPayoutsInput = {
+  id?: string
+  userId: string
+  stripeAccountId: string
+  chargesEnabled?: boolean
+  payoutsEnabled?: boolean
+  detailsSubmitted?: boolean
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: string | null
+  lastAccountLinkId?: string | null
+  lastLoginLinkId?: string | null
+  lastStripeEventId?: string | null
+  syncedAt?: Date | string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type ConnectedAccountCreateOrConnectWithoutPayoutsInput = {
+  where: Prisma.ConnectedAccountWhereUniqueInput
+  create: Prisma.XOR<Prisma.ConnectedAccountCreateWithoutPayoutsInput, Prisma.ConnectedAccountUncheckedCreateWithoutPayoutsInput>
+}
+
+export type ConnectedAccountUpsertWithoutPayoutsInput = {
+  update: Prisma.XOR<Prisma.ConnectedAccountUpdateWithoutPayoutsInput, Prisma.ConnectedAccountUncheckedUpdateWithoutPayoutsInput>
+  create: Prisma.XOR<Prisma.ConnectedAccountCreateWithoutPayoutsInput, Prisma.ConnectedAccountUncheckedCreateWithoutPayoutsInput>
+  where?: Prisma.ConnectedAccountWhereInput
+}
+
+export type ConnectedAccountUpdateToOneWithWhereWithoutPayoutsInput = {
+  where?: Prisma.ConnectedAccountWhereInput
+  data: Prisma.XOR<Prisma.ConnectedAccountUpdateWithoutPayoutsInput, Prisma.ConnectedAccountUncheckedUpdateWithoutPayoutsInput>
+}
+
+export type ConnectedAccountUpdateWithoutPayoutsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
+  chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAccountLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutConnectedAccountNestedInput
+}
+
+export type ConnectedAccountUncheckedUpdateWithoutPayoutsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripeAccountId?: Prisma.StringFieldUpdateOperationsInput | string
+  chargesEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  payoutsEnabled?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  detailsSubmitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  requirementsCurrentlyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  requirementsEventuallyDue?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  disabledReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastAccountLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastLoginLinkId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
+
+/**
+ * Count Type ConnectedAccountCountOutputType
+ */
+
+export type ConnectedAccountCountOutputType = {
+  payouts: number
+}
+
+export type ConnectedAccountCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  payouts?: boolean | ConnectedAccountCountOutputTypeCountPayoutsArgs
+}
+
+/**
+ * ConnectedAccountCountOutputType without action
+ */
+export type ConnectedAccountCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ConnectedAccountCountOutputType
+   */
+  select?: Prisma.ConnectedAccountCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * ConnectedAccountCountOutputType without action
+ */
+export type ConnectedAccountCountOutputTypeCountPayoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PayoutRecordWhereInput
+}
 
 
 export type ConnectedAccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  provider?: boolean
-  providerAccountId?: boolean
-  readiness?: boolean
+  stripeAccountId?: boolean
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
-  lastProviderSyncAt?: boolean
-  lastErrorCode?: boolean
-  lastErrorMessage?: boolean
+  requirementsCurrentlyDue?: boolean
+  requirementsEventuallyDue?: boolean
+  disabledReason?: boolean
+  lastAccountLinkId?: boolean
+  lastLoginLinkId?: boolean
+  lastStripeEventId?: boolean
+  syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  payouts?: boolean | Prisma.ConnectedAccount$payoutsArgs<ExtArgs>
+  _count?: boolean | Prisma.ConnectedAccountCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["connectedAccount"]>
 
 export type ConnectedAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  provider?: boolean
-  providerAccountId?: boolean
-  readiness?: boolean
+  stripeAccountId?: boolean
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
-  lastProviderSyncAt?: boolean
-  lastErrorCode?: boolean
-  lastErrorMessage?: boolean
+  requirementsCurrentlyDue?: boolean
+  requirementsEventuallyDue?: boolean
+  disabledReason?: boolean
+  lastAccountLinkId?: boolean
+  lastLoginLinkId?: boolean
+  lastStripeEventId?: boolean
+  syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -643,15 +825,17 @@ export type ConnectedAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Ty
 export type ConnectedAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
-  provider?: boolean
-  providerAccountId?: boolean
-  readiness?: boolean
+  stripeAccountId?: boolean
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
-  lastProviderSyncAt?: boolean
-  lastErrorCode?: boolean
-  lastErrorMessage?: boolean
+  requirementsCurrentlyDue?: boolean
+  requirementsEventuallyDue?: boolean
+  disabledReason?: boolean
+  lastAccountLinkId?: boolean
+  lastLoginLinkId?: boolean
+  lastStripeEventId?: boolean
+  syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -660,22 +844,26 @@ export type ConnectedAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Ty
 export type ConnectedAccountSelectScalar = {
   id?: boolean
   userId?: boolean
-  provider?: boolean
-  providerAccountId?: boolean
-  readiness?: boolean
+  stripeAccountId?: boolean
   chargesEnabled?: boolean
   payoutsEnabled?: boolean
   detailsSubmitted?: boolean
-  lastProviderSyncAt?: boolean
-  lastErrorCode?: boolean
-  lastErrorMessage?: boolean
+  requirementsCurrentlyDue?: boolean
+  requirementsEventuallyDue?: boolean
+  disabledReason?: boolean
+  lastAccountLinkId?: boolean
+  lastLoginLinkId?: boolean
+  lastStripeEventId?: boolean
+  syncedAt?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type ConnectedAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "provider" | "providerAccountId" | "readiness" | "chargesEnabled" | "payoutsEnabled" | "detailsSubmitted" | "lastProviderSyncAt" | "lastErrorCode" | "lastErrorMessage" | "createdAt" | "updatedAt", ExtArgs["result"]["connectedAccount"]>
+export type ConnectedAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "stripeAccountId" | "chargesEnabled" | "payoutsEnabled" | "detailsSubmitted" | "requirementsCurrentlyDue" | "requirementsEventuallyDue" | "disabledReason" | "lastAccountLinkId" | "lastLoginLinkId" | "lastStripeEventId" | "syncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["connectedAccount"]>
 export type ConnectedAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  payouts?: boolean | Prisma.ConnectedAccount$payoutsArgs<ExtArgs>
+  _count?: boolean | Prisma.ConnectedAccountCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ConnectedAccountIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -688,19 +876,22 @@ export type $ConnectedAccountPayload<ExtArgs extends runtime.Types.Extensions.In
   name: "ConnectedAccount"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    payouts: Prisma.$PayoutRecordPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
-    provider: $Enums.PaymentProvider
-    providerAccountId: string
-    readiness: $Enums.PayoutReadinessStatus
+    stripeAccountId: string
     chargesEnabled: boolean
     payoutsEnabled: boolean
     detailsSubmitted: boolean
-    lastProviderSyncAt: Date | null
-    lastErrorCode: string | null
-    lastErrorMessage: string | null
+    requirementsCurrentlyDue: runtime.JsonValue | null
+    requirementsEventuallyDue: runtime.JsonValue | null
+    disabledReason: string | null
+    lastAccountLinkId: string | null
+    lastLoginLinkId: string | null
+    lastStripeEventId: string | null
+    syncedAt: Date | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["connectedAccount"]>
@@ -1098,6 +1289,7 @@ readonly fields: ConnectedAccountFieldRefs;
 export interface Prisma__ConnectedAccountClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  payouts<T extends Prisma.ConnectedAccount$payoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ConnectedAccount$payoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PayoutRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1129,15 +1321,17 @@ export interface Prisma__ConnectedAccountClient<T, Null = never, ExtArgs extends
 export interface ConnectedAccountFieldRefs {
   readonly id: Prisma.FieldRef<"ConnectedAccount", 'String'>
   readonly userId: Prisma.FieldRef<"ConnectedAccount", 'String'>
-  readonly provider: Prisma.FieldRef<"ConnectedAccount", 'PaymentProvider'>
-  readonly providerAccountId: Prisma.FieldRef<"ConnectedAccount", 'String'>
-  readonly readiness: Prisma.FieldRef<"ConnectedAccount", 'PayoutReadinessStatus'>
+  readonly stripeAccountId: Prisma.FieldRef<"ConnectedAccount", 'String'>
   readonly chargesEnabled: Prisma.FieldRef<"ConnectedAccount", 'Boolean'>
   readonly payoutsEnabled: Prisma.FieldRef<"ConnectedAccount", 'Boolean'>
   readonly detailsSubmitted: Prisma.FieldRef<"ConnectedAccount", 'Boolean'>
-  readonly lastProviderSyncAt: Prisma.FieldRef<"ConnectedAccount", 'DateTime'>
-  readonly lastErrorCode: Prisma.FieldRef<"ConnectedAccount", 'String'>
-  readonly lastErrorMessage: Prisma.FieldRef<"ConnectedAccount", 'String'>
+  readonly requirementsCurrentlyDue: Prisma.FieldRef<"ConnectedAccount", 'Json'>
+  readonly requirementsEventuallyDue: Prisma.FieldRef<"ConnectedAccount", 'Json'>
+  readonly disabledReason: Prisma.FieldRef<"ConnectedAccount", 'String'>
+  readonly lastAccountLinkId: Prisma.FieldRef<"ConnectedAccount", 'String'>
+  readonly lastLoginLinkId: Prisma.FieldRef<"ConnectedAccount", 'String'>
+  readonly lastStripeEventId: Prisma.FieldRef<"ConnectedAccount", 'String'>
+  readonly syncedAt: Prisma.FieldRef<"ConnectedAccount", 'DateTime'>
   readonly createdAt: Prisma.FieldRef<"ConnectedAccount", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"ConnectedAccount", 'DateTime'>
 }
@@ -1538,6 +1732,30 @@ export type ConnectedAccountDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
    * Limit how many ConnectedAccounts to delete.
    */
   limit?: number
+}
+
+/**
+ * ConnectedAccount.payouts
+ */
+export type ConnectedAccount$payoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PayoutRecord
+   */
+  select?: Prisma.PayoutRecordSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PayoutRecord
+   */
+  omit?: Prisma.PayoutRecordOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PayoutRecordInclude<ExtArgs> | null
+  where?: Prisma.PayoutRecordWhereInput
+  orderBy?: Prisma.PayoutRecordOrderByWithRelationInput | Prisma.PayoutRecordOrderByWithRelationInput[]
+  cursor?: Prisma.PayoutRecordWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PayoutRecordScalarFieldEnum | Prisma.PayoutRecordScalarFieldEnum[]
 }
 
 /**

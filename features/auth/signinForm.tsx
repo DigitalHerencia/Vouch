@@ -14,9 +14,6 @@ import { authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { loginSchema, verificationSchema } from "@/schemas/auth"
 import { type LoginFormProps, type LoginFormValues } from "@/types/auth"
-import { AuthProcessPanelGrid } from "@/components/blocks/process-panel"
-import Link from "next/link"
-import { LogoLockup } from "@/components/brand/logo-lockup"
 
 function getErrorMessage(error: unknown, fallback: string): string {
   const clerkError = error as { errors?: Array<{ message?: string }> }
@@ -238,54 +235,56 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
   return (
     <form onSubmit={handleSubmit} noValidate {...props}>
       {awaitingSecondFactor ? (
-        <OTPVerificationForm
-          title={authVerificationContent.codeLabel}
-          description={
-            secondFactorMethod === "phone_code"
-              ? authVerificationContent.latestCodePhone
-              : authVerificationContent.latestCodeEmail
-          }
-          length={6}
-          value={verificationCode}
-          notice={notice}
-          error={form.formState.errors.verificationCode?.message}
-          rootError={rootError}
-          disabled={isBusy}
-          submitLabel={authVerificationContent.verifyCode}
-          resendLabel={authVerificationContent.resendCode}
-          backLabel={authVerificationContent.startOver}
-          isSubmitting={form.formState.isSubmitting}
-          isResending={isResending}
-          isResetting={isResetting}
-          onChange={(code) =>
-            form.setValue("verificationCode", code, {
-              shouldDirty: true,
-              shouldValidate: code.length === 6,
-            })
-          }
-          onResend={() => {
-            startResending(async () => {
-              form.clearErrors("root")
-              setNotice(null)
-              await sendSecondFactorCode()
-            })
-          }}
-          onBackToLogin={() => {
-            startResetting(async () => {
-              await signIn.reset()
-              setAwaitingSecondFactor(false)
-              setSecondFactorMethod(null)
-              setNotice(null)
-              form.reset({
-                email: form.getValues("email"),
-                password: "",
-                verificationCode: "",
+        <div className="relative z-10 flex min-h-dvh items-center justify-center px-4 py-16">
+          <OTPVerificationForm
+            title={authVerificationContent.codeLabel}
+            description={
+              secondFactorMethod === "phone_code"
+                ? authVerificationContent.latestCodePhone
+                : authVerificationContent.latestCodeEmail
+            }
+            length={6}
+            value={verificationCode}
+            notice={notice}
+            error={form.formState.errors.verificationCode?.message}
+            rootError={rootError}
+            disabled={isBusy}
+            submitLabel={authVerificationContent.verifyCode}
+            resendLabel={authVerificationContent.resendCode}
+            backLabel={authVerificationContent.startOver}
+            isSubmitting={form.formState.isSubmitting}
+            isResending={isResending}
+            isResetting={isResetting}
+            onChange={(code) =>
+              form.setValue("verificationCode", code, {
+                shouldDirty: true,
+                shouldValidate: code.length === 6,
               })
-            })
-          }}
-        />
+            }
+            onResend={() => {
+              startResending(async () => {
+                form.clearErrors("root")
+                setNotice(null)
+                await sendSecondFactorCode()
+              })
+            }}
+            onBackToLogin={() => {
+              startResetting(async () => {
+                await signIn.reset()
+                setAwaitingSecondFactor(false)
+                setSecondFactorMethod(null)
+                setNotice(null)
+                form.reset({
+                  email: form.getValues("email"),
+                  password: "",
+                  verificationCode: "",
+                })
+              })
+            }}
+          />
+        </div>
       ) : (
-        <main className="mt-36">
+        <div className="relative z-10 flex min-h-dvh items-center justify-center px-12 py-24">
           <LoginBlock
             title="Back your commitment."
             description="Sign in to manage your account"
@@ -308,7 +307,7 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
               submitLabel="Sign in"
             />
           </LoginBlock>
-        </main>
+        </div>
       )}
     </form>
   )

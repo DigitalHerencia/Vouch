@@ -13,8 +13,7 @@ import type {
 import type { ID, VouchID } from "./common"
 
 export type PaymentProvider = (typeof PAYMENT_PROVIDER_VALUES)[number]
-export type VerificationProvider = (typeof VERIFICATION_PROVIDER_VALUES)[number]
-export type PaymentReadinessStatus = (typeof PAYMENT_READINESS_STATUS_VALUES)[number]
+export type paymentMethodReadyStatus = (typeof PAYMENT_READINESS_STATUS_VALUES)[number]
 export type PayoutReadinessStatus = (typeof PAYOUT_READINESS_STATUS_VALUES)[number]
 export type PaymentStatus = (typeof PAYMENT_STATUS_VALUES)[number]
 export type SettlementStatus = (typeof SETTLEMENT_STATUS_VALUES)[number]

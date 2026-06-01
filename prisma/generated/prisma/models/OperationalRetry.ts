@@ -20,98 +20,146 @@ export type OperationalRetryModel = runtime.Types.Result.DefaultSelection<Prisma
 
 export type AggregateOperationalRetry = {
   _count: OperationalRetryCountAggregateOutputType | null
+  _avg: OperationalRetryAvgAggregateOutputType | null
+  _sum: OperationalRetrySumAggregateOutputType | null
   _min: OperationalRetryMinAggregateOutputType | null
   _max: OperationalRetryMaxAggregateOutputType | null
 }
 
+export type OperationalRetryAvgAggregateOutputType = {
+  attemptCount: number | null
+  maxAttempts: number | null
+}
+
+export type OperationalRetrySumAggregateOutputType = {
+  attemptCount: number | null
+  maxAttempts: number | null
+}
+
 export type OperationalRetryMinAggregateOutputType = {
   id: string | null
+  vouchId: string | null
   operation: $Enums.OperationalRetryOperation | null
   status: $Enums.OperationalRetryStatus | null
   entityType: string | null
   entityId: string | null
-  userId: string | null
-  reason: string | null
-  errorCode: string | null
-  startedAt: Date | null
+  attemptCount: number | null
+  maxAttempts: number | null
+  nextAttemptAt: Date | null
+  lastAttemptAt: Date | null
+  lockedAt: Date | null
   completedAt: Date | null
+  failedAt: Date | null
+  failureReason: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type OperationalRetryMaxAggregateOutputType = {
   id: string | null
+  vouchId: string | null
   operation: $Enums.OperationalRetryOperation | null
   status: $Enums.OperationalRetryStatus | null
   entityType: string | null
   entityId: string | null
-  userId: string | null
-  reason: string | null
-  errorCode: string | null
-  startedAt: Date | null
+  attemptCount: number | null
+  maxAttempts: number | null
+  nextAttemptAt: Date | null
+  lastAttemptAt: Date | null
+  lockedAt: Date | null
   completedAt: Date | null
+  failedAt: Date | null
+  failureReason: string | null
   createdAt: Date | null
   updatedAt: Date | null
 }
 
 export type OperationalRetryCountAggregateOutputType = {
   id: number
+  vouchId: number
   operation: number
   status: number
   entityType: number
   entityId: number
-  userId: number
-  reason: number
-  errorCode: number
-  startedAt: number
+  attemptCount: number
+  maxAttempts: number
+  nextAttemptAt: number
+  lastAttemptAt: number
+  lockedAt: number
   completedAt: number
+  failedAt: number
+  failureReason: number
+  metadata: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
 
+export type OperationalRetryAvgAggregateInputType = {
+  attemptCount?: true
+  maxAttempts?: true
+}
+
+export type OperationalRetrySumAggregateInputType = {
+  attemptCount?: true
+  maxAttempts?: true
+}
+
 export type OperationalRetryMinAggregateInputType = {
   id?: true
+  vouchId?: true
   operation?: true
   status?: true
   entityType?: true
   entityId?: true
-  userId?: true
-  reason?: true
-  errorCode?: true
-  startedAt?: true
+  attemptCount?: true
+  maxAttempts?: true
+  nextAttemptAt?: true
+  lastAttemptAt?: true
+  lockedAt?: true
   completedAt?: true
+  failedAt?: true
+  failureReason?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type OperationalRetryMaxAggregateInputType = {
   id?: true
+  vouchId?: true
   operation?: true
   status?: true
   entityType?: true
   entityId?: true
-  userId?: true
-  reason?: true
-  errorCode?: true
-  startedAt?: true
+  attemptCount?: true
+  maxAttempts?: true
+  nextAttemptAt?: true
+  lastAttemptAt?: true
+  lockedAt?: true
   completedAt?: true
+  failedAt?: true
+  failureReason?: true
   createdAt?: true
   updatedAt?: true
 }
 
 export type OperationalRetryCountAggregateInputType = {
   id?: true
+  vouchId?: true
   operation?: true
   status?: true
   entityType?: true
   entityId?: true
-  userId?: true
-  reason?: true
-  errorCode?: true
-  startedAt?: true
+  attemptCount?: true
+  maxAttempts?: true
+  nextAttemptAt?: true
+  lastAttemptAt?: true
+  lockedAt?: true
   completedAt?: true
+  failedAt?: true
+  failureReason?: true
+  metadata?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -155,6 +203,18 @@ export type OperationalRetryAggregateArgs<ExtArgs extends runtime.Types.Extensio
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: OperationalRetryAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: OperationalRetrySumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: OperationalRetryMinAggregateInputType
@@ -185,24 +245,33 @@ export type OperationalRetryGroupByArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   _count?: OperationalRetryCountAggregateInputType | true
+  _avg?: OperationalRetryAvgAggregateInputType
+  _sum?: OperationalRetrySumAggregateInputType
   _min?: OperationalRetryMinAggregateInputType
   _max?: OperationalRetryMaxAggregateInputType
 }
 
 export type OperationalRetryGroupByOutputType = {
   id: string
+  vouchId: string | null
   operation: $Enums.OperationalRetryOperation
   status: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
-  userId: string | null
-  reason: string | null
-  errorCode: string | null
-  startedAt: Date
+  attemptCount: number
+  maxAttempts: number
+  nextAttemptAt: Date | null
+  lastAttemptAt: Date | null
+  lockedAt: Date | null
   completedAt: Date | null
+  failedAt: Date | null
+  failureReason: string | null
+  metadata: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
   _count: OperationalRetryCountAggregateOutputType | null
+  _avg: OperationalRetryAvgAggregateOutputType | null
+  _sum: OperationalRetrySumAggregateOutputType | null
   _min: OperationalRetryMinAggregateOutputType | null
   _max: OperationalRetryMaxAggregateOutputType | null
 }
@@ -227,34 +296,44 @@ export type OperationalRetryWhereInput = {
   OR?: Prisma.OperationalRetryWhereInput[]
   NOT?: Prisma.OperationalRetryWhereInput | Prisma.OperationalRetryWhereInput[]
   id?: Prisma.StringFilter<"OperationalRetry"> | string
+  vouchId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   operation?: Prisma.EnumOperationalRetryOperationFilter<"OperationalRetry"> | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFilter<"OperationalRetry"> | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFilter<"OperationalRetry"> | string
   entityId?: Prisma.StringFilter<"OperationalRetry"> | string
-  userId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
-  reason?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
-  errorCode?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
-  startedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
+  attemptCount?: Prisma.IntFilter<"OperationalRetry"> | number
+  maxAttempts?: Prisma.IntFilter<"OperationalRetry"> | number
+  nextAttemptAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  lastAttemptAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  failedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  failureReason?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
+  metadata?: Prisma.JsonNullableFilter<"OperationalRetry">
   createdAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
-  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  vouch?: Prisma.XOR<Prisma.VouchNullableScalarRelationFilter, Prisma.VouchWhereInput> | null
 }
 
 export type OperationalRetryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  vouchId?: Prisma.SortOrderInput | Prisma.SortOrder
   operation?: Prisma.SortOrder
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
-  userId?: Prisma.SortOrderInput | Prisma.SortOrder
-  reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  errorCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
+  attemptCount?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  user?: Prisma.UserOrderByWithRelationInput
+  vouch?: Prisma.VouchOrderByWithRelationInput
 }
 
 export type OperationalRetryWhereUniqueInput = Prisma.AtLeast<{
@@ -262,36 +341,48 @@ export type OperationalRetryWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.OperationalRetryWhereInput | Prisma.OperationalRetryWhereInput[]
   OR?: Prisma.OperationalRetryWhereInput[]
   NOT?: Prisma.OperationalRetryWhereInput | Prisma.OperationalRetryWhereInput[]
+  vouchId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   operation?: Prisma.EnumOperationalRetryOperationFilter<"OperationalRetry"> | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFilter<"OperationalRetry"> | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFilter<"OperationalRetry"> | string
   entityId?: Prisma.StringFilter<"OperationalRetry"> | string
-  userId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
-  reason?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
-  errorCode?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
-  startedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
+  attemptCount?: Prisma.IntFilter<"OperationalRetry"> | number
+  maxAttempts?: Prisma.IntFilter<"OperationalRetry"> | number
+  nextAttemptAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  lastAttemptAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  failedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  failureReason?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
+  metadata?: Prisma.JsonNullableFilter<"OperationalRetry">
   createdAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
-  user?: Prisma.XOR<Prisma.UserNullableScalarRelationFilter, Prisma.UserWhereInput> | null
+  vouch?: Prisma.XOR<Prisma.VouchNullableScalarRelationFilter, Prisma.VouchWhereInput> | null
 }, "id">
 
 export type OperationalRetryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  vouchId?: Prisma.SortOrderInput | Prisma.SortOrder
   operation?: Prisma.SortOrder
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
-  userId?: Prisma.SortOrderInput | Prisma.SortOrder
-  reason?: Prisma.SortOrderInput | Prisma.SortOrder
-  errorCode?: Prisma.SortOrderInput | Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
+  attemptCount?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastAttemptAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  lockedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   completedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  metadata?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.OperationalRetryCountOrderByAggregateInput
+  _avg?: Prisma.OperationalRetryAvgOrderByAggregateInput
   _max?: Prisma.OperationalRetryMaxOrderByAggregateInput
   _min?: Prisma.OperationalRetryMinOrderByAggregateInput
+  _sum?: Prisma.OperationalRetrySumOrderByAggregateInput
 }
 
 export type OperationalRetryScalarWhereWithAggregatesInput = {
@@ -299,15 +390,20 @@ export type OperationalRetryScalarWhereWithAggregatesInput = {
   OR?: Prisma.OperationalRetryScalarWhereWithAggregatesInput[]
   NOT?: Prisma.OperationalRetryScalarWhereWithAggregatesInput | Prisma.OperationalRetryScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"OperationalRetry"> | string
+  vouchId?: Prisma.StringNullableWithAggregatesFilter<"OperationalRetry"> | string | null
   operation?: Prisma.EnumOperationalRetryOperationWithAggregatesFilter<"OperationalRetry"> | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusWithAggregatesFilter<"OperationalRetry"> | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringWithAggregatesFilter<"OperationalRetry"> | string
   entityId?: Prisma.StringWithAggregatesFilter<"OperationalRetry"> | string
-  userId?: Prisma.StringNullableWithAggregatesFilter<"OperationalRetry"> | string | null
-  reason?: Prisma.StringNullableWithAggregatesFilter<"OperationalRetry"> | string | null
-  errorCode?: Prisma.StringNullableWithAggregatesFilter<"OperationalRetry"> | string | null
-  startedAt?: Prisma.DateTimeWithAggregatesFilter<"OperationalRetry"> | Date | string
+  attemptCount?: Prisma.IntWithAggregatesFilter<"OperationalRetry"> | number
+  maxAttempts?: Prisma.IntWithAggregatesFilter<"OperationalRetry"> | number
+  nextAttemptAt?: Prisma.DateTimeNullableWithAggregatesFilter<"OperationalRetry"> | Date | string | null
+  lastAttemptAt?: Prisma.DateTimeNullableWithAggregatesFilter<"OperationalRetry"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"OperationalRetry"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"OperationalRetry"> | Date | string | null
+  failedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"OperationalRetry"> | Date | string | null
+  failureReason?: Prisma.StringNullableWithAggregatesFilter<"OperationalRetry"> | string | null
+  metadata?: Prisma.JsonNullableWithAggregatesFilter<"OperationalRetry">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"OperationalRetry"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"OperationalRetry"> | Date | string
 }
@@ -318,26 +414,36 @@ export type OperationalRetryCreateInput = {
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
-  reason?: string | null
-  errorCode?: string | null
-  startedAt?: Date | string
+  attemptCount?: number
+  maxAttempts?: number
+  nextAttemptAt?: Date | string | null
+  lastAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
   completedAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
-  user?: Prisma.UserCreateNestedOneWithoutOperationalRetriesInput
+  vouch?: Prisma.VouchCreateNestedOneWithoutRetriesInput
 }
 
 export type OperationalRetryUncheckedCreateInput = {
   id?: string
+  vouchId?: string | null
   operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
-  userId?: string | null
-  reason?: string | null
-  errorCode?: string | null
-  startedAt?: Date | string
+  attemptCount?: number
+  maxAttempts?: number
+  nextAttemptAt?: Date | string | null
+  lastAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
   completedAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -348,41 +454,56 @@ export type OperationalRetryUpdateInput = {
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneWithoutOperationalRetriesNestedInput
+  vouch?: Prisma.VouchUpdateOneWithoutRetriesNestedInput
 }
 
 export type OperationalRetryUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OperationalRetryCreateManyInput = {
   id?: string
+  vouchId?: string | null
   operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
-  userId?: string | null
-  reason?: string | null
-  errorCode?: string | null
-  startedAt?: Date | string
+  attemptCount?: number
+  maxAttempts?: number
+  nextAttemptAt?: Date | string | null
+  lastAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
   completedAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -393,25 +514,35 @@ export type OperationalRetryUpdateManyMutationInput = {
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type OperationalRetryUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -428,88 +559,111 @@ export type OperationalRetryOrderByRelationAggregateInput = {
 
 export type OperationalRetryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  vouchId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
-  errorCode?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
+  attemptCount?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrder
+  lastAttemptAt?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  failedAt?: Prisma.SortOrder
+  failureReason?: Prisma.SortOrder
+  metadata?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
+export type OperationalRetryAvgOrderByAggregateInput = {
+  attemptCount?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+}
+
 export type OperationalRetryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  vouchId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
-  errorCode?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
+  attemptCount?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrder
+  lastAttemptAt?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  failedAt?: Prisma.SortOrder
+  failureReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
 export type OperationalRetryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  vouchId?: Prisma.SortOrder
   operation?: Prisma.SortOrder
   status?: Prisma.SortOrder
   entityType?: Prisma.SortOrder
   entityId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  reason?: Prisma.SortOrder
-  errorCode?: Prisma.SortOrder
-  startedAt?: Prisma.SortOrder
+  attemptCount?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+  nextAttemptAt?: Prisma.SortOrder
+  lastAttemptAt?: Prisma.SortOrder
+  lockedAt?: Prisma.SortOrder
   completedAt?: Prisma.SortOrder
+  failedAt?: Prisma.SortOrder
+  failureReason?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
 
-export type OperationalRetryCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput> | Prisma.OperationalRetryCreateWithoutUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutUserInput | Prisma.OperationalRetryCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.OperationalRetryCreateManyUserInputEnvelope
+export type OperationalRetrySumOrderByAggregateInput = {
+  attemptCount?: Prisma.SortOrder
+  maxAttempts?: Prisma.SortOrder
+}
+
+export type OperationalRetryCreateNestedManyWithoutVouchInput = {
+  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutVouchInput, Prisma.OperationalRetryUncheckedCreateWithoutVouchInput> | Prisma.OperationalRetryCreateWithoutVouchInput[] | Prisma.OperationalRetryUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutVouchInput | Prisma.OperationalRetryCreateOrConnectWithoutVouchInput[]
+  createMany?: Prisma.OperationalRetryCreateManyVouchInputEnvelope
   connect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
 }
 
-export type OperationalRetryUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput> | Prisma.OperationalRetryCreateWithoutUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutUserInput | Prisma.OperationalRetryCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.OperationalRetryCreateManyUserInputEnvelope
+export type OperationalRetryUncheckedCreateNestedManyWithoutVouchInput = {
+  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutVouchInput, Prisma.OperationalRetryUncheckedCreateWithoutVouchInput> | Prisma.OperationalRetryCreateWithoutVouchInput[] | Prisma.OperationalRetryUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutVouchInput | Prisma.OperationalRetryCreateOrConnectWithoutVouchInput[]
+  createMany?: Prisma.OperationalRetryCreateManyVouchInputEnvelope
   connect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
 }
 
-export type OperationalRetryUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput> | Prisma.OperationalRetryCreateWithoutUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutUserInput | Prisma.OperationalRetryCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.OperationalRetryUpsertWithWhereUniqueWithoutUserInput | Prisma.OperationalRetryUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.OperationalRetryCreateManyUserInputEnvelope
+export type OperationalRetryUpdateManyWithoutVouchNestedInput = {
+  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutVouchInput, Prisma.OperationalRetryUncheckedCreateWithoutVouchInput> | Prisma.OperationalRetryCreateWithoutVouchInput[] | Prisma.OperationalRetryUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutVouchInput | Prisma.OperationalRetryCreateOrConnectWithoutVouchInput[]
+  upsert?: Prisma.OperationalRetryUpsertWithWhereUniqueWithoutVouchInput | Prisma.OperationalRetryUpsertWithWhereUniqueWithoutVouchInput[]
+  createMany?: Prisma.OperationalRetryCreateManyVouchInputEnvelope
   set?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   disconnect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   delete?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   connect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
-  update?: Prisma.OperationalRetryUpdateWithWhereUniqueWithoutUserInput | Prisma.OperationalRetryUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.OperationalRetryUpdateManyWithWhereWithoutUserInput | Prisma.OperationalRetryUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.OperationalRetryUpdateWithWhereUniqueWithoutVouchInput | Prisma.OperationalRetryUpdateWithWhereUniqueWithoutVouchInput[]
+  updateMany?: Prisma.OperationalRetryUpdateManyWithWhereWithoutVouchInput | Prisma.OperationalRetryUpdateManyWithWhereWithoutVouchInput[]
   deleteMany?: Prisma.OperationalRetryScalarWhereInput | Prisma.OperationalRetryScalarWhereInput[]
 }
 
-export type OperationalRetryUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput> | Prisma.OperationalRetryCreateWithoutUserInput[] | Prisma.OperationalRetryUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutUserInput | Prisma.OperationalRetryCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.OperationalRetryUpsertWithWhereUniqueWithoutUserInput | Prisma.OperationalRetryUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.OperationalRetryCreateManyUserInputEnvelope
+export type OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput = {
+  create?: Prisma.XOR<Prisma.OperationalRetryCreateWithoutVouchInput, Prisma.OperationalRetryUncheckedCreateWithoutVouchInput> | Prisma.OperationalRetryCreateWithoutVouchInput[] | Prisma.OperationalRetryUncheckedCreateWithoutVouchInput[]
+  connectOrCreate?: Prisma.OperationalRetryCreateOrConnectWithoutVouchInput | Prisma.OperationalRetryCreateOrConnectWithoutVouchInput[]
+  upsert?: Prisma.OperationalRetryUpsertWithWhereUniqueWithoutVouchInput | Prisma.OperationalRetryUpsertWithWhereUniqueWithoutVouchInput[]
+  createMany?: Prisma.OperationalRetryCreateManyVouchInputEnvelope
   set?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   disconnect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   delete?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
   connect?: Prisma.OperationalRetryWhereUniqueInput | Prisma.OperationalRetryWhereUniqueInput[]
-  update?: Prisma.OperationalRetryUpdateWithWhereUniqueWithoutUserInput | Prisma.OperationalRetryUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.OperationalRetryUpdateManyWithWhereWithoutUserInput | Prisma.OperationalRetryUpdateManyWithWhereWithoutUserInput[]
+  update?: Prisma.OperationalRetryUpdateWithWhereUniqueWithoutVouchInput | Prisma.OperationalRetryUpdateWithWhereUniqueWithoutVouchInput[]
+  updateMany?: Prisma.OperationalRetryUpdateManyWithWhereWithoutVouchInput | Prisma.OperationalRetryUpdateManyWithWhereWithoutVouchInput[]
   deleteMany?: Prisma.OperationalRetryScalarWhereInput | Prisma.OperationalRetryScalarWhereInput[]
 }
 
@@ -521,58 +675,68 @@ export type EnumOperationalRetryStatusFieldUpdateOperationsInput = {
   set?: $Enums.OperationalRetryStatus
 }
 
-export type OperationalRetryCreateWithoutUserInput = {
+export type OperationalRetryCreateWithoutVouchInput = {
   id?: string
   operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
-  reason?: string | null
-  errorCode?: string | null
-  startedAt?: Date | string
+  attemptCount?: number
+  maxAttempts?: number
+  nextAttemptAt?: Date | string | null
+  lastAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
   completedAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
-export type OperationalRetryUncheckedCreateWithoutUserInput = {
+export type OperationalRetryUncheckedCreateWithoutVouchInput = {
   id?: string
   operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
-  reason?: string | null
-  errorCode?: string | null
-  startedAt?: Date | string
+  attemptCount?: number
+  maxAttempts?: number
+  nextAttemptAt?: Date | string | null
+  lastAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
   completedAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
-export type OperationalRetryCreateOrConnectWithoutUserInput = {
+export type OperationalRetryCreateOrConnectWithoutVouchInput = {
   where: Prisma.OperationalRetryWhereUniqueInput
-  create: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput>
+  create: Prisma.XOR<Prisma.OperationalRetryCreateWithoutVouchInput, Prisma.OperationalRetryUncheckedCreateWithoutVouchInput>
 }
 
-export type OperationalRetryCreateManyUserInputEnvelope = {
-  data: Prisma.OperationalRetryCreateManyUserInput | Prisma.OperationalRetryCreateManyUserInput[]
+export type OperationalRetryCreateManyVouchInputEnvelope = {
+  data: Prisma.OperationalRetryCreateManyVouchInput | Prisma.OperationalRetryCreateManyVouchInput[]
   skipDuplicates?: boolean
 }
 
-export type OperationalRetryUpsertWithWhereUniqueWithoutUserInput = {
+export type OperationalRetryUpsertWithWhereUniqueWithoutVouchInput = {
   where: Prisma.OperationalRetryWhereUniqueInput
-  update: Prisma.XOR<Prisma.OperationalRetryUpdateWithoutUserInput, Prisma.OperationalRetryUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.OperationalRetryCreateWithoutUserInput, Prisma.OperationalRetryUncheckedCreateWithoutUserInput>
+  update: Prisma.XOR<Prisma.OperationalRetryUpdateWithoutVouchInput, Prisma.OperationalRetryUncheckedUpdateWithoutVouchInput>
+  create: Prisma.XOR<Prisma.OperationalRetryCreateWithoutVouchInput, Prisma.OperationalRetryUncheckedCreateWithoutVouchInput>
 }
 
-export type OperationalRetryUpdateWithWhereUniqueWithoutUserInput = {
+export type OperationalRetryUpdateWithWhereUniqueWithoutVouchInput = {
   where: Prisma.OperationalRetryWhereUniqueInput
-  data: Prisma.XOR<Prisma.OperationalRetryUpdateWithoutUserInput, Prisma.OperationalRetryUncheckedUpdateWithoutUserInput>
+  data: Prisma.XOR<Prisma.OperationalRetryUpdateWithoutVouchInput, Prisma.OperationalRetryUncheckedUpdateWithoutVouchInput>
 }
 
-export type OperationalRetryUpdateManyWithWhereWithoutUserInput = {
+export type OperationalRetryUpdateManyWithWhereWithoutVouchInput = {
   where: Prisma.OperationalRetryScalarWhereInput
-  data: Prisma.XOR<Prisma.OperationalRetryUpdateManyMutationInput, Prisma.OperationalRetryUncheckedUpdateManyWithoutUserInput>
+  data: Prisma.XOR<Prisma.OperationalRetryUpdateManyMutationInput, Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchInput>
 }
 
 export type OperationalRetryScalarWhereInput = {
@@ -580,71 +744,96 @@ export type OperationalRetryScalarWhereInput = {
   OR?: Prisma.OperationalRetryScalarWhereInput[]
   NOT?: Prisma.OperationalRetryScalarWhereInput | Prisma.OperationalRetryScalarWhereInput[]
   id?: Prisma.StringFilter<"OperationalRetry"> | string
+  vouchId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
   operation?: Prisma.EnumOperationalRetryOperationFilter<"OperationalRetry"> | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFilter<"OperationalRetry"> | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFilter<"OperationalRetry"> | string
   entityId?: Prisma.StringFilter<"OperationalRetry"> | string
-  userId?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
-  reason?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
-  errorCode?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
-  startedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
+  attemptCount?: Prisma.IntFilter<"OperationalRetry"> | number
+  maxAttempts?: Prisma.IntFilter<"OperationalRetry"> | number
+  nextAttemptAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  lastAttemptAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  lockedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
   completedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  failedAt?: Prisma.DateTimeNullableFilter<"OperationalRetry"> | Date | string | null
+  failureReason?: Prisma.StringNullableFilter<"OperationalRetry"> | string | null
+  metadata?: Prisma.JsonNullableFilter<"OperationalRetry">
   createdAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"OperationalRetry"> | Date | string
 }
 
-export type OperationalRetryCreateManyUserInput = {
+export type OperationalRetryCreateManyVouchInput = {
   id?: string
   operation: $Enums.OperationalRetryOperation
   status?: $Enums.OperationalRetryStatus
   entityType: string
   entityId: string
-  reason?: string | null
-  errorCode?: string | null
-  startedAt?: Date | string
+  attemptCount?: number
+  maxAttempts?: number
+  nextAttemptAt?: Date | string | null
+  lastAttemptAt?: Date | string | null
+  lockedAt?: Date | string | null
   completedAt?: Date | string | null
+  failedAt?: Date | string | null
+  failureReason?: string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
 }
 
-export type OperationalRetryUpdateWithoutUserInput = {
+export type OperationalRetryUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type OperationalRetryUncheckedUpdateWithoutUserInput = {
+export type OperationalRetryUncheckedUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type OperationalRetryUncheckedUpdateManyWithoutUserInput = {
+export type OperationalRetryUncheckedUpdateManyWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   operation?: Prisma.EnumOperationalRetryOperationFieldUpdateOperationsInput | $Enums.OperationalRetryOperation
   status?: Prisma.EnumOperationalRetryStatusFieldUpdateOperationsInput | $Enums.OperationalRetryStatus
   entityType?: Prisma.StringFieldUpdateOperationsInput | string
   entityId?: Prisma.StringFieldUpdateOperationsInput | string
-  reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  errorCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  startedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attemptCount?: Prisma.IntFieldUpdateOperationsInput | number
+  maxAttempts?: Prisma.IntFieldUpdateOperationsInput | number
+  nextAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastAttemptAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lockedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   completedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metadata?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -653,94 +842,119 @@ export type OperationalRetryUncheckedUpdateManyWithoutUserInput = {
 
 export type OperationalRetrySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  vouchId?: boolean
   operation?: boolean
   status?: boolean
   entityType?: boolean
   entityId?: boolean
-  userId?: boolean
-  reason?: boolean
-  errorCode?: boolean
-  startedAt?: boolean
+  attemptCount?: boolean
+  maxAttempts?: boolean
+  nextAttemptAt?: boolean
+  lastAttemptAt?: boolean
+  lockedAt?: boolean
   completedAt?: boolean
+  failedAt?: boolean
+  failureReason?: boolean
+  metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
+  vouch?: boolean | Prisma.OperationalRetry$vouchArgs<ExtArgs>
 }, ExtArgs["result"]["operationalRetry"]>
 
 export type OperationalRetrySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  vouchId?: boolean
   operation?: boolean
   status?: boolean
   entityType?: boolean
   entityId?: boolean
-  userId?: boolean
-  reason?: boolean
-  errorCode?: boolean
-  startedAt?: boolean
+  attemptCount?: boolean
+  maxAttempts?: boolean
+  nextAttemptAt?: boolean
+  lastAttemptAt?: boolean
+  lockedAt?: boolean
   completedAt?: boolean
+  failedAt?: boolean
+  failureReason?: boolean
+  metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
+  vouch?: boolean | Prisma.OperationalRetry$vouchArgs<ExtArgs>
 }, ExtArgs["result"]["operationalRetry"]>
 
 export type OperationalRetrySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  vouchId?: boolean
   operation?: boolean
   status?: boolean
   entityType?: boolean
   entityId?: boolean
-  userId?: boolean
-  reason?: boolean
-  errorCode?: boolean
-  startedAt?: boolean
+  attemptCount?: boolean
+  maxAttempts?: boolean
+  nextAttemptAt?: boolean
+  lastAttemptAt?: boolean
+  lockedAt?: boolean
   completedAt?: boolean
+  failedAt?: boolean
+  failureReason?: boolean
+  metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
+  vouch?: boolean | Prisma.OperationalRetry$vouchArgs<ExtArgs>
 }, ExtArgs["result"]["operationalRetry"]>
 
 export type OperationalRetrySelectScalar = {
   id?: boolean
+  vouchId?: boolean
   operation?: boolean
   status?: boolean
   entityType?: boolean
   entityId?: boolean
-  userId?: boolean
-  reason?: boolean
-  errorCode?: boolean
-  startedAt?: boolean
+  attemptCount?: boolean
+  maxAttempts?: boolean
+  nextAttemptAt?: boolean
+  lastAttemptAt?: boolean
+  lockedAt?: boolean
   completedAt?: boolean
+  failedAt?: boolean
+  failureReason?: boolean
+  metadata?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type OperationalRetryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "operation" | "status" | "entityType" | "entityId" | "userId" | "reason" | "errorCode" | "startedAt" | "completedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["operationalRetry"]>
+export type OperationalRetryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "operation" | "status" | "entityType" | "entityId" | "attemptCount" | "maxAttempts" | "nextAttemptAt" | "lastAttemptAt" | "lockedAt" | "completedAt" | "failedAt" | "failureReason" | "metadata" | "createdAt" | "updatedAt", ExtArgs["result"]["operationalRetry"]>
 export type OperationalRetryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
+  vouch?: boolean | Prisma.OperationalRetry$vouchArgs<ExtArgs>
 }
 export type OperationalRetryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
+  vouch?: boolean | Prisma.OperationalRetry$vouchArgs<ExtArgs>
 }
 export type OperationalRetryIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  user?: boolean | Prisma.OperationalRetry$userArgs<ExtArgs>
+  vouch?: boolean | Prisma.OperationalRetry$vouchArgs<ExtArgs>
 }
 
 export type $OperationalRetryPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "OperationalRetry"
   objects: {
-    user: Prisma.$UserPayload<ExtArgs> | null
+    vouch: Prisma.$VouchPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    vouchId: string | null
     operation: $Enums.OperationalRetryOperation
     status: $Enums.OperationalRetryStatus
     entityType: string
     entityId: string
-    userId: string | null
-    reason: string | null
-    errorCode: string | null
-    startedAt: Date
+    attemptCount: number
+    maxAttempts: number
+    nextAttemptAt: Date | null
+    lastAttemptAt: Date | null
+    lockedAt: Date | null
     completedAt: Date | null
+    failedAt: Date | null
+    failureReason: string | null
+    metadata: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["operationalRetry"]>
@@ -1137,7 +1351,7 @@ readonly fields: OperationalRetryFieldRefs;
  */
 export interface Prisma__OperationalRetryClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
-  user<T extends Prisma.OperationalRetry$userArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OperationalRetry$userArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  vouch<T extends Prisma.OperationalRetry$vouchArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OperationalRetry$vouchArgs<ExtArgs>>): Prisma.Prisma__VouchClient<runtime.Types.Result.GetResult<Prisma.$VouchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1168,15 +1382,20 @@ export interface Prisma__OperationalRetryClient<T, Null = never, ExtArgs extends
  */
 export interface OperationalRetryFieldRefs {
   readonly id: Prisma.FieldRef<"OperationalRetry", 'String'>
+  readonly vouchId: Prisma.FieldRef<"OperationalRetry", 'String'>
   readonly operation: Prisma.FieldRef<"OperationalRetry", 'OperationalRetryOperation'>
   readonly status: Prisma.FieldRef<"OperationalRetry", 'OperationalRetryStatus'>
   readonly entityType: Prisma.FieldRef<"OperationalRetry", 'String'>
   readonly entityId: Prisma.FieldRef<"OperationalRetry", 'String'>
-  readonly userId: Prisma.FieldRef<"OperationalRetry", 'String'>
-  readonly reason: Prisma.FieldRef<"OperationalRetry", 'String'>
-  readonly errorCode: Prisma.FieldRef<"OperationalRetry", 'String'>
-  readonly startedAt: Prisma.FieldRef<"OperationalRetry", 'DateTime'>
+  readonly attemptCount: Prisma.FieldRef<"OperationalRetry", 'Int'>
+  readonly maxAttempts: Prisma.FieldRef<"OperationalRetry", 'Int'>
+  readonly nextAttemptAt: Prisma.FieldRef<"OperationalRetry", 'DateTime'>
+  readonly lastAttemptAt: Prisma.FieldRef<"OperationalRetry", 'DateTime'>
+  readonly lockedAt: Prisma.FieldRef<"OperationalRetry", 'DateTime'>
   readonly completedAt: Prisma.FieldRef<"OperationalRetry", 'DateTime'>
+  readonly failedAt: Prisma.FieldRef<"OperationalRetry", 'DateTime'>
+  readonly failureReason: Prisma.FieldRef<"OperationalRetry", 'String'>
+  readonly metadata: Prisma.FieldRef<"OperationalRetry", 'Json'>
   readonly createdAt: Prisma.FieldRef<"OperationalRetry", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"OperationalRetry", 'DateTime'>
 }
@@ -1580,22 +1799,22 @@ export type OperationalRetryDeleteManyArgs<ExtArgs extends runtime.Types.Extensi
 }
 
 /**
- * OperationalRetry.user
+ * OperationalRetry.vouch
  */
-export type OperationalRetry$userArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type OperationalRetry$vouchArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the User
+   * Select specific fields to fetch from the Vouch
    */
-  select?: Prisma.UserSelect<ExtArgs> | null
+  select?: Prisma.VouchSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the User
+   * Omit specific fields from the Vouch
    */
-  omit?: Prisma.UserOmit<ExtArgs> | null
+  omit?: Prisma.VouchOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.UserInclude<ExtArgs> | null
-  where?: Prisma.UserWhereInput
+  include?: Prisma.VouchInclude<ExtArgs> | null
+  where?: Prisma.VouchWhereInput
 }
 
 /**

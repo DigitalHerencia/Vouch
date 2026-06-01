@@ -27,111 +27,147 @@ export type AggregatePresenceConfirmation = {
 }
 
 export type PresenceConfirmationAvgAggregateOutputType = {
-  timeBucket: number | null
+  retryCount: number | null
 }
 
 export type PresenceConfirmationSumAggregateOutputType = {
-  timeBucket: number | null
+  retryCount: number | null
 }
 
 export type PresenceConfirmationMinAggregateOutputType = {
   id: string | null
   vouchId: string | null
-  userId: string | null
-  participantRole: $Enums.ParticipantRole | null
-  status: $Enums.ConfirmationStatus | null
-  method: $Enums.ConfirmationMethod | null
-  confirmedAt: Date | null
-  serverReceivedAt: Date | null
-  timeBucket: number | null
-  clockSkewAccepted: boolean | null
-  offlinePayloadHash: string | null
+  status: $Enums.PresenceConfirmationStatus | null
+  windowOpensAt: Date | null
+  windowClosesAt: Date | null
+  merchantConfirmedAt: Date | null
+  customerConfirmedAt: Date | null
+  canCaptureAt: Date | null
+  voidedAt: Date | null
+  merchantCodeVerified: boolean | null
+  customerCodeVerified: boolean | null
+  resolutionSource: $Enums.PresenceResolutionSource | null
+  failureReason: string | null
+  retryUntil: Date | null
+  lastRetryAt: Date | null
+  retryCount: number | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type PresenceConfirmationMaxAggregateOutputType = {
   id: string | null
   vouchId: string | null
-  userId: string | null
-  participantRole: $Enums.ParticipantRole | null
-  status: $Enums.ConfirmationStatus | null
-  method: $Enums.ConfirmationMethod | null
-  confirmedAt: Date | null
-  serverReceivedAt: Date | null
-  timeBucket: number | null
-  clockSkewAccepted: boolean | null
-  offlinePayloadHash: string | null
+  status: $Enums.PresenceConfirmationStatus | null
+  windowOpensAt: Date | null
+  windowClosesAt: Date | null
+  merchantConfirmedAt: Date | null
+  customerConfirmedAt: Date | null
+  canCaptureAt: Date | null
+  voidedAt: Date | null
+  merchantCodeVerified: boolean | null
+  customerCodeVerified: boolean | null
+  resolutionSource: $Enums.PresenceResolutionSource | null
+  failureReason: string | null
+  retryUntil: Date | null
+  lastRetryAt: Date | null
+  retryCount: number | null
   createdAt: Date | null
+  updatedAt: Date | null
 }
 
 export type PresenceConfirmationCountAggregateOutputType = {
   id: number
   vouchId: number
-  userId: number
-  participantRole: number
   status: number
-  method: number
-  confirmedAt: number
-  serverReceivedAt: number
-  timeBucket: number
-  clockSkewAccepted: number
-  offlinePayloadHash: number
+  windowOpensAt: number
+  windowClosesAt: number
+  merchantConfirmedAt: number
+  customerConfirmedAt: number
+  canCaptureAt: number
+  voidedAt: number
+  merchantCodeVerified: number
+  customerCodeVerified: number
+  resolutionSource: number
+  failureReason: number
+  retryUntil: number
+  lastRetryAt: number
+  retryCount: number
   createdAt: number
+  updatedAt: number
   _all: number
 }
 
 
 export type PresenceConfirmationAvgAggregateInputType = {
-  timeBucket?: true
+  retryCount?: true
 }
 
 export type PresenceConfirmationSumAggregateInputType = {
-  timeBucket?: true
+  retryCount?: true
 }
 
 export type PresenceConfirmationMinAggregateInputType = {
   id?: true
   vouchId?: true
-  userId?: true
-  participantRole?: true
   status?: true
-  method?: true
-  confirmedAt?: true
-  serverReceivedAt?: true
-  timeBucket?: true
-  clockSkewAccepted?: true
-  offlinePayloadHash?: true
+  windowOpensAt?: true
+  windowClosesAt?: true
+  merchantConfirmedAt?: true
+  customerConfirmedAt?: true
+  canCaptureAt?: true
+  voidedAt?: true
+  merchantCodeVerified?: true
+  customerCodeVerified?: true
+  resolutionSource?: true
+  failureReason?: true
+  retryUntil?: true
+  lastRetryAt?: true
+  retryCount?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type PresenceConfirmationMaxAggregateInputType = {
   id?: true
   vouchId?: true
-  userId?: true
-  participantRole?: true
   status?: true
-  method?: true
-  confirmedAt?: true
-  serverReceivedAt?: true
-  timeBucket?: true
-  clockSkewAccepted?: true
-  offlinePayloadHash?: true
+  windowOpensAt?: true
+  windowClosesAt?: true
+  merchantConfirmedAt?: true
+  customerConfirmedAt?: true
+  canCaptureAt?: true
+  voidedAt?: true
+  merchantCodeVerified?: true
+  customerCodeVerified?: true
+  resolutionSource?: true
+  failureReason?: true
+  retryUntil?: true
+  lastRetryAt?: true
+  retryCount?: true
   createdAt?: true
+  updatedAt?: true
 }
 
 export type PresenceConfirmationCountAggregateInputType = {
   id?: true
   vouchId?: true
-  userId?: true
-  participantRole?: true
   status?: true
-  method?: true
-  confirmedAt?: true
-  serverReceivedAt?: true
-  timeBucket?: true
-  clockSkewAccepted?: true
-  offlinePayloadHash?: true
+  windowOpensAt?: true
+  windowClosesAt?: true
+  merchantConfirmedAt?: true
+  customerConfirmedAt?: true
+  canCaptureAt?: true
+  voidedAt?: true
+  merchantCodeVerified?: true
+  customerCodeVerified?: true
+  resolutionSource?: true
+  failureReason?: true
+  retryUntil?: true
+  lastRetryAt?: true
+  retryCount?: true
   createdAt?: true
+  updatedAt?: true
   _all?: true
 }
 
@@ -224,16 +260,22 @@ export type PresenceConfirmationGroupByArgs<ExtArgs extends runtime.Types.Extens
 export type PresenceConfirmationGroupByOutputType = {
   id: string
   vouchId: string
-  userId: string
-  participantRole: $Enums.ParticipantRole
-  status: $Enums.ConfirmationStatus
-  method: $Enums.ConfirmationMethod
-  confirmedAt: Date | null
-  serverReceivedAt: Date
-  timeBucket: number | null
-  clockSkewAccepted: boolean
-  offlinePayloadHash: string | null
+  status: $Enums.PresenceConfirmationStatus
+  windowOpensAt: Date
+  windowClosesAt: Date
+  merchantConfirmedAt: Date | null
+  customerConfirmedAt: Date | null
+  canCaptureAt: Date | null
+  voidedAt: Date | null
+  merchantCodeVerified: boolean
+  customerCodeVerified: boolean
+  resolutionSource: $Enums.PresenceResolutionSource | null
+  failureReason: string | null
+  retryUntil: Date | null
+  lastRetryAt: Date | null
+  retryCount: number
   createdAt: Date
+  updatedAt: Date
   _count: PresenceConfirmationCountAggregateOutputType | null
   _avg: PresenceConfirmationAvgAggregateOutputType | null
   _sum: PresenceConfirmationSumAggregateOutputType | null
@@ -262,72 +304,94 @@ export type PresenceConfirmationWhereInput = {
   NOT?: Prisma.PresenceConfirmationWhereInput | Prisma.PresenceConfirmationWhereInput[]
   id?: Prisma.StringFilter<"PresenceConfirmation"> | string
   vouchId?: Prisma.StringFilter<"PresenceConfirmation"> | string
-  userId?: Prisma.StringFilter<"PresenceConfirmation"> | string
-  participantRole?: Prisma.EnumParticipantRoleFilter<"PresenceConfirmation"> | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFilter<"PresenceConfirmation"> | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFilter<"PresenceConfirmation"> | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
-  timeBucket?: Prisma.IntNullableFilter<"PresenceConfirmation"> | number | null
-  clockSkewAccepted?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
-  offlinePayloadHash?: Prisma.StringNullableFilter<"PresenceConfirmation"> | string | null
+  status?: Prisma.EnumPresenceConfirmationStatusFilter<"PresenceConfirmation"> | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  windowClosesAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  merchantConfirmedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  customerConfirmedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  canCaptureAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  merchantCodeVerified?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
+  customerCodeVerified?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
+  resolutionSource?: Prisma.EnumPresenceResolutionSourceNullableFilter<"PresenceConfirmation"> | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.StringNullableFilter<"PresenceConfirmation"> | string | null
+  retryUntil?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  lastRetryAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  retryCount?: Prisma.IntFilter<"PresenceConfirmation"> | number
   createdAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  attempts?: Prisma.PresenceConfirmationAttemptListRelationFilter
 }
 
 export type PresenceConfirmationOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  participantRole?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  method?: Prisma.SortOrder
-  confirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  serverReceivedAt?: Prisma.SortOrder
-  timeBucket?: Prisma.SortOrderInput | Prisma.SortOrder
-  clockSkewAccepted?: Prisma.SortOrder
-  offlinePayloadHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  windowOpensAt?: Prisma.SortOrder
+  windowClosesAt?: Prisma.SortOrder
+  merchantConfirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  customerConfirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  canCaptureAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  merchantCodeVerified?: Prisma.SortOrder
+  customerCodeVerified?: Prisma.SortOrder
+  resolutionSource?: Prisma.SortOrderInput | Prisma.SortOrder
+  failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  retryUntil?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastRetryAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   vouch?: Prisma.VouchOrderByWithRelationInput
-  user?: Prisma.UserOrderByWithRelationInput
+  attempts?: Prisma.PresenceConfirmationAttemptOrderByRelationAggregateInput
 }
 
 export type PresenceConfirmationWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  vouchId_participantRole?: Prisma.PresenceConfirmationVouchIdParticipantRoleCompoundUniqueInput
-  vouchId_userId?: Prisma.PresenceConfirmationVouchIdUserIdCompoundUniqueInput
+  vouchId?: string
   AND?: Prisma.PresenceConfirmationWhereInput | Prisma.PresenceConfirmationWhereInput[]
   OR?: Prisma.PresenceConfirmationWhereInput[]
   NOT?: Prisma.PresenceConfirmationWhereInput | Prisma.PresenceConfirmationWhereInput[]
-  vouchId?: Prisma.StringFilter<"PresenceConfirmation"> | string
-  userId?: Prisma.StringFilter<"PresenceConfirmation"> | string
-  participantRole?: Prisma.EnumParticipantRoleFilter<"PresenceConfirmation"> | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFilter<"PresenceConfirmation"> | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFilter<"PresenceConfirmation"> | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
-  timeBucket?: Prisma.IntNullableFilter<"PresenceConfirmation"> | number | null
-  clockSkewAccepted?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
-  offlinePayloadHash?: Prisma.StringNullableFilter<"PresenceConfirmation"> | string | null
+  status?: Prisma.EnumPresenceConfirmationStatusFilter<"PresenceConfirmation"> | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  windowClosesAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  merchantConfirmedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  customerConfirmedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  canCaptureAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  merchantCodeVerified?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
+  customerCodeVerified?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
+  resolutionSource?: Prisma.EnumPresenceResolutionSourceNullableFilter<"PresenceConfirmation"> | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.StringNullableFilter<"PresenceConfirmation"> | string | null
+  retryUntil?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  lastRetryAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
+  retryCount?: Prisma.IntFilter<"PresenceConfirmation"> | number
   createdAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
-  user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
-}, "id" | "vouchId_participantRole" | "vouchId_userId">
+  attempts?: Prisma.PresenceConfirmationAttemptListRelationFilter
+}, "id" | "vouchId">
 
 export type PresenceConfirmationOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  participantRole?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  method?: Prisma.SortOrder
-  confirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  serverReceivedAt?: Prisma.SortOrder
-  timeBucket?: Prisma.SortOrderInput | Prisma.SortOrder
-  clockSkewAccepted?: Prisma.SortOrder
-  offlinePayloadHash?: Prisma.SortOrderInput | Prisma.SortOrder
+  windowOpensAt?: Prisma.SortOrder
+  windowClosesAt?: Prisma.SortOrder
+  merchantConfirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  customerConfirmedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  canCaptureAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  voidedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  merchantCodeVerified?: Prisma.SortOrder
+  customerCodeVerified?: Prisma.SortOrder
+  resolutionSource?: Prisma.SortOrderInput | Prisma.SortOrder
+  failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
+  retryUntil?: Prisma.SortOrderInput | Prisma.SortOrder
+  lastRetryAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
   _count?: Prisma.PresenceConfirmationCountOrderByAggregateInput
   _avg?: Prisma.PresenceConfirmationAvgOrderByAggregateInput
   _max?: Prisma.PresenceConfirmationMaxOrderByAggregateInput
@@ -341,396 +405,349 @@ export type PresenceConfirmationScalarWhereWithAggregatesInput = {
   NOT?: Prisma.PresenceConfirmationScalarWhereWithAggregatesInput | Prisma.PresenceConfirmationScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"PresenceConfirmation"> | string
   vouchId?: Prisma.StringWithAggregatesFilter<"PresenceConfirmation"> | string
-  userId?: Prisma.StringWithAggregatesFilter<"PresenceConfirmation"> | string
-  participantRole?: Prisma.EnumParticipantRoleWithAggregatesFilter<"PresenceConfirmation"> | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusWithAggregatesFilter<"PresenceConfirmation"> | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodWithAggregatesFilter<"PresenceConfirmation"> | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PresenceConfirmation"> | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmation"> | Date | string
-  timeBucket?: Prisma.IntNullableWithAggregatesFilter<"PresenceConfirmation"> | number | null
-  clockSkewAccepted?: Prisma.BoolWithAggregatesFilter<"PresenceConfirmation"> | boolean
-  offlinePayloadHash?: Prisma.StringNullableWithAggregatesFilter<"PresenceConfirmation"> | string | null
+  status?: Prisma.EnumPresenceConfirmationStatusWithAggregatesFilter<"PresenceConfirmation"> | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmation"> | Date | string
+  windowClosesAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmation"> | Date | string
+  merchantConfirmedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PresenceConfirmation"> | Date | string | null
+  customerConfirmedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PresenceConfirmation"> | Date | string | null
+  canCaptureAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PresenceConfirmation"> | Date | string | null
+  voidedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PresenceConfirmation"> | Date | string | null
+  merchantCodeVerified?: Prisma.BoolWithAggregatesFilter<"PresenceConfirmation"> | boolean
+  customerCodeVerified?: Prisma.BoolWithAggregatesFilter<"PresenceConfirmation"> | boolean
+  resolutionSource?: Prisma.EnumPresenceResolutionSourceNullableWithAggregatesFilter<"PresenceConfirmation"> | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.StringNullableWithAggregatesFilter<"PresenceConfirmation"> | string | null
+  retryUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"PresenceConfirmation"> | Date | string | null
+  lastRetryAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PresenceConfirmation"> | Date | string | null
+  retryCount?: Prisma.IntWithAggregatesFilter<"PresenceConfirmation"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmation"> | Date | string
+  updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmation"> | Date | string
 }
 
 export type PresenceConfirmationCreateInput = {
   id?: string
-  participantRole: $Enums.ParticipantRole
-  status?: $Enums.ConfirmationStatus
-  method?: $Enums.ConfirmationMethod
-  confirmedAt?: Date | string | null
-  serverReceivedAt?: Date | string
-  timeBucket?: number | null
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
+  status?: $Enums.PresenceConfirmationStatus
+  windowOpensAt: Date | string
+  windowClosesAt: Date | string
+  merchantConfirmedAt?: Date | string | null
+  customerConfirmedAt?: Date | string | null
+  canCaptureAt?: Date | string | null
+  voidedAt?: Date | string | null
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: $Enums.PresenceResolutionSource | null
+  failureReason?: string | null
+  retryUntil?: Date | string | null
+  lastRetryAt?: Date | string | null
+  retryCount?: number
   createdAt?: Date | string
-  vouch: Prisma.VouchCreateNestedOneWithoutPresenceConfirmationsInput
-  user: Prisma.UserCreateNestedOneWithoutPresenceConfirmationsInput
+  updatedAt?: Date | string
+  vouch: Prisma.VouchCreateNestedOneWithoutPresenceConfirmationInput
+  attempts?: Prisma.PresenceConfirmationAttemptCreateNestedManyWithoutPresenceConfirmationInput
 }
 
 export type PresenceConfirmationUncheckedCreateInput = {
   id?: string
   vouchId: string
-  userId: string
-  participantRole: $Enums.ParticipantRole
-  status?: $Enums.ConfirmationStatus
-  method?: $Enums.ConfirmationMethod
-  confirmedAt?: Date | string | null
-  serverReceivedAt?: Date | string
-  timeBucket?: number | null
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
+  status?: $Enums.PresenceConfirmationStatus
+  windowOpensAt: Date | string
+  windowClosesAt: Date | string
+  merchantConfirmedAt?: Date | string | null
+  customerConfirmedAt?: Date | string | null
+  canCaptureAt?: Date | string | null
+  voidedAt?: Date | string | null
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: $Enums.PresenceResolutionSource | null
+  failureReason?: string | null
+  retryUntil?: Date | string | null
+  lastRetryAt?: Date | string | null
+  retryCount?: number
   createdAt?: Date | string
+  updatedAt?: Date | string
+  attempts?: Prisma.PresenceConfirmationAttemptUncheckedCreateNestedManyWithoutPresenceConfirmationInput
 }
 
 export type PresenceConfirmationUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  windowClosesAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  merchantConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vouch?: Prisma.VouchUpdateOneRequiredWithoutPresenceConfirmationsNestedInput
-  user?: Prisma.UserUpdateOneRequiredWithoutPresenceConfirmationsNestedInput
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vouch?: Prisma.VouchUpdateOneRequiredWithoutPresenceConfirmationNestedInput
+  attempts?: Prisma.PresenceConfirmationAttemptUpdateManyWithoutPresenceConfirmationNestedInput
 }
 
 export type PresenceConfirmationUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  windowClosesAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  merchantConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attempts?: Prisma.PresenceConfirmationAttemptUncheckedUpdateManyWithoutPresenceConfirmationNestedInput
 }
 
 export type PresenceConfirmationCreateManyInput = {
   id?: string
   vouchId: string
-  userId: string
-  participantRole: $Enums.ParticipantRole
-  status?: $Enums.ConfirmationStatus
-  method?: $Enums.ConfirmationMethod
-  confirmedAt?: Date | string | null
-  serverReceivedAt?: Date | string
-  timeBucket?: number | null
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
+  status?: $Enums.PresenceConfirmationStatus
+  windowOpensAt: Date | string
+  windowClosesAt: Date | string
+  merchantConfirmedAt?: Date | string | null
+  customerConfirmedAt?: Date | string | null
+  canCaptureAt?: Date | string | null
+  voidedAt?: Date | string | null
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: $Enums.PresenceResolutionSource | null
+  failureReason?: string | null
+  retryUntil?: Date | string | null
+  lastRetryAt?: Date | string | null
+  retryCount?: number
   createdAt?: Date | string
+  updatedAt?: Date | string
 }
 
 export type PresenceConfirmationUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  windowClosesAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  merchantConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type PresenceConfirmationUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  windowClosesAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  merchantConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type PresenceConfirmationListRelationFilter = {
-  every?: Prisma.PresenceConfirmationWhereInput
-  some?: Prisma.PresenceConfirmationWhereInput
-  none?: Prisma.PresenceConfirmationWhereInput
-}
-
-export type PresenceConfirmationOrderByRelationAggregateInput = {
-  _count?: Prisma.SortOrder
-}
-
-export type PresenceConfirmationVouchIdParticipantRoleCompoundUniqueInput = {
-  vouchId: string
-  participantRole: $Enums.ParticipantRole
-}
-
-export type PresenceConfirmationVouchIdUserIdCompoundUniqueInput = {
-  vouchId: string
-  userId: string
+export type PresenceConfirmationNullableScalarRelationFilter = {
+  is?: Prisma.PresenceConfirmationWhereInput | null
+  isNot?: Prisma.PresenceConfirmationWhereInput | null
 }
 
 export type PresenceConfirmationCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  participantRole?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  method?: Prisma.SortOrder
-  confirmedAt?: Prisma.SortOrder
-  serverReceivedAt?: Prisma.SortOrder
-  timeBucket?: Prisma.SortOrder
-  clockSkewAccepted?: Prisma.SortOrder
-  offlinePayloadHash?: Prisma.SortOrder
+  windowOpensAt?: Prisma.SortOrder
+  windowClosesAt?: Prisma.SortOrder
+  merchantConfirmedAt?: Prisma.SortOrder
+  customerConfirmedAt?: Prisma.SortOrder
+  canCaptureAt?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  merchantCodeVerified?: Prisma.SortOrder
+  customerCodeVerified?: Prisma.SortOrder
+  resolutionSource?: Prisma.SortOrder
+  failureReason?: Prisma.SortOrder
+  retryUntil?: Prisma.SortOrder
+  lastRetryAt?: Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type PresenceConfirmationAvgOrderByAggregateInput = {
-  timeBucket?: Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
 }
 
 export type PresenceConfirmationMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  participantRole?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  method?: Prisma.SortOrder
-  confirmedAt?: Prisma.SortOrder
-  serverReceivedAt?: Prisma.SortOrder
-  timeBucket?: Prisma.SortOrder
-  clockSkewAccepted?: Prisma.SortOrder
-  offlinePayloadHash?: Prisma.SortOrder
+  windowOpensAt?: Prisma.SortOrder
+  windowClosesAt?: Prisma.SortOrder
+  merchantConfirmedAt?: Prisma.SortOrder
+  customerConfirmedAt?: Prisma.SortOrder
+  canCaptureAt?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  merchantCodeVerified?: Prisma.SortOrder
+  customerCodeVerified?: Prisma.SortOrder
+  resolutionSource?: Prisma.SortOrder
+  failureReason?: Prisma.SortOrder
+  retryUntil?: Prisma.SortOrder
+  lastRetryAt?: Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type PresenceConfirmationMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   vouchId?: Prisma.SortOrder
-  userId?: Prisma.SortOrder
-  participantRole?: Prisma.SortOrder
   status?: Prisma.SortOrder
-  method?: Prisma.SortOrder
-  confirmedAt?: Prisma.SortOrder
-  serverReceivedAt?: Prisma.SortOrder
-  timeBucket?: Prisma.SortOrder
-  clockSkewAccepted?: Prisma.SortOrder
-  offlinePayloadHash?: Prisma.SortOrder
+  windowOpensAt?: Prisma.SortOrder
+  windowClosesAt?: Prisma.SortOrder
+  merchantConfirmedAt?: Prisma.SortOrder
+  customerConfirmedAt?: Prisma.SortOrder
+  canCaptureAt?: Prisma.SortOrder
+  voidedAt?: Prisma.SortOrder
+  merchantCodeVerified?: Prisma.SortOrder
+  customerCodeVerified?: Prisma.SortOrder
+  resolutionSource?: Prisma.SortOrder
+  failureReason?: Prisma.SortOrder
+  retryUntil?: Prisma.SortOrder
+  lastRetryAt?: Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  updatedAt?: Prisma.SortOrder
 }
 
 export type PresenceConfirmationSumOrderByAggregateInput = {
-  timeBucket?: Prisma.SortOrder
+  retryCount?: Prisma.SortOrder
 }
 
-export type PresenceConfirmationCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutUserInput, Prisma.PresenceConfirmationUncheckedCreateWithoutUserInput> | Prisma.PresenceConfirmationCreateWithoutUserInput[] | Prisma.PresenceConfirmationUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutUserInput | Prisma.PresenceConfirmationCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.PresenceConfirmationCreateManyUserInputEnvelope
-  connect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
+export type PresenceConfirmationScalarRelationFilter = {
+  is?: Prisma.PresenceConfirmationWhereInput
+  isNot?: Prisma.PresenceConfirmationWhereInput
 }
 
-export type PresenceConfirmationUncheckedCreateNestedManyWithoutUserInput = {
-  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutUserInput, Prisma.PresenceConfirmationUncheckedCreateWithoutUserInput> | Prisma.PresenceConfirmationCreateWithoutUserInput[] | Prisma.PresenceConfirmationUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutUserInput | Prisma.PresenceConfirmationCreateOrConnectWithoutUserInput[]
-  createMany?: Prisma.PresenceConfirmationCreateManyUserInputEnvelope
-  connect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
+export type PresenceConfirmationCreateNestedOneWithoutVouchInput = {
+  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput>
+  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput
+  connect?: Prisma.PresenceConfirmationWhereUniqueInput
 }
 
-export type PresenceConfirmationUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutUserInput, Prisma.PresenceConfirmationUncheckedCreateWithoutUserInput> | Prisma.PresenceConfirmationCreateWithoutUserInput[] | Prisma.PresenceConfirmationUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutUserInput | Prisma.PresenceConfirmationCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.PresenceConfirmationUpsertWithWhereUniqueWithoutUserInput | Prisma.PresenceConfirmationUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.PresenceConfirmationCreateManyUserInputEnvelope
-  set?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  disconnect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  delete?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  connect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  update?: Prisma.PresenceConfirmationUpdateWithWhereUniqueWithoutUserInput | Prisma.PresenceConfirmationUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.PresenceConfirmationUpdateManyWithWhereWithoutUserInput | Prisma.PresenceConfirmationUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.PresenceConfirmationScalarWhereInput | Prisma.PresenceConfirmationScalarWhereInput[]
+export type PresenceConfirmationUncheckedCreateNestedOneWithoutVouchInput = {
+  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput>
+  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput
+  connect?: Prisma.PresenceConfirmationWhereUniqueInput
 }
 
-export type PresenceConfirmationUncheckedUpdateManyWithoutUserNestedInput = {
-  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutUserInput, Prisma.PresenceConfirmationUncheckedCreateWithoutUserInput> | Prisma.PresenceConfirmationCreateWithoutUserInput[] | Prisma.PresenceConfirmationUncheckedCreateWithoutUserInput[]
-  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutUserInput | Prisma.PresenceConfirmationCreateOrConnectWithoutUserInput[]
-  upsert?: Prisma.PresenceConfirmationUpsertWithWhereUniqueWithoutUserInput | Prisma.PresenceConfirmationUpsertWithWhereUniqueWithoutUserInput[]
-  createMany?: Prisma.PresenceConfirmationCreateManyUserInputEnvelope
-  set?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  disconnect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  delete?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  connect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  update?: Prisma.PresenceConfirmationUpdateWithWhereUniqueWithoutUserInput | Prisma.PresenceConfirmationUpdateWithWhereUniqueWithoutUserInput[]
-  updateMany?: Prisma.PresenceConfirmationUpdateManyWithWhereWithoutUserInput | Prisma.PresenceConfirmationUpdateManyWithWhereWithoutUserInput[]
-  deleteMany?: Prisma.PresenceConfirmationScalarWhereInput | Prisma.PresenceConfirmationScalarWhereInput[]
+export type PresenceConfirmationUpdateOneWithoutVouchNestedInput = {
+  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput>
+  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput
+  upsert?: Prisma.PresenceConfirmationUpsertWithoutVouchInput
+  disconnect?: Prisma.PresenceConfirmationWhereInput | boolean
+  delete?: Prisma.PresenceConfirmationWhereInput | boolean
+  connect?: Prisma.PresenceConfirmationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PresenceConfirmationUpdateToOneWithWhereWithoutVouchInput, Prisma.PresenceConfirmationUpdateWithoutVouchInput>, Prisma.PresenceConfirmationUncheckedUpdateWithoutVouchInput>
 }
 
-export type PresenceConfirmationCreateNestedManyWithoutVouchInput = {
-  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput> | Prisma.PresenceConfirmationCreateWithoutVouchInput[] | Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput[]
-  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput | Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput[]
-  createMany?: Prisma.PresenceConfirmationCreateManyVouchInputEnvelope
-  connect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
+export type PresenceConfirmationUncheckedUpdateOneWithoutVouchNestedInput = {
+  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput>
+  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput
+  upsert?: Prisma.PresenceConfirmationUpsertWithoutVouchInput
+  disconnect?: Prisma.PresenceConfirmationWhereInput | boolean
+  delete?: Prisma.PresenceConfirmationWhereInput | boolean
+  connect?: Prisma.PresenceConfirmationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PresenceConfirmationUpdateToOneWithWhereWithoutVouchInput, Prisma.PresenceConfirmationUpdateWithoutVouchInput>, Prisma.PresenceConfirmationUncheckedUpdateWithoutVouchInput>
 }
 
-export type PresenceConfirmationUncheckedCreateNestedManyWithoutVouchInput = {
-  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput> | Prisma.PresenceConfirmationCreateWithoutVouchInput[] | Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput[]
-  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput | Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput[]
-  createMany?: Prisma.PresenceConfirmationCreateManyVouchInputEnvelope
-  connect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
+export type EnumPresenceConfirmationStatusFieldUpdateOperationsInput = {
+  set?: $Enums.PresenceConfirmationStatus
 }
 
-export type PresenceConfirmationUpdateManyWithoutVouchNestedInput = {
-  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput> | Prisma.PresenceConfirmationCreateWithoutVouchInput[] | Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput[]
-  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput | Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput[]
-  upsert?: Prisma.PresenceConfirmationUpsertWithWhereUniqueWithoutVouchInput | Prisma.PresenceConfirmationUpsertWithWhereUniqueWithoutVouchInput[]
-  createMany?: Prisma.PresenceConfirmationCreateManyVouchInputEnvelope
-  set?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  disconnect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  delete?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  connect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  update?: Prisma.PresenceConfirmationUpdateWithWhereUniqueWithoutVouchInput | Prisma.PresenceConfirmationUpdateWithWhereUniqueWithoutVouchInput[]
-  updateMany?: Prisma.PresenceConfirmationUpdateManyWithWhereWithoutVouchInput | Prisma.PresenceConfirmationUpdateManyWithWhereWithoutVouchInput[]
-  deleteMany?: Prisma.PresenceConfirmationScalarWhereInput | Prisma.PresenceConfirmationScalarWhereInput[]
+export type NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput = {
+  set?: $Enums.PresenceResolutionSource | null
 }
 
-export type PresenceConfirmationUncheckedUpdateManyWithoutVouchNestedInput = {
-  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput> | Prisma.PresenceConfirmationCreateWithoutVouchInput[] | Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput[]
-  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput | Prisma.PresenceConfirmationCreateOrConnectWithoutVouchInput[]
-  upsert?: Prisma.PresenceConfirmationUpsertWithWhereUniqueWithoutVouchInput | Prisma.PresenceConfirmationUpsertWithWhereUniqueWithoutVouchInput[]
-  createMany?: Prisma.PresenceConfirmationCreateManyVouchInputEnvelope
-  set?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  disconnect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  delete?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  connect?: Prisma.PresenceConfirmationWhereUniqueInput | Prisma.PresenceConfirmationWhereUniqueInput[]
-  update?: Prisma.PresenceConfirmationUpdateWithWhereUniqueWithoutVouchInput | Prisma.PresenceConfirmationUpdateWithWhereUniqueWithoutVouchInput[]
-  updateMany?: Prisma.PresenceConfirmationUpdateManyWithWhereWithoutVouchInput | Prisma.PresenceConfirmationUpdateManyWithWhereWithoutVouchInput[]
-  deleteMany?: Prisma.PresenceConfirmationScalarWhereInput | Prisma.PresenceConfirmationScalarWhereInput[]
+export type PresenceConfirmationCreateNestedOneWithoutAttemptsInput = {
+  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutAttemptsInput, Prisma.PresenceConfirmationUncheckedCreateWithoutAttemptsInput>
+  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutAttemptsInput
+  connect?: Prisma.PresenceConfirmationWhereUniqueInput
 }
 
-export type EnumParticipantRoleFieldUpdateOperationsInput = {
-  set?: $Enums.ParticipantRole
-}
-
-export type EnumConfirmationStatusFieldUpdateOperationsInput = {
-  set?: $Enums.ConfirmationStatus
-}
-
-export type EnumConfirmationMethodFieldUpdateOperationsInput = {
-  set?: $Enums.ConfirmationMethod
-}
-
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
-}
-
-export type PresenceConfirmationCreateWithoutUserInput = {
-  id?: string
-  participantRole: $Enums.ParticipantRole
-  status?: $Enums.ConfirmationStatus
-  method?: $Enums.ConfirmationMethod
-  confirmedAt?: Date | string | null
-  serverReceivedAt?: Date | string
-  timeBucket?: number | null
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
-  createdAt?: Date | string
-  vouch: Prisma.VouchCreateNestedOneWithoutPresenceConfirmationsInput
-}
-
-export type PresenceConfirmationUncheckedCreateWithoutUserInput = {
-  id?: string
-  vouchId: string
-  participantRole: $Enums.ParticipantRole
-  status?: $Enums.ConfirmationStatus
-  method?: $Enums.ConfirmationMethod
-  confirmedAt?: Date | string | null
-  serverReceivedAt?: Date | string
-  timeBucket?: number | null
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
-  createdAt?: Date | string
-}
-
-export type PresenceConfirmationCreateOrConnectWithoutUserInput = {
-  where: Prisma.PresenceConfirmationWhereUniqueInput
-  create: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutUserInput, Prisma.PresenceConfirmationUncheckedCreateWithoutUserInput>
-}
-
-export type PresenceConfirmationCreateManyUserInputEnvelope = {
-  data: Prisma.PresenceConfirmationCreateManyUserInput | Prisma.PresenceConfirmationCreateManyUserInput[]
-  skipDuplicates?: boolean
-}
-
-export type PresenceConfirmationUpsertWithWhereUniqueWithoutUserInput = {
-  where: Prisma.PresenceConfirmationWhereUniqueInput
-  update: Prisma.XOR<Prisma.PresenceConfirmationUpdateWithoutUserInput, Prisma.PresenceConfirmationUncheckedUpdateWithoutUserInput>
-  create: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutUserInput, Prisma.PresenceConfirmationUncheckedCreateWithoutUserInput>
-}
-
-export type PresenceConfirmationUpdateWithWhereUniqueWithoutUserInput = {
-  where: Prisma.PresenceConfirmationWhereUniqueInput
-  data: Prisma.XOR<Prisma.PresenceConfirmationUpdateWithoutUserInput, Prisma.PresenceConfirmationUncheckedUpdateWithoutUserInput>
-}
-
-export type PresenceConfirmationUpdateManyWithWhereWithoutUserInput = {
-  where: Prisma.PresenceConfirmationScalarWhereInput
-  data: Prisma.XOR<Prisma.PresenceConfirmationUpdateManyMutationInput, Prisma.PresenceConfirmationUncheckedUpdateManyWithoutUserInput>
-}
-
-export type PresenceConfirmationScalarWhereInput = {
-  AND?: Prisma.PresenceConfirmationScalarWhereInput | Prisma.PresenceConfirmationScalarWhereInput[]
-  OR?: Prisma.PresenceConfirmationScalarWhereInput[]
-  NOT?: Prisma.PresenceConfirmationScalarWhereInput | Prisma.PresenceConfirmationScalarWhereInput[]
-  id?: Prisma.StringFilter<"PresenceConfirmation"> | string
-  vouchId?: Prisma.StringFilter<"PresenceConfirmation"> | string
-  userId?: Prisma.StringFilter<"PresenceConfirmation"> | string
-  participantRole?: Prisma.EnumParticipantRoleFilter<"PresenceConfirmation"> | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFilter<"PresenceConfirmation"> | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFilter<"PresenceConfirmation"> | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
-  timeBucket?: Prisma.IntNullableFilter<"PresenceConfirmation"> | number | null
-  clockSkewAccepted?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
-  offlinePayloadHash?: Prisma.StringNullableFilter<"PresenceConfirmation"> | string | null
-  createdAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
+export type PresenceConfirmationUpdateOneRequiredWithoutAttemptsNestedInput = {
+  create?: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutAttemptsInput, Prisma.PresenceConfirmationUncheckedCreateWithoutAttemptsInput>
+  connectOrCreate?: Prisma.PresenceConfirmationCreateOrConnectWithoutAttemptsInput
+  upsert?: Prisma.PresenceConfirmationUpsertWithoutAttemptsInput
+  connect?: Prisma.PresenceConfirmationWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PresenceConfirmationUpdateToOneWithWhereWithoutAttemptsInput, Prisma.PresenceConfirmationUpdateWithoutAttemptsInput>, Prisma.PresenceConfirmationUncheckedUpdateWithoutAttemptsInput>
 }
 
 export type PresenceConfirmationCreateWithoutVouchInput = {
   id?: string
-  participantRole: $Enums.ParticipantRole
-  status?: $Enums.ConfirmationStatus
-  method?: $Enums.ConfirmationMethod
-  confirmedAt?: Date | string | null
-  serverReceivedAt?: Date | string
-  timeBucket?: number | null
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
+  status?: $Enums.PresenceConfirmationStatus
+  windowOpensAt: Date | string
+  windowClosesAt: Date | string
+  merchantConfirmedAt?: Date | string | null
+  customerConfirmedAt?: Date | string | null
+  canCaptureAt?: Date | string | null
+  voidedAt?: Date | string | null
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: $Enums.PresenceResolutionSource | null
+  failureReason?: string | null
+  retryUntil?: Date | string | null
+  lastRetryAt?: Date | string | null
+  retryCount?: number
   createdAt?: Date | string
-  user: Prisma.UserCreateNestedOneWithoutPresenceConfirmationsInput
+  updatedAt?: Date | string
+  attempts?: Prisma.PresenceConfirmationAttemptCreateNestedManyWithoutPresenceConfirmationInput
 }
 
 export type PresenceConfirmationUncheckedCreateWithoutVouchInput = {
   id?: string
-  userId: string
-  participantRole: $Enums.ParticipantRole
-  status?: $Enums.ConfirmationStatus
-  method?: $Enums.ConfirmationMethod
-  confirmedAt?: Date | string | null
-  serverReceivedAt?: Date | string
-  timeBucket?: number | null
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
+  status?: $Enums.PresenceConfirmationStatus
+  windowOpensAt: Date | string
+  windowClosesAt: Date | string
+  merchantConfirmedAt?: Date | string | null
+  customerConfirmedAt?: Date | string | null
+  canCaptureAt?: Date | string | null
+  voidedAt?: Date | string | null
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: $Enums.PresenceResolutionSource | null
+  failureReason?: string | null
+  retryUntil?: Date | string | null
+  lastRetryAt?: Date | string | null
+  retryCount?: number
   createdAt?: Date | string
+  updatedAt?: Date | string
+  attempts?: Prisma.PresenceConfirmationAttemptUncheckedCreateNestedManyWithoutPresenceConfirmationInput
 }
 
 export type PresenceConfirmationCreateOrConnectWithoutVouchInput = {
@@ -738,240 +755,317 @@ export type PresenceConfirmationCreateOrConnectWithoutVouchInput = {
   create: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput>
 }
 
-export type PresenceConfirmationCreateManyVouchInputEnvelope = {
-  data: Prisma.PresenceConfirmationCreateManyVouchInput | Prisma.PresenceConfirmationCreateManyVouchInput[]
-  skipDuplicates?: boolean
-}
-
-export type PresenceConfirmationUpsertWithWhereUniqueWithoutVouchInput = {
-  where: Prisma.PresenceConfirmationWhereUniqueInput
+export type PresenceConfirmationUpsertWithoutVouchInput = {
   update: Prisma.XOR<Prisma.PresenceConfirmationUpdateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedUpdateWithoutVouchInput>
   create: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedCreateWithoutVouchInput>
+  where?: Prisma.PresenceConfirmationWhereInput
 }
 
-export type PresenceConfirmationUpdateWithWhereUniqueWithoutVouchInput = {
-  where: Prisma.PresenceConfirmationWhereUniqueInput
+export type PresenceConfirmationUpdateToOneWithWhereWithoutVouchInput = {
+  where?: Prisma.PresenceConfirmationWhereInput
   data: Prisma.XOR<Prisma.PresenceConfirmationUpdateWithoutVouchInput, Prisma.PresenceConfirmationUncheckedUpdateWithoutVouchInput>
-}
-
-export type PresenceConfirmationUpdateManyWithWhereWithoutVouchInput = {
-  where: Prisma.PresenceConfirmationScalarWhereInput
-  data: Prisma.XOR<Prisma.PresenceConfirmationUpdateManyMutationInput, Prisma.PresenceConfirmationUncheckedUpdateManyWithoutVouchInput>
-}
-
-export type PresenceConfirmationCreateManyUserInput = {
-  id?: string
-  vouchId: string
-  participantRole: $Enums.ParticipantRole
-  status?: $Enums.ConfirmationStatus
-  method?: $Enums.ConfirmationMethod
-  confirmedAt?: Date | string | null
-  serverReceivedAt?: Date | string
-  timeBucket?: number | null
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
-  createdAt?: Date | string
-}
-
-export type PresenceConfirmationUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  vouch?: Prisma.VouchUpdateOneRequiredWithoutPresenceConfirmationsNestedInput
-}
-
-export type PresenceConfirmationUncheckedUpdateWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type PresenceConfirmationUncheckedUpdateManyWithoutUserInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
-  participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-}
-
-export type PresenceConfirmationCreateManyVouchInput = {
-  id?: string
-  userId: string
-  participantRole: $Enums.ParticipantRole
-  status?: $Enums.ConfirmationStatus
-  method?: $Enums.ConfirmationMethod
-  confirmedAt?: Date | string | null
-  serverReceivedAt?: Date | string
-  timeBucket?: number | null
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
-  createdAt?: Date | string
 }
 
 export type PresenceConfirmationUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  windowClosesAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  merchantConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  user?: Prisma.UserUpdateOneRequiredWithoutPresenceConfirmationsNestedInput
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attempts?: Prisma.PresenceConfirmationAttemptUpdateManyWithoutPresenceConfirmationNestedInput
 }
 
 export type PresenceConfirmationUncheckedUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  windowClosesAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  merchantConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attempts?: Prisma.PresenceConfirmationAttemptUncheckedUpdateManyWithoutPresenceConfirmationNestedInput
 }
 
-export type PresenceConfirmationUncheckedUpdateManyWithoutVouchInput = {
+export type PresenceConfirmationCreateWithoutAttemptsInput = {
+  id?: string
+  status?: $Enums.PresenceConfirmationStatus
+  windowOpensAt: Date | string
+  windowClosesAt: Date | string
+  merchantConfirmedAt?: Date | string | null
+  customerConfirmedAt?: Date | string | null
+  canCaptureAt?: Date | string | null
+  voidedAt?: Date | string | null
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: $Enums.PresenceResolutionSource | null
+  failureReason?: string | null
+  retryUntil?: Date | string | null
+  lastRetryAt?: Date | string | null
+  retryCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  vouch: Prisma.VouchCreateNestedOneWithoutPresenceConfirmationInput
+}
+
+export type PresenceConfirmationUncheckedCreateWithoutAttemptsInput = {
+  id?: string
+  vouchId: string
+  status?: $Enums.PresenceConfirmationStatus
+  windowOpensAt: Date | string
+  windowClosesAt: Date | string
+  merchantConfirmedAt?: Date | string | null
+  customerConfirmedAt?: Date | string | null
+  canCaptureAt?: Date | string | null
+  voidedAt?: Date | string | null
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: $Enums.PresenceResolutionSource | null
+  failureReason?: string | null
+  retryUntil?: Date | string | null
+  lastRetryAt?: Date | string | null
+  retryCount?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type PresenceConfirmationCreateOrConnectWithoutAttemptsInput = {
+  where: Prisma.PresenceConfirmationWhereUniqueInput
+  create: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutAttemptsInput, Prisma.PresenceConfirmationUncheckedCreateWithoutAttemptsInput>
+}
+
+export type PresenceConfirmationUpsertWithoutAttemptsInput = {
+  update: Prisma.XOR<Prisma.PresenceConfirmationUpdateWithoutAttemptsInput, Prisma.PresenceConfirmationUncheckedUpdateWithoutAttemptsInput>
+  create: Prisma.XOR<Prisma.PresenceConfirmationCreateWithoutAttemptsInput, Prisma.PresenceConfirmationUncheckedCreateWithoutAttemptsInput>
+  where?: Prisma.PresenceConfirmationWhereInput
+}
+
+export type PresenceConfirmationUpdateToOneWithWhereWithoutAttemptsInput = {
+  where?: Prisma.PresenceConfirmationWhereInput
+  data: Prisma.XOR<Prisma.PresenceConfirmationUpdateWithoutAttemptsInput, Prisma.PresenceConfirmationUncheckedUpdateWithoutAttemptsInput>
+}
+
+export type PresenceConfirmationUpdateWithoutAttemptsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  participantRole?: Prisma.EnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole
-  status?: Prisma.EnumConfirmationStatusFieldUpdateOperationsInput | $Enums.ConfirmationStatus
-  method?: Prisma.EnumConfirmationMethodFieldUpdateOperationsInput | $Enums.ConfirmationMethod
-  confirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  serverReceivedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  timeBucket?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  clockSkewAccepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  offlinePayloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  windowClosesAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  merchantConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  vouch?: Prisma.VouchUpdateOneRequiredWithoutPresenceConfirmationNestedInput
 }
 
+export type PresenceConfirmationUncheckedUpdateWithoutAttemptsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  vouchId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPresenceConfirmationStatusFieldUpdateOperationsInput | $Enums.PresenceConfirmationStatus
+  windowOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  windowClosesAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  merchantConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  customerConfirmedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  canCaptureAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  merchantCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
+  failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+
+/**
+ * Count Type PresenceConfirmationCountOutputType
+ */
+
+export type PresenceConfirmationCountOutputType = {
+  attempts: number
+}
+
+export type PresenceConfirmationCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  attempts?: boolean | PresenceConfirmationCountOutputTypeCountAttemptsArgs
+}
+
+/**
+ * PresenceConfirmationCountOutputType without action
+ */
+export type PresenceConfirmationCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PresenceConfirmationCountOutputType
+   */
+  select?: Prisma.PresenceConfirmationCountOutputTypeSelect<ExtArgs> | null
+}
+
+/**
+ * PresenceConfirmationCountOutputType without action
+ */
+export type PresenceConfirmationCountOutputTypeCountAttemptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PresenceConfirmationAttemptWhereInput
+}
 
 
 export type PresenceConfirmationSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   vouchId?: boolean
-  userId?: boolean
-  participantRole?: boolean
   status?: boolean
-  method?: boolean
-  confirmedAt?: boolean
-  serverReceivedAt?: boolean
-  timeBucket?: boolean
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: boolean
+  windowOpensAt?: boolean
+  windowClosesAt?: boolean
+  merchantConfirmedAt?: boolean
+  customerConfirmedAt?: boolean
+  canCaptureAt?: boolean
+  voidedAt?: boolean
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: boolean
+  failureReason?: boolean
+  retryUntil?: boolean
+  lastRetryAt?: boolean
+  retryCount?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  attempts?: boolean | Prisma.PresenceConfirmation$attemptsArgs<ExtArgs>
+  _count?: boolean | Prisma.PresenceConfirmationCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["presenceConfirmation"]>
 
 export type PresenceConfirmationSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   vouchId?: boolean
-  userId?: boolean
-  participantRole?: boolean
   status?: boolean
-  method?: boolean
-  confirmedAt?: boolean
-  serverReceivedAt?: boolean
-  timeBucket?: boolean
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: boolean
+  windowOpensAt?: boolean
+  windowClosesAt?: boolean
+  merchantConfirmedAt?: boolean
+  customerConfirmedAt?: boolean
+  canCaptureAt?: boolean
+  voidedAt?: boolean
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: boolean
+  failureReason?: boolean
+  retryUntil?: boolean
+  lastRetryAt?: boolean
+  retryCount?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["presenceConfirmation"]>
 
 export type PresenceConfirmationSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   vouchId?: boolean
-  userId?: boolean
-  participantRole?: boolean
   status?: boolean
-  method?: boolean
-  confirmedAt?: boolean
-  serverReceivedAt?: boolean
-  timeBucket?: boolean
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: boolean
+  windowOpensAt?: boolean
+  windowClosesAt?: boolean
+  merchantConfirmedAt?: boolean
+  customerConfirmedAt?: boolean
+  canCaptureAt?: boolean
+  voidedAt?: boolean
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: boolean
+  failureReason?: boolean
+  retryUntil?: boolean
+  lastRetryAt?: boolean
+  retryCount?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["presenceConfirmation"]>
 
 export type PresenceConfirmationSelectScalar = {
   id?: boolean
   vouchId?: boolean
-  userId?: boolean
-  participantRole?: boolean
   status?: boolean
-  method?: boolean
-  confirmedAt?: boolean
-  serverReceivedAt?: boolean
-  timeBucket?: boolean
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: boolean
+  windowOpensAt?: boolean
+  windowClosesAt?: boolean
+  merchantConfirmedAt?: boolean
+  customerConfirmedAt?: boolean
+  canCaptureAt?: boolean
+  voidedAt?: boolean
+  merchantCodeVerified?: boolean
+  customerCodeVerified?: boolean
+  resolutionSource?: boolean
+  failureReason?: boolean
+  retryUntil?: boolean
+  lastRetryAt?: boolean
+  retryCount?: boolean
   createdAt?: boolean
+  updatedAt?: boolean
 }
 
-export type PresenceConfirmationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "userId" | "participantRole" | "status" | "method" | "confirmedAt" | "serverReceivedAt" | "timeBucket" | "clockSkewAccepted" | "offlinePayloadHash" | "createdAt", ExtArgs["result"]["presenceConfirmation"]>
+export type PresenceConfirmationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "status" | "windowOpensAt" | "windowClosesAt" | "merchantConfirmedAt" | "customerConfirmedAt" | "canCaptureAt" | "voidedAt" | "merchantCodeVerified" | "customerCodeVerified" | "resolutionSource" | "failureReason" | "retryUntil" | "lastRetryAt" | "retryCount" | "createdAt" | "updatedAt", ExtArgs["result"]["presenceConfirmation"]>
 export type PresenceConfirmationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  attempts?: boolean | Prisma.PresenceConfirmation$attemptsArgs<ExtArgs>
+  _count?: boolean | Prisma.PresenceConfirmationCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PresenceConfirmationIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 export type PresenceConfirmationIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
-  user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
 
 export type $PresenceConfirmationPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "PresenceConfirmation"
   objects: {
     vouch: Prisma.$VouchPayload<ExtArgs>
-    user: Prisma.$UserPayload<ExtArgs>
+    attempts: Prisma.$PresenceConfirmationAttemptPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     vouchId: string
-    userId: string
-    participantRole: $Enums.ParticipantRole
-    status: $Enums.ConfirmationStatus
-    method: $Enums.ConfirmationMethod
-    confirmedAt: Date | null
-    serverReceivedAt: Date
-    timeBucket: number | null
-    clockSkewAccepted: boolean
-    offlinePayloadHash: string | null
+    status: $Enums.PresenceConfirmationStatus
+    windowOpensAt: Date
+    windowClosesAt: Date
+    merchantConfirmedAt: Date | null
+    customerConfirmedAt: Date | null
+    canCaptureAt: Date | null
+    voidedAt: Date | null
+    merchantCodeVerified: boolean
+    customerCodeVerified: boolean
+    resolutionSource: $Enums.PresenceResolutionSource | null
+    failureReason: string | null
+    retryUntil: Date | null
+    lastRetryAt: Date | null
+    retryCount: number
     createdAt: Date
+    updatedAt: Date
   }, ExtArgs["result"]["presenceConfirmation"]>
   composites: {}
 }
@@ -1367,7 +1461,7 @@ readonly fields: PresenceConfirmationFieldRefs;
 export interface Prisma__PresenceConfirmationClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   vouch<T extends Prisma.VouchDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.VouchDefaultArgs<ExtArgs>>): Prisma.Prisma__VouchClient<runtime.Types.Result.GetResult<Prisma.$VouchPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  attempts<T extends Prisma.PresenceConfirmation$attemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PresenceConfirmation$attemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PresenceConfirmationAttemptPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1399,16 +1493,22 @@ export interface Prisma__PresenceConfirmationClient<T, Null = never, ExtArgs ext
 export interface PresenceConfirmationFieldRefs {
   readonly id: Prisma.FieldRef<"PresenceConfirmation", 'String'>
   readonly vouchId: Prisma.FieldRef<"PresenceConfirmation", 'String'>
-  readonly userId: Prisma.FieldRef<"PresenceConfirmation", 'String'>
-  readonly participantRole: Prisma.FieldRef<"PresenceConfirmation", 'ParticipantRole'>
-  readonly status: Prisma.FieldRef<"PresenceConfirmation", 'ConfirmationStatus'>
-  readonly method: Prisma.FieldRef<"PresenceConfirmation", 'ConfirmationMethod'>
-  readonly confirmedAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
-  readonly serverReceivedAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
-  readonly timeBucket: Prisma.FieldRef<"PresenceConfirmation", 'Int'>
-  readonly clockSkewAccepted: Prisma.FieldRef<"PresenceConfirmation", 'Boolean'>
-  readonly offlinePayloadHash: Prisma.FieldRef<"PresenceConfirmation", 'String'>
+  readonly status: Prisma.FieldRef<"PresenceConfirmation", 'PresenceConfirmationStatus'>
+  readonly windowOpensAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly windowClosesAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly merchantConfirmedAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly customerConfirmedAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly canCaptureAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly voidedAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly merchantCodeVerified: Prisma.FieldRef<"PresenceConfirmation", 'Boolean'>
+  readonly customerCodeVerified: Prisma.FieldRef<"PresenceConfirmation", 'Boolean'>
+  readonly resolutionSource: Prisma.FieldRef<"PresenceConfirmation", 'PresenceResolutionSource'>
+  readonly failureReason: Prisma.FieldRef<"PresenceConfirmation", 'String'>
+  readonly retryUntil: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly lastRetryAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly retryCount: Prisma.FieldRef<"PresenceConfirmation", 'Int'>
   readonly createdAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
+  readonly updatedAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
 }
     
 
@@ -1807,6 +1907,30 @@ export type PresenceConfirmationDeleteManyArgs<ExtArgs extends runtime.Types.Ext
    * Limit how many PresenceConfirmations to delete.
    */
   limit?: number
+}
+
+/**
+ * PresenceConfirmation.attempts
+ */
+export type PresenceConfirmation$attemptsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PresenceConfirmationAttempt
+   */
+  select?: Prisma.PresenceConfirmationAttemptSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PresenceConfirmationAttempt
+   */
+  omit?: Prisma.PresenceConfirmationAttemptOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PresenceConfirmationAttemptInclude<ExtArgs> | null
+  where?: Prisma.PresenceConfirmationAttemptWhereInput
+  orderBy?: Prisma.PresenceConfirmationAttemptOrderByWithRelationInput | Prisma.PresenceConfirmationAttemptOrderByWithRelationInput[]
+  cursor?: Prisma.PresenceConfirmationAttemptWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PresenceConfirmationAttemptScalarFieldEnum | Prisma.PresenceConfirmationAttemptScalarFieldEnum[]
 }
 
 /**

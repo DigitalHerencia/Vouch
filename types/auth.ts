@@ -2,20 +2,14 @@ import type { ComponentProps } from "react"
 
 export const BASE_ROLE_VALUES = ["anonymous", "authenticated_user", "admin", "system"] as const
 
-export const CONTEXTUAL_ROLE_VALUES = [
-  "merchant",
-  "customer",
-  "invited_customer_candidate",
-] as const
+export const CONTEXTUAL_ROLE_VALUES = ["merchant", "customer"] as const
 
-export const USER_STATUS_VALUES = ["active", "disabled"] as const
+export const USER_STATUS_VALUES = ["active", "suspended", "disabled"] as const
 
 export const SETUP_REQUIREMENT_VALUES = [
-  "identity_verified",
-  "adult_verified",
   "payment_ready",
   "payout_ready",
-  "terms_accepted",
+  "useragreement_accepted",
 ] as const
 
 export type BaseRole = (typeof BASE_ROLE_VALUES)[number]
@@ -27,23 +21,11 @@ export type AuthCapability =
   | "view_public_marketing"
   | "view_public_legal"
   | "start_auth_flow"
-  | "open_invite_landing"
   | "view_dashboard"
   | "view_own_account"
-  | "view_setup_status"
   | "create_vouch"
-  | "accept_vouch"
-  | "decline_vouch"
   | "confirm_presence"
   | "view_vouches_where_participant"
-  | "view_admin_dashboard"
-  | "view_users_operational"
-  | "view_vouches_operational"
-  | "view_payment_records_operational"
-  | "view_audit_events_operational"
-  | "view_webhook_events_operational"
-  | "retry_safe_technical_operation"
-  | "disable_user_account"
 
 export type AdminCapability = Extract<
   AuthCapability,
@@ -55,6 +37,7 @@ export type AdminCapability = Extract<
   | "view_webhook_events_operational"
   | "retry_safe_technical_operation"
   | "disable_user_account"
+  | "suspend_user_account"
 >
 
 export type VouchAccessInput = {
@@ -62,25 +45,13 @@ export type VouchAccessInput = {
   merchantId: string
   customerId?: string | null
   isAdmin?: boolean
-  inviteValid?: boolean
 }
 
 export type VouchReadinessInput = {
   userStatus?: UserStatus
-  identityStatus?: string
-  adultStatus?: string
-  paymentReadiness?: string
+  paymentMethodReady?: string
   payoutReadiness?: string
-  termsAccepted?: boolean
-}
-
-export type AcceptVouchAuthzInput = VouchReadinessInput & {
-  userId?: string | null
-  merchantId: string
-  existingCustomerId?: string | null
-  status: string
-  inviteValid: boolean
-  eligible?: boolean
+  useragreementAccepted?: boolean
 }
 
 export type ConfirmPresenceAuthzInput = {
@@ -127,11 +98,9 @@ export interface Session {
 
 export interface SetupStatus {
   accountActive: boolean
-  identityVerified: boolean
-  adultVerified: boolean
   paymentReady: boolean
   payoutReady: boolean
-  termsAccepted: boolean
+  useragreementAccepted: boolean
   missingRequirements: SetupRequirement[]
 }
 
@@ -175,15 +144,11 @@ export interface SignupFormProps extends ComponentProps<"form"> {
 
 export const SUPPORTED_CLERK_WEBHOOK_EVENT_TYPES = [
   "email.created",
-  "invitation.accepted",
-  "invitation.created",
-  "invitation.revoked",
   "session.created",
   "session.ended",
   "session.pending",
   "session.removed",
   "session.revoked",
-  "sms.created",
   "user.created",
   "user.deleted",
   "user.updated",
