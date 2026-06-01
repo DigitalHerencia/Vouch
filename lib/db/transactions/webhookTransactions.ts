@@ -1,16 +1,19 @@
 import "server-only"
 
-import type { Prisma, PrismaClient, WebhookProvider } from "@/prisma/generated/prisma/client"
+import type {
+  Prisma,
+  PrismaClient,
+  WebhookProcessingStatus,
+  WebhookProvider,
+} from "@/prisma/generated/prisma/client"
+
+type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">
 
 const unsafeMetadataKeyPattern = /payload|signature|secret|token|card|bank|identity/i
 
 function assertNonEmptyString(value: string, fieldName: string): string {
   const trimmed = value.trim()
-
-  if (!trimmed) {
-    throw new Error(`INVALID_WEBHOOK_TX_INPUT: ${fieldName} is required`)
-  }
-
+  if (!trimmed) throw new Error(`INVALID_WEBHOOK_TX_INPUT: ${fieldName} is required`)
   return trimmed
 }
 
@@ -23,10 +26,24 @@ function toSafeMetadata(
     Object.entries(metadata).filter(([key, value]) => {
       if (unsafeMetadataKeyPattern.test(key)) return false
       if (value === null) return true
-
       return ["boolean", "number", "string"].includes(typeof value)
     })
   ) as Prisma.InputJsonObject
+}
+
+function processedFromStatus(status: WebhookProcessingStatus): boolean {
+  return status === "processed" || status === "ignored"
+}
+
+const providerWebhookEventSelect = {
+  id: true,
+  providerEventId: true,
+  eventType: true,
+  status: true,
+} as const
+
+function withProcessed<T extends { status: WebhookProcessingStatus }>(event: T) {
+  return { ...event, processed: processedFromStatus(event.status) }
 }
 
 export async function recordProviderWebhookReceivedTx(
@@ -40,26 +57,21 @@ export async function recordProviderWebhookReceivedTx(
 ) {
   const provider = input.provider ?? "stripe"
   const providerEventId = assertNonEmptyString(input.providerEventId, "providerEventId")
-
-  const data: Prisma.ProviderWebhookEventCreateInput = {
-    provider,
-    providerEventId,
-    eventType: assertNonEmptyString(input.eventType, "eventType"),
-    status: "received",
-    processed: false,
-  }
-  const safeMetadata = toSafeMetadata(input.safeMetadata)
-  if (safeMetadata !== undefined) {
-    data.safeMetadata = safeMetadata
-  }
+  const payload = toSafeMetadata(input.safeMetadata)
 
   try {
     const event = await tx.providerWebhookEvent.create({
-      data,
-      select: { id: true, providerEventId: true, eventType: true, processed: true },
+      data: {
+        provider,
+        providerEventId,
+        eventType: assertNonEmptyString(input.eventType, "eventType"),
+        status: "received",
+        ...(payload ? { payload } : {}),
+      },
+      select: providerWebhookEventSelect,
     })
 
-    return { event, duplicate: false }
+    return { event: withProcessed(event), duplicate: false }
   } catch (error) {
     const existing = await tx.providerWebhookEvent.findUnique({
       where: {
@@ -68,48 +80,38 @@ export async function recordProviderWebhookReceivedTx(
           providerEventId,
         },
       },
-      select: { id: true, providerEventId: true, eventType: true, processed: true },
+      select: providerWebhookEventSelect,
     })
 
-    if (existing) return { event: existing, duplicate: true }
+    if (existing) return { event: withProcessed(existing), duplicate: true }
     throw error
   }
 }
 
 export async function markProviderWebhookProcessedTx(tx: Tx, input: { id: string }) {
   const id = assertNonEmptyString(input.id, "id")
-  const updated = await tx.providerWebhookEvent.updateMany({
-    where: { id, processed: false },
+  await tx.providerWebhookEvent.update({
+    where: { id },
     data: {
       status: "processed",
-      processed: true,
       processedAt: new Date(),
-      processingError: null,
+      failureReason: null,
     },
   })
-
-  if (updated.count !== 1) {
-    throw new Error("WEBHOOK_ALREADY_PROCESSED")
-  }
 
   return tx.providerWebhookEvent.findUniqueOrThrow({ where: { id } })
 }
 
 export async function markProviderWebhookIgnoredTx(tx: Tx, input: { id: string; reason?: string }) {
   const id = assertNonEmptyString(input.id, "id")
-  const updated = await tx.providerWebhookEvent.updateMany({
-    where: { id, processed: false },
+  await tx.providerWebhookEvent.update({
+    where: { id },
     data: {
       status: "ignored",
-      processed: true,
       processedAt: new Date(),
-      processingError: input.reason ?? null,
+      failureReason: input.reason ?? null,
     },
   })
-
-  if (updated.count !== 1) {
-    throw new Error("WEBHOOK_ALREADY_PROCESSED")
-  }
 
   return tx.providerWebhookEvent.findUniqueOrThrow({ where: { id } })
 }
@@ -119,8 +121,8 @@ export async function markProviderWebhookFailedTx(tx: Tx, input: { id: string; e
     where: { id: assertNonEmptyString(input.id, "id") },
     data: {
       status: "failed",
-      processed: false,
-      processingError: assertNonEmptyString(input.error, "error"),
+      failedAt: new Date(),
+      failureReason: assertNonEmptyString(input.error, "error"),
     },
   })
 }

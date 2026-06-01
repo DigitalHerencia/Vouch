@@ -3,7 +3,6 @@ import "server-only"
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
 import { confirmationParticipantSummarySelect } from "./confirmation.selects"
-import { invitationSummarySelect } from "./invitation.selects"
 import {
   paymentRecordParticipantSummarySelect,
   refundRecordParticipantSummarySelect,
@@ -15,27 +14,19 @@ const vouchBaseScalarsSelect = {
   publicId: true,
   merchantId: true,
   customerId: true,
-  status: true,
-  archiveStatus: true,
-  recoveryStatus: true,
+  amountCents: true,
   currency: true,
-  protectedAmountCents: true,
-  merchantReceivesCents: true,
-  vouchServiceFeeCents: true,
-  processingFeeOffsetCents: true,
-  applicationFeeAmountCents: true,
-  customerTotalCents: true,
-  label: true,
-  appointmentStartsAt: true,
+  appointmentAt: true,
   confirmationOpensAt: true,
   confirmationExpiresAt: true,
-  committedAt: true,
-  sentAt: true,
-  acceptedAt: true,
+  status: true,
+  protocolFeePaidAt: true,
   authorizedAt: true,
-  confirmableAt: true,
-  completedAt: true,
+  capturedAt: true,
+  voidedAt: true,
   expiredAt: true,
+  archived: true,
+  archivedAt: true,
   createdAt: true,
   updatedAt: true,
 } as const
@@ -50,57 +41,41 @@ export const vouchCardSelect = {
   publicId: true,
   merchantId: true,
   customerId: true,
-  status: true,
-  archiveStatus: true,
+  amountCents: true,
   currency: true,
-  protectedAmountCents: true,
-  customerTotalCents: true,
-  appointmentStartsAt: true,
+  appointmentAt: true,
   confirmationOpensAt: true,
   confirmationExpiresAt: true,
+  status: true,
+  archived: true,
   createdAt: true,
   updatedAt: true,
   merchant: { select: userSafeIdentitySelect },
   customer: { select: userSafeIdentitySelect },
-  paymentRecords: {
-    where: { purpose: "customer_authorization" },
+  paymentIntents: {
+    where: { purpose: "customer_deposit_authorization" },
     take: 1,
-    select: {
-      id: true,
-      status: true,
-      settlementStatus: true,
-      captureBefore: true,
-      lastErrorCode: true,
-    },
+    select: paymentRecordParticipantSummarySelect,
   },
-  presenceConfirmations: { select: confirmationParticipantSummarySelect },
+  presenceConfirmation: { select: confirmationParticipantSummarySelect },
 } as const satisfies Prisma.VouchSelect
-
-export const vouchListItemSelect = vouchCardSelect
-export const merchantVouchListItemSelect = vouchCardSelect
-export const customerVouchListItemSelect = vouchCardSelect
 
 export const vouchDetailBaseSelect = {
   ...vouchBaseScalarsSelect,
   merchant: { select: userSafeIdentitySelect },
   customer: { select: userSafeIdentitySelect },
-  invitation: { select: invitationSummarySelect },
-  presenceConfirmations: {
-    select: confirmationParticipantSummarySelect,
-    orderBy: { createdAt: "asc" },
-  },
-  paymentRecords: {
-    where: { purpose: "customer_authorization" },
+  presenceConfirmation: { select: confirmationParticipantSummarySelect },
+  paymentIntents: {
+    where: { purpose: "customer_deposit_authorization" },
     take: 1,
     select: paymentRecordParticipantSummarySelect,
   },
-  refundRecords: {
+  refunds: {
     select: refundRecordParticipantSummarySelect,
     orderBy: { createdAt: "desc" },
   },
 } as const satisfies Prisma.VouchSelect
 
-export const vouchDetailForParticipantSelect = vouchDetailBaseSelect
 export const vouchDetailCommittedSelect = vouchDetailBaseSelect
 export const vouchDetailSentSelect = vouchDetailBaseSelect
 export const vouchDetailAcceptedSelect = vouchDetailBaseSelect
@@ -118,18 +93,14 @@ export const vouchConfirmationStateSelect = {
   status: true,
   confirmationOpensAt: true,
   confirmationExpiresAt: true,
-  presenceConfirmations: {
-    select: confirmationParticipantSummarySelect,
-  },
-  paymentRecords: {
-    where: { purpose: "customer_authorization" },
+  presenceConfirmation: { select: confirmationParticipantSummarySelect },
+  paymentIntents: {
+    where: { purpose: "customer_deposit_authorization" },
     take: 1,
     select: {
       id: true,
       status: true,
-      settlementStatus: true,
       captureBefore: true,
-      amountCapturableCents: true,
     },
   },
 } as const satisfies Prisma.VouchSelect
@@ -137,114 +108,41 @@ export const vouchConfirmationStateSelect = {
 export const vouchWindowSummarySelect = {
   id: true,
   status: true,
-  appointmentStartsAt: true,
+  appointmentAt: true,
   confirmationOpensAt: true,
   confirmationExpiresAt: true,
-  committedAt: true,
-  sentAt: true,
-  acceptedAt: true,
+  protocolFeePaidAt: true,
   authorizedAt: true,
-  confirmableAt: true,
-  completedAt: true,
+  capturedAt: true,
+  voidedAt: true,
   expiredAt: true,
 } as const satisfies Prisma.VouchSelect
 
 export const vouchPaymentSummarySelect = {
-  id: true,
-  publicId: true,
-  merchantId: true,
-  customerId: true,
-  status: true,
-  archiveStatus: true,
-  recoveryStatus: true,
-  currency: true,
-  protectedAmountCents: true,
-  merchantReceivesCents: true,
-  vouchServiceFeeCents: true,
-  processingFeeOffsetCents: true,
-  applicationFeeAmountCents: true,
-  customerTotalCents: true,
-  paymentRecords: {
-    where: { purpose: "customer_authorization" },
+  ...vouchBaseScalarsSelect,
+  paymentIntents: {
+    where: { purpose: "customer_deposit_authorization" },
     take: 1,
     select: paymentRecordParticipantSummarySelect,
   },
-  refundRecords: {
+  refunds: {
     select: refundRecordParticipantSummarySelect,
     orderBy: { createdAt: "desc" },
   },
 } as const satisfies Prisma.VouchSelect
 
 export const vouchTimelineSelect = {
-  id: true,
-  publicId: true,
-  status: true,
-  appointmentStartsAt: true,
-  confirmationOpensAt: true,
-  confirmationExpiresAt: true,
-  committedAt: true,
-  sentAt: true,
-  acceptedAt: true,
-  authorizedAt: true,
-  confirmableAt: true,
-  completedAt: true,
-  expiredAt: true,
-  presenceConfirmations: {
-    select: confirmationParticipantSummarySelect,
-    orderBy: { createdAt: "asc" },
-  },
-  paymentRecords: {
-    where: { purpose: "customer_authorization" },
+  ...vouchWindowSummarySelect,
+  presenceConfirmation: { select: confirmationParticipantSummarySelect },
+  paymentIntents: {
+    where: { purpose: "customer_deposit_authorization" },
     take: 1,
     select: paymentRecordParticipantSummarySelect,
   },
-  refundRecords: {
+  refunds: {
     select: refundRecordParticipantSummarySelect,
     orderBy: { createdAt: "desc" },
   },
 } as const satisfies Prisma.VouchSelect
 
-export const vouchArchiveStateSelect = {
-  id: true,
-  publicId: true,
-  merchantId: true,
-  customerId: true,
-  status: true,
-  archiveStatus: true,
-  completedAt: true,
-  expiredAt: true,
-} as const satisfies Prisma.VouchSelect
-
-export const vouchRecoveryStateSelect = {
-  id: true,
-  publicId: true,
-  status: true,
-  recoveryStatus: true,
-  paymentRecords: {
-    where: { purpose: "customer_authorization" },
-    take: 1,
-    select: {
-      id: true,
-      status: true,
-      settlementStatus: true,
-      lastErrorCode: true,
-      lastProviderSyncAt: true,
-    },
-  },
-} as const satisfies Prisma.VouchSelect
-
-export const whatHappensNextSelect = {
-  ...vouchDetailBaseSelect,
-  paymentRecords: {
-    where: { purpose: "customer_authorization" },
-    take: 1,
-    select: {
-      id: true,
-      status: true,
-      settlementStatus: true,
-      captureBefore: true,
-      amountCapturableCents: true,
-      lastErrorCode: true,
-    },
-  },
-} as const satisfies Prisma.VouchSelect
+export const whatHappensNextSelect = vouchDetailBaseSelect

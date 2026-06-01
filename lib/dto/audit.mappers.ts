@@ -2,6 +2,28 @@ import "server-only"
 
 import type { ISODateTime } from "@/types/commonTypes"
 
+type DateLike = Date | string | null | undefined
+
+export type ParticipantSafeAuditTimelineItemDTO = {
+  id: string
+  eventName: string
+  actorType: string
+  entityType: string
+  entityId: string
+  metadata: Record<string, unknown> | null
+  createdAt: ISODateTime
+}
+
+type ParticipantSafeAuditTimelineItemRecord = {
+  id: string
+  eventName: string
+  actorType: string
+  entityType: string
+  entityId: string
+  metadata: unknown
+  createdAt: DateLike
+}
+
 function toIso(value: DateLike): ISODateTime | null {
   if (!value) return null
   if (typeof value === "string") return value
@@ -32,7 +54,6 @@ export function mapParticipantSafeAuditTimelineItemDTO(
     actorType: record.actorType,
     entityType: record.entityType,
     entityId: record.entityId,
-    participantSafe: record.participantSafe,
     metadata: toParticipantSafeMetadata(record.metadata),
     createdAt: toIso(record.createdAt) ?? "",
   }

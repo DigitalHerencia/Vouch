@@ -1,7 +1,7 @@
 import "server-only"
 
+import type { VouchStatus } from "@/prisma/generated/prisma/client"
 import type { ISODateTime } from "@/types/commonTypes"
-import type { AggregateConfirmationStatus, ParticipantRole, VouchStatus } from "@/types/vouchTypes"
 
 import {
   mapPaymentRecordParticipantDTO,
@@ -12,6 +12,134 @@ import {
   toMoneyDTO,
 } from "./payment.mappers"
 
+type DateLike = Date | string | null | undefined
+
+type SafeUserRecord = {
+  id: string
+  displayName: string | null
+  email: string | null
+  status: string
+}
+
+export type SafeUserDTO = SafeUserRecord
+
+type PresenceConfirmationRecord = {
+  id: string
+  vouchId: string
+  status: string
+  windowOpensAt?: DateLike
+  windowClosesAt?: DateLike
+  merchantConfirmedAt?: DateLike
+  customerConfirmedAt?: DateLike
+  canCaptureAt?: DateLike
+  voidedAt?: DateLike
+  createdAt?: DateLike
+  updatedAt?: DateLike
+}
+
+export type PresenceConfirmationDTO = {
+  id: string
+  vouchId: string
+  status: string
+  windowOpensAt: ISODateTime | null
+  windowClosesAt: ISODateTime | null
+  merchantConfirmedAt: ISODateTime | null
+  customerConfirmedAt: ISODateTime | null
+  canCaptureAt: ISODateTime | null
+  voidedAt: ISODateTime | null
+  createdAt: ISODateTime | null
+  updatedAt: ISODateTime | null
+}
+
+export type AggregateConfirmationStatus =
+  | "none_confirmed"
+  | "merchant_confirmed"
+  | "customer_confirmed"
+  | "both_confirmed"
+
+type VouchBaseRecord = {
+  id: string
+  publicId?: string
+  merchantId?: string
+  customerId?: string | null
+  status: VouchStatus | string
+  archived?: boolean
+  currency?: string
+  amountCents?: number
+  appointmentAt?: DateLike
+  confirmationOpensAt: DateLike
+  confirmationExpiresAt: DateLike
+  protocolFeePaidAt?: DateLike
+  authorizedAt?: DateLike
+  capturedAt?: DateLike
+  voidedAt?: DateLike
+  expiredAt?: DateLike
+  archivedAt?: DateLike
+  createdAt?: DateLike
+  updatedAt?: DateLike
+  merchant?: SafeUserRecord
+  customer?: SafeUserRecord | null
+  presenceConfirmation?: PresenceConfirmationRecord | null
+  paymentIntents?: Parameters<typeof mapPaymentRecordParticipantDTO>[0][]
+  refunds?: Parameters<typeof mapRefundRecordParticipantDTOs>[0]
+}
+
+export type VouchCardDTO = {
+  id: string
+  publicId: string
+  merchantId: string
+  customerId: string | null
+  status: string
+  archived: boolean
+  currency: string
+  amountCents: number
+  amount: MoneyDTO
+  appointmentAt: ISODateTime | null
+  confirmationOpensAt: ISODateTime | null
+  confirmationExpiresAt: ISODateTime | null
+  createdAt: ISODateTime | null
+  updatedAt: ISODateTime | null
+  merchant: SafeUserDTO | null
+  customer: SafeUserDTO | null
+  paymentRecord: PaymentRecordParticipantDTO | null
+  presenceConfirmation: PresenceConfirmationDTO | null
+  aggregateConfirmationStatus: AggregateConfirmationStatus
+}
+
+export type VouchDetailDTO = VouchCardDTO & {
+  protocolFeePaidAt: ISODateTime | null
+  authorizedAt: ISODateTime | null
+  capturedAt: ISODateTime | null
+  voidedAt: ISODateTime | null
+  expiredAt: ISODateTime | null
+  archivedAt: ISODateTime | null
+  refundRecords: RefundRecordParticipantDTO[]
+  windowState: "before_window" | "open" | "closed"
+}
+
+export type VouchWindowSummaryDTO = {
+  id: string
+  status: string
+  appointmentAt: ISODateTime | null
+  confirmationOpensAt: ISODateTime | null
+  confirmationExpiresAt: ISODateTime | null
+  windowState: "before_window" | "open" | "closed"
+}
+
+export type VouchConfirmationStateDTO = {
+  id: string
+  merchantId: string
+  customerId: string | null
+  status: string
+  confirmationOpensAt: ISODateTime | null
+  confirmationExpiresAt: ISODateTime | null
+  presenceConfirmation: PresenceConfirmationDTO | null
+  aggregateConfirmationStatus: AggregateConfirmationStatus
+  windowState: "before_window" | "open" | "closed"
+  merchantConfirmed: boolean
+  customerConfirmed: boolean
+}
+
 function toIso(value: DateLike): ISODateTime | null {
   if (!value) return null
   if (typeof value === "string") return value
@@ -20,7 +148,6 @@ function toIso(value: DateLike): ISODateTime | null {
 
 function mapSafeUserDTO(record: SafeUserRecord | null | undefined): SafeUserDTO | null {
   if (!record) return null
-
   return {
     id: record.id,
     displayName: record.displayName,
@@ -29,54 +156,36 @@ function mapSafeUserDTO(record: SafeUserRecord | null | undefined): SafeUserDTO 
   }
 }
 
-function mapPresenceConfirmationDTO(record: PresenceConfirmationRecord): PresenceConfirmationDTO {
-  return {
-    id: record.id,
-    vouchId: record.vouchId,
-    userId: record.userId,
-    participantRole: record.participantRole,
-    status: record.status,
-    method: record.method,
-    confirmedAt: toIso(record.confirmedAt),
-    serverReceivedAt: toIso(record.serverReceivedAt),
-    timeBucket: record.timeBucket ?? null,
-    clockSkewAccepted: record.clockSkewAccepted ?? false,
-    createdAt: toIso(record.createdAt),
-  }
-}
-
-function mapInvitationDTO(record: InvitationRecord | null | undefined): InvitationDTO | null {
+function mapPresenceConfirmationDTO(
+  record: PresenceConfirmationRecord | null | undefined
+): PresenceConfirmationDTO | null {
   if (!record) return null
 
   return {
     id: record.id,
     vouchId: record.vouchId,
     status: record.status,
-    expiresAt: toIso(record.expiresAt),
-    openedAt: toIso(record.openedAt),
-    acceptedAt: toIso(record.acceptedAt),
-    declinedAt: toIso(record.declinedAt),
+    windowOpensAt: toIso(record.windowOpensAt),
+    windowClosesAt: toIso(record.windowClosesAt),
+    merchantConfirmedAt: toIso(record.merchantConfirmedAt),
+    customerConfirmedAt: toIso(record.customerConfirmedAt),
+    canCaptureAt: toIso(record.canCaptureAt),
+    voidedAt: toIso(record.voidedAt),
     createdAt: toIso(record.createdAt),
     updatedAt: toIso(record.updatedAt),
   }
 }
 
 export function getAggregateConfirmationStatus(
-  confirmations: PresenceConfirmationDTO[]
+  confirmation: PresenceConfirmationDTO | PresenceConfirmationDTO[] | null | undefined
 ): AggregateConfirmationStatus {
-  const merchantConfirmed = confirmations.some(
-    (confirmation) =>
-      confirmation.participantRole === "merchant" && confirmation.status === "confirmed"
-  )
-  const customerConfirmed = confirmations.some(
-    (confirmation) =>
-      confirmation.participantRole === "customer" && confirmation.status === "confirmed"
-  )
+  const confirmations = Array.isArray(confirmation) ? confirmation : confirmation ? [confirmation] : []
+  const merchantConfirmed = confirmations.some((item) => Boolean(item.merchantConfirmedAt))
+  const customerConfirmed = confirmations.some((item) => Boolean(item.customerConfirmedAt))
 
   if (merchantConfirmed && customerConfirmed) return "both_confirmed"
   if (merchantConfirmed) return "merchant_confirmed"
   if (customerConfirmed) return "customer_confirmed"
-
   return "none_confirmed"
 }
 
@@ -93,16 +202,14 @@ export function getWindowState(input: {
 
   if (opensAt && now < opensAt) return "before_window"
   if (expiresAt && now > expiresAt) return "closed"
-
   return "open"
 }
 
 export function mapVouchCardDTO(record: VouchBaseRecord): VouchCardDTO {
-  const confirmations = (record.presenceConfirmations ?? []).map(mapPresenceConfirmationDTO)
-  const customerAuthorizationRecord = record.paymentRecords?.[0]
+  const presenceConfirmation = mapPresenceConfirmationDTO(record.presenceConfirmation)
+  const customerAuthorizationRecord = record.paymentIntents?.[0]
   const currency = record.currency ?? "usd"
-  const protectedAmountCents = record.protectedAmountCents ?? 0
-  const customerTotalCents = record.customerTotalCents ?? protectedAmountCents
+  const amountCents = record.amountCents ?? 0
 
   return {
     id: record.id,
@@ -110,13 +217,11 @@ export function mapVouchCardDTO(record: VouchBaseRecord): VouchCardDTO {
     merchantId: record.merchantId ?? "",
     customerId: record.customerId ?? null,
     status: record.status,
-    archiveStatus: record.archiveStatus ?? "active",
+    archived: record.archived ?? false,
     currency,
-    protectedAmountCents,
-    protectedAmount: toMoneyDTO(protectedAmountCents, currency),
-    customerTotalCents,
-    customerTotal: toMoneyDTO(customerTotalCents, currency),
-    appointmentStartsAt: toIso(record.appointmentStartsAt),
+    amountCents,
+    amount: toMoneyDTO(amountCents, currency),
+    appointmentAt: toIso(record.appointmentAt),
     confirmationOpensAt: toIso(record.confirmationOpensAt),
     confirmationExpiresAt: toIso(record.confirmationExpiresAt),
     createdAt: toIso(record.createdAt),
@@ -124,39 +229,23 @@ export function mapVouchCardDTO(record: VouchBaseRecord): VouchCardDTO {
     merchant: mapSafeUserDTO(record.merchant),
     customer: mapSafeUserDTO(record.customer),
     paymentRecord: mapPaymentRecordParticipantDTO(customerAuthorizationRecord),
-    presenceConfirmations: confirmations,
-    aggregateConfirmationStatus: getAggregateConfirmationStatus(confirmations),
+    presenceConfirmation,
+    aggregateConfirmationStatus: getAggregateConfirmationStatus(presenceConfirmation),
   }
 }
 
 export function mapVouchDetailDTO(record: VouchBaseRecord): VouchDetailDTO {
   const card = mapVouchCardDTO(record)
-  const merchantReceivesCents = record.merchantReceivesCents ?? record.protectedAmountCents ?? 0
-  const vouchServiceFeeCents = record.vouchServiceFeeCents ?? 0
-  const processingFeeOffsetCents = record.processingFeeOffsetCents ?? 0
-  const applicationFeeAmountCents = record.applicationFeeAmountCents ?? 0
 
   return {
     ...card,
-    recoveryStatus: record.recoveryStatus ?? "normal",
-    merchantReceivesCents,
-    merchantReceives: toMoneyDTO(merchantReceivesCents, card.currency),
-    vouchServiceFeeCents,
-    vouchServiceFee: toMoneyDTO(vouchServiceFeeCents, card.currency),
-    processingFeeOffsetCents,
-    processingFeeOffset: toMoneyDTO(processingFeeOffsetCents, card.currency),
-    applicationFeeAmountCents,
-    applicationFeeAmount: toMoneyDTO(applicationFeeAmountCents, card.currency),
-    label: record.label ?? null,
-    committedAt: toIso(record.committedAt),
-    sentAt: toIso(record.sentAt),
-    acceptedAt: toIso(record.acceptedAt),
+    protocolFeePaidAt: toIso(record.protocolFeePaidAt),
     authorizedAt: toIso(record.authorizedAt),
-    confirmableAt: toIso(record.confirmableAt),
-    completedAt: toIso(record.completedAt),
+    capturedAt: toIso(record.capturedAt),
+    voidedAt: toIso(record.voidedAt),
     expiredAt: toIso(record.expiredAt),
-    invitation: mapInvitationDTO(record.invitation),
-    refundRecords: mapRefundRecordParticipantDTOs(record.refundRecords),
+    archivedAt: toIso(record.archivedAt),
+    refundRecords: mapRefundRecordParticipantDTOs(record.refunds),
     windowState: getWindowState({
       confirmationOpensAt: record.confirmationOpensAt,
       confirmationExpiresAt: record.confirmationExpiresAt,
@@ -168,7 +257,7 @@ export function mapVouchWindowSummaryDTO(record: VouchBaseRecord): VouchWindowSu
   return {
     id: record.id,
     status: record.status,
-    appointmentStartsAt: toIso(record.appointmentStartsAt),
+    appointmentAt: toIso(record.appointmentAt),
     confirmationOpensAt: toIso(record.confirmationOpensAt),
     confirmationExpiresAt: toIso(record.confirmationExpiresAt),
     windowState: getWindowState({
@@ -179,8 +268,8 @@ export function mapVouchWindowSummaryDTO(record: VouchBaseRecord): VouchWindowSu
 }
 
 export function mapVouchConfirmationStateDTO(record: VouchBaseRecord): VouchConfirmationStateDTO {
-  const confirmations = (record.presenceConfirmations ?? []).map(mapPresenceConfirmationDTO)
-  const aggregateConfirmationStatus = getAggregateConfirmationStatus(confirmations)
+  const presenceConfirmation = mapPresenceConfirmationDTO(record.presenceConfirmation)
+  const aggregateConfirmationStatus = getAggregateConfirmationStatus(presenceConfirmation)
 
   return {
     id: record.id,
@@ -189,7 +278,7 @@ export function mapVouchConfirmationStateDTO(record: VouchBaseRecord): VouchConf
     status: record.status,
     confirmationOpensAt: toIso(record.confirmationOpensAt),
     confirmationExpiresAt: toIso(record.confirmationExpiresAt),
-    presenceConfirmations: confirmations,
+    presenceConfirmation,
     aggregateConfirmationStatus,
     windowState: getWindowState({
       confirmationOpensAt: record.confirmationOpensAt,

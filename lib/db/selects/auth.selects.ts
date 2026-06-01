@@ -1,39 +1,6 @@
-// lib/db/selects/auth.selects.ts
-
 import "server-only"
 
 import type { Prisma } from "@/prisma/generated/prisma/client"
-
-const latestTermsAcceptanceArgs = {
-  orderBy: { acceptedAt: "desc" },
-  take: 1,
-  select: {
-    id: true,
-    userId: true,
-    termsVersion: true,
-    acceptedAt: true,
-  },
-} as const
-
-const authReadinessSelect = {
-  verificationProfile: {
-    select: {
-      identityStatus: true,
-      adultStatus: true,
-    },
-  },
-  paymentCustomer: {
-    select: {
-      readiness: true,
-    },
-  },
-  connectedAccount: {
-    select: {
-      readiness: true,
-    },
-  },
-  termsAcceptances: latestTermsAcceptanceArgs,
-} as const
 
 export const currentUserAuthSelect = {
   id: true,
@@ -44,7 +11,24 @@ export const currentUserAuthSelect = {
   status: true,
   createdAt: true,
   updatedAt: true,
-  ...authReadinessSelect,
+  paymentCustomer: {
+    select: {
+      id: true,
+      paymentMethodReady: true,
+      defaultPaymentMethodId: true,
+      syncedAt: true,
+    },
+  },
+  connectedAccount: {
+    select: {
+      id: true,
+      chargesEnabled: true,
+      payoutsEnabled: true,
+      detailsSubmitted: true,
+      disabledReason: true,
+      syncedAt: true,
+    },
+  },
 } as const satisfies Prisma.UserSelect
 
 export const activeUserGateSelect = {
@@ -61,29 +45,14 @@ export const contextualParticipantRoleSelect = {
 
 export const inviteCandidateAuthSelect = {
   id: true,
-  vouchId: true,
-  recipientEmail: true,
+  publicId: true,
+  merchantId: true,
+  customerId: true,
   status: true,
-  expiresAt: true,
-  vouch: {
-    select: {
-      id: true,
-      publicId: true,
-      merchantId: true,
-      customerId: true,
-      status: true,
-      archiveStatus: true,
-      recoveryStatus: true,
-      currency: true,
-      protectedAmountCents: true,
-      merchantReceivesCents: true,
-      vouchServiceFeeCents: true,
-      processingFeeOffsetCents: true,
-      applicationFeeAmountCents: true,
-      customerTotalCents: true,
-      appointmentStartsAt: true,
-      confirmationOpensAt: true,
-      confirmationExpiresAt: true,
-    },
-  },
-} as const satisfies Prisma.InvitationSelect
+  archived: true,
+  amountCents: true,
+  currency: true,
+  appointmentAt: true,
+  confirmationOpensAt: true,
+  confirmationExpiresAt: true,
+} as const satisfies Prisma.VouchSelect

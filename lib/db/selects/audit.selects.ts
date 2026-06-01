@@ -8,7 +8,6 @@ export const participantSafeAuditTimelineItemSelect = {
   actorType: true,
   entityType: true,
   entityId: true,
-  participantSafe: true,
   metadata: true,
   createdAt: true,
 } as const satisfies Prisma.AuditEventSelect

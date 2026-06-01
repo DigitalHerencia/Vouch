@@ -1,8 +1,15 @@
-// lib/db/transactions/authTransactions.ts
-
 import "server-only"
 
 import type { PrismaClient } from "@/prisma/generated/prisma/client"
+
+type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">
+
+type LocalUserSyncInput = {
+  clerkUserId: string
+  email?: string | null
+  phone?: string | null
+  displayName?: string | null
+}
 
 export async function upsertUserFromClerkTx(tx: Tx, input: LocalUserSyncInput) {
   return tx.user.upsert({
@@ -23,10 +30,9 @@ export async function upsertUserFromClerkTx(tx: Tx, input: LocalUserSyncInput) {
 }
 
 export async function createDefaultVerificationProfileTx(tx: Tx, input: { userId: string }) {
-  return tx.verificationProfile.upsert({
-    where: { userId: input.userId },
-    create: { userId: input.userId },
-    update: {},
+  return tx.user.findUniqueOrThrow({
+    where: { id: input.userId },
+    select: { id: true },
   })
 }
 
@@ -82,37 +88,18 @@ export async function recordTermsAcceptanceTx(
     requestId?: string | null
   }
 ) {
-  const acceptance = await tx.termsAcceptance.upsert({
-    where: {
-      userId_termsVersion: {
-        userId: input.userId,
-        termsVersion: input.termsVersion,
-      },
-    },
-    create: {
-      userId: input.userId,
-      termsVersion: input.termsVersion,
-      acceptedAt: input.acceptedAt,
-      ipHash: input.ipHash ?? null,
-      userAgentHash: input.userAgentHash ?? null,
-    },
-    update: {},
-  })
-
-  await tx.auditEvent.create({
+  return tx.auditEvent.create({
     data: {
       eventName: "user.terms.accepted",
       actorType: "user",
       actorUserId: input.userId,
       entityType: "TermsAcceptance",
-      entityId: acceptance.id,
-      requestId: input.requestId ?? null,
+      entityId: input.userId,
       metadata: {
         terms_version: input.termsVersion,
+        accepted_at: input.acceptedAt.toISOString(),
         source: "signup",
       },
     },
   })
-
-  return acceptance
 }

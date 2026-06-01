@@ -1,4 +1,4 @@
-import type { UserID, ID } from "./commonTypes"
+import type { ID, UserID } from "./commonTypes"
 
 export type AuditActorType =
   | "user"
@@ -79,26 +79,4 @@ export interface AuditFilterInput {
   actorType?: AuditActorType
   eventName?: AuditEventName
   page?: number
-}
-
-export type ParticipantSafeAuditTimelineItemDTO = {
-  id: string
-  eventName: string
-  actorType: string
-  entityType: string
-  entityId: string
-  participantSafe: boolean
-  metadata: Record<string, unknown> | null
-  createdAt: ISODateTime
-}
-
-type ParticipantSafeAuditTimelineItemRecord = {
-  id: string
-  eventName: string
-  actorType: string
-  entityType: string
-  entityId: string
-  participantSafe: boolean
-  metadata: unknown
-  createdAt: Date | string
 }
