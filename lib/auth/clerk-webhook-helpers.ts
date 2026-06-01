@@ -1,7 +1,7 @@
 // lib/auth/clerk-webhook-helpers.ts
 
-import type { ClerkWebhookEvent, ClerkWebhookUserData } from "@/types/auth"
-import { clerkWebhookEventSchema } from "@/schemas/auth"
+import type { ClerkWebhookEvent, ClerkWebhookUserData } from "@/types/authTypes"
+import { clerkWebhookEventSchema } from "@/schemas/authSchemas"
 
 export function extractClerkUserEmail(data: ClerkWebhookUserData): string | undefined {
   const primary = data.email_addresses?.find((email) => email.id === data.primary_email_address_id)

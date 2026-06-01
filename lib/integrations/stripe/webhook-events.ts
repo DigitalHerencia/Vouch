@@ -5,12 +5,6 @@ import type Stripe from "stripe"
 import { getStripeClient } from "@/lib/integrations/stripe/client"
 import { getStripeRuntimeConfig } from "@/lib/integrations/stripe/config"
 
-export type StripeWebhookEvent = Stripe.Event
-
-export type StripeWebhookVerificationResult =
-  | { ok: true; event: StripeWebhookEvent }
-  | { ok: false; status: 400; message: string }
-
 export async function verifyStripeWebhookEvent(
   rawBody: string,
   signatureHeader: string | null

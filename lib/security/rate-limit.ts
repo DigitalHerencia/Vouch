@@ -1,11 +1,6 @@
 import "server-only"
 
-import type { RateLimitResult } from "@/types/security"
-
-type RateLimitBucket = {
-  count: number
-  resetAt: number
-}
+import type { RateLimitResult } from "@/types/securityTypes"
 
 const buckets = new Map<string, RateLimitBucket>()
 

@@ -2,7 +2,7 @@ import "server-only"
 
 import type Stripe from "stripe"
 
-import type { PaymentStatus, RefundStatus, SettlementStatus } from "@/types/payment"
+import type { PaymentStatus, RefundStatus, SettlementStatus } from "@/types/paymentTypes"
 
 export function mapStripePaymentIntentStatus(status: Stripe.PaymentIntent.Status): PaymentStatus {
   switch (status) {

@@ -4,22 +4,12 @@ import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
-// Timeline Context
-interface TimelineContextValue {
-  orientation: "vertical" | "horizontal"
-}
-
 const TimelineContext = React.createContext<TimelineContextValue>({
   orientation: "vertical",
 })
 
 function useTimeline() {
   return React.useContext(TimelineContext)
-}
-
-// Timeline Root
-export interface TimelineProps extends React.HTMLAttributes<HTMLDivElement> {
-  orientation?: "vertical" | "horizontal"
 }
 
 const Timeline = React.forwardRef<HTMLDivElement, TimelineProps>(
@@ -45,10 +35,6 @@ Timeline.displayName = "Timeline"
 
 // Timeline Item
 const timelineItemVariants = cva("relative flex")
-
-export interface TimelineItemProps extends React.HTMLAttributes<HTMLDivElement> {
-  status?: "completed" | "current" | "upcoming"
-}
 
 const TimelineItem = React.forwardRef<HTMLDivElement, TimelineItemProps>(
   ({ status, className, children, ...props }, ref) => {
@@ -95,9 +81,6 @@ const timelineDotVariants = cva(
   }
 )
 
-export interface TimelineDotProps
-  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof timelineDotVariants> {}
-
 const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
   ({ status, size, className, children, ...props }, ref) => {
     return (
@@ -127,11 +110,6 @@ const timelineConnectorVariants = cva("transition-all duration-200", {
     orientation: "vertical",
   },
 })
-
-export interface TimelineConnectorProps
-  extends
-    React.HTMLAttributes<HTMLDivElement>,
-    Omit<VariantProps<typeof timelineConnectorVariants>, "orientation"> {}
 
 const TimelineConnector = React.forwardRef<HTMLDivElement, TimelineConnectorProps>(
   ({ status, className, ...props }, ref) => {

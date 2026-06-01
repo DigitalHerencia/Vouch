@@ -9,26 +9,6 @@ import { Eye, Mail, Lock, User, LoaderCircle } from "lucide-react"
 import { LogoLockup } from "@/components/brand/logo-lockup"
 import { AuthProcessPanelGrid } from "@/components/blocks/process-panel"
 
-// ============================================================================
-// AUTH VARIANT 1: Login Form
-// ============================================================================
-export interface LoginFormProps {
-  logo?: React.ReactNode
-  title?: string
-  description?: string
-  notice?: React.ReactNode
-  error?: React.ReactNode
-  children?: React.ReactNode
-  footer?: React.ReactNode
-  signUpHref?: string | undefined
-  signUpPrompt?: string | undefined
-  signUpLabel?: string | undefined
-  onSubmit?: (data: { email: string; password: string; remember: boolean }) => void
-  onForgotPassword?: () => void
-  onSignUp?: () => void
-  socialProviders?: Array<"google" | "github">
-}
-
 export function LoginForm({
   logo,
   title,
@@ -202,17 +182,6 @@ export function LoginForm({
   )
 }
 
-export interface LoginFormFieldsProps {
-  emailInputProps: React.ComponentProps<typeof Input>
-  passwordInputProps: React.ComponentProps<typeof Input>
-  emailError?: string | undefined
-  passwordError?: string | undefined
-  passwordDescription?: string | undefined
-  disabled?: boolean
-  isSubmitting?: boolean
-  submitLabel?: string
-}
-
 export function LoginFormFields({
   emailInputProps,
   passwordInputProps,
@@ -266,27 +235,6 @@ export function LoginFormFields({
       </Button>
     </div>
   )
-}
-
-// ============================================================================
-// AUTH VARIANT 2: Sign Up Form
-// ============================================================================
-export interface SignUpFormProps {
-  logo?: React.ReactNode
-  title?: string
-  description?: string
-  notice?: React.ReactNode
-  error?: React.ReactNode
-  children?: React.ReactNode
-  footer?: React.ReactNode
-  signInHref?: string | undefined
-  signInPrompt?: string | undefined
-  signInLabel?: string | undefined
-  onSubmit?: (data: { name: string; email: string; password: string; terms: boolean }) => void
-  onSignIn?: () => void
-  socialProviders?: Array<"google" | "github">
-  termsUrl?: string
-  privacyUrl?: string
 }
 
 export function SignUpForm({
@@ -482,25 +430,6 @@ export function SignUpForm({
   )
 }
 
-export interface SignUpFormFieldsProps {
-  firstNameInputProps: React.ComponentProps<typeof Input>
-  lastNameInputProps: React.ComponentProps<typeof Input>
-  emailInputProps: React.ComponentProps<typeof Input>
-  passwordInputProps: React.ComponentProps<typeof Input>
-  firstNameError?: string | undefined
-  lastNameError?: string | undefined
-  emailError?: string | undefined
-  passwordError?: string | undefined
-  agreementError?: string | undefined
-  agreementChecked: boolean
-  agreementLabel: React.ReactNode
-  onAgreementChange: (checked: boolean) => void
-  disabled?: boolean
-  isSubmitting?: boolean
-  submitLabel?: string
-  captcha?: React.ReactNode
-}
-
 export function SignUpFormFields({
   firstNameInputProps,
   lastNameInputProps,
@@ -615,17 +544,6 @@ export function SignUpFormFields({
   )
 }
 
-// ============================================================================
-// AUTH VARIANT 3: Forgot Password Form
-// ============================================================================
-export interface ForgotPasswordFormProps {
-  logo?: React.ReactNode
-  title?: string
-  description?: string
-  onSubmit?: (email: string) => void
-  onBackToLogin?: () => void
-}
-
 export function ForgotPasswordForm({
   logo,
   title = "Forgot password?",
@@ -678,33 +596,6 @@ export function ForgotPasswordForm({
       </Card>
     </div>
   )
-}
-
-// ============================================================================
-// AUTH VARIANT 4: OTP Verification Form
-// ============================================================================
-export interface OTPVerificationFormProps {
-  logo?: React.ReactNode
-  title?: string
-  description?: string
-  email?: string
-  length?: number
-  value?: string
-  notice?: React.ReactNode
-  error?: string | undefined
-  rootError?: React.ReactNode
-  disabled?: boolean
-  submitLabel?: string
-  resendLabel?: string
-  backLabel?: string
-  onChange?: (otp: string) => void
-  onSubmit?: (otp: string) => void
-  onResend?: () => void
-  onBackToLogin?: () => void
-  isSubmitting?: boolean
-  isResending?: boolean
-  isResetting?: boolean
-  actions?: React.ReactNode
 }
 
 export function OTPVerificationForm({
@@ -826,15 +717,6 @@ export function OTPVerificationForm({
       </Card>
     </div>
   )
-}
-
-// ============================================================================
-// AUTH VARIANT 5: Split Auth Layout
-// ============================================================================
-export interface AuthSplitLayoutProps {
-  children: React.ReactNode
-  brandContent?: React.ReactNode
-  position?: "left" | "right"
 }
 
 export function AuthSplitLayout({

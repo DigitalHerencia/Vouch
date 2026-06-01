@@ -1,37 +1,7 @@
-import type { AggregateConfirmationStatus, VouchStatus } from "@/types/vouch"
+import type { AggregateConfirmationStatus, VouchStatus } from "@/types/vouchTypes"
 
 import { deriveAggregateConfirmationStatus, type ConfirmationStateInput } from "./state"
 import { isConfirmationWindowClosed, type DateLike } from "./time-windows"
-
-export type ResolutionPaymentStatus =
-  | "not_started"
-  | "requires_payment_method"
-  | "authorized"
-  | "captured"
-  | "capture_pending"
-  | "captured_settlement"
-  | "refund_pending"
-  | "refunded"
-  | "canceled"
-  | "failed"
-
-export type ReleaseResolutionInput = ConfirmationStateInput & {
-  vouchStatus: VouchStatus
-  paymentStatus?: ResolutionPaymentStatus
-}
-
-export type ExpirationResolutionInput = ConfirmationStateInput & {
-  vouchStatus: VouchStatus
-  now?: DateLike
-  confirmationExpiresAt: DateLike
-}
-
-export type RefundOrVoidResolutionInput = ConfirmationStateInput & {
-  vouchStatus: VouchStatus
-  paymentStatus: ResolutionPaymentStatus
-  now?: DateLike
-  confirmationExpiresAt?: DateLike
-}
 
 const REFUND_OR_CANCEL_PAYMENT_STATUSES = new Set<ResolutionPaymentStatus>([
   "authorized",

@@ -1,6 +1,6 @@
 import { z } from "zod"
-import { internalReturnToPathSchema, optionalTrimmedStringSchema } from "./common"
-import { baseRoleSchema } from "./auth"
+import { internalReturnToPathSchema, optionalTrimmedStringSchema } from "./commonSchemas"
+import { baseRoleSchema } from "./authSchemas"
 
 export const systemPageVariantSchema = z.enum([
   "global_loading",

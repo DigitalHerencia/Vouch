@@ -21,8 +21,6 @@ import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
 
 const DEFAULT_TAKE = 10
 
-type VouchCardRecord = Prisma.VouchGetPayload<{ select: typeof vouchCardSelect }>
-
 export async function parseDashboardSearchParams(
   searchParams: Record<string, string | string[] | undefined>
 ): Promise<DashboardFiltersDTO> {

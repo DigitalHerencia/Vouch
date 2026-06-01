@@ -48,26 +48,8 @@ import {
   paymentProviderReturnInputSchema,
   startStripeConnectInputSchema,
   startStripePaymentManagementInputSchema,
-} from "@/schemas/payment"
-import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
-
-type ProviderRedirectResult = {
-  redirectTo: string
-  clientSecret?: string | null
-}
-
-type ReadinessResult = {
-  userId: string
-  readiness: "not_started" | "requires_action" | "ready" | "restricted" | "failed"
-}
-
-type PaymentActionResult = {
-  paymentRecordId: string
-  vouchId: string
-  status: string
-  settlementStatus: string
-  redirectTo?: string
-}
+} from "@/schemas/paymentSchemas"
+import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-resultTypes"
 
 function getAppUrl(): string {
   return (

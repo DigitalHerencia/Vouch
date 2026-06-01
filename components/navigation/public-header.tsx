@@ -6,16 +6,6 @@ import Link from "next/link"
 import { LogoLockup } from "@/components/brand/logo-lockup"
 import { Button } from "@/components/ui/button"
 
-export interface PublicHeaderNavItem {
-  label: string
-  href: string
-}
-
-export interface PublicHeaderProps {
-  logo?: ReactNode | undefined
-  navItems?: readonly PublicHeaderNavItem[] | undefined
-}
-
 export const defaultPublicNavItems = [
   { label: "Pricing", href: "/pricing" },
   { label: "FAQ", href: "/faq" },

@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { internalReturnToPathSchema } from "./common"
+import { internalReturnToPathSchema } from "./commonSchemas"
 
 export const marketingPageIdSchema = z.enum([
   "home",

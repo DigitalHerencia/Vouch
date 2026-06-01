@@ -15,23 +15,6 @@ const bodyTextMotion =
 const cardMotion =
   "group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
 
-// ============================================================================
-// FEATURE GRID VARIANT 1: With Icons
-// ============================================================================
-export interface FeatureItem {
-  icon: React.ReactNode
-  title: string
-  description: string
-}
-
-export interface FeatureGridWithIconsProps {
-  title?: string
-  subtitle?: string
-  description?: string
-  features: FeatureItem[]
-  columns?: 2 | 3 | 4
-}
-
 export function FeatureGridWithIcons({
   title,
   subtitle,
@@ -95,21 +78,6 @@ export function FeatureGridWithIcons({
   )
 }
 
-// ============================================================================
-// FEATURE GRID VARIANT 2: With Images
-// ============================================================================
-export interface FeatureWithImageItem {
-  image: string
-  title: string
-  description: string
-}
-
-export interface FeatureGridWithImagesProps {
-  title?: string
-  subtitle?: string
-  features: FeatureWithImageItem[]
-}
-
 export function FeatureGridWithImages({ title, subtitle, features }: FeatureGridWithImagesProps) {
   return (
     <main>
@@ -146,20 +114,6 @@ export function FeatureGridWithImages({ title, subtitle, features }: FeatureGrid
       </section>
     </main>
   )
-}
-
-// ============================================================================
-// FEATURE GRID VARIANT 3: Alternating
-// ============================================================================
-export interface FeatureAlternatingItem {
-  icon: React.ReactNode
-  title: string
-  description: string
-  image?: string
-}
-
-export interface FeatureGridAlternatingProps {
-  features: FeatureAlternatingItem[]
 }
 
 export function FeatureGridAlternating({ features }: FeatureGridAlternatingProps) {
@@ -207,23 +161,6 @@ export function FeatureGridAlternating({ features }: FeatureGridAlternatingProps
       </section>
     </main>
   )
-}
-
-// ============================================================================
-// FEATURE GRID VARIANT 4: Bento Grid
-// ============================================================================
-export interface BentoFeatureItem {
-  icon: React.ReactNode
-  title: string
-  description: string
-  span?: "normal" | "wide" | "tall"
-}
-
-export interface FeatureBentoGridProps {
-  title?: string
-  subtitle?: string
-  features: BentoFeatureItem[]
-  align?: "center" | "left"
 }
 
 export function FeatureBentoGrid({

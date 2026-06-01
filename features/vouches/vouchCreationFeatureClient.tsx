@@ -10,13 +10,6 @@ import type {
 } from "@/components/blocks/status"
 import { vouchPageCopy } from "@/content/vouches"
 
-export interface VouchCreationFeatureClientProps {
-  initialDraft?: Partial<VouchCreationDraft>
-  onSaveAmount: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
-  onSaveWindow: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
-  onCreateVouch: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
-}
-
 const defaultDraft: VouchCreationDraft = {
   amountDollars: "50.00",
   appointmentStartsAt: "",

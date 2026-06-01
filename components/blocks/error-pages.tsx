@@ -15,6 +15,15 @@ import {
   Clock,
   Lock,
 } from "lucide-react"
+import type {
+  ComingSoonPageProps,
+  ForbiddenPageProps,
+  GenericErrorPageProps,
+  MaintenancePageProps,
+  NotFoundPageProps,
+  OfflinePageProps,
+  ServerErrorPageProps,
+} from "@/types/commonTypes"
 function safeHref(href: string) {
   if (href.startsWith("/") || href.startsWith("#") || href.startsWith("mailto:")) return href
 
@@ -24,20 +33,6 @@ function safeHref(href: string) {
   } catch {
     return "#"
   }
-}
-
-// ============================================================================
-// ERROR PAGE VARIANT 1: 404 Not Found
-// ============================================================================
-export interface NotFoundPageProps {
-  title?: string
-  description?: string
-  showSearch?: boolean
-  searchQuery?: string
-  onSearchQueryChange?: (query: string) => void
-  onSearch?: (query: string) => void
-  homeHref?: string
-  backHref?: string
 }
 
 export function NotFoundPage({
@@ -112,18 +107,6 @@ export function NotFoundPage({
   )
 }
 
-// ============================================================================
-// ERROR PAGE VARIANT 2: 500 Server Error
-// ============================================================================
-export interface ServerErrorPageProps {
-  title?: string
-  description?: string
-  errorId?: string
-  onRetry?: () => void
-  homeHref?: string
-  supportEmail?: string
-}
-
 export function ServerErrorPage({
   title = "500",
   description = "Something went wrong on our end. Our team has been notified and is working on a fix.",
@@ -188,17 +171,6 @@ export function ServerErrorPage({
   )
 }
 
-// ============================================================================
-// ERROR PAGE VARIANT 3: Maintenance Page
-// ============================================================================
-export interface MaintenancePageProps {
-  title?: string
-  description?: string
-  estimatedTime?: string
-  features?: string[]
-  statusPageUrl?: string
-}
-
 export function MaintenancePage({
   title = "Under Maintenance",
   description = "We're currently performing scheduled maintenance to improve your experience.",
@@ -253,15 +225,6 @@ export function MaintenancePage({
   )
 }
 
-// ============================================================================
-// ERROR PAGE VARIANT 4: Offline Page
-// ============================================================================
-export interface OfflinePageProps {
-  title?: string
-  description?: string
-  onRetry?: () => void
-}
-
 export function OfflinePage({
   title = "You're Offline",
   description = "It looks like you've lost your internet connection. Please check your connection and try again.",
@@ -299,16 +262,6 @@ export function OfflinePage({
       </div>
     </div>
   )
-}
-
-// ============================================================================
-// ERROR PAGE VARIANT 5: 403 Forbidden
-// ============================================================================
-export interface ForbiddenPageProps {
-  title?: string
-  description?: string
-  homeHref?: string
-  loginHref?: string
 }
 
 export function ForbiddenPage({
@@ -372,17 +325,6 @@ export function getErrorPageCountdown(launchDate?: Date) {
     hours: Math.floor((total / (1000 * 60 * 60)) % 24),
     minutes: Math.floor((total / (1000 * 60)) % 60),
   }
-}
-
-export interface ComingSoonPageProps {
-  title?: string
-  description?: string
-  launchDate?: Date
-  onNotify?: (email: string) => void
-  email?: string
-  onEmailChange?: (email: string) => void
-  submitted?: boolean
-  timeRemaining?: ReturnType<typeof getErrorPageCountdown>
 }
 
 export function ComingSoonPage({
@@ -454,18 +396,6 @@ export function ComingSoonPage({
       </div>
     </div>
   )
-}
-// ============================================================================
-export interface GenericErrorPageProps {
-  icon?: React.ReactNode
-  title?: string
-  description?: string
-  actions?: Array<{
-    label: string
-    href?: string
-    onClick?: () => void
-    variant?: "default" | "outline"
-  }>
 }
 
 export function GenericErrorPage({

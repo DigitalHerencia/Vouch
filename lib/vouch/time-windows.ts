@@ -1,16 +1,4 @@
-export type DateLike = Date | string | number
 
-export type ConfirmationWindowInput = {
-  now?: DateLike
-  confirmationOpensAt: DateLike
-  confirmationExpiresAt: DateLike
-}
-
-export type ValidConfirmationWindowInput = {
-  meetingStartsAt?: DateLike
-  confirmationOpensAt: DateLike
-  confirmationExpiresAt: DateLike
-}
 
 export function toDate(value: DateLike): Date {
   const date = value instanceof Date ? value : new Date(value)

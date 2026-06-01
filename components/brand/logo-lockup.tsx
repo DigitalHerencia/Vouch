@@ -2,12 +2,6 @@
 
 import { Handshake } from "lucide-react"
 
-export interface LogoLockupProps {
-  className?: string
-  iconClassName?: string
-  textClassName?: string
-}
-
 export function LogoLockup({ className, iconClassName, textClassName }: LogoLockupProps) {
   return (
     <span className={["inline-flex items-center gap-2.5 text-white", className].filter(Boolean).join(" ")} aria-label="Vouch">

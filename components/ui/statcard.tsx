@@ -28,21 +28,6 @@ const statCardVariants = cva("relative overflow-hidden", {
   },
 })
 
-export interface StatCardProps
-  extends
-    Omit<React.HTMLAttributes<HTMLDivElement>, "title" | "color">,
-    VariantProps<typeof statCardVariants> {
-  title: string
-  value: string | number
-  change?: string
-  trend?: "up" | "down" | "neutral"
-  icon?: React.ReactNode
-  progress?: { value: number; label?: string }
-  comparison?: string
-  /** @deprecated Use colorScheme instead */
-  color?: "primary" | "secondary" | "accent" | "success" | "warning" | "info" | "destructive"
-}
-
 const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
   (
     {

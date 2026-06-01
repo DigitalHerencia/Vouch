@@ -12,19 +12,6 @@ const bodyTextMotion =
 const panelMotion =
   "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
 
-// ============================================================================
-// HERO VARIANT 1: Centered
-// ============================================================================
-export interface HeroCenteredProps {
-  eyebrow?: string
-  title: string
-  titleHighlight?: string
-  description: string
-  primaryAction?: { label: string; href?: string; onClick?: () => void }
-  secondaryAction?: { label: string; href?: string; onClick?: () => void }
-  align?: "center" | "left"
-}
-
 export function HeroCentered({
   eyebrow,
   title,
@@ -97,20 +84,6 @@ export function HeroCentered({
   )
 }
 
-// ============================================================================
-// HERO VARIANT 2: Split with Image
-// ============================================================================
-export interface HeroSplitProps {
-  title: string
-  titleHighlight?: string
-  description: string
-  primaryAction?: { label: string; href?: string; onClick?: () => void }
-  secondaryAction?: { label: string; href?: string; onClick?: () => void }
-  imageSrc: string
-  imageAlt?: string
-  imagePosition?: "left" | "right"
-}
-
 export function HeroSplit({
   title,
   titleHighlight,
@@ -178,30 +151,6 @@ export function HeroSplit({
       </section>
     </main>
   )
-}
-
-// ============================================================================
-// HERO VARIANT 2 Duplicate: Split with Process Panel
-// ============================================================================
-export interface HeroSplitPanelProps {
-  eyebrow?: string
-  title: string
-  titleHighlight?: string
-  description: string
-  primaryAction?: { label: string; href?: string; onClick?: () => void }
-  secondaryAction?: { label: string; href?: string; onClick?: () => void }
-
-  panelTitle: string
-  panelSteps: readonly {
-    number: string
-    title: string
-    body: string
-    icon: LucideIcon
-  }[]
-  panelFooter?: string | undefined
-  panelId?: string | undefined
-
-  panelPosition?: "left" | "right"
 }
 
 export function HeroSplitPanel({
@@ -347,19 +296,6 @@ export function HeroSplitPanel({
   )
 }
 
-// ============================================================================
-// HERO VARIANT 3: With Stats
-// ============================================================================
-export interface HeroWithStatsProps {
-  subtitle?: string
-  title: string
-  titleHighlight?: string
-  description: string
-  primaryAction?: { label: string; href?: string; onClick?: () => void }
-  stats: Array<{ value: string; label: string; body?: string }>
-  align?: "center" | "left"
-}
-
 export function HeroWithStats({
   subtitle,
   title,
@@ -435,15 +371,6 @@ export function HeroWithStats({
   )
 }
 
-// ============================================================================
-// HERO VARIANT 4: Minimal
-// ============================================================================
-export interface HeroMinimalProps {
-  title: string
-  description: string
-  primaryAction?: { label: string; href?: string; onClick?: () => void }
-}
-
 export function HeroMinimal({ title, description, primaryAction }: HeroMinimalProps) {
   return (
     <main>
@@ -473,18 +400,6 @@ export function HeroMinimal({ title, description, primaryAction }: HeroMinimalPr
       </section>
     </main>
   )
-}
-
-// ============================================================================
-// HERO VARIANT 5: With Video
-// ============================================================================
-export interface HeroWithVideoProps {
-  title: string
-  titleHighlight?: string
-  description: string
-  primaryAction?: { label: string; href?: string; onClick?: () => void }
-  videoThumbnail: string
-  onPlayClick?: () => void
 }
 
 export function HeroWithVideo({

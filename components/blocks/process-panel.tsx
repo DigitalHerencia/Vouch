@@ -7,24 +7,6 @@ import { Marquee, MarqueeItem, MarqueeSeparator } from "@/components/ui/marquee"
 const panelMotion =
   "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
 
-// ============================================================================
-// Process Panel VARIANT 1: Table with Icons
-// ============================================================================
-
-export interface ProcessPanelStep {
-  number: string
-  title: string
-  body: string
-  icon: LucideIcon
-}
-
-export interface ProcessPanelProps {
-  title: string
-  steps: readonly ProcessPanelStep[]
-  footer?: string | undefined
-  id?: string | undefined
-}
-
 export function ProcessPanel({ title, steps, footer, id }: ProcessPanelProps) {
   return (
     <main>
@@ -77,23 +59,6 @@ export function ProcessPanel({ title, steps, footer, id }: ProcessPanelProps) {
   )
 }
 
-// ============================================================================
-// Process Panel VARIANT 2: Stacked Legal Rows
-// ============================================================================
-export interface ProcessPanelListItem {
-  number: string
-  title: string
-  body: string
-}
-
-export interface ProcessPanelListProps {
-  title: string
-  items: readonly ProcessPanelListItem[]
-  eyebrow?: string | undefined
-  body?: string | undefined
-  id?: string | undefined
-}
-
 export function ProcessPanelList({ title, items, eyebrow, body, id }: ProcessPanelListProps) {
   return (
     <main>
@@ -125,21 +90,6 @@ export function ProcessPanelList({ title, items, eyebrow, body, id }: ProcessPan
       </section>
     </main>
   )
-}
-
-// ============================================================================
-// Process Panel VARIANT 3: Rule Grid
-// ============================================================================
-export interface ProcessPanelRuleItem {
-  label: string
-  value: string
-}
-
-export interface ProcessPanelRuleGridProps {
-  title: string
-  items: readonly ProcessPanelRuleItem[]
-  footer?: string | undefined
-  id?: string | undefined
 }
 
 export function ProcessPanelRuleGrid({ title, items, footer, id }: ProcessPanelRuleGridProps) {
@@ -181,17 +131,6 @@ export function ProcessPanelRuleGrid({ title, items, footer, id }: ProcessPanelR
   )
 }
 
-// ============================================================================
-// Process Panel VARIANT 4: Callout
-// ============================================================================
-export interface ProcessPanelCalloutProps {
-  title: string
-  body: string
-  action: string
-  icon: LucideIcon
-  id?: string | undefined
-}
-
 export function ProcessPanelCallout({
   title,
   body,
@@ -221,23 +160,6 @@ export function ProcessPanelCallout({
       </section>
     </main>
   )
-}
-
-// ============================================================================
-// Process Panel VARIANT 5: Bordered Content Grid
-// ============================================================================
-export interface ProcessPanelGridItem {
-  name: string
-  logo: React.ReactNode
-  detail?: string | undefined
-  icon?: LucideIcon | undefined
-}
-
-export interface ProcessPanelGridProps {
-  title?: string | undefined
-  subtitle?: string | undefined
-  logos: readonly ProcessPanelGridItem[]
-  footer?: string | undefined
 }
 
 function ProcessPanelMarqueeTrack({

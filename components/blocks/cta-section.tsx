@@ -19,12 +19,6 @@ function safeHref(href: string) {
   }
 }
 
-export interface CTAAction {
-  label: string
-  href?: string
-  onClick?: () => void
-}
-
 function CTAButton({
   action,
   variant = "default",
@@ -47,13 +41,6 @@ function CTAButton({
   )
 }
 
-export interface CTASimpleProps {
-  title: string
-  description?: string
-  primaryAction: CTAAction
-  secondaryAction?: CTAAction
-}
-
 export function CTASimple({ title, description, primaryAction, secondaryAction }: CTASimpleProps) {
   return (
     <main>
@@ -71,14 +58,6 @@ export function CTASimple({ title, description, primaryAction, secondaryAction }
       </section>
     </main>
   )
-}
-
-export interface CTAWithBackgroundProps {
-  icon?: React.ReactNode
-  title: string
-  description?: string
-  primaryAction: CTAAction
-  backgroundColor?: "primary" | "secondary" | "accent" | "muted"
 }
 
 export function CTAWithBackground({
@@ -128,16 +107,6 @@ export function CTAWithBackground({
   )
 }
 
-export interface CTANewsletterProps {
-  title: string
-  description?: string
-  placeholder?: string
-  buttonLabel?: string
-  email: string
-  onEmailChange: (email: string) => void
-  onSubmit?: () => void
-}
-
 export function CTANewsletter({
   title,
   description,
@@ -180,16 +149,6 @@ export function CTANewsletter({
   )
 }
 
-export interface CTASplitProps {
-  title: string
-  description?: string
-  primaryAction: CTAAction
-  secondaryAction?: CTAAction
-  imageSrc: string
-  imageAlt?: string
-  imagePosition?: "left" | "right"
-}
-
 export function CTASplit({
   title,
   description,
@@ -228,15 +187,6 @@ export function CTASplit({
       </section>
     </main>
   )
-}
-
-export interface CTABannerProps {
-  text: string
-  action: CTAAction
-  dismissible?: boolean
-  isVisible?: boolean
-  onDismiss?: () => void
-  variant?: "primary" | "secondary" | "accent" | "warning"
 }
 
 export function CTABanner({

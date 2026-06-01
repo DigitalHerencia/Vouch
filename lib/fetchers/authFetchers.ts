@@ -15,37 +15,6 @@ import {
 } from "@/lib/db/selects/auth.selects"
 import { hashInvitationToken } from "@/lib/invitations/tokens"
 
-type CurrentUserAuthRecord = {
-  id: string
-  clerkUserId: string
-  email: string | null
-  phone: string | null
-  displayName: string | null
-  status: string
-  createdAt: Date
-  updatedAt: Date
-  verificationProfile: {
-    identityStatus: string
-    adultStatus: string
-  } | null
-  paymentCustomer: { readiness: string } | null
-  connectedAccount: { readiness: string } | null
-  termsAcceptances: Array<{
-    termsVersion: string
-    acceptedAt: Date
-  }>
-}
-
-export type CurrentUser = {
-  id: string
-  clerkUserId: string
-  email: string | null
-  phone: string | null
-  displayName: string | null
-  status: "active" | "disabled"
-  isAdmin: boolean
-}
-
 function isAdminFromClaims(sessionClaims: unknown): boolean {
   if (!sessionClaims || typeof sessionClaims !== "object") {
     return false

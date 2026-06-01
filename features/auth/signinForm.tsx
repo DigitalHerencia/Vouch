@@ -12,8 +12,8 @@ import {
 } from "@/components/blocks/auth-forms"
 import { authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
-import { loginSchema, verificationSchema } from "@/schemas/auth"
-import { type LoginFormProps, type LoginFormValues } from "@/types/auth"
+import { loginSchema, verificationSchema } from "@/schemas/authSchemas"
+import { type LoginFormProps, type LoginFormValues } from "@/types/authTypes"
 
 function getErrorMessage(error: unknown, fallback: string): string {
   const clerkError = error as { errors?: Array<{ message?: string }> }

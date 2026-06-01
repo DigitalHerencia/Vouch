@@ -3,12 +3,7 @@ import type {
   ConfirmationStatus,
   ParticipantRole,
   VouchStatus,
-} from "@/types/vouch"
-
-export type ConfirmationStateInput = {
-  merchantConfirmed: boolean
-  customerConfirmed: boolean
-}
+} from "@/types/vouchTypes"
 
 export function getAggregateConfirmationStatus(
   input: ConfirmationStateInput

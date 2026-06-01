@@ -17,7 +17,7 @@ import {
   internalReturnToPathSchema,
   optionalTrimmedStringSchema,
   vouchIdSchema,
-} from "./common"
+} from "./commonSchemas"
 
 export const paymentProviderSchema = z.enum(PAYMENT_PROVIDER_VALUES)
 export const verificationProviderSchema = z.enum(VERIFICATION_PROVIDER_VALUES)

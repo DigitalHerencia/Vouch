@@ -15,3 +15,11 @@ export type ProviderWebhookLedgerInput = {
   eventType: string
   safeMetadata?: Record<string, unknown>
 }
+
+type WebhookProcessResult = {
+  providerWebhookEventId: string
+  providerEventId: string
+  eventType: string
+  processed: boolean
+  duplicate?: boolean
+}

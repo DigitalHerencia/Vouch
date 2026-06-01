@@ -18,19 +18,6 @@ import {
 import { tenantNavigationContent } from "@/content/navigation"
 import { vouchPageCopy } from "@/content/vouches"
 
-type TenantProviderAction = (formData: FormData) => void | Promise<void>
-
-export interface TenantHeaderNavItem {
-  href: string
-  label: string
-}
-
-export interface TenantHeaderProps {
-  connectAction: TenantProviderAction
-  paymentAction: TenantProviderAction
-  navItems?: readonly TenantHeaderNavItem[] | undefined
-}
-
 export const defaultTenantNavItems = [
   { href: "/dashboard", label: tenantNavigationContent.links.dashboard },
   { href: "/vouches/new", label: tenantNavigationContent.links.vouches },

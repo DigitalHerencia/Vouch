@@ -12,22 +12,6 @@ const bodyTextMotion =
 const cardMotion =
   "group flex flex-col overflow-hidden bg-black transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
 
-export interface StatItem {
-  value: string
-  label: string
-  description?: string
-  trend?: "up" | "down" | "neutral"
-  trendValue?: string
-}
-
-// ============================================================================
-// STATS VARIANT 1: Simple Grid
-// ============================================================================
-export interface StatsGridProps {
-  stats: StatItem[]
-  columns?: 2 | 3 | 4
-}
-
 export function StatsGrid({ stats, columns = 4 }: StatsGridProps) {
   const gridCols = {
     2: "grid-cols-2",
@@ -52,15 +36,6 @@ export function StatsGrid({ stats, columns = 4 }: StatsGridProps) {
       </section>
     </main>
   )
-}
-
-// ============================================================================
-// STATS VARIANT 2: With Cards
-// ============================================================================
-export interface StatsCardsProps {
-  title?: string
-  subtitle?: string
-  stats: StatItem[]
 }
 
 export function StatsCards({ title, subtitle, stats }: StatsCardsProps) {
@@ -120,17 +95,6 @@ export function StatsCards({ title, subtitle, stats }: StatsCardsProps) {
   )
 }
 
-// ============================================================================
-// STATS VARIANT 3: Split with Content
-// ============================================================================
-export interface StatsSplitProps {
-  subtitle?: string
-  title: string
-  description: string
-  stats: StatItem[]
-  contentPosition?: "left" | "right"
-}
-
 export function StatsSplit({
   subtitle,
   title,
@@ -182,13 +146,6 @@ export function StatsSplit({
   )
 }
 
-// ============================================================================
-// STATS VARIANT 4: Inline
-// ============================================================================
-export interface StatsInlineProps {
-  stats: StatItem[]
-}
-
 export function StatsInline({ stats }: StatsInlineProps) {
   return (
     <main>
@@ -206,17 +163,6 @@ export function StatsInline({ stats }: StatsInlineProps) {
       </section>
     </main>
   )
-}
-
-// ============================================================================
-// STATS VARIANT 5: With Icons
-// ============================================================================
-export interface StatWithIconItem extends StatItem {
-  icon: React.ReactNode
-}
-
-export interface StatsWithIconsProps {
-  stats: StatWithIconItem[]
 }
 
 export function StatsWithIcons({ stats }: StatsWithIconsProps) {

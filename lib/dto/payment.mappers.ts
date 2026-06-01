@@ -1,14 +1,6 @@
 import "server-only"
 
-import type { ISODateTime } from "@/types/common"
-
-type DateLike = Date | string | null | undefined
-
-export type MoneyDTO = {
-  cents: number
-  currency: string
-  display: string
-}
+import type { ISODateTime } from "@/types/commonTypes"
 
 function toIso(value: DateLike): ISODateTime | null {
   if (!value) return null
@@ -31,92 +23,6 @@ export function toMoneyDTO(
       currency: safeCurrency.toUpperCase(),
     }).format(safeCents / 100),
   }
-}
-
-export type PaymentRecordParticipantDTO = {
-  id: string
-  vouchId: string
-  provider: string
-  purpose: string
-  status: string
-  settlementStatus: string
-  amountCents: number
-  amount: MoneyDTO
-  currency: string
-  protectedAmountCents: number
-  protectedAmount: MoneyDTO
-  merchantReceivesCents: number
-  merchantReceives: MoneyDTO
-  vouchServiceFeeCents: number
-  vouchServiceFee: MoneyDTO
-  processingFeeOffsetCents: number
-  processingFeeOffset: MoneyDTO
-  applicationFeeAmountCents: number
-  applicationFeeAmount: MoneyDTO
-  customerTotalCents: number
-  customerTotal: MoneyDTO
-  amountCapturableCents: number
-  amountCapturable: MoneyDTO
-  captureBefore: ISODateTime | null
-  authorizedAt: ISODateTime | null
-  capturedAt: ISODateTime | null
-  canceledAt: ISODateTime | null
-  failedAt: ISODateTime | null
-  lastProviderSyncAt: ISODateTime | null
-  lastErrorCode?: string | null
-  createdAt: ISODateTime
-  updatedAt: ISODateTime
-}
-
-export type RefundRecordParticipantDTO = {
-  id: string
-  vouchId: string
-  paymentRecordId: string
-  status: string
-  reason: string | null
-  amountCents: number
-  amount: MoneyDTO
-  createdAt: ISODateTime
-  updatedAt: ISODateTime
-}
-
-type PaymentRecordRecord = {
-  id: string
-  vouchId?: string
-  provider?: string
-  purpose?: string
-  status: string
-  settlementStatus: string
-  amountCents?: number
-  currency?: string
-  protectedAmountCents?: number
-  merchantReceivesCents?: number
-  vouchServiceFeeCents?: number
-  processingFeeOffsetCents?: number
-  applicationFeeAmountCents?: number
-  customerTotalCents?: number
-  amountCapturableCents?: number
-  captureBefore?: DateLike
-  authorizedAt?: DateLike
-  capturedAt?: DateLike
-  canceledAt?: DateLike
-  failedAt?: DateLike
-  lastProviderSyncAt?: DateLike
-  lastErrorCode?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-}
-
-type RefundRecordRecord = {
-  id: string
-  vouchId: string
-  paymentRecordId: string
-  status: string
-  reason: string | null
-  amountCents: number
-  currency?: string
-  createdAt: Date | string
-  updatedAt: Date | string
 }
 
 export function mapPaymentRecordParticipantDTO(

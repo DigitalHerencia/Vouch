@@ -2,21 +2,6 @@ import { createHmac, timingSafeEqual } from "node:crypto"
 
 import { CONFIRMATION_CODE_BUCKET_SECONDS } from "@/lib/vouch/constants"
 
-type ParticipantRole = "merchant" | "customer"
-
-type ConfirmationCodeInput = {
-  vouchId: string
-  publicId: string
-  participantRole: ParticipantRole
-  participantUserId: string
-  at?: Date
-}
-
-type VerifyConfirmationCodeInput = ConfirmationCodeInput & {
-  submittedCode: string
-  allowedBucketSkew?: number
-}
-
 function confirmationSecret(): string {
   const secret =
     process.env.CONFIRMATION_CODE_SECRET ??

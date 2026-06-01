@@ -19,8 +19,11 @@ import {
   markProviderWebhookProcessedTx,
   recordProviderWebhookReceivedTx,
 } from "@/lib/db/transactions/webhookTransactions"
-import { clerkWebhookEventSchema, supportedClerkWebhookEventTypeSchema } from "@/schemas/auth"
-import type { ClerkWebhookEvent, ClerkWebhookUserData } from "@/types/auth"
+import {
+  clerkWebhookEventSchema,
+  supportedClerkWebhookEventTypeSchema,
+} from "@/schemas/authSchemas"
+import type { ClerkWebhookEvent, ClerkWebhookUserData } from "@/types/authTypes"
 
 function safeClerkMetadata(event: ClerkWebhookEvent): Prisma.InputJsonObject {
   return {

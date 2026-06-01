@@ -2,10 +2,6 @@
 
 import Image from "next/image"
 
-export interface WordmarkProps {
-  asImage?: boolean
-}
-
 export function Wordmark({ asImage = true }: WordmarkProps) {
   if (asImage) {
     return (

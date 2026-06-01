@@ -1,17 +1,4 @@
-export type VouchPricingInput = {
-  protectedAmountCents: number
-  stripePercentBps?: number
-  stripeFixedCents?: number
-}
 
-export type VouchPricing = {
-  protectedAmountCents: number
-  merchantReceivesCents: number
-  vouchServiceFeeCents: number
-  processingFeeOffsetCents: number
-  customerTotalCents: number
-  applicationFeeAmountCents: number
-}
 
 export const DEFAULT_STRIPE_PERCENT_BPS = 290
 export const DEFAULT_STRIPE_FIXED_CENTS = 30

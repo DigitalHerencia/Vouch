@@ -29,14 +29,13 @@ import {
 } from "@/lib/db/transactions/vouchTransactions"
 import { getRuntimeEnv } from "@/lib/env"
 import { createStripeMerchantCreationFeeCheckout } from "@/lib/integrations/stripe/checkout-sessions"
-import { createInvitationToken, hashInvitationToken } from "@/lib/invitations/tokens"
 import {
   authorizeVouchPayment,
   captureConfirmedVouchPayment,
   startStripeConnectOnboarding,
   startStripePaymentManagement,
 } from "@/lib/actions/paymentActions"
-import { calculateVouchPricing, type VouchPricing } from "@/lib/vouch/fees"
+import { calculateVouchPricing } from "@/lib/vouch/fees"
 import { verifyConfirmationCode } from "@/lib/vouch/confirmation-codes"
 import {
   archiveVouchSchema,
@@ -44,38 +43,11 @@ import {
   confirmPresenceInputSchema,
   createVouchDraftInputSchema,
   feePreviewInputSchema,
-} from "@/schemas/vouch"
-import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
+} from "@/schemas/vouchSchemas"
+import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-resultTypes"
+import { type VouchPricing } from "@/types/vouchTypes"
 
 const INVITATION_TTL_DAYS = 14
-
-type FieldErrorsSource = {
-  flatten(): { fieldErrors: Record<string, string[]> }
-}
-
-type FeePreview = {
-  amountCents: number
-  currency: "usd"
-  protectedAmountCents: number
-  merchantReceivesCents: number
-  vouchServiceFeeCents: number
-  processingFeeOffsetCents: number
-  applicationFeeAmountCents: number
-  customerTotalCents: number
-  totalCents: number
-}
-
-type CreatedVouchResult = {
-  vouchId: string
-  invitationId: string
-  detailPath: string
-  checkoutUrl?: string
-}
-
-type AcceptedVouchResult = {
-  vouchId: string
-  checkoutUrl?: string
-}
 
 function invitationExpiresAt(): Date {
   const expiresAt = new Date()
@@ -137,76 +109,6 @@ async function revalidateVouchSurfaces(
 
   for (const userId of userIds) {
     if (userId) revalidatePath(`/dashboard?user=${userId}`)
-  }
-}
-
-async function getInvitationByToken(token: string) {
-  return prisma.invitation.findUnique({
-    where: { tokenHash: await hashInvitationToken(token) },
-    select: {
-      id: true,
-      vouchId: true,
-      recipientEmail: true,
-      status: true,
-      expiresAt: true,
-      vouch: {
-        select: {
-          id: true,
-          merchantId: true,
-          customerId: true,
-          status: true,
-          protectedAmountCents: true,
-          currency: true,
-          merchantReceivesCents: true,
-          vouchServiceFeeCents: true,
-          processingFeeOffsetCents: true,
-          applicationFeeAmountCents: true,
-          customerTotalCents: true,
-          paymentRecords: {
-            where: { purpose: "customer_authorization" },
-            take: 1,
-            select: {
-              id: true,
-              status: true,
-              settlementStatus: true,
-            },
-          },
-        },
-      },
-    },
-  })
-}
-
-type InvitationByToken = Awaited<ReturnType<typeof getInvitationByToken>>
-type UsableInvitation = NonNullable<InvitationByToken>
-
-function assertInvitationUsable(
-  invitation: InvitationByToken
-): asserts invitation is UsableInvitation {
-  if (!invitation) throw new Error("INVITATION_NOT_FOUND")
-  if (invitation.expiresAt <= new Date()) throw new Error("INVITATION_EXPIRED")
-  if (!["created", "sent", "opened"].includes(invitation.status)) {
-    throw new Error("INVITATION_NOT_USABLE")
-  }
-  if (invitation.vouch.status !== "sent" && invitation.vouch.status !== "committed") {
-    throw new Error("VOUCH_NOT_ACCEPTABLE")
-  }
-}
-
-function mapInvitationError(error: unknown): ActionResult<never> | null {
-  if (!(error instanceof Error)) return null
-
-  switch (error.message) {
-    case "INVITATION_NOT_FOUND":
-      return actionFailure("NOT_FOUND", "Invitation not found.")
-    case "INVITATION_EXPIRED":
-      return actionFailure("INVITATION_EXPIRED", "Invitation expired.")
-    case "INVITATION_NOT_USABLE":
-      return actionFailure("INVITATION_NOT_USABLE", "Invitation is no longer usable.")
-    case "VOUCH_NOT_ACCEPTABLE":
-      return actionFailure("INVALID_VOUCH_STATE", "Vouch is not available to accept.")
-    default:
-      return null
   }
 }
 

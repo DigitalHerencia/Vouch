@@ -3,10 +3,6 @@ import type { ReactNode } from "react"
 import { AuthProcessPanelGrid } from "@/components/blocks/process-panel"
 import { AuthFooter } from "@/components/navigation/auth-footer"
 
-export interface AuthShellProps {
-  children: ReactNode
-}
-
 export function AuthShell({ children }: AuthShellProps) {
   return (
     <div className="relative mx-auto h-dvh w-full overflow-hidden">

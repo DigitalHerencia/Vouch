@@ -4,11 +4,6 @@ import { useEffect } from "react"
 
 import { ServerErrorPage } from "@/components/blocks/error-pages"
 
-type GlobalErrorProps = {
-  error: Error & { digest?: string }
-  reset: () => void
-}
-
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {
     console.error("global application error", {

@@ -1,4 +1,6 @@
-import type { ComponentProps } from "react"
+import type { Input } from "@base-ui/react"
+import type { ComponentProps, ReactNode } from "react"
+import type { VouchPricing } from "./vouchTypes"
 
 export const BASE_ROLE_VALUES = ["anonymous", "authenticated_user", "admin", "system"] as const
 
@@ -134,10 +136,6 @@ export interface SignupFormValues {
   acceptedUserAgreement: boolean
 }
 
-export interface LoginFormProps extends ComponentProps<"form"> {
-  redirectUrl?: string | undefined
-}
-
 export interface SignupFormProps extends ComponentProps<"form"> {
   redirectUrl?: string | undefined
 }
@@ -186,3 +184,136 @@ export type ClerkWebhookProcessingStatus = "processed" | "ignored" | "duplicate"
 export type ClerkWebhookProcessingResult =
   | { ok: true; status: ClerkWebhookProcessingStatus; ignored?: boolean; reason?: string }
   | { ok: false; status: "failed"; message: string }
+
+export interface AuthShellProps {
+  children: ReactNode
+}
+
+// ============================================================================
+// AUTH VARIANT 1: Login Form
+// ============================================================================
+export interface LoginFormProps {
+  logo?: React.ReactNode
+  title?: string
+  description?: string
+  notice?: React.ReactNode
+  error?: React.ReactNode
+  children?: React.ReactNode
+  footer?: React.ReactNode
+  signUpHref?: string | undefined
+  signUpPrompt?: string | undefined
+  signUpLabel?: string | undefined
+  onSubmit?: (data: { email: string; password: string; remember: boolean }) => void
+  onForgotPassword?: () => void
+  onSignUp?: () => void
+  socialProviders?: Array<"google" | "github">
+}
+
+export interface LoginFormFieldsProps {
+  emailInputProps: React.ComponentProps<typeof Input>
+  passwordInputProps: React.ComponentProps<typeof Input>
+  emailError?: string | undefined
+  passwordError?: string | undefined
+  passwordDescription?: string | undefined
+  disabled?: boolean
+  isSubmitting?: boolean
+  submitLabel?: string
+}
+
+// ============================================================================
+// AUTH VARIANT 2: Sign Up Form
+// ============================================================================
+export interface SignUpFormProps {
+  logo?: React.ReactNode
+  title?: string
+  description?: string
+  notice?: React.ReactNode
+  error?: React.ReactNode
+  children?: React.ReactNode
+  footer?: React.ReactNode
+  signInHref?: string | undefined
+  signInPrompt?: string | undefined
+  signInLabel?: string | undefined
+  onSubmit?: (data: { name: string; email: string; password: string; terms: boolean }) => void
+  onSignIn?: () => void
+  socialProviders?: Array<"google" | "github">
+  termsUrl?: string
+  privacyUrl?: string
+}
+
+export interface SignUpFormFieldsProps {
+  firstNameInputProps: React.ComponentProps<typeof Input>
+  lastNameInputProps: React.ComponentProps<typeof Input>
+  emailInputProps: React.ComponentProps<typeof Input>
+  passwordInputProps: React.ComponentProps<typeof Input>
+  firstNameError?: string | undefined
+  lastNameError?: string | undefined
+  emailError?: string | undefined
+  passwordError?: string | undefined
+  agreementError?: string | undefined
+  agreementChecked: boolean
+  agreementLabel: React.ReactNode
+  onAgreementChange: (checked: boolean) => void
+  disabled?: boolean
+  isSubmitting?: boolean
+  submitLabel?: string
+  captcha?: React.ReactNode
+}
+
+// ============================================================================
+// AUTH VARIANT 5: Split Auth Layout
+// ============================================================================
+export interface AuthSplitLayoutProps {
+  children: React.ReactNode
+  brandContent?: React.ReactNode
+  position?: "left" | "right"
+}
+
+export type CreateStripeCheckoutAuthorizationInput = {
+  vouchId: string
+  pricing: VouchPricing
+  currency: string
+  connectedAccountId: string
+  providerCustomerId?: string
+  successUrl: string
+  cancelUrl?: string
+  idempotencyKey: string
+}
+
+type CurrentUserAuthRecord = {
+  id: string
+  clerkUserId: string
+  email: string | null
+  phone: string | null
+  displayName: string | null
+  status: string
+  createdAt: Date
+  updatedAt: Date
+  verificationProfile: {
+    identityStatus: string
+    adultStatus: string
+  } | null
+  paymentCustomer: { readiness: string } | null
+  connectedAccount: { readiness: string } | null
+  termsAcceptances: Array<{
+    termsVersion: string
+    acceptedAt: Date
+  }>
+}
+
+export type ParticipantAuthzInput = {
+  userId: string
+  merchantId?: string | null
+  customerId?: string | null
+}
+
+export type ClerkUserLike = {
+  id: string
+  emailAddresses?: Array<{ id: string; emailAddress: string }>
+  primaryEmailAddressId?: string | null
+  phoneNumbers?: Array<{ id: string; phoneNumber: string }>
+  primaryPhoneNumberId?: string | null
+  firstName?: string | null
+  lastName?: string | null
+  username?: string | null
+}

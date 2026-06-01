@@ -13,7 +13,7 @@ import {
   VOUCH_STATUS_VALUES,
 } from "@/lib/vouch/constants"
 
-import { positiveMoneyCentsSchema, vouchIdSchema } from "./common"
+import { positiveMoneyCentsSchema, vouchIdSchema } from "./commonSchemas"
 
 export const vouchStatusSchema = z.enum(VOUCH_STATUS_VALUES)
 export const invitationStatusSchema = z.enum(INVITATION_STATUS_VALUES)
@@ -87,12 +87,6 @@ export const vouchListSearchParamsSchema = z.object({
   sort: vouchListSortSchema.default("newest"),
 })
 
-export type CreateVouchDraftInput = z.infer<typeof createVouchDraftSchema>
-export type ConfirmCreateVouchInput = z.infer<typeof confirmCreateVouchSchema>
-export type ConfirmPresenceInput = z.infer<typeof confirmPresenceSchema>
-export type ArchiveVouchInput = z.infer<typeof archiveVouchSchema>
-export type VouchListSearchParams = z.infer<typeof vouchListSearchParamsSchema>
-
 /**
  * Backward-compatible schema aliases retained only to keep Pass 4 isolated.
  * Later passes should migrate call sites to the canonical schema names.
@@ -103,5 +97,3 @@ export const createVouchDraftInputSchema = createVouchDraftSchema
 export const confirmCreateVouchInputSchema = confirmCreateVouchSchema
 export const confirmPresenceInputSchema = confirmPresenceSchema
 export const vouchListQuerySchema = vouchListSearchParamsSchema
-
-export type CreateVouchInput = ConfirmCreateVouchInput

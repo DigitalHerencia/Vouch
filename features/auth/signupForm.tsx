@@ -15,8 +15,8 @@ import {
 import { authVerificationContent } from "@/content/auth"
 import { completeSignUpWithTermsAcceptance } from "@/lib/actions/authActions"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
-import { signupSchema, verificationSchema } from "@/schemas/auth"
-import { type SignupFormProps, type SignupFormValues } from "@/types/auth"
+import { signupSchema, verificationSchema } from "@/schemas/authSchemas"
+import { type SignupFormProps, type SignupFormValues } from "@/types/authTypes"
 
 function getErrorMessage(error: unknown, fallback: string): string {
   const clerkError = error as { errors?: Array<{ message?: string }> }

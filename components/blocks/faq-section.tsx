@@ -13,21 +13,6 @@ const subtitleMotion =
 const headingMotion =
   "transition-all duration-300 text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
 
-export interface FAQItem {
-  question: string
-  answer: string
-}
-
-// ============================================================================
-// FAQ VARIANT 1: Simple Accordion
-// ============================================================================
-export interface FAQAccordionProps {
-  title?: string
-  subtitle?: string
-  description?: string
-  items: FAQItem[]
-}
-
 export function FAQAccordion({ title, subtitle, description, items }: FAQAccordionProps) {
   return (
     <main>
@@ -69,16 +54,6 @@ export function FAQAccordion({ title, subtitle, description, items }: FAQAccordi
   )
 }
 
-// ============================================================================
-// FAQ VARIANT 2: Two Columns
-// ============================================================================
-export interface FAQTwoColumnsProps {
-  title?: string
-  subtitle?: string
-  description?: string
-  items: FAQItem[]
-}
-
 export function FAQTwoColumns({ title, subtitle, description, items }: FAQTwoColumnsProps) {
   const midpoint = Math.ceil(items.length / 2)
   const leftColumn = items.slice(0, midpoint)
@@ -114,23 +89,6 @@ export function FAQTwoColumns({ title, subtitle, description, items }: FAQTwoCol
       </section>
     </main>
   )
-}
-
-// ============================================================================
-// FAQ VARIANT 3: With Categories
-// ============================================================================
-export interface FAQCategory {
-  name: string
-  items: FAQItem[]
-}
-
-export interface FAQWithCategoriesProps {
-  title?: string
-  subtitle?: string
-  description?: string
-  categories: FAQCategory[]
-  activeCategory?: number
-  onCategoryChange?: (categoryIndex: number) => void
 }
 
 export function FAQWithCategories({
@@ -192,19 +150,6 @@ export function FAQWithCategories({
   )
 }
 
-// ============================================================================
-// FAQ VARIANT 4: With Contact CTA
-// ============================================================================
-export interface FAQWithContactProps {
-  title?: string
-  subtitle?: string
-  description?: string
-  items: FAQItem[]
-  contactTitle?: string
-  contactDescription?: string
-  contactAction?: { label: string; onClick?: () => void }
-}
-
 export function FAQWithContact({
   title,
   subtitle,
@@ -260,16 +205,6 @@ export function FAQWithContact({
       </section>
     </main>
   )
-}
-
-// ============================================================================
-// FAQ VARIANT 5: Simple List
-// ============================================================================
-export interface FAQSimpleListProps {
-  title?: string
-  subtitle?: string
-  description?: string
-  items: FAQItem[]
 }
 
 export function FAQSimpleList({ title, subtitle, items }: FAQSimpleListProps) {

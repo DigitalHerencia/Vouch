@@ -1,64 +1,6 @@
-import type { AggregateConfirmationStatus, ParticipantRole, VouchStatus } from "@/types/vouch"
+import type { AggregateConfirmationStatus, ParticipantRole, VouchStatus } from "@/types/vouchTypes"
 
 import { isConfirmationWindowClosed, isConfirmationWindowOpen, type DateLike } from "./time-windows"
-
-export type ConfirmationStateInput = {
-  merchantConfirmed: boolean
-  customerConfirmed: boolean
-}
-
-export type VouchDetailVariant =
-  | "draft"
-  | "committed"
-  | "sent"
-  | "accepted"
-  | "authorized"
-  | "confirmable_before_window"
-  | "confirmable_window_open"
-  | "merchant_confirmed_waiting_for_customer"
-  | "customer_confirmed_waiting_for_merchant"
-  | "both_confirmed_processing_capture"
-  | "completed"
-  | "expired"
-
-export type VouchTransition = {
-  from: VouchStatus
-  to: VouchStatus
-}
-
-export type NextVouchActionKind =
-  | "commit"
-  | "accept"
-  | "authorize"
-  | "confirm_presence"
-  | "waiting"
-  | "readiness_required"
-  | "view_outcome"
-  | "none"
-
-export type NextVouchAction = {
-  kind: NextVouchActionKind
-  label: string
-  href?: string
-}
-
-export type DeriveDetailVariantInput = ConfirmationStateInput & {
-  status: VouchStatus
-  now?: DateLike
-  confirmationOpensAt?: DateLike
-  confirmationExpiresAt?: DateLike
-  paymentCapturePending?: boolean
-}
-
-export type DeriveNextVouchActionInput = ConfirmationStateInput & {
-  vouchId?: string
-  status: VouchStatus
-  role: ParticipantRole
-  now?: DateLike
-  confirmationOpensAt?: DateLike
-  confirmationExpiresAt?: DateLike
-  readinessBlocked?: boolean
-}
 
 const ALLOWED_TRANSITIONS: ReadonlyMap<VouchStatus, readonly VouchStatus[]> = new Map([
   ["draft", ["committed", "sent", "expired"]],

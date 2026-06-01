@@ -6,7 +6,7 @@ import { randomUUID } from "node:crypto"
 import { headers as nextHeaders } from "next/headers"
 
 import { hashSensitiveValue } from "@/lib/security/hash"
-import type { HeaderBag, RequestMetadataInput } from "@/types/security"
+import type { HeaderBag, RequestMetadataInput } from "@/types/securityTypes"
 
 async function getHeaderBag(input?: RequestMetadataInput): Promise<HeaderBag> {
   if (input?.headers) return input.headers

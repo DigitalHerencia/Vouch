@@ -1,7 +1,5 @@
 import "server-only"
 
-type LogMetadata = Record<string, unknown>
-
 const REDACTED = "[redacted]"
 const CIRCULAR = "[circular]"
 const SENSITIVE_KEY_PATTERN =

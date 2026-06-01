@@ -32,20 +32,6 @@ const defaultProfileUser = {
   email: "",
 }
 
-export interface ProfileSettingsProps {
-  user?: {
-    name: string
-    email: string
-    avatar?: string
-    bio?: string
-    company?: string
-    location?: string
-    website?: string
-  }
-  onSave?: (data: ProfileSettingsProps["user"]) => void
-  onAvatarChange?: (file: File) => void
-}
-
 export function ProfileSettings({ user = defaultProfileUser }: ProfileSettingsProps) {
   return (
     <Card>
@@ -178,22 +164,6 @@ export function ProfileSettings({ user = defaultProfileUser }: ProfileSettingsPr
   )
 }
 
-// ============================================================================
-// SETTINGS VARIANT 2: Notification Settings
-// ============================================================================
-export interface NotificationSetting {
-  id: string
-  title: string
-  description: string
-  email: boolean
-  push: boolean
-}
-
-export interface NotificationSettingsProps {
-  notifications?: NotificationSetting[]
-  onSave?: (settings: NotificationSetting[]) => void
-}
-
 const defaultNotifications: NotificationSetting[] = [
   {
     id: "comments",
@@ -276,23 +246,6 @@ export function NotificationSettings({
       </CardContent>
     </Card>
   )
-}
-
-// ============================================================================
-// SETTINGS VARIANT 3: Security Settings
-// ============================================================================
-export interface SecuritySettingsProps {
-  twoFactorEnabled?: boolean
-  sessions?: Array<{
-    id: string
-    device: string
-    location: string
-    lastActive: string
-    current?: boolean
-  }>
-  onChangePassword?: () => void
-  onToggleTwoFactor?: (enabled: boolean) => void
-  onRevokeSession?: (sessionId: string) => void
 }
 
 export function SecuritySettings({
@@ -384,16 +337,6 @@ export function SecuritySettings({
   )
 }
 
-// ============================================================================
-// SETTINGS VARIANT 4: Appearance Settings
-// ============================================================================
-export interface AppearanceSettingsProps {
-  theme?: "light" | "dark" | "system"
-  accentColor?: string
-  onThemeChange?: (theme: "light" | "dark" | "system") => void
-  onAccentColorChange?: (color: string) => void
-}
-
 export function AppearanceSettings({ theme = "system" }: AppearanceSettingsProps) {
   return (
     <Card>
@@ -432,15 +375,6 @@ export function AppearanceSettings({ theme = "system" }: AppearanceSettingsProps
       </CardContent>
     </Card>
   )
-}
-
-// ============================================================================
-// SETTINGS VARIANT 5: Danger Zone
-// ============================================================================
-export interface DangerZoneProps {
-  onExportData?: () => void
-  onDeactivate?: () => void
-  onDelete?: () => void
 }
 
 export function DangerZone({}: DangerZoneProps) {
@@ -487,13 +421,6 @@ export function DangerZone({}: DangerZoneProps) {
       </CardContent>
     </Card>
   )
-}
-
-// ============================================================================
-// SETTINGS VARIANT 6: Full Settings Page
-// ============================================================================
-export interface SettingsPageProps {
-  defaultTab?: string
 }
 
 export function SettingsPage({ defaultTab = "profile" }: SettingsPageProps) {

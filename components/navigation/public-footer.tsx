@@ -2,15 +2,6 @@ import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 
-export interface PublicFooterLink {
-  label: string
-  href: string
-}
-
-export interface PublicFooterProps {
-  links?: readonly PublicFooterLink[] | undefined
-}
-
 export const defaultPublicFooterLinks = [
   { label: "Pricing", href: "/pricing" },
   { label: "FAQ", href: "/faq" },

@@ -54,9 +54,6 @@ const emptyStateVariants = cva("flex items-center justify-center", {
   },
 })
 
-export interface EmptyStateProps
-  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof emptyStateVariants> {}
-
 const EmptyState = React.forwardRef<HTMLDivElement, EmptyStateProps>(
   ({ className, variant, size, layout, animation, children, ...props }, ref) => {
     return (
@@ -113,12 +110,6 @@ const iconSizeMap = {
   xl: "h-12 w-12",
 }
 
-export interface EmptyStateIconProps
-  extends React.HTMLAttributes<HTMLDivElement>, VariantProps<typeof iconContainerVariants> {
-  /** Custom icon size independent of container */
-  iconSize?: "xs" | "sm" | "md" | "lg" | "xl"
-}
-
 const EmptyStateIcon = React.forwardRef<HTMLDivElement, EmptyStateIconProps>(
   ({ className, size, iconColor, iconSize, children, ...props }, ref) => {
     return (
@@ -141,15 +132,6 @@ const EmptyStateIcon = React.forwardRef<HTMLDivElement, EmptyStateIconProps>(
 )
 EmptyStateIcon.displayName = "EmptyStateIcon"
 
-// ============================================================================
-// Empty State Illustration (for custom SVGs/images)
-// ============================================================================
-
-export interface EmptyStateIllustrationProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** Max width for the illustration */
-  maxWidth?: string | number
-}
-
 const EmptyStateIllustration = React.forwardRef<HTMLDivElement, EmptyStateIllustrationProps>(
   ({ className, maxWidth = "200px", children, style, ...props }, ref) => {
     return (
@@ -166,12 +148,6 @@ const EmptyStateIllustration = React.forwardRef<HTMLDivElement, EmptyStateIllust
 )
 EmptyStateIllustration.displayName = "EmptyStateIllustration"
 
-// ============================================================================
-// Empty State Title
-// ============================================================================
-
-export type EmptyStateTitleProps = React.HTMLAttributes<HTMLHeadingElement>
-
 const EmptyStateTitle = React.forwardRef<HTMLHeadingElement, EmptyStateTitleProps>(
   ({ className, children, ...props }, ref) => {
     return (
@@ -187,12 +163,6 @@ const EmptyStateTitle = React.forwardRef<HTMLHeadingElement, EmptyStateTitleProp
 )
 EmptyStateTitle.displayName = "EmptyStateTitle"
 
-// ============================================================================
-// Empty State Description
-// ============================================================================
-
-export type EmptyStateDescriptionProps = React.HTMLAttributes<HTMLParagraphElement>
-
 const EmptyStateDescription = React.forwardRef<HTMLParagraphElement, EmptyStateDescriptionProps>(
   ({ className, children, ...props }, ref) => {
     return (
@@ -203,12 +173,6 @@ const EmptyStateDescription = React.forwardRef<HTMLParagraphElement, EmptyStateD
   }
 )
 EmptyStateDescription.displayName = "EmptyStateDescription"
-
-// ============================================================================
-// Empty State Actions
-// ============================================================================
-
-export type EmptyStateActionsProps = React.HTMLAttributes<HTMLDivElement>
 
 const EmptyStateActions = React.forwardRef<HTMLDivElement, EmptyStateActionsProps>(
   ({ className, children, ...props }, ref) => {
@@ -224,34 +188,6 @@ const EmptyStateActions = React.forwardRef<HTMLDivElement, EmptyStateActionsProp
   }
 )
 EmptyStateActions.displayName = "EmptyStateActions"
-
-// ============================================================================
-// Presets
-// ============================================================================
-
-export type EmptyStatePresetType =
-  | "no-results"
-  | "no-data"
-  | "empty-inbox"
-  | "empty-folder"
-  | "no-users"
-  | "empty-cart"
-  | "no-notifications"
-  | "no-images"
-  // New presets
-  | "error"
-  | "offline"
-  | "permission-denied"
-  | "coming-soon"
-  | "maintenance"
-  | "upload"
-
-interface PresetConfig {
-  icon: React.ReactNode
-  title: string
-  description: string
-  iconColor?: VariantProps<typeof iconContainerVariants>["iconColor"]
-}
 
 const presetConfig: Record<EmptyStatePresetType, PresetConfig> = {
   "no-results": {
@@ -331,22 +267,6 @@ const presetConfig: Record<EmptyStatePresetType, PresetConfig> = {
     description: "Drag and drop files here, or click to browse.",
     iconColor: "primary",
   },
-}
-
-export interface EmptyStatePresetProps
-  extends
-    Omit<EmptyStateProps, "children">,
-    Omit<VariantProps<typeof iconContainerVariants>, "size"> {
-  preset: EmptyStatePresetType
-  action?: React.ReactNode
-  customTitle?: string
-  customDescription?: string
-  /** Custom icon to override the preset icon */
-  customIcon?: React.ReactNode
-  /** Custom illustration (overrides icon completely) */
-  illustration?: React.ReactNode
-  /** Icon container size */
-  iconSize?: VariantProps<typeof iconContainerVariants>["size"]
 }
 
 const EmptyStatePreset = React.forwardRef<HTMLDivElement, EmptyStatePresetProps>(

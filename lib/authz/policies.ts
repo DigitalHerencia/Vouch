@@ -4,7 +4,7 @@ import type {
   ConfirmPresenceAuthzInput,
   VouchAccessInput,
   VouchReadinessInput,
-} from "@/types/auth"
+} from "@/types/authTypes"
 
 function isActive(input: VouchReadinessInput): boolean {
   return input.userStatus !== "disabled"

@@ -62,37 +62,6 @@ import { participantSafeAuditTimelineItemSelect } from "@/lib/db/selects/audit.s
 
 const DEFAULT_PAGE_SIZE = 20
 
-type VouchDetailRecord = Prisma.VouchGetPayload<{ select: typeof vouchDetailBaseSelect }>
-type VouchConfirmationRecord = Prisma.VouchGetPayload<{
-  select: typeof vouchConfirmationStateSelect
-}>
-type VouchWindowRecord = Prisma.VouchGetPayload<{ select: typeof vouchWindowSummarySelect }>
-type VouchPaymentRecord = Prisma.VouchGetPayload<{ select: typeof vouchPaymentSummarySelect }>
-type VouchTimelineRecord = Prisma.VouchGetPayload<{ select: typeof vouchTimelineSelect }>
-
-type VouchDetailSelect =
-  | typeof vouchDetailBaseSelect
-  | typeof vouchDetailCommittedSelect
-  | typeof vouchDetailSentSelect
-  | typeof vouchDetailAcceptedSelect
-  | typeof vouchDetailAuthorizedSelect
-  | typeof vouchDetailConfirmableSelect
-  | typeof vouchDetailCompletedSelect
-  | typeof vouchDetailExpiredSelect
-  | typeof vouchDetailProviderFailureSelect
-  | typeof vouchPaymentSummarySelect
-  | typeof vouchTimelineSelect
-  | typeof vouchWindowSummarySelect
-  | typeof vouchConfirmationStateSelect
-  | typeof whatHappensNextSelect
-
-type StatusFilterInput = {
-  userId?: string
-  status?: VouchStatus
-  page?: number
-  pageSize?: number
-}
-
 function pageArgs(input?: { page?: number; pageSize?: number }) {
   const page = Math.max(input?.page ?? 1, 1)
   const pageSize = Math.min(Math.max(input?.pageSize ?? DEFAULT_PAGE_SIZE, 1), 100)

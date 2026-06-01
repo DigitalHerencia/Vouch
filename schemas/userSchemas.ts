@@ -4,7 +4,7 @@ import {
   optionalEmailSchema,
   optionalTrimmedStringSchema,
   userIdSchema,
-} from "./common"
+} from "./commonSchemas"
 
 export const userStatusSchema = z.enum(["active", "disabled"])
 

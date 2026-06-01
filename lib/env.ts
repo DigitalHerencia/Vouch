@@ -1,22 +1,5 @@
 import "server-only"
 
-type RuntimeEnv = {
-  databaseUrl: string
-  clerkSecretKey: string | undefined
-  clerkWebhookSecret: string | undefined
-  stripeSecretKey: string
-  stripeWebhookSecret: string
-  stripePublishableKey: string | undefined
-  appUrl: string
-  vercelUrl: string | undefined
-  adminEmail: string | undefined
-  adminUserIds: string[]
-  emailProvider: string | undefined
-  emailApiUrl: string | undefined
-  emailApiKey: string | undefined
-  emailFrom: string | undefined
-}
-
 export function getRequiredEnv(name: string): string {
   const value = process.env[name]
 

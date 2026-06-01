@@ -4,24 +4,6 @@ import "server-only"
 
 import { auth, currentUser, type User as ClerkUser } from "@clerk/nextjs/server"
 
-export type ClerkUserLike = {
-  id: string
-  emailAddresses?: Array<{ id: string; emailAddress: string }>
-  primaryEmailAddressId?: string | null
-  phoneNumbers?: Array<{ id: string; phoneNumber: string }>
-  primaryPhoneNumberId?: string | null
-  firstName?: string | null
-  lastName?: string | null
-  username?: string | null
-}
-
-export type LocalUserSyncInput = {
-  clerkUserId: string
-  email?: string
-  phone?: string
-  displayName?: string
-}
-
 export async function getCurrentClerkAuth() {
   return auth()
 }

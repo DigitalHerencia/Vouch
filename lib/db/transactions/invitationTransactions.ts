@@ -2,42 +2,6 @@ import "server-only"
 
 import type { InvitationStatus, PrismaClient } from "@/prisma/generated/prisma/client"
 
-type Tx = Omit<
-  PrismaClient,
-  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
->
-
-type CreateInvitationTxInput = {
-  vouchId: string
-  recipientEmail?: string | null
-  tokenHash: string
-  expiresAt: Date
-}
-
-type InvitationIdTxInput = {
-  invitationId: string
-}
-
-type RotateInvitationTokenHashTxInput = {
-  invitationId: string
-  tokenHash: string
-  expiresAt?: Date
-}
-
-type InvitationResult = {
-  id: string
-  vouchId: string
-  tokenHash: string
-  recipientEmail: string | null
-  status: InvitationStatus
-  expiresAt: Date
-  openedAt: Date | null
-  acceptedAt: Date | null
-  declinedAt: Date | null
-  createdAt: Date
-  updatedAt: Date
-}
-
 const INVITATION_SELECT = {
   id: true,
   vouchId: true,

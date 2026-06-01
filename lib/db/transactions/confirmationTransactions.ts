@@ -7,53 +7,6 @@ import type {
   PrismaClient,
 } from "@/prisma/generated/prisma/client"
 
-type Tx = Omit<
-  PrismaClient,
-  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
->
-
-type AggregateConfirmationStatus =
-  | "none_confirmed"
-  | "merchant_confirmed"
-  | "customer_confirmed"
-  | "both_confirmed"
-
-type CreatePresenceConfirmationTxInput = {
-  vouchId: string
-  userId: string
-  participantRole: ParticipantRole
-  method: ConfirmationMethod
-  confirmedAt?: Date
-  serverReceivedAt?: Date
-  timeBucket?: number | null
-  clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
-}
-
-type AssertNoDuplicateConfirmationTxInput = {
-  vouchId: string
-  userId: string
-  participantRole: ParticipantRole
-}
-
-type VouchIdTxInput = {
-  vouchId: string
-}
-
-type PresenceConfirmationResult = {
-  id: string
-  vouchId: string
-  userId: string
-  participantRole: ParticipantRole
-  status: ConfirmationStatus
-  method: ConfirmationMethod
-  confirmedAt: Date | null
-  serverReceivedAt: Date
-  timeBucket: number | null
-  clockSkewAccepted: boolean
-  createdAt: Date
-}
-
 const PRESENCE_CONFIRMATION_SELECT = {
   id: true,
   vouchId: true,

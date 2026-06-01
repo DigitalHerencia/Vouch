@@ -27,46 +27,6 @@ import {
 } from "@/components/ui/drawer"
 import { vouchPageCopy } from "@/content/vouches"
 
-type WarningCopy = {
-  title: string
-  consequence: string
-  context: string
-  finePrint: string
-}
-
-type BaseItem = {
-  label: string
-  icon: LucideIcon
-  primary?: boolean
-}
-
-type LinkItem = BaseItem & {
-  kind: "link"
-  href: string
-}
-
-type ActionItem = BaseItem & {
-  kind: "action"
-  warning: WarningCopy
-  action: (formData: FormData) => void | Promise<void>
-}
-
-type AccountItem = BaseItem & {
-  kind: "account"
-}
-
-type MobileBottomNavItem = LinkItem | ActionItem | AccountItem
-
-type MobileBottomNavProps = {
-  items: readonly MobileBottomNavItem[]
-  "aria-label"?: string
-}
-
-type TenantMobileBottomNavProps = {
-  connectAction: (formData: FormData) => void | Promise<void>
-  paymentAction: (formData: FormData) => void | Promise<void>
-}
-
 function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
 }

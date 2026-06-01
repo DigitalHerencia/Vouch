@@ -20,3 +20,8 @@ export type IdempotencyKeyParts = {
   requestId?: string | null
   payloadHash?: string | null
 }
+
+type RateLimitBucket = {
+  count: number
+  resetAt: number
+}

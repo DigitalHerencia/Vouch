@@ -33,15 +33,7 @@ import {
   isStripeSetupIntentEvent,
   type StripeWebhookEvent,
 } from "@/lib/integrations/stripe/webhook-events"
-import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-result"
-
-type WebhookProcessResult = {
-  providerWebhookEventId: string
-  providerEventId: string
-  eventType: string
-  processed: boolean
-  duplicate?: boolean
-}
+import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-resultTypes"
 
 function mapIntentTiming(intent: Stripe.PaymentIntent) {
   const status = mapStripePaymentIntentStatus(intent.status)

@@ -1,8 +1,6 @@
 import "server-only"
 
-import type { ISODateTime } from "@/types/common"
-
-type DateLike = Date | string | null | undefined
+import type { ISODateTime } from "@/types/commonTypes"
 
 function toIso(value: DateLike): ISODateTime | null {
   if (!value) return null
@@ -23,28 +21,6 @@ function toParticipantSafeMetadata(value: unknown): Record<string, unknown> | nu
       return ["boolean", "number", "string"].includes(typeof entry)
     })
   )
-}
-
-export type ParticipantSafeAuditTimelineItemDTO = {
-  id: string
-  eventName: string
-  actorType: string
-  entityType: string
-  entityId: string
-  participantSafe: boolean
-  metadata: Record<string, unknown> | null
-  createdAt: ISODateTime
-}
-
-type ParticipantSafeAuditTimelineItemRecord = {
-  id: string
-  eventName: string
-  actorType: string
-  entityType: string
-  entityId: string
-  participantSafe: boolean
-  metadata: unknown
-  createdAt: Date | string
 }
 
 export function mapParticipantSafeAuditTimelineItemDTO(

@@ -6,15 +6,6 @@ import { TenantHeader } from "@/components/navigation/tenant-header"
 import { TenantFooter } from "@/components/navigation/tenant-footer"
 import { TenantMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"
 
-type TenantProviderAction = (formData: FormData) => void | Promise<void>
-
-export interface TenantShellProps {
-  children: ReactNode
-  connectAction: TenantProviderAction
-  paymentAction: TenantProviderAction
-  withMobileBottomNav?: boolean | undefined
-}
-
 export function TenantShell({
   children,
   connectAction,

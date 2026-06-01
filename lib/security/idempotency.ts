@@ -2,7 +2,7 @@
 
 import { createHash } from "node:crypto"
 
-import type { IdempotencyKeyParts } from "@/types/security"
+import type { IdempotencyKeyParts } from "@/types/securityTypes"
 
 const IDEMPOTENCY_KEY_PATTERN = /^[a-z0-9][a-z0-9:_-]{15,191}$/
 

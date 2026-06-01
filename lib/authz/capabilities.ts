@@ -2,7 +2,7 @@ import "server-only"
 
 import type { CurrentUser } from "@/lib/fetchers/authFetchers"
 import { deny } from "@/lib/authz/assertions"
-import type { AdminCapability } from "@/types/auth"
+import type { AdminCapability } from "@/types/authTypes"
 
 const ADMIN_CAPABILITIES: AdminCapability[] = [
   "view_admin_dashboard",

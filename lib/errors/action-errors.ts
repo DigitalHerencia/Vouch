@@ -2,7 +2,7 @@ import "server-only"
 
 import type { ZodError } from "zod"
 
-import { actionFailure, type ActionResult, type FieldErrors } from "@/types/action-result"
+import { actionFailure, type ActionResult, type FieldErrors } from "@/types/action-resultTypes"
 
 export function toFieldErrors(error: ZodError): FieldErrors {
   return error.flatten().fieldErrors

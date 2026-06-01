@@ -16,23 +16,6 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Progress } from "@/components/ui/progress"
 
-export interface OnboardingStep {
-  id: string
-  title: string
-  description?: string
-  icon?: React.ReactNode
-  content: React.ReactNode
-  optional?: boolean
-}
-
-export interface OnboardingWizardProps {
-  steps: OnboardingStep[]
-  currentStep: number
-  onStepChange: (stepIndex: number) => void
-  onComplete?: () => void
-  showProgress?: boolean
-}
-
 export function OnboardingWizard({
   steps,
   currentStep,
@@ -135,15 +118,6 @@ export function OnboardingWizard({
   )
 }
 
-export interface WelcomeScreenProps {
-  logo?: React.ReactNode
-  title?: string
-  subtitle?: string
-  features?: Array<{ icon: React.ReactNode; title: string; description: string }>
-  primaryAction?: { label: string; onClick?: () => void }
-  secondaryAction?: { label: string; onClick?: () => void }
-}
-
 export function WelcomeScreen({
   logo,
   title = "Welcome to the app",
@@ -197,22 +171,6 @@ export function WelcomeScreen({
       </Card>
     </div>
   )
-}
-
-export interface ProfileSetupProps {
-  name: string
-  role: string
-  interests: string[]
-  avatarPreview?: string | null
-  avatarError?: string | null
-  onNameChange: (name: string) => void
-  onRoleChange: (role: string) => void
-  onInterestToggle: (interest: string) => void
-  onAvatarInputClick?: () => void
-  onAvatarChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
-  onSubmit?: () => void
-  availableRoles?: Array<{ value: string; label: string }>
-  availableInterests?: Array<{ value: string; label: string }>
 }
 
 const defaultRoles = [
@@ -353,20 +311,6 @@ export function ProfileSetup({
   )
 }
 
-export interface WorkspaceSetupProps {
-  title?: string
-  description?: string
-  workspaceName: string
-  memberEmail: string
-  members: string[]
-  onWorkspaceNameChange: (name: string) => void
-  onMemberEmailChange: (email: string) => void
-  onAddMember: () => void
-  onRemoveMember: (email: string) => void
-  onSubmit?: () => void
-  onSkip?: () => void
-}
-
 export function WorkspaceSetup({
   title = "Create Your Workspace",
   description = "Set up your team workspace and invite members",
@@ -462,15 +406,6 @@ export function WorkspaceSetup({
   )
 }
 
-export interface GoalSelectionProps {
-  goals: Array<{ id: string; title: string; description: string; icon: React.ReactNode }>
-  selectedGoals: string[]
-  onGoalToggle: (goalId: string) => void
-  onSubmit?: () => void
-  minSelection?: number
-  maxSelection?: number
-}
-
 export function GoalSelection({
   goals,
   selectedGoals,
@@ -534,13 +469,6 @@ export function GoalSelection({
       </CardContent>
     </Card>
   )
-}
-
-export interface CompletionScreenProps {
-  title?: string
-  subtitle?: string
-  features?: Array<{ title: string; description: string }>
-  primaryAction?: { label: string; onClick?: () => void }
 }
 
 export function CompletionScreen({

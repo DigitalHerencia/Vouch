@@ -96,10 +96,6 @@ export const viewport: Viewport = {
   maximumScale: 1,
 }
 
-type RootLayoutProps = Readonly<{
-  children: ReactNode
-}>
-
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html

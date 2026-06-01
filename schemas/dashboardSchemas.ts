@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { vouchListSortSchema } from "./vouch"
+import { vouchListSortSchema } from "./vouchSchemas"
 
 export const dashboardSectionIdSchema = z.enum([
   "action_required",

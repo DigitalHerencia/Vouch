@@ -2,11 +2,6 @@ import "server-only"
 
 import type { Prisma, PrismaClient, WebhookProvider } from "@/prisma/generated/prisma/client"
 
-type Tx = Omit<
-  PrismaClient,
-  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
->
-
 const unsafeMetadataKeyPattern = /payload|signature|secret|token|card|bank|identity/i
 
 function assertNonEmptyString(value: string, fieldName: string): string {

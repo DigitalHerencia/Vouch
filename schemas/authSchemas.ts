@@ -35,16 +35,12 @@ export const userSyncSchema = z.object({
   displayName: z.string().trim().max(120).optional(),
 })
 
-export type UserSyncInput = z.infer<typeof userSyncSchema>
-
 export const authRedirectSearchParamsSchema = z.object({
   redirect_url: internalPathSchema.optional(),
   redirectUrl: internalPathSchema.optional(),
   return_to: internalPathSchema.optional(),
   returnTo: internalPathSchema.optional(),
 })
-
-export type AuthRedirectSearchParams = z.infer<typeof authRedirectSearchParamsSchema>
 
 export const supportedClerkWebhookEventTypeSchema = z.enum([
   "email.created",

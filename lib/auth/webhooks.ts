@@ -7,7 +7,7 @@ import type { NextRequest } from "next/server"
 
 import { getRequiredEnv } from "@/lib/env"
 import { processClerkWebhookEvent } from "@/lib/webhooks/clerk"
-import type { ClerkWebhookEvent } from "@/types/auth"
+import type { ClerkWebhookEvent } from "@/types/authTypes"
 
 export async function verifyClerkWebhook(request: NextRequest): Promise<unknown> {
   return verifyClerkRequestWebhook(request, {

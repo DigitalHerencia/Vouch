@@ -6,11 +6,6 @@ import { PublicHeader } from "@/components/navigation/public-header"
 import { PublicFooter } from "@/components/navigation/public-footer"
 import { PublicMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"
 
-export interface PublicShellProps {
-  children: ReactNode
-  withMobileBottomNav?: boolean | undefined
-}
-
 export function PublicShell({ children, withMobileBottomNav = true }: PublicShellProps) {
   return (
     <div className="min-h-dvh">

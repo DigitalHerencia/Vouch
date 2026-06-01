@@ -23,8 +23,6 @@ const readinessSelect = {
   },
 } satisfies Prisma.UserSelect
 
-type ReadinessRecord = Prisma.UserGetPayload<{ select: typeof readinessSelect }>
-
 function normalizeReadiness(record: ReadinessRecord | null) {
   const terms = record?.termsAcceptances?.[0] ?? null
   const verification = record?.verificationProfile ?? null

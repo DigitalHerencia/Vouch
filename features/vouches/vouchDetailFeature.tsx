@@ -10,36 +10,7 @@ import {
   getParticipantSafeAuditTimeline,
   getVouchDetailForParticipant,
 } from "@/lib/fetchers/vouchFetchers"
-import type { VouchStatus } from "@/types/vouch"
-
-type ConfirmationState = {
-  merchantConfirmed: boolean
-  customerConfirmed: boolean
-  canConfirm: boolean
-  action?: ReactNode
-}
-
-type VouchDetailPageProps = {
-  vouchId: string
-}
-
-type VouchDetailViewProps = {
-  title: string
-  amountLabel: string
-  statusLabel: VouchStatus | string
-  currentUserRoleLabel: "merchant" | "customer" | "participant"
-  merchantLabel: string
-  customerLabel: string
-  appointmentLabel: string
-  windowLabel: string
-  deadlineLabel: string
-  paymentStatusLabel: string
-  settlementStatusLabel: string
-  merchantReceivesLabel: string
-  customerTotalLabel: string
-  confirmation: ConfirmationState
-  timeline: { label: string; timestampLabel: string }[]
-}
+import type { VouchStatus } from "@/types/vouchTypes"
 
 const money = (cents: unknown, currency: unknown) =>
   new Intl.NumberFormat("en-US", {

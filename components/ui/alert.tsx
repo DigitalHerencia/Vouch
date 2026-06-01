@@ -47,11 +47,6 @@ const AlertDescription = React.forwardRef<
 ))
 AlertDescription.displayName = "AlertDescription"
 
-export interface AlertActionProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  /** Shows an inline spinner and disables the button automatically */
-  loading?: boolean
-}
-
 const AlertAction = React.forwardRef<HTMLButtonElement, AlertActionProps>(
   ({ className, loading, disabled, children, ...props }, ref) => (
     <button

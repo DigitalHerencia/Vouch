@@ -1,30 +1,8 @@
 import "server-only"
 
-import type { PayoutReadinessStatus } from "@/types/payment"
+import type { PayoutReadinessStatus } from "@/types/paymentTypes"
 
 import { getStripeServerClient } from "./client"
-
-type StripeV2Account = {
-  id: string
-}
-
-type StripeV2AccountLink = {
-  url: string
-}
-
-type StripeV2Client = {
-  v2?: {
-    core?: {
-      accounts?: {
-        create(input: unknown, options?: { idempotencyKey?: string }): Promise<StripeV2Account>
-        retrieve(id: string, options?: { expand?: string[]; include?: string[] }): Promise<unknown>
-      }
-      accountLinks?: {
-        create(input: unknown, options?: { idempotencyKey?: string }): Promise<StripeV2AccountLink>
-      }
-    }
-  }
-}
 
 function readNestedRecord(record: Record<string, unknown> | undefined, key: string) {
   const value = record?.[key]

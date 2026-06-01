@@ -1,5 +1,10 @@
 import { z } from "zod"
-import { idSchema, optionalTrimmedStringSchema, safeMetadataSchema, userIdSchema } from "./common"
+import {
+  idSchema,
+  optionalTrimmedStringSchema,
+  safeMetadataSchema,
+  userIdSchema,
+} from "./commonSchemas"
 
 export const auditActorTypeSchema = z.enum([
   "user",

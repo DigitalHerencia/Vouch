@@ -11,66 +11,6 @@ import {
 } from "@/components/blocks/status"
 import { Progress } from "../ui/progress"
 
-// ============================================================================
-// Common Types
-// ============================================================================
-export interface InvoiceItem {
-  description: string
-  quantity: number
-  unitPrice: number
-  unitPriceLabel?: string
-  total?: number
-  totalLabel?: string
-}
-
-export interface InvoiceAddress {
-  name: string
-  company?: string
-  address: string
-  city: string
-  state?: string
-  zip: string
-  country?: string
-  email?: string
-  phone?: string
-}
-
-export interface InvoiceData {
-  title?: string
-  invoiceNumber: string
-  issueDate: string
-  dueDate: string
-  status?: "paid" | "pending" | "overdue" | string
-  from: InvoiceAddress
-  to: InvoiceAddress
-  items: InvoiceItem[]
-  subtotal: number
-  tax?: { label: string; rate: number; amount: number }
-  discount?: { label: string; amount: number }
-  total: number
-  notes?: string
-  terms?: string
-  details?: Array<{ label: string; value: string }>
-  actions?: React.ReactNode
-  paymentInfo?: {
-    bankName?: string
-    accountNumber?: string
-    routingNumber?: string
-    paymentMethods?: string[]
-  }
-}
-
-// ============================================================================
-// INVOICE VARIANT 1: Full Invoice
-// ============================================================================
-export interface InvoiceProps {
-  data: InvoiceData
-  logo?: React.ReactNode
-  onDownload?: () => void
-  onPrint?: () => void
-  onSendEmail?: () => void
-}
-
 export function Invoice({ data, logo, onDownload, onPrint, onSendEmail }: InvoiceProps) {
   const computedSubtotal = data.items.reduce(
     (sum, item) => sum + (item.total ?? item.quantity * item.unitPrice),
@@ -306,35 +246,6 @@ export function Invoice({ data, logo, onDownload, onPrint, onSendEmail }: Invoic
   )
 }
 
-// ============================================================================
-// INVOICE VARIANT 2: Compact Receipt
-// ============================================================================
-export interface ReceiptData {
-  receiptNumber: string
-  date: string
-  merchant: {
-    name: string
-    address?: string
-    phone?: string
-  }
-  items: Array<{
-    name: string
-    quantity?: number
-    price: number
-  }>
-  subtotal: number
-  tax?: number
-  total: number
-  paymentMethod?: string
-  cardLast4?: string
-}
-
-export interface ReceiptProps {
-  data: ReceiptData
-  logo?: React.ReactNode
-  onDownload?: () => void
-}
-
 export function Receipt({ data, logo, onDownload }: ReceiptProps) {
   return (
     <div className="mx-auto min-w-lg">
@@ -421,33 +332,6 @@ export function Receipt({ data, logo, onDownload }: ReceiptProps) {
       </div>
     </div>
   )
-}
-
-// ============================================================================
-// INVOICE VARIANT 3: Invoice Summary Card
-// ============================================================================
-export interface InvoiceSummaryProps {
-  invoiceNumber: string
-  clientName: string
-  issueDate: string
-  dueDate: string
-  amount: number
-  amountLabel?: string
-  status: string
-  statusTone?: VouchStatusTone
-  href: string
-  vouchId?: string
-  appointmentLabel?: string
-  confirmationWindowLabel?: string
-  protectedAmountLabel?: string
-  countdown?: VouchCountdownProps | undefined
-  label: string
-  expiresAtLabel: string
-  remainingLabel: string
-  percentRemaining?: number
-  tone?: VouchStatusTone
-  onView?: () => void
-  onDownload?: () => void
 }
 
 export function InvoiceSummary({
@@ -542,24 +426,6 @@ export function VouchCard({
       </p>
     </main>
   )
-}
-
-// ============================================================================
-// INVOICE VARIANT 4: Invoice List
-// ============================================================================
-export interface InvoiceListItem {
-  id: string
-  invoiceNumber: string
-  clientName: string
-  date: string
-  amount: number
-  status: "paid" | "pending" | "overdue"
-}
-
-export interface InvoiceListProps {
-  invoices: InvoiceListItem[]
-  onView?: (id: string) => void
-  onDownload?: (id: string) => void
 }
 
 export function InvoiceList({ invoices }: InvoiceListProps) {

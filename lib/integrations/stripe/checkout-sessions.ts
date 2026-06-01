@@ -6,37 +6,6 @@ import type { VouchPricing } from "@/lib/vouch/fees"
 
 import { getStripeServerClient } from "./client"
 
-export type CreateStripeCheckoutAuthorizationInput = {
-  vouchId: string
-  pricing: VouchPricing
-  currency: string
-  connectedAccountId: string
-  providerCustomerId?: string
-  successUrl: string
-  cancelUrl?: string
-  idempotencyKey: string
-}
-
-export type CreateStripeMerchantCreationFeeCheckoutInput = {
-  vouchId: string
-  merchantUserId: string
-  feeAmountCents: number
-  protectedAmountCents: number
-  currency: string
-  providerCustomerId?: string
-  successUrl: string
-  cancelUrl: string
-  idempotencyKey: string
-}
-
-export type CreateStripePaymentMethodSetupCheckoutInput = {
-  userId: string
-  providerCustomerId: string
-  successUrl: string
-  cancelUrl: string
-  idempotencyKey: string
-}
-
 function pricingMetadata(input: { vouchId: string; pricing: VouchPricing }) {
   return {
     vouch_id: input.vouchId,

@@ -4,10 +4,6 @@
 
 import { UserButton } from "@clerk/nextjs"
 
-export type UserMenuProps = Readonly<{
-  size?: "default" | "compact"
-}>
-
 export function UserMenu({ size = "default" }: UserMenuProps) {
   const isCompact = size === "compact"
   const triggerSize = isCompact ? "size-9" : "size-11"

@@ -2,17 +2,6 @@ import "server-only"
 
 import type { Prisma, PrismaClient } from "@/prisma/generated/prisma/client"
 
-type Tx = Omit<
-  PrismaClient,
-  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
->
-
-type SystemEventInput = {
-  code: string
-  message: string
-  metadata?: Record<string, unknown>
-}
-
 const unsafeMetadataKeyPattern = /payload|signature|secret|token|card|bank|identity/i
 
 function toSafeMetadata(

@@ -11,66 +11,6 @@ import type {
   SettlementStatus,
 } from "@/prisma/generated/prisma/client"
 
-type Tx = Omit<
-  PrismaClient,
-  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
->
-
-export type UpsertPaymentRecordTxInput = {
-  vouchId: string
-  purpose: PaymentRecordPurpose
-  provider?: PaymentProvider
-  providerPaymentIntentId?: string | null
-  providerCheckoutSessionId?: string | null
-  providerChargeId?: string | null
-  providerTransferId?: string | null
-  status: PaymentStatus
-  settlementStatus: SettlementStatus
-  amountCents: number
-  currency: string
-  protectedAmountCents: number
-  merchantReceivesCents: number
-  vouchServiceFeeCents: number
-  processingFeeOffsetCents: number
-  applicationFeeAmountCents: number
-  customerTotalCents: number
-  amountCapturableCents?: number
-  captureBefore?: Date | null
-  authorizedAt?: Date | null
-  capturedAt?: Date | null
-  canceledAt?: Date | null
-  failedAt?: Date | null
-  lastProviderSyncAt?: Date
-  lastErrorCode?: string | null
-  lastErrorMessage?: string | null
-}
-
-export type UpdatePaymentProviderStateTxInput = {
-  paymentRecordId: string
-  providerPaymentIntentId?: string | null
-  providerChargeId?: string | null
-  providerTransferId?: string | null
-  status: PaymentStatus
-  settlementStatus: SettlementStatus
-  amountCapturableCents?: number
-  captureBefore?: Date | null
-  authorizedAt?: Date | null
-  capturedAt?: Date | null
-  canceledAt?: Date | null
-  failedAt?: Date | null
-  lastErrorCode?: string | null
-  lastErrorMessage?: string | null
-}
-
-export type CreateRefundRecordTxInput = {
-  vouchId: string
-  paymentRecordId: string
-  providerRefundId?: string | null
-  status: RefundStatus
-  reason: RefundReason
-  amountCents: number
-}
-
 export async function upsertPaymentRecordTx(tx: Tx, input: UpsertPaymentRecordTxInput) {
   const lastProviderSyncAt = input.lastProviderSyncAt ?? new Date()
   const update: Prisma.PaymentRecordUpdateInput = {
