@@ -1,4 +1,9 @@
 
+import type {
+  ConfirmationWindowInput,
+  DateLike,
+} from "@/types/vouchTypes"
+
 
 export function toDate(value: DateLike): Date {
   const date = value instanceof Date ? value : new Date(value)
@@ -23,21 +28,4 @@ export function isConfirmationWindowClosed(input: ConfirmationWindowInput): bool
   const expiresAt = toDate(input.confirmationExpiresAt)
 
   return now > expiresAt
-}
-
-export function assertValidConfirmationWindow(input: ValidConfirmationWindowInput): void {
-  const opensAt = toDate(input.confirmationOpensAt)
-  const expiresAt = toDate(input.confirmationExpiresAt)
-
-  if (opensAt >= expiresAt) {
-    throw new Error("confirmationOpensAt must be before confirmationExpiresAt.")
-  }
-
-  if (input.meetingStartsAt !== undefined) {
-    const meetingStartsAt = toDate(input.meetingStartsAt)
-
-    if (meetingStartsAt > expiresAt) {
-      throw new Error("meetingStartsAt must be before or equal to confirmationExpiresAt.")
-    }
-  }
 }

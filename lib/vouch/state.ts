@@ -1,6 +1,14 @@
-import type { AggregateConfirmationStatus, ParticipantRole, VouchStatus } from "@/types/vouchTypes"
+import type {
+  AggregateConfirmationStatus,
+  ConfirmationStateInput,
+  DateLike,
+  DeriveNextVouchActionInput,
+  NextVouchAction,
+  VouchStatus,
+  VouchTransition,
+} from "@/types/vouchTypes"
 
-import { isConfirmationWindowClosed, isConfirmationWindowOpen, type DateLike } from "./time-windows"
+import { isConfirmationWindowClosed, isConfirmationWindowOpen } from "./time-windows"
 
 const ALLOWED_TRANSITIONS: ReadonlyMap<VouchStatus, readonly VouchStatus[]> = new Map([
   ["draft", ["committed", "sent", "expired"]],
@@ -47,38 +55,6 @@ export function assertValidVouchTransition({ from, to }: VouchTransition): void 
   if (!allowedTargets.includes(to)) {
     throw new Error(`Invalid Vouch transition: ${from} -> ${to}.`)
   }
-}
-
-export function deriveVouchDetailVariant(input: DeriveDetailVariantInput): VouchDetailVariant {
-  if (input.status === "completed" || input.status === "expired") return input.status
-
-  if (input.status === "confirmable") {
-    if (input.paymentCapturePending) return "both_confirmed_processing_capture"
-
-    const aggregateStatus = deriveAggregateConfirmationStatus(input)
-
-    if (aggregateStatus === "both_confirmed") return "both_confirmed_processing_capture"
-    if (aggregateStatus === "merchant_confirmed") return "merchant_confirmed_waiting_for_customer"
-    if (aggregateStatus === "customer_confirmed") return "customer_confirmed_waiting_for_merchant"
-
-    if (
-      input.confirmationOpensAt !== undefined &&
-      input.confirmationExpiresAt !== undefined &&
-      isConfirmationWindowOpen(
-        buildWindowInput({
-          now: input.now ?? new Date(),
-          confirmationOpensAt: input.confirmationOpensAt,
-          confirmationExpiresAt: input.confirmationExpiresAt,
-        })
-      )
-    ) {
-      return "confirmable_window_open"
-    }
-
-    return "confirmable_before_window"
-  }
-
-  return input.status
 }
 
 export function deriveNextVouchAction(input: DeriveNextVouchActionInput): NextVouchAction {

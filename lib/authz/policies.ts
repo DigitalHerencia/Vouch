@@ -1,10 +1,14 @@
-import type { CurrentUser } from "@/lib/fetchers/authFetchers"
 import type {
   AcceptVouchAuthzInput,
   ConfirmPresenceAuthzInput,
   VouchAccessInput,
   VouchReadinessInput,
 } from "@/types/authTypes"
+
+type AdminAuthzUser = {
+  isAdmin: boolean
+  status: string
+}
 
 function isActive(input: VouchReadinessInput): boolean {
   return input.userStatus !== "disabled"
@@ -63,20 +67,6 @@ export function canAcceptVouch(input: AcceptVouchAuthzInput): boolean {
   )
 }
 
-export function canDeclineVouch(input: {
-  userId?: string | null
-  merchantId: string
-  status: string
-  inviteValid: boolean
-}): boolean {
-  return (
-    Boolean(input.userId) &&
-    (input.status === "committed" || input.status === "sent") &&
-    input.userId !== input.merchantId &&
-    input.inviteValid
-  )
-}
-
 export function canConfirmPresence(input: ConfirmPresenceAuthzInput): boolean {
   const isParticipant =
     Boolean(input.userId) &&
@@ -90,7 +80,7 @@ export function canConfirmPresence(input: ConfirmPresenceAuthzInput): boolean {
   )
 }
 
-export function canViewAdmin(user: Pick<CurrentUser, "isAdmin" | "status"> | null): boolean {
+export function canViewAdmin(user: AdminAuthzUser | null): boolean {
   return user?.status === "active" && user.isAdmin
 }
 

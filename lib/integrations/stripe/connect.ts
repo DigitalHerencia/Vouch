@@ -4,6 +4,31 @@ import type { PayoutReadinessStatus } from "@/types/paymentTypes"
 
 import { getStripeServerClient } from "./client"
 
+type StripeV2Core = {
+  accounts: {
+    create(
+      params: Record<string, unknown>,
+      options?: { idempotencyKey?: string }
+    ): Promise<{ id: string }>
+    retrieve(
+      accountId: string,
+      params?: Record<string, unknown>
+    ): Promise<Record<string, unknown>>
+  }
+  accountLinks: {
+    create(
+      params: Record<string, unknown>,
+      options?: { idempotencyKey?: string }
+    ): Promise<{ url: string }>
+  }
+}
+
+type StripeV2Client = {
+  v2?: {
+    core?: Partial<StripeV2Core>
+  }
+}
+
 function readNestedRecord(record: Record<string, unknown> | undefined, key: string) {
   const value = record?.[key]
   return value && typeof value === "object" ? (value as Record<string, unknown>) : undefined
@@ -27,10 +52,7 @@ function getStripeV2Core() {
     throw new Error("STRIPE_ACCOUNTS_V2_UNAVAILABLE")
   }
 
-  return core as {
-    accounts: NonNullable<NonNullable<StripeV2Client["v2"]>["core"]>["accounts"] & {}
-    accountLinks: NonNullable<NonNullable<StripeV2Client["v2"]>["core"]>["accountLinks"] & {}
-  }
+  return core as StripeV2Core
 }
 
 export async function createStripeConnectAccount(input: {
@@ -83,8 +105,6 @@ export async function createStripeConnectAccount(input: {
   return { providerAccountId: account.id }
 }
 
-export const createConnectedAccount = createStripeConnectAccount
-
 export async function createStripeConnectOnboardingLink(input: {
   providerAccountId: string
   refreshUrl: string
@@ -110,8 +130,6 @@ export async function createStripeConnectOnboardingLink(input: {
   return { url: link.url }
 }
 
-export const createConnectedAccountOnboardingSession = createStripeConnectOnboardingLink
-
 export async function createStripeConnectDashboardLink(input: {
   providerAccountId: string
 }): Promise<{ url: string }> {
@@ -120,8 +138,6 @@ export async function createStripeConnectDashboardLink(input: {
   return { url: link.url }
 }
 
-export const createConnectedAccountManagementSession = createStripeConnectDashboardLink
-
 export async function refreshStripeConnectReadiness(input: { providerAccountId: string }): Promise<{
   readiness: PayoutReadinessStatus
   chargesEnabled: boolean
@@ -129,9 +145,9 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
   detailsSubmitted: boolean
 }> {
   const core = getStripeV2Core()
-  const account = (await core.accounts.retrieve(input.providerAccountId, {
+  const account = await core.accounts.retrieve(input.providerAccountId, {
     include: ["configuration.recipient"],
-  })) as Record<string, unknown>
+  })
 
   const topLevelDetailsSubmitted = readNestedBoolean(account, "details_submitted")
   const topLevelPayoutsEnabled = readNestedBoolean(account, "payouts_enabled")
@@ -161,6 +177,3 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
     detailsSubmitted,
   }
 }
-
-export const retrieveConnectedAccount = refreshStripeConnectReadiness
-export const mapConnectedAccountReadiness = refreshStripeConnectReadiness

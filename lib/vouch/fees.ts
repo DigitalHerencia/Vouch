@@ -1,4 +1,8 @@
 
+import type { VouchPricing, VouchPricingInput } from "@/types/vouchTypes"
+
+export type { VouchPricing } from "@/types/vouchTypes"
+
 
 export const DEFAULT_STRIPE_PERCENT_BPS = 290
 export const DEFAULT_STRIPE_FIXED_CENTS = 30

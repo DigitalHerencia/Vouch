@@ -9,17 +9,6 @@ export const VOUCH_STATUS_VALUES = [
   "expired",
 ] as const
 
-export const TERMINAL_VOUCH_STATUS_VALUES = ["completed", "expired"] as const
-
-export const OPEN_VOUCH_STATUS_VALUES = [
-  "draft",
-  "committed",
-  "sent",
-  "accepted",
-  "authorized",
-  "confirmable",
-] as const
-
 export const INVITATION_STATUS_VALUES = [
   "created",
   "sent",
@@ -121,14 +110,7 @@ export const RECOVERY_STATUS_VALUES = [
   "recovery_failed",
 ] as const
 
-export const SUPPORTED_CURRENCY_VALUES = ["usd"] as const
-
-export const MIN_VOUCH_AMOUNT_CENTS = 100
-export const VOUCH_PLATFORM_FEE_BPS = 500
-export const MIN_VOUCH_PLATFORM_FEE_CENTS = 500
-
 export const CONFIRMATION_CODE_BUCKET_SECONDS = 300
-export const OFFLINE_CONFIRMATION_ALLOWED_BUCKET_SKEW = 1
 
 export const VOUCH_LIST_STATUS_FILTER_VALUES = [
   "active",
@@ -185,17 +167,3 @@ export const PAYMENT_FAILURE_STAGE_VALUES = [
   "webhook",
   "unknown",
 ] as const
-
-export const APP_ROUTES = {
-  home: "/",
-  faq: "/faq",
-  pricing: "/pricing",
-  terms: "/legal/terms",
-  privacy: "/legal/privacy",
-  signIn: "/sign-in",
-  signUp: "/sign-up",
-  dashboard: "/dashboard",
-  newVouch: "/vouches/new",
-  vouchDetailBase: "/vouches",
-  checkoutSuccess: "/checkout/success",
-} as const

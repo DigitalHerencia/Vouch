@@ -1,7 +1,5 @@
 import "server-only"
 
-import type { Prisma } from "@/prisma/generated/prisma/client"
-
 import {
   extractClerkDisplayName,
   extractClerkUserEmail,
@@ -19,27 +17,15 @@ import {
   markProviderWebhookProcessedTx,
   recordProviderWebhookReceivedTx,
 } from "@/lib/db/transactions/webhookTransactions"
-import {
-  clerkWebhookEventSchema,
-  supportedClerkWebhookEventTypeSchema,
-} from "@/schemas/authSchemas"
-import type { ClerkWebhookEvent, ClerkWebhookUserData } from "@/types/authTypes"
+import type { ClerkWebhookEvent } from "@/types/authTypes"
 
-function safeClerkMetadata(event: ClerkWebhookEvent): Prisma.InputJsonObject {
+function safeClerkMetadata(event: ClerkWebhookEvent): Record<string, unknown> {
   return {
     resource_id: event.data.id,
     resource_type: event.type.split(".")[0] ?? "unknown",
     ...(event.data.user_id ? { clerk_user_id: event.data.user_id } : {}),
     ...(event.type.startsWith("user.") ? { clerk_user_id: event.data.id } : {}),
   }
-}
-
-function messageTargetEmail(data: ClerkWebhookUserData) {
-  return data.email_address ?? extractClerkUserEmail(data)
-}
-
-function messageTargetPhone(data: ClerkWebhookUserData) {
-  return data.phone_number ?? extractClerkUserPhone(data)
 }
 
 async function upsertLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
@@ -95,107 +81,7 @@ async function disableLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
   })
 }
 
-async function upsertClerkSessionProjection(event: ClerkWebhookEvent) {
-  const now = new Date()
-  const update: Prisma.ClerkSessionUpdateInput = {
-    status: event.type.replace("session.", ""),
-    lastEventType: event.type,
-  }
-  if (event.data.user_id) update.clerkUserId = event.data.user_id
-  if (event.type === "session.ended") update.endedAt = now
-  if (event.type === "session.removed") update.removedAt = now
-  if (event.type === "session.revoked") update.revokedAt = now
-
-  await prisma.clerkSession.upsert({
-    where: { id: event.data.id },
-    create: {
-      id: event.data.id,
-      clerkUserId: event.data.user_id ?? null,
-      status: event.type.replace("session.", ""),
-      lastEventType: event.type,
-      endedAt: event.type === "session.ended" ? now : null,
-      removedAt: event.type === "session.removed" ? now : null,
-      revokedAt: event.type === "session.revoked" ? now : null,
-    },
-    update,
-  })
-}
-
-async function upsertClerkEmailProjection(event: ClerkWebhookEvent, svixId: string) {
-  const id = event.data.email_address_id ?? event.data.id ?? `svix:${svixId}`
-  const toEmail = messageTargetEmail(event.data)
-  const update: Prisma.ClerkEmailUpdateInput = {
-    lastEventType: event.type,
-  }
-  if (event.data.user_id) update.clerkUserId = event.data.user_id
-  if (event.data.status) update.status = event.data.status
-  if (toEmail) update.toEmail = toEmail
-
-  await prisma.clerkEmail.upsert({
-    where: { id },
-    create: {
-      id,
-      clerkUserId: event.data.user_id ?? null,
-      status: event.data.status ?? null,
-      toEmail: toEmail ?? null,
-      lastEventType: event.type,
-    },
-    update,
-  })
-}
-
-async function upsertClerkSmsProjection(event: ClerkWebhookEvent, svixId: string) {
-  const id = event.data.phone_number_id ?? event.data.id ?? `svix:${svixId}`
-  const toPhone = messageTargetPhone(event.data)
-  const update: Prisma.ClerkSmsUpdateInput = {
-    lastEventType: event.type,
-  }
-  if (event.data.user_id) update.clerkUserId = event.data.user_id
-  if (event.data.status) update.status = event.data.status
-  if (toPhone) update.toPhone = toPhone
-
-  await prisma.clerkSms.upsert({
-    where: { id },
-    create: {
-      id,
-      clerkUserId: event.data.user_id ?? null,
-      status: event.data.status ?? null,
-      toPhone: toPhone ?? null,
-      lastEventType: event.type,
-    },
-    update,
-  })
-}
-
-async function upsertClerkInvitationProjection(event: ClerkWebhookEvent) {
-  const now = new Date()
-  const status = event.type.replace("invitation.", "")
-  const emailAddress = messageTargetEmail(event.data)
-  const update: Prisma.ClerkInvitationUpdateInput = {
-    status,
-    lastEventType: event.type,
-  }
-  if (event.data.user_id) update.clerkUserId = event.data.user_id
-  if (emailAddress) update.emailAddress = emailAddress
-  if (event.type === "invitation.accepted") update.acceptedAt = now
-  if (event.type === "invitation.revoked") update.revokedAt = now
-
-  await prisma.clerkInvitation.upsert({
-    where: { id: event.data.id },
-    create: {
-      id: event.data.id,
-      clerkUserId: event.data.user_id ?? null,
-      emailAddress: emailAddress ?? null,
-      status,
-      lastEventType: event.type,
-      acceptedAt: event.type === "invitation.accepted" ? now : null,
-      revokedAt: event.type === "invitation.revoked" ? now : null,
-    },
-    update,
-  })
-}
-
-async function processSupportedClerkEvent(event: ClerkWebhookEvent, svixId: string) {
+async function processSupportedClerkEvent(event: ClerkWebhookEvent) {
   switch (event.type) {
     case "user.created":
     case "user.updated":
@@ -204,31 +90,13 @@ async function processSupportedClerkEvent(event: ClerkWebhookEvent, svixId: stri
     case "user.deleted":
       await disableLocalUserFromClerkEvent(event)
       return
-    case "session.created":
-    case "session.pending":
-    case "session.ended":
-    case "session.removed":
-    case "session.revoked":
-      await upsertClerkSessionProjection(event)
-      return
-    case "email.created":
-      await upsertClerkEmailProjection(event, svixId)
-      return
-    case "sms.created":
-      await upsertClerkSmsProjection(event, svixId)
-      return
-    case "invitation.created":
-    case "invitation.accepted":
-    case "invitation.revoked":
-      await upsertClerkInvitationProjection(event)
-      return
     default:
       throw new Error(`Unsupported Clerk event reached processor: ${event.type}`)
   }
 }
 
 export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId: string) {
-  const parsed = clerkWebhookEventSchema.parse(event) as ClerkWebhookEvent
+  const parsed = event
   const providerEventId = svixId
 
   const ledger = await prisma.$transaction((tx) =>
@@ -245,8 +113,11 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
   }
 
   try {
-    const supported = supportedClerkWebhookEventTypeSchema.safeParse(parsed.type)
-    if (!supported.success) {
+    if (
+      parsed.type !== "user.created" &&
+      parsed.type !== "user.updated" &&
+      parsed.type !== "user.deleted"
+    ) {
       await prisma.$transaction((tx) =>
         markProviderWebhookIgnoredTx(tx, {
           id: ledger.event.id,
@@ -261,7 +132,7 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
       }
     }
 
-    await processSupportedClerkEvent(parsed, svixId)
+    await processSupportedClerkEvent(parsed)
     await prisma.$transaction((tx) => markProviderWebhookProcessedTx(tx, { id: ledger.event.id }))
     return { ok: true as const, status: "processed" as const, ignored: false as const }
   } catch (error) {

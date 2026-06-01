@@ -68,12 +68,6 @@ export async function refundStripePayment(input: {
   )
 }
 
-export async function retrieveStripeRefund(input: {
-  providerRefundId: string
-}): Promise<Stripe.Refund> {
-  return getStripeServerClient().refunds.retrieve(input.providerRefundId)
-}
-
 /**
  * Compatibility alias retained for older imports.
  */

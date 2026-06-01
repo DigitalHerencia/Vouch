@@ -6,6 +6,37 @@ import type { VouchPricing } from "@/lib/vouch/fees"
 
 import { getStripeServerClient } from "./client"
 
+type CreateStripeMerchantCreationFeeCheckoutInput = {
+  vouchId: string
+  merchantUserId: string
+  feeAmountCents: number
+  protectedAmountCents: number
+  currency: string
+  successUrl: string
+  cancelUrl: string
+  providerCustomerId?: string
+  idempotencyKey: string
+}
+
+type CreateStripePaymentMethodSetupCheckoutInput = {
+  providerCustomerId: string
+  userId: string
+  successUrl: string
+  cancelUrl: string
+  idempotencyKey: string
+}
+
+type CreateStripeCheckoutAuthorizationInput = {
+  vouchId: string
+  pricing: VouchPricing
+  currency: string
+  connectedAccountId: string
+  providerCustomerId?: string
+  successUrl: string
+  cancelUrl?: string
+  idempotencyKey: string
+}
+
 function pricingMetadata(input: { vouchId: string; pricing: VouchPricing }) {
   return {
     vouch_id: input.vouchId,
@@ -97,13 +128,10 @@ export async function createStripeCheckoutAuthorization(
       mode: "payment",
       payment_intent_data: {
         capture_method: "manual",
-        transfer_data: {
-          destination: input.connectedAccountId,
-        },
         metadata,
       },
       metadata,
     },
-    { idempotencyKey: input.idempotencyKey }
+    { idempotencyKey: input.idempotencyKey, stripeAccount: input.connectedAccountId }
   )
 }

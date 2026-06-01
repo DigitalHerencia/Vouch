@@ -5,6 +5,12 @@ import type Stripe from "stripe"
 import { getStripeClient } from "@/lib/integrations/stripe/client"
 import { getStripeRuntimeConfig } from "@/lib/integrations/stripe/config"
 
+export type StripeWebhookEvent = Stripe.Event
+
+type StripeWebhookVerificationResult =
+  | { ok: true; event: StripeWebhookEvent }
+  | { ok: false; status: 400; message: string }
+
 export async function verifyStripeWebhookEvent(
   rawBody: string,
   signatureHeader: string | null
@@ -42,8 +48,4 @@ export function isStripeSetupIntentEvent(event: StripeWebhookEvent): boolean {
 
 export function isStripeAccountEvent(event: StripeWebhookEvent): boolean {
   return event.type.startsWith("account.") || event.type.startsWith("v2.core.account")
-}
-
-export function isStripeIdentityEvent(event: StripeWebhookEvent): boolean {
-  return event.type.startsWith("identity.verification_session.")
 }

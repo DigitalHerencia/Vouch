@@ -1,5 +1,11 @@
 import "server-only"
 
+type StripeRuntimeConfig = {
+  secretKey: string
+  webhookSecret: string
+  publishableKey?: string
+}
+
 export function getStripeRuntimeConfig(): StripeRuntimeConfig {
   const secretKey = process.env.STRIPE_SECRET_KEY
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
