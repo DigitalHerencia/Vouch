@@ -59,33 +59,28 @@ export async function recordProviderWebhookReceivedTx(
   const providerEventId = assertNonEmptyString(input.providerEventId, "providerEventId")
   const payload = toSafeMetadata(input.safeMetadata)
 
-  try {
-    const event = await tx.providerWebhookEvent.create({
-      data: {
+  const createResult = await tx.providerWebhookEvent.createMany({
+    data: {
+      provider,
+      providerEventId,
+      eventType: assertNonEmptyString(input.eventType, "eventType"),
+      status: "received",
+      ...(payload ? { payload } : {}),
+    },
+    skipDuplicates: true,
+  })
+
+  const event = await tx.providerWebhookEvent.findUniqueOrThrow({
+    where: {
+      provider_providerEventId: {
         provider,
         providerEventId,
-        eventType: assertNonEmptyString(input.eventType, "eventType"),
-        status: "received",
-        ...(payload ? { payload } : {}),
       },
-      select: providerWebhookEventSelect,
-    })
+    },
+    select: providerWebhookEventSelect,
+  })
 
-    return { event: withProcessed(event), duplicate: false }
-  } catch (error) {
-    const existing = await tx.providerWebhookEvent.findUnique({
-      where: {
-        provider_providerEventId: {
-          provider,
-          providerEventId,
-        },
-      },
-      select: providerWebhookEventSelect,
-    })
-
-    if (existing) return { event: withProcessed(existing), duplicate: true }
-    throw error
-  }
+  return { event: withProcessed(event), duplicate: createResult.count === 0 }
 }
 
 export async function markProviderWebhookProcessedTx(tx: Tx, input: { id: string }) {

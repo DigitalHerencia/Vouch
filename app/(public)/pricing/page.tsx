@@ -1,7 +1,5 @@
 import {
   BadgeDollarSign,
-  CheckCircle2,
-  CreditCard,
   Handshake,
   Landmark,
   LockKeyhole,
@@ -11,33 +9,17 @@ import {
 } from "lucide-react"
 
 import { CTAWithBackground } from "@/components/blocks/cta-section"
-import { FeatureGridAlternating, FeatureGridWithIcons } from "@/components/blocks/feature-grid"
-import { HeroMinimal, HeroWithStats } from "@/components/blocks/hero-section"
-import {
-  ProcessPanel,
-  ProcessPanelCallout,
-  ProcessPanelGrid,
-  ProcessPanelRuleGrid,
-} from "@/components/blocks/process-panel"
-import { StatsCards } from "@/components/blocks/stats-section"
+import { FeatureGridAlternating } from "@/components/blocks/feature-grid"
+import { HeroWithStats } from "@/components/blocks/hero-section"
+import { ProcessPanelRuleGrid } from "@/components/blocks/process-panel"
 import {
   PricingHeroContent,
-  pricingCalloutContent,
   pricingComparisonRules,
   pricingFeatureCards,
-  pricingFlowSteps,
   pricingNotes,
   pricingStats,
-  pricingTrustContent,
 } from "@/content/pricing"
 import { landingCalloutContent } from "@/content/marketing"
-
-const pricingFlowIcons = {
-  amount: BadgeDollarSign,
-  fee: CreditCard,
-  confirm: CheckCircle2,
-  release: Landmark,
-} satisfies Record<(typeof pricingFlowSteps)[number]["icon"], LucideIcon>
 
 const pricingFeatureIcons = {
   fee: BadgeDollarSign,

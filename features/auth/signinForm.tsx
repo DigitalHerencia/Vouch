@@ -5,11 +5,7 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
-import {
-  LoginForm as LoginBlock,
-  LoginFormFields,
-  OTPVerificationForm,
-} from "@/components/blocks/auth-forms"
+import { LoginForm as LoginBlock, OTPVerificationForm } from "@/components/blocks/auth-forms"
 import { authVerificationContent } from "@/content/auth"
 import { ensureLocalUserForCurrentSession } from "@/lib/actions/authActions"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
@@ -289,27 +285,23 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
       ) : (
         <div className="relative z-10 flex min-h-dvh items-center justify-center px-12 py-24">
           <LoginBlock
-            title="Back your commitment."
-            description="Sign in to manage your account"
+            description="sign in to manage your account"
             notice={notice}
             error={rootError}
             signUpHref={
               redirectUrl ? `/sign-up?redirect_url=${encodeURIComponent(redirectUrl)}` : "/sign-up"
             }
-          >
-            <LoginFormFields
-              emailInputProps={form.register("email", {
-                setValueAs: (value: string) =>
-                  typeof value === "string" ? value.trim().toLowerCase() : "",
-              })}
-              passwordInputProps={form.register("password")}
-              emailError={form.formState.errors.email?.message}
-              passwordError={form.formState.errors.password?.message}
-              disabled={isBusy}
-              isSubmitting={form.formState.isSubmitting}
-              submitLabel="Sign in"
-            />
-          </LoginBlock>
+            emailInputProps={form.register("email", {
+              setValueAs: (value: string) =>
+                typeof value === "string" ? value.trim().toLowerCase() : "",
+            })}
+            passwordInputProps={form.register("password")}
+            emailError={form.formState.errors.email?.message}
+            passwordError={form.formState.errors.password?.message}
+            disabled={isBusy}
+            isSubmitting={form.formState.isSubmitting}
+            submitLabel="Sign in"
+          />
         </div>
       )}
     </form>

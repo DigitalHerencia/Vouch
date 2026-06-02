@@ -1,13 +1,11 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
-import { Download, Printer, Mail, Check, Clock, AlertCircle, CalendarClock } from "lucide-react"
+import { Download, Printer, Mail, Check, Clock, AlertCircle } from "lucide-react"
 import Link from "next/link"
 import {
-  VouchCountdown,
   VouchStatusBadge,
   type VouchCountdownProps,
-  type VouchStatusTone,
 } from "@/components/blocks/status"
 import { Progress } from "../ui/progress"
 
@@ -337,16 +335,10 @@ export function Receipt({ data, logo, onDownload }: ReceiptProps) {
 export function InvoiceSummary({
   invoiceNumber,
   clientName,
-  issueDate,
-  dueDate,
   amount,
   amountLabel,
-  status,
-  statusTone = "pending",
   href,
   vouchId,
-  appointmentLabel,
-  confirmationWindowLabel,
   protectedAmountLabel,
   label,
   expiresAtLabel,

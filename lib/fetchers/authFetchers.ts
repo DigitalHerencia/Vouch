@@ -7,9 +7,14 @@ import { unstable_noStore as noStore } from "next/cache"
 
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
-import { getCurrentClerkAuth } from "@/lib/auth/clerk"
+import {
+  getCurrentClerkAuth,
+  getCurrentClerkUser,
+  mapClerkUserToLocalInput,
+} from "@/lib/auth/clerk"
 import { prisma } from "@/lib/db/prisma"
 import { currentUserAuthSelect } from "@/lib/db/selects/auth.selects"
+import { upsertUserFromClerkTx } from "@/lib/db/transactions/authTransactions"
 
 type CurrentUserAuthRecord = Prisma.UserGetPayload<{ select: typeof currentUserAuthSelect }>
 
@@ -82,10 +87,25 @@ export async function getCurrentUser() {
   const session = await getCurrentClerkAuth()
   if (!session.userId) return null
 
-  const user = await prisma.user.findUnique({
+  let user = await prisma.user.findUnique({
     where: { clerkUserId: session.userId },
     select: currentUserAuthSelect,
   })
+
+  if (!user) {
+    const clerkUser = await getCurrentClerkUser()
+
+    if (clerkUser) {
+      await prisma.$transaction((tx) =>
+        upsertUserFromClerkTx(tx, mapClerkUserToLocalInput(clerkUser))
+      )
+
+      user = await prisma.user.findUnique({
+        where: { clerkUserId: session.userId },
+        select: currentUserAuthSelect,
+      })
+    }
+  }
 
   const mapped = mapCurrentUser(user)
 

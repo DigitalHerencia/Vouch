@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { useForm } from "react-hook-form"
+import { useForm, useWatch } from "react-hook-form"
 
 import { VouchCreationWizard } from "@/components/blocks/status"
 import { vouchPageCopy } from "@/content/vouches"
@@ -136,7 +136,10 @@ export function VouchCreationFeatureClient({
   const [cartOpen, setCartOpen] = React.useState(false)
   const [isPending, startTransition] = React.useTransition()
   const [optimisticStep, setOptimisticStep] = React.useOptimistic(currentStep)
-  const draft = form.watch()
+  const draft = useWatch({
+    control: form.control,
+    defaultValue: { ...defaultDraft, ...initialDraft },
+  }) as VouchCreationDraft
 
   const fieldErrors = result?.ok === false ? result.fieldErrors : undefined
   const formError = result?.ok === false ? result.formError : null

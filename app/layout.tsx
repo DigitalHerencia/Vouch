@@ -3,7 +3,6 @@
 import type { Metadata, Viewport } from "next"
 import { ClerkProvider } from "@clerk/nextjs"
 import { Archivo_Black, Bebas_Neue, JetBrains_Mono } from "next/font/google"
-import type { ReactNode } from "react"
 import "./globals.css"
 
 const archivoBlack = Archivo_Black({

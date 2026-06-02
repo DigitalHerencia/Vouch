@@ -4,7 +4,6 @@ import {
   Building,
   Check,
   Handshake,
-  PartyPopper,
   Target,
   Upload,
   User,

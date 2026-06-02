@@ -207,8 +207,6 @@ type LoginFormProps = React.ComponentPropsWithoutRef<"form"> & {
   onForgotPassword?: () => void
   onSignUp?: () => void
   socialProviders?: string[]
-}
-type LoginFormFieldsProps = {
   emailInputProps?: React.ComponentPropsWithoutRef<"input">
   passwordInputProps?: React.ComponentPropsWithoutRef<"input">
   emailError?: string | undefined
@@ -225,23 +223,14 @@ type SignUpFormProps = LoginFormProps & {
   onSignIn?: () => void
   termsUrl?: string
   privacyUrl?: string
-}
-type SignUpFormFieldsProps = {
   firstNameInputProps?: React.ComponentPropsWithoutRef<"input">
   lastNameInputProps?: React.ComponentPropsWithoutRef<"input">
-  emailInputProps?: React.ComponentPropsWithoutRef<"input">
-  passwordInputProps?: React.ComponentPropsWithoutRef<"input">
   firstNameError?: string | undefined
   lastNameError?: string | undefined
-  emailError?: string | undefined
-  passwordError?: string | undefined
   agreementError?: string | undefined
   agreementChecked?: boolean | undefined
   agreementLabel?: React.ReactNode
-  onAgreementChange: (checked: boolean) => void
-  disabled?: boolean
-  isSubmitting?: boolean
-  submitLabel?: string
+  onAgreementChange?: (checked: boolean) => void
   captcha?: React.ReactNode
 }
 type ForgotPasswordFormProps = {

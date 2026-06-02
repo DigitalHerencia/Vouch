@@ -1,5 +1,3 @@
-import type { ReactNode } from "react"
-
 import { AuthProcessPanelGrid } from "@/components/blocks/process-panel"
 import { AuthFooter } from "@/components/navigation/auth-footer"
 

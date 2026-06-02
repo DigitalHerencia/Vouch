@@ -6,11 +6,8 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
-import {
-  OTPVerificationForm,
-  SignUpForm as SignUpBlock,
-  SignUpFormFields,
-} from "@/components/blocks/auth-forms"
+import { OTPVerificationForm, SignUpForm as SignUpBlock } from "@/components/blocks/auth-forms"
+import { Button } from "@/components/ui/button"
 import { authVerificationContent } from "@/content/auth"
 import { completeSignUpWithTermsAcceptance } from "@/lib/actions/authActions"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
@@ -273,58 +270,51 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
           />
         ) : (
           <SignUpBlock
-            title="Create your account."
-            description="Set up a verified account to create Vouches, accept invites, and confirm real-world presence."
+            description="create an account to use Vouch"
             notice={notice}
             error={rootError}
             signInHref={
               redirectUrl ? `/sign-in?redirect_url=${encodeURIComponent(redirectUrl)}` : "/sign-in"
             }
-          >
-            <SignUpFormFields
-              firstNameInputProps={form.register("firstName", {
-                setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
-              })}
-              lastNameInputProps={form.register("lastName", {
-                setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
-              })}
-              emailInputProps={form.register("email", {
-                setValueAs: (value: string) =>
-                  typeof value === "string" ? value.trim().toLowerCase() : "",
-              })}
-              passwordInputProps={form.register("password")}
-              firstNameError={form.formState.errors.firstName?.message}
-              lastNameError={form.formState.errors.lastName?.message}
-              emailError={form.formState.errors.email?.message}
-              passwordError={form.formState.errors.password?.message}
-              agreementError={form.formState.errors.acceptedUserAgreement?.message}
-              agreementChecked={acceptedUserAgreement}
-              agreementLabel={
-                <>
-                  I agree to the{" "}
-                  <Link
-                    href="/legal/user-agreement"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="font-bold text-blue-600 underline-offset-4 hover:text-white hover:underline"
-                  >
+            firstNameInputProps={form.register("firstName", {
+              setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
+            })}
+            lastNameInputProps={form.register("lastName", {
+              setValueAs: (value: string) => (typeof value === "string" ? value.trim() : ""),
+            })}
+            emailInputProps={form.register("email", {
+              setValueAs: (value: string) =>
+                typeof value === "string" ? value.trim().toLowerCase() : "",
+            })}
+            passwordInputProps={form.register("password")}
+            firstNameError={form.formState.errors.firstName?.message}
+            lastNameError={form.formState.errors.lastName?.message}
+            emailError={form.formState.errors.email?.message}
+            passwordError={form.formState.errors.password?.message}
+            agreementError={form.formState.errors.acceptedUserAgreement?.message}
+            agreementChecked={acceptedUserAgreement}
+            agreementLabel={
+              <>
+                I agree to the
+                <Button asChild variant="nav" size="nav" className="ml-3">
+                  <Link href="/legal/user-agreement" target="_blank" rel="noreferrer">
                     User Agreement
                   </Link>
-                  .
-                </>
-              }
-              onAgreementChange={(checked: boolean) => {
-                form.setValue("acceptedUserAgreement", checked, {
-                  shouldDirty: true,
-                  shouldValidate: true,
-                })
-              }}
-              disabled={isBusy}
-              isSubmitting={form.formState.isSubmitting}
-              submitLabel="Create account"
-              captcha={<div id="clerk-captcha" className="min-h-0 w-full overflow-hidden" />}
-            />
-          </SignUpBlock>
+                </Button>
+                .
+              </>
+            }
+            onAgreementChange={(checked: boolean) => {
+              form.setValue("acceptedUserAgreement", checked, {
+                shouldDirty: true,
+                shouldValidate: true,
+              })
+            }}
+            disabled={isBusy}
+            isSubmitting={form.formState.isSubmitting}
+            submitLabel="Create account"
+            captcha={<div id="clerk-captcha" className="min-h-0 w-full overflow-hidden" />}
+          />
         )}
       </form>
     </div>

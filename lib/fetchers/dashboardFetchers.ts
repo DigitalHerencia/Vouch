@@ -16,6 +16,7 @@ import { prisma } from "@/lib/db/prisma"
 import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
 
 const DEFAULT_TAKE = 10
+const ACTIVE_DB_STATUSES = ["active", "authorized", "can_capture"] as const satisfies readonly VouchStatus[]
 
 type VouchCardRecord = Prisma.VouchGetPayload<{ select: typeof vouchCardSelect }>
 
@@ -118,7 +119,7 @@ async function getActiveVouches(input: { userId: string }): Promise<VouchCardRec
   return listForUser(input.userId, {
     archived: false,
     status: {
-      in: ["active", "authorized", "can_capture"] satisfies VouchStatus[],
+      in: [...ACTIVE_DB_STATUSES],
     },
   })
 }

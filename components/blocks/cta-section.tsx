@@ -1,5 +1,5 @@
 import * as React from "react"
-import { CheckCircle, Mail } from "lucide-react"
+import { CheckCircle, CreditCard, Mail, SquareArrowOutUpRight } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,7 +21,6 @@ function safeHref(href: string) {
 
 function CTAButton({
   action,
-  variant = "default",
 }: {
   action?: CTAAction | undefined
   variant?: "default" | "outline"
@@ -244,10 +243,50 @@ export function CTABanner({
   )
 }
 
+export function DashboardRequirementsNotice() {
+  const notices = [
+    {
+      icon: SquareArrowOutUpRight,
+      title: "Stripe Connect",
+      body: "You must complete Stripe Connect Acount onboarding before creating a Vouch",
+    },
+    {
+      icon: CreditCard,
+      title: "Payment method",
+      body: "You must save a valid payment method before you can complete purchases",
+    },
+  ]
+
+  return (
+    <section className="px-4 py-8 md:px-8 lg:px-16">
+      <div className="grid gap-4 md:grid-cols-2">
+        {notices.map((notice) => {
+          const Icon = notice.icon
+
+          return (
+            <div key={notice.title} className="border-3 border-neutral-400 bg-black p-5">
+              <div className="mb-4 flex size-11 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white">
+                <Icon className="size-5" />
+              </div>
+              <h2 className="text-xl font-black tracking-wide text-white uppercase">
+                {notice.title}
+              </h2>
+              <p className="mt-2 text-sm leading-6 font-semibold text-neutral-400">
+                {notice.body}
+              </p>
+            </div>
+          )
+        })}
+      </div>
+    </section>
+  )
+}
+
 export const CTASection = {
   Simple: CTASimple,
   WithBackground: CTAWithBackground,
   Newsletter: CTANewsletter,
   Split: CTASplit,
   Banner: CTABanner,
+  DashboardRequirementsNotice,
 }

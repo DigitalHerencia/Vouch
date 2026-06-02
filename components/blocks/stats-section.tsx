@@ -1,7 +1,6 @@
 import * as React from "react"
-import { TrendingUp, TrendingDown, Minus, Check, CheckSquare } from "lucide-react"
-import { stat } from "fs"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card"
+import { TrendingUp, TrendingDown, Minus, CheckSquare } from "lucide-react"
+import { Card, CardContent } from "../ui/card"
 
 const subtitleMotion =
   "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"

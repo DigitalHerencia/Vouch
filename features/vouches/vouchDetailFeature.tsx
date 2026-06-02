@@ -10,7 +10,6 @@ import {
   getParticipantSafeAuditTimeline,
   getVouchDetailForParticipant,
 } from "@/lib/fetchers/vouchFetchers"
-import type { VouchStatus } from "@/types/vouchTypes"
 
 type VouchDetailPageProps = {
   vouchId: string

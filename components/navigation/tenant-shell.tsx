@@ -1,7 +1,3 @@
-// components/navigation/tenant-shell.tsx
-
-import type { ReactNode } from "react"
-
 import { TenantHeader } from "@/components/navigation/tenant-header"
 import { TenantFooter } from "@/components/navigation/tenant-footer"
 import { TenantMobileBottomNav } from "@/components/navigation/mobile-bottom-nav"

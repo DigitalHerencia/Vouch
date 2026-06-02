@@ -2,8 +2,7 @@ import type { Metadata } from "next"
 
 import { CTAWithBackground } from "@/components/blocks/cta-section"
 import { FAQSimpleList } from "@/components/blocks/faq-section"
-import { HeroMinimal } from "@/components/blocks/hero-section"
-import { privacyCalloutContent, privacySections } from "@/content/legal"
+import { privacySections } from "@/content/legal"
 import { landingCalloutContent } from "@/content/marketing"
 import { Handshake } from "lucide-react"
 
@@ -13,8 +12,6 @@ export const metadata: Metadata = {
 }
 
 export default function PrivacyRoute() {
-  const CalloutIcon = privacyCalloutContent.icon
-
   return (
     <main>
       <FAQSimpleList

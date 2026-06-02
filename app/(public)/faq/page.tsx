@@ -1,15 +1,10 @@
-import type { Metadata } from "next"
-
 import { CTAWithBackground } from "@/components/blocks/cta-section"
 import { FAQAccordion } from "@/components/blocks/faq-section"
-import { HeroMinimal } from "@/components/blocks/hero-section"
-import { faqCalloutContent, faqSections } from "@/content/faq"
+import { faqSections } from "@/content/faq"
 import { Handshake } from "lucide-react"
 import { landingCalloutContent } from "@/content/marketing"
 
 export default function FaqRoute() {
-  const CalloutIcon = faqCalloutContent.icon
-
   return (
     <main>
       <FAQAccordion

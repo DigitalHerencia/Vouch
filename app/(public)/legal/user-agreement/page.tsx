@@ -1,15 +1,10 @@
-import type { Metadata } from "next"
-
 import { CTAWithBackground } from "@/components/blocks/cta-section"
 import { FAQSimpleList } from "@/components/blocks/faq-section"
-import { HeroMinimal } from "@/components/blocks/hero-section"
-import { userAgreementCalloutContent, userAgreementSections } from "@/content/legal"
+import { userAgreementSections } from "@/content/legal"
 import { landingCalloutContent } from "@/content/marketing"
 import { Handshake } from "lucide-react"
 
 export default function UserAgreementRoute() {
-  const CalloutIcon = userAgreementCalloutContent.icon
-
   return (
     <main>
       <FAQSimpleList

@@ -1,8 +1,10 @@
 import type { ComponentProps } from "react"
 
+import { CTASection } from "@/components/blocks/cta-section"
 import { HeroCentered } from "@/components/blocks/hero-section"
 import { InvoiceSummary } from "@/components/blocks/invoice"
 import { StatsCards } from "@/components/blocks/stats-section"
+import { StatusBlocks } from "@/components/blocks/status"
 import { dashboardContent } from "@/content/dashboard"
 import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
@@ -178,9 +180,18 @@ export async function DashboardFeature() {
 
       <StatsCards stats={metrics} />
 
-      {invoices.map((invoice) => (
-        <InvoiceSummary key={invoice.vouchId ?? invoice.invoiceNumber} {...invoice} />
-      ))}
+      {state.variant === "empty" ? (
+        <>
+          <CTASection.DashboardRequirementsNotice />
+          <section className="px-4 py-8 md:px-8 lg:px-16">
+            <StatusBlocks.DashboardEmptyState />
+          </section>
+        </>
+      ) : (
+        invoices.map((invoice) => (
+          <InvoiceSummary key={invoice.vouchId ?? invoice.invoiceNumber} {...invoice} />
+        ))
+      )}
     </main>
   )
 }

@@ -1,6 +1,5 @@
 import {
   BadgeDollarSign,
-  CalendarClock,
   Check,
   Clock3,
   FileText,
@@ -14,15 +13,13 @@ import { createElement } from "react"
 
 import { CTAWithBackground } from "@/components/blocks/cta-section"
 import { FeatureBentoGrid } from "@/components/blocks/feature-grid"
-import { StatsCards, StatsSplit } from "@/components/blocks/stats-section"
+import { StatsSplit } from "@/components/blocks/stats-section"
 import { PublicShell } from "@/components/navigation/public-shell"
 import {
-  landingAudienceFeatures,
   landingCalloutContent,
   landingFeatureCards,
   landingHeroActionsContent,
   landingHeroContent,
-  landingMetrics,
   landingProcessPanelContent,
   landingProcessSteps,
   landingProofStats,
@@ -43,13 +40,6 @@ const ruleIcons = {
   payment: BadgeDollarSign,
   immutable: Lock,
 } satisfies Record<(typeof landingFeatureCards)[number]["icon"], LucideIcon>
-
-const audienceIcon = {
-  money: BadgeDollarSign,
-  calendar: CalendarClock,
-  handshake: Handshake,
-  rules: Lock,
-} satisfies Record<(typeof landingAudienceFeatures)[number]["icon"], LucideIcon>
 
 export default function HomePage() {
   return (
