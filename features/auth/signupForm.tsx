@@ -223,8 +223,8 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
   })
 
   return (
-    <div className="relative z-10 flex min-h-dvh items-center justify-center px-12 py-24">
-      <form onSubmit={handleSubmit} noValidate {...props}>
+    <div className="relative z-10 grid min-h-dvh place-items-center p-4 sm:p-6 lg:p-8">
+      <form className="w-full max-w-md" onSubmit={handleSubmit} noValidate {...props}>
         {awaitingVerification ? (
           <OTPVerificationForm
             title={authVerificationContent.codeLabel}
@@ -241,7 +241,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
             isSubmitting={form.formState.isSubmitting}
             isResending={isResending}
             isResetting={isResetting}
-            onChange={(code) =>
+            onChange={(code: string) =>
               form.setValue("verificationCode", code, {
                 shouldDirty: true,
                 shouldValidate: code.length === 6,
@@ -313,7 +313,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
                   .
                 </>
               }
-              onAgreementChange={(checked) => {
+              onAgreementChange={(checked: boolean) => {
                 form.setValue("acceptedUserAgreement", checked, {
                   shouldDirty: true,
                   shouldValidate: true,

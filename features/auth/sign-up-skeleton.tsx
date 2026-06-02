@@ -9,8 +9,8 @@ function AuthSkeletonBlock({ className }: { className: string }) {
 
 export function SignUpSkeleton() {
   return (
-    <div className="relative z-10 flex min-h-dvh items-center justify-center px-12 py-24">
-      <div className="mx-auto w-full max-w-md">
+    <div className="relative z-10 grid min-h-dvh place-items-center p-4 sm:p-6 lg:p-8">
+      <div className="w-full max-w-md">
         <div className="border-3 border-neutral-400 bg-transparent p-6">
           <div className="mb-6 grid justify-items-center gap-3">
             <AuthSkeletonBlock className="h-14 w-64" />

@@ -11,6 +11,7 @@ import {
   OTPVerificationForm,
 } from "@/components/blocks/auth-forms"
 import { authVerificationContent } from "@/content/auth"
+import { ensureLocalUserForCurrentSession } from "@/lib/actions/authActions"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { loginSchema, verificationSchema } from "@/schemas/authSchemas"
 import { type LoginFormProps, type LoginFormValues } from "@/types/authTypes"
@@ -56,10 +57,19 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
 
   async function finalizeAndRedirect(): Promise<boolean> {
     const finalizeResult = await signIn.finalize({
-      navigate: ({ session, decorateUrl }) => {
+      navigate: async ({ session, decorateUrl }) => {
         if (session?.currentTask) {
           form.setError("root", {
             message: "Finish the required account step before continuing.",
+          })
+          return
+        }
+
+        const localUserResult = await ensureLocalUserForCurrentSession()
+
+        if (!localUserResult.ok) {
+          form.setError("root", {
+            message: "Unable to sync your Vouch account. Try again.",
           })
           return
         }
@@ -247,7 +257,7 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
             isSubmitting={form.formState.isSubmitting}
             isResending={isResending}
             isResetting={isResetting}
-            onChange={(code) =>
+            onChange={(code: string) =>
               form.setValue("verificationCode", code, {
                 shouldDirty: true,
                 shouldValidate: code.length === 6,

@@ -80,3 +80,7 @@ async function ensureLocalUserForSession() {
 
   return syncClerkUser(mapClerkUserToLocalInput(clerkUser))
 }
+
+export async function ensureLocalUserForCurrentSession() {
+  return ensureLocalUserForSession()
+}

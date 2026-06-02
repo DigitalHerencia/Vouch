@@ -63,8 +63,8 @@ export function LoginForm({
             <Link href="/" aria-label="Go to Vouch home" className="inline-flex">
               <LogoLockup
                 className="justify-center"
-                iconClassName="size-10 sm:size-12"
-                textClassName="text-[38px] sm:text-[48px] lg:text-[54px]"
+                iconClassName="size-14 sm:size-16"
+                textClassName="text-[52px] sm:text-[64px] lg:text-[72px]"
               />
             </Link>
             <CardDescription className="mt-2">{description}</CardDescription>
@@ -288,11 +288,14 @@ export function SignUpForm({
     <div className="mx-auto w-full max-w-md">
       <Card>
         <CardHeader className="space-y-4 text-center">
-          {logo && <div className="mx-auto">{logo}</div>}
           <div>
-            <CardTitle className="text-4xl font-black uppercase md:text-5xl lg:text-6xl">
-              {title}
-            </CardTitle>
+            <Link href="/" aria-label="Go to Vouch home" className="inline-flex">
+              <LogoLockup
+                className="justify-center"
+                iconClassName="size-14 sm:size-16"
+                textClassName="text-[52px] sm:text-[64px] lg:text-[72px]"
+              />
+            </Link>
             <CardDescription className="mt-2">{description}</CardDescription>
           </div>
         </CardHeader>
@@ -622,14 +625,49 @@ export function OTPVerificationForm({
   actions,
 }: OTPVerificationFormProps) {
   const digits = value.padEnd(length).slice(0, length).split("")
+  const inputRefs = React.useRef<Array<HTMLInputElement | null>>([])
+
+  function commitDigits(nextDigits: string[]) {
+    onChange?.(nextDigits.join("").trim())
+  }
+
+  function updateDigit(index: number, rawValue: string) {
+    const nextDigit = rawValue.replace(/\D/g, "").slice(-1)
+    const nextDigits = [...digits]
+    nextDigits[index] = nextDigit
+    commitDigits(nextDigits)
+
+    if (nextDigit && index < length - 1) {
+      inputRefs.current[index + 1]?.focus()
+    }
+  }
+
+  function handlePaste(event: React.ClipboardEvent<HTMLInputElement>) {
+    event.preventDefault()
+
+    const pastedDigits = event.clipboardData.getData("text").replace(/\D/g, "").slice(0, length)
+    const nextDigits = Array.from({ length }, (_, index) => pastedDigits[index] ?? "")
+    commitDigits(nextDigits)
+    inputRefs.current[Math.min(pastedDigits.length, length - 1)]?.focus()
+  }
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <Card className="rounded-none border-3 border-neutral-400 bg-transparent shadow-none">
-        <CardHeader className="space-y-4 text-center">
-          {logo && <div className="mx-auto">{logo}</div>}
+      <Card className="rounded-none border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+        <CardHeader className="space-y-4 px-5 py-6 text-center sm:px-6">
+          <div className="mx-auto">
+            {logo ?? (
+              <Link href="/" aria-label="Go to Vouch home" className="inline-flex">
+                <LogoLockup
+                  className="justify-center"
+                  iconClassName="size-10 sm:size-12"
+                  textClassName="text-[38px] sm:text-[48px] lg:text-[54px]"
+                />
+              </Link>
+            )}
+          </div>
           <div>
-            <CardTitle className="text-4xl font-black uppercase md:text-5xl lg:text-6xl">
+            <CardTitle className="text-3xl leading-none font-black uppercase sm:text-4xl">
               {title}
             </CardTitle>
             <CardDescription className="mt-2">
@@ -638,7 +676,7 @@ export function OTPVerificationForm({
             </CardDescription>
           </div>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 px-5 pb-6 sm:px-6">
           {notice ? (
             <div className="border-3 border-blue-600 bg-blue-600/10 px-4 py-3 text-sm text-white">
               {notice}
@@ -649,24 +687,30 @@ export function OTPVerificationForm({
               {rootError}
             </div>
           ) : null}
-          <div className="flex justify-center gap-2">
+          <div className="flex justify-center gap-2 sm:gap-3">
             {digits.map((digit, index) => (
               <Input
                 key={`otp-digit-${index}`}
+                ref={(node) => {
+                  inputRefs.current[index] = node
+                }}
                 type="text"
                 inputMode="numeric"
                 maxLength={1}
                 aria-label={`Digit ${index + 1} of ${length}`}
                 value={digit}
-                onChange={(event) => {
-                  const nextDigit = event.target.value.replace(/\D/g, "").slice(-1)
-                  const nextDigits = [...digits]
-                  nextDigits[index] = nextDigit
-                  onChange?.(nextDigits.join("").trim())
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  updateDigit(index, event.target.value)
                 }}
+                onKeyDown={(event: React.KeyboardEvent<HTMLInputElement>) => {
+                  if (event.key === "Backspace" && !digits[index] && index > 0) {
+                    inputRefs.current[index - 1]?.focus()
+                  }
+                }}
+                onPaste={handlePaste}
                 readOnly={!onChange}
                 disabled={disabled}
-                className="h-14 w-12 border-2 border-neutral-400 text-center text-2xl font-black"
+                className="h-14 w-11 rounded-none border-2 border-neutral-400 bg-black text-center text-2xl font-black text-white caret-white shadow-none selection:bg-blue-600 selection:text-white focus-visible:border-blue-600 focus-visible:ring-0 sm:w-12"
               />
             ))}
           </div>

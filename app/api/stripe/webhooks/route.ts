@@ -3,6 +3,9 @@ import { NextResponse, type NextRequest } from "next/server"
 import { verifyStripeWebhookEvent } from "@/lib/integrations/stripe/webhook-events"
 import { processStripeWebhookEvent } from "@/lib/webhooks/stripe"
 
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
+
 export async function POST(request: NextRequest) {
   const rawBody = await request.text()
   const signature = request.headers.get("stripe-signature")
@@ -16,7 +19,7 @@ export async function POST(request: NextRequest) {
   const processed = await processStripeWebhookEvent(verified.event)
 
   if (!processed.ok) {
-    return NextResponse.json({ ok: false, error: processed.formError }, { status: 200 })
+    return NextResponse.json({ ok: false, error: processed.formError }, { status: 500 })
   }
 
   return NextResponse.json({
