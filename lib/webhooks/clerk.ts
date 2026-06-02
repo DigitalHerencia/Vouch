@@ -17,25 +17,47 @@ import {
   markProviderWebhookProcessedTx,
   recordProviderWebhookReceivedTx,
 } from "@/lib/db/transactions/webhookTransactions"
-import type { ClerkWebhookEvent } from "@/types/authTypes"
+import {
+  SUPPORTED_CLERK_WEBHOOK_EVENT_TYPES,
+  type ClerkWebhookEvent,
+  type ClerkWebhookUserData,
+} from "@/types/authTypes"
 
 function safeClerkMetadata(event: ClerkWebhookEvent): Record<string, unknown> {
+  const clerkUserId = getClerkUserIdFromEvent(event)
+
   return {
     resource_id: event.data.id,
     resource_type: event.type.split(".")[0] ?? "unknown",
-    ...(event.data.user_id ? { clerk_user_id: event.data.user_id } : {}),
-    ...(event.type.startsWith("user.") ? { clerk_user_id: event.data.id } : {}),
+    ...(event.id ? { clerk_event_id: event.id } : {}),
+    ...(clerkUserId ? { clerk_user_id: clerkUserId } : {}),
   }
 }
 
-async function upsertLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
-  const email = extractClerkUserEmail(event.data)
-  const phone = extractClerkUserPhone(event.data)
-  const displayName = extractClerkDisplayName(event.data)
+function isSupportedClerkEventType(type: string): boolean {
+  return SUPPORTED_CLERK_WEBHOOK_EVENT_TYPES.includes(
+    type as (typeof SUPPORTED_CLERK_WEBHOOK_EVENT_TYPES)[number]
+  )
+}
+
+function getClerkUserIdFromEvent(event: ClerkWebhookEvent): string | undefined {
+  if (event.type.startsWith("user.")) return event.data.id
+  return event.data.user_id ?? event.data.user?.id ?? undefined
+}
+
+function getUserDataFromEvent(event: ClerkWebhookEvent): ClerkWebhookUserData | undefined {
+  if (event.type.startsWith("user.")) return event.data
+  return event.data.user ?? undefined
+}
+
+async function upsertLocalUserFromClerkData(eventType: string, data: ClerkWebhookUserData) {
+  const email = extractClerkUserEmail(data)
+  const phone = extractClerkUserPhone(data)
+  const displayName = extractClerkDisplayName(data)
 
   await prisma.$transaction(async (tx) => {
     const user = await upsertUserFromClerkTx(tx, {
-      clerkUserId: event.data.id,
+      clerkUserId: data.id,
       email: email ?? null,
       phone: phone ?? null,
       displayName: displayName ?? null,
@@ -45,12 +67,12 @@ async function upsertLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
 
     await tx.auditEvent.create({
       data: {
-        eventName: event.type,
+        eventName: eventType,
         actorType: "clerk",
         entityType: "user",
         entityId: user.id,
         metadata: {
-          clerk_user_id: event.data.id,
+          clerk_user_id: data.id,
         },
       },
     })
@@ -81,14 +103,61 @@ async function disableLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
   })
 }
 
+async function updateLocalUserEmailFromClerkEvent(event: ClerkWebhookEvent) {
+  if (event.type !== "email.created" || !event.data.user_id || !event.data.email_address) return
+
+  const clerkUserId = event.data.user_id
+  const emailAddress = event.data.email_address
+
+  await prisma.$transaction(async (tx) => {
+    const user = await tx.user.updateMany({
+      where: { clerkUserId },
+      data: { email: emailAddress },
+    })
+
+    if (user.count === 0) return
+
+    const localUser = await tx.user.findUnique({
+      where: { clerkUserId },
+      select: { id: true },
+    })
+
+    await tx.auditEvent.create({
+      data: {
+        eventName: "email.created",
+        actorType: "clerk",
+        entityType: "user",
+        entityId: localUser?.id ?? clerkUserId,
+        metadata: {
+          clerk_user_id: clerkUserId,
+          clerk_email_id: event.data.id,
+        },
+      },
+    })
+  })
+}
+
 async function processSupportedClerkEvent(event: ClerkWebhookEvent) {
   switch (event.type) {
     case "user.created":
     case "user.updated":
-      await upsertLocalUserFromClerkEvent(event)
+      await upsertLocalUserFromClerkData(event.type, event.data)
       return
     case "user.deleted":
       await disableLocalUserFromClerkEvent(event)
+      return
+    case "email.created":
+      await updateLocalUserEmailFromClerkEvent(event)
+      return
+    case "session.created": {
+      const user = getUserDataFromEvent(event)
+      if (user) await upsertLocalUserFromClerkData(event.type, user)
+      return
+    }
+    case "session.ended":
+    case "session.pending":
+    case "session.removed":
+    case "session.revoked":
       return
     default:
       throw new Error(`Unsupported Clerk event reached processor: ${event.type}`)
@@ -113,11 +182,7 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
   }
 
   try {
-    if (
-      parsed.type !== "user.created" &&
-      parsed.type !== "user.updated" &&
-      parsed.type !== "user.deleted"
-    ) {
+    if (!isSupportedClerkEventType(parsed.type)) {
       await prisma.$transaction((tx) =>
         markProviderWebhookIgnoredTx(tx, {
           id: ledger.event.id,

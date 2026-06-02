@@ -15,27 +15,11 @@ function isActive(input: VouchReadinessInput): boolean {
 }
 
 function hasCreateReadiness(input: VouchReadinessInput): boolean {
-  return (
-    isActive(input) &&
-    input.identityStatus === "verified" &&
-    input.adultStatus === "verified" &&
-    input.payoutReadiness === "ready" &&
-    input.termsAccepted === true
-  )
+  return isActive(input) && input.payoutReadiness === "ready"
 }
 
-function hasAcceptReadiness(input: VouchReadinessInput & { eligible?: boolean }): boolean {
-  if (input.eligible !== undefined) {
-    return input.eligible
-  }
-
-  return (
-    isActive(input) &&
-    input.identityStatus === "verified" &&
-    input.adultStatus === "verified" &&
-    input.paymentMethodReady === "ready" &&
-    input.termsAccepted === true
-  )
+function hasAcceptReadiness(input: VouchReadinessInput): boolean {
+  return isActive(input) && input.paymentMethodReady === "ready"
 }
 
 export function canViewVouch(input: VouchAccessInput): boolean {
@@ -46,8 +30,7 @@ export function canViewVouch(input: VouchAccessInput): boolean {
   return (
     input.isAdmin === true ||
     input.userId === input.merchantId ||
-    input.userId === input.customerId ||
-    input.inviteValid === true
+    input.userId === input.customerId
   )
 }
 
@@ -59,10 +42,9 @@ export function canAcceptVouch(input: AcceptVouchAuthzInput): boolean {
   return (
     Boolean(input.userId) &&
     isActive(input) &&
-    (input.status === "committed" || input.status === "sent") &&
+    input.status === "active" &&
     !input.existingCustomerId &&
     input.userId !== input.merchantId &&
-    input.inviteValid &&
     hasAcceptReadiness(input)
   )
 }
@@ -74,7 +56,7 @@ export function canConfirmPresence(input: ConfirmPresenceAuthzInput): boolean {
   return (
     isParticipant &&
     input.userStatus !== "disabled" &&
-    (input.status === "authorized" || input.status === "confirmable") &&
+    (input.status === "authorized" || input.status === "can_capture") &&
     input.windowOpen &&
     !input.alreadyConfirmed
   )

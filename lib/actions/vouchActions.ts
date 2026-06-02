@@ -10,8 +10,9 @@ import {
   getAggregateConfirmationStatusTx,
 } from "@/lib/db/transactions/confirmationTransactions"
 import { createVouchTx, updateVouchArchiveStatusTx } from "@/lib/db/transactions/vouchTransactions"
-import { requireActiveUser } from "@/lib/fetchers/authFetchers"
+import { getCurrentUserPaymentCustomer, requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { assertCreateVouchReadinessReady } from "@/lib/fetchers/readinessFetchers"
+import { getVouchParticipantActionState } from "@/lib/fetchers/vouchFetchers"
 import { createStripeMerchantCreationFeeCheckout } from "@/lib/integrations/stripe/checkout-sessions"
 import { verifyConfirmationCode } from "@/lib/vouch/confirmation-codes"
 import { calculateVouchPricing } from "@/lib/vouch/fees"
@@ -148,10 +149,7 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
 
   const pricing = calculatePricing(amountCents)
   const merchantFeeCents = pricing.vouchServiceFeeCents + pricing.processingFeeOffsetCents
-  const paymentCustomer = await prisma.paymentCustomer.findUnique({
-    where: { userId: user.id },
-    select: { stripeCustomerId: true },
-  })
+  const paymentCustomer = await getCurrentUserPaymentCustomer()
 
   const vouch = await prisma.$transaction(async (tx) => {
     const created = await createVouchTx(tx, {
@@ -220,15 +218,7 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
     )
   }
 
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: {
-      id: true,
-      publicId: true,
-      merchantId: true,
-      customerId: true,
-    },
-  })
+  const vouch = await getVouchParticipantActionState(parsed.data.vouchId)
 
   if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
 
@@ -323,14 +313,7 @@ export async function archiveVouch(input: unknown): Promise<ActionResult<{ vouch
     return actionFailure("VALIDATION_FAILED", "Check the Vouch ID.", getFieldErrors(parsed.error))
   }
 
-  const vouch = await prisma.vouch.findUnique({
-    where: { id: parsed.data.vouchId },
-    select: {
-      id: true,
-      merchantId: true,
-      customerId: true,
-    },
-  })
+  const vouch = await getVouchParticipantActionState(parsed.data.vouchId)
 
   if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
 

@@ -24,8 +24,6 @@ function normalizeReadiness(record: ReadinessRecord | null) {
   const state = {
     userId: record?.id ?? null,
     userStatus: record?.status === "active" ? ("active" as const) : ("disabled" as const),
-    identityStatus: "verified",
-    adultStatus: "verified",
     paymentMethodReady: paymentCustomer?.paymentMethodReady ? "ready" : "not_started",
     payoutReadiness:
       connectedAccount?.detailsSubmitted && connectedAccount.payoutsEnabled
@@ -33,9 +31,6 @@ function normalizeReadiness(record: ReadinessRecord | null) {
         : "not_started",
     hasPaymentCustomer: Boolean(paymentCustomer),
     hasConnectedAccount: Boolean(connectedAccount),
-    termsAccepted: true,
-    termsVersion: null,
-    termsAcceptedAt: null,
   }
 
   return {
@@ -46,8 +41,7 @@ function normalizeReadiness(record: ReadinessRecord | null) {
       userId: state.userId,
       merchantId: "",
       existingCustomerId: null,
-      status: "sent",
-      inviteValid: true,
+      status: "active",
     }),
     confirmReady: state.userStatus === "active",
   }
@@ -67,19 +61,11 @@ function blockersFor(
   const blockers: string[] = []
 
   if (readiness.userStatus !== "active") blockers.push("account_inactive")
-  if (readiness.identityStatus !== "verified") blockers.push("identity_verification_required")
-  if (readiness.adultStatus !== "verified") blockers.push("adult_verification_required")
   if (kind === "create" && readiness.payoutReadiness !== "ready") {
     blockers.push("payout_method_required")
   }
-  if (kind === "create" && !readiness.termsAccepted) {
-    blockers.push("terms_acceptance_required")
-  }
   if (kind === "accept" && readiness.paymentMethodReady !== "ready") {
     blockers.push("payment_method_required")
-  }
-  if (kind === "accept" && !readiness.termsAccepted) {
-    blockers.push("terms_acceptance_required")
   }
 
   return blockers

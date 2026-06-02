@@ -3,11 +3,7 @@ import type { ComponentProps } from "react"
 export const BASE_ROLE_VALUES = ["anonymous", "authenticated_user", "admin", "system"] as const
 export const CONTEXTUAL_ROLE_VALUES = ["merchant", "customer"] as const
 export const USER_STATUS_VALUES = ["active", "suspended", "disabled"] as const
-export const SETUP_REQUIREMENT_VALUES = [
-  "payment_ready",
-  "payout_ready",
-  "useragreement_accepted",
-] as const
+export const SETUP_REQUIREMENT_VALUES = ["payment_ready", "payout_ready"] as const
 
 export type BaseRole = (typeof BASE_ROLE_VALUES)[number]
 export type ContextualRole = (typeof CONTEXTUAL_ROLE_VALUES)[number]
@@ -51,17 +47,12 @@ export type VouchAccessInput = {
   merchantId: string
   customerId?: string | null
   isAdmin?: boolean
-  inviteValid?: boolean
 }
 
 export type VouchReadinessInput = {
   userStatus?: UserStatus
-  identityStatus?: string
-  adultStatus?: string
   paymentMethodReady?: string
   payoutReadiness?: string
-  termsAccepted?: boolean
-  useragreementAccepted?: boolean
 }
 
 export type AcceptVouchAuthzInput = VouchReadinessInput & {
@@ -69,8 +60,6 @@ export type AcceptVouchAuthzInput = VouchReadinessInput & {
   merchantId: string
   existingCustomerId?: string | null
   status: string
-  inviteValid: boolean
-  eligible?: boolean
 }
 
 export type ConfirmPresenceAuthzInput = {
@@ -119,7 +108,6 @@ export interface SetupStatus {
   accountActive: boolean
   paymentReady: boolean
   payoutReady: boolean
-  useragreementAccepted: boolean
   missingRequirements: SetupRequirement[]
 }
 
@@ -193,10 +181,14 @@ export type ClerkWebhookUserData = {
   phone_number_id?: string | null
 }
 
+export type ClerkWebhookData = ClerkWebhookUserData & {
+  user?: ClerkWebhookUserData | null
+}
+
 export type ClerkWebhookEvent = {
   id?: string
   type: ClerkWebhookEventType
-  data: ClerkWebhookUserData
+  data: ClerkWebhookData
 }
 
 export type ClerkWebhookProcessingStatus = "processed" | "ignored" | "duplicate"

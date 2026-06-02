@@ -3,8 +3,12 @@
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
-import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
+import {
+  getCurrentUserConnectedAccount,
+  getCurrentUserPaymentCustomer,
+  requireActiveUser,
+} from "@/lib/fetchers/authFetchers"
 import {
   createStripeConnectAccount,
   createStripeConnectDashboardLink,
@@ -35,10 +39,7 @@ async function ensureStripeConnectedAccount(user: {
   email: string | null
   displayName: string | null
 }): Promise<string> {
-  const existing = await prisma.connectedAccount.findUnique({
-    where: { userId: user.id },
-    select: { stripeAccountId: true },
-  })
+  const existing = await getCurrentUserConnectedAccount()
 
   if (existing?.stripeAccountId) return existing.stripeAccountId
 
@@ -73,10 +74,7 @@ async function ensureStripeCustomer(user: {
   email: string | null
   displayName: string | null
 }): Promise<string> {
-  const existing = await prisma.paymentCustomer.findUnique({
-    where: { userId: user.id },
-    select: { stripeCustomerId: true },
-  })
+  const existing = await getCurrentUserPaymentCustomer()
 
   if (existing?.stripeCustomerId) return existing.stripeCustomerId
 

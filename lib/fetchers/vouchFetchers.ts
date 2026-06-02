@@ -217,3 +217,12 @@ export async function getParticipantSafeAuditTimeline(
 
   return mapParticipantSafeAuditTimelineDTO(rows)
 }
+
+export async function getVouchParticipantActionState(vouchId: string) {
+  return requireParticipantVouch(vouchId, {
+    id: true,
+    publicId: true,
+    merchantId: true,
+    customerId: true,
+  })
+}

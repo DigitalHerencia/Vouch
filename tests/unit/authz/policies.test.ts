@@ -42,9 +42,8 @@ describe("authz policies", () => {
         userId: "user_merchant",
         merchantId: "user_merchant",
         existingCustomerId: null,
-        status: "sent",
-        inviteValid: true,
-        eligible: true,
+        status: "active",
+        paymentMethodReady: "ready",
       })
     ).toBe(false)
   })
@@ -55,9 +54,8 @@ describe("authz policies", () => {
         userId: "user_customer",
         merchantId: "user_merchant",
         existingCustomerId: null,
-        status: "sent",
-        inviteValid: true,
-        eligible: true,
+        status: "active",
+        paymentMethodReady: "ready",
         userStatus: "disabled",
       })
     ).toBe(false)
@@ -69,7 +67,7 @@ describe("authz policies", () => {
         userId: "user_customer",
         merchantId: "user_merchant",
         customerId: "user_customer",
-        status: "confirmable",
+        status: "authorized",
         windowOpen: true,
         alreadyConfirmed: false,
       })

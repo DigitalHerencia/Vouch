@@ -44,15 +44,11 @@ export const authRedirectSearchParamsSchema = z.object({
 
 export const supportedClerkWebhookEventTypeSchema = z.enum([
   "email.created",
-  "invitation.accepted",
-  "invitation.created",
-  "invitation.revoked",
   "session.created",
   "session.ended",
   "session.pending",
   "session.removed",
   "session.revoked",
-  "sms.created",
   "user.created",
   "user.deleted",
   "user.updated",

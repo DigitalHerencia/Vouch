@@ -49,13 +49,8 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
       createdAt: string | null
       updatedAt: string | null
       readiness: {
-        identityStatus: string
-        adultStatus: string
         paymentMethodReady: string
         payoutReadiness: string
-        termsAccepted: boolean
-        termsVersion: string | null
-        termsAcceptedAt: string | null
       }
     })
   | null {
@@ -72,16 +67,11 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
     createdAt: toIso(record.createdAt),
     updatedAt: toIso(record.updatedAt),
     readiness: {
-      identityStatus: "verified",
-      adultStatus: "verified",
       paymentMethodReady: record.paymentCustomer?.paymentMethodReady ? "ready" : "not_started",
       payoutReadiness:
         record.connectedAccount?.detailsSubmitted && record.connectedAccount?.payoutsEnabled
           ? "ready"
           : "not_started",
-      termsAccepted: true,
-      termsVersion: null,
-      termsAcceptedAt: null,
     },
   }
 }
@@ -117,4 +107,26 @@ export async function requireActiveUser() {
   const user = await requireUser()
   if (!isActive(user)) redirect("/dashboard?blocked=account_disabled")
   return user
+}
+
+export async function getCurrentUserPaymentCustomer() {
+  noStore()
+
+  const user = await requireActiveUser()
+
+  return prisma.paymentCustomer.findUnique({
+    where: { userId: user.id },
+    select: { stripeCustomerId: true },
+  })
+}
+
+export async function getCurrentUserConnectedAccount() {
+  noStore()
+
+  const user = await requireActiveUser()
+
+  return prisma.connectedAccount.findUnique({
+    where: { userId: user.id },
+    select: { stripeAccountId: true },
+  })
 }

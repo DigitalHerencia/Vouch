@@ -1,40 +1,19 @@
 // app/api/clerk/webhooks/route.ts
 
+import { verifyWebhook } from "@clerk/nextjs/webhooks"
 import { NextResponse, type NextRequest } from "next/server"
 
-import { handleVerifiedClerkWebhook, verifyClerkWebhook } from "@/lib/auth/webhooks"
+import { processClerkWebhookEvent } from "@/lib/webhooks/clerk"
 import type { ClerkWebhookEvent } from "@/types/authTypes"
 
-export const runtime = "nodejs"
-export const dynamic = "force-dynamic"
+function getClerkWebhookSecret(): string {
+  const secret = process.env.CLERK_WEBHOOK_SECRET
 
-type ClerkSessionCreatedEvent = ClerkWebhookEvent & {
-  type: "session.created"
-  data: ClerkWebhookEvent["data"] & {
-    user: ClerkWebhookEvent["data"]
-  }
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object"
-}
-
-function isClerkSessionCreatedEvent(event: unknown): event is ClerkSessionCreatedEvent {
-  if (!isRecord(event) || event.type !== "session.created" || !isRecord(event.data)) {
-    return false
+  if (!secret) {
+    throw new Error("CLERK_WEBHOOK_SECRET is required")
   }
 
-  return isRecord(event.data.user) && typeof event.data.user.id === "string"
-}
-
-function normalizeClerkWebhookEvent(event: unknown): unknown {
-  if (!isClerkSessionCreatedEvent(event)) return event
-
-  return {
-    ...event,
-    type: "user.updated",
-    data: event.data.user,
-  } satisfies ClerkWebhookEvent
+  return secret
 }
 
 export async function POST(request: NextRequest) {
@@ -51,7 +30,9 @@ export async function POST(request: NextRequest) {
 
   let event: unknown
   try {
-    event = await verifyClerkWebhook(request)
+    event = await verifyWebhook(request, {
+      signingSecret: getClerkWebhookSecret(),
+    })
   } catch (error) {
     if (error instanceof Error && error.message === "CLERK_WEBHOOK_SECRET is required") {
       return NextResponse.json({ ok: false, error: "Webhook is not configured." }, { status: 500 })
@@ -63,10 +44,7 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  const result = await handleVerifiedClerkWebhook({
-    svixId,
-    event: normalizeClerkWebhookEvent(event),
-  })
+  const result = await processClerkWebhookEvent(event as ClerkWebhookEvent, svixId)
 
   if (!result.ok) {
     return NextResponse.json({ ok: false, error: result.message }, { status: 500 })
