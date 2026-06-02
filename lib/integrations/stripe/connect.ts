@@ -10,10 +10,7 @@ type StripeV2Core = {
       params: Record<string, unknown>,
       options?: { idempotencyKey?: string }
     ): Promise<{ id: string }>
-    retrieve(
-      accountId: string,
-      params?: Record<string, unknown>
-    ): Promise<Record<string, unknown>>
+    retrieve(accountId: string, params?: Record<string, unknown>): Promise<Record<string, unknown>>
   }
   accountLinks: {
     create(

@@ -28,9 +28,7 @@ export function canViewVouch(input: VouchAccessInput): boolean {
   }
 
   return (
-    input.isAdmin === true ||
-    input.userId === input.merchantId ||
-    input.userId === input.customerId
+    input.isAdmin === true || input.userId === input.merchantId || input.userId === input.customerId
   )
 }
 

@@ -61,4 +61,3 @@ Stop and report before editing when:
 - Existing code enforces a business rule contradicted by active governance.
 - Stripe or Clerk API constraints make the documented architecture impossible.
 - A requested change requires a forbidden product surface.
-

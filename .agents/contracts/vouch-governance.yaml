@@ -145,4 +145,3 @@ validation_policy:
   package_manager: pnpm
   default_for_agents: narrowest_relevant
   do_not_run_when_user_says_no_validation: true
-

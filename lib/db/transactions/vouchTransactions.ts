@@ -106,7 +106,9 @@ export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<
       confirmationOpensAt: input.confirmationOpensAt,
       confirmationExpiresAt: input.confirmationExpiresAt,
       merchantCodeHash: hashConfirmationCode(`${publicId}:merchant`),
-      ...(input.customerId ? { customerCodeHash: hashConfirmationCode(`${publicId}:customer`) } : {}),
+      ...(input.customerId
+        ? { customerCodeHash: hashConfirmationCode(`${publicId}:customer`) }
+        : {}),
       ...(input.createAsDraft ? {} : { protocolFeePaidAt: now }),
     },
     select: VOUCH_SELECT,

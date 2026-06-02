@@ -33,7 +33,7 @@ const Marquee = React.forwardRef<HTMLDivElement, MarqueeProps>(
       <div
         ref={ref}
         className={cn(
-          "flex overflow-hidden contain-[layout_paint] will-change-transform",
+          "flex overflow-hidden will-change-transform contain-[layout_paint]",
           bordered && "border-3 border-neutral-400 bg-black",
           className
         )}

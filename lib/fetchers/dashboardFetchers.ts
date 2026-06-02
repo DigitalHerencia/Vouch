@@ -103,9 +103,7 @@ export async function getDashboardPageState(input?: {
   }
 }
 
-async function getActionRequiredVouches(input: {
-  userId: string
-}): Promise<VouchCardRecord[]> {
+async function getActionRequiredVouches(input: { userId: string }): Promise<VouchCardRecord[]> {
   const now = new Date()
 
   return listForUser(input.userId, {

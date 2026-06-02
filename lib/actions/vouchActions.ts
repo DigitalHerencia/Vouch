@@ -194,7 +194,9 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
     successUrl: `${appUrl}/vouches/${vouch.id}?merchant_fee=paid`,
     cancelUrl: `${appUrl}/vouches/new?merchant_fee=cancelled`,
     idempotencyKey: `vouch:${vouch.id}:merchant-fee-checkout`,
-    ...(paymentCustomer?.stripeCustomerId ? { providerCustomerId: paymentCustomer.stripeCustomerId } : {}),
+    ...(paymentCustomer?.stripeCustomerId
+      ? { providerCustomerId: paymentCustomer.stripeCustomerId }
+      : {}),
   })
 
   revalidateVouchSurfaces(vouch.id)

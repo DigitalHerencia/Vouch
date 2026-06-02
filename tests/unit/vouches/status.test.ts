@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import {
-  assertValidVouchTransition,
-  deriveNextVouchAction,
-} from "@/lib/vouch/state"
+import { assertValidVouchTransition, deriveNextVouchAction } from "@/lib/vouch/state"
 import type { NextVouchAction } from "@/types/vouchTypes"
 import { getVouchStatusLabel, isFinalVouchStatus } from "@/lib/vouch/status"
 

@@ -179,7 +179,11 @@ function mapPresenceConfirmationDTO(
 export function getAggregateConfirmationStatus(
   confirmation: PresenceConfirmationDTO | PresenceConfirmationDTO[] | null | undefined
 ): AggregateConfirmationStatus {
-  const confirmations = Array.isArray(confirmation) ? confirmation : confirmation ? [confirmation] : []
+  const confirmations = Array.isArray(confirmation)
+    ? confirmation
+    : confirmation
+      ? [confirmation]
+      : []
   const merchantConfirmed = confirmations.some((item) => Boolean(item.merchantConfirmedAt))
   const customerConfirmed = confirmations.some((item) => Boolean(item.customerConfirmedAt))
 

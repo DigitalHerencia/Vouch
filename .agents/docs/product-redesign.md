@@ -66,4 +66,3 @@ Vouch owns workflow truth only. Stripe owns payment truth. Clerk owns auth truth
 - Full Stripe Dashboard access for connected businesses.
 - Automatic payouts.
 - Up-front verification.
-

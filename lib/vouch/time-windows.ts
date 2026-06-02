@@ -1,9 +1,4 @@
-
-import type {
-  ConfirmationWindowInput,
-  DateLike,
-} from "@/types/vouchTypes"
-
+import type { ConfirmationWindowInput, DateLike } from "@/types/vouchTypes"
 
 export function toDate(value: DateLike): Date {
   const date = value instanceof Date ? value : new Date(value)

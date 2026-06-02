@@ -1,6 +1,4 @@
-import type {
-  VouchStatus,
-} from "@/types/vouchTypes"
+import type { VouchStatus } from "@/types/vouchTypes"
 
 export function isFinalVouchStatus(status: VouchStatus): boolean {
   return status === "completed" || status === "expired"

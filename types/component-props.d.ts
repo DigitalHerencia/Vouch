@@ -27,7 +27,11 @@ type TenantShellProps = {
 }
 
 type PublicHeaderNavItem = { label: string; href: string }
-type PublicHeaderProps = { logo?: React.ReactNode; navItems?: readonly PublicHeaderNavItem[]; items?: readonly PublicHeaderNavItem[] }
+type PublicHeaderProps = {
+  logo?: React.ReactNode
+  navItems?: readonly PublicHeaderNavItem[]
+  items?: readonly PublicHeaderNavItem[]
+}
 type PublicFooterLink = { label: string; href: string }
 type PublicFooterProps = { links?: readonly PublicFooterLink[] }
 
@@ -78,11 +82,15 @@ type TenantMobileBottomNavProps = {
 type UserMenuProps = { size?: "default" | "sm" | "compact" }
 
 type ButtonProps = React.ComponentPropsWithoutRef<"button"> &
-  import("class-variance-authority").VariantProps<typeof import("@/components/ui/button").buttonVariants> & {
+  import("class-variance-authority").VariantProps<
+    typeof import("@/components/ui/button").buttonVariants
+  > & {
     asChild?: boolean
   }
 type BadgeProps = React.ComponentPropsWithoutRef<"span"> &
-  import("class-variance-authority").VariantProps<typeof import("@/components/ui/badge").badgeVariants>
+  import("class-variance-authority").VariantProps<
+    typeof import("@/components/ui/badge").badgeVariants
+  >
 type AlertActionProps = React.ComponentPropsWithoutRef<"button"> & { loading?: boolean }
 type SheetContentProps = React.ComponentPropsWithoutRef<"div"> & {
   side?: "top" | "right" | "bottom" | "left"
@@ -148,7 +156,15 @@ type EmptyStateProps = React.ComponentPropsWithoutRef<"div"> & {
 }
 type EmptyStateIconProps = React.ComponentPropsWithoutRef<"div"> & {
   size?: "xs" | "sm" | "md" | "lg" | "xl"
-  iconColor?: "default" | "primary" | "secondary" | "accent" | "muted" | "destructive" | "warning" | "success"
+  iconColor?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "accent"
+    | "muted"
+    | "destructive"
+    | "warning"
+    | "success"
   iconSize?: "xs" | "sm" | "md" | "lg" | "xl"
 }
 type EmptyStateIllustrationProps = React.ComponentPropsWithoutRef<"div"> & { maxWidth?: string }
@@ -265,7 +281,12 @@ type AuthSplitLayoutProps = {
 
 type FAQItem = { question: string; answer: string; category?: string }
 type FAQCategory = { name: string; items: FAQItem[] }
-type FAQAccordionProps = { title?: string; subtitle?: string; description?: string; items: readonly FAQItem[] }
+type FAQAccordionProps = {
+  title?: string
+  subtitle?: string
+  description?: string
+  items: readonly FAQItem[]
+}
 type FAQTwoColumnsProps = FAQAccordionProps
 type FAQWithCategoriesProps = Omit<FAQAccordionProps, "items"> & {
   categories: readonly FAQCategory[]
@@ -273,7 +294,11 @@ type FAQWithCategoriesProps = Omit<FAQAccordionProps, "items"> & {
   activeCategory?: number
   onCategoryChange?: (category: number) => void
 }
-type FAQWithContactProps = FAQAccordionProps & { contactTitle?: string; contactDescription?: string; contactAction?: CTAAction }
+type FAQWithContactProps = FAQAccordionProps & {
+  contactTitle?: string
+  contactDescription?: string
+  contactAction?: CTAAction
+}
 type FAQSimpleListProps = { title?: string; subtitle?: string; items: readonly FAQItem[] }
 
 type CTAAction = AuthAction
@@ -318,10 +343,25 @@ type FeatureGridItem = {
   size?: "normal" | "wide" | "tall"
   span?: string
 }
-type FeatureGridWithIconsProps = { title?: string; subtitle?: string; description?: string; features: readonly FeatureGridItem[]; columns?: 2 | 3 | 4 }
-type FeatureGridWithImagesProps = { title?: string; subtitle?: string; features: readonly FeatureGridItem[] }
+type FeatureGridWithIconsProps = {
+  title?: string
+  subtitle?: string
+  description?: string
+  features: readonly FeatureGridItem[]
+  columns?: 2 | 3 | 4
+}
+type FeatureGridWithImagesProps = {
+  title?: string
+  subtitle?: string
+  features: readonly FeatureGridItem[]
+}
 type FeatureGridAlternatingProps = { features: readonly FeatureGridItem[] }
-type FeatureBentoGridProps = { title?: string; subtitle?: string; align?: "left" | "center"; features: readonly FeatureGridItem[] }
+type FeatureBentoGridProps = {
+  title?: string
+  subtitle?: string
+  align?: "left" | "center"
+  features: readonly FeatureGridItem[]
+}
 
 type HeroAction = AuthAction
 type HeroCenteredProps = {
@@ -333,10 +373,19 @@ type HeroCenteredProps = {
   secondaryAction?: HeroAction
   align?: "left" | "center"
 }
-type HeroSplitProps = HeroCenteredProps & { imageSrc: string; imageAlt?: string; imagePosition?: "left" | "right" }
+type HeroSplitProps = HeroCenteredProps & {
+  imageSrc: string
+  imageAlt?: string
+  imagePosition?: "left" | "right"
+}
 type HeroSplitPanelProps = HeroCenteredProps & {
   panelTitle: string
-  panelSteps: Array<{ number: string; title: string; body: string; icon: React.ComponentType<{ className?: string; strokeWidth?: number }> }>
+  panelSteps: Array<{
+    number: string
+    title: string
+    body: string
+    icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+  }>
   panelFooter?: string
   panelId?: string
   panelPosition?: "left" | "right"
@@ -348,27 +397,101 @@ type HeroWithStatsProps = HeroCenteredProps & {
 type HeroMinimalProps = { title: string; description?: string; primaryAction?: HeroAction }
 type HeroWithVideoProps = HeroCenteredProps & { videoThumbnail: string; onPlayClick?: () => void }
 
-type StatItem = { label: string; value: string; description?: string; trend?: "up" | "down" | "neutral"; trendValue?: string; icon?: React.ReactNode; body?: string }
+type StatItem = {
+  label: string
+  value: string
+  description?: string
+  trend?: "up" | "down" | "neutral"
+  trendValue?: string
+  icon?: React.ReactNode
+  body?: string
+}
 type StatsGridProps = { stats: StatItem[]; columns?: 2 | 3 | 4 }
 type StatsCardsProps = { title?: string; subtitle?: string; stats: StatItem[] }
-type StatsSplitProps = { subtitle?: string; title: string; description?: string; stats: StatItem[]; contentPosition?: "left" | "right" }
+type StatsSplitProps = {
+  subtitle?: string
+  title: string
+  description?: string
+  stats: StatItem[]
+  contentPosition?: "left" | "right"
+}
 type StatsInlineProps = { stats: StatItem[] }
 type StatsWithIconsProps = { stats: StatItem[] }
 
-type ProcessPanelStep = { number?: string; label?: string; value?: string; title?: string; body?: string; icon?: React.ComponentType<{ className?: string; strokeWidth?: number }> }
-type ProcessPanelProps = { title?: string; steps: readonly ProcessPanelStep[]; footer?: string | React.ReactNode; id?: string }
-type ProcessPanelListProps = { title?: string; items: readonly ProcessPanelStep[]; eyebrow?: string; body?: string; id?: string }
-type ProcessPanelRuleGridProps = { title?: string; items: readonly ProcessPanelStep[]; footer?: string | React.ReactNode; id?: string }
-type ProcessPanelCalloutProps = { title?: string; body?: string; action?: React.ReactNode; icon: React.ComponentType<{ className?: string; strokeWidth?: number }>; id?: string }
+type ProcessPanelStep = {
+  number?: string
+  label?: string
+  value?: string
+  title?: string
+  body?: string
+  icon?: React.ComponentType<{ className?: string; strokeWidth?: number }>
+}
+type ProcessPanelProps = {
+  title?: string
+  steps: readonly ProcessPanelStep[]
+  footer?: string | React.ReactNode
+  id?: string
+}
+type ProcessPanelListProps = {
+  title?: string
+  items: readonly ProcessPanelStep[]
+  eyebrow?: string
+  body?: string
+  id?: string
+}
+type ProcessPanelRuleGridProps = {
+  title?: string
+  items: readonly ProcessPanelStep[]
+  footer?: string | React.ReactNode
+  id?: string
+}
+type ProcessPanelCalloutProps = {
+  title?: string
+  body?: string
+  action?: React.ReactNode
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+  id?: string
+}
 type ProcessPanelGridItem = { name: string; logo: React.ReactNode; detail?: string }
-type ProcessPanelGridProps = { title?: string; subtitle?: string; logos: readonly ProcessPanelGridItem[]; footer?: string }
+type ProcessPanelGridProps = {
+  title?: string
+  subtitle?: string
+  logos: readonly ProcessPanelGridItem[]
+  footer?: string
+}
 
-type OnboardingStep = { id: string; title: string; description?: string; content?: React.ReactNode; icon?: React.ReactNode; optional?: boolean }
-type OnboardingWizardProps = { steps: readonly OnboardingStep[]; currentStep: number; onStepChange: (step: number) => void; onComplete?: () => void; showProgress?: boolean }
-type OnboardingFeature = { title: string; description?: string; icon?: React.ReactNode; [key: string]: unknown }
+type OnboardingStep = {
+  id: string
+  title: string
+  description?: string
+  content?: React.ReactNode
+  icon?: React.ReactNode
+  optional?: boolean
+}
+type OnboardingWizardProps = {
+  steps: readonly OnboardingStep[]
+  currentStep: number
+  onStepChange: (step: number) => void
+  onComplete?: () => void
+  showProgress?: boolean
+}
+type OnboardingFeature = {
+  title: string
+  description?: string
+  icon?: React.ReactNode
+  [key: string]: unknown
+}
 type OnboardingAction = { label: string; onClick?: () => void }
 type OnboardingOption = { value: string; label: string }
-type WelcomeScreenProps = { logo?: React.ReactNode; title?: string; subtitle?: string; features?: readonly OnboardingFeature[]; primaryAction?: OnboardingAction; secondaryAction?: OnboardingAction; onGetStarted?: () => void }
+type WelcomeScreenProps = {
+  logo?: React.ReactNode
+  title?: string
+  subtitle?: string
+  features?: readonly OnboardingFeature[]
+  primaryAction?: OnboardingAction
+  secondaryAction?: OnboardingAction
+  onGetStarted?: () => void
+}
 type ProfileSetupProps = {
   name?: string
   role?: string
@@ -407,7 +530,13 @@ type GoalSelectionProps = {
   minSelection?: number
   maxSelection?: number
 }
-type CompletionScreenProps = { title?: string; subtitle?: string; features?: readonly OnboardingFeature[]; primaryAction?: OnboardingAction; onComplete?: () => void }
+type CompletionScreenProps = {
+  title?: string
+  subtitle?: string
+  features?: readonly OnboardingFeature[]
+  primaryAction?: OnboardingAction
+  onComplete?: () => void
+}
 
 type InvoiceAddress = {
   name: string
@@ -420,7 +549,14 @@ type InvoiceAddress = {
   email?: string
   phone?: string
 }
-type InvoiceLineItem = { description: string; quantity: number; unitPrice: number; total?: number; unitPriceLabel?: string; totalLabel?: string }
+type InvoiceLineItem = {
+  description: string
+  quantity: number
+  unitPrice: number
+  total?: number
+  unitPriceLabel?: string
+  totalLabel?: string
+}
 type InvoiceProps = {
   data: {
     title?: string
@@ -435,7 +571,12 @@ type InvoiceProps = {
     tax?: { label: string; rate: number; amount: number }
     discount?: { label: string; amount: number }
     total: number
-    paymentInfo?: { bankName?: string; accountNumber?: string; routingNumber?: string; paymentMethods?: readonly string[] }
+    paymentInfo?: {
+      bankName?: string
+      accountNumber?: string
+      routingNumber?: string
+      paymentMethods?: readonly string[]
+    }
     notes?: string
     terms?: string
     details?: readonly { label: string; value: string }[]
@@ -481,7 +622,16 @@ type InvoiceSummaryProps = {
   percentRemaining?: number
   tone?: VouchStatusTone
 }
-type InvoiceListProps = { invoices: Array<{ id: string; invoiceNumber: string; clientName: string; date: string; amount: number; status: "paid" | "pending" | "overdue" }> }
+type InvoiceListProps = {
+  invoices: Array<{
+    id: string
+    invoiceNumber: string
+    clientName: string
+    date: string
+    amount: number
+    status: "paid" | "pending" | "overdue"
+  }>
+}
 
 type VouchStatusTone = "active" | "pending" | "complete" | "failed" | "expired" | "offline"
 type VouchCountdownProps = {
@@ -515,7 +665,11 @@ type VouchStatusDocumentData = {
   merchantReceivesLabel: string
   customerTotalLabel: string
   countdown?: VouchCountdownProps
-  confirmations: { merchantConfirmed: boolean; customerConfirmed: boolean; action?: React.ReactNode }
+  confirmations: {
+    merchantConfirmed: boolean
+    customerConfirmed: boolean
+    action?: React.ReactNode
+  }
   timeline: VouchStatusTimelineItem[]
   audit?: Array<{ label: string; value: string }>
 }
@@ -565,11 +719,47 @@ type VouchCreationWizardProps = {
   onCreateVouch: () => void
 }
 
-type ProfileSettingsProps = { user?: { name: string; email: string; avatar?: string; bio?: string; company?: string; location?: string; website?: string } }
-type NotificationSetting = { id: string; title?: string; label?: string; description?: string; email?: boolean; push?: boolean; enabled?: boolean }
-type NotificationSettingsProps = { notifications?: readonly NotificationSetting[]; settings?: readonly NotificationSetting[]; onToggle?: (id: string, enabled: boolean) => void }
-type SecuritySession = { id: string; device: string; location?: string; lastActive: string; current?: boolean }
+type ProfileSettingsProps = {
+  user?: {
+    name: string
+    email: string
+    avatar?: string
+    bio?: string
+    company?: string
+    location?: string
+    website?: string
+  }
+}
+type NotificationSetting = {
+  id: string
+  title?: string
+  label?: string
+  description?: string
+  email?: boolean
+  push?: boolean
+  enabled?: boolean
+}
+type NotificationSettingsProps = {
+  notifications?: readonly NotificationSetting[]
+  settings?: readonly NotificationSetting[]
+  onToggle?: (id: string, enabled: boolean) => void
+}
+type SecuritySession = {
+  id: string
+  device: string
+  location?: string
+  lastActive: string
+  current?: boolean
+}
 type SecuritySettingsProps = { twoFactorEnabled?: boolean; sessions?: readonly SecuritySession[] }
-type AppearanceSettingsProps = { theme?: "light" | "dark" | "system"; onThemeChange?: (theme: string) => void }
+type AppearanceSettingsProps = {
+  theme?: "light" | "dark" | "system"
+  onThemeChange?: (theme: string) => void
+}
 type DangerZoneProps = { onDeleteAccount?: () => void }
-type SettingsPageProps = { defaultTab?: string; user?: ProfileSettingsProps["user"]; notificationSettings?: readonly NotificationSetting[]; sessions?: readonly SecuritySession[] }
+type SettingsPageProps = {
+  defaultTab?: string
+  user?: ProfileSettingsProps["user"]
+  notificationSettings?: readonly NotificationSetting[]
+  sessions?: readonly SecuritySession[]
+}
