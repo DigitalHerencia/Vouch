@@ -3,8 +3,8 @@ import { describe, expect, it } from "vitest"
 import {
   assertValidVouchTransition,
   deriveNextVouchAction,
-  type NextVouchAction,
 } from "@/lib/vouch/state"
+import type { NextVouchAction } from "@/types/vouchTypes"
 import { getVouchStatusLabel, isFinalVouchStatus } from "@/lib/vouch/status"
 
 describe("vouch status helpers", () => {

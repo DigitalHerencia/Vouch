@@ -527,7 +527,7 @@ export function SignUpFormFields({
         <label className="flex items-start gap-3 border-3 border-neutral-400 bg-black p-3">
           <Checkbox
             className="mt-1 shrink-0 rounded-none"
-            checked={agreementChecked}
+          checked={agreementChecked ?? false}
             aria-invalid={Boolean(agreementError)}
             disabled={disabled}
             onCheckedChange={(checked) => onAgreementChange(checked === true)}

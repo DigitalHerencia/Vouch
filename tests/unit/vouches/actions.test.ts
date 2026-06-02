@@ -10,7 +10,6 @@ vi.mock("@/lib/fetchers/authFetchers", () => ({
 
 vi.mock("@/lib/fetchers/readinessFetchers", () => ({
   assertCreateVouchReadinessReady: vi.fn(),
-  assertAcceptVouchReadinessReady: vi.fn(),
 }))
 
 vi.mock("@/lib/db/prisma", () => ({
@@ -34,15 +33,6 @@ vi.mock("@/lib/actions/transactions/vouchTransactions", async (importOriginal) =
   return {
     ...actual,
     bindPayeeToVouchTx: vi.fn(),
-  }
-})
-
-vi.mock("@/lib/actions/transactions/invitationTransactions", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("@/lib/db/transactions/invitationTransactions")>()
-  return {
-    ...actual,
-    markInvitationAcceptedTx: vi.fn(),
   }
 })
 
@@ -75,20 +65,17 @@ describe("vouch actions", () => {
     })
   })
 
-  it("returns an ActionResult when accept readiness is blocked", async () => {
-    const { assertAcceptVouchReadinessReady } = await import("@/lib/fetchers/readinessFetchers")
-    const { acceptVouch } = await import("@/lib/actions/vouchActions")
+  it("returns an ActionResult when create input is invalid", async () => {
+    const { assertCreateVouchReadinessReady } = await import("@/lib/fetchers/readinessFetchers")
+    const { createVouch } = await import("@/lib/actions/vouchActions")
 
-    vi.mocked(assertAcceptVouchReadinessReady).mockRejectedValueOnce(
-      new Error("READINESS_BLOCKED: payout_ready")
-    )
+    vi.mocked(assertCreateVouchReadinessReady).mockResolvedValueOnce({ ok: true, blockers: [] })
 
-    const result = await acceptVouch({ token: "valid-token", disclaimerAccepted: true })
+    const result = await createVouch({ amountCents: 0 })
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       ok: false,
-      code: "READINESS_BLOCKED",
-      formError: "Required account readiness is incomplete.",
+      code: "VALIDATION_FAILED",
     })
   })
 })

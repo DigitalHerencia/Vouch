@@ -8,14 +8,15 @@ import YAML from "yaml"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 
-const yamlContractFiles = [".agents/vouch_governance.yaml"]
+const yamlContractFiles = [".agents/contracts/vouch-governance.yaml"]
 
 const markdownContractFiles = [
-  ".agents/vouch_intent.md",
-  ".agents/vouch_stripe_payment_architecture.md",
+  ".agents/docs/product-redesign.md",
+  ".agents/docs/architecture.md",
+  ".agents/instructions/codex.instructions.md",
 ]
 
-const executionFiles = [".agents/vouch_execution.json"]
+const executionFiles = []
 
 const errors = []
 

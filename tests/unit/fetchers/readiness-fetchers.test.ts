@@ -35,10 +35,11 @@ function readinessRecord(input: {
       adultStatus: input.adultStatus ?? "verified",
     },
     paymentCustomer: {
-      readiness: input.paymentMethodReady ?? "not_started",
+      paymentMethodReady: input.paymentMethodReady === "ready",
     },
     connectedAccount: {
-      readiness: input.payoutReadiness ?? "not_started",
+      detailsSubmitted: input.payoutReadiness === "ready",
+      payoutsEnabled: input.payoutReadiness === "ready",
     },
     termsAcceptances: input.termsAccepted
       ? [{ termsVersion: "2026-05-22", acceptedAt: new Date("2026-05-22T00:00:00.000Z") }]

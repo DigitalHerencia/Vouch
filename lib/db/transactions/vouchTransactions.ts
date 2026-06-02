@@ -147,13 +147,15 @@ export async function updateVouchArchiveStatusTx(
 ): Promise<VouchResult> {
   const archived = input.archiveStatus === true || input.archiveStatus === "archived"
 
+  const data = {
+    archived,
+    archivedAt: archived ? new Date() : null,
+    ...(archived ? { status: "archived" as const } : {}),
+  }
+
   return tx.vouch.update({
     where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
-    data: {
-      archived,
-      archivedAt: archived ? new Date() : null,
-      status: archived ? "archived" : undefined,
-    },
+    data,
     select: VOUCH_SELECT,
   })
 }

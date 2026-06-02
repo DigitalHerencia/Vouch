@@ -23,9 +23,11 @@ function CTAButton({
   action,
   variant = "default",
 }: {
-  action: CTAAction
+  action?: CTAAction | undefined
   variant?: "default" | "outline"
 }) {
+  if (!action) return null
+
   if (action.href) {
     return (
       <Button size="lg" variant="outline" asChild>
@@ -67,7 +69,7 @@ export function CTAWithBackground({
   primaryAction,
   backgroundColor = "primary",
 }: CTAWithBackgroundProps) {
-  const bgColors = {
+  const bgColors: Record<NonNullable<CTAWithBackgroundProps["backgroundColor"]>, string> = {
     primary: "bg-blue-600/10 text-white",
     secondary: "bg-black text-white",
     accent: "bg-blue-600 text-white",
@@ -134,7 +136,7 @@ export function CTANewsletter({
               type="email"
               placeholder={placeholder}
               value={email}
-              onChange={(event) => onEmailChange(event.target.value)}
+              onChange={(event) => onEmailChange?.(event.target.value)}
               className="flex-1"
               required
             />
@@ -214,15 +216,17 @@ export function CTABanner({
         >
           <div className="flex flex-col items-center justify-center gap-3 text-center sm:flex-row sm:text-left">
             <p className="text-sm font-bold">{text}</p>
-            {action.href ? (
-              <Button size="sm" variant="outline" className="shrink-0" asChild>
-                <Link href={safeHref(action.href)}>{action.label}</Link>
-              </Button>
-            ) : (
-              <Button size="sm" variant="outline" className="shrink-0" onClick={action.onClick}>
-                {action.label}
-              </Button>
-            )}
+            {action ? (
+              action.href ? (
+                <Button size="sm" variant="outline" className="shrink-0" asChild>
+                  <Link href={safeHref(action.href)}>{action.label}</Link>
+                </Button>
+              ) : (
+                <Button size="sm" variant="outline" className="shrink-0" onClick={action.onClick}>
+                  {action.label}
+                </Button>
+              )
+            ) : null}
             {dismissible ? (
               <button
                 type="button"

@@ -1,17 +1,33 @@
 import { describe, expect, it } from "vitest"
 
-import { createInvitationToken, hashInvitationToken } from "@/lib/invitations/tokens"
+import { deriveConfirmationCode, verifyConfirmationCode } from "@/lib/vouch/confirmation-codes"
 
-describe("invitation token helpers", () => {
-  it("creates URL-safe invitation tokens", async () => {
-    const token = await createInvitationToken(16)
+describe("confirmation code helpers", () => {
+  it("creates six digit confirmation codes", () => {
+    process.env.CONFIRMATION_CODE_SECRET = "test-secret"
 
-    expect(token).toMatch(/^[A-Za-z0-9_-]+$/)
+    const code = deriveConfirmationCode({
+      vouchId: "vouch_1",
+      publicId: "VCH-1",
+      participantRole: "merchant",
+      participantUserId: "user_1",
+      at: new Date("2026-01-01T10:00:00.000Z"),
+    })
+
+    expect(code).toMatch(/^\d{6}$/)
   })
 
-  it("hashes the same token consistently for actions and fetchers", async () => {
-    await expect(hashInvitationToken(" invite-token ")).resolves.toBe(
-      await hashInvitationToken("invite-token")
-    )
+  it("verifies derived confirmation codes", () => {
+    process.env.CONFIRMATION_CODE_SECRET = "test-secret"
+    const input = {
+      vouchId: "vouch_1",
+      publicId: "VCH-1",
+      participantRole: "merchant" as const,
+      participantUserId: "user_1",
+      at: new Date("2026-01-01T10:00:00.000Z"),
+    }
+    const code = deriveConfirmationCode(input)
+
+    expect(verifyConfirmationCode({ ...input, submittedCode: code })).toBe(true)
   })
 })

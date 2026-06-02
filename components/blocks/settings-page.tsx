@@ -225,11 +225,11 @@ export function NotificationSettings({
               </div>
               <div className="flex items-center gap-6">
                 <Switch
-                  defaultChecked={setting.email}
+                  defaultChecked={setting.email ?? false}
                   aria-label={`${setting.title} email notifications`}
                 />
                 <Switch
-                  defaultChecked={setting.push}
+                  defaultChecked={setting.push ?? false}
                   aria-label={`${setting.title} push notifications`}
                 />
               </div>

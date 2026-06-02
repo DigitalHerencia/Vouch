@@ -40,7 +40,9 @@ export function ProcessPanel({ title, steps, footer, id }: ProcessPanelProps) {
                     </div>
 
                     <div className="flex items-center justify-center border-l-3 border-neutral-400">
-                      <Icon className="size-14 text-white md:size-16" strokeWidth={1.8} />
+                      {Icon ? (
+                        <Icon className="size-14 text-white md:size-16" strokeWidth={1.8} />
+                      ) : null}
                     </div>
                   </div>
                 </section>

@@ -36,7 +36,7 @@ export function MobileBottomNav({
   "aria-label": ariaLabel = "Mobile navigation",
 }: MobileBottomNavProps) {
   const pathname = usePathname()
-  const [pendingAction, setPendingAction] = useState<ActionItem | null>(null)
+  const [pendingAction, setPendingAction] = useState<MobileBottomNavItem | null>(null)
 
   return (
     <>
@@ -48,7 +48,7 @@ export function MobileBottomNav({
       >
         {items.map((item) => {
           const Icon = item.icon
-          const isActive = item.kind === "link" && isActivePath(pathname, item.href)
+          const isActive = item.kind === "link" && !!item.href && isActivePath(pathname, item.href)
 
           const itemClassName = isActive
             ? "flex h-full min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] leading-none font-semibold text-white uppercase"
@@ -63,15 +63,15 @@ export function MobileBottomNav({
               <span className={iconClassName}>
                 {item.kind === "account" ? (
                   <UserMenu size="compact" />
-                ) : (
+                ) : Icon ? (
                   <Icon className="size-4" />
-                )}
+                ) : null}
               </span>
               <span className="max-w-full truncate">{item.label}</span>
             </>
           )
 
-          if (item.kind === "link") {
+          if (item.kind === "link" && item.href) {
             return (
               <Link key={item.href} href={item.href} className={itemClassName}>
                 {content}
@@ -85,7 +85,8 @@ export function MobileBottomNav({
                 key={item.label}
                 type="button"
                 className={itemClassName}
-                onClick={() => setPendingAction(item)}
+                onClick={() => (item.action ? setPendingAction(item) : undefined)}
+                disabled={!item.action}
               >
                 {content}
               </button>
@@ -108,17 +109,17 @@ export function MobileBottomNav({
       >
         <DrawerContent>
           <DrawerHeader className="border-b border-neutral-400 text-left">
-            <DrawerTitle>{pendingAction?.warning.title}</DrawerTitle>
+            <DrawerTitle>{pendingAction?.warning?.title}</DrawerTitle>
             <DrawerDescription className="font-semibold">
-              {pendingAction?.warning.consequence}
+              {pendingAction?.warning?.consequence}
             </DrawerDescription>
           </DrawerHeader>
           <div className="grid gap-4 p-4">
             <div className="border border-neutral-400 bg-neutral-900 p-3 text-sm font-semibold text-neutral-300">
-              {pendingAction?.warning.context}
+              {pendingAction?.warning?.context}
             </div>
             <p className="text-xs leading-5 font-semibold text-neutral-400">
-              {pendingAction?.warning.finePrint}
+              {pendingAction?.warning?.finePrint}
             </p>
           </div>
           {pendingAction ? (

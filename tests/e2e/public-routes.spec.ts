@@ -4,19 +4,21 @@ test.describe("public marketing routes", () => {
   test("landing page loads without auth", async ({ page }) => {
     await page.goto("/")
 
-    await expect(page.getByText(/deterministic commitment layer/i)).toBeVisible()
+    await expect(page.getByRole("heading", { name: /create share meet confirm/i })).toBeVisible()
   })
 
   test("pricing loads without auth", async ({ page }) => {
     await page.goto("/pricing")
 
-    await expect(page.getByText(/merchant pays the Vouch fee at commitment/i)).toBeVisible()
+    await expect(
+      page.getByRole("heading", { name: /transparent pricing for protected appointments/i })
+    ).toBeVisible()
   })
 
   test("faq loads without auth", async ({ page }) => {
     await page.goto("/faq")
 
-    await expect(page.getByRole("heading", { name: /precise answers/i })).toBeVisible()
+    await expect(page.getByRole("heading", { name: /frequently asked questions/i })).toBeVisible()
   })
 
   test("legal pages load without auth", async ({ page }) => {

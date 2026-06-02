@@ -33,7 +33,7 @@ const vouchRecord = {
 }
 
 describe("vouch transaction helpers", () => {
-  it("accepts only a sent Vouch without an existing customer", async () => {
+  it("binds only an unclaimed active Vouch to a non-merchant customer", async () => {
     const tx = {
       vouch: {
         updateMany: vi.fn().mockResolvedValue({ count: 1 }),
@@ -49,9 +49,13 @@ describe("vouch transaction helpers", () => {
       expect.objectContaining({
         where: {
           id: "vouch_1",
-          status: { in: ["committed", "sent"] },
+          status: { in: ["draft", "active"] },
           customerId: null,
           merchantId: { not: "customer_1" },
+        },
+        data: {
+          customerId: "customer_1",
+          status: "active",
         },
       })
     )

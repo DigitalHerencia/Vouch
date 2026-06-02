@@ -24,7 +24,7 @@ describe("createStripeCheckoutAuthorization", () => {
     })
   })
 
-  it("creates a manual-capture destination Checkout Session with pricing metadata", async () => {
+  it("creates a manual-capture connected-account Checkout Session with pricing metadata", async () => {
     const { createStripeCheckoutAuthorization } =
       await import("@/lib/integrations/stripe/checkout-sessions")
 
@@ -66,9 +66,6 @@ describe("createStripeCheckoutAuthorization", () => {
         mode: "payment",
         payment_intent_data: {
           capture_method: "manual",
-          transfer_data: {
-            destination: "acct_merchant_destination",
-          },
           metadata: {
             vouch_id: "vouch_123",
             payment_role: "customer_commitment",
@@ -81,7 +78,7 @@ describe("createStripeCheckoutAuthorization", () => {
           protected_amount_cents: "10000",
         },
       },
-      { idempotencyKey: "idem_checkout" }
+      { idempotencyKey: "idem_checkout", stripeAccount: "acct_merchant_destination" }
     )
   })
 })

@@ -42,6 +42,16 @@ import {
   TimelineTitle,
 } from "@/components/ui/timeline"
 
+export type VouchStatusTone = "active" | "pending" | "complete" | "failed" | "expired" | "offline"
+
+export type VouchCountdownProps = {
+  label: string
+  expiresAtLabel: string
+  remainingLabel: string
+  percentRemaining?: number
+  tone?: VouchStatusTone
+}
+
 const statusToneConfig: Record<
   VouchStatusTone,
   {

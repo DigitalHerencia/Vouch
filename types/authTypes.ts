@@ -70,6 +70,7 @@ export type AcceptVouchAuthzInput = VouchReadinessInput & {
   existingCustomerId?: string | null
   status: string
   inviteValid: boolean
+  eligible?: boolean
 }
 
 export type ConfirmPresenceAuthzInput = {
