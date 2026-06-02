@@ -1,14 +1,73 @@
 "use client"
 
 import * as React from "react"
+import { useForm } from "react-hook-form"
 
 import { VouchCreationWizard } from "@/components/blocks/status"
-import type {
-  VouchCreationActionResult,
-  VouchCreationDraft,
-  VouchCreationWizardContent,
-} from "@/components/blocks/status"
 import { vouchPageCopy } from "@/content/vouches"
+import type { ActionResult } from "@/types/action-resultTypes"
+
+export type VouchCreationDraft = {
+  amountDollars: string
+  appointmentStartsAt: string
+  confirmationOpensAt: string
+  confirmationExpiresAt: string
+  disclaimerAccepted: boolean
+}
+
+type VouchCreationPreviewData = {
+  amountCents: number
+  currency: "usd"
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
+  applicationFeeAmountCents: number
+  customerTotalCents: number
+  totalCents: number
+  vouchId?: string
+  detailPath?: string
+  checkoutUrl?: string
+}
+
+type CreatedVouchData = {
+  vouchId: string
+  detailPath: string
+  checkoutUrl?: string
+}
+
+export type VouchCreationActionResult = ActionResult<VouchCreationPreviewData | CreatedVouchData>
+
+type VouchCreationWizardContent = {
+  eyebrow: string
+  title: string
+  helper: string
+  progressHint: string
+  amountDescription: string
+  cartTitle: string
+  cartDescription: string
+  immutableAcknowledgement: string
+  steps: Array<{
+    title: string
+    completeLabel: string
+    pendingLabel: string
+  }>
+  protocolTiles: Array<{
+    title: string
+    body: string
+  }>
+  cartRail: Array<{
+    label: string
+    value: string
+  }>
+}
+
+type VouchCreationFeatureClientProps = {
+  initialDraft?: Partial<VouchCreationDraft>
+  onSaveAmount: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
+  onSaveWindow: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
+  onCreateVouch: (draft: VouchCreationDraft) => Promise<VouchCreationActionResult>
+}
 
 const defaultDraft: VouchCreationDraft = {
   amountDollars: "50.00",
@@ -68,20 +127,30 @@ export function VouchCreationFeatureClient({
   onSaveWindow,
   onCreateVouch,
 }: VouchCreationFeatureClientProps) {
+  const form = useForm<VouchCreationDraft>({
+    defaultValues: { ...defaultDraft, ...initialDraft },
+  })
   const [currentStep, setCurrentStep] = React.useState(0)
-  const [draft, setDraft] = React.useState<VouchCreationDraft>({ ...defaultDraft, ...initialDraft })
   const [savedSteps, setSavedSteps] = React.useState<Set<number>>(() => new Set())
   const [result, setResult] = React.useState<VouchCreationActionResult | null>(null)
   const [cartOpen, setCartOpen] = React.useState(false)
   const [isPending, startTransition] = React.useTransition()
   const [optimisticStep, setOptimisticStep] = React.useOptimistic(currentStep)
+  const draft = form.watch()
 
   const fieldErrors = result?.ok === false ? result.fieldErrors : undefined
   const formError = result?.ok === false ? result.formError : null
-  const preview = result?.ok ? result.data : undefined
+  const preview = result?.ok && "amountCents" in result.data ? result.data : undefined
 
   function updateDraft(patch: Partial<VouchCreationDraft>) {
-    setDraft((current) => ({ ...current, ...patch }))
+    for (const [key, value] of Object.entries(patch) as Array<
+      [keyof VouchCreationDraft, VouchCreationDraft[keyof VouchCreationDraft]]
+    >) {
+      form.setValue(key, value, {
+        shouldDirty: true,
+        shouldTouch: true,
+      })
+    }
     setResult(null)
   }
 

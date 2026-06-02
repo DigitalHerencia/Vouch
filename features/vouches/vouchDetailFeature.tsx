@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
 
-import { StatusBlocks, type VouchStatusTimelineItem } from "@/components/blocks/status"
+import { StatusBlocks } from "@/components/blocks/status"
 import { vouchPageCopy } from "@/content/vouches"
 import { ConfirmPresenceInlineForm } from "@/features/vouches/vouchDetailFeature.client"
 import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
@@ -11,6 +11,44 @@ import {
   getVouchDetailForParticipant,
 } from "@/lib/fetchers/vouchFetchers"
 import type { VouchStatus } from "@/types/vouchTypes"
+
+type VouchDetailPageProps = {
+  vouchId: string
+}
+
+type ConfirmationState = {
+  merchantConfirmed: boolean
+  customerConfirmed: boolean
+  canConfirm: boolean
+  action: ReactNode
+}
+
+type VouchDetailViewProps = {
+  title: string
+  amountLabel: string
+  statusLabel: string
+  currentUserRoleLabel: string
+  merchantLabel: string
+  customerLabel: string
+  appointmentLabel: string
+  windowLabel: string
+  deadlineLabel: string
+  paymentStatusLabel: string
+  settlementStatusLabel: string
+  merchantReceivesLabel: string
+  customerTotalLabel: string
+  confirmation: ConfirmationState
+  timeline: Array<{ label: string; timestampLabel: string }>
+}
+
+type VouchStatusTimelineItem = {
+  id: string
+  title: string
+  description: string
+  state: "completed" | "current" | "upcoming"
+  timeLabel?: string
+  meta?: string
+}
 
 const money = (cents: unknown, currency: unknown) =>
   new Intl.NumberFormat("en-US", {
@@ -44,8 +82,8 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
 
   return (
     <VouchDetailView
-      title={vouch.label ?? vouch.publicId}
-      amountLabel={money(vouch.protectedAmountCents, vouch.currency)}
+      title={vouch.publicId}
+      amountLabel={money(vouch.amountCents, vouch.currency)}
       statusLabel={vouch.status}
       currentUserRoleLabel={
         confirmState.variant === "confirm_as_merchant"
@@ -56,13 +94,16 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
       }
       merchantLabel={participantName(vouch.merchant)}
       customerLabel={participantName(vouch.customer)}
-      appointmentLabel={dateTime(vouch.appointmentStartsAt)}
+      appointmentLabel={dateTime(vouch.appointmentAt)}
       windowLabel={dateTime(vouch.confirmationOpensAt)}
       deadlineLabel={dateTime(vouch.confirmationExpiresAt)}
       paymentStatusLabel={vouch.paymentRecord?.status ?? "not_started"}
-      settlementStatusLabel={vouch.paymentRecord?.settlementStatus ?? "pending"}
-      merchantReceivesLabel={money(vouch.merchantReceivesCents, vouch.currency)}
-      customerTotalLabel={money(vouch.customerTotalCents, vouch.currency)}
+      settlementStatusLabel={vouch.paymentRecord?.status ?? "pending"}
+      merchantReceivesLabel={money(vouch.amountCents, vouch.currency)}
+      customerTotalLabel={money(
+        vouch.paymentRecord?.amountCents ?? vouch.amountCents,
+        vouch.currency
+      )}
       confirmation={{
         merchantConfirmed:
           vouch.aggregateConfirmationStatus === "merchant_confirmed" ||

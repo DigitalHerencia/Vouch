@@ -1,6 +1,8 @@
-import { type VouchCreationActionResult, type VouchCreationDraft } from "@/components/blocks/status"
-import { Button } from "@/components/ui/button"
-import { VouchCreationFeatureClient } from "@/features/vouches/vouchCreationFeatureClient"
+import {
+  VouchCreationFeatureClient,
+  type VouchCreationActionResult,
+  type VouchCreationDraft,
+} from "@/features/vouches/vouchCreationFeatureClient"
 import {
   calculatePlatformFee,
   createVouch,
@@ -71,9 +73,12 @@ export async function VouchForm() {
                 {blockedReason}
               </p>
               <div>
-                <Button asChild>
-                  <a href="/dashboard">Return to dashboard</a>
-                </Button>
+                <a
+                  href="/dashboard"
+                  className="inline-flex h-10 items-center justify-center border-2 border-neutral-400 bg-blue-600 px-4 text-sm font-black text-white uppercase shadow-[4px_4px_0px_black] transition hover:-translate-x-0.5 hover:-translate-y-0.5"
+                >
+                  Return to dashboard
+                </a>
               </div>
             </div>
           </Panel>
