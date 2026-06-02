@@ -24,10 +24,6 @@ function getErrorMessage(error: unknown, fallback: string): string {
     : fallback
 }
 
-export default function LoginForm({ redirectUrl }: { redirectUrl?: string | undefined }) {
-  return <SignInForm redirectUrl={redirectUrl} />
-}
-
 export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
   const { fetchStatus, signIn } = useSignIn()
   const router = useRouter()
@@ -135,8 +131,6 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
   }
 
   const handleSubmit = form.handleSubmit(async (values) => {
-    if (!fetchStatus) return
-
     form.clearErrors()
     setNotice(null)
 
@@ -222,9 +216,7 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
         return
       }
 
-      form.setError("root", {
-        message: `Sign-in requires additional verification in Clerk (${signIn.status}).`,
-      })
+      form.setError("root", { message: "Sign-in requires an unsupported account step." })
     } catch (error) {
       form.setError("root", {
         message: getErrorMessage(error, "Invalid email or password."),
@@ -274,6 +266,7 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
                 setAwaitingSecondFactor(false)
                 setSecondFactorMethod(null)
                 setNotice(null)
+                form.clearErrors()
                 form.reset({
                   email: form.getValues("email"),
                   password: "",

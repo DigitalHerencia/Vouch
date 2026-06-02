@@ -172,15 +172,3 @@ export async function getAggregateConfirmationStatusTx(
   if (customerConfirmed) return "customer_confirmed"
   return "none_confirmed"
 }
-
-export async function markConfirmationWindowOpenedTx(tx: Tx, input: VouchIdTxInput): Promise<void> {
-  await tx.vouch.updateMany({
-    where: {
-      id: assertNonEmptyString(input.vouchId, "vouchId"),
-      status: "authorized",
-      confirmationOpensAt: { lte: new Date() },
-      confirmationExpiresAt: { gt: new Date() },
-    },
-    data: { status: "can_capture" },
-  })
-}

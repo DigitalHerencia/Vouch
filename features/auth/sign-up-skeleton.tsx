@@ -1,22 +1,34 @@
-import { Skeleton } from "@/components/ui/skeleton"
+function AuthSkeletonBlock({ className }: { className: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`animate-pulse border-3 border-neutral-400 bg-black/55 ${className}`}
+    />
+  )
+}
 
 export function SignUpSkeleton() {
   return (
-    <main className="grid min-h-dvh lg:grid-cols-2">
-      <aside className="hidden min-h-dvh px-6 py-10 lg:block lg:px-12">
-        <div className="mx-auto grid h-full max-w-3xl content-center gap-6">
-          <Skeleton className="h-28 rounded-none border border-neutral-400 bg-black" />
-          <Skeleton className="h-52 rounded-none border border-neutral-400 bg-black" />
+    <div className="relative z-10 flex min-h-dvh items-center justify-center px-12 py-24">
+      <div className="mx-auto w-full max-w-md">
+        <div className="border-3 border-neutral-400 bg-transparent p-6">
+          <div className="mb-6 grid justify-items-center gap-3">
+            <AuthSkeletonBlock className="h-14 w-64" />
+            <AuthSkeletonBlock className="h-4 w-72 max-w-full" />
+          </div>
+          <div className="grid gap-4">
+            <div className="grid gap-3 sm:grid-cols-2">
+              <AuthSkeletonBlock className="h-12 w-full" />
+              <AuthSkeletonBlock className="h-12 w-full" />
+            </div>
+            <AuthSkeletonBlock className="h-12 w-full" />
+            <AuthSkeletonBlock className="h-12 w-full" />
+            <AuthSkeletonBlock className="h-16 w-full" />
+            <AuthSkeletonBlock className="h-14 w-full" />
+            <AuthSkeletonBlock className="mx-auto h-4 w-44" />
+          </div>
         </div>
-      </aside>
-      <section className="flex min-h-dvh items-center px-6 py-10 sm:px-10 lg:px-12">
-        <div className="mx-auto grid w-full max-w-xl gap-4">
-          <Skeleton className="h-12 rounded-none border border-neutral-400 bg-black" />
-          <Skeleton className="h-12 rounded-none border border-neutral-400 bg-black" />
-          <Skeleton className="h-12 rounded-none border border-neutral-400 bg-black" />
-          <Skeleton className="h-14 rounded-none border border-neutral-400 bg-black" />
-        </div>
-      </section>
-    </main>
+      </div>
+    </div>
   )
 }

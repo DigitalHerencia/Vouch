@@ -36,27 +36,6 @@ export type DashboardPageStateDTO = {
   summary: DashboardSummaryDTO | null
 }
 
-export type DashboardReadinessCalloutDTO = {
-  visible: boolean
-  title: string
-  body: string
-  actions: Array<{
-    id: string
-    label: string
-    kind: "connect" | "payment" | "none"
-  }>
-}
-
-export type DashboardEmptyStateDTO = {
-  userId: string
-  title: string
-  message: string
-  cta: {
-    label: string
-    href: string
-  }
-}
-
 export function mapDashboardVouchCards(records: DashboardVouchRecord[]): VouchCardDTO[] {
   return records.map(mapVouchCardDTO)
 }
@@ -103,40 +82,4 @@ export function getDashboardVariant(
 ): DashboardPageStateDTO["variant"] {
   if (!summary) return "empty"
   return Object.values(summary.counts).some((count) => count > 0) ? "mixed_vouch_states" : "empty"
-}
-
-export function mapDashboardReadinessCalloutDTO(input: {
-  canCreateVouch: boolean
-  needsPayment: boolean
-  needsPayout: boolean
-  needsTerms: boolean
-  needsVerification: boolean
-}): DashboardReadinessCalloutDTO {
-  if (input.canCreateVouch) {
-    return {
-      visible: false,
-      title: "Ready",
-      body: "Account readiness is complete.",
-      actions: [],
-    }
-  }
-
-  const actions: DashboardReadinessCalloutDTO["actions"] = []
-
-  if (input.needsPayment) {
-    actions.push({ id: "payment", label: "Manage payment", kind: "payment" })
-  }
-
-  if (input.needsPayout) {
-    actions.push({ id: "connect", label: "Connect Stripe", kind: "connect" })
-  }
-
-  return {
-    visible: true,
-    title: "Required account step",
-    body: "Complete the required provider-backed readiness steps before creating or accepting a Vouch.",
-    actions: actions.length
-      ? actions
-      : [{ id: "none", label: "Review readiness", kind: "none" }],
-  }
 }

@@ -7,7 +7,6 @@ import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
 import {
-  AuthPageShell,
   OTPVerificationForm,
   SignUpForm as SignUpBlock,
   SignUpFormFields,
@@ -25,10 +24,6 @@ function getErrorMessage(error: unknown, fallback: string): string {
   return typeof firstMessage === "string" && firstMessage.trim().length > 0
     ? firstMessage
     : fallback
-}
-
-export function SignUpFeature({ redirectUrl }: { redirectUrl?: string | undefined }) {
-  return <SignUpForm redirectUrl={redirectUrl} />
 }
 
 export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
@@ -218,7 +213,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
       }
 
       form.setError("root", {
-        message: `Sign-up requires additional verification in Clerk (${signUp.status}).`,
+        message: "Sign-up requires an unsupported account step.",
       })
     } catch (error) {
       form.setError("root", {
@@ -228,11 +223,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
   })
 
   return (
-    <AuthPageShell
-      eyebrow="Deterministic onboarding"
-      title="Create access with boundaries built in"
-      body="Create an account before funding, accepting, or confirming a Vouch. User agreement acceptance and provider readiness stay separate from payment release."
-    >
+    <div className="relative z-10 flex min-h-dvh items-center justify-center px-12 py-24">
       <form onSubmit={handleSubmit} noValidate {...props}>
         {awaitingVerification ? (
           <OTPVerificationForm
@@ -268,6 +259,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
                 await signUp.reset()
                 setAwaitingVerification(false)
                 setNotice(null)
+                form.clearErrors()
                 form.reset({
                   firstName: form.getValues("firstName"),
                   lastName: form.getValues("lastName"),
@@ -311,7 +303,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
                 <>
                   I agree to the{" "}
                   <Link
-                    href="/user-agreement"
+                    href="/legal/user-agreement"
                     target="_blank"
                     rel="noreferrer"
                     className="font-bold text-blue-600 underline-offset-4 hover:text-white hover:underline"
@@ -335,6 +327,6 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
           </SignUpBlock>
         )}
       </form>
-    </AuthPageShell>
+    </div>
   )
 }

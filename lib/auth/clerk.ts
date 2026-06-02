@@ -36,11 +36,6 @@ export async function getCurrentClerkAuth() {
   return auth()
 }
 
-export async function getCurrentClerkUserId() {
-  const session = await getCurrentClerkAuth()
-  return session.userId
-}
-
 export async function getCurrentClerkUser() {
   return currentUser()
 }

@@ -1,12 +1,17 @@
-import type { VouchStatusTone } from "@/components/blocks/status"
+import type { ComponentProps } from "react"
+
 import { HeroCentered } from "@/components/blocks/hero-section"
-import { InvoiceSummary, type InvoiceSummaryProps } from "@/components/blocks/invoice"
-import { StatsCards, type StatItem } from "@/components/blocks/stats-section"
+import { InvoiceSummary } from "@/components/blocks/invoice"
+import { StatsCards } from "@/components/blocks/stats-section"
 import { dashboardContent } from "@/content/dashboard"
 import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
 
-function formatDate(value: string | null) {
+type InvoiceSummaryData = ComponentProps<typeof InvoiceSummary>
+type StatItem = ComponentProps<typeof StatsCards>["stats"][number]
+type VouchStatusTone = NonNullable<InvoiceSummaryData["tone"]>
+
+function formatDate(value: string | null | undefined) {
   if (!value) return dashboardContent.fallbackDeadline
 
   return new Intl.DateTimeFormat("en-US", {
@@ -16,7 +21,7 @@ function formatDate(value: string | null) {
   }).format(new Date(value))
 }
 
-function formatDateTime(value: string | null) {
+function formatDateTime(value: string | null | undefined) {
   if (!value) return dashboardContent.fallbackDeadline
 
   return new Intl.DateTimeFormat("en-US", {
@@ -27,7 +32,7 @@ function formatDateTime(value: string | null) {
   }).format(new Date(value))
 }
 
-function formatClientName(vouch: VouchCardDTO) {
+function formatParticipantName(vouch: VouchCardDTO) {
   return (
     vouch.customer?.displayName ??
     vouch.customer?.email ??
@@ -44,63 +49,78 @@ function formatCurrency(cents: number, currency: string) {
   }).format(cents / 100)
 }
 
+function getStatusLabel(status: VouchCardDTO["status"]) {
+  return status.replace(/_/g, " ")
+}
+
 function mapStatusTone(status: VouchCardDTO["status"]): VouchStatusTone {
-  if (status === "completed") return "complete"
+  if (status === "captured") return "complete"
   if (status === "expired") return "expired"
-  if (status === "confirmable" || status === "authorized") return "active"
+  if (status === "active" || status === "authorized" || status === "can_capture") {
+    return "active"
+  }
 
   return "pending"
 }
 
-function getCountdown(vouch: VouchCardDTO): InvoiceSummaryProps["countdown"] {
-  if (!vouch.appointmentStartsAt) return undefined
+function getRemainingLabel(value: string | null | undefined) {
+  if (!value) return "No deadline"
+
+  const remaining = new Date(value).getTime() - Date.now()
+
+  if (remaining <= 0) return "Due now"
+
+  const hours = Math.ceil(remaining / 3_600_000)
+
+  if (hours < 48) {
+    return new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(hours, "hour")
+  }
+
+  return new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(
+    Math.ceil(hours / 24),
+    "day"
+  )
+}
+
+function getPercentRemaining(vouch: VouchCardDTO) {
+  const expiresAt = vouch.confirmationExpiresAt ?? vouch.appointmentAt
+
+  if (!expiresAt) return 0
 
   const now = Date.now()
   const createdAt = vouch.createdAt ? new Date(vouch.createdAt).getTime() : now
-  const appointmentAt = new Date(vouch.appointmentStartsAt).getTime()
-  const total = Math.max(appointmentAt - createdAt, 1)
-  const remaining = appointmentAt - now
-  const percentRemaining = Math.max(0, Math.min(100, (remaining / total) * 100))
-  const remainingLabel =
-    remaining <= 0
-      ? "Due now"
-      : new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(
-          Math.ceil(remaining / 3_600_000),
-          "hour"
-        )
+  const expiresAtMs = new Date(expiresAt).getTime()
+  const total = Math.max(expiresAtMs - createdAt, 1)
+  const remaining = expiresAtMs - now
 
-  return {
-    label: "Appointment countdown",
-    expiresAtLabel: formatDateTime(vouch.appointmentStartsAt),
-    remainingLabel,
-    percentRemaining,
-    tone: mapStatusTone(vouch.status),
-  }
+  return Math.max(0, Math.min(100, (remaining / total) * 100))
 }
 
-function mapVouchToInvoice(vouch: VouchCardDTO): InvoiceSummaryProps {
+function mapVouchToInvoice(vouch: VouchCardDTO): InvoiceSummaryData {
+  const tone = mapStatusTone(vouch.status)
+  const deadline = vouch.confirmationExpiresAt ?? vouch.appointmentAt
+
   return {
     invoiceNumber: vouch.publicId,
-    clientName: formatClientName(vouch),
+    clientName: formatParticipantName(vouch),
     issueDate: formatDate(vouch.createdAt),
-    dueDate: formatDate(vouch.appointmentStartsAt ?? vouch.confirmationExpiresAt),
-    amount: vouch.customerTotalCents / 100,
-    amountLabel: formatCurrency(vouch.customerTotalCents, vouch.currency),
-    status: vouch.status,
-    statusTone: mapStatusTone(vouch.status),
+    dueDate: formatDate(deadline),
+    amount: vouch.amountCents / 100,
+    amountLabel: formatCurrency(vouch.amountCents, vouch.currency),
+    status: getStatusLabel(vouch.status),
+    statusTone: tone,
     href: `/vouches/${vouch.id}`,
     vouchId: vouch.id,
-    appointmentLabel: formatDateTime(vouch.appointmentStartsAt),
-    confirmationWindowLabel: `${formatDateTime(vouch.confirmationOpensAt)} - ${formatDateTime(
+    appointmentLabel: formatDateTime(vouch.appointmentAt),
+    confirmationWindowLabel: `${formatDateTime(vouch.confirmationOpensAt)} to ${formatDateTime(
       vouch.confirmationExpiresAt
     )}`,
-    protectedAmountLabel: formatCurrency(vouch.protectedAmountCents, vouch.currency),
-    countdown: getCountdown(vouch),
-    label: formatDateTime(vouch.appointmentStartsAt),
-    expiresAtLabel: formatDate(vouch.confirmationExpiresAt),
-    remainingLabel: formatDateTime(vouch.confirmationOpensAt),
-    percentRemaining: 0,
-    tone: "active",
+    protectedAmountLabel: formatCurrency(vouch.amountCents, vouch.currency),
+    label: "Confirmation deadline",
+    expiresAtLabel: formatDateTime(deadline),
+    remainingLabel: getRemainingLabel(deadline),
+    percentRemaining: getPercentRemaining(vouch),
+    tone,
   }
 }
 
@@ -114,7 +134,7 @@ export async function DashboardFeature() {
   const completed = sections?.completed ?? []
   const expired = sections?.expired ?? []
 
-  const invoices: InvoiceSummaryProps[] = [
+  const invoices: InvoiceSummaryData[] = [
     ...drafts.map(mapVouchToInvoice),
     ...actionRequired.map(mapVouchToInvoice),
     ...active.map(mapVouchToInvoice),
@@ -138,7 +158,7 @@ export async function DashboardFeature() {
       value: String(activeCount),
     },
     {
-      label: "Pending",
+      label: "Action",
       value: String(actionRequiredCount),
     },
     {

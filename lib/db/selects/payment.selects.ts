@@ -2,38 +2,6 @@ import "server-only"
 
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
-export const paymentCustomerReadinessSelect = {
-  id: true,
-  userId: true,
-  stripeCustomerId: true,
-  defaultPaymentMethodId: true,
-  paymentMethodReady: true,
-  lastSetupIntentId: true,
-  lastCustomerPortalSession: true,
-  lastStripeEventId: true,
-  syncedAt: true,
-  createdAt: true,
-  updatedAt: true,
-} as const satisfies Prisma.PaymentCustomerSelect
-
-export const connectedAccountReadinessSelect = {
-  id: true,
-  userId: true,
-  stripeAccountId: true,
-  chargesEnabled: true,
-  payoutsEnabled: true,
-  detailsSubmitted: true,
-  requirementsCurrentlyDue: true,
-  requirementsEventuallyDue: true,
-  disabledReason: true,
-  lastAccountLinkId: true,
-  lastLoginLinkId: true,
-  lastStripeEventId: true,
-  syncedAt: true,
-  createdAt: true,
-  updatedAt: true,
-} as const satisfies Prisma.ConnectedAccountSelect
-
 export const paymentRecordParticipantSummarySelect = {
   id: true,
   vouchId: true,

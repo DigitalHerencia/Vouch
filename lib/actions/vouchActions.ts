@@ -2,11 +2,6 @@
 
 import { revalidatePath } from "next/cache"
 
-import { requireActiveUser } from "@/lib/fetchers/authFetchers"
-import {
-  assertCreateVouchReadinessReady,
-  assertAcceptVouchReadinessReady,
-} from "@/lib/fetchers/readinessFetchers"
 import { getParticipantRoleForVouch } from "@/lib/authz/participants"
 import { VOUCH_LIMITS } from "@/lib/constants/limits"
 import { prisma } from "@/lib/db/prisma"
@@ -14,29 +9,12 @@ import {
   createPresenceConfirmationTx,
   getAggregateConfirmationStatusTx,
 } from "@/lib/db/transactions/confirmationTransactions"
-import {
-  createInvitationTx,
-  markInvitationAcceptedTx,
-  markInvitationDeclinedTx,
-  markInvitationOpenedTx,
-} from "@/lib/db/transactions/invitationTransactions"
-import {
-  bindCustomerToVouchTx,
-  createVouchTx,
-  expireVouchWithoutCaptureTx,
-  updateVouchArchiveStatusTx,
-  updateVouchRecoveryStatusTx,
-} from "@/lib/db/transactions/vouchTransactions"
-import { getRuntimeEnv } from "@/lib/env"
+import { createVouchTx, updateVouchArchiveStatusTx } from "@/lib/db/transactions/vouchTransactions"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
+import { assertCreateVouchReadinessReady } from "@/lib/fetchers/readinessFetchers"
 import { createStripeMerchantCreationFeeCheckout } from "@/lib/integrations/stripe/checkout-sessions"
-import {
-  authorizeVouchPayment,
-  captureConfirmedVouchPayment,
-  startStripeConnectOnboarding,
-  startStripePaymentManagement,
-} from "@/lib/actions/paymentActions"
-import { calculateVouchPricing } from "@/lib/vouch/fees"
 import { verifyConfirmationCode } from "@/lib/vouch/confirmation-codes"
+import { calculateVouchPricing } from "@/lib/vouch/fees"
 import {
   archiveVouchSchema,
   confirmCreateVouchInputSchema,
@@ -47,12 +25,33 @@ import {
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-resultTypes"
 import { type VouchPricing } from "@/types/vouchTypes"
 
-const INVITATION_TTL_DAYS = 14
+type FieldErrorsSource = {
+  flatten(): { fieldErrors: Record<string, string[]> }
+}
 
-function invitationExpiresAt(): Date {
-  const expiresAt = new Date()
-  expiresAt.setDate(expiresAt.getDate() + INVITATION_TTL_DAYS)
-  return expiresAt
+type FeePreview = {
+  amountCents: number
+  currency: "usd"
+  protectedAmountCents: number
+  merchantReceivesCents: number
+  vouchServiceFeeCents: number
+  processingFeeOffsetCents: number
+  applicationFeeAmountCents: number
+  customerTotalCents: number
+  totalCents: number
+}
+
+type CreatedVouchResult = {
+  vouchId: string
+  detailPath: string
+  checkoutUrl?: string
+}
+
+function getAppUrl(): string {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+  )
 }
 
 function getFieldErrors(error: FieldErrorsSource) {
@@ -87,29 +86,17 @@ async function mapReadinessFailure(
     return null
   } catch (error) {
     if (!(error instanceof Error)) throw error
-
-    if (
-      error.message.startsWith("READINESS_BLOCKED:") ||
-      error.message.startsWith("SETUP_BLOCKED:")
-    ) {
+    if (error.message.startsWith("READINESS_BLOCKED:")) {
       return actionFailure("READINESS_BLOCKED", "Required account readiness is incomplete.")
     }
-
     throw error
   }
 }
 
-async function revalidateVouchSurfaces(
-  vouchId: string,
-  userIds: Array<string | null | undefined> = []
-): Promise<void> {
+function revalidateVouchSurfaces(vouchId: string): void {
   revalidatePath("/dashboard")
   revalidatePath("/vouches/new")
   revalidatePath(`/vouches/${vouchId}`)
-
-  for (const userId of userIds) {
-    if (userId) revalidatePath(`/dashboard?user=${userId}`)
-  }
 }
 
 export async function calculatePlatformFee(input: unknown): Promise<ActionResult<FeePreview>> {
@@ -152,7 +139,6 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
   }
 
   const amountCents = parsed.data.amountCents
-
   if (amountCents < VOUCH_LIMITS.minAmountCents || amountCents > VOUCH_LIMITS.maxAmountCents) {
     return actionFailure(
       "AMOUNT_OUT_OF_RANGE",
@@ -162,34 +148,20 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
 
   const pricing = calculatePricing(amountCents)
   const merchantFeeCents = pricing.vouchServiceFeeCents + pricing.processingFeeOffsetCents
-  const inviteToken = await createInvitationToken(VOUCH_LIMITS.inviteTokenBytes)
-  const tokenHash = await hashInvitationToken(inviteToken)
   const paymentCustomer = await prisma.paymentCustomer.findUnique({
     where: { userId: user.id },
-    select: { providerCustomerId: true },
+    select: { stripeCustomerId: true },
   })
 
-  const created = await prisma.$transaction(async (tx) => {
-    const vouch = await createVouchTx(tx, {
+  const vouch = await prisma.$transaction(async (tx) => {
+    const created = await createVouchTx(tx, {
       merchantId: user.id,
       currency: parsed.data.currency,
       protectedAmountCents: pricing.protectedAmountCents,
-      merchantReceivesCents: pricing.merchantReceivesCents,
-      vouchServiceFeeCents: pricing.vouchServiceFeeCents,
-      processingFeeOffsetCents: pricing.processingFeeOffsetCents,
-      applicationFeeAmountCents: pricing.applicationFeeAmountCents,
-      customerTotalCents: pricing.customerTotalCents,
       appointmentStartsAt: parsed.data.appointmentStartsAt,
       confirmationOpensAt: parsed.data.confirmationOpensAt,
       confirmationExpiresAt: parsed.data.confirmationExpiresAt,
       createAsDraft: true,
-    })
-
-    const invitation = await createInvitationTx(tx, {
-      vouchId: vouch.id,
-      recipientEmail: null,
-      tokenHash,
-      expiresAt: invitationExpiresAt(),
     })
 
     await tx.auditEvent.create({
@@ -198,7 +170,7 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
         actorType: "user",
         actorUserId: user.id,
         entityType: "Vouch",
-        entityId: vouch.id,
+        entityId: created.id,
         participantSafe: true,
         metadata: {
           protected_amount_cents: pricing.protectedAmountCents,
@@ -211,206 +183,34 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
       },
     })
 
-    return { vouch, invitation }
+    return created
   })
 
-  const appUrl = getRuntimeEnv().appUrl
+  const appUrl = getAppUrl()
   const checkout = await createStripeMerchantCreationFeeCheckout({
-    vouchId: created.vouch.id,
+    vouchId: vouch.id,
     merchantUserId: user.id,
     feeAmountCents: merchantFeeCents,
     protectedAmountCents: pricing.protectedAmountCents,
     currency: parsed.data.currency,
-    successUrl: `${appUrl}/vouches/${created.vouch.id}?merchant_fee=paid`,
+    successUrl: `${appUrl}/vouches/${vouch.id}?merchant_fee=paid`,
     cancelUrl: `${appUrl}/vouches/new?merchant_fee=cancelled`,
-    idempotencyKey: `vouch:${created.vouch.id}:merchant-fee-checkout`,
-    ...(paymentCustomer?.providerCustomerId
-      ? { providerCustomerId: paymentCustomer.providerCustomerId }
-      : {}),
+    idempotencyKey: `vouch:${vouch.id}:merchant-fee-checkout`,
+    ...(paymentCustomer?.stripeCustomerId ? { providerCustomerId: paymentCustomer.stripeCustomerId } : {}),
   })
 
-  await revalidateVouchSurfaces(created.vouch.id, [user.id])
+  revalidateVouchSurfaces(vouch.id)
 
   return actionSuccess({
-    vouchId: created.vouch.id,
-    invitationId: created.invitation.id,
-    detailPath: `/vouches/${created.vouch.id}`,
+    vouchId: vouch.id,
+    detailPath: `/vouches/${vouch.id}`,
     ...(checkout.url ? { checkoutUrl: checkout.url } : {}),
   })
-}
-
-export async function acceptVouch(input: unknown): Promise<ActionResult<AcceptedVouchResult>> {
-  const user = await requireActiveUser()
-  const readinessFailure = await mapReadinessFailure(assertAcceptVouchReadinessReady(user.id))
-  if (readinessFailure) return readinessFailure
-
-  const token = typeof input === "object" && input && "token" in input ? String(input.token) : ""
-  const disclaimerAccepted =
-    typeof input === "object" && input && "disclaimerAccepted" in input
-      ? input.disclaimerAccepted === true
-      : false
-
-  if (!token || !disclaimerAccepted) {
-    return actionFailure("VALIDATION_FAILED", "Accepting a Vouch requires valid terms acceptance.")
-  }
-
-  const invitation = await getInvitationByToken(token)
-
-  try {
-    assertInvitationUsable(invitation)
-  } catch (error) {
-    return (
-      mapInvitationError(error) ?? actionFailure("INVALID_INVITATION", "Invitation is not usable.")
-    )
-  }
-
-  if (invitation.vouch.merchantId === user.id) {
-    return actionFailure("SELF_ACCEPT_BLOCKED", "Merchant cannot accept their own Vouch.")
-  }
-
-  if (invitation.vouch.customerId) {
-    return actionFailure("VOUCH_ALREADY_ACCEPTED", "Vouch already has a customer.")
-  }
-
-  const accepted = await prisma.$transaction(async (tx) => {
-    const vouch = await bindCustomerToVouchTx(tx, {
-      vouchId: invitation.vouch.id,
-      customerId: user.id,
-    })
-
-    await markInvitationAcceptedTx(tx, { invitationId: invitation.id })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.accepted",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "Vouch",
-        entityId: vouch.id,
-        participantSafe: true,
-      },
-    })
-
-    return vouch
-  })
-
-  const payment = await authorizeVouchPayment({
-    vouchId: accepted.id,
-    idempotencyKey: `vouch:${accepted.id}:payment_authorization`,
-  })
-
-  if (!payment.ok) {
-    await prisma.$transaction(async (tx) => {
-      await updateVouchRecoveryStatusTx(tx, {
-        vouchId: accepted.id,
-        recoveryStatus: "recovery_required",
-      })
-
-      await tx.auditEvent.create({
-        data: {
-          eventName: "payment.authorization_failed",
-          actorType: "system",
-          entityType: "Vouch",
-          entityId: accepted.id,
-          participantSafe: true,
-          metadata: { code: payment.code },
-        },
-      })
-    })
-
-    await revalidateVouchSurfaces(accepted.id, [accepted.merchantId, user.id])
-    return actionFailure(
-      payment.code ?? "PAYMENT_AUTHORIZATION_FAILED",
-      payment.formError ?? "Payment authorization failed."
-    )
-  }
-
-  await revalidateVouchSurfaces(accepted.id, [accepted.merchantId, user.id])
-  return actionSuccess({
-    vouchId: accepted.id,
-    ...(payment.data.redirectTo ? { checkoutUrl: payment.data.redirectTo } : {}),
-  })
-}
-
-export async function declineVouch(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
-  const user = await requireActiveUser()
-  const token = typeof input === "object" && input && "token" in input ? String(input.token) : ""
-
-  if (!token) return actionFailure("VALIDATION_FAILED", "Invite token is required.")
-
-  const invitation = await getInvitationByToken(token)
-
-  try {
-    assertInvitationUsable(invitation)
-  } catch (error) {
-    return (
-      mapInvitationError(error) ?? actionFailure("INVALID_INVITATION", "Invitation is not usable.")
-    )
-  }
-
-  if (invitation.vouch.merchantId === user.id) {
-    return actionFailure("SELF_DECLINE_BLOCKED", "Merchant cannot decline their own Vouch invite.")
-  }
-
-  await prisma.$transaction(async (tx) => {
-    await markInvitationDeclinedTx(tx, { invitationId: invitation.id })
-    await expireVouchWithoutCaptureTx(tx, { vouchId: invitation.vouch.id })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.declined",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "Vouch",
-        entityId: invitation.vouch.id,
-        participantSafe: true,
-      },
-    })
-  })
-
-  await revalidateVouchSurfaces(invitation.vouch.id, [invitation.vouch.merchantId, user.id])
-  return actionSuccess({ vouchId: invitation.vouch.id })
-}
-
-export async function markInviteOpened(
-  input: unknown
-): Promise<ActionResult<{ invitationId: string }>> {
-  const token = typeof input === "object" && input && "token" in input ? String(input.token) : ""
-
-  if (!token) return actionFailure("VALIDATION_FAILED", "Invite token is required.")
-
-  const invitation = await getInvitationByToken(token)
-
-  try {
-    assertInvitationUsable(invitation)
-  } catch (error) {
-    return (
-      mapInvitationError(error) ?? actionFailure("INVALID_INVITATION", "Invitation is not usable.")
-    )
-  }
-
-  await prisma.$transaction(async (tx) => {
-    await markInvitationOpenedTx(tx, { invitationId: invitation.id })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.invite.opened",
-        actorType: "user",
-        entityType: "Invitation",
-        entityId: invitation.id,
-        participantSafe: true,
-      },
-    })
-  })
-
-  await revalidateVouchSurfaces(invitation.vouchId, [invitation.vouch.merchantId])
-  return actionSuccess({ invitationId: invitation.id })
 }
 
 export async function confirmPresence(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
   const user = await requireActiveUser()
   const parsed = confirmPresenceInputSchema.safeParse(input)
-  let shouldCapture = false
 
   if (!parsed.success) {
     return actionFailure(
@@ -427,9 +227,6 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
       publicId: true,
       merchantId: true,
       customerId: true,
-      status: true,
-      confirmationOpensAt: true,
-      confirmationExpiresAt: true,
     },
   })
 
@@ -487,20 +284,6 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
           },
         },
       })
-
-      if (aggregateStatus === "both_confirmed") {
-        shouldCapture = true
-
-        await tx.auditEvent.create({
-          data: {
-            eventName: "vouch.confirmation_complete",
-            actorType: "system",
-            entityType: "Vouch",
-            entityId: parsed.data.vouchId,
-            participantSafe: true,
-          },
-        })
-      }
     })
   } catch (error) {
     if (error instanceof Error) {
@@ -513,47 +296,20 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
           return actionFailure("CONFIRMATION_WINDOW_CLOSED", "Confirmation window has closed.")
         case "UNAUTHORIZED_CONFIRMATION_PARTICIPANT":
           return actionFailure("AUTHZ_DENIED", "Participant access required.")
-        case "INVALID_CONFIRMATION_METHOD":
-          return actionFailure("INVALID_CONFIRMATION_METHOD", "Confirmation method is not valid.")
         case "VOUCH_NOT_CONFIRMABLE":
           return actionFailure("INVALID_VOUCH_STATE", "This Vouch is not confirmable.")
       }
     }
-
     throw error
   }
 
-  if (shouldCapture) {
-    let capture: Awaited<ReturnType<typeof captureConfirmedVouchPayment>>
-
-    try {
-      capture = await captureConfirmedVouchPayment({
-        vouchId: parsed.data.vouchId,
-        idempotencyKey: `vouch:${parsed.data.vouchId}:capture`,
-      })
-    } catch (error) {
-      await revalidateVouchSurfaces(parsed.data.vouchId, [vouch.merchantId, vouch.customerId])
-      return actionFailure(
-        "PAYMENT_CAPTURE_FAILED",
-        error instanceof Error ? error.message : "Payment capture failed."
-      )
-    }
-
-    if (!capture.ok) {
-      await revalidateVouchSurfaces(parsed.data.vouchId, [vouch.merchantId, vouch.customerId])
-      return capture
-    }
-  }
-
-  await revalidateVouchSurfaces(parsed.data.vouchId, [vouch.merchantId, vouch.customerId])
+  revalidateVouchSurfaces(parsed.data.vouchId)
   return actionSuccess({ vouchId: parsed.data.vouchId })
 }
 
 export async function confirmPresenceFormAction(formData: FormData): Promise<void> {
-  const vouchId = String(formData.get("vouchId") ?? "")
-
   await confirmPresence({
-    vouchId,
+    vouchId: String(formData.get("vouchId") ?? ""),
     submittedCode: String(formData.get("submittedCode") ?? ""),
     method: "code_exchange",
   })
@@ -604,22 +360,6 @@ export async function archiveVouch(input: unknown): Promise<ActionResult<{ vouch
     })
   })
 
-  await revalidateVouchSurfaces(parsed.data.vouchId, [vouch.merchantId, vouch.customerId])
+  revalidateVouchSurfaces(parsed.data.vouchId)
   return actionSuccess({ vouchId: parsed.data.vouchId })
 }
-
-export async function startConnectRedirect(input?: unknown) {
-  return startStripeConnectOnboarding(input)
-}
-
-export async function startPaymentRedirect(input?: unknown) {
-  return startStripePaymentManagement(input)
-}
-
-/**
- * Compatibility aliases retained temporarily for old imports.
- */
-export const createVouchAction = createVouch
-export const acceptVouchAction = acceptVouch
-export const declineVouchAction = declineVouch
-export const preventDuplicateConfirmation = async () => actionSuccess({ ok: true as const })

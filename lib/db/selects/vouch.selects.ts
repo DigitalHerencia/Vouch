@@ -31,11 +31,6 @@ const vouchBaseScalarsSelect = {
   updatedAt: true,
 } as const
 
-export const vouchIdSelect = {
-  id: true,
-  publicId: true,
-} as const satisfies Prisma.VouchSelect
-
 export const vouchCardSelect = {
   id: true,
   publicId: true,
@@ -76,15 +71,6 @@ export const vouchDetailBaseSelect = {
   },
 } as const satisfies Prisma.VouchSelect
 
-export const vouchDetailCommittedSelect = vouchDetailBaseSelect
-export const vouchDetailSentSelect = vouchDetailBaseSelect
-export const vouchDetailAcceptedSelect = vouchDetailBaseSelect
-export const vouchDetailAuthorizedSelect = vouchDetailBaseSelect
-export const vouchDetailConfirmableSelect = vouchDetailBaseSelect
-export const vouchDetailCompletedSelect = vouchDetailBaseSelect
-export const vouchDetailExpiredSelect = vouchDetailBaseSelect
-export const vouchDetailProviderFailureSelect = vouchDetailBaseSelect
-
 export const vouchConfirmationStateSelect = {
   id: true,
   publicId: true,
@@ -117,32 +103,3 @@ export const vouchWindowSummarySelect = {
   voidedAt: true,
   expiredAt: true,
 } as const satisfies Prisma.VouchSelect
-
-export const vouchPaymentSummarySelect = {
-  ...vouchBaseScalarsSelect,
-  paymentIntents: {
-    where: { purpose: "customer_deposit_authorization" },
-    take: 1,
-    select: paymentRecordParticipantSummarySelect,
-  },
-  refunds: {
-    select: refundRecordParticipantSummarySelect,
-    orderBy: { createdAt: "desc" },
-  },
-} as const satisfies Prisma.VouchSelect
-
-export const vouchTimelineSelect = {
-  ...vouchWindowSummarySelect,
-  presenceConfirmation: { select: confirmationParticipantSummarySelect },
-  paymentIntents: {
-    where: { purpose: "customer_deposit_authorization" },
-    take: 1,
-    select: paymentRecordParticipantSummarySelect,
-  },
-  refunds: {
-    select: refundRecordParticipantSummarySelect,
-    orderBy: { createdAt: "desc" },
-  },
-} as const satisfies Prisma.VouchSelect
-
-export const whatHappensNextSelect = vouchDetailBaseSelect

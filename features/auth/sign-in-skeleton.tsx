@@ -1,30 +1,30 @@
-import { Skeleton } from "@/components/ui/skeleton"
+function AuthSkeletonBlock({ className }: { className: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`animate-pulse border-3 border-neutral-400 bg-black/55 ${className}`}
+    />
+  )
+}
 
 export function SignInSkeleton() {
   return (
-    <main className="grid min-h-dvh lg:grid-cols-[minmax(0,1fr)_minmax(22rem,34rem)_minmax(0,1fr)]">
-      <section className="flex min-h-dvh items-center px-6 py-24 sm:px-10 lg:col-start-2 lg:px-8">
-        <div className="mx-auto grid w-full max-w-xl gap-4">
-          <Skeleton className="h-16 rounded-none border border-neutral-400 bg-black/60" />
-          <Skeleton className="h-12 rounded-none border border-neutral-400 bg-black/60" />
-          <Skeleton className="h-12 rounded-none border border-neutral-400 bg-black/60" />
-          <Skeleton className="h-14 rounded-none border border-neutral-400 bg-black/60" />
+    <div className="relative z-10 flex min-h-dvh items-center justify-center px-12 py-24">
+      <div className="mx-auto w-full max-w-md">
+        <div className="border-3 border-neutral-400 bg-transparent p-6">
+          <div className="mb-6 grid justify-items-center gap-3">
+            <AuthSkeletonBlock className="h-12 w-48" />
+            <AuthSkeletonBlock className="h-4 w-56" />
+          </div>
+          <div className="grid gap-4">
+            <AuthSkeletonBlock className="h-12 w-full" />
+            <AuthSkeletonBlock className="h-12 w-full" />
+            <AuthSkeletonBlock className="h-4 w-40" />
+            <AuthSkeletonBlock className="h-14 w-full" />
+            <AuthSkeletonBlock className="mx-auto h-4 w-44" />
+          </div>
         </div>
-      </section>
-      <aside className="hidden min-h-dvh content-center lg:grid">
-        <div className="grid gap-5">
-          <Skeleton className="h-20 rounded-none border border-neutral-400 bg-black/60" />
-          <Skeleton className="h-32 rounded-none border border-neutral-400 bg-black/60" />
-          <Skeleton className="h-20 rounded-none border border-neutral-400 bg-black/60" />
-        </div>
-      </aside>
-      <aside className="hidden min-h-dvh content-center lg:grid">
-        <div className="grid gap-5">
-          <Skeleton className="h-20 rounded-none border border-neutral-400 bg-black/60" />
-          <Skeleton className="h-32 rounded-none border border-neutral-400 bg-black/60" />
-          <Skeleton className="h-20 rounded-none border border-neutral-400 bg-black/60" />
-        </div>
-      </aside>
-    </main>
+      </div>
+    </div>
   )
 }

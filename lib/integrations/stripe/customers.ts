@@ -20,52 +20,6 @@ export async function createStripeCustomer(input: {
   return { providerCustomerId: customer.id }
 }
 
-export async function createStripeSetupIntent(input: {
-  providerCustomerId: string
-  userId: string
-  idempotencyKey: string
-}): Promise<{ id: string; clientSecret: string | null }> {
-  const setupIntent = await getStripeServerClient().setupIntents.create(
-    {
-      customer: input.providerCustomerId,
-      usage: "off_session",
-      metadata: { vouch_user_id: input.userId },
-    },
-    { idempotencyKey: input.idempotencyKey }
-  )
-
-  return { id: setupIntent.id, clientSecret: setupIntent.client_secret }
-}
-
-export async function retrieveStripeSetupIntent(input: { setupIntentId: string }): Promise<{
-  status: string
-  providerCustomerId: string | null
-  providerPaymentMethodId: string | null
-}> {
-  const setupIntent = await getStripeServerClient().setupIntents.retrieve(input.setupIntentId)
-
-  return {
-    status: setupIntent.status,
-    providerCustomerId:
-      setupIntent.customer && typeof setupIntent.customer === "string"
-        ? setupIntent.customer
-        : null,
-    providerPaymentMethodId:
-      setupIntent.payment_method && typeof setupIntent.payment_method === "string"
-        ? setupIntent.payment_method
-        : null,
-  }
-}
-
-export async function setStripeCustomerDefaultPaymentMethod(input: {
-  providerCustomerId: string
-  providerPaymentMethodId: string
-}): Promise<void> {
-  await getStripeServerClient().customers.update(input.providerCustomerId, {
-    invoice_settings: { default_payment_method: input.providerPaymentMethodId },
-  })
-}
-
 export async function getStripeCustomerpaymentMethodReady(providerCustomerId: string): Promise<{
   readiness: "requires_action" | "ready" | "failed"
   defaultPaymentMethodId: string | null

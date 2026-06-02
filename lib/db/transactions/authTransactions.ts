@@ -36,45 +36,11 @@ export async function createDefaultVerificationProfileTx(tx: Tx, input: { userId
   })
 }
 
-export async function syncUserEmailFromClerkTx(
-  tx: Tx,
-  input: { clerkUserId: string; email?: string }
-) {
-  return tx.user.update({
-    where: { clerkUserId: input.clerkUserId },
-    data: { email: input.email ?? null },
-  })
-}
-
-export async function syncUserPhoneFromClerkTx(
-  tx: Tx,
-  input: { clerkUserId: string; phone?: string }
-) {
-  return tx.user.update({
-    where: { clerkUserId: input.clerkUserId },
-    data: { phone: input.phone ?? null },
-  })
-}
-
-export async function syncUserDisplayNameFromClerkTx(
-  tx: Tx,
-  input: { clerkUserId: string; displayName?: string }
-) {
-  return tx.user.update({
-    where: { clerkUserId: input.clerkUserId },
-    data: { displayName: input.displayName ?? null },
-  })
-}
-
 export async function softDisableUserFromClerkDeletedTx(tx: Tx, input: { clerkUserId: string }) {
   return tx.user.updateMany({
     where: { clerkUserId: input.clerkUserId },
     data: { status: "disabled" },
   })
-}
-
-export async function ensureUserSetupRecordsTx(tx: Tx, input: { userId: string }) {
-  return createDefaultVerificationProfileTx(tx, input)
 }
 
 export async function recordTermsAcceptanceTx(

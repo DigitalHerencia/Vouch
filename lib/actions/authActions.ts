@@ -8,7 +8,6 @@ import {
   mapClerkUserToLocalInput,
   type LocalUserSyncInput,
 } from "@/lib/auth/clerk"
-import { getPostAuthRedirect } from "@/lib/auth/redirects"
 import { prisma } from "@/lib/db/prisma"
 import {
   createDefaultVerificationProfileTx,
@@ -80,18 +79,4 @@ async function ensureLocalUserForSession() {
   }
 
   return syncClerkUser(mapClerkUserToLocalInput(clerkUser))
-}
-
-export async function resolvePostAuthRedirect(input?: unknown) {
-  const params =
-    input && typeof input === "object"
-      ? (input as {
-          redirect_url?: string | string[]
-          redirectUrl?: string | string[]
-          return_to?: string | string[]
-          returnTo?: string | string[]
-        })
-      : {}
-
-  return { ok: true as const, data: { redirectTo: getPostAuthRedirect(params) } }
 }

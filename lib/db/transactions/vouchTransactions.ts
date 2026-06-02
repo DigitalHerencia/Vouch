@@ -25,10 +25,6 @@ type CreateVouchTxInput = {
   createAsSent?: boolean
 }
 
-type VouchIdTxInput = {
-  vouchId: string
-}
-
 type BindCustomerToVouchTxInput = {
   vouchId: string
   customerId: string
@@ -37,11 +33,6 @@ type BindCustomerToVouchTxInput = {
 type VouchArchiveStatusTxInput = {
   vouchId: string
   archiveStatus: boolean | string
-}
-
-type VouchRecoveryStatusTxInput = {
-  vouchId: string
-  recoveryStatus: string
 }
 
 const VOUCH_SELECT = {
@@ -96,39 +87,6 @@ function assertValidWindow(input: {
   }
 }
 
-async function transitionVouchStatusTx(
-  tx: Tx,
-  input: {
-    vouchId: string
-    from: VouchStatus[]
-    data: {
-      status: VouchStatus
-      protocolFeePaidAt?: Date
-      authorizedAt?: Date
-      capturedAt?: Date
-      voidedAt?: Date
-      expiredAt?: Date
-    }
-    conflictCode: string
-  }
-): Promise<VouchResult> {
-  const vouchId = assertNonEmptyString(input.vouchId, "vouchId")
-  const updated = await tx.vouch.updateMany({
-    where: {
-      id: vouchId,
-      status: { in: input.from },
-    },
-    data: input.data,
-  })
-
-  if (updated.count !== 1) throw new Error(input.conflictCode)
-
-  return tx.vouch.findUniqueOrThrow({
-    where: { id: vouchId },
-    select: VOUCH_SELECT,
-  })
-}
-
 export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<VouchResult> {
   assertValidWindow(input)
 
@@ -152,15 +110,6 @@ export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<
       ...(input.createAsDraft ? {} : { protocolFeePaidAt: now }),
     },
     select: VOUCH_SELECT,
-  })
-}
-
-export async function markVouchSentTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return transitionVouchStatusTx(tx, {
-    vouchId: input.vouchId,
-    from: ["draft", "active"],
-    data: { status: "active", protocolFeePaidAt: new Date() },
-    conflictCode: "VOUCH_SENT_TRANSITION_CONFLICT",
   })
 }
 
@@ -192,42 +141,6 @@ export async function bindCustomerToVouchTx(
   })
 }
 
-export async function markVouchAuthorizedTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return transitionVouchStatusTx(tx, {
-    vouchId: input.vouchId,
-    from: ["active"],
-    data: { status: "authorized", authorizedAt: new Date() },
-    conflictCode: "VOUCH_AUTHORIZATION_TRANSITION_CONFLICT",
-  })
-}
-
-export async function markVouchConfirmableTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return transitionVouchStatusTx(tx, {
-    vouchId: input.vouchId,
-    from: ["authorized"],
-    data: { status: "can_capture" },
-    conflictCode: "VOUCH_CONFIRMABLE_TRANSITION_CONFLICT",
-  })
-}
-
-export async function markVouchCompletedTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return transitionVouchStatusTx(tx, {
-    vouchId: input.vouchId,
-    from: ["authorized", "can_capture"],
-    data: { status: "captured", capturedAt: new Date() },
-    conflictCode: "VOUCH_COMPLETION_TRANSITION_CONFLICT",
-  })
-}
-
-export async function markVouchExpiredTx(tx: Tx, input: VouchIdTxInput): Promise<VouchResult> {
-  return transitionVouchStatusTx(tx, {
-    vouchId: input.vouchId,
-    from: ["draft", "active", "authorized", "can_capture"],
-    data: { status: "expired", expiredAt: new Date() },
-    conflictCode: "VOUCH_EXPIRATION_TRANSITION_CONFLICT",
-  })
-}
-
 export async function updateVouchArchiveStatusTx(
   tx: Tx,
   input: VouchArchiveStatusTxInput
@@ -243,28 +156,4 @@ export async function updateVouchArchiveStatusTx(
     },
     select: VOUCH_SELECT,
   })
-}
-
-export async function updateVouchRecoveryStatusTx(
-  tx: Tx,
-  input: VouchRecoveryStatusTxInput
-): Promise<VouchResult> {
-  return tx.vouch.findUniqueOrThrow({
-    where: { id: assertNonEmptyString(input.vouchId, "vouchId") },
-    select: VOUCH_SELECT,
-  })
-}
-
-export async function completeVouchWithPaymentCaptureTx(
-  tx: Tx,
-  input: VouchIdTxInput
-): Promise<VouchResult> {
-  return markVouchCompletedTx(tx, input)
-}
-
-export async function expireVouchWithoutCaptureTx(
-  tx: Tx,
-  input: VouchIdTxInput
-): Promise<VouchResult> {
-  return markVouchExpiredTx(tx, input)
 }
