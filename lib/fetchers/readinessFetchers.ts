@@ -20,15 +20,13 @@ type ReadinessRecord = Prisma.UserGetPayload<{ select: typeof readinessSelect }>
 function normalizeReadiness(record: ReadinessRecord | null) {
   const paymentCustomer = record?.paymentCustomer ?? null
   const connectedAccount = record?.connectedAccount ?? null
+  const payoutReady = Boolean(connectedAccount?.detailsSubmitted && connectedAccount.payoutsEnabled)
 
   const state = {
     userId: record?.id ?? null,
     userStatus: record?.status === "active" ? ("active" as const) : ("disabled" as const),
     paymentMethodReady: paymentCustomer?.paymentMethodReady ? "ready" : "not_started",
-    payoutReadiness:
-      connectedAccount?.detailsSubmitted && connectedAccount.payoutsEnabled
-        ? "ready"
-        : "not_started",
+    payoutReadiness: payoutReady ? "ready" : "not_started",
     hasPaymentCustomer: Boolean(paymentCustomer),
     hasConnectedAccount: Boolean(connectedAccount),
   }
@@ -41,7 +39,7 @@ function normalizeReadiness(record: ReadinessRecord | null) {
       userId: state.userId,
       merchantId: "",
       existingCustomerId: null,
-      status: "active",
+      status: "protocol_fee_paid",
     }),
     confirmReady: state.userStatus === "active",
   }

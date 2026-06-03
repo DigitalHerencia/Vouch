@@ -20,6 +20,7 @@ const vouchBaseScalarsSelect = {
   confirmationOpensAt: true,
   confirmationExpiresAt: true,
   status: true,
+  disclaimerAcceptedAt: true,
   protocolFeePaidAt: true,
   authorizedAt: true,
   capturedAt: true,

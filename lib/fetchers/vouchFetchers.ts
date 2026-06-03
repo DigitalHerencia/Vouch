@@ -4,10 +4,7 @@ import { unstable_noStore as noStore } from "next/cache"
 
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
-import {
-  mapAuditTimelineDTO,
-  type AuditTimelineItemDTO,
-} from "@/lib/dto/audit.mappers"
+import { mapAuditTimelineDTO, type AuditTimelineItemDTO } from "@/lib/dto/audit.mappers"
 import {
   mapVouchConfirmationStateDTO,
   mapVouchDetailDTO,
@@ -22,10 +19,7 @@ import {
   vouchWindowSummarySelect,
 } from "@/lib/db/selects/vouch.selects"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
-import {
-  getAccountReadiness,
-  getCreateVouchReadinessGate,
-} from "@/lib/fetchers/readinessFetchers"
+import { getCreateVouchReadinessGate } from "@/lib/fetchers/readinessFetchers"
 import { deriveConfirmationCode } from "@/lib/vouch/confirmation-codes"
 
 type VouchDetailRecord = Prisma.VouchGetPayload<{ select: typeof vouchDetailBaseSelect }>
@@ -60,16 +54,6 @@ export async function getCreateVouchPageState(input?: { userId?: string }) {
     variant: gate.allowed ? "ready" : "blocked",
     userId,
     gate,
-  }
-}
-
-export async function getCurrentUserReadinessWarningState() {
-  const user = await requireActiveUser()
-  const readiness = await getAccountReadiness(user.id)
-
-  return {
-    show:
-      readiness?.payoutReadiness !== "ready" || readiness?.paymentMethodReady !== "ready",
   }
 }
 

@@ -456,6 +456,8 @@ type OnboardingStep = {
   content?: React.ReactNode
   icon?: React.ReactNode
   optional?: boolean
+  canContinue?: boolean
+  actionLabel?: string
 }
 type OnboardingWizardProps = {
   steps: readonly OnboardingStep[]
@@ -610,6 +612,7 @@ type InvoiceSummaryProps = {
   remainingLabel?: string
   percentRemaining?: number
   tone?: VouchStatusTone
+  disabled?: boolean
 }
 type InvoiceListProps = {
   invoices: Array<{
@@ -698,6 +701,7 @@ type VouchCreationWizardProps = {
   formError?: string | null | undefined
   cartOpen: boolean
   isPending: boolean
+  disabled?: boolean
   onDraftChange: (patch: Partial<VouchCreationDraft>) => void
   onStepSelect: (stepIndex: number) => void
   onBack: () => void

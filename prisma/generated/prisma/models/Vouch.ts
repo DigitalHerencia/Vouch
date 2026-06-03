@@ -47,6 +47,7 @@ export type VouchMinAggregateOutputType = {
   merchantCodeHash: string | null
   customerCodeHash: string | null
   status: $Enums.VouchStatus | null
+  disclaimerAcceptedAt: Date | null
   protocolFeePaidAt: Date | null
   authorizedAt: Date | null
   capturedAt: Date | null
@@ -71,6 +72,7 @@ export type VouchMaxAggregateOutputType = {
   merchantCodeHash: string | null
   customerCodeHash: string | null
   status: $Enums.VouchStatus | null
+  disclaimerAcceptedAt: Date | null
   protocolFeePaidAt: Date | null
   authorizedAt: Date | null
   capturedAt: Date | null
@@ -95,6 +97,7 @@ export type VouchCountAggregateOutputType = {
   merchantCodeHash: number
   customerCodeHash: number
   status: number
+  disclaimerAcceptedAt: number
   protocolFeePaidAt: number
   authorizedAt: number
   capturedAt: number
@@ -129,6 +132,7 @@ export type VouchMinAggregateInputType = {
   merchantCodeHash?: true
   customerCodeHash?: true
   status?: true
+  disclaimerAcceptedAt?: true
   protocolFeePaidAt?: true
   authorizedAt?: true
   capturedAt?: true
@@ -153,6 +157,7 @@ export type VouchMaxAggregateInputType = {
   merchantCodeHash?: true
   customerCodeHash?: true
   status?: true
+  disclaimerAcceptedAt?: true
   protocolFeePaidAt?: true
   authorizedAt?: true
   capturedAt?: true
@@ -177,6 +182,7 @@ export type VouchCountAggregateInputType = {
   merchantCodeHash?: true
   customerCodeHash?: true
   status?: true
+  disclaimerAcceptedAt?: true
   protocolFeePaidAt?: true
   authorizedAt?: true
   capturedAt?: true
@@ -288,6 +294,7 @@ export type VouchGroupByOutputType = {
   merchantCodeHash: string
   customerCodeHash: string | null
   status: $Enums.VouchStatus
+  disclaimerAcceptedAt: Date | null
   protocolFeePaidAt: Date | null
   authorizedAt: Date | null
   capturedAt: Date | null
@@ -335,6 +342,7 @@ export type VouchWhereInput = {
   merchantCodeHash?: Prisma.StringFilter<"Vouch"> | string
   customerCodeHash?: Prisma.StringNullableFilter<"Vouch"> | string | null
   status?: Prisma.EnumVouchStatusFilter<"Vouch"> | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
   protocolFeePaidAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
   authorizedAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
   capturedAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
@@ -369,6 +377,7 @@ export type VouchOrderByWithRelationInput = {
   merchantCodeHash?: Prisma.SortOrder
   customerCodeHash?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  disclaimerAcceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   protocolFeePaidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   authorizedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   capturedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -406,6 +415,7 @@ export type VouchWhereUniqueInput = Prisma.AtLeast<{
   merchantCodeHash?: Prisma.StringFilter<"Vouch"> | string
   customerCodeHash?: Prisma.StringNullableFilter<"Vouch"> | string | null
   status?: Prisma.EnumVouchStatusFilter<"Vouch"> | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
   protocolFeePaidAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
   authorizedAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
   capturedAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
@@ -440,6 +450,7 @@ export type VouchOrderByWithAggregationInput = {
   merchantCodeHash?: Prisma.SortOrder
   customerCodeHash?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
+  disclaimerAcceptedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   protocolFeePaidAt?: Prisma.SortOrderInput | Prisma.SortOrder
   authorizedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   capturedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -472,6 +483,7 @@ export type VouchScalarWhereWithAggregatesInput = {
   merchantCodeHash?: Prisma.StringWithAggregatesFilter<"Vouch"> | string
   customerCodeHash?: Prisma.StringNullableWithAggregatesFilter<"Vouch"> | string | null
   status?: Prisma.EnumVouchStatusWithAggregatesFilter<"Vouch"> | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Vouch"> | Date | string | null
   protocolFeePaidAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Vouch"> | Date | string | null
   authorizedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Vouch"> | Date | string | null
   capturedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Vouch"> | Date | string | null
@@ -494,6 +506,7 @@ export type VouchCreateInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -528,6 +541,7 @@ export type VouchUncheckedCreateInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -558,6 +572,7 @@ export type VouchUpdateInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -592,6 +607,7 @@ export type VouchUncheckedUpdateInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -624,6 +640,7 @@ export type VouchCreateManyInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -646,6 +663,7 @@ export type VouchUpdateManyMutationInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -670,6 +688,7 @@ export type VouchUncheckedUpdateManyInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -704,6 +723,7 @@ export type VouchCountOrderByAggregateInput = {
   merchantCodeHash?: Prisma.SortOrder
   customerCodeHash?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  disclaimerAcceptedAt?: Prisma.SortOrder
   protocolFeePaidAt?: Prisma.SortOrder
   authorizedAt?: Prisma.SortOrder
   capturedAt?: Prisma.SortOrder
@@ -732,6 +752,7 @@ export type VouchMaxOrderByAggregateInput = {
   merchantCodeHash?: Prisma.SortOrder
   customerCodeHash?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  disclaimerAcceptedAt?: Prisma.SortOrder
   protocolFeePaidAt?: Prisma.SortOrder
   authorizedAt?: Prisma.SortOrder
   capturedAt?: Prisma.SortOrder
@@ -756,6 +777,7 @@ export type VouchMinOrderByAggregateInput = {
   merchantCodeHash?: Prisma.SortOrder
   customerCodeHash?: Prisma.SortOrder
   status?: Prisma.SortOrder
+  disclaimerAcceptedAt?: Prisma.SortOrder
   protocolFeePaidAt?: Prisma.SortOrder
   authorizedAt?: Prisma.SortOrder
   capturedAt?: Prisma.SortOrder
@@ -1010,6 +1032,7 @@ export type VouchCreateWithoutMerchantInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1042,6 +1065,7 @@ export type VouchUncheckedCreateWithoutMerchantInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1082,6 +1106,7 @@ export type VouchCreateWithoutCustomerInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1114,6 +1139,7 @@ export type VouchUncheckedCreateWithoutCustomerInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1175,6 +1201,7 @@ export type VouchScalarWhereInput = {
   merchantCodeHash?: Prisma.StringFilter<"Vouch"> | string
   customerCodeHash?: Prisma.StringNullableFilter<"Vouch"> | string | null
   status?: Prisma.EnumVouchStatusFilter<"Vouch"> | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
   protocolFeePaidAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
   authorizedAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
   capturedAt?: Prisma.DateTimeNullableFilter<"Vouch"> | Date | string | null
@@ -1213,6 +1240,7 @@ export type VouchCreateWithoutPresenceConfirmationInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1246,6 +1274,7 @@ export type VouchUncheckedCreateWithoutPresenceConfirmationInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1291,6 +1320,7 @@ export type VouchUpdateWithoutPresenceConfirmationInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1324,6 +1354,7 @@ export type VouchUncheckedUpdateWithoutPresenceConfirmationInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1353,6 +1384,7 @@ export type VouchCreateWithoutPaymentIntentsInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1386,6 +1418,7 @@ export type VouchUncheckedCreateWithoutPaymentIntentsInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1431,6 +1464,7 @@ export type VouchUpdateWithoutPaymentIntentsInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1464,6 +1498,7 @@ export type VouchUncheckedUpdateWithoutPaymentIntentsInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1493,6 +1528,7 @@ export type VouchCreateWithoutChargesInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1526,6 +1562,7 @@ export type VouchUncheckedCreateWithoutChargesInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1571,6 +1608,7 @@ export type VouchUpdateWithoutChargesInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1604,6 +1642,7 @@ export type VouchUncheckedUpdateWithoutChargesInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1633,6 +1672,7 @@ export type VouchCreateWithoutRefundsInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1666,6 +1706,7 @@ export type VouchUncheckedCreateWithoutRefundsInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1711,6 +1752,7 @@ export type VouchUpdateWithoutRefundsInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1744,6 +1786,7 @@ export type VouchUncheckedUpdateWithoutRefundsInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1773,6 +1816,7 @@ export type VouchCreateWithoutWebhookEventsInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1806,6 +1850,7 @@ export type VouchUncheckedCreateWithoutWebhookEventsInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1851,6 +1896,7 @@ export type VouchUpdateWithoutWebhookEventsInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1884,6 +1930,7 @@ export type VouchUncheckedUpdateWithoutWebhookEventsInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1913,6 +1960,7 @@ export type VouchCreateWithoutEventsInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1946,6 +1994,7 @@ export type VouchUncheckedCreateWithoutEventsInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -1991,6 +2040,7 @@ export type VouchUpdateWithoutEventsInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2024,6 +2074,7 @@ export type VouchUncheckedUpdateWithoutEventsInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2053,6 +2104,7 @@ export type VouchCreateWithoutRetriesInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -2086,6 +2138,7 @@ export type VouchUncheckedCreateWithoutRetriesInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -2131,6 +2184,7 @@ export type VouchUpdateWithoutRetriesInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2164,6 +2218,7 @@ export type VouchUncheckedUpdateWithoutRetriesInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2193,6 +2248,7 @@ export type VouchCreateWithoutRecoverySnapshotsInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -2226,6 +2282,7 @@ export type VouchUncheckedCreateWithoutRecoverySnapshotsInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -2271,6 +2328,7 @@ export type VouchUpdateWithoutRecoverySnapshotsInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2304,6 +2362,7 @@ export type VouchUncheckedUpdateWithoutRecoverySnapshotsInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2334,6 +2393,7 @@ export type VouchCreateManyMerchantInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -2357,6 +2417,7 @@ export type VouchCreateManyCustomerInput = {
   merchantCodeHash: string
   customerCodeHash?: string | null
   status?: $Enums.VouchStatus
+  disclaimerAcceptedAt?: Date | string | null
   protocolFeePaidAt?: Date | string | null
   authorizedAt?: Date | string | null
   capturedAt?: Date | string | null
@@ -2379,6 +2440,7 @@ export type VouchUpdateWithoutMerchantInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2411,6 +2473,7 @@ export type VouchUncheckedUpdateWithoutMerchantInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2442,6 +2505,7 @@ export type VouchUncheckedUpdateManyWithoutMerchantInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2464,6 +2528,7 @@ export type VouchUpdateWithoutCustomerInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2496,6 +2561,7 @@ export type VouchUncheckedUpdateWithoutCustomerInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2527,6 +2593,7 @@ export type VouchUncheckedUpdateManyWithoutCustomerInput = {
   merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
+  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2636,6 +2703,7 @@ export type VouchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   merchantCodeHash?: boolean
   customerCodeHash?: boolean
   status?: boolean
+  disclaimerAcceptedAt?: boolean
   protocolFeePaidAt?: boolean
   authorizedAt?: boolean
   capturedAt?: boolean
@@ -2671,6 +2739,7 @@ export type VouchSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   merchantCodeHash?: boolean
   customerCodeHash?: boolean
   status?: boolean
+  disclaimerAcceptedAt?: boolean
   protocolFeePaidAt?: boolean
   authorizedAt?: boolean
   capturedAt?: boolean
@@ -2697,6 +2766,7 @@ export type VouchSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   merchantCodeHash?: boolean
   customerCodeHash?: boolean
   status?: boolean
+  disclaimerAcceptedAt?: boolean
   protocolFeePaidAt?: boolean
   authorizedAt?: boolean
   capturedAt?: boolean
@@ -2723,6 +2793,7 @@ export type VouchSelectScalar = {
   merchantCodeHash?: boolean
   customerCodeHash?: boolean
   status?: boolean
+  disclaimerAcceptedAt?: boolean
   protocolFeePaidAt?: boolean
   authorizedAt?: boolean
   capturedAt?: boolean
@@ -2734,7 +2805,7 @@ export type VouchSelectScalar = {
   updatedAt?: boolean
 }
 
-export type VouchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "merchantId" | "customerId" | "amountCents" | "currency" | "appointmentAt" | "confirmationOpensAt" | "confirmationExpiresAt" | "merchantCodeHash" | "customerCodeHash" | "status" | "protocolFeePaidAt" | "authorizedAt" | "capturedAt" | "voidedAt" | "expiredAt" | "archived" | "archivedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["vouch"]>
+export type VouchOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicId" | "merchantId" | "customerId" | "amountCents" | "currency" | "appointmentAt" | "confirmationOpensAt" | "confirmationExpiresAt" | "merchantCodeHash" | "customerCodeHash" | "status" | "disclaimerAcceptedAt" | "protocolFeePaidAt" | "authorizedAt" | "capturedAt" | "voidedAt" | "expiredAt" | "archived" | "archivedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["vouch"]>
 export type VouchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   merchant?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   customer?: boolean | Prisma.Vouch$customerArgs<ExtArgs>
@@ -2784,6 +2855,7 @@ export type $VouchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     merchantCodeHash: string
     customerCodeHash: string | null
     status: $Enums.VouchStatus
+    disclaimerAcceptedAt: Date | null
     protocolFeePaidAt: Date | null
     authorizedAt: Date | null
     capturedAt: Date | null
@@ -3238,6 +3310,7 @@ export interface VouchFieldRefs {
   readonly merchantCodeHash: Prisma.FieldRef<"Vouch", 'String'>
   readonly customerCodeHash: Prisma.FieldRef<"Vouch", 'String'>
   readonly status: Prisma.FieldRef<"Vouch", 'VouchStatus'>
+  readonly disclaimerAcceptedAt: Prisma.FieldRef<"Vouch", 'DateTime'>
   readonly protocolFeePaidAt: Prisma.FieldRef<"Vouch", 'DateTime'>
   readonly authorizedAt: Prisma.FieldRef<"Vouch", 'DateTime'>
   readonly capturedAt: Prisma.FieldRef<"Vouch", 'DateTime'>

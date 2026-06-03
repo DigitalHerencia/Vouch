@@ -34,6 +34,9 @@ export type DashboardPageStateDTO = {
   variant: "empty" | "mixed_vouch_states"
   filters: DashboardFiltersDTO
   summary: DashboardSummaryDTO | null
+  warnings: {
+    paymentMethodRequired: boolean
+  }
 }
 
 export function mapDashboardVouchCards(records: DashboardVouchRecord[]): VouchCardDTO[] {

@@ -18,6 +18,7 @@ export type PaymentRecordParticipantDTO = {
   amountCents: number
   amount: MoneyDTO
   currency: string
+  checkoutUrl: string | null
   captureBefore: ISODateTime | null
   authorizedAt: ISODateTime | null
   canceledAt: ISODateTime | null
@@ -48,6 +49,7 @@ type PaymentRecordRecord = {
   status: string
   amountCents?: number
   currency?: string
+  stripeCheckoutSessionUrl?: string | null
   captureBefore?: DateLike
   authorizedAt?: DateLike
   canceledAt?: DateLike
@@ -110,6 +112,7 @@ export function mapPaymentRecordParticipantDTO(
     amountCents,
     amount: toMoneyDTO(amountCents, currency),
     currency,
+    checkoutUrl: record.stripeCheckoutSessionUrl ?? null,
     captureBefore: toIso(record.captureBefore),
     authorizedAt: toIso(record.authorizedAt),
     canceledAt: toIso(record.canceledAt),

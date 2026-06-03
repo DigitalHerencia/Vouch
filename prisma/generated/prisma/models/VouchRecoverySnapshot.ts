@@ -62,6 +62,7 @@ export type VouchRecoverySnapshotMinAggregateOutputType = {
   customerCodeHash: string | null
   stripePaymentIntentId: string | null
   stripeCheckoutSessionId: string | null
+  stripeCheckoutSessionUrl: string | null
   stripeChargeId: string | null
   stripeBalanceTransactionId: string | null
   lastStripeEventId: string | null
@@ -96,6 +97,7 @@ export type VouchRecoverySnapshotMaxAggregateOutputType = {
   customerCodeHash: string | null
   stripePaymentIntentId: string | null
   stripeCheckoutSessionId: string | null
+  stripeCheckoutSessionUrl: string | null
   stripeChargeId: string | null
   stripeBalanceTransactionId: string | null
   lastStripeEventId: string | null
@@ -130,6 +132,7 @@ export type VouchRecoverySnapshotCountAggregateOutputType = {
   customerCodeHash: number
   stripePaymentIntentId: number
   stripeCheckoutSessionId: number
+  stripeCheckoutSessionUrl: number
   stripeChargeId: number
   stripeBalanceTransactionId: number
   lastStripeEventId: number
@@ -176,6 +179,7 @@ export type VouchRecoverySnapshotMinAggregateInputType = {
   customerCodeHash?: true
   stripePaymentIntentId?: true
   stripeCheckoutSessionId?: true
+  stripeCheckoutSessionUrl?: true
   stripeChargeId?: true
   stripeBalanceTransactionId?: true
   lastStripeEventId?: true
@@ -210,6 +214,7 @@ export type VouchRecoverySnapshotMaxAggregateInputType = {
   customerCodeHash?: true
   stripePaymentIntentId?: true
   stripeCheckoutSessionId?: true
+  stripeCheckoutSessionUrl?: true
   stripeChargeId?: true
   stripeBalanceTransactionId?: true
   lastStripeEventId?: true
@@ -244,6 +249,7 @@ export type VouchRecoverySnapshotCountAggregateInputType = {
   customerCodeHash?: true
   stripePaymentIntentId?: true
   stripeCheckoutSessionId?: true
+  stripeCheckoutSessionUrl?: true
   stripeChargeId?: true
   stripeBalanceTransactionId?: true
   lastStripeEventId?: true
@@ -365,6 +371,7 @@ export type VouchRecoverySnapshotGroupByOutputType = {
   customerCodeHash: string | null
   stripePaymentIntentId: string | null
   stripeCheckoutSessionId: string | null
+  stripeCheckoutSessionUrl: string | null
   stripeChargeId: string | null
   stripeBalanceTransactionId: string | null
   lastStripeEventId: string | null
@@ -422,6 +429,7 @@ export type VouchRecoverySnapshotWhereInput = {
   customerCodeHash?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripePaymentIntentId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripeCheckoutSessionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeCheckoutSessionUrl?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripeChargeId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripeBalanceTransactionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   lastStripeEventId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
@@ -457,6 +465,7 @@ export type VouchRecoverySnapshotOrderByWithRelationInput = {
   customerCodeHash?: Prisma.SortOrderInput | Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeCheckoutSessionUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeChargeId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeBalanceTransactionId?: Prisma.SortOrderInput | Prisma.SortOrder
   lastStripeEventId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -495,6 +504,7 @@ export type VouchRecoverySnapshotWhereUniqueInput = Prisma.AtLeast<{
   customerCodeHash?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripePaymentIntentId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripeCheckoutSessionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeCheckoutSessionUrl?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripeChargeId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripeBalanceTransactionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   lastStripeEventId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
@@ -530,6 +540,7 @@ export type VouchRecoverySnapshotOrderByWithAggregationInput = {
   customerCodeHash?: Prisma.SortOrderInput | Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeCheckoutSessionUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeChargeId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeBalanceTransactionId?: Prisma.SortOrderInput | Prisma.SortOrder
   lastStripeEventId?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -572,6 +583,7 @@ export type VouchRecoverySnapshotScalarWhereWithAggregatesInput = {
   customerCodeHash?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
   stripePaymentIntentId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
   stripeCheckoutSessionId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
+  stripeCheckoutSessionUrl?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
   stripeChargeId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
   stripeBalanceTransactionId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
   lastStripeEventId?: Prisma.StringNullableWithAggregatesFilter<"VouchRecoverySnapshot"> | string | null
@@ -605,6 +617,7 @@ export type VouchRecoverySnapshotCreateInput = {
   customerCodeHash?: string | null
   stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeChargeId?: string | null
   stripeBalanceTransactionId?: string | null
   lastStripeEventId?: string | null
@@ -640,6 +653,7 @@ export type VouchRecoverySnapshotUncheckedCreateInput = {
   customerCodeHash?: string | null
   stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeChargeId?: string | null
   stripeBalanceTransactionId?: string | null
   lastStripeEventId?: string | null
@@ -673,6 +687,7 @@ export type VouchRecoverySnapshotUpdateInput = {
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -708,6 +723,7 @@ export type VouchRecoverySnapshotUncheckedUpdateInput = {
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -742,6 +758,7 @@ export type VouchRecoverySnapshotCreateManyInput = {
   customerCodeHash?: string | null
   stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeChargeId?: string | null
   stripeBalanceTransactionId?: string | null
   lastStripeEventId?: string | null
@@ -775,6 +792,7 @@ export type VouchRecoverySnapshotUpdateManyMutationInput = {
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -809,6 +827,7 @@ export type VouchRecoverySnapshotUncheckedUpdateManyInput = {
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -853,6 +872,7 @@ export type VouchRecoverySnapshotCountOrderByAggregateInput = {
   customerCodeHash?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
   stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeCheckoutSessionUrl?: Prisma.SortOrder
   stripeChargeId?: Prisma.SortOrder
   stripeBalanceTransactionId?: Prisma.SortOrder
   lastStripeEventId?: Prisma.SortOrder
@@ -892,6 +912,7 @@ export type VouchRecoverySnapshotMaxOrderByAggregateInput = {
   customerCodeHash?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
   stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeCheckoutSessionUrl?: Prisma.SortOrder
   stripeChargeId?: Prisma.SortOrder
   stripeBalanceTransactionId?: Prisma.SortOrder
   lastStripeEventId?: Prisma.SortOrder
@@ -926,6 +947,7 @@ export type VouchRecoverySnapshotMinOrderByAggregateInput = {
   customerCodeHash?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
   stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeCheckoutSessionUrl?: Prisma.SortOrder
   stripeChargeId?: Prisma.SortOrder
   stripeBalanceTransactionId?: Prisma.SortOrder
   lastStripeEventId?: Prisma.SortOrder
@@ -1014,6 +1036,7 @@ export type VouchRecoverySnapshotCreateWithoutVouchInput = {
   customerCodeHash?: string | null
   stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeChargeId?: string | null
   stripeBalanceTransactionId?: string | null
   lastStripeEventId?: string | null
@@ -1047,6 +1070,7 @@ export type VouchRecoverySnapshotUncheckedCreateWithoutVouchInput = {
   customerCodeHash?: string | null
   stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeChargeId?: string | null
   stripeBalanceTransactionId?: string | null
   lastStripeEventId?: string | null
@@ -1110,6 +1134,7 @@ export type VouchRecoverySnapshotScalarWhereInput = {
   customerCodeHash?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripePaymentIntentId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripeCheckoutSessionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
+  stripeCheckoutSessionUrl?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripeChargeId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   stripeBalanceTransactionId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
   lastStripeEventId?: Prisma.StringNullableFilter<"VouchRecoverySnapshot"> | string | null
@@ -1143,6 +1168,7 @@ export type VouchRecoverySnapshotCreateManyVouchInput = {
   customerCodeHash?: string | null
   stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeChargeId?: string | null
   stripeBalanceTransactionId?: string | null
   lastStripeEventId?: string | null
@@ -1176,6 +1202,7 @@ export type VouchRecoverySnapshotUpdateWithoutVouchInput = {
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1209,6 +1236,7 @@ export type VouchRecoverySnapshotUncheckedUpdateWithoutVouchInput = {
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1242,6 +1270,7 @@ export type VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchInput = {
   customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeChargeId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeBalanceTransactionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1278,6 +1307,7 @@ export type VouchRecoverySnapshotSelect<ExtArgs extends runtime.Types.Extensions
   customerCodeHash?: boolean
   stripePaymentIntentId?: boolean
   stripeCheckoutSessionId?: boolean
+  stripeCheckoutSessionUrl?: boolean
   stripeChargeId?: boolean
   stripeBalanceTransactionId?: boolean
   lastStripeEventId?: boolean
@@ -1313,6 +1343,7 @@ export type VouchRecoverySnapshotSelectCreateManyAndReturn<ExtArgs extends runti
   customerCodeHash?: boolean
   stripePaymentIntentId?: boolean
   stripeCheckoutSessionId?: boolean
+  stripeCheckoutSessionUrl?: boolean
   stripeChargeId?: boolean
   stripeBalanceTransactionId?: boolean
   lastStripeEventId?: boolean
@@ -1348,6 +1379,7 @@ export type VouchRecoverySnapshotSelectUpdateManyAndReturn<ExtArgs extends runti
   customerCodeHash?: boolean
   stripePaymentIntentId?: boolean
   stripeCheckoutSessionId?: boolean
+  stripeCheckoutSessionUrl?: boolean
   stripeChargeId?: boolean
   stripeBalanceTransactionId?: boolean
   lastStripeEventId?: boolean
@@ -1383,6 +1415,7 @@ export type VouchRecoverySnapshotSelectScalar = {
   customerCodeHash?: boolean
   stripePaymentIntentId?: boolean
   stripeCheckoutSessionId?: boolean
+  stripeCheckoutSessionUrl?: boolean
   stripeChargeId?: boolean
   stripeBalanceTransactionId?: boolean
   lastStripeEventId?: boolean
@@ -1391,7 +1424,7 @@ export type VouchRecoverySnapshotSelectScalar = {
   createdAt?: boolean
 }
 
-export type VouchRecoverySnapshotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "publicId" | "reason" | "merchantId" | "customerId" | "amountCents" | "currency" | "appointmentAt" | "confirmationOpensAt" | "confirmationExpiresAt" | "status" | "protocolFeePaidAt" | "authorizedAt" | "capturedAt" | "voidedAt" | "expiredAt" | "archived" | "presenceStatus" | "presenceCanCaptureAt" | "presenceVoidedAt" | "merchantCodeHash" | "customerCodeHash" | "stripePaymentIntentId" | "stripeCheckoutSessionId" | "stripeChargeId" | "stripeBalanceTransactionId" | "lastStripeEventId" | "sourceVersion" | "checksumHash" | "createdAt", ExtArgs["result"]["vouchRecoverySnapshot"]>
+export type VouchRecoverySnapshotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "publicId" | "reason" | "merchantId" | "customerId" | "amountCents" | "currency" | "appointmentAt" | "confirmationOpensAt" | "confirmationExpiresAt" | "status" | "protocolFeePaidAt" | "authorizedAt" | "capturedAt" | "voidedAt" | "expiredAt" | "archived" | "presenceStatus" | "presenceCanCaptureAt" | "presenceVoidedAt" | "merchantCodeHash" | "customerCodeHash" | "stripePaymentIntentId" | "stripeCheckoutSessionId" | "stripeCheckoutSessionUrl" | "stripeChargeId" | "stripeBalanceTransactionId" | "lastStripeEventId" | "sourceVersion" | "checksumHash" | "createdAt", ExtArgs["result"]["vouchRecoverySnapshot"]>
 export type VouchRecoverySnapshotInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
 }
@@ -1433,6 +1466,7 @@ export type $VouchRecoverySnapshotPayload<ExtArgs extends runtime.Types.Extensio
     customerCodeHash: string | null
     stripePaymentIntentId: string | null
     stripeCheckoutSessionId: string | null
+    stripeCheckoutSessionUrl: string | null
     stripeChargeId: string | null
     stripeBalanceTransactionId: string | null
     lastStripeEventId: string | null
@@ -1888,6 +1922,7 @@ export interface VouchRecoverySnapshotFieldRefs {
   readonly customerCodeHash: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
   readonly stripePaymentIntentId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
   readonly stripeCheckoutSessionId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
+  readonly stripeCheckoutSessionUrl: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
   readonly stripeChargeId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
   readonly stripeBalanceTransactionId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>
   readonly lastStripeEventId: Prisma.FieldRef<"VouchRecoverySnapshot", 'String'>

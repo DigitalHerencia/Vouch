@@ -34,8 +34,6 @@ export interface CreateVouchDraftInput {
   amountCents: MoneyCents
   currency: CurrencyCode
   appointmentStartsAt: ISODateTime
-  confirmationOpensAt: ISODateTime
-  confirmationExpiresAt: ISODateTime
 }
 
 export interface ConfirmCreateVouchInput extends CreateVouchDraftInput {

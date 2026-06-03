@@ -11,9 +11,15 @@ import {
 } from "@/lib/db/transactions/confirmationTransactions"
 import { createVouchTx, updateVouchArchiveStatusTx } from "@/lib/db/transactions/vouchTransactions"
 import { getCurrentUserPaymentCustomer, requireActiveUser } from "@/lib/fetchers/authFetchers"
-import { assertCreateVouchReadinessReady } from "@/lib/fetchers/readinessFetchers"
+import {
+  assertCreateVouchReadinessReady,
+  getCreateVouchReadinessGate,
+} from "@/lib/fetchers/readinessFetchers"
 import { getVouchParticipantActionState } from "@/lib/fetchers/vouchFetchers"
-import { createStripeMerchantCreationFeeCheckout } from "@/lib/integrations/stripe/checkout-sessions"
+import {
+  createStripeCheckoutAuthorization,
+  createStripeMerchantCreationFeeCheckout,
+} from "@/lib/integrations/stripe/checkout-sessions"
 import { verifyConfirmationCode } from "@/lib/vouch/confirmation-codes"
 import { calculateVouchPricing } from "@/lib/vouch/fees"
 import {
@@ -48,6 +54,11 @@ type CreatedVouchResult = {
   checkoutUrl?: string
 }
 
+type CustomerAuthorizationCheckoutResult = {
+  vouchId: string
+  checkoutUrl: string | null
+}
+
 function getAppUrl(): string {
   return (
     process.env.NEXT_PUBLIC_APP_URL ??
@@ -77,6 +88,23 @@ function toFeePreview(amountCents: number, currency: "usd"): FeePreview {
     customerTotalCents: pricing?.customerTotalCents ?? amountCents,
     totalCents: pricing?.customerTotalCents ?? amountCents,
   }
+}
+
+function getConfirmationWindow(appointmentStartsAt: Date) {
+  return {
+    confirmationOpensAt: new Date(appointmentStartsAt.getTime() - 60 * 60 * 1000),
+    confirmationExpiresAt: new Date(appointmentStartsAt.getTime() + 60 * 60 * 1000),
+  }
+}
+
+function getStripeId(value: unknown): string | undefined {
+  if (typeof value === "string") return value
+  if (value && typeof value === "object" && "id" in value) {
+    const id = (value as { id?: unknown }).id
+    return typeof id === "string" ? id : undefined
+  }
+
+  return undefined
 }
 
 async function mapReadinessFailure(
@@ -124,6 +152,17 @@ export async function validateCreateVouchDraft(input: unknown): Promise<ActionRe
   return actionSuccess(toFeePreview(parsed.data.amountCents, parsed.data.currency))
 }
 
+export async function getCreateVouchFormReadiness(): Promise<
+  ActionResult<{ onboardingRequired: boolean }>
+> {
+  const user = await requireActiveUser()
+  const gate = await getCreateVouchReadinessGate(user.id)
+
+  return actionSuccess({
+    onboardingRequired: gate.readiness?.payoutReadiness !== "ready",
+  })
+}
+
 export async function createVouch(input: unknown): Promise<ActionResult<CreatedVouchResult>> {
   const user = await requireActiveUser()
   const readinessFailure = await mapReadinessFailure(assertCreateVouchReadinessReady(user.id))
@@ -150,6 +189,9 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
   const pricing = calculatePricing(amountCents)
   const merchantFeeCents = pricing.vouchServiceFeeCents + pricing.processingFeeOffsetCents
   const paymentCustomer = await getCurrentUserPaymentCustomer()
+  const { confirmationOpensAt, confirmationExpiresAt } = getConfirmationWindow(
+    parsed.data.appointmentStartsAt
+  )
 
   const vouch = await prisma.$transaction(async (tx) => {
     const created = await createVouchTx(tx, {
@@ -157,8 +199,7 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
       currency: parsed.data.currency,
       protectedAmountCents: pricing.protectedAmountCents,
       appointmentStartsAt: parsed.data.appointmentStartsAt,
-      confirmationOpensAt: parsed.data.confirmationOpensAt,
-      confirmationExpiresAt: parsed.data.confirmationExpiresAt,
+      disclaimerAcceptedAt: new Date(),
       createAsDraft: true,
     })
 
@@ -176,6 +217,9 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
           processing_fee_offset_cents: pricing.processingFeeOffsetCents,
           application_fee_amount_cents: pricing.applicationFeeAmountCents,
           customer_total_cents: pricing.customerTotalCents,
+          appointment_starts_at: parsed.data.appointmentStartsAt.toISOString(),
+          confirmation_opens_at: confirmationOpensAt.toISOString(),
+          confirmation_expires_at: confirmationExpiresAt.toISOString(),
         },
       },
     })
@@ -205,6 +249,251 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
     detailPath: `/vouches/${vouch.id}`,
     ...(checkout.url ? { checkoutUrl: checkout.url } : {}),
   })
+}
+
+export async function ensureCustomerAuthorizationCheckoutForVouch(
+  vouchId: string
+): Promise<ActionResult<CustomerAuthorizationCheckoutResult>> {
+  const vouch = await prisma.vouch.findUnique({
+    where: { id: vouchId },
+    select: {
+      id: true,
+      merchantId: true,
+      amountCents: true,
+      currency: true,
+      protocolFeePaidAt: true,
+      merchant: {
+        select: {
+          connectedAccount: {
+            select: {
+              stripeAccountId: true,
+              chargesEnabled: true,
+              payoutsEnabled: true,
+              detailsSubmitted: true,
+            },
+          },
+        },
+      },
+      paymentIntents: {
+        where: { purpose: "customer_deposit_authorization" },
+        take: 1,
+        select: {
+          id: true,
+          stripeCheckoutSessionUrl: true,
+        },
+      },
+    },
+  })
+
+  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
+  if (!vouch.protocolFeePaidAt) {
+    return actionFailure("PROTOCOL_FEE_REQUIRED", "Protocol fee payment is required first.")
+  }
+
+  const existing = vouch.paymentIntents[0]
+  if (existing?.stripeCheckoutSessionUrl) {
+    return actionSuccess({ vouchId, checkoutUrl: existing.stripeCheckoutSessionUrl })
+  }
+
+  const connectedAccount = vouch.merchant.connectedAccount
+  if (
+    !connectedAccount?.stripeAccountId ||
+    !connectedAccount.chargesEnabled ||
+    !connectedAccount.payoutsEnabled ||
+    !connectedAccount.detailsSubmitted
+  ) {
+    return actionFailure("READINESS_BLOCKED", "Connected account readiness is incomplete.")
+  }
+
+  const pricing = calculatePricing(vouch.amountCents)
+  const appUrl = getAppUrl()
+  const checkout = await createStripeCheckoutAuthorization({
+    vouchId,
+    pricing,
+    currency: vouch.currency,
+    connectedAccountId: connectedAccount.stripeAccountId,
+    successUrl: `${appUrl}/vouches/${vouchId}?deposit_authorization=created`,
+    cancelUrl: `${appUrl}/vouches/${vouchId}?deposit_authorization=cancelled`,
+    idempotencyKey: `vouch:${vouchId}:customer-authorization-checkout`,
+  })
+
+  const paymentIntentId = getStripeId(checkout.payment_intent)
+  const checkoutUrl = checkout.url ?? null
+
+  await prisma.$transaction(async (tx) => {
+    await tx.paymentIntentRecord.upsert({
+      where: { stripeCheckoutSessionId: checkout.id },
+      create: {
+        vouchId,
+        purpose: "customer_deposit_authorization",
+        participantRole: "customer",
+        ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
+        stripeCheckoutSessionId: checkout.id,
+        stripeCheckoutSessionUrl: checkoutUrl,
+        stripeAccountId: connectedAccount.stripeAccountId,
+        amountCents: pricing.protectedAmountCents,
+        currency: vouch.currency,
+        status: "requires_payment_method",
+        captureMethod: "manual",
+      },
+      update: {
+        ...(paymentIntentId ? { stripePaymentIntentId: paymentIntentId } : {}),
+        stripeCheckoutSessionUrl: checkoutUrl,
+        stripeAccountId: connectedAccount.stripeAccountId,
+        amountCents: pricing.protectedAmountCents,
+        currency: vouch.currency,
+        status: "requires_payment_method",
+        captureMethod: "manual",
+      },
+    })
+
+    await tx.auditEvent.create({
+      data: {
+        eventName: "vouch.customer_authorization_checkout_created",
+        actorType: "stripe",
+        entityType: "Vouch",
+        entityId: vouchId,
+        metadata: {
+          stripe_checkout_session_id: checkout.id,
+          stripe_payment_intent_id: paymentIntentId,
+          stripe_account_id: connectedAccount.stripeAccountId,
+        },
+      },
+    })
+  })
+
+  revalidateVouchSurfaces(vouchId)
+
+  return actionSuccess({ vouchId, checkoutUrl })
+}
+
+export async function markProtocolFeePaidAndIssueAuthorizationCheckout(input: {
+  vouchId: string
+  stripeCheckoutSessionId: string
+  stripePaymentIntentId?: string | undefined
+}): Promise<ActionResult<CustomerAuthorizationCheckoutResult>> {
+  await prisma.$transaction(async (tx) => {
+    const now = new Date()
+
+    await tx.vouch.updateMany({
+      where: {
+        id: input.vouchId,
+        protocolFeePaidAt: null,
+        status: "draft",
+      },
+      data: {
+        protocolFeePaidAt: now,
+        status: "protocol_fee_paid",
+      },
+    })
+
+    await tx.paymentIntentRecord.upsert({
+      where: { stripeCheckoutSessionId: input.stripeCheckoutSessionId },
+      create: {
+        vouchId: input.vouchId,
+        purpose: "merchant_protocol_fee",
+        participantRole: "merchant",
+        ...(input.stripePaymentIntentId
+          ? { stripePaymentIntentId: input.stripePaymentIntentId }
+          : {}),
+        stripeCheckoutSessionId: input.stripeCheckoutSessionId,
+        amountCents: 0,
+        currency: "usd",
+        status: "succeeded",
+        captureMethod: "automatic",
+        succeededAt: now,
+        syncedAt: now,
+      },
+      update: {
+        ...(input.stripePaymentIntentId
+          ? { stripePaymentIntentId: input.stripePaymentIntentId }
+          : {}),
+        status: "succeeded",
+        succeededAt: now,
+        syncedAt: now,
+      },
+    })
+
+    await tx.auditEvent.create({
+      data: {
+        eventName: "vouch.protocol_fee_paid",
+        actorType: "stripe",
+        entityType: "Vouch",
+        entityId: input.vouchId,
+        metadata: {
+          stripe_checkout_session_id: input.stripeCheckoutSessionId,
+          stripe_payment_intent_id: input.stripePaymentIntentId,
+        },
+      },
+    })
+  })
+
+  return ensureCustomerAuthorizationCheckoutForVouch(input.vouchId)
+}
+
+export async function markCustomerDepositAuthorized(input: {
+  vouchId: string
+  stripeCheckoutSessionId: string
+  stripePaymentIntentId?: string | undefined
+  stripeCustomerId?: string | undefined
+  stripeAccountId?: string | undefined
+  amountCents?: number | undefined
+  currency?: string | undefined
+}): Promise<ActionResult<{ vouchId: string }>> {
+  await prisma.$transaction(async (tx) => {
+    const now = new Date()
+
+    await tx.paymentIntentRecord.updateMany({
+      where: {
+        vouchId: input.vouchId,
+        purpose: "customer_deposit_authorization",
+        stripeCheckoutSessionId: input.stripeCheckoutSessionId,
+      },
+      data: {
+        ...(input.stripePaymentIntentId
+          ? { stripePaymentIntentId: input.stripePaymentIntentId }
+          : {}),
+        ...(input.stripeCustomerId ? { stripeCustomerId: input.stripeCustomerId } : {}),
+        ...(input.stripeAccountId ? { stripeAccountId: input.stripeAccountId } : {}),
+        ...(input.amountCents ? { amountCents: input.amountCents } : {}),
+        ...(input.currency ? { currency: input.currency } : {}),
+        status: "requires_capture",
+        captureMethod: "manual",
+        authorizedAt: now,
+        syncedAt: now,
+      },
+    })
+
+    await tx.vouch.updateMany({
+      where: {
+        id: input.vouchId,
+        status: "protocol_fee_paid",
+        authorizedAt: null,
+      },
+      data: {
+        status: "authorized",
+        authorizedAt: now,
+      },
+    })
+
+    await tx.auditEvent.create({
+      data: {
+        eventName: "vouch.customer_deposit_authorized",
+        actorType: "stripe",
+        entityType: "Vouch",
+        entityId: input.vouchId,
+        metadata: {
+          stripe_checkout_session_id: input.stripeCheckoutSessionId,
+          stripe_payment_intent_id: input.stripePaymentIntentId,
+          stripe_account_id: input.stripeAccountId,
+        },
+      },
+    })
+  })
+
+  revalidateVouchSurfaces(input.vouchId)
+
+  return actionSuccess({ vouchId: input.vouchId })
 }
 
 export async function confirmPresence(input: unknown): Promise<ActionResult<{ vouchId: string }>> {

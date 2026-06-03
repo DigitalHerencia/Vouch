@@ -105,6 +105,8 @@ model Vouch {
 
   status VouchStatus @default(draft)
 
+  disclaimerAcceptedAt DateTime?
+
   protocolFeePaidAt DateTime?
   authorizedAt      DateTime?
   capturedAt        DateTime?
@@ -201,8 +203,9 @@ model PaymentIntentRecord {
   purpose         PaymentIntentPurpose
   participantRole ParticipantRole?
 
-  stripePaymentIntentId   String  @unique
+  stripePaymentIntentId   String? @unique
   stripeCheckoutSessionId String? @unique
+  stripeCheckoutSessionUrl String?
   stripeCustomerId        String?
   stripeAccountId         String?
 
@@ -489,6 +492,7 @@ model VouchRecoverySnapshot {
 
   stripePaymentIntentId      String?
   stripeCheckoutSessionId    String?
+  stripeCheckoutSessionUrl   String?
   stripeChargeId             String?
   stripeBalanceTransactionId String?
   lastStripeEventId          String?
@@ -535,7 +539,7 @@ enum ParticipantRole {
 
 enum VouchStatus {
   draft
-  active
+  protocol_fee_paid
   authorized
   can_capture
   captured

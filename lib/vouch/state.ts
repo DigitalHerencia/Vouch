@@ -11,8 +11,8 @@ import type {
 import { isConfirmationWindowClosed, isConfirmationWindowOpen } from "./time-windows"
 
 const ALLOWED_TRANSITIONS: ReadonlyMap<VouchStatus, readonly VouchStatus[]> = new Map([
-  ["draft", ["active", "expired", "archived"]],
-  ["active", ["authorized", "expired", "archived"]],
+  ["draft", ["protocol_fee_paid", "expired", "archived"]],
+  ["protocol_fee_paid", ["authorized", "expired", "archived"]],
   ["authorized", ["can_capture", "captured", "expired", "archived"]],
   ["can_capture", ["captured", "expired", "archived"]],
   ["captured", ["archived"]],
@@ -65,7 +65,7 @@ export function deriveNextVouchAction(input: DeriveNextVouchActionInput): NextVo
     }
   }
 
-  if (input.status === "active" || input.status === "authorized") {
+  if (input.status === "protocol_fee_paid" || input.status === "authorized") {
     return { kind: "waiting", label: "Waiting for confirmation window" }
   }
 

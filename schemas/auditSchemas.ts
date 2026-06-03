@@ -6,12 +6,7 @@ import {
   userIdSchema,
 } from "./commonSchemas"
 
-export const auditActorTypeSchema = z.enum([
-  "user",
-  "system",
-  "clerk",
-  "stripe",
-])
+export const auditActorTypeSchema = z.enum(["user", "system", "clerk", "stripe"])
 
 export const auditEntityTypeSchema = z.enum([
   "User",

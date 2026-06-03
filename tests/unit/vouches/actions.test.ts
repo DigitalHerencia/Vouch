@@ -6,6 +6,7 @@ vi.mock("next/cache", () => ({
 
 vi.mock("@/lib/fetchers/authFetchers", () => ({
   requireActiveUser: vi.fn().mockResolvedValue({ id: "user_1", status: "active" }),
+  getCurrentUserPaymentCustomer: vi.fn().mockResolvedValue(null),
 }))
 
 vi.mock("@/lib/fetchers/readinessFetchers", () => ({
@@ -53,8 +54,6 @@ describe("vouch actions", () => {
       amountCents: 10_000,
       currency: "usd",
       appointmentStartsAt: new Date("2026-05-01T16:00:00.000Z"),
-      confirmationOpensAt: new Date("2026-05-01T16:00:00.000Z"),
-      confirmationExpiresAt: new Date("2026-05-01T17:00:00.000Z"),
       disclaimerAccepted: true,
     })
 

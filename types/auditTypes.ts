@@ -1,10 +1,6 @@
 import type { ID, UserID } from "./commonTypes"
 
-export type AuditActorType =
-  | "user"
-  | "system"
-  | "clerk"
-  | "stripe"
+export type AuditActorType = "user" | "system" | "clerk" | "stripe"
 
 export type AuditEntityType =
   | "User"

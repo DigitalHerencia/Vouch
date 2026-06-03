@@ -7,7 +7,7 @@ import { getVouchStatusLabel, isFinalVouchStatus } from "@/lib/vouch/status"
 describe("vouch status helpers", () => {
   it("labels statuses for user-facing UI", () => {
     expect(getVouchStatusLabel("draft")).toBe("Draft")
-    expect(getVouchStatusLabel("active")).toBe("Active")
+    expect(getVouchStatusLabel("protocol_fee_paid")).toBe("Protocol fee paid")
     expect(getVouchStatusLabel("authorized")).toBe("Authorized")
     expect(getVouchStatusLabel("can_capture")).toBe("Can capture")
     expect(getVouchStatusLabel("captured")).toBe("Captured")
@@ -16,7 +16,7 @@ describe("vouch status helpers", () => {
   })
 
   it("detects final states", () => {
-    expect(isFinalVouchStatus("active")).toBe(false)
+    expect(isFinalVouchStatus("protocol_fee_paid")).toBe(false)
     expect(isFinalVouchStatus("can_capture")).toBe(false)
     expect(isFinalVouchStatus("captured")).toBe(true)
     expect(isFinalVouchStatus("expired")).toBe(true)

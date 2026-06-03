@@ -28,7 +28,7 @@ export type ParticipantRole = (typeof ParticipantRole)[keyof typeof ParticipantR
 
 export const VouchStatus = {
   draft: 'draft',
-  active: 'active',
+  protocol_fee_paid: 'protocol_fee_paid',
   authorized: 'authorized',
   can_capture: 'can_capture',
   captured: 'captured',

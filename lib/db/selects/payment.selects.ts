@@ -9,6 +9,7 @@ export const paymentRecordParticipantSummarySelect = {
   participantRole: true,
   stripePaymentIntentId: true,
   stripeCheckoutSessionId: true,
+  stripeCheckoutSessionUrl: true,
   stripeCustomerId: true,
   stripeAccountId: true,
   amountCents: true,

@@ -69,6 +69,7 @@ type VouchBaseRecord = {
   appointmentAt?: DateLike
   confirmationOpensAt: DateLike
   confirmationExpiresAt: DateLike
+  disclaimerAcceptedAt?: DateLike
   protocolFeePaidAt?: DateLike
   authorizedAt?: DateLike
   capturedAt?: DateLike
@@ -104,6 +105,7 @@ export type VouchCardDTO = {
   paymentRecord: PaymentRecordParticipantDTO | null
   presenceConfirmation: PresenceConfirmationDTO | null
   aggregateConfirmationStatus: AggregateConfirmationStatus
+  protocolFeePaidAt: ISODateTime | null
 }
 
 export type VouchDetailDTO = VouchCardDTO & {
@@ -235,6 +237,7 @@ export function mapVouchCardDTO(record: VouchBaseRecord): VouchCardDTO {
     paymentRecord: mapPaymentRecordParticipantDTO(customerAuthorizationRecord),
     presenceConfirmation,
     aggregateConfirmationStatus: getAggregateConfirmationStatus(presenceConfirmation),
+    protocolFeePaidAt: toIso(record.protocolFeePaidAt),
   }
 }
 

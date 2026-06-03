@@ -41,6 +41,7 @@ export type PaymentIntentRecordMinAggregateOutputType = {
   participantRole: $Enums.ParticipantRole | null
   stripePaymentIntentId: string | null
   stripeCheckoutSessionId: string | null
+  stripeCheckoutSessionUrl: string | null
   stripeCustomerId: string | null
   stripeAccountId: string | null
   amountCents: number | null
@@ -65,6 +66,7 @@ export type PaymentIntentRecordMaxAggregateOutputType = {
   participantRole: $Enums.ParticipantRole | null
   stripePaymentIntentId: string | null
   stripeCheckoutSessionId: string | null
+  stripeCheckoutSessionUrl: string | null
   stripeCustomerId: string | null
   stripeAccountId: string | null
   amountCents: number | null
@@ -89,6 +91,7 @@ export type PaymentIntentRecordCountAggregateOutputType = {
   participantRole: number
   stripePaymentIntentId: number
   stripeCheckoutSessionId: number
+  stripeCheckoutSessionUrl: number
   stripeCustomerId: number
   stripeAccountId: number
   amountCents: number
@@ -123,6 +126,7 @@ export type PaymentIntentRecordMinAggregateInputType = {
   participantRole?: true
   stripePaymentIntentId?: true
   stripeCheckoutSessionId?: true
+  stripeCheckoutSessionUrl?: true
   stripeCustomerId?: true
   stripeAccountId?: true
   amountCents?: true
@@ -147,6 +151,7 @@ export type PaymentIntentRecordMaxAggregateInputType = {
   participantRole?: true
   stripePaymentIntentId?: true
   stripeCheckoutSessionId?: true
+  stripeCheckoutSessionUrl?: true
   stripeCustomerId?: true
   stripeAccountId?: true
   amountCents?: true
@@ -171,6 +176,7 @@ export type PaymentIntentRecordCountAggregateInputType = {
   participantRole?: true
   stripePaymentIntentId?: true
   stripeCheckoutSessionId?: true
+  stripeCheckoutSessionUrl?: true
   stripeCustomerId?: true
   stripeAccountId?: true
   amountCents?: true
@@ -280,8 +286,9 @@ export type PaymentIntentRecordGroupByOutputType = {
   vouchId: string | null
   purpose: $Enums.PaymentIntentPurpose
   participantRole: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId: string | null
   stripeCheckoutSessionId: string | null
+  stripeCheckoutSessionUrl: string | null
   stripeCustomerId: string | null
   stripeAccountId: string | null
   amountCents: number
@@ -327,8 +334,9 @@ export type PaymentIntentRecordWhereInput = {
   vouchId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   purpose?: Prisma.EnumPaymentIntentPurposeFilter<"PaymentIntentRecord"> | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.EnumParticipantRoleNullableFilter<"PaymentIntentRecord"> | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFilter<"PaymentIntentRecord"> | string
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   stripeCheckoutSessionId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
+  stripeCheckoutSessionUrl?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   stripeCustomerId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   stripeAccountId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   amountCents?: Prisma.IntFilter<"PaymentIntentRecord"> | number
@@ -354,8 +362,9 @@ export type PaymentIntentRecordOrderByWithRelationInput = {
   vouchId?: Prisma.SortOrderInput | Prisma.SortOrder
   purpose?: Prisma.SortOrder
   participantRole?: Prisma.SortOrderInput | Prisma.SortOrder
-  stripePaymentIntentId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeCheckoutSessionUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
   amountCents?: Prisma.SortOrder
@@ -386,6 +395,7 @@ export type PaymentIntentRecordWhereUniqueInput = Prisma.AtLeast<{
   vouchId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   purpose?: Prisma.EnumPaymentIntentPurposeFilter<"PaymentIntentRecord"> | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.EnumParticipantRoleNullableFilter<"PaymentIntentRecord"> | $Enums.ParticipantRole | null
+  stripeCheckoutSessionUrl?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   stripeCustomerId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   stripeAccountId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   amountCents?: Prisma.IntFilter<"PaymentIntentRecord"> | number
@@ -411,8 +421,9 @@ export type PaymentIntentRecordOrderByWithAggregationInput = {
   vouchId?: Prisma.SortOrderInput | Prisma.SortOrder
   purpose?: Prisma.SortOrder
   participantRole?: Prisma.SortOrderInput | Prisma.SortOrder
-  stripePaymentIntentId?: Prisma.SortOrder
+  stripePaymentIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCheckoutSessionId?: Prisma.SortOrderInput | Prisma.SortOrder
+  stripeCheckoutSessionUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrderInput | Prisma.SortOrder
   stripeAccountId?: Prisma.SortOrderInput | Prisma.SortOrder
   amountCents?: Prisma.SortOrder
@@ -443,8 +454,9 @@ export type PaymentIntentRecordScalarWhereWithAggregatesInput = {
   vouchId?: Prisma.StringNullableWithAggregatesFilter<"PaymentIntentRecord"> | string | null
   purpose?: Prisma.EnumPaymentIntentPurposeWithAggregatesFilter<"PaymentIntentRecord"> | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.EnumParticipantRoleNullableWithAggregatesFilter<"PaymentIntentRecord"> | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringWithAggregatesFilter<"PaymentIntentRecord"> | string
+  stripePaymentIntentId?: Prisma.StringNullableWithAggregatesFilter<"PaymentIntentRecord"> | string | null
   stripeCheckoutSessionId?: Prisma.StringNullableWithAggregatesFilter<"PaymentIntentRecord"> | string | null
+  stripeCheckoutSessionUrl?: Prisma.StringNullableWithAggregatesFilter<"PaymentIntentRecord"> | string | null
   stripeCustomerId?: Prisma.StringNullableWithAggregatesFilter<"PaymentIntentRecord"> | string | null
   stripeAccountId?: Prisma.StringNullableWithAggregatesFilter<"PaymentIntentRecord"> | string | null
   amountCents?: Prisma.IntWithAggregatesFilter<"PaymentIntentRecord"> | number
@@ -466,8 +478,9 @@ export type PaymentIntentRecordCreateInput = {
   id?: string
   purpose: $Enums.PaymentIntentPurpose
   participantRole?: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeCustomerId?: string | null
   stripeAccountId?: string | null
   amountCents: number
@@ -493,8 +506,9 @@ export type PaymentIntentRecordUncheckedCreateInput = {
   vouchId?: string | null
   purpose: $Enums.PaymentIntentPurpose
   participantRole?: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeCustomerId?: string | null
   stripeAccountId?: string | null
   amountCents: number
@@ -518,8 +532,9 @@ export type PaymentIntentRecordUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -545,8 +560,9 @@ export type PaymentIntentRecordUncheckedUpdateInput = {
   vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -571,8 +587,9 @@ export type PaymentIntentRecordCreateManyInput = {
   vouchId?: string | null
   purpose: $Enums.PaymentIntentPurpose
   participantRole?: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeCustomerId?: string | null
   stripeAccountId?: string | null
   amountCents: number
@@ -594,8 +611,9 @@ export type PaymentIntentRecordUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -618,8 +636,9 @@ export type PaymentIntentRecordUncheckedUpdateManyInput = {
   vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -654,6 +673,7 @@ export type PaymentIntentRecordCountOrderByAggregateInput = {
   participantRole?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
   stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeCheckoutSessionUrl?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeAccountId?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
@@ -682,6 +702,7 @@ export type PaymentIntentRecordMaxOrderByAggregateInput = {
   participantRole?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
   stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeCheckoutSessionUrl?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeAccountId?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
@@ -706,6 +727,7 @@ export type PaymentIntentRecordMinOrderByAggregateInput = {
   participantRole?: Prisma.SortOrder
   stripePaymentIntentId?: Prisma.SortOrder
   stripeCheckoutSessionId?: Prisma.SortOrder
+  stripeCheckoutSessionUrl?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
   stripeAccountId?: Prisma.SortOrder
   amountCents?: Prisma.SortOrder
@@ -826,8 +848,9 @@ export type PaymentIntentRecordCreateWithoutVouchInput = {
   id?: string
   purpose: $Enums.PaymentIntentPurpose
   participantRole?: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeCustomerId?: string | null
   stripeAccountId?: string | null
   amountCents: number
@@ -851,8 +874,9 @@ export type PaymentIntentRecordUncheckedCreateWithoutVouchInput = {
   id?: string
   purpose: $Enums.PaymentIntentPurpose
   participantRole?: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeCustomerId?: string | null
   stripeAccountId?: string | null
   amountCents: number
@@ -906,8 +930,9 @@ export type PaymentIntentRecordScalarWhereInput = {
   vouchId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   purpose?: Prisma.EnumPaymentIntentPurposeFilter<"PaymentIntentRecord"> | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.EnumParticipantRoleNullableFilter<"PaymentIntentRecord"> | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFilter<"PaymentIntentRecord"> | string
+  stripePaymentIntentId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   stripeCheckoutSessionId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
+  stripeCheckoutSessionUrl?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   stripeCustomerId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   stripeAccountId?: Prisma.StringNullableFilter<"PaymentIntentRecord"> | string | null
   amountCents?: Prisma.IntFilter<"PaymentIntentRecord"> | number
@@ -929,8 +954,9 @@ export type PaymentIntentRecordCreateWithoutChargesInput = {
   id?: string
   purpose: $Enums.PaymentIntentPurpose
   participantRole?: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeCustomerId?: string | null
   stripeAccountId?: string | null
   amountCents: number
@@ -955,8 +981,9 @@ export type PaymentIntentRecordUncheckedCreateWithoutChargesInput = {
   vouchId?: string | null
   purpose: $Enums.PaymentIntentPurpose
   participantRole?: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeCustomerId?: string | null
   stripeAccountId?: string | null
   amountCents: number
@@ -995,8 +1022,9 @@ export type PaymentIntentRecordUpdateWithoutChargesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1021,8 +1049,9 @@ export type PaymentIntentRecordUncheckedUpdateWithoutChargesInput = {
   vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1045,8 +1074,9 @@ export type PaymentIntentRecordCreateWithoutRefundsInput = {
   id?: string
   purpose: $Enums.PaymentIntentPurpose
   participantRole?: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeCustomerId?: string | null
   stripeAccountId?: string | null
   amountCents: number
@@ -1071,8 +1101,9 @@ export type PaymentIntentRecordUncheckedCreateWithoutRefundsInput = {
   vouchId?: string | null
   purpose: $Enums.PaymentIntentPurpose
   participantRole?: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeCustomerId?: string | null
   stripeAccountId?: string | null
   amountCents: number
@@ -1111,8 +1142,9 @@ export type PaymentIntentRecordUpdateWithoutRefundsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1137,8 +1169,9 @@ export type PaymentIntentRecordUncheckedUpdateWithoutRefundsInput = {
   vouchId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1161,8 +1194,9 @@ export type PaymentIntentRecordCreateManyVouchInput = {
   id?: string
   purpose: $Enums.PaymentIntentPurpose
   participantRole?: $Enums.ParticipantRole | null
-  stripePaymentIntentId: string
+  stripePaymentIntentId?: string | null
   stripeCheckoutSessionId?: string | null
+  stripeCheckoutSessionUrl?: string | null
   stripeCustomerId?: string | null
   stripeAccountId?: string | null
   amountCents: number
@@ -1184,8 +1218,9 @@ export type PaymentIntentRecordUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1209,8 +1244,9 @@ export type PaymentIntentRecordUncheckedUpdateWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1234,8 +1270,9 @@ export type PaymentIntentRecordUncheckedUpdateManyWithoutVouchInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   purpose?: Prisma.EnumPaymentIntentPurposeFieldUpdateOperationsInput | $Enums.PaymentIntentPurpose
   participantRole?: Prisma.NullableEnumParticipantRoleFieldUpdateOperationsInput | $Enums.ParticipantRole | null
-  stripePaymentIntentId?: Prisma.StringFieldUpdateOperationsInput | string
+  stripePaymentIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCheckoutSessionId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stripeCheckoutSessionUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   stripeAccountId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amountCents?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1300,6 +1337,7 @@ export type PaymentIntentRecordSelect<ExtArgs extends runtime.Types.Extensions.I
   participantRole?: boolean
   stripePaymentIntentId?: boolean
   stripeCheckoutSessionId?: boolean
+  stripeCheckoutSessionUrl?: boolean
   stripeCustomerId?: boolean
   stripeAccountId?: boolean
   amountCents?: boolean
@@ -1328,6 +1366,7 @@ export type PaymentIntentRecordSelectCreateManyAndReturn<ExtArgs extends runtime
   participantRole?: boolean
   stripePaymentIntentId?: boolean
   stripeCheckoutSessionId?: boolean
+  stripeCheckoutSessionUrl?: boolean
   stripeCustomerId?: boolean
   stripeAccountId?: boolean
   amountCents?: boolean
@@ -1353,6 +1392,7 @@ export type PaymentIntentRecordSelectUpdateManyAndReturn<ExtArgs extends runtime
   participantRole?: boolean
   stripePaymentIntentId?: boolean
   stripeCheckoutSessionId?: boolean
+  stripeCheckoutSessionUrl?: boolean
   stripeCustomerId?: boolean
   stripeAccountId?: boolean
   amountCents?: boolean
@@ -1378,6 +1418,7 @@ export type PaymentIntentRecordSelectScalar = {
   participantRole?: boolean
   stripePaymentIntentId?: boolean
   stripeCheckoutSessionId?: boolean
+  stripeCheckoutSessionUrl?: boolean
   stripeCustomerId?: boolean
   stripeAccountId?: boolean
   amountCents?: boolean
@@ -1395,7 +1436,7 @@ export type PaymentIntentRecordSelectScalar = {
   updatedAt?: boolean
 }
 
-export type PaymentIntentRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "purpose" | "participantRole" | "stripePaymentIntentId" | "stripeCheckoutSessionId" | "stripeCustomerId" | "stripeAccountId" | "amountCents" | "currency" | "status" | "captureMethod" | "captureBefore" | "authorizedAt" | "canceledAt" | "failedAt" | "succeededAt" | "lastStripeEventId" | "syncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentIntentRecord"]>
+export type PaymentIntentRecordOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "purpose" | "participantRole" | "stripePaymentIntentId" | "stripeCheckoutSessionId" | "stripeCheckoutSessionUrl" | "stripeCustomerId" | "stripeAccountId" | "amountCents" | "currency" | "status" | "captureMethod" | "captureBefore" | "authorizedAt" | "canceledAt" | "failedAt" | "succeededAt" | "lastStripeEventId" | "syncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentIntentRecord"]>
 export type PaymentIntentRecordInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.PaymentIntentRecord$vouchArgs<ExtArgs>
   charges?: boolean | Prisma.PaymentIntentRecord$chargesArgs<ExtArgs>
@@ -1421,8 +1462,9 @@ export type $PaymentIntentRecordPayload<ExtArgs extends runtime.Types.Extensions
     vouchId: string | null
     purpose: $Enums.PaymentIntentPurpose
     participantRole: $Enums.ParticipantRole | null
-    stripePaymentIntentId: string
+    stripePaymentIntentId: string | null
     stripeCheckoutSessionId: string | null
+    stripeCheckoutSessionUrl: string | null
     stripeCustomerId: string | null
     stripeAccountId: string | null
     amountCents: number
@@ -1870,6 +1912,7 @@ export interface PaymentIntentRecordFieldRefs {
   readonly participantRole: Prisma.FieldRef<"PaymentIntentRecord", 'ParticipantRole'>
   readonly stripePaymentIntentId: Prisma.FieldRef<"PaymentIntentRecord", 'String'>
   readonly stripeCheckoutSessionId: Prisma.FieldRef<"PaymentIntentRecord", 'String'>
+  readonly stripeCheckoutSessionUrl: Prisma.FieldRef<"PaymentIntentRecord", 'String'>
   readonly stripeCustomerId: Prisma.FieldRef<"PaymentIntentRecord", 'String'>
   readonly stripeAccountId: Prisma.FieldRef<"PaymentIntentRecord", 'String'>
   readonly amountCents: Prisma.FieldRef<"PaymentIntentRecord", 'Int'>

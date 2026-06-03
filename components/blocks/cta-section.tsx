@@ -42,6 +42,26 @@ function CTAButton({
   )
 }
 
+function RequirementNoticeCard({
+  icon: Icon,
+  title,
+  body,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+  body: string
+}) {
+  return (
+    <div className="border-3 border-neutral-400 bg-black p-5">
+      <div className="mb-4 flex size-11 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white">
+        <Icon className="size-5" />
+      </div>
+      <h2 className="text-xl font-black tracking-wide text-white uppercase">{title}</h2>
+      <p className="mt-2 text-sm leading-6 font-semibold text-neutral-400">{body}</p>
+    </div>
+  )
+}
+
 export function CTASimple({ title, description, primaryAction, secondaryAction }: CTASimpleProps) {
   return (
     <main>
@@ -243,41 +263,26 @@ export function CTABanner({
   )
 }
 
-export function DashboardRequirementsNotice() {
-  const notices = [
-    {
-      icon: SquareArrowOutUpRight,
-      title: "Stripe Connect",
-      body: "You must complete Stripe Connect Acount onboarding before creating a Vouch",
-    },
-    {
-      icon: CreditCard,
-      title: "Payment method",
-      body: "You must save a valid payment method before you can complete purchases",
-    },
-  ]
-
+export function OnboardingRequirementNotice() {
   return (
     <section className="px-4 py-8 md:px-8 lg:px-16">
-      <div className="grid gap-4 md:grid-cols-2">
-        {notices.map((notice) => {
-          const Icon = notice.icon
+      <RequirementNoticeCard
+        icon={SquareArrowOutUpRight}
+        title="Stripe Connect"
+        body="You must complete Stripe Connect account onboarding before creating a Vouch"
+      />
+    </section>
+  )
+}
 
-          return (
-            <div key={notice.title} className="border-3 border-neutral-400 bg-black p-5">
-              <div className="mb-4 flex size-11 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white">
-                <Icon className="size-5" />
-              </div>
-              <h2 className="text-xl font-black tracking-wide text-white uppercase">
-                {notice.title}
-              </h2>
-              <p className="mt-2 text-sm leading-6 font-semibold text-neutral-400">
-                {notice.body}
-              </p>
-            </div>
-          )
-        })}
-      </div>
+export function DashboardRequirementsNotice() {
+  return (
+    <section className="px-4 py-8 md:px-8 lg:px-16">
+      <RequirementNoticeCard
+        icon={CreditCard}
+        title="Payment method"
+        body="You must save a valid payment method before you can complete purchases"
+      />
     </section>
   )
 }
@@ -288,5 +293,6 @@ export const CTASection = {
   Newsletter: CTANewsletter,
   Split: CTASplit,
   Banner: CTABanner,
+  OnboardingRequirementNotice,
   DashboardRequirementsNotice,
 }

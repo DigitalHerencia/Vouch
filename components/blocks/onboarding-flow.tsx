@@ -1,13 +1,5 @@
 import * as React from "react"
-import {
-  BadgeCheck,
-  Building,
-  Check,
-  Handshake,
-  Target,
-  Upload,
-  User,
-} from "lucide-react"
+import { BadgeCheck, Building, Check, Handshake, Target, Upload, User } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -26,8 +18,10 @@ export function OnboardingWizard({
   const progress = steps.length ? ((currentStep + 1) / steps.length) * 100 : 0
 
   if (!step) return null
+  const current = step
 
   function goNext() {
+    if (current.canContinue === false) return
     if (currentStep < steps.length - 1) onStepChange(currentStep + 1)
     else onComplete?.()
   }
@@ -106,8 +100,8 @@ export function OnboardingWizard({
                   Skip
                 </Button>
               ) : null}
-              <Button onClick={goNext}>
-                {currentStep === steps.length - 1 ? "Complete" : "Continue"}
+              <Button onClick={goNext} disabled={step.canContinue === false}>
+                {currentStep === steps.length - 1 ? (step.actionLabel ?? "Complete") : "Continue"}
               </Button>
             </div>
           </div>

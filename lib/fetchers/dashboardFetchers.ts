@@ -14,9 +14,14 @@ import {
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
 import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
+import { getAccountReadiness } from "@/lib/fetchers/readinessFetchers"
 
 const DEFAULT_TAKE = 10
-const ACTIVE_DB_STATUSES = ["active", "authorized", "can_capture"] as const satisfies readonly VouchStatus[]
+const ACTIVE_DB_STATUSES = [
+  "protocol_fee_paid",
+  "authorized",
+  "can_capture",
+] as const satisfies readonly VouchStatus[]
 
 type VouchCardRecord = Prisma.VouchGetPayload<{ select: typeof vouchCardSelect }>
 
@@ -95,12 +100,18 @@ export async function getDashboardPageState(input?: {
 }): Promise<DashboardPageStateDTO> {
   const current = await requireActiveUser()
   const filters = await parseDashboardSearchParams(input?.searchParams ?? {})
-  const summary = await getDashboardSummary(current.id)
+  const [summary, readiness] = await Promise.all([
+    getDashboardSummary(current.id),
+    getAccountReadiness(current.id),
+  ])
 
   return {
     variant: getDashboardVariant(summary),
     filters,
     summary,
+    warnings: {
+      paymentMethodRequired: readiness?.paymentMethodReady !== "ready",
+    },
   }
 }
 

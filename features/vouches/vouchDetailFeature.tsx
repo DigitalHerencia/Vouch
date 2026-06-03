@@ -1,15 +1,16 @@
 import { notFound } from "next/navigation"
+import Link from "next/link"
 import type { ReactNode } from "react"
 
-import { CTASection } from "@/components/blocks/cta-section"
 import { StatusBlocks } from "@/components/blocks/status"
+import { Button } from "@/components/ui/button"
 import { vouchPageCopy } from "@/content/vouches"
 import { ConfirmPresenceInlineForm } from "@/features/vouches/vouchDetailFeature.client"
 import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import {
   getAuditTimeline,
   getConfirmPresencePageState,
-  getCurrentUserReadinessWarningState,
   getVouchDetailForParticipant,
 } from "@/lib/fetchers/vouchFetchers"
 
@@ -38,6 +39,7 @@ type VouchDetailViewProps = {
   settlementStatusLabel: string
   merchantReceivesLabel: string
   customerTotalLabel: string
+  authorizationCheckoutUrl: string | null
   confirmation: ConfirmationState
   timeline: Array<{ label: string; timestampLabel: string }>
 }
@@ -70,6 +72,7 @@ const participantName = (
 ) => participant?.displayName ?? participant?.email ?? "Pending"
 
 export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
+  const user = await requireActiveUser()
   const state = await getVouchDetailForParticipant({ vouchId })
   if (!("vouch" in state) || !state.vouch) notFound()
 
@@ -80,56 +83,55 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
   const currentUserCode =
     "currentUserCode" in confirmState ? confirmState.currentUserCode : undefined
   const timeline = await getAuditTimeline(vouchId)
-  const readinessWarning = await getCurrentUserReadinessWarningState()
 
   return (
-    <>
-      {readinessWarning.show ? <CTASection.DashboardRequirementsNotice /> : null}
-      <VouchDetailView
-        title={vouch.publicId}
-        amountLabel={money(vouch.amountCents, vouch.currency)}
-        statusLabel={vouch.status}
-        currentUserRoleLabel={
-          confirmState.variant === "confirm_as_merchant"
-            ? "merchant"
-            : confirmState.variant === "confirm_as_customer"
-              ? "customer"
-              : "participant"
-        }
-        merchantLabel={participantName(vouch.merchant)}
-        customerLabel={participantName(vouch.customer)}
-        appointmentLabel={dateTime(vouch.appointmentAt)}
-        windowLabel={dateTime(vouch.confirmationOpensAt)}
-        deadlineLabel={dateTime(vouch.confirmationExpiresAt)}
-        paymentStatusLabel={vouch.paymentRecord?.status ?? "not_started"}
-        settlementStatusLabel={vouch.paymentRecord?.status ?? "pending"}
-        merchantReceivesLabel={money(vouch.amountCents, vouch.currency)}
-        customerTotalLabel={money(
-          vouch.paymentRecord?.amountCents ?? vouch.amountCents,
-          vouch.currency
-        )}
-        confirmation={{
-          merchantConfirmed:
-            vouch.aggregateConfirmationStatus === "merchant_confirmed" ||
-            vouch.aggregateConfirmationStatus === "both_confirmed",
-          customerConfirmed:
-            vouch.aggregateConfirmationStatus === "customer_confirmed" ||
-            vouch.aggregateConfirmationStatus === "both_confirmed",
-          canConfirm,
-          action: canConfirm ? (
-            <ConfirmPresenceInlineForm
-              action={confirmPresenceFormAction}
-              vouchId={vouchId}
-              {...(currentUserCode ? { currentUserCode } : {})}
-            />
-          ) : null,
-        }}
-        timeline={timeline.map((event) => ({
-          label: event.eventName,
-          timestampLabel: dateTime(event.createdAt),
-        }))}
-      />
-    </>
+    <VouchDetailView
+      title={vouch.publicId}
+      amountLabel={money(vouch.amountCents, vouch.currency)}
+      statusLabel={vouch.status}
+      currentUserRoleLabel={
+        confirmState.variant === "confirm_as_merchant"
+          ? "merchant"
+          : confirmState.variant === "confirm_as_customer"
+            ? "customer"
+            : "participant"
+      }
+      merchantLabel={participantName(vouch.merchant)}
+      customerLabel={participantName(vouch.customer)}
+      appointmentLabel={dateTime(vouch.appointmentAt)}
+      windowLabel={dateTime(vouch.confirmationOpensAt)}
+      deadlineLabel={dateTime(vouch.confirmationExpiresAt)}
+      paymentStatusLabel={vouch.paymentRecord?.status ?? "not_started"}
+      settlementStatusLabel={vouch.paymentRecord?.status ?? "pending"}
+      merchantReceivesLabel={money(vouch.amountCents, vouch.currency)}
+      customerTotalLabel={money(
+        vouch.paymentRecord?.amountCents ?? vouch.amountCents,
+        vouch.currency
+      )}
+      authorizationCheckoutUrl={
+        user.id === vouch.merchantId ? (vouch.paymentRecord?.checkoutUrl ?? null) : null
+      }
+      confirmation={{
+        merchantConfirmed:
+          vouch.aggregateConfirmationStatus === "merchant_confirmed" ||
+          vouch.aggregateConfirmationStatus === "both_confirmed",
+        customerConfirmed:
+          vouch.aggregateConfirmationStatus === "customer_confirmed" ||
+          vouch.aggregateConfirmationStatus === "both_confirmed",
+        canConfirm,
+        action: canConfirm ? (
+          <ConfirmPresenceInlineForm
+            action={confirmPresenceFormAction}
+            vouchId={vouchId}
+            {...(currentUserCode ? { currentUserCode } : {})}
+          />
+        ) : null,
+      }}
+      timeline={timeline.map((event) => ({
+        label: event.eventName,
+        timestampLabel: dateTime(event.createdAt),
+      }))}
+    />
   )
 }
 
@@ -147,6 +149,7 @@ function VouchDetailView({
   settlementStatusLabel,
   merchantReceivesLabel,
   customerTotalLabel,
+  authorizationCheckoutUrl,
   confirmation,
   timeline,
 }: VouchDetailViewProps) {
@@ -198,6 +201,21 @@ function VouchDetailView({
               action: (
                 <div className="grid gap-4">
                   {confirmation.action}
+                  {authorizationCheckoutUrl ? (
+                    <div className="border border-neutral-400 bg-neutral-900 p-4">
+                      <p className="text-sm font-black text-white uppercase">
+                        Customer authorization link
+                      </p>
+                      <p className="mt-2 text-xs leading-5 font-semibold text-neutral-400">
+                        Send this Stripe-hosted link to the customer to authorize the Vouch amount.
+                      </p>
+                      <Button asChild className="mt-4">
+                        <Link href={authorizationCheckoutUrl} target="_blank" rel="noreferrer">
+                          Open authorization checkout
+                        </Link>
+                      </Button>
+                    </div>
+                  ) : null}
                   <div className="border border-neutral-400 bg-neutral-900 p-4">
                     <p className="text-sm font-black text-white uppercase">{copy.actionsTitle}</p>
                     <p className="mt-2 text-xs leading-5 font-semibold text-neutral-400">

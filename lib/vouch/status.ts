@@ -8,8 +8,8 @@ export function getVouchStatusLabel(status: VouchStatus): string {
   switch (status) {
     case "draft":
       return "Draft"
-    case "active":
-      return "Active"
+    case "protocol_fee_paid":
+      return "Protocol fee paid"
     case "authorized":
       return "Authorized"
     case "can_capture":

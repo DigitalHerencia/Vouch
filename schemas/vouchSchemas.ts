@@ -39,23 +39,34 @@ export const createVouchDraftSchema = z
     amountCents: positiveMoneyCentsSchema,
     currency: z.literal("usd").default("usd"),
     appointmentStartsAt: z.coerce.date(),
-    confirmationOpensAt: z.coerce.date(),
-    confirmationExpiresAt: z.coerce.date(),
   })
   .superRefine((value, ctx) => {
-    if (value.confirmationOpensAt >= value.confirmationExpiresAt) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["confirmationExpiresAt"],
-        message: "Confirmation expiration must be after confirmation opening.",
-      })
-    }
+    const now = Date.now()
+    const appointmentMs = value.appointmentStartsAt.getTime()
+    const maxAdvanceMs = 24 * 60 * 60 * 1000
 
-    if (value.appointmentStartsAt > value.confirmationExpiresAt) {
+    if (Number.isNaN(appointmentMs)) {
       ctx.addIssue({
         code: "custom",
         path: ["appointmentStartsAt"],
-        message: "Appointment must occur before the confirmation deadline.",
+        message: "Enter a valid appointment date and time.",
+      })
+      return
+    }
+
+    if (appointmentMs <= now) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["appointmentStartsAt"],
+        message: "Appointment must be in the future.",
+      })
+    }
+
+    if (appointmentMs - now > maxAdvanceMs) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["appointmentStartsAt"],
+        message: "Create a Vouch no more than 24 hours before the appointment.",
       })
     }
   })

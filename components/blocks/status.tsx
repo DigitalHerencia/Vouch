@@ -330,6 +330,7 @@ export function VouchCreationWizard({
   formError,
   cartOpen,
   isPending,
+  disabled = false,
   onDraftChange,
   onStepSelect,
   onBack,
@@ -344,9 +345,9 @@ export function VouchCreationWizard({
   const stepIcons = [CircleDollarSign, CalendarClock, FileCheck2] as const
 
   return (
-    <div className="grid h-full min-h-0 w-full gap-4 overflow-hidden lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
-      <aside className="flex min-h-0 flex-col border-3 border-neutral-400 bg-black">
-        <div className="border-b-3 border-neutral-400 p-4 md:p-5">
+    <div className="mx-auto grid w-full max-w-2xl gap-8">
+      <aside className="grid gap-4">
+        <div className="text-center">
           <p className="text-lg font-black tracking-widest text-blue-600 uppercase">
             {content.eyebrow}
           </p>
@@ -355,7 +356,16 @@ export function VouchCreationWizard({
           </h1>
         </div>
 
-        <div className="grid flex-1 content-between gap-4 p-4 md:p-5">
+        <div className="grid gap-4">
+          <div>
+            <Progress value={progress} className="h-3 shadow-none" />
+            <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-bold text-neutral-400">
+              <span>
+                Step {optimisticStep + 1} of {content.steps.length}
+              </span>
+              <span className="text-right">{Math.round(progress)}% complete</span>
+            </div>
+          </div>
           <div className="space-y-3">
             {content.steps.map((step, index) => {
               const Icon = stepIcons[index] ?? FileCheck2
@@ -367,11 +377,13 @@ export function VouchCreationWizard({
                   key={step.title}
                   type="button"
                   onClick={() => onStepSelect(index)}
+                  disabled={disabled}
                   className={[
                     "grid w-full grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 border-2 p-3 text-left transition",
                     active
                       ? "border-blue-600 bg-blue-600 text-white shadow-[5px_5px_0_black]"
                       : "border-neutral-400 bg-black text-neutral-400 hover:border-blue-600",
+                    disabled ? "cursor-not-allowed opacity-50 hover:border-neutral-400" : "",
                   ].join(" ")}
                 >
                   <span className="flex size-10 items-center justify-center border border-neutral-400 bg-black text-white">
@@ -392,19 +404,14 @@ export function VouchCreationWizard({
               )
             })}
           </div>
-
-          <div>
-            <Progress value={progress} className="h-3 shadow-none" />
-            <div className="mt-3 grid grid-cols-2 gap-2 text-[11px] font-bold text-neutral-400">
-              <span>{Math.round(progress)}% complete</span>
-              <span className="text-right">{content.progressHint}</span>
-            </div>
-          </div>
+          <p className="text-center text-[11px] font-bold text-neutral-400">
+            {content.progressHint}
+          </p>
         </div>
       </aside>
 
-      <section className="min-h-0 overflow-hidden border-3 border-neutral-400 bg-black">
-        <div className="grid h-full min-h-0 grid-rows-[auto_minmax(0,1fr)_auto]">
+      <section className="border-3 border-neutral-400 bg-black">
+        <div className="grid">
           <div className="border-b-3 border-neutral-400 p-4 md:p-5">
             <h2 className="leading-none font-black tracking-wide uppercase">
               {content.steps[optimisticStep]?.title}
@@ -414,7 +421,7 @@ export function VouchCreationWizard({
             </p>
           </div>
 
-          <div className="min-h-0 overflow-auto p-4 md:p-5">
+          <div className="p-4 md:p-5">
             {formError ? (
               <div className="mb-4 border border-red-600 bg-red-600/10 p-3 text-sm font-semibold text-white">
                 {formError}
@@ -429,6 +436,7 @@ export function VouchCreationWizard({
                 >
                   <Input
                     type="number"
+                    disabled={disabled}
                     inputMode="decimal"
                     min="5"
                     max="2500"
@@ -458,18 +466,21 @@ export function VouchCreationWizard({
                     label="Appointment"
                     value={draft.appointmentStartsAt}
                     error={firstFieldError(fieldErrors, ["appointmentStartsAt"])}
+                    disabled={disabled}
                     onChange={(value) => onDraftChange({ appointmentStartsAt: value })}
                   />
                   <DateField
                     label="Opens"
                     value={draft.confirmationOpensAt}
                     error={firstFieldError(fieldErrors, ["confirmationOpensAt"])}
+                    disabled={disabled}
                     onChange={(value) => onDraftChange({ confirmationOpensAt: value })}
                   />
                   <DateField
                     label="Expires"
                     value={draft.confirmationExpiresAt}
                     error={firstFieldError(fieldErrors, ["confirmationExpiresAt"])}
+                    disabled={disabled}
                     onChange={(value) => onDraftChange({ confirmationExpiresAt: value })}
                   />
                 </div>
@@ -498,6 +509,7 @@ export function VouchCreationWizard({
                 <label className="flex min-w-0 items-start gap-3 border border-neutral-400 p-4">
                   <input
                     type="checkbox"
+                    disabled={disabled}
                     checked={draft.disclaimerAccepted}
                     onChange={(event) =>
                       onDraftChange({ disclaimerAccepted: event.target.checked })
@@ -522,24 +534,24 @@ export function VouchCreationWizard({
               type="button"
               variant="outline"
               onClick={onBack}
-              disabled={currentStep === 0 || isPending}
+              disabled={currentStep === 0 || isPending || disabled}
             >
               Back
             </Button>
             {currentStep === 0 ? (
-              <Button type="button" disabled={isPending} onClick={onSaveAmount}>
+              <Button type="button" disabled={isPending || disabled} onClick={onSaveAmount}>
                 Save fee invoice
               </Button>
             ) : null}
             {currentStep === 1 ? (
-              <Button type="button" disabled={isPending} onClick={onSaveWindow}>
+              <Button type="button" disabled={isPending || disabled} onClick={onSaveWindow}>
                 Save window
               </Button>
             ) : null}
             {currentStep === 2 ? (
               <Button
                 type="button"
-                disabled={isPending || !draft.disclaimerAccepted}
+                disabled={isPending || disabled || !draft.disclaimerAccepted}
                 onClick={onReviewCart}
               >
                 Review cart
@@ -557,6 +569,7 @@ export function VouchCreationWizard({
         draft={draft}
         preview={preview}
         isPending={isPending}
+        disabled={disabled}
         onConfirm={onCreateVouch}
       />
     </div>
@@ -592,17 +605,20 @@ function DateField({
   label,
   value,
   error,
+  disabled,
   onChange,
 }: {
   label: string
   value: string
   error: string | null
   onChange: (value: string) => void
+  disabled?: boolean
 }) {
   return (
     <FieldShell label={label} error={error}>
       <Input
         type="datetime-local"
+        disabled={disabled}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         className="h-12 rounded-none border border-neutral-400 bg-black px-3 text-sm font-bold text-white focus-visible:border-blue-600 focus-visible:ring-0"
@@ -638,6 +654,7 @@ function VouchCreationCartSheet({
   draft,
   preview,
   isPending,
+  disabled,
   onConfirm,
 }: {
   open: boolean
@@ -646,6 +663,7 @@ function VouchCreationCartSheet({
   draft: VouchCreationDraft
   preview?: VouchCreationPreviewData | undefined
   isPending: boolean
+  disabled?: boolean
   onConfirm: () => void
 }) {
   const protectedAmount = parseCurrencyLabel(draft.amountDollars)
@@ -692,7 +710,7 @@ function VouchCreationCartSheet({
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             Back to wizard
           </Button>
-          <Button type="button" disabled={isPending} onClick={onConfirm}>
+          <Button type="button" disabled={isPending || disabled} onClick={onConfirm}>
             Open hosted fee invoice
           </Button>
         </SheetFooter>

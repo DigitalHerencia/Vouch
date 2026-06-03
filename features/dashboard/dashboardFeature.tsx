@@ -58,7 +58,7 @@ function getStatusLabel(status: VouchCardDTO["status"]) {
 function mapStatusTone(status: VouchCardDTO["status"]): VouchStatusTone {
   if (status === "captured") return "complete"
   if (status === "expired") return "expired"
-  if (status === "active" || status === "authorized" || status === "can_capture") {
+  if (status === "protocol_fee_paid" || status === "authorized" || status === "can_capture") {
     return "active"
   }
 
@@ -129,6 +129,7 @@ function mapVouchToInvoice(vouch: VouchCardDTO): InvoiceSummaryData {
 export async function DashboardFeature() {
   const state = await getDashboardPageState()
   const sections = state.summary?.sections
+  const dashboardBlocked = state.warnings.paymentMethodRequired
 
   const drafts = sections?.drafts ?? []
   const actionRequired = sections?.actionRequired ?? []
@@ -180,16 +181,19 @@ export async function DashboardFeature() {
 
       <StatsCards stats={metrics} />
 
+      {dashboardBlocked ? <CTASection.DashboardRequirementsNotice /> : null}
+
       {state.variant === "empty" ? (
-        <>
-          <CTASection.DashboardRequirementsNotice />
-          <section className="px-4 py-8 md:px-8 lg:px-16">
-            <StatusBlocks.DashboardEmptyState />
-          </section>
-        </>
+        <section className="px-4 py-8 md:px-8 lg:px-16">
+          <StatusBlocks.DashboardEmptyState />
+        </section>
       ) : (
         invoices.map((invoice) => (
-          <InvoiceSummary key={invoice.vouchId ?? invoice.invoiceNumber} {...invoice} />
+          <InvoiceSummary
+            key={invoice.vouchId ?? invoice.invoiceNumber}
+            {...invoice}
+            disabled={dashboardBlocked}
+          />
         ))
       )}
     </main>

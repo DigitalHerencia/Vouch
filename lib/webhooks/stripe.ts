@@ -1,5 +1,7 @@
 import "server-only"
 
+import type Stripe from "stripe"
+
 import { prisma } from "@/lib/db/prisma"
 import {
   markProviderWebhookFailedTx,
@@ -15,6 +17,10 @@ import {
   isStripeSetupIntentEvent,
   type StripeWebhookEvent,
 } from "@/lib/integrations/stripe/webhook-events"
+import {
+  markCustomerDepositAuthorized,
+  markProtocolFeePaidAndIssueAuthorizationCheckout,
+} from "@/lib/actions/vouchActions"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-resultTypes"
 
 type WebhookProcessResult = {
@@ -33,6 +39,60 @@ function isSupportedStripeEvent(event: StripeWebhookEvent): boolean {
     isStripeSetupIntentEvent(event) ||
     isStripeAccountEvent(event)
   )
+}
+
+function getStripeId(value: unknown): string | undefined {
+  if (typeof value === "string") return value
+  if (value && typeof value === "object" && "id" in value) {
+    const id = (value as { id?: unknown }).id
+    return typeof id === "string" ? id : undefined
+  }
+
+  return undefined
+}
+
+async function processCheckoutSessionCompleted(
+  session: Stripe.Checkout.Session,
+  accountId?: string
+): Promise<void> {
+  const vouchId = session.metadata?.vouch_id
+  if (!vouchId) return
+
+  const paymentRole = session.metadata?.payment_role
+  const paymentIntentId = getStripeId(session.payment_intent)
+  const customerId = getStripeId(session.customer)
+
+  const result =
+    paymentRole === "merchant_creation_fee"
+      ? await markProtocolFeePaidAndIssueAuthorizationCheckout({
+          vouchId,
+          stripeCheckoutSessionId: session.id,
+          stripePaymentIntentId: paymentIntentId,
+        })
+      : paymentRole === "customer_commitment"
+        ? await markCustomerDepositAuthorized({
+            vouchId,
+            stripeCheckoutSessionId: session.id,
+            stripePaymentIntentId: paymentIntentId,
+            stripeCustomerId: customerId,
+            stripeAccountId: accountId,
+            amountCents: session.amount_total ?? undefined,
+            currency: session.currency ?? undefined,
+          })
+        : null
+
+  if (!result) return
+
+  if (!result.ok) throw new Error(result.formError ?? result.code)
+}
+
+async function processSupportedStripeEvent(event: StripeWebhookEvent): Promise<void> {
+  if (event.type === "checkout.session.completed") {
+    await processCheckoutSessionCompleted(
+      event.data.object as Stripe.Checkout.Session,
+      event.account
+    )
+  }
 }
 
 export async function processStripeWebhookEvent(
@@ -73,6 +133,8 @@ export async function processStripeWebhookEvent(
         processed: false,
       })
     }
+
+    await processSupportedStripeEvent(event)
 
     await prisma.$transaction((tx) => markProviderWebhookProcessedTx(tx, { id: ledger.event.id }))
 

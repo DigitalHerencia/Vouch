@@ -40,7 +40,7 @@ export function canAcceptVouch(input: AcceptVouchAuthzInput): boolean {
   return (
     Boolean(input.userId) &&
     isActive(input) &&
-    input.status === "active" &&
+    input.status === "protocol_fee_paid" &&
     !input.existingCustomerId &&
     input.userId !== input.merchantId &&
     hasAcceptReadiness(input)

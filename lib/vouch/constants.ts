@@ -1,6 +1,6 @@
 export const VOUCH_STATUS_VALUES = [
   "draft",
-  "active",
+  "protocol_fee_paid",
   "authorized",
   "can_capture",
   "captured",
@@ -113,7 +113,7 @@ export const VOUCH_LIST_SORT_VALUES = ["newest", "oldest", "deadline"] as const
 
 export const VOUCH_DETAIL_VARIANT_VALUES = [
   "draft",
-  "active",
+  "protocol_fee_paid",
   "authorized",
   "can_capture_before_window",
   "can_capture_window_open",

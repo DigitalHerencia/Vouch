@@ -19,8 +19,7 @@ type CreateVouchTxInput = {
   customerTotalCents?: number
   label?: string | null
   appointmentStartsAt: Date
-  confirmationOpensAt: Date
-  confirmationExpiresAt: Date
+  disclaimerAcceptedAt?: Date
   createAsDraft?: boolean
   createAsSent?: boolean
 }
@@ -45,6 +44,7 @@ const VOUCH_SELECT = {
   appointmentAt: true,
   confirmationOpensAt: true,
   confirmationExpiresAt: true,
+  disclaimerAcceptedAt: true,
   status: true,
   protocolFeePaidAt: true,
   authorizedAt: true,
@@ -73,26 +73,27 @@ function hashConfirmationCode(seed: string): string {
   return createHash("sha256").update(seed).digest("hex")
 }
 
-function assertValidWindow(input: {
-  appointmentStartsAt: Date
+function getConfirmationWindow(appointmentStartsAt: Date): {
   confirmationOpensAt: Date
   confirmationExpiresAt: Date
-}): void {
-  if (input.confirmationOpensAt >= input.confirmationExpiresAt) {
-    throw new Error("INVALID_VOUCH_CONFIRMATION_WINDOW")
+} {
+  if (Number.isNaN(appointmentStartsAt.getTime())) {
+    throw new Error("INVALID_VOUCH_APPOINTMENT_TIME")
   }
 
-  if (input.appointmentStartsAt > input.confirmationExpiresAt) {
-    throw new Error("INVALID_VOUCH_APPOINTMENT_TIME")
+  return {
+    confirmationOpensAt: new Date(appointmentStartsAt.getTime() - 60 * 60 * 1000),
+    confirmationExpiresAt: new Date(appointmentStartsAt.getTime() + 60 * 60 * 1000),
   }
 }
 
 export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<VouchResult> {
-  assertValidWindow(input)
-
   const publicId = input.publicId ?? createPublicId()
   const now = new Date()
-  const status: VouchStatus = input.createAsDraft ? "draft" : "active"
+  const status: VouchStatus = input.createAsDraft ? "draft" : "protocol_fee_paid"
+  const { confirmationOpensAt, confirmationExpiresAt } = getConfirmationWindow(
+    input.appointmentStartsAt
+  )
 
   return tx.vouch.create({
     data: {
@@ -103,8 +104,9 @@ export async function createVouchTx(tx: Tx, input: CreateVouchTxInput): Promise<
       amountCents: input.protectedAmountCents,
       currency: input.currency ?? "usd",
       appointmentAt: input.appointmentStartsAt,
-      confirmationOpensAt: input.confirmationOpensAt,
-      confirmationExpiresAt: input.confirmationExpiresAt,
+      confirmationOpensAt,
+      confirmationExpiresAt,
+      disclaimerAcceptedAt: input.disclaimerAcceptedAt ?? now,
       merchantCodeHash: hashConfirmationCode(`${publicId}:merchant`),
       ...(input.customerId
         ? { customerCodeHash: hashConfirmationCode(`${publicId}:customer`) }
@@ -125,13 +127,13 @@ export async function bindCustomerToVouchTx(
   const updated = await tx.vouch.updateMany({
     where: {
       id: vouchId,
-      status: { in: ["draft", "active"] },
+      status: { in: ["draft", "protocol_fee_paid"] },
       customerId: null,
       merchantId: { not: customerId },
     },
     data: {
       customerId,
-      status: "active",
+      status: "protocol_fee_paid",
     },
   })
 
