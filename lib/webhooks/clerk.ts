@@ -92,7 +92,7 @@ async function upsertLocalUserFromClerkData(eventType: string, data: ClerkWebhoo
 
   await recordClerkAuditEvent({
     eventName: eventType,
-    entityType: "user",
+    entityType: "User",
     entityId: user.id,
     metadata: {
       clerk_user_id: data.id,
@@ -114,7 +114,7 @@ async function disableLocalUserFromClerkEvent(event: ClerkWebhookEvent) {
 
   await recordClerkAuditEvent({
     eventName: "user.deleted",
-    entityType: "user",
+    entityType: "User",
     entityId: result.userId,
     metadata: {
       clerk_user_id: event.data.id,
@@ -147,7 +147,7 @@ async function updateLocalUserEmailFromClerkEvent(event: ClerkWebhookEvent) {
 
   await recordClerkAuditEvent({
     eventName: "email.created",
-    entityType: "user",
+    entityType: "User",
     entityId: localUser.id,
     metadata: {
       clerk_user_id: clerkUserId,

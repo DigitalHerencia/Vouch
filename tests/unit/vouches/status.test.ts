@@ -7,25 +7,25 @@ import { getVouchStatusLabel, isFinalVouchStatus } from "@/lib/vouch/status"
 describe("vouch status helpers", () => {
   it("labels statuses for user-facing UI", () => {
     expect(getVouchStatusLabel("draft")).toBe("Draft")
-    expect(getVouchStatusLabel("committed")).toBe("Committed")
-    expect(getVouchStatusLabel("sent")).toBe("Sent")
-    expect(getVouchStatusLabel("accepted")).toBe("Accepted")
+    expect(getVouchStatusLabel("active")).toBe("Active")
     expect(getVouchStatusLabel("authorized")).toBe("Authorized")
-    expect(getVouchStatusLabel("confirmable")).toBe("Confirmable")
-    expect(getVouchStatusLabel("completed")).toBe("Completed")
+    expect(getVouchStatusLabel("can_capture")).toBe("Can capture")
+    expect(getVouchStatusLabel("captured")).toBe("Captured")
     expect(getVouchStatusLabel("expired")).toBe("Expired")
+    expect(getVouchStatusLabel("archived")).toBe("Archived")
   })
 
   it("detects final states", () => {
-    expect(isFinalVouchStatus("sent")).toBe(false)
-    expect(isFinalVouchStatus("confirmable")).toBe(false)
-    expect(isFinalVouchStatus("completed")).toBe(true)
+    expect(isFinalVouchStatus("active")).toBe(false)
+    expect(isFinalVouchStatus("can_capture")).toBe(false)
+    expect(isFinalVouchStatus("captured")).toBe(true)
     expect(isFinalVouchStatus("expired")).toBe(true)
+    expect(isFinalVouchStatus("archived")).toBe(true)
   })
 
   it("does not claim one-sided confirmation releases funds", () => {
     const action: NextVouchAction = deriveNextVouchAction({
-      status: "confirmable",
+      status: "can_capture",
       role: "merchant",
       merchantConfirmed: true,
       customerConfirmed: false,
@@ -40,11 +40,11 @@ describe("vouch status helpers", () => {
   })
 
   it("allows deterministic confirmable to expired resolution", () => {
-    expect(() => assertValidVouchTransition({ from: "confirmable", to: "expired" })).not.toThrow()
+    expect(() => assertValidVouchTransition({ from: "can_capture", to: "expired" })).not.toThrow()
   })
 
   it("blocks reopening terminal Vouches", () => {
-    expect(() => assertValidVouchTransition({ from: "expired", to: "completed" })).toThrow(
+    expect(() => assertValidVouchTransition({ from: "expired", to: "captured" })).toThrow(
       "Invalid Vouch transition"
     )
   })

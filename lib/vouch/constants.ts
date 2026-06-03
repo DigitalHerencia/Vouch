@@ -1,22 +1,11 @@
 export const VOUCH_STATUS_VALUES = [
   "draft",
-  "committed",
-  "sent",
-  "accepted",
+  "active",
   "authorized",
-  "confirmable",
-  "completed",
+  "can_capture",
+  "captured",
   "expired",
-] as const
-
-export const INVITATION_STATUS_VALUES = [
-  "created",
-  "sent",
-  "opened",
-  "accepted",
-  "declined",
-  "expired",
-  "invalidated",
+  "archived",
 ] as const
 
 export const PARTICIPANT_ROLE_VALUES = ["merchant", "customer"] as const
@@ -38,11 +27,11 @@ export const AGGREGATE_CONFIRMATION_STATUS_VALUES = [
 export const CONFIRMATION_METHOD_VALUES = ["code_exchange", "offline_code_exchange"] as const
 
 export const PAYMENT_PROVIDER_VALUES = ["stripe"] as const
-export const VERIFICATION_PROVIDER_VALUES = ["stripe_identity"] as const
-export const WEBHOOK_PROVIDER_VALUES = ["clerk", "stripe", "stripe_identity"] as const
+export const WEBHOOK_PROVIDER_VALUES = ["clerk", "stripe"] as const
 
 export const PROVIDER_WEBHOOK_STATUS_VALUES = [
   "received",
+  "processing",
   "processed",
   "ignored",
   "failed",
@@ -115,7 +104,7 @@ export const CONFIRMATION_CODE_BUCKET_SECONDS = 300
 export const VOUCH_LIST_STATUS_FILTER_VALUES = [
   "active",
   "archived",
-  "completed",
+  "captured",
   "expired",
   "all",
 ] as const
@@ -124,16 +113,14 @@ export const VOUCH_LIST_SORT_VALUES = ["newest", "oldest", "deadline"] as const
 
 export const VOUCH_DETAIL_VARIANT_VALUES = [
   "draft",
-  "committed",
-  "sent",
-  "accepted",
+  "active",
   "authorized",
-  "confirmable_before_window",
-  "confirmable_window_open",
+  "can_capture_before_window",
+  "can_capture_window_open",
   "merchant_confirmed_waiting_for_customer",
   "customer_confirmed_waiting_for_merchant",
   "both_confirmed_processing_capture",
-  "completed",
+  "captured",
   "expired",
   "provider_payment_failure",
   "provider_capture_failure",

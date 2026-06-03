@@ -59,7 +59,7 @@ export async function recordTermsAcceptanceTx(
       eventName: "user.terms.accepted",
       actorType: "user",
       actorUserId: input.userId,
-      entityType: "TermsAcceptance",
+      entityType: "User",
       entityId: input.userId,
       metadata: {
         terms_version: input.termsVersion,

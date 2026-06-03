@@ -2,7 +2,7 @@ import "server-only"
 
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
-export const participantSafeAuditTimelineItemSelect = {
+export const auditTimelineItemSelect = {
   id: true,
   eventName: true,
   actorType: true,

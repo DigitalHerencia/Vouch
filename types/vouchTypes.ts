@@ -4,7 +4,6 @@ import type {
   CONFIRMATION_METHOD_VALUES,
   CONFIRMATION_STATUS_VALUES,
   CONFIRM_PRESENCE_VARIANT_VALUES,
-  INVITATION_STATUS_VALUES,
   PARTICIPANT_ROLE_VALUES,
   PAYMENT_ROLE_MAP,
   RECOVERY_STATUS_VALUES,
@@ -19,7 +18,6 @@ import type { ResolutionPaymentStatus } from "./paymentTypes"
 export type DateLike = Date | string | number
 
 export type VouchStatus = (typeof VOUCH_STATUS_VALUES)[number]
-export type InvitationStatus = (typeof INVITATION_STATUS_VALUES)[number]
 export type ParticipantRole = (typeof PARTICIPANT_ROLE_VALUES)[number]
 export type PaymentRoleAlias = (typeof PAYMENT_ROLE_MAP)[ParticipantRole]
 export type ConfirmationStatus = (typeof CONFIRMATION_STATUS_VALUES)[number]
@@ -97,7 +95,6 @@ export interface VouchTimelineItemDTO {
   label: string
   body: string
   occurredAt: ISODateTime
-  participantSafe: boolean
 }
 
 export type CreateVouchInput = ConfirmCreateVouchInput

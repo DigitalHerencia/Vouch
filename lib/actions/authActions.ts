@@ -26,7 +26,7 @@ async function syncClerkUser(input: LocalUserSyncInput) {
       data: {
         eventName: "user.synced",
         actorType: "clerk",
-        entityType: "user",
+        entityType: "User",
         entityId: syncedUser.id,
         metadata: { clerk_user_id: syncedUser.clerkUserId },
       },

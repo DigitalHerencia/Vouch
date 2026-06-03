@@ -1,8 +1,8 @@
 /**
  * Vouch route protection.
  *
- * Public routes: marketing, legal, auth, invite landing, and signed provider webhooks.
- * Protected routes: dashboard, setup, settings, Vouch detail/create/confirm, admin.
+ * Public routes: marketing, legal, auth, and signed provider webhooks.
+ * Protected routes: dashboard, Vouch detail/create/confirm.
  *
  * Admin capability and participant authorization are enforced server-side in fetchers/actions.
  * This proxy only handles authentication boundary routing.
@@ -17,9 +17,10 @@ const isPublicRoute = createRouteMatcher([
   "/faq(.*)",
   "/legal/terms(.*)",
   "/legal/privacy(.*)",
+  "/legal/user-agreement(.*)",
+  "/legal/disclaimer(.*)",
   "/sign-in(.*)",
   "/sign-up(.*)",
-  "/vouches/invite(.*)",
   "/api/clerk/webhooks",
   "/api/stripe/webhooks",
 ])

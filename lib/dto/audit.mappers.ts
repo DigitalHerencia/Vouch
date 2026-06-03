@@ -4,7 +4,7 @@ import type { ISODateTime } from "@/types/commonTypes"
 
 type DateLike = Date | string | null | undefined
 
-export type ParticipantSafeAuditTimelineItemDTO = {
+export type AuditTimelineItemDTO = {
   id: string
   eventName: string
   actorType: string
@@ -14,7 +14,7 @@ export type ParticipantSafeAuditTimelineItemDTO = {
   createdAt: ISODateTime
 }
 
-type ParticipantSafeAuditTimelineItemRecord = {
+type AuditTimelineItemRecord = {
   id: string
   eventName: string
   actorType: string
@@ -32,7 +32,7 @@ function toIso(value: DateLike): ISODateTime | null {
 
 const unsafeMetadataKeyPattern = /clerk|stripe|webhook|token|identity|card|bank|payload|signature/i
 
-function toParticipantSafeMetadata(value: unknown): Record<string, unknown> | null {
+function toAuditTimelineMetadata(value: unknown): Record<string, unknown> | null {
   if (!value || typeof value !== "object" || Array.isArray(value)) return null
 
   return Object.fromEntries(
@@ -45,22 +45,18 @@ function toParticipantSafeMetadata(value: unknown): Record<string, unknown> | nu
   )
 }
 
-export function mapParticipantSafeAuditTimelineItemDTO(
-  record: ParticipantSafeAuditTimelineItemRecord
-): ParticipantSafeAuditTimelineItemDTO {
+export function mapAuditTimelineItemDTO(record: AuditTimelineItemRecord): AuditTimelineItemDTO {
   return {
     id: record.id,
     eventName: record.eventName,
     actorType: record.actorType,
     entityType: record.entityType,
     entityId: record.entityId,
-    metadata: toParticipantSafeMetadata(record.metadata),
+    metadata: toAuditTimelineMetadata(record.metadata),
     createdAt: toIso(record.createdAt) ?? "",
   }
 }
 
-export function mapParticipantSafeAuditTimelineDTO(
-  records: ParticipantSafeAuditTimelineItemRecord[]
-): ParticipantSafeAuditTimelineItemDTO[] {
-  return records.map(mapParticipantSafeAuditTimelineItemDTO)
+export function mapAuditTimelineDTO(records: AuditTimelineItemRecord[]): AuditTimelineItemDTO[] {
+  return records.map(mapAuditTimelineItemDTO)
 }

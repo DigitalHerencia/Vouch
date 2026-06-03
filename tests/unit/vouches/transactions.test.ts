@@ -7,27 +7,19 @@ const vouchRecord = {
   publicId: "vch_public",
   merchantId: "merchant_1",
   customerId: "customer_1",
+  amountCents: 10_000,
   currency: "usd",
-  protectedAmountCents: 10_000,
-  merchantReceivesCents: 10_000,
-  vouchServiceFeeCents: 500,
-  processingFeeOffsetCents: 46,
-  applicationFeeAmountCents: 0,
-  customerTotalCents: 10_000,
-  status: "accepted",
-  archiveStatus: "active",
-  recoveryStatus: "normal",
-  label: null,
-  appointmentStartsAt: new Date("2026-05-01T16:00:00.000Z"),
+  appointmentAt: new Date("2026-05-01T16:00:00.000Z"),
   confirmationOpensAt: new Date("2026-05-01T16:00:00.000Z"),
   confirmationExpiresAt: new Date("2026-05-01T17:00:00.000Z"),
-  committedAt: new Date("2026-05-01T14:00:00.000Z"),
-  sentAt: new Date("2026-05-01T14:30:00.000Z"),
-  acceptedAt: new Date("2026-05-01T15:00:00.000Z"),
+  status: "active",
+  protocolFeePaidAt: null,
   authorizedAt: null,
-  confirmableAt: null,
-  completedAt: null,
+  capturedAt: null,
+  voidedAt: null,
   expiredAt: null,
+  archived: false,
+  archivedAt: null,
   createdAt: new Date("2026-04-28T00:00:00.000Z"),
   updatedAt: new Date("2026-04-28T00:00:00.000Z"),
 }
@@ -43,7 +35,7 @@ describe("vouch transaction helpers", () => {
 
     await expect(
       bindCustomerToVouchTx(tx as never, { vouchId: "vouch_1", customerId: "customer_1" })
-    ).resolves.toMatchObject({ id: "vouch_1", status: "accepted", customerId: "customer_1" })
+    ).resolves.toMatchObject({ id: "vouch_1", status: "active", customerId: "customer_1" })
 
     expect(tx.vouch.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({

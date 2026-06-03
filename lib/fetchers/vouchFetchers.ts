@@ -5,8 +5,8 @@ import { unstable_noStore as noStore } from "next/cache"
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
 import {
-  mapParticipantSafeAuditTimelineDTO,
-  type ParticipantSafeAuditTimelineItemDTO,
+  mapAuditTimelineDTO,
+  type AuditTimelineItemDTO,
 } from "@/lib/dto/audit.mappers"
 import {
   mapVouchConfirmationStateDTO,
@@ -15,7 +15,7 @@ import {
   type VouchDetailDTO,
 } from "@/lib/dto/vouch.mappers"
 import { prisma } from "@/lib/db/prisma"
-import { participantSafeAuditTimelineItemSelect } from "@/lib/db/selects/audit.selects"
+import { auditTimelineItemSelect } from "@/lib/db/selects/audit.selects"
 import {
   vouchConfirmationStateSelect,
   vouchDetailBaseSelect,
@@ -188,9 +188,7 @@ function getConfirmUnauthorizedState(vouchId: string) {
   }
 }
 
-export async function getParticipantSafeAuditTimeline(
-  vouchId: string
-): Promise<ParticipantSafeAuditTimelineItemDTO[]> {
+export async function getAuditTimeline(vouchId: string): Promise<AuditTimelineItemDTO[]> {
   noStore()
 
   const user = await requireActiveUser()
@@ -209,13 +207,12 @@ export async function getParticipantSafeAuditTimeline(
     where: {
       entityType: "Vouch",
       entityId: vouchId,
-      participantSafe: true,
     },
     orderBy: { createdAt: "asc" },
-    select: participantSafeAuditTimelineItemSelect,
+    select: auditTimelineItemSelect,
   })
 
-  return mapParticipantSafeAuditTimelineDTO(rows)
+  return mapAuditTimelineDTO(rows)
 }
 
 export async function getVouchParticipantActionState(vouchId: string) {

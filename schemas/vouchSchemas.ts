@@ -5,7 +5,6 @@ import {
   CONFIRMATION_METHOD_VALUES,
   CONFIRMATION_STATUS_VALUES,
   CONFIRM_PRESENCE_VARIANT_VALUES,
-  INVITATION_STATUS_VALUES,
   PARTICIPANT_ROLE_VALUES,
   VOUCH_DETAIL_VARIANT_VALUES,
   VOUCH_LIST_SORT_VALUES,
@@ -16,7 +15,6 @@ import {
 import { positiveMoneyCentsSchema, vouchIdSchema } from "./commonSchemas"
 
 export const vouchStatusSchema = z.enum(VOUCH_STATUS_VALUES)
-export const invitationStatusSchema = z.enum(INVITATION_STATUS_VALUES)
 export const participantRoleSchema = z.enum(PARTICIPANT_ROLE_VALUES)
 export const confirmationStatusSchema = z.enum(CONFIRMATION_STATUS_VALUES)
 export const aggregateConfirmationStatusSchema = z.enum(AGGREGATE_CONFIRMATION_STATUS_VALUES)

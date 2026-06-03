@@ -169,7 +169,6 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
         actorUserId: user.id,
         entityType: "Vouch",
         entityId: created.id,
-        participantSafe: true,
         metadata: {
           protected_amount_cents: pricing.protectedAmountCents,
           merchant_receives_cents: pricing.merchantReceivesCents,
@@ -269,7 +268,6 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
           actorUserId: user.id,
           entityType: "Vouch",
           entityId: parsed.data.vouchId,
-          participantSafe: true,
           metadata: {
             participant_role: participantRole,
             aggregate_status: aggregateStatus,
@@ -340,7 +338,6 @@ export async function archiveVouch(input: unknown): Promise<ActionResult<{ vouch
         actorUserId: user.id,
         entityType: "Vouch",
         entityId: parsed.data.vouchId,
-        participantSafe: false,
       },
     })
   })

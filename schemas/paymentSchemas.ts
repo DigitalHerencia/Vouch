@@ -9,7 +9,6 @@ import {
   REFUND_REASON_VALUES,
   REFUND_STATUS_VALUES,
   SETTLEMENT_STATUS_VALUES,
-  VERIFICATION_PROVIDER_VALUES,
 } from "@/lib/vouch/constants"
 
 import {
@@ -20,7 +19,6 @@ import {
 } from "./commonSchemas"
 
 export const paymentProviderSchema = z.enum(PAYMENT_PROVIDER_VALUES)
-export const verificationProviderSchema = z.enum(VERIFICATION_PROVIDER_VALUES)
 export const paymentMethodReadyStatusSchema = z.enum(PAYMENT_READINESS_STATUS_VALUES)
 export const payoutReadinessStatusSchema = z.enum(PAYOUT_READINESS_STATUS_VALUES)
 export const paymentStatusSchema = z.enum(PAYMENT_STATUS_VALUES)

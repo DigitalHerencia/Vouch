@@ -6,8 +6,8 @@ import { vouchPageCopy } from "@/content/vouches"
 import { ConfirmPresenceInlineForm } from "@/features/vouches/vouchDetailFeature.client"
 import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
 import {
+  getAuditTimeline,
   getConfirmPresencePageState,
-  getParticipantSafeAuditTimeline,
   getVouchDetailForParticipant,
 } from "@/lib/fetchers/vouchFetchers"
 
@@ -77,7 +77,7 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
     confirmState.variant === "confirm_as_merchant" || confirmState.variant === "confirm_as_customer"
   const currentUserCode =
     "currentUserCode" in confirmState ? confirmState.currentUserCode : undefined
-  const timeline = await getParticipantSafeAuditTimeline(vouchId)
+  const timeline = await getAuditTimeline(vouchId)
 
   return (
     <VouchDetailView

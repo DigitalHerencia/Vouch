@@ -11,14 +11,13 @@ import type {
 import { isConfirmationWindowClosed, isConfirmationWindowOpen } from "./time-windows"
 
 const ALLOWED_TRANSITIONS: ReadonlyMap<VouchStatus, readonly VouchStatus[]> = new Map([
-  ["draft", ["committed", "sent", "expired"]],
-  ["committed", ["sent", "accepted", "expired"]],
-  ["sent", ["accepted", "expired"]],
-  ["accepted", ["authorized", "expired"]],
-  ["authorized", ["confirmable", "completed", "expired"]],
-  ["confirmable", ["completed", "expired"]],
-  ["completed", []],
+  ["draft", ["active", "expired", "archived"]],
+  ["active", ["authorized", "expired", "archived"]],
+  ["authorized", ["can_capture", "captured", "expired", "archived"]],
+  ["can_capture", ["captured", "expired", "archived"]],
+  ["captured", ["archived"]],
   ["expired", []],
+  ["archived", []],
 ])
 
 function withOptionalHref(action: Omit<NextVouchAction, "href">, href?: string): NextVouchAction {
@@ -66,22 +65,11 @@ export function deriveNextVouchAction(input: DeriveNextVouchActionInput): NextVo
     }
   }
 
-  if (input.status === "sent" || input.status === "committed") {
-    if (input.role === "customer") {
-      return withOptionalHref(
-        { kind: "accept", label: "Review and accept Vouch" },
-        input.vouchId ? `/vouches/${input.vouchId}` : undefined
-      )
-    }
-
-    return { kind: "waiting", label: "Waiting for customer authorization" }
-  }
-
-  if (input.status === "accepted" || input.status === "authorized") {
+  if (input.status === "active" || input.status === "authorized") {
     return { kind: "waiting", label: "Waiting for confirmation window" }
   }
 
-  if (input.status === "confirmable") {
+  if (input.status === "can_capture") {
     const currentUserConfirmed =
       input.role === "merchant" ? input.merchantConfirmed : input.customerConfirmed
 

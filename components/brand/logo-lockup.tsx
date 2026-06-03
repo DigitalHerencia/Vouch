@@ -30,3 +30,32 @@ export function LogoLockup({ className, iconClassName, textClassName }: LogoLock
     </span>
   )
 }
+
+export function MarqueeLogo({ className, iconClassName, textClassName }: LogoLockupProps) {
+  return (
+    <span
+      className={["inline-flex items-center gap-2.5 text-black", className]
+        .filter(Boolean)
+        .join(" ")}
+      aria-label="Vouch"
+    >
+      <Handshake
+        className={["size-12 text-blue-600 sm:size-14 lg:size-16", iconClassName]
+          .filter(Boolean)
+          .join(" ")}
+        strokeWidth={2.4}
+      />
+
+      <span
+        className={[
+          "font-(family-name:--font-brand) text-[44px] leading-none tracking-normal text-black uppercase sm:text-[56] lg:text-[64px]",
+          textClassName,
+        ]
+          .filter(Boolean)
+          .join(" ")}
+      >
+        Vouch
+      </span>
+    </span>
+  )
+}

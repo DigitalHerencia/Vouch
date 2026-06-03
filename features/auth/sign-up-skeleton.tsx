@@ -2,7 +2,7 @@ function AuthSkeletonBlock({ className }: { className: string }) {
   return (
     <div
       aria-hidden="true"
-      className={`animate-pulse border-3 border-neutral-400 bg-black/55 ${className}`}
+      className={`animate-pulse border-3 border-neutral-400 bg-black ${className}`}
     />
   )
 }

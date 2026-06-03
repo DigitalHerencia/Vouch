@@ -3,24 +3,27 @@ import type { ID, UserID } from "./commonTypes"
 export type AuditActorType =
   | "user"
   | "system"
-  | "admin"
-  | "payment_provider"
-  | "auth_provider"
-  | "verification_provider"
+  | "clerk"
+  | "stripe"
 
 export type AuditEntityType =
   | "User"
-  | "VerificationProfile"
   | "PaymentCustomer"
   | "ConnectedAccount"
   | "Vouch"
-  | "Invitation"
   | "PresenceConfirmation"
-  | "PaymentRecord"
+  | "PresenceConfirmationAttempt"
+  | "PaymentIntentRecord"
+  | "ChargeRecord"
   | "RefundRecord"
-  | "TermsAcceptance"
-  | "NotificationEvent"
-  | "PaymentWebhookEvent"
+  | "PayoutRecord"
+  | "ProviderWebhookEvent"
+  | "StripeWebhookEvent"
+  | "AuditEvent"
+  | "VouchEvent"
+  | "OperationalRetry"
+  | "VouchRecoverySnapshot"
+  | "AnalyticsEvent"
 
 export type AuditEventName =
   | "user.created"
@@ -69,7 +72,6 @@ export interface WriteAuditEventInput {
   entityType: AuditEntityType
   entityId: ID
   requestId?: string
-  participantSafe?: boolean
   metadata?: Record<string, unknown>
 }
 

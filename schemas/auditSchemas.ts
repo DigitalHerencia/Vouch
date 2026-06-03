@@ -9,25 +9,28 @@ import {
 export const auditActorTypeSchema = z.enum([
   "user",
   "system",
-  "admin",
-  "payment_provider",
-  "auth_provider",
-  "verification_provider",
+  "clerk",
+  "stripe",
 ])
 
 export const auditEntityTypeSchema = z.enum([
   "User",
-  "VerificationProfile",
   "PaymentCustomer",
   "ConnectedAccount",
   "Vouch",
-  "Invitation",
   "PresenceConfirmation",
-  "PaymentRecord",
+  "PresenceConfirmationAttempt",
+  "PaymentIntentRecord",
+  "ChargeRecord",
   "RefundRecord",
-  "TermsAcceptance",
-  "NotificationEvent",
-  "PaymentWebhookEvent",
+  "PayoutRecord",
+  "ProviderWebhookEvent",
+  "StripeWebhookEvent",
+  "AuditEvent",
+  "VouchEvent",
+  "OperationalRetry",
+  "VouchRecoverySnapshot",
+  "AnalyticsEvent",
 ])
 
 export const auditEventNameSchema = z.enum([
@@ -81,7 +84,6 @@ export const writeAuditEventInputSchema = z.object({
   entityType: auditEntityTypeSchema,
   entityId: idSchema,
   requestId: requestIdSchema,
-  participantSafe: z.boolean().optional(),
   metadata: safeAuditMetadataSchema.optional(),
 })
 
@@ -93,6 +95,4 @@ export const auditFilterInputSchema = z.object({
   page: z.coerce.number().int().min(1).optional(),
 })
 
-export const participantSafeAuditFilterSchema = auditFilterInputSchema.extend({
-  participantSafe: z.literal(true).default(true),
-})
+export const auditTimelineFilterSchema = auditFilterInputSchema

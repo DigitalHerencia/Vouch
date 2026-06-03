@@ -1,8 +1,9 @@
 import * as React from "react"
 import Image from "next/image"
-import { CheckCircle2, LockKeyhole, ShieldCheck, type LucideIcon } from "lucide-react"
+import { CheckCircle2, Handshake, LockKeyhole, ShieldCheck, type LucideIcon } from "lucide-react"
 import { CardHeader, Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
 import { Marquee, MarqueeItem, MarqueeSeparator } from "@/components/ui/marquee"
+import { LogoLockup, MarqueeLogo } from "../brand/logo-lockup"
 
 const panelMotion =
   "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
@@ -185,8 +186,8 @@ function ProcessPanelMarqueeTrack({
     <Marquee
       direction={direction}
       speed="slow"
-      pauseOnHover={false}
-      repeat={1}
+      pauseOnHover={true}
+      repeat={3}
       className={[
         "relative z-0 border-x-0 border-y-3 border-neutral-400 bg-black select-none",
         className,
@@ -201,7 +202,7 @@ function ProcessPanelMarqueeTrack({
           <React.Fragment key={`${direction}-${item.name}`}>
             <MarqueeItem
               className={[
-                "h-24 min-w-40 bg-white px-6 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
+                "h-24 min-w-35 bg-white px-6 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
                 logoOnly ? "gap-0" : "",
                 itemClassName,
               ]
@@ -279,15 +280,7 @@ export function ProcessPanelGrid({ title, subtitle, logos, footer }: ProcessPane
 const authProcessLogos: readonly ProcessPanelGridItem[] = [
   {
     name: "Vouch",
-    logo: (
-      <Image
-        src="/logo-light.png"
-        alt="Vouch"
-        width={176}
-        height={48}
-        className="h-12 w-44 scale-175 object-contain"
-      />
-    ),
+    logo: <MarqueeLogo />,
   },
   {
     name: "Powered by Stripe",
