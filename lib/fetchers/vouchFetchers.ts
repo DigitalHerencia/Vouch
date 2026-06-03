@@ -22,7 +22,10 @@ import {
   vouchWindowSummarySelect,
 } from "@/lib/db/selects/vouch.selects"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
-import { getCreateVouchReadinessGate } from "@/lib/fetchers/readinessFetchers"
+import {
+  getAccountReadiness,
+  getCreateVouchReadinessGate,
+} from "@/lib/fetchers/readinessFetchers"
 import { deriveConfirmationCode } from "@/lib/vouch/confirmation-codes"
 
 type VouchDetailRecord = Prisma.VouchGetPayload<{ select: typeof vouchDetailBaseSelect }>
@@ -57,6 +60,16 @@ export async function getCreateVouchPageState(input?: { userId?: string }) {
     variant: gate.allowed ? "ready" : "blocked",
     userId,
     gate,
+  }
+}
+
+export async function getCurrentUserReadinessWarningState() {
+  const user = await requireActiveUser()
+  const readiness = await getAccountReadiness(user.id)
+
+  return {
+    show:
+      readiness?.payoutReadiness !== "ready" || readiness?.paymentMethodReady !== "ready",
   }
 }
 

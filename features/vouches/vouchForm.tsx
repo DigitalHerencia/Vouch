@@ -1,3 +1,4 @@
+import { CTASection } from "@/components/blocks/cta-section"
 import {
   VouchCreationFeatureClient,
   type VouchCreationActionResult,
@@ -61,36 +62,22 @@ export async function createVouchWizardStep(
 
 export async function VouchForm() {
   const state = await getCreateVouchPageState()
-  const blockedReason = state.variant === "blocked" ? state.gate.blockers.join(", ") : null
+  const showReadinessNotice =
+    state.variant === "blocked" ||
+    state.gate.readiness?.paymentMethodReady !== "ready" ||
+    state.gate.readiness?.payoutReadiness !== "ready"
 
   return (
-    <main className="h-[calc(100dvh-8rem)] overflow-hidden p-4 md:p-8 lg:p-12">
-      <section className="grid h-full min-h-0 gap-8 overflow-hidden md:gap-16">
-        {blockedReason ? (
-          <Panel title="Readiness required">
-            <div className="grid h-full content-center gap-4">
-              <p className="max-w-prose text-sm leading-6 font-semibold text-neutral-400">
-                {blockedReason}
-              </p>
-              <div>
-                <a
-                  href="/dashboard"
-                  className="inline-flex h-10 items-center justify-center border-2 border-neutral-400 bg-blue-600 px-4 text-sm font-black text-white uppercase shadow-[4px_4px_0px_black] transition hover:-translate-x-0.5 hover:-translate-y-0.5"
-                >
-                  Return to dashboard
-                </a>
-              </div>
-            </div>
-          </Panel>
-        ) : (
-          <Panel title="Create Vouch">
-            <VouchCreationFeatureClient
-              onSaveAmount={saveVouchAmountStep}
-              onSaveWindow={saveVouchWindowStep}
-              onCreateVouch={createVouchWizardStep}
-            />
-          </Panel>
-        )}
+    <main className="h-[calc(100dvh-8rem)] overflow-y-auto p-4 md:p-8 lg:p-12">
+      <section className="grid min-h-full gap-8 md:gap-16">
+        {showReadinessNotice ? <CTASection.DashboardRequirementsNotice /> : null}
+        <Panel title="Create Vouch">
+          <VouchCreationFeatureClient
+            onSaveAmount={saveVouchAmountStep}
+            onSaveWindow={saveVouchWindowStep}
+            onCreateVouch={createVouchWizardStep}
+          />
+        </Panel>
       </section>
     </main>
   )

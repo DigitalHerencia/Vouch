@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation"
 import type { ReactNode } from "react"
 
+import { CTASection } from "@/components/blocks/cta-section"
 import { StatusBlocks } from "@/components/blocks/status"
 import { vouchPageCopy } from "@/content/vouches"
 import { ConfirmPresenceInlineForm } from "@/features/vouches/vouchDetailFeature.client"
@@ -8,6 +9,7 @@ import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
 import {
   getAuditTimeline,
   getConfirmPresencePageState,
+  getCurrentUserReadinessWarningState,
   getVouchDetailForParticipant,
 } from "@/lib/fetchers/vouchFetchers"
 
@@ -78,52 +80,56 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
   const currentUserCode =
     "currentUserCode" in confirmState ? confirmState.currentUserCode : undefined
   const timeline = await getAuditTimeline(vouchId)
+  const readinessWarning = await getCurrentUserReadinessWarningState()
 
   return (
-    <VouchDetailView
-      title={vouch.publicId}
-      amountLabel={money(vouch.amountCents, vouch.currency)}
-      statusLabel={vouch.status}
-      currentUserRoleLabel={
-        confirmState.variant === "confirm_as_merchant"
-          ? "merchant"
-          : confirmState.variant === "confirm_as_customer"
-            ? "customer"
-            : "participant"
-      }
-      merchantLabel={participantName(vouch.merchant)}
-      customerLabel={participantName(vouch.customer)}
-      appointmentLabel={dateTime(vouch.appointmentAt)}
-      windowLabel={dateTime(vouch.confirmationOpensAt)}
-      deadlineLabel={dateTime(vouch.confirmationExpiresAt)}
-      paymentStatusLabel={vouch.paymentRecord?.status ?? "not_started"}
-      settlementStatusLabel={vouch.paymentRecord?.status ?? "pending"}
-      merchantReceivesLabel={money(vouch.amountCents, vouch.currency)}
-      customerTotalLabel={money(
-        vouch.paymentRecord?.amountCents ?? vouch.amountCents,
-        vouch.currency
-      )}
-      confirmation={{
-        merchantConfirmed:
-          vouch.aggregateConfirmationStatus === "merchant_confirmed" ||
-          vouch.aggregateConfirmationStatus === "both_confirmed",
-        customerConfirmed:
-          vouch.aggregateConfirmationStatus === "customer_confirmed" ||
-          vouch.aggregateConfirmationStatus === "both_confirmed",
-        canConfirm,
-        action: canConfirm ? (
-          <ConfirmPresenceInlineForm
-            action={confirmPresenceFormAction}
-            vouchId={vouchId}
-            {...(currentUserCode ? { currentUserCode } : {})}
-          />
-        ) : null,
-      }}
-      timeline={timeline.map((event) => ({
-        label: event.eventName,
-        timestampLabel: dateTime(event.createdAt),
-      }))}
-    />
+    <>
+      {readinessWarning.show ? <CTASection.DashboardRequirementsNotice /> : null}
+      <VouchDetailView
+        title={vouch.publicId}
+        amountLabel={money(vouch.amountCents, vouch.currency)}
+        statusLabel={vouch.status}
+        currentUserRoleLabel={
+          confirmState.variant === "confirm_as_merchant"
+            ? "merchant"
+            : confirmState.variant === "confirm_as_customer"
+              ? "customer"
+              : "participant"
+        }
+        merchantLabel={participantName(vouch.merchant)}
+        customerLabel={participantName(vouch.customer)}
+        appointmentLabel={dateTime(vouch.appointmentAt)}
+        windowLabel={dateTime(vouch.confirmationOpensAt)}
+        deadlineLabel={dateTime(vouch.confirmationExpiresAt)}
+        paymentStatusLabel={vouch.paymentRecord?.status ?? "not_started"}
+        settlementStatusLabel={vouch.paymentRecord?.status ?? "pending"}
+        merchantReceivesLabel={money(vouch.amountCents, vouch.currency)}
+        customerTotalLabel={money(
+          vouch.paymentRecord?.amountCents ?? vouch.amountCents,
+          vouch.currency
+        )}
+        confirmation={{
+          merchantConfirmed:
+            vouch.aggregateConfirmationStatus === "merchant_confirmed" ||
+            vouch.aggregateConfirmationStatus === "both_confirmed",
+          customerConfirmed:
+            vouch.aggregateConfirmationStatus === "customer_confirmed" ||
+            vouch.aggregateConfirmationStatus === "both_confirmed",
+          canConfirm,
+          action: canConfirm ? (
+            <ConfirmPresenceInlineForm
+              action={confirmPresenceFormAction}
+              vouchId={vouchId}
+              {...(currentUserCode ? { currentUserCode } : {})}
+            />
+          ) : null,
+        }}
+        timeline={timeline.map((event) => ({
+          label: event.eventName,
+          timestampLabel: dateTime(event.createdAt),
+        }))}
+      />
+    </>
   )
 }
 
