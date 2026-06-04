@@ -1,5 +1,5 @@
-import { CTAWithBackground } from "@/components/blocks/cta-section"
-import { FAQSimpleList } from "@/components/blocks/faq-section"
+import { CTAWithBackground } from "@/components/shared/cta-section"
+import { FAQSimpleList } from "@/components/public/faq-section"
 import { disclaimerSections } from "@/content/legal"
 import { Handshake } from "lucide-react"
 import { landingCalloutContent } from "@/content/marketing"

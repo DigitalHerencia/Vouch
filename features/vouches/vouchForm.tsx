@@ -6,15 +6,13 @@ import Image from "next/image"
 import Link from "next/link"
 import { useForm, useWatch } from "react-hook-form"
 
-import { CTASection } from "@/components/blocks/cta-section"
+import { CTASection } from "@/components/shared/cta-section"
 import {
   VouchCreationCartRow,
-  VouchCreationFieldShell,
+  VouchCreationField,
   VouchCreationWizard,
-} from "@/components/blocks/status"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
+} from "@/components/vouches/status"
+import { Button, Checkbox, Input } from "@/components/vouches/form-controls"
 import { openStripeConnectDashboard } from "@/lib/actions/paymentActions"
 import { createVouch, getCreateVouchFormReadiness } from "@/lib/actions/vouchActions"
 
@@ -219,7 +217,7 @@ export function VouchForm() {
       content: (
         <div className="grid gap-6">
           <div className="grid gap-5 sm:grid-cols-2">
-            <VouchCreationFieldShell
+            <VouchCreationField
               label="Appointment date and time"
               error={form.formState.errors.appointmentStartsAt?.message}
             >
@@ -230,8 +228,8 @@ export function VouchForm() {
                 onChange={(event) => updateDraft("appointmentStartsAt", event.target.value)}
                 className="h-12 rounded-none border-2 border-neutral-400 bg-black px-3 font-mono text-sm font-bold text-white disabled:opacity-50"
               />
-            </VouchCreationFieldShell>
-            <VouchCreationFieldShell
+            </VouchCreationField>
+            <VouchCreationField
               label="Protected amount"
               error={form.formState.errors.amountDollars?.message}
             >
@@ -246,7 +244,7 @@ export function VouchForm() {
                 onChange={(event) => updateDraft("amountDollars", event.target.value)}
                 className="h-12 rounded-none border-2 border-neutral-400 bg-black px-3 font-mono text-sm font-bold text-white disabled:opacity-50"
               />
-            </VouchCreationFieldShell>
+            </VouchCreationField>
           </div>
           <p className="max-w-prose text-sm leading-6 font-semibold text-neutral-300">
             Create a Vouch up to 24 hours before the appointment. The confirmation window is

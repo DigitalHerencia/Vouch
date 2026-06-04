@@ -1,4 +1,4 @@
-// components/brand/wordmark.tsx
+// components/nav/wordmark.tsx
 
 import Image from "next/image"
 

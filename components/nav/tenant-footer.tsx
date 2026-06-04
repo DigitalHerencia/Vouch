@@ -1,4 +1,4 @@
-// components/navigation/tenant-footer.tsx
+// components/nav/tenant-footer.tsx
 "use client"
 
 import Link from "next/link"
@@ -59,21 +59,26 @@ export function TenantFooter({
 
       <Drawer open={!!pendingProvider} onOpenChange={(open) => !open && setPendingProvider(null)}>
         <DrawerContent>
-          <DrawerHeader className="border-b border-neutral-400 text-left">
-            <DrawerTitle>{providerCopy?.title}</DrawerTitle>
-            <DrawerDescription className="font-semibold">
+          <DrawerHeader className="gap-3 border-b border-neutral-400 px-5 pt-8 pb-5 text-left">
+            <p className="text-xs leading-none font-black tracking-widest text-blue-600 uppercase">
+              Secure Stripe step
+            </p>
+            <DrawerTitle className="text-2xl leading-tight tracking-normal normal-case md:text-3xl">
+              {providerCopy?.title}
+            </DrawerTitle>
+            <DrawerDescription className="max-w-xl text-base leading-7 font-semibold text-neutral-200">
               {providerCopy?.consequence}
             </DrawerDescription>
           </DrawerHeader>
-          <div className="grid gap-4 p-4">
-            <div className="border border-neutral-400 bg-neutral-900 p-3 text-sm font-semibold text-neutral-300">
+          <div className="grid gap-4 px-5 py-5">
+            <div className="border-l-4 border-blue-600 bg-neutral-950 px-4 py-3 text-sm leading-6 font-medium text-neutral-200">
               {providerCopy?.context}
             </div>
-            <p className="text-xs leading-5 font-semibold text-neutral-400">
+            <p className="text-sm leading-6 font-medium text-neutral-400">
               {providerCopy?.finePrint}
             </p>
           </div>
-          <DrawerFooter>
+          <DrawerFooter className="px-5 pb-5">
             <form action={providerAction}>
               <Button type="submit" className="w-full">
                 Continue to Stripe

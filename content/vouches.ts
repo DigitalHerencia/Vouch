@@ -74,21 +74,19 @@ export const vouchPageCopy = {
   },
   providerRedirects: {
     connect: {
-      title: "Open Stripe Connect",
+      title: "Finish your Stripe setup",
       consequence:
-        "You are leaving Vouch for a Stripe-hosted Connect flow. Stripe owns onboarding, verification, banking, and payout readiness.",
+        "Complete your secure Stripe setup so your business is ready to create Vouches and receive payouts.",
       context:
-        "Vouch will use provider-backed readiness after Stripe returns or webhooks reconcile. This page does not decide payout readiness.",
-      finePrint:
-        "Do not enter payout or identity information on any page that is not Stripe-hosted.",
+        "Stripe will guide you through the details it needs for verification, banking, and payout access.",
+      finePrint: "You'll return to Vouch when you're done.",
     },
     payment: {
-      title: "Open payment setup",
-      consequence:
-        "You are leaving Vouch for a Stripe-hosted payment method flow. Stripe owns payment method collection and billing details.",
+      title: "Add your payment method",
+      consequence: "Save a secure payment method so checkout is ready when you create a Vouch.",
       context:
-        "Vouch will use provider-backed readiness after Stripe returns or webhooks reconcile. This page does not create or confirm a Vouch payment.",
-      finePrint: "Vouch does not host raw card forms or store raw card, bank, or identity data.",
+        "Stripe handles the payment details and keeps them available for your future Vouch fees.",
+      finePrint: "You'll return to Vouch when your payment method is saved.",
     },
   },
   confirm: {

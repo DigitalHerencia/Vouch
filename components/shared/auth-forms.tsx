@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Mail, LoaderCircle } from "lucide-react"
-import { LogoLockup } from "@/components/brand/logo-lockup"
+import { LogoLockup } from "@/components/nav/logo-lockup"
 
 export function LoginForm({
   description = "sign in to manage your account",

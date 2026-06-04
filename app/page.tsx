@@ -11,10 +11,10 @@ import {
 } from "lucide-react"
 import { createElement } from "react"
 
-import { CTAWithBackground } from "@/components/blocks/cta-section"
-import { FeatureBentoGrid } from "@/components/blocks/feature-grid"
-import { StatsSplit } from "@/components/blocks/stats-section"
-import { PublicShell } from "@/components/navigation/public-shell"
+import { CTAWithBackground } from "@/components/shared/cta-section"
+import { FeatureBentoGrid } from "@/components/public/feature-grid"
+import { StatsSplit } from "@/components/shared/stats-section"
+import { PublicShell } from "@/components/nav/public-shell"
 import {
   landingCalloutContent,
   landingFeatureCards,
@@ -24,7 +24,7 @@ import {
   landingProcessSteps,
   landingProofStats,
 } from "@/content/marketing"
-import { HeroSplitPanel } from "@/components/blocks/hero-section"
+import { HeroSplitPanel } from "@/components/shared/hero-section"
 
 const processIcons = {
   file: FileText,

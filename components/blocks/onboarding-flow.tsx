@@ -13,6 +13,7 @@ export function OnboardingWizard({
   onStepChange,
   onComplete,
   showProgress = true,
+  disabled = false,
 }: OnboardingWizardProps) {
   const step = steps[currentStep]
   const progress = steps.length ? ((currentStep + 1) / steps.length) * 100 : 0
@@ -21,6 +22,7 @@ export function OnboardingWizard({
   const current = step
 
   function goNext() {
+    if (disabled) return
     if (current.canContinue === false) return
     if (currentStep < steps.length - 1) onStepChange(currentStep + 1)
     else onComplete?.()
@@ -53,10 +55,11 @@ export function OnboardingWizard({
               aria-label={`Step ${index + 1} of ${steps.length}: ${item.title}`}
               aria-current={index === currentStep ? "step" : undefined}
               onClick={() => onStepChange(index)}
+              disabled={disabled}
               className={
                 index <= currentStep
-                  ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-blue-600 font-bold text-white transition-all"
-                  : "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-neutral-900 font-bold text-neutral-400 transition-all"
+                  ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-blue-600 font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                  : "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-neutral-900 font-bold text-neutral-400 transition-all disabled:cursor-not-allowed disabled:opacity-50"
               }
             >
               {index < currentStep ? <Check className="h-5 w-5" /> : index + 1}
@@ -90,17 +93,17 @@ export function OnboardingWizard({
             <Button
               variant="outline"
               onClick={() => onStepChange(Math.max(currentStep - 1, 0))}
-              disabled={currentStep === 0}
+              disabled={disabled || currentStep === 0}
             >
               Back
             </Button>
             <div className="flex items-center gap-2">
               {step.optional ? (
-                <Button variant="ghost" onClick={goNext}>
+                <Button variant="ghost" onClick={goNext} disabled={disabled}>
                   Skip
                 </Button>
               ) : null}
-              <Button onClick={goNext} disabled={step.canContinue === false}>
+              <Button onClick={goNext} disabled={disabled || step.canContinue === false}>
                 {currentStep === steps.length - 1 ? (step.actionLabel ?? "Complete") : "Continue"}
               </Button>
             </div>

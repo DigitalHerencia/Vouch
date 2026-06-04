@@ -11,6 +11,11 @@ type StripeV2Core = {
       options?: { idempotencyKey?: string }
     ): Promise<{ id: string }>
     retrieve(accountId: string, params?: Record<string, unknown>): Promise<Record<string, unknown>>
+    update(
+      accountId: string,
+      params: Record<string, unknown>,
+      options?: { idempotencyKey?: string }
+    ): Promise<Record<string, unknown>>
   }
   accountLinks: {
     create(
@@ -43,14 +48,39 @@ function readNestedBoolean(record: Record<string, unknown> | undefined, key: str
 
 function readStringArray(record: Record<string, unknown> | undefined, key: string): string[] {
   const value = record?.[key]
-  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : []
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : []
+}
+
+function getConnectedAccountConfiguration() {
+  return {
+    customer: {},
+    merchant: {
+      capabilities: {
+        card_payments: {
+          requested: true,
+        },
+        stripe_balance: {
+          payouts: {
+            requested: true,
+          },
+        },
+      },
+    },
+  }
 }
 
 function getStripeV2Core() {
   const stripe = getStripeServerClient() as unknown as StripeV2Client
   const core = stripe.v2?.core
 
-  if (!core?.accounts || !core.accountLinks) {
+  if (
+    !core?.accounts?.create ||
+    !core.accounts.retrieve ||
+    !core.accounts.update ||
+    !core.accountLinks?.create
+  ) {
     throw new Error("STRIPE_ACCOUNTS_V2_UNAVAILABLE")
   }
 
@@ -67,17 +97,7 @@ export async function createStripeConnectAccount(input: {
   const core = getStripeV2Core()
   const account = await core.accounts.create(
     {
-      configuration: {
-        recipient: {
-          capabilities: {
-            stripe_balance: {
-              stripe_transfers: {
-                requested: true,
-              },
-            },
-          },
-        },
-      },
+      configuration: getConnectedAccountConfiguration(),
       display_name: input.displayName ?? "Vouch participant",
       contact_email: input.email ?? undefined,
       defaults: {
@@ -90,13 +110,7 @@ export async function createStripeConnectAccount(input: {
       identity: {
         country: input.country ?? "US",
       },
-      include: [
-        "configuration.merchant",
-        "configuration.recipient",
-        "identity",
-        "defaults",
-        "configuration.customer",
-      ],
+      include: ["configuration.merchant", "identity", "defaults", "configuration.customer"],
       metadata: {
         vouch_user_id: input.userId,
       },
@@ -114,13 +128,27 @@ export async function createStripeConnectOnboardingLink(input: {
   idempotencyKey?: string
 }): Promise<{ url: string }> {
   const core = getStripeV2Core()
+  await core.accounts.update(
+    input.providerAccountId,
+    {
+      configuration: getConnectedAccountConfiguration(),
+      include: ["configuration.merchant", "configuration.customer"],
+    },
+    {
+      idempotencyKey:
+        input.idempotencyKey !== undefined
+          ? `${input.idempotencyKey}:configurations`
+          : `account:${input.providerAccountId}:connect_configurations`,
+    }
+  )
+
   const link = await core.accountLinks.create(
     {
       account: input.providerAccountId,
       use_case: {
         type: "account_onboarding",
         account_onboarding: {
-          configurations: ["recipient", "merchant"],
+          configurations: ["merchant", "customer"],
           refresh_url: input.refreshUrl,
           return_url: input.returnUrl,
         },
@@ -151,29 +179,33 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
 }> {
   const core = getStripeV2Core()
   const account = await core.accounts.retrieve(input.providerAccountId, {
-    include: ["configuration.recipient", "requirements"],
+    include: ["configuration.merchant", "requirements"],
   })
 
   const topLevelDetailsSubmitted = readNestedBoolean(account, "details_submitted")
   const topLevelPayoutsEnabled = readNestedBoolean(account, "payouts_enabled")
   const topLevelChargesEnabled = readNestedBoolean(account, "charges_enabled")
   const configuration = account.configuration as Record<string, unknown> | undefined
-  const recipient = readNestedRecord(configuration, "recipient")
-  const capabilities = readNestedRecord(recipient, "capabilities")
+  const merchant = readNestedRecord(configuration, "merchant")
+  const capabilities = readNestedRecord(merchant, "capabilities")
+  const cardPayments = readNestedRecord(capabilities, "card_payments")
   const stripeBalance = readNestedRecord(capabilities, "stripe_balance")
-  const stripeTransfers = readNestedRecord(stripeBalance, "stripe_transfers")
-  const transferStatus =
-    readNestedString(stripeTransfers, "status") ?? readNestedString(recipient, "status")
+  const payouts = readNestedRecord(stripeBalance, "payouts")
+  const paymentStatus =
+    readNestedString(cardPayments, "status") ?? readNestedString(merchant, "status")
+  const payoutStatus = readNestedString(payouts, "status")
   const requirements = readNestedRecord(account, "requirements")
   const detailsSubmitted =
-    topLevelDetailsSubmitted === true || transferStatus === "active" || transferStatus === "enabled"
+    topLevelDetailsSubmitted === true || paymentStatus === "active" || paymentStatus === "enabled"
   const readiness: PayoutReadinessStatus =
-    transferStatus === "restricted" || transferStatus === "disabled"
+    paymentStatus === "restricted" || paymentStatus === "disabled"
       ? "restricted"
       : detailsSubmitted
         ? "ready"
         : "requires_action"
-  const payoutsEnabled = topLevelPayoutsEnabled ?? detailsSubmitted
+  const payoutsEnabled =
+    topLevelPayoutsEnabled ??
+    (payoutStatus === "active" || payoutStatus === "enabled" || detailsSubmitted)
   const chargesEnabled = topLevelChargesEnabled ?? detailsSubmitted
 
   return {

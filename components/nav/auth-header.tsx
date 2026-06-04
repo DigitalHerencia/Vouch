@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 
-import { LogoLockup } from "@/components/brand/logo-lockup"
+import { LogoLockup } from "@/components/nav/logo-lockup"
 import { authHeaderContent } from "@/content/auth"
 
 export function AuthHeader() {

@@ -1,4 +1,4 @@
-// components/brand/logo-lockup.tsx
+// components/nav/logo-lockup.tsx
 
 import { Handshake } from "lucide-react"
 

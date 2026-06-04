@@ -1,6 +1,6 @@
 import Link from "next/link"
 
-import { LogoLockup } from "@/components/brand/logo-lockup"
+import { LogoLockup } from "@/components/nav/logo-lockup"
 import { Button } from "@/components/ui/button"
 
 export const defaultPublicNavItems = [

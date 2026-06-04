@@ -12,7 +12,14 @@ const readinessSelect = {
   id: true,
   status: true,
   paymentCustomer: { select: { paymentMethodReady: true } },
-  connectedAccount: { select: { detailsSubmitted: true, payoutsEnabled: true } },
+  connectedAccount: {
+    select: {
+      stripeAccountId: true,
+      chargesEnabled: true,
+      detailsSubmitted: true,
+      payoutsEnabled: true,
+    },
+  },
 } satisfies Prisma.UserSelect
 
 type ReadinessRecord = Prisma.UserGetPayload<{ select: typeof readinessSelect }>
@@ -20,15 +27,20 @@ type ReadinessRecord = Prisma.UserGetPayload<{ select: typeof readinessSelect }>
 function normalizeReadiness(record: ReadinessRecord | null) {
   const paymentCustomer = record?.paymentCustomer ?? null
   const connectedAccount = record?.connectedAccount ?? null
-  const payoutReady = Boolean(connectedAccount?.detailsSubmitted && connectedAccount.payoutsEnabled)
+  const merchantAccountReady = Boolean(
+    connectedAccount?.stripeAccountId &&
+      connectedAccount.chargesEnabled &&
+      connectedAccount.detailsSubmitted &&
+      connectedAccount.payoutsEnabled
+  )
 
   const state = {
     userId: record?.id ?? null,
     userStatus: record?.status === "active" ? ("active" as const) : ("disabled" as const),
     paymentMethodReady: paymentCustomer?.paymentMethodReady ? "ready" : "not_started",
-    payoutReadiness: payoutReady ? "ready" : "not_started",
+    payoutReadiness: merchantAccountReady ? "ready" : "not_started",
     hasPaymentCustomer: Boolean(paymentCustomer),
-    hasConnectedAccount: Boolean(connectedAccount),
+    hasConnectedAccount: Boolean(connectedAccount?.stripeAccountId),
   }
 
   return {

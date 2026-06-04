@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
-import { LoginForm as LoginBlock, OTPVerificationForm } from "@/components/blocks/auth-forms"
+import { LoginForm as LoginBlock, OTPVerificationForm } from "@/components/shared/auth-forms"
 import { authVerificationContent } from "@/content/auth"
 import { ensureLocalUserForCurrentSession } from "@/lib/actions/authActions"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"

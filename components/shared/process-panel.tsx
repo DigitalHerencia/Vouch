@@ -3,7 +3,7 @@ import Image from "next/image"
 import { CheckCircle2, LockKeyhole, ShieldCheck, type LucideIcon } from "lucide-react"
 import { CardHeader, Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
 import { Marquee, MarqueeItem, MarqueeSeparator } from "@/components/ui/marquee"
-import { MarqueeLogo } from "../brand/logo-lockup"
+import { MarqueeLogo } from "@/components/nav/logo-lockup"
 
 const panelMotion =
   "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"

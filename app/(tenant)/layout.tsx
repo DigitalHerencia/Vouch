@@ -1,6 +1,6 @@
 // app/(tenant)/layout.tsx
 
-import { TenantShell } from "@/components/navigation/tenant-shell"
+import { TenantShell } from "@/components/nav/tenant-shell"
 import {
   openStripeConnectDashboard,
   openStripePaymentMethodDashboard,

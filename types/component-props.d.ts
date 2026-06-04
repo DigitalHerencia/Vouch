@@ -465,6 +465,7 @@ type OnboardingWizardProps = {
   onStepChange: (step: number) => void
   onComplete?: () => void
   showProgress?: boolean
+  disabled?: boolean
 }
 type OnboardingFeature = {
   title: string
@@ -665,51 +666,13 @@ type VouchStatusDocumentData = {
   timeline: VouchStatusTimelineItem[]
   audit?: Array<{ label: string; value: string }>
 }
-type VouchCreationWizardContent = {
-  eyebrow: string
-  title: string
-  helper: string
-  progressHint: string
-  amountDescription: string
-  cartTitle: string
-  cartDescription: string
-  immutableAcknowledgement: string
-  steps: Array<{ title: string; completeLabel: string; pendingLabel: string }>
-  protocolTiles: Array<{ title: string; body: string }>
-  cartRail: Array<{ label: string; value: string }>
-}
-type VouchCreationDraft = {
-  amountDollars: string
-  appointmentStartsAt: string
-  confirmationOpensAt: string
-  confirmationExpiresAt: string
-  disclaimerAccepted: boolean
-}
-type VouchCreationPreviewData = {
-  amountCents: number
-  vouchServiceFeeCents: number
-  processingFeeOffsetCents: number
-}
 type VouchCreationWizardProps = {
-  content: VouchCreationWizardContent
+  steps: readonly OnboardingStep[]
   currentStep: number
-  optimisticStep: number
-  savedStepIndexes: number[]
-  draft: VouchCreationDraft
-  preview?: VouchCreationPreviewData | undefined
-  fieldErrors?: Record<string, string[]> | undefined
-  formError?: string | null | undefined
-  cartOpen: boolean
-  isPending: boolean
+  onStepChange: (step: number) => void
+  onComplete?: () => void
+  showProgress?: boolean
   disabled?: boolean
-  onDraftChange: (patch: Partial<VouchCreationDraft>) => void
-  onStepSelect: (stepIndex: number) => void
-  onBack: () => void
-  onSaveAmount: () => void
-  onSaveWindow: () => void
-  onReviewCart: () => void
-  onCartOpenChange: (open: boolean) => void
-  onCreateVouch: () => void
 }
 
 type ProfileSettingsProps = {

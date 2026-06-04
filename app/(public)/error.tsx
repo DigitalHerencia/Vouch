@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 
-import { GenericErrorPage } from "@/components/blocks/error-pages"
+import { GenericErrorPage } from "@/components/shared/error-pages"
 
 export default function PublicError({
   error,

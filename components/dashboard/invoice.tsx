@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { Download, Printer, Mail, Check, Clock, AlertCircle } from "lucide-react"
 import Link from "next/link"
-import { VouchStatusBadge, type VouchCountdownProps } from "@/components/blocks/status"
+import { VouchStatusBadge, type VouchCountdownProps } from "@/components/vouches/status"
 import { Progress } from "../ui/progress"
 
 export function Invoice({ data, logo, onDownload, onPrint, onSendEmail }: InvoiceProps) {
