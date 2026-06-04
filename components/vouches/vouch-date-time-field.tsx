@@ -1,0 +1,23 @@
+import { Input } from "@/components/ui/input"
+import { VouchCreationField } from "@/components/vouches/vouch-creation-field"
+
+type VouchDateTimeFieldProps = {
+  value: string
+  disabled?: boolean | undefined
+  error?: string | undefined
+  onChange: (value: string) => void
+}
+
+export function VouchDateTimeField({ value, disabled, error, onChange }: VouchDateTimeFieldProps) {
+  return (
+    <VouchCreationField label="Appointment date and time" error={error}>
+      <Input
+        type="datetime-local"
+        value={value}
+        disabled={disabled}
+        onChange={(event) => onChange(event.target.value)}
+        className="h-12 rounded-none border-2 border-neutral-400 bg-black px-3 font-mono text-sm font-bold text-white disabled:opacity-50"
+      />
+    </VouchCreationField>
+  )
+}

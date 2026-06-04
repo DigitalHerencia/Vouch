@@ -1,5 +1,5 @@
 import { AuthFooter } from "@/components/nav/auth-footer"
-import { AuthProcessPanelGrid } from "@/components/shared/process-panel"
+import { AuthProcessPanelGrid } from "@/components/shared/auth-process-panel-grid"
 
 export function AuthShell({ children }: AuthShellProps) {
   return (

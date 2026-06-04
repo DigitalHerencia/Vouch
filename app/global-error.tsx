@@ -2,7 +2,7 @@
 
 import { useEffect } from "react"
 
-import { ServerErrorPage } from "@/components/shared/error-pages"
+import { ServerErrorPage } from "@/components/shared/server-error-page"
 
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
   useEffect(() => {

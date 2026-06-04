@@ -130,7 +130,7 @@ export function MobileBottomNav({
             <DrawerFooter className="px-5 pb-5">
               <form action={pendingAction.action}>
                 <Button type="submit" className="w-full">
-                  Continue
+                  {pendingAction.label === "Method" ? "Save payment method" : "Continue"}
                 </Button>
               </form>
             </DrawerFooter>
@@ -174,7 +174,7 @@ export function TenantMobileBottomNav({
     },
     {
       kind: "action",
-      label: "Pay",
+      label: "Method",
       icon: CreditCard,
       action: paymentAction,
       warning: vouchPageCopy.providerRedirects.payment,

@@ -83,9 +83,9 @@ export const vouchPageCopy = {
     },
     payment: {
       title: "Add your payment method",
-      consequence: "Save a secure payment method so checkout is ready when you create a Vouch.",
+      consequence: "Save a secure payment method with Stripe, then return to Vouch.",
       context:
-        "Stripe handles the payment details and keeps them available for your future Vouch fees.",
+        "Stripe collects and stores the payment method details. Vouch does not charge anything from this link.",
       finePrint: "You'll return to Vouch when your payment method is saved.",
     },
   },

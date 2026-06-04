@@ -8,10 +8,10 @@ import {
   type LucideIcon,
 } from "lucide-react"
 
-import { CTAWithBackground } from "@/components/shared/cta-section"
 import { FeatureGridAlternating } from "@/components/public/feature-grid-alternating"
-import { HeroWithStats } from "@/components/shared/hero-section"
-import { ProcessPanelRuleGrid } from "@/components/shared/process-panel"
+import { CTAWithBackground } from "@/components/shared/cta-with-background"
+import { HeroWithStats } from "@/components/shared/hero-with-stats"
+import { ProcessPanelRuleGrid } from "@/components/shared/process-panel-rule-grid"
 import {
   PricingHeroContent,
   pricingComparisonRules,

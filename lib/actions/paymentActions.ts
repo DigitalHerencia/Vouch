@@ -1,5 +1,7 @@
 "use server"
 
+import { randomUUID } from "node:crypto"
+
 import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
@@ -15,11 +17,7 @@ import {
   createStripeConnectOnboardingLink,
   refreshStripeConnectReadiness,
 } from "@/lib/integrations/stripe/connect"
-import {
-  createStripeCustomer,
-  createStripeCustomerPortalSession,
-  getStripeCustomerpaymentMethodReady,
-} from "@/lib/integrations/stripe/customers"
+import { createStripeCustomer } from "@/lib/integrations/stripe/customers"
 import { createStripePaymentMethodSetupCheckout } from "@/lib/integrations/stripe/checkout-sessions"
 import { syncPaymentCustomerReadinessForUser } from "@/lib/payments/stripeReadinessSync"
 
@@ -137,31 +135,22 @@ export async function openStripeConnectDashboard(): Promise<never> {
   redirect(link.url)
 }
 
-export async function openStripePaymentMethodDashboard(): Promise<never> {
+export async function openStripePaymentMethodSetup(): Promise<never> {
   const user = await requireActiveUser()
   const stripeCustomerId = await ensureStripeCustomer(user)
   await syncPaymentCustomerReadinessForUser({ userId: user.id, stripeCustomerId })
-  const readiness = await getStripeCustomerpaymentMethodReady(stripeCustomerId)
 
   revalidatePaymentSurfaces()
   const appUrl = getAppUrl()
 
-  if (readiness.readiness !== "ready") {
-    const checkout = await createStripePaymentMethodSetupCheckout({
-      userId: user.id,
-      providerCustomerId: stripeCustomerId,
-      currency: "usd",
-      successUrl: `${appUrl}/dashboard?stripe_payment_return=1`,
-      cancelUrl: `${appUrl}/dashboard?stripe_payment_cancelled=1`,
-      idempotencyKey: `user:${user.id}:payment-method-setup-checkout`,
-    })
-    redirect(checkout.url ?? "/dashboard")
-  }
-
-  const link = await createStripeCustomerPortalSession({
+  const checkout = await createStripePaymentMethodSetupCheckout({
+    userId: user.id,
     providerCustomerId: stripeCustomerId,
-    returnUrl: `${appUrl}/dashboard?stripe_payment_return=1`,
+    currency: "usd",
+    successUrl: `${appUrl}/dashboard?stripe_payment_return=1`,
+    cancelUrl: `${appUrl}/dashboard?stripe_payment_cancelled=1`,
+    idempotencyKey: `user:${user.id}:payment-method-setup-checkout:${randomUUID()}`,
   })
 
-  redirect(link.url)
+  redirect(checkout.url ?? "/dashboard")
 }

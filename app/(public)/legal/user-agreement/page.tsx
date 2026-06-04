@@ -1,4 +1,4 @@
-import { CTAWithBackground } from "@/components/shared/cta-section"
+import { CTAWithBackground } from "@/components/shared/cta-with-background"
 import { FAQSimpleList } from "@/components/public/faq-simple-list"
 import { userAgreementSections } from "@/content/legal"
 import { landingCalloutContent } from "@/content/marketing"

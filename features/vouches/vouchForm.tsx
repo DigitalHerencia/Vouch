@@ -5,14 +5,12 @@ import { CalendarClock, CircleDollarSign, FileCheck2, ShieldCheck } from "lucide
 import Image from "next/image"
 import { useForm, useWatch } from "react-hook-form"
 
-import { OnboardingRequirementNotice } from "@/components/shared/cta-section"
+import { VouchAmountField } from "@/components/vouches/vouch-amount-field"
 import { VouchCreationCartRow } from "@/components/vouches/vouch-creation-cart-row"
 import { VouchCreationWizard } from "@/components/vouches/vouch-creation-wizard"
-import {
-  VouchAmountField,
-  VouchDateTimeField,
-  VouchDisclaimerAgreement,
-} from "@/components/vouches/vouch-form-controls"
+import { VouchDateTimeField } from "@/components/vouches/vouch-date-time-field"
+import { VouchDisclaimerAgreement } from "@/components/vouches/vouch-disclaimer-agreement"
+import { OnboardingRequirementNotice } from "@/components/vouches/onboarding-requirement-notice"
 import { openStripeConnectDashboard } from "@/lib/actions/paymentActions"
 import { createVouch, getCreateVouchFormReadiness } from "@/lib/actions/vouchActions"
 

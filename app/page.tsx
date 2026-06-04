@@ -13,9 +13,9 @@ import { createElement } from "react"
 
 import { FeatureBentoGrid } from "@/components/public/feature-bento-grid"
 import { PublicShell } from "@/components/nav/public-shell"
-import { CTAWithBackground } from "@/components/shared/cta-section"
-import { HeroSplitPanel } from "@/components/shared/hero-section"
-import { StatsSplit } from "@/components/shared/stats-section"
+import { CTAWithBackground } from "@/components/shared/cta-with-background"
+import { HeroSplitPanel } from "@/components/shared/hero-split-panel"
+import { StatsSplit } from "@/components/shared/stats-split"
 import {
   landingCalloutContent,
   landingFeatureCards,

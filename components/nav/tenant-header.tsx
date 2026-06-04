@@ -31,6 +31,8 @@ export function TenantHeader({
   const [pendingProvider, setPendingProvider] = useState<"connect" | "payment" | null>(null)
   const providerCopy = pendingProvider ? vouchPageCopy.providerRedirects[pendingProvider] : null
   const providerAction = pendingProvider === "connect" ? connectAction : paymentAction
+  const providerActionLabel =
+    pendingProvider === "payment" ? "Save payment method" : "Continue to Stripe"
 
   return (
     <>
@@ -101,7 +103,7 @@ export function TenantHeader({
           <DrawerFooter className="px-5 pb-5">
             <form action={providerAction}>
               <Button type="submit" className="w-full">
-                Continue to Stripe
+                {providerActionLabel}
               </Button>
             </form>
           </DrawerFooter>

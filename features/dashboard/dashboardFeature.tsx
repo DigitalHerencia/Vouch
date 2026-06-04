@@ -1,12 +1,12 @@
 import type { ComponentProps } from "react"
 
+import { HeroCentered } from "@/components/shared/hero-centered"
+import { StatsCards } from "@/components/shared/stats-cards"
 import { DashboardEmptyState } from "@/components/dashboard/dashboard-empty-state"
-import { InvoiceSummary } from "@/components/dashboard/InvoiceSummary"
-import { DashboardRequirementsNotice } from "@/components/shared/cta-section"
-import { HeroCentered } from "@/components/shared/hero-section"
-import { StatsCards } from "@/components/shared/stats-section"
+import { DashboardRequirementsNotice } from "@/components/dashboard/dashboard-requirements-notice"
+import { InvoiceSummary } from "@/components/dashboard/invoice-summary"
 import { dashboardContent } from "@/content/dashboard"
-import { openStripePaymentMethodDashboard } from "@/lib/actions/paymentActions"
+import { openStripePaymentMethodSetup } from "@/lib/actions/paymentActions"
 import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
 
@@ -184,7 +184,7 @@ export async function DashboardFeature({
         align="left"
       />
       {dashboardBlocked ? (
-        <DashboardRequirementsNotice action={openStripePaymentMethodDashboard} />
+        <DashboardRequirementsNotice action={openStripePaymentMethodSetup} />
       ) : null}
 
       <StatsCards stats={metrics} />

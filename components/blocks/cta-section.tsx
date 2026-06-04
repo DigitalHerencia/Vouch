@@ -318,9 +318,10 @@ export function DashboardRequirementsNotice({
   return (
     <RequirementNoticeSplit
       eyebrow="Payment method required"
-      title="Add a payment method to continue"
-      body="Save a payment method with Stripe so checkout is ready when you use Vouch. Your payment details are handled securely by Stripe, not stored by Vouch."
+      title="Save a payment method with Stripe"
+      body="This link only saves a payment method with Stripe and returns you to Vouch. It does not make a payment."
       action={action}
+      actionLabel="Save payment method"
     />
   )
 }

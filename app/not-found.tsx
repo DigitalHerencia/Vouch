@@ -1,4 +1,4 @@
-import { NotFoundPage } from "@/components/shared/error-pages"
+import { NotFoundPage } from "@/components/shared/not-found-page"
 
 export default function NotFound() {
   return (

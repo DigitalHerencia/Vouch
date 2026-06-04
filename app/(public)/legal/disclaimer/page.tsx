@@ -1,4 +1,4 @@
-import { CTAWithBackground } from "@/components/shared/cta-section"
+import { CTAWithBackground } from "@/components/shared/cta-with-background"
 import { FAQSimpleList } from "@/components/public/faq-simple-list"
 import { disclaimerSections } from "@/content/legal"
 import { Handshake } from "lucide-react"

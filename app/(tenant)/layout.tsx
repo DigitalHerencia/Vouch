@@ -3,7 +3,7 @@
 import { TenantShell } from "@/components/nav/tenant-shell"
 import {
   openStripeConnectDashboard,
-  openStripePaymentMethodDashboard,
+  openStripePaymentMethodSetup,
 } from "@/lib/actions/paymentActions"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 
@@ -17,7 +17,7 @@ export default async function AppLayout({
   return (
     <TenantShell
       connectAction={openStripeConnectDashboard}
-      paymentAction={openStripePaymentMethodDashboard}
+      paymentAction={openStripePaymentMethodSetup}
     >
       {children}
     </TenantShell>
