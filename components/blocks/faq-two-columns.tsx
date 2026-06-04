@@ -1,4 +1,4 @@
-import { FAQCard } from "@/components/public/faq-card"
+import { FAQCard } from "@/components/blocks/faq-card"
 
 export function FAQTwoColumns({ title, subtitle, description, items }: FAQTwoColumnsProps) {
   const midpoint = Math.ceil(items.length / 2)

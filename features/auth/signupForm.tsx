@@ -1,13 +1,13 @@
 "use client"
 
 import { useSignUp } from "@clerk/nextjs"
-import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
-import { Button } from "@/components/shared/Button"
-import { OTPVerificationForm, SignUpForm as SignUpBlock } from "@/components/shared/auth-forms"
+import { AuthNavLink } from "@/components/auth/auth-nav-link"
+import { OTPVerificationForm } from "@/components/auth/otp-verification-form"
+import { SignUpForm as SignUpBlock } from "@/components/auth/sign-up-form"
 import { authVerificationContent } from "@/content/auth"
 import { completeSignUpWithTermsAcceptance } from "@/lib/actions/authActions"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
@@ -296,11 +296,9 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
             agreementLabel={
               <>
                 I agree to the
-                <Button asChild variant="nav" size="nav" className="ml-3">
-                  <Link href="/legal/user-agreement" target="_blank" rel="noreferrer">
-                    User Agreement
-                  </Link>
-                </Button>
+                <AuthNavLink href="/legal/user-agreement" className="ml-3">
+                  User Agreement
+                </AuthNavLink>
                 .
               </>
             }

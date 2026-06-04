@@ -1,10 +1,10 @@
 import { ReceiptText } from "lucide-react"
 
 import { ConfirmationProtocolCard } from "@/components/vouches/confirmation-protocol-card"
+import { VouchStatusBadge } from "@/components/shared/vouch-status-badge"
 import { StatusRow } from "@/components/vouches/status-row"
 import { StatusTile } from "@/components/vouches/status-tile"
 import { VouchCountdown } from "@/components/vouches/vouch-countdown"
-import { VouchStatusBadge } from "@/components/vouches/vouch-status-badge"
 import { VouchStatusTimeline } from "@/components/vouches/vouch-status-timeline"
 
 export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData }) {

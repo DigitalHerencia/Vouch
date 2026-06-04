@@ -1,7 +1,7 @@
 import Link from "next/link"
 
+import { VouchStatusBadge } from "@/components/shared/vouch-status-badge"
 import { Progress } from "@/components/ui/progress"
-import { VouchStatusBadge } from "@/components/vouches/vouch-status-badge"
 
 export function InvoiceSummary({
   invoiceNumber,

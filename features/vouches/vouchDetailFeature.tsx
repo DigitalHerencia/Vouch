@@ -1,8 +1,7 @@
 import { notFound } from "next/navigation"
-import Link from "next/link"
 import type { ReactNode } from "react"
 
-import { Button } from "@/components/ui/button"
+import { AuthorizationCheckoutCard } from "@/components/vouches/authorization-checkout-card"
 import { VouchCountdown } from "@/components/vouches/vouch-countdown"
 import { VouchStatusDocument } from "@/components/vouches/vouch-status-document"
 import { VouchStatusTimeline } from "@/components/vouches/vouch-status-timeline"
@@ -204,19 +203,7 @@ function VouchDetailView({
                 <div className="grid gap-4">
                   {confirmation.action}
                   {authorizationCheckoutUrl ? (
-                    <div className="border border-neutral-400 bg-neutral-900 p-4">
-                      <p className="text-sm font-black text-white uppercase">
-                        Customer authorization link
-                      </p>
-                      <p className="mt-2 text-xs leading-5 font-semibold text-neutral-400">
-                        Send this Stripe-hosted link to the customer to authorize the Vouch amount.
-                      </p>
-                      <Button asChild className="mt-4">
-                        <Link href={authorizationCheckoutUrl} target="_blank" rel="noreferrer">
-                          Open authorization checkout
-                        </Link>
-                      </Button>
-                    </div>
+                    <AuthorizationCheckoutCard checkoutUrl={authorizationCheckoutUrl} />
                   ) : null}
                   <div className="border border-neutral-400 bg-neutral-900 p-4">
                     <p className="text-sm font-black text-white uppercase">{copy.actionsTitle}</p>

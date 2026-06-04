@@ -1,5 +1,5 @@
 import { Progress } from "@/components/ui/progress"
-import { VouchStatusBadge, type VouchStatusTone } from "@/components/vouches/vouch-status-badge"
+import { VouchStatusBadge, type VouchStatusTone } from "@/components/shared/vouch-status-badge"
 
 export type VouchCountdownProps = {
   label: string

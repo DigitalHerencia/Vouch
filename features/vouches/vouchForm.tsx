@@ -3,16 +3,16 @@
 import * as React from "react"
 import { CalendarClock, CircleDollarSign, FileCheck2, ShieldCheck } from "lucide-react"
 import Image from "next/image"
-import Link from "next/link"
 import { useForm, useWatch } from "react-hook-form"
 
 import { OnboardingRequirementNotice } from "@/components/shared/cta-section"
-import { Button } from "@/components/ui/button"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Input } from "@/components/ui/input"
 import { VouchCreationCartRow } from "@/components/vouches/vouch-creation-cart-row"
-import { VouchCreationField } from "@/components/vouches/vouch-creation-field"
 import { VouchCreationWizard } from "@/components/vouches/vouch-creation-wizard"
+import {
+  VouchAmountField,
+  VouchDateTimeField,
+  VouchDisclaimerAgreement,
+} from "@/components/vouches/vouch-form-controls"
 import { openStripeConnectDashboard } from "@/lib/actions/paymentActions"
 import { createVouch, getCreateVouchFormReadiness } from "@/lib/actions/vouchActions"
 
@@ -178,34 +178,12 @@ export function VouchForm() {
       icon: <FileCheck2 className="h-8 w-8 text-white" />,
       canContinue: canContinueDisclaimer,
       content: (
-        <div className="grid gap-4">
-          <label className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4 bg-black p-1">
-            <Checkbox
-              checked={formValues.disclaimerAccepted}
-              disabled={disabled}
-              onCheckedChange={(checked) => updateDraft("disclaimerAccepted", checked === true)}
-              className="mt-1 border-neutral-400"
-            />
-            <span className="max-w-prose text-sm leading-6 font-semibold text-neutral-300">
-              Vouch coordinates payment state through third-party providers. Vouch does not directly
-              custody funds, hold card data, store bank data, or act as a funds custodian.
-              <span className="mt-3 block">
-                I agree to the
-                <Button asChild variant="nav" size="nav" className="ml-2">
-                  <Link href="/legal/disclaimer" target="_blank" rel="noreferrer">
-                    Disclaimer
-                  </Link>
-                </Button>
-                .
-              </span>
-            </span>
-          </label>
-          {form.formState.errors.disclaimerAccepted?.message ? (
-            <p className="text-sm leading-5 font-semibold text-red-600">
-              {form.formState.errors.disclaimerAccepted.message}
-            </p>
-          ) : null}
-        </div>
+        <VouchDisclaimerAgreement
+          checked={formValues.disclaimerAccepted}
+          disabled={disabled}
+          error={form.formState.errors.disclaimerAccepted?.message}
+          onCheckedChange={(checked) => updateDraft("disclaimerAccepted", checked)}
+        />
       ),
     },
     {
@@ -217,34 +195,18 @@ export function VouchForm() {
       content: (
         <div className="grid gap-6">
           <div className="grid gap-5 sm:grid-cols-2">
-            <VouchCreationField
-              label="Appointment date and time"
+            <VouchDateTimeField
+              value={formValues.appointmentStartsAt}
+              disabled={disabled}
               error={form.formState.errors.appointmentStartsAt?.message}
-            >
-              <Input
-                type="datetime-local"
-                value={formValues.appointmentStartsAt}
-                disabled={disabled}
-                onChange={(event) => updateDraft("appointmentStartsAt", event.target.value)}
-                className="h-12 rounded-none border-2 border-neutral-400 bg-black px-3 font-mono text-sm font-bold text-white disabled:opacity-50"
-              />
-            </VouchCreationField>
-            <VouchCreationField
-              label="Protected amount"
+              onChange={(value) => updateDraft("appointmentStartsAt", value)}
+            />
+            <VouchAmountField
+              value={formValues.amountDollars}
+              disabled={disabled}
               error={form.formState.errors.amountDollars?.message}
-            >
-              <Input
-                type="number"
-                inputMode="decimal"
-                min="0"
-                step="0.01"
-                placeholder="250.00"
-                value={formValues.amountDollars}
-                disabled={disabled}
-                onChange={(event) => updateDraft("amountDollars", event.target.value)}
-                className="h-12 rounded-none border-2 border-neutral-400 bg-black px-3 font-mono text-sm font-bold text-white disabled:opacity-50"
-              />
-            </VouchCreationField>
+              onChange={(value) => updateDraft("amountDollars", value)}
+            />
           </div>
           <p className="max-w-prose text-sm leading-6 font-semibold text-neutral-300">
             Create a Vouch up to 24 hours before the appointment. The confirmation window is

@@ -1,5 +1,6 @@
 import { Suspense } from "react"
 
+import { VouchDetailSkeleton } from "@/features/vouches/vouch-detail-skeleton"
 import { VouchDetailPage } from "@/features/vouches/vouchDetailFeature"
 
 export default async function VouchDetailRoute({
@@ -9,9 +10,7 @@ export default async function VouchDetailRoute({
 }) {
   const { vouchId } = await params
   return (
-    <Suspense
-      fallback={<div className="border border-neutral-400 bg-black p-6">Loading Vouch...</div>}
-    >
+    <Suspense fallback={<VouchDetailSkeleton />}>
       <VouchDetailPage vouchId={vouchId} />
     </Suspense>
   )

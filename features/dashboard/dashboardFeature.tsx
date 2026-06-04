@@ -1,10 +1,10 @@
 import type { ComponentProps } from "react"
 
-import { DashboardRequirementsNotice } from "@/components/shared/cta-section"
+import { DashboardEmptyState } from "@/components/dashboard/dashboard-empty-state"
 import { InvoiceSummary } from "@/components/dashboard/InvoiceSummary"
+import { DashboardRequirementsNotice } from "@/components/shared/cta-section"
 import { HeroCentered } from "@/components/shared/hero-section"
 import { StatsCards } from "@/components/shared/stats-section"
-import { DashboardEmptyState } from "@/components/vouches/dashboard-empty-state"
 import { dashboardContent } from "@/content/dashboard"
 import { openStripePaymentMethodDashboard } from "@/lib/actions/paymentActions"
 import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
