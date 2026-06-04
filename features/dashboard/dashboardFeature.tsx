@@ -4,7 +4,7 @@ import { DashboardRequirementsNotice } from "@/components/shared/cta-section"
 import { InvoiceSummary } from "@/components/dashboard/InvoiceSummary"
 import { HeroCentered } from "@/components/shared/hero-section"
 import { StatsCards } from "@/components/shared/stats-section"
-import { StatusBlocks } from "@/components/vouches/status"
+import { DashboardEmptyState } from "@/components/vouches/dashboard-empty-state"
 import { dashboardContent } from "@/content/dashboard"
 import { openStripePaymentMethodDashboard } from "@/lib/actions/paymentActions"
 import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
@@ -192,7 +192,7 @@ export async function DashboardFeature({
 
       {state.variant === "empty" ? (
         <section className="px-4 py-8 md:px-8 lg:px-16">
-          <StatusBlocks.DashboardEmptyState />
+          <DashboardEmptyState />
         </section>
       ) : (
         invoices.map((invoice) => (

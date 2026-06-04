@@ -9,7 +9,7 @@ import {
 } from "lucide-react"
 
 import { CTAWithBackground } from "@/components/shared/cta-section"
-import { FeatureGridAlternating } from "@/components/public/feature-grid"
+import { FeatureGridAlternating } from "@/components/public/feature-grid-alternating"
 import { HeroWithStats } from "@/components/shared/hero-section"
 import { ProcessPanelRuleGrid } from "@/components/shared/process-panel"
 import {

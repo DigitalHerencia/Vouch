@@ -2,8 +2,10 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import type { ReactNode } from "react"
 
-import { StatusBlocks } from "@/components/vouches/status"
-import { Button } from "@/components/vouches/form-controls"
+import { Button } from "@/components/ui/button"
+import { VouchCountdown } from "@/components/vouches/vouch-countdown"
+import { VouchStatusDocument } from "@/components/vouches/vouch-status-document"
+import { VouchStatusTimeline } from "@/components/vouches/vouch-status-timeline"
 import { vouchPageCopy } from "@/content/vouches"
 import { ConfirmPresenceInlineForm } from "@/features/vouches/vouchDetailFeature.client"
 import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
@@ -168,7 +170,7 @@ function VouchDetailView({
   return (
     <main>
       <section className="px-4 py-16 md:px-8 lg:px-16">
-        <StatusBlocks.Full
+        <VouchStatusDocument
           data={{
             title: copy.termsTitle,
             publicId: title,
@@ -245,12 +247,12 @@ function VouchDetailView({
               </p>
             ) : null}
           </div>
-          <StatusBlocks.Timeline items={statusTimeline} />
+          <VouchStatusTimeline items={statusTimeline} />
         </section>
       </section>
 
       <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-2 md:gap-8">
-        <StatusBlocks.Countdown
+        <VouchCountdown
           label={copy.bottomCalloutTitle}
           expiresAtLabel={deadlineLabel}
           remainingLabel={copy.bottomCalloutBody}

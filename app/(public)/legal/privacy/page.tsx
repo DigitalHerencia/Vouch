@@ -1,7 +1,7 @@
 import type { Metadata } from "next"
 
 import { CTAWithBackground } from "@/components/shared/cta-section"
-import { FAQSimpleList } from "@/components/public/faq-section"
+import { FAQSimpleList } from "@/components/public/faq-simple-list"
 import { privacySections } from "@/content/legal"
 import { landingCalloutContent } from "@/content/marketing"
 import { Handshake } from "lucide-react"

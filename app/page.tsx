@@ -11,7 +11,7 @@ import {
 } from "lucide-react"
 import { createElement } from "react"
 
-import { FeatureBentoGrid } from "@/components/public/feature-grid"
+import { FeatureBentoGrid } from "@/components/public/feature-bento-grid"
 import { PublicShell } from "@/components/nav/public-shell"
 import { CTAWithBackground } from "@/components/shared/cta-section"
 import { HeroSplitPanel } from "@/components/shared/hero-section"

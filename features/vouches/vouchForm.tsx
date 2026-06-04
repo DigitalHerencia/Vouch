@@ -7,12 +7,12 @@ import Link from "next/link"
 import { useForm, useWatch } from "react-hook-form"
 
 import { OnboardingRequirementNotice } from "@/components/shared/cta-section"
-import {
-  VouchCreationCartRow,
-  VouchCreationField,
-  VouchCreationWizard,
-} from "@/components/vouches/status"
-import { Button, Checkbox, Input } from "@/components/vouches/form-controls"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { VouchCreationCartRow } from "@/components/vouches/vouch-creation-cart-row"
+import { VouchCreationField } from "@/components/vouches/vouch-creation-field"
+import { VouchCreationWizard } from "@/components/vouches/vouch-creation-wizard"
 import { openStripeConnectDashboard } from "@/lib/actions/paymentActions"
 import { createVouch, getCreateVouchFormReadiness } from "@/lib/actions/vouchActions"
 
