@@ -21,6 +21,7 @@ type CreateStripeMerchantCreationFeeCheckoutInput = {
 type CreateStripePaymentMethodSetupCheckoutInput = {
   providerCustomerId: string
   userId: string
+  currency: string
   successUrl: string
   cancelUrl: string
   idempotencyKey: string
@@ -86,6 +87,7 @@ export async function createStripePaymentMethodSetupCheckout(
     {
       customer: input.providerCustomerId,
       mode: "setup",
+      currency: input.currency,
       success_url: input.successUrl,
       cancel_url: input.cancelUrl,
       metadata: {

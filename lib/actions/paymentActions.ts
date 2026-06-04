@@ -150,6 +150,7 @@ export async function openStripePaymentMethodDashboard(): Promise<never> {
     const checkout = await createStripePaymentMethodSetupCheckout({
       userId: user.id,
       providerCustomerId: stripeCustomerId,
+      currency: "usd",
       successUrl: `${appUrl}/dashboard?stripe_payment_return=1`,
       cancelUrl: `${appUrl}/dashboard?stripe_payment_cancelled=1`,
       idempotencyKey: `user:${user.id}:payment-method-setup-checkout`,

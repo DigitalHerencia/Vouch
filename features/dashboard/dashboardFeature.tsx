@@ -183,17 +183,14 @@ export async function DashboardFeature({
         description=""
         align="left"
       />
-
-      <StatsCards stats={metrics} />
-
       {dashboardBlocked ? (
         <DashboardRequirementsNotice action={openStripePaymentMethodDashboard} />
       ) : null}
 
+      <StatsCards stats={metrics} />
+
       {state.variant === "empty" ? (
-        <section className="px-4 py-8 md:px-8 lg:px-16">
-          <DashboardEmptyState />
-        </section>
+        <DashboardEmptyState />
       ) : (
         invoices.map((invoice) => (
           <InvoiceSummary
