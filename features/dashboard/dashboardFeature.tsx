@@ -1,8 +1,8 @@
 import type { ComponentProps } from "react"
 
-import { CTASection } from "@/components/shared/cta-section"
+import { DashboardRequirementsNotice } from "@/components/shared/cta-section"
+import { InvoiceSummary } from "@/components/dashboard/InvoiceSummary"
 import { HeroCentered } from "@/components/shared/hero-section"
-import { InvoiceSummary } from "@/components/dashboard/invoice"
 import { StatsCards } from "@/components/shared/stats-section"
 import { StatusBlocks } from "@/components/vouches/status"
 import { dashboardContent } from "@/content/dashboard"
@@ -187,7 +187,7 @@ export async function DashboardFeature({
       <StatsCards stats={metrics} />
 
       {dashboardBlocked ? (
-        <CTASection.DashboardRequirementsNotice action={openStripePaymentMethodDashboard} />
+        <DashboardRequirementsNotice action={openStripePaymentMethodDashboard} />
       ) : null}
 
       {state.variant === "empty" ? (

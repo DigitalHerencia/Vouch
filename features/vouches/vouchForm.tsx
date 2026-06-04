@@ -6,7 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useForm, useWatch } from "react-hook-form"
 
-import { CTASection } from "@/components/shared/cta-section"
+import { OnboardingRequirementNotice } from "@/components/shared/cta-section"
 import {
   VouchCreationCartRow,
   VouchCreationField,
@@ -309,7 +309,7 @@ export function VouchForm() {
   return (
     <main className="mb-16 grid gap-8 p-4 md:p-8 lg:p-12">
       {onboardingRequired ? (
-        <CTASection.OnboardingRequirementNotice action={openStripeConnectDashboard} />
+        <OnboardingRequirementNotice action={openStripeConnectDashboard} />
       ) : null}
       <div className="grid gap-5">
         <VouchCreationWizard

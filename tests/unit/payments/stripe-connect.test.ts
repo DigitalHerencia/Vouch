@@ -5,6 +5,7 @@ vi.mock("server-only", () => ({}))
 const createAccount = vi.fn()
 const createAccountLink = vi.fn()
 const retrieveAccount = vi.fn()
+const updateAccount = vi.fn()
 
 vi.mock("@/lib/integrations/stripe/client", () => ({
   getStripeServerClient: () => ({
@@ -13,6 +14,7 @@ vi.mock("@/lib/integrations/stripe/client", () => ({
         accounts: {
           create: createAccount,
           retrieve: retrieveAccount,
+          update: updateAccount,
         },
         accountLinks: {
           create: createAccountLink,
@@ -27,14 +29,19 @@ describe("Stripe Connect Accounts v2", () => {
     createAccount.mockReset()
     createAccountLink.mockReset()
     retrieveAccount.mockReset()
+    updateAccount.mockReset()
     createAccount.mockResolvedValue({ id: "acct_connected" })
     createAccountLink.mockResolvedValue({ url: "https://connect.stripe.test/onboard" })
+    updateAccount.mockResolvedValue({})
     retrieveAccount.mockResolvedValue({
       configuration: {
-        recipient: {
+        merchant: {
           capabilities: {
+            card_payments: {
+              status: "active",
+            },
             stripe_balance: {
-              stripe_transfers: {
+              payouts: {
                 status: "active",
               },
             },
@@ -44,7 +51,7 @@ describe("Stripe Connect Accounts v2", () => {
     })
   })
 
-  it("creates recipient accounts with the blueprint include fields", async () => {
+  it("creates connected accounts with the blueprint include fields", async () => {
     const { createStripeConnectAccount } = await import("@/lib/integrations/stripe/connect")
 
     await createStripeConnectAccount({
@@ -58,10 +65,14 @@ describe("Stripe Connect Accounts v2", () => {
     expect(createAccount).toHaveBeenCalledWith(
       expect.objectContaining({
         configuration: {
-          recipient: {
+          customer: {},
+          merchant: {
             capabilities: {
+              card_payments: {
+                requested: true,
+              },
               stripe_balance: {
-                stripe_transfers: {
+                payouts: {
                   requested: true,
                 },
               },
@@ -79,7 +90,6 @@ describe("Stripe Connect Accounts v2", () => {
         dashboard: "express",
         include: [
           "configuration.merchant",
-          "configuration.recipient",
           "identity",
           "defaults",
           "configuration.customer",
@@ -92,7 +102,7 @@ describe("Stripe Connect Accounts v2", () => {
     )
   })
 
-  it("creates onboarding links for recipient and merchant configurations", async () => {
+  it("creates onboarding links for customer and merchant configurations", async () => {
     const { createStripeConnectOnboardingLink } = await import("@/lib/integrations/stripe/connect")
 
     await createStripeConnectOnboardingLink({
@@ -102,13 +112,36 @@ describe("Stripe Connect Accounts v2", () => {
       idempotencyKey: "idem_link",
     })
 
+    expect(updateAccount).toHaveBeenCalledWith(
+      "acct_connected",
+      {
+        configuration: {
+          customer: {},
+          merchant: {
+            capabilities: {
+              card_payments: {
+                requested: true,
+              },
+              stripe_balance: {
+                payouts: {
+                  requested: true,
+                },
+              },
+            },
+          },
+        },
+        include: ["configuration.merchant", "configuration.customer"],
+      },
+      { idempotencyKey: "idem_link:configurations" }
+    )
+
     expect(createAccountLink).toHaveBeenCalledWith(
       {
         account: "acct_connected",
         use_case: {
           type: "account_onboarding",
           account_onboarding: {
-            configurations: ["recipient", "merchant"],
+            configurations: ["merchant", "customer"],
             refresh_url: "https://vouch.test/settings/payout",
             return_url: "https://vouch.test/settings/payout/return",
           },
@@ -118,7 +151,7 @@ describe("Stripe Connect Accounts v2", () => {
     )
   })
 
-  it("maps nested recipient transfer capability status to payout readiness", async () => {
+  it("maps nested merchant payout capability status to payout readiness", async () => {
     const { refreshStripeConnectReadiness } = await import("@/lib/integrations/stripe/connect")
 
     await expect(
@@ -134,7 +167,7 @@ describe("Stripe Connect Accounts v2", () => {
     })
 
     expect(retrieveAccount).toHaveBeenCalledWith("acct_connected", {
-      include: ["configuration.recipient", "requirements"],
+      include: ["configuration.merchant", "requirements"],
     })
   })
 
@@ -143,10 +176,13 @@ describe("Stripe Connect Accounts v2", () => {
 
     retrieveAccount.mockResolvedValueOnce({
       configuration: {
-        recipient: {
+        merchant: {
           capabilities: {
+            card_payments: {
+              status: "restricted",
+            },
             stripe_balance: {
-              stripe_transfers: {
+              payouts: {
                 status: "restricted",
               },
             },
