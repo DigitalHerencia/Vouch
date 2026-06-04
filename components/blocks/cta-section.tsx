@@ -1,9 +1,10 @@
 import * as React from "react"
-import { CheckCircle, CreditCard, Mail, SquareArrowOutUpRight } from "lucide-react"
+import { CheckCircle, Mail } from "lucide-react"
+import Image from "next/image"
+import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import Link from "next/link"
 
 const cardMotion =
   "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
@@ -42,23 +43,54 @@ function CTAButton({
   )
 }
 
-function RequirementNoticeCard({
-  icon: Icon,
+function RequirementNoticeSplit({
+  eyebrow,
   title,
   body,
+  action,
+  actionLabel,
 }: {
-  icon: React.ComponentType<{ className?: string }>
+  eyebrow: string
   title: string
   body: string
+  action?: (() => void | Promise<void>) | undefined
+  actionLabel?: string | undefined
 }) {
   return (
-    <div className="border-3 border-neutral-400 bg-black p-5">
-      <div className="mb-4 flex size-11 items-center justify-center border-2 border-neutral-400 bg-blue-600 text-white">
-        <Icon className="size-5" />
+    <section className="px-4 py-8 md:px-8 lg:px-16">
+      <div className="overflow-hidden border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+        <div className="grid md:grid-cols-[minmax(0,1fr)_minmax(14rem,0.42fr)]">
+          <div className="flex flex-col justify-center p-5 md:p-6">
+            <p className="text-xs font-black tracking-widest text-blue-600 uppercase">{eyebrow}</p>
+            <h2 className="mt-2 text-2xl leading-tight font-black tracking-wide text-white uppercase md:text-3xl">
+              {title}
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 font-semibold text-neutral-300 md:text-[15px] md:leading-7">
+              {body}
+            </p>
+            {action ? (
+              <form action={action} className="mt-5">
+                <Button type="submit" size="lg" variant="outline">
+                  {actionLabel ?? "Continue to Stripe"}
+                </Button>
+              </form>
+            ) : null}
+          </div>
+          <div className="grid place-items-center border-t-3 border-neutral-400 bg-white p-6 md:border-t-0 md:border-l-3 md:p-8">
+            <span className="inline-flex w-full items-center justify-center bg-white px-6 py-5">
+              <Image
+                src="/Stripe wordmark - Blurple.svg"
+                alt="Stripe"
+                width={180}
+                height={75}
+                className="h-auto w-40"
+                priority={false}
+              />
+            </span>
+          </div>
+        </div>
       </div>
-      <h2 className="text-xl font-black tracking-wide text-white uppercase">{title}</h2>
-      <p className="mt-2 text-sm leading-6 font-semibold text-neutral-400">{body}</p>
-    </div>
+    </section>
   )
 }
 
@@ -263,27 +295,33 @@ export function CTABanner({
   )
 }
 
-export function OnboardingRequirementNotice() {
+export function OnboardingRequirementNotice({
+  action,
+}: {
+  action?: (() => void | Promise<void>) | undefined
+}) {
   return (
-    <section className="px-4 py-8 md:px-8 lg:px-16">
-      <RequirementNoticeCard
-        icon={SquareArrowOutUpRight}
-        title="Stripe Connect"
-        body="You must complete Stripe Connect account onboarding before creating a Vouch"
-      />
-    </section>
+    <RequirementNoticeSplit
+      eyebrow="Onboarding required"
+      title="Connect Stripe to start creating Vouches"
+      body="Vouch uses Stripe to keep payments secure and easy to manage. Connect your Stripe account once, then you can create Vouches and manage payouts from Stripe."
+      action={action}
+    />
   )
 }
 
-export function DashboardRequirementsNotice() {
+export function DashboardRequirementsNotice({
+  action,
+}: {
+  action?: (() => void | Promise<void>) | undefined
+}) {
   return (
-    <section className="px-4 py-8 md:px-8 lg:px-16">
-      <RequirementNoticeCard
-        icon={CreditCard}
-        title="Payment method"
-        body="You must save a valid payment method before you can complete purchases"
-      />
-    </section>
+    <RequirementNoticeSplit
+      eyebrow="Payment method required"
+      title="Add a payment method to continue"
+      body="Save a payment method with Stripe so checkout is ready when you use Vouch. Your payment details are handled securely by Stripe, not stored by Vouch."
+      action={action}
+    />
   )
 }
 

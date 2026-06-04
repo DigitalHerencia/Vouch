@@ -21,6 +21,10 @@ import {
   markCustomerDepositAuthorized,
   markProtocolFeePaidAndIssueAuthorizationCheckout,
 } from "@/lib/actions/vouchActions"
+import {
+  syncConnectedAccountReadinessForUser,
+  syncPaymentCustomerReadinessForUser,
+} from "@/lib/payments/stripeReadinessSync"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-resultTypes"
 
 type WebhookProcessResult = {
@@ -53,8 +57,26 @@ function getStripeId(value: unknown): string | undefined {
 
 async function processCheckoutSessionCompleted(
   session: Stripe.Checkout.Session,
+  eventId: string,
   accountId?: string
 ): Promise<void> {
+  if (session.mode === "setup" && session.metadata?.payment_role === "customer_payment_method_setup") {
+    const userId = session.metadata.vouch_user_id
+    const customerId = getStripeId(session.customer)
+    const setupIntentId = getStripeId(session.setup_intent)
+
+    if (userId && customerId) {
+      await syncPaymentCustomerReadinessForUser({
+        userId,
+        stripeCustomerId: customerId,
+        stripeEventId: eventId,
+        ...(setupIntentId ? { setupIntentId } : {}),
+      })
+    }
+
+    return
+  }
+
   const vouchId = session.metadata?.vouch_id
   if (!vouchId) return
 
@@ -90,8 +112,28 @@ async function processSupportedStripeEvent(event: StripeWebhookEvent): Promise<v
   if (event.type === "checkout.session.completed") {
     await processCheckoutSessionCompleted(
       event.data.object as Stripe.Checkout.Session,
+      event.id,
       event.account
     )
+  }
+
+  if (isStripeAccountEvent(event)) {
+    const account = event.data.object as { id?: string }
+    const stripeAccountId = event.account ?? account.id
+    if (!stripeAccountId) return
+
+    const connectedAccount = await prisma.connectedAccount.findUnique({
+      where: { stripeAccountId },
+      select: { userId: true },
+    })
+
+    if (!connectedAccount) return
+
+    await syncConnectedAccountReadinessForUser({
+      userId: connectedAccount.userId,
+      stripeAccountId,
+      stripeEventId: event.id,
+    })
   }
 }
 

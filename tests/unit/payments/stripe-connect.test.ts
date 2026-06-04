@@ -128,10 +128,13 @@ describe("Stripe Connect Accounts v2", () => {
       chargesEnabled: true,
       payoutsEnabled: true,
       detailsSubmitted: true,
+      requirementsCurrentlyDue: [],
+      requirementsEventuallyDue: [],
+      disabledReason: null,
     })
 
     expect(retrieveAccount).toHaveBeenCalledWith("acct_connected", {
-      include: ["configuration.recipient"],
+      include: ["configuration.recipient", "requirements"],
     })
   })
 

@@ -6,6 +6,7 @@ import { InvoiceSummary } from "@/components/blocks/invoice"
 import { StatsCards } from "@/components/blocks/stats-section"
 import { StatusBlocks } from "@/components/blocks/status"
 import { dashboardContent } from "@/content/dashboard"
+import { openStripePaymentMethodDashboard } from "@/lib/actions/paymentActions"
 import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
 
@@ -126,8 +127,12 @@ function mapVouchToInvoice(vouch: VouchCardDTO): InvoiceSummaryData {
   }
 }
 
-export async function DashboardFeature() {
-  const state = await getDashboardPageState()
+export async function DashboardFeature({
+  searchParams,
+}: {
+  searchParams?: Record<string, string | string[] | undefined>
+}) {
+  const state = await getDashboardPageState(searchParams ? { searchParams } : undefined)
   const sections = state.summary?.sections
   const dashboardBlocked = state.warnings.paymentMethodRequired
 
@@ -181,7 +186,9 @@ export async function DashboardFeature() {
 
       <StatsCards stats={metrics} />
 
-      {dashboardBlocked ? <CTASection.DashboardRequirementsNotice /> : null}
+      {dashboardBlocked ? (
+        <CTASection.DashboardRequirementsNotice action={openStripePaymentMethodDashboard} />
+      ) : null}
 
       {state.variant === "empty" ? (
         <section className="px-4 py-8 md:px-8 lg:px-16">

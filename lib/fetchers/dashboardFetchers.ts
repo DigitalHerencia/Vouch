@@ -15,6 +15,10 @@ import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
 import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
 import { getAccountReadiness } from "@/lib/fetchers/readinessFetchers"
+import {
+  syncConnectedAccountReadinessForUser,
+  syncPaymentCustomerReadinessForUser,
+} from "@/lib/payments/stripeReadinessSync"
 
 const DEFAULT_TAKE = 10
 const ACTIVE_DB_STATUSES = [
@@ -37,6 +41,42 @@ async function parseDashboardSearchParams(
     status: value("status") ?? "all",
     page: Math.max(Number(value("page") ?? 1), 1),
     sort: value("sort") ?? "newest",
+  }
+}
+
+async function syncStripeReturns(input: {
+  userId: string
+  searchParams: Record<string, string | string[] | undefined>
+}): Promise<void> {
+  const stripeConnectReturn = input.searchParams.stripe_connect_return
+  const stripePaymentReturn = input.searchParams.stripe_payment_return
+
+  if (stripeConnectReturn) {
+    const connectedAccount = await prisma.connectedAccount.findUnique({
+      where: { userId: input.userId },
+      select: { stripeAccountId: true },
+    })
+
+    if (connectedAccount?.stripeAccountId) {
+      await syncConnectedAccountReadinessForUser({
+        userId: input.userId,
+        stripeAccountId: connectedAccount.stripeAccountId,
+      })
+    }
+  }
+
+  if (stripePaymentReturn) {
+    const paymentCustomer = await prisma.paymentCustomer.findUnique({
+      where: { userId: input.userId },
+      select: { stripeCustomerId: true },
+    })
+
+    if (paymentCustomer?.stripeCustomerId) {
+      await syncPaymentCustomerReadinessForUser({
+        userId: input.userId,
+        stripeCustomerId: paymentCustomer.stripeCustomerId,
+      })
+    }
   }
 }
 
@@ -99,6 +139,7 @@ export async function getDashboardPageState(input?: {
   searchParams?: Record<string, string | string[] | undefined>
 }): Promise<DashboardPageStateDTO> {
   const current = await requireActiveUser()
+  await syncStripeReturns({ userId: current.id, searchParams: input?.searchParams ?? {} })
   const filters = await parseDashboardSearchParams(input?.searchParams ?? {})
   const [summary, readiness] = await Promise.all([
     getDashboardSummary(current.id),

@@ -41,6 +41,11 @@ function readNestedBoolean(record: Record<string, unknown> | undefined, key: str
   return typeof value === "boolean" ? value : undefined
 }
 
+function readStringArray(record: Record<string, unknown> | undefined, key: string): string[] {
+  const value = record?.[key]
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : []
+}
+
 function getStripeV2Core() {
   const stripe = getStripeServerClient() as unknown as StripeV2Client
   const core = stripe.v2?.core
@@ -140,10 +145,13 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
   chargesEnabled: boolean
   payoutsEnabled: boolean
   detailsSubmitted: boolean
+  requirementsCurrentlyDue: string[]
+  requirementsEventuallyDue: string[]
+  disabledReason: string | null
 }> {
   const core = getStripeV2Core()
   const account = await core.accounts.retrieve(input.providerAccountId, {
-    include: ["configuration.recipient"],
+    include: ["configuration.recipient", "requirements"],
   })
 
   const topLevelDetailsSubmitted = readNestedBoolean(account, "details_submitted")
@@ -156,6 +164,7 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
   const stripeTransfers = readNestedRecord(stripeBalance, "stripe_transfers")
   const transferStatus =
     readNestedString(stripeTransfers, "status") ?? readNestedString(recipient, "status")
+  const requirements = readNestedRecord(account, "requirements")
   const detailsSubmitted =
     topLevelDetailsSubmitted === true || transferStatus === "active" || transferStatus === "enabled"
   const readiness: PayoutReadinessStatus =
@@ -172,5 +181,8 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
     chargesEnabled,
     payoutsEnabled,
     detailsSubmitted,
+    requirementsCurrentlyDue: readStringArray(requirements, "currently_due"),
+    requirementsEventuallyDue: readStringArray(requirements, "eventually_due"),
+    disabledReason: readNestedString(requirements, "disabled_reason") ?? null,
   }
 }

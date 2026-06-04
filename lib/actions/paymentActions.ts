@@ -21,6 +21,7 @@ import {
   getStripeCustomerpaymentMethodReady,
 } from "@/lib/integrations/stripe/customers"
 import { createStripePaymentMethodSetupCheckout } from "@/lib/integrations/stripe/checkout-sessions"
+import { syncPaymentCustomerReadinessForUser } from "@/lib/payments/stripeReadinessSync"
 
 function getAppUrl(): string {
   return (
@@ -113,6 +114,9 @@ export async function openStripeConnectDashboard(): Promise<never> {
       chargesEnabled: readiness.chargesEnabled,
       payoutsEnabled: readiness.payoutsEnabled,
       detailsSubmitted: readiness.detailsSubmitted,
+      requirementsCurrentlyDue: readiness.requirementsCurrentlyDue,
+      requirementsEventuallyDue: readiness.requirementsEventuallyDue,
+      disabledReason: readiness.disabledReason,
       syncedAt: new Date(),
     },
   })
@@ -136,16 +140,8 @@ export async function openStripeConnectDashboard(): Promise<never> {
 export async function openStripePaymentMethodDashboard(): Promise<never> {
   const user = await requireActiveUser()
   const stripeCustomerId = await ensureStripeCustomer(user)
+  await syncPaymentCustomerReadinessForUser({ userId: user.id, stripeCustomerId })
   const readiness = await getStripeCustomerpaymentMethodReady(stripeCustomerId)
-
-  await prisma.paymentCustomer.updateMany({
-    where: { userId: user.id, stripeCustomerId },
-    data: {
-      paymentMethodReady: readiness.readiness === "ready",
-      defaultPaymentMethodId: readiness.defaultPaymentMethodId,
-      syncedAt: new Date(),
-    },
-  })
 
   revalidatePaymentSurfaces()
   const appUrl = getAppUrl()
