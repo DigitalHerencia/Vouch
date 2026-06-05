@@ -134,7 +134,7 @@ export async function DashboardFeature({
 }) {
   const state = await getDashboardPageState(searchParams ? { searchParams } : undefined)
   const sections = state.summary?.sections
-  const dashboardBlocked = state.warnings.paymentMethodRequired
+  const showPaymentMethodNotice = state.warnings.paymentMethodRequired
 
   const drafts = sections?.drafts ?? []
   const actionRequired = sections?.actionRequired ?? []
@@ -183,7 +183,7 @@ export async function DashboardFeature({
         description=""
         align="left"
       />
-      {dashboardBlocked ? (
+      {showPaymentMethodNotice ? (
         <DashboardRequirementsNotice action={openStripePaymentMethodSetup} />
       ) : null}
 
@@ -196,7 +196,7 @@ export async function DashboardFeature({
           <InvoiceSummary
             key={invoice.vouchId ?? invoice.invoiceNumber}
             {...invoice}
-            disabled={dashboardBlocked}
+            disabled={false}
           />
         ))
       )}

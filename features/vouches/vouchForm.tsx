@@ -47,12 +47,6 @@ function calculateProtocolFeeCents(amountCents: number) {
   return Math.max(Math.ceil(amountCents * 0.05), 500)
 }
 
-function calculateStripeFeeCents(amountCents: number) {
-  if (amountCents <= 0) return 0
-
-  return Math.ceil((amountCents + 30) / (1 - 0.029) - amountCents)
-}
-
 function toIsoFromLocalDateTime(value: string | undefined) {
   if (!value) return ""
 
@@ -126,8 +120,6 @@ export function VouchForm() {
 
   const amountCents = parseAmountCents(formValues.amountDollars)
   const protocolFeeCents = calculateProtocolFeeCents(amountCents)
-  const stripeFeeCents = calculateStripeFeeCents(protocolFeeCents)
-  const totalDueNowCents = protocolFeeCents + stripeFeeCents
   const appointmentIso = toIsoFromLocalDateTime(formValues.appointmentStartsAt)
   const disabled = !readinessChecked || onboardingRequired || isReadinessPending
   const rootError = form.formState.errors.root?.message
@@ -286,10 +278,9 @@ export function VouchForm() {
                 label="Protocol fee"
                 value={`${formatCurrency(protocolFeeCents)} (5% min $5)`}
               />
-              <VouchCreationCartRow label="Stripe fee" value={formatCurrency(stripeFeeCents)} />
               <VouchCreationCartRow
                 label="Due now"
-                value={formatCurrency(totalDueNowCents)}
+                value={formatCurrency(protocolFeeCents)}
                 strong
               />
             </div>

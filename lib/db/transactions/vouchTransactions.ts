@@ -14,8 +14,6 @@ type CreateVouchTxInput = {
   protectedAmountCents: number
   merchantReceivesCents?: number
   vouchServiceFeeCents?: number
-  processingFeeOffsetCents?: number
-  applicationFeeAmountCents?: number
   customerTotalCents?: number
   label?: string | null
   appointmentStartsAt: Date
@@ -127,13 +125,12 @@ export async function bindCustomerToVouchTx(
   const updated = await tx.vouch.updateMany({
     where: {
       id: vouchId,
-      status: { in: ["draft", "protocol_fee_paid"] },
+      status: { in: ["protocol_fee_paid", "authorized"] },
       customerId: null,
       merchantId: { not: customerId },
     },
     data: {
       customerId,
-      status: "protocol_fee_paid",
     },
   })
 

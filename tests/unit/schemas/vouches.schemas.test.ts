@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest"
 
 import {
   archiveVouchSchema,
+  confirmCreateVouchSchema,
   confirmPresenceSchema,
-  createVouchSchema,
 } from "@/schemas/vouchSchemas"
 
 describe("vouch schemas", () => {
@@ -11,7 +11,7 @@ describe("vouch schemas", () => {
     const now = new Date()
     const meetingStartsAt = new Date(now.getTime() + 60 * 60 * 1000)
 
-    const result = createVouchSchema.safeParse({
+    const result = confirmCreateVouchSchema.safeParse({
       amountCents: 12_500,
       currency: "usd",
       appointmentStartsAt: meetingStartsAt,
@@ -22,7 +22,7 @@ describe("vouch schemas", () => {
   })
 
   it("rejects invalid currency casing", () => {
-    const result = createVouchSchema.safeParse({
+    const result = confirmCreateVouchSchema.safeParse({
       amountCents: 5000,
       currency: "USD",
       appointmentStartsAt: new Date(),
@@ -32,7 +32,7 @@ describe("vouch schemas", () => {
   })
 
   it("rejects appointments more than 24 hours ahead", () => {
-    const result = createVouchSchema.safeParse({
+    const result = confirmCreateVouchSchema.safeParse({
       amountCents: 5000,
       currency: "usd",
       appointmentStartsAt: new Date(Date.now() + 25 * 60 * 60 * 1000),

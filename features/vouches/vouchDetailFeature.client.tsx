@@ -1,6 +1,8 @@
 "use client"
 
+import * as React from "react"
 import { ArrowRight } from "lucide-react"
+import { useRouter } from "next/navigation"
 
 import { vouchPageCopy } from "@/content/vouches"
 
@@ -8,12 +10,30 @@ export function ConfirmPresenceInlineForm({
   action,
   vouchId,
   currentUserCode,
+  confirmationExpiresAt,
 }: {
   action: (formData: FormData) => void | Promise<void>
   vouchId: string
   currentUserCode?: string
+  confirmationExpiresAt: string
 }) {
   const copy = vouchPageCopy.detail
+  const [closed, setClosed] = React.useState(false)
+
+  React.useEffect(() => {
+    const update = () => setClosed(Date.now() > new Date(confirmationExpiresAt).getTime())
+    update()
+    const interval = window.setInterval(update, 1000)
+    return () => window.clearInterval(interval)
+  }, [confirmationExpiresAt])
+
+  if (closed) {
+    return (
+      <div className="border border-neutral-400 bg-neutral-900 p-4 text-sm font-semibold text-neutral-400">
+        The confirmation window is closed. Codes and confirmation controls are no longer valid.
+      </div>
+    )
+  }
 
   return (
     <form action={action} className="grid gap-4 border border-neutral-400 bg-neutral-900 p-4">
@@ -53,4 +73,25 @@ export function ConfirmPresenceInlineForm({
       </button>
     </form>
   )
+}
+
+export function VouchDeadlineRefresh({
+  confirmationOpensAt,
+  confirmationExpiresAt,
+}: {
+  confirmationOpensAt: string
+  confirmationExpiresAt: string
+}) {
+  const router = useRouter()
+
+  React.useEffect(() => {
+    const timers = [confirmationOpensAt, confirmationExpiresAt]
+      .map((value) => new Date(value).getTime() - Date.now() + 1000)
+      .filter((delay) => delay > 0 && delay <= 2_147_483_647)
+      .map((delay) => window.setTimeout(() => router.refresh(), delay))
+
+    return () => timers.forEach((timer) => window.clearTimeout(timer))
+  }, [confirmationExpiresAt, confirmationOpensAt, router])
+
+  return null
 }

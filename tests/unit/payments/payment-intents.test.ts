@@ -36,15 +36,20 @@ describe("Stripe PaymentIntent operations", () => {
     const { retrieveStripePaymentIntent } =
       await import("@/lib/integrations/stripe/payment-intents")
 
-    await retrieveStripePaymentIntent({ providerPaymentIntentId: "pi_provider" })
-
-    expect(retrievePaymentIntent).toHaveBeenCalledWith("pi_provider", {
-      expand: ["latest_charge"],
+    await retrieveStripePaymentIntent({
+      providerPaymentIntentId: "pi_provider",
+      connectedAccountId: "acct_merchant",
     })
+
+    expect(retrievePaymentIntent).toHaveBeenCalledWith(
+      "pi_provider",
+      { expand: ["latest_charge"] },
+      { stripeAccount: "acct_merchant" }
+    )
   })
 
   it("uses idempotency keys for capture, cancel, and refund operations", async () => {
-    const { captureStripePayment, voidStripeAuthorization, refundStripePayment } =
+    const { captureStripePayment, cancelStripeAuthorization, refundStripePayment } =
       await import("@/lib/integrations/stripe/payment-intents")
 
     retrievePaymentIntent
@@ -54,28 +59,32 @@ describe("Stripe PaymentIntent operations", () => {
 
     await captureStripePayment({
       providerPaymentIntentId: "pi_provider",
+      connectedAccountId: "acct_merchant",
       idempotencyKey: "idem_capture",
     })
-    await voidStripeAuthorization({
+    await cancelStripeAuthorization({
       providerPaymentIntentId: "pi_provider",
+      connectedAccountId: "acct_merchant",
       idempotencyKey: "idem_cancel",
     })
     await refundStripePayment({
       providerPaymentIntentId: "pi_provider",
+      connectedAccountId: "acct_merchant",
       idempotencyKey: "idem_refund",
     })
 
     expect(capturePaymentIntent).toHaveBeenCalledWith("pi_provider", undefined, {
       idempotencyKey: "idem_capture",
+      stripeAccount: "acct_merchant",
     })
     expect(cancelPaymentIntent).toHaveBeenCalledWith(
       "pi_provider",
       {},
-      { idempotencyKey: "idem_cancel" }
+      { idempotencyKey: "idem_cancel", stripeAccount: "acct_merchant" }
     )
     expect(createRefund).toHaveBeenCalledWith(
       { payment_intent: "pi_provider" },
-      { idempotencyKey: "idem_refund" }
+      { idempotencyKey: "idem_refund", stripeAccount: "acct_merchant" }
     )
   })
 })

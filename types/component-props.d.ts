@@ -632,6 +632,8 @@ type VouchCountdownProps = {
   label: string
   expiresAtLabel: string
   remainingLabel: string
+  startsAt?: string
+  expiresAt?: string
   percentRemaining?: number
   tone?: VouchStatusTone
 }

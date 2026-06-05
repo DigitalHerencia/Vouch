@@ -1,7 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server"
 
-import { verifyStripeWebhookEvent } from "@/lib/integrations/stripe/webhook-events"
-import { processStripeWebhookEvent } from "@/lib/webhooks/stripe"
+import {
+  isStripeAccountEventNotification,
+  verifyStripeWebhookEvent,
+} from "@/lib/integrations/stripe/webhook-events"
+import {
+  processStripeAccountEventNotification,
+  processStripeWebhookEvent,
+} from "@/lib/webhooks/stripe"
 
 export const runtime = "nodejs"
 export const dynamic = "force-dynamic"
@@ -16,7 +22,9 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: verified.message }, { status: verified.status })
   }
 
-  const processed = await processStripeWebhookEvent(verified.event)
+  const processed = isStripeAccountEventNotification(verified.event)
+    ? await processStripeAccountEventNotification(verified.event)
+    : await processStripeWebhookEvent(verified.event)
 
   if (!processed.ok) {
     return NextResponse.json({ ok: false, error: processed.formError }, { status: 500 })

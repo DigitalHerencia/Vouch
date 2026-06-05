@@ -11,11 +11,6 @@ type StripeV2Core = {
       options?: { idempotencyKey?: string }
     ): Promise<{ id: string }>
     retrieve(accountId: string, params?: Record<string, unknown>): Promise<Record<string, unknown>>
-    update(
-      accountId: string,
-      params: Record<string, unknown>,
-      options?: { idempotencyKey?: string }
-    ): Promise<Record<string, unknown>>
   }
   accountLinks: {
     create(
@@ -41,16 +36,39 @@ function readNestedString(record: Record<string, unknown> | undefined, key: stri
   return typeof value === "string" ? value : undefined
 }
 
-function readNestedBoolean(record: Record<string, unknown> | undefined, key: string) {
-  const value = record?.[key]
-  return typeof value === "boolean" ? value : undefined
-}
-
 function readStringArray(record: Record<string, unknown> | undefined, key: string): string[] {
   const value = record?.[key]
   return Array.isArray(value)
     ? value.filter((item): item is string => typeof item === "string")
     : []
+}
+
+function readAppliedConfigurations(
+  record: Record<string, unknown>
+): Array<"merchant" | "customer"> {
+  const configurations = readStringArray(record, "applied_configurations").filter(
+    (configuration): configuration is "merchant" | "customer" =>
+      configuration === "merchant" || configuration === "customer"
+  )
+
+  if (!configurations.includes("merchant")) {
+    throw new Error("STRIPE_MERCHANT_CONFIGURATION_NOT_APPLIED")
+  }
+
+  return configurations
+}
+
+function assertSupportedConnectedAccount(record: Record<string, unknown>): void {
+  const defaults = readNestedRecord(record, "defaults")
+  const responsibilities = readNestedRecord(defaults, "responsibilities")
+
+  if (
+    readNestedString(record, "dashboard") !== "full" ||
+    readNestedString(responsibilities, "fees_collector") !== "stripe" ||
+    readNestedString(responsibilities, "losses_collector") !== "stripe"
+  ) {
+    throw new Error("STRIPE_CONNECTED_ACCOUNT_REPLACEMENT_REQUIRED")
+  }
 }
 
 function getConnectedAccountConfiguration() {
@@ -61,26 +79,35 @@ function getConnectedAccountConfiguration() {
         card_payments: {
           requested: true,
         },
-        stripe_balance: {
-          payouts: {
-            requested: true,
-          },
-        },
       },
     },
   }
+}
+
+function readRequirementDescriptions(
+  requirements: Record<string, unknown> | undefined,
+  statuses: readonly string[]
+): string[] {
+  const entries = requirements?.entries
+  if (!Array.isArray(entries)) return []
+
+  return entries.flatMap((entry) => {
+    if (!entry || typeof entry !== "object") return []
+
+    const requirement = entry as Record<string, unknown>
+    const deadline = readNestedRecord(requirement, "minimum_deadline")
+    const status = readNestedString(deadline, "status")
+    const description = readNestedString(requirement, "description")
+
+    return status && description && statuses.includes(status) ? [description] : []
+  })
 }
 
 function getStripeV2Core() {
   const stripe = getStripeServerClient() as unknown as StripeV2Client
   const core = stripe.v2?.core
 
-  if (
-    !core?.accounts?.create ||
-    !core.accounts.retrieve ||
-    !core.accounts.update ||
-    !core.accountLinks?.create
-  ) {
+  if (!core?.accounts?.create || !core.accounts.retrieve || !core.accountLinks?.create) {
     throw new Error("STRIPE_ACCOUNTS_V2_UNAVAILABLE")
   }
 
@@ -102,11 +129,13 @@ export async function createStripeConnectAccount(input: {
       contact_email: input.email ?? undefined,
       defaults: {
         responsibilities: {
-          losses_collector: "application",
-          fees_collector: "application",
+          // Full Dashboard merchants own payment operations. Stripe collects processing fees
+          // and connected-account losses; Vouch never becomes liable for their negative balance.
+          losses_collector: "stripe",
+          fees_collector: "stripe",
         },
       },
-      dashboard: "express",
+      dashboard: "full",
       identity: {
         country: input.country ?? "US",
       },
@@ -125,22 +154,14 @@ export async function createStripeConnectOnboardingLink(input: {
   providerAccountId: string
   refreshUrl: string
   returnUrl: string
-  idempotencyKey?: string
+  idempotencyKey: string
 }): Promise<{ url: string }> {
   const core = getStripeV2Core()
-  await core.accounts.update(
-    input.providerAccountId,
-    {
-      configuration: getConnectedAccountConfiguration(),
-      include: ["configuration.merchant", "configuration.customer"],
-    },
-    {
-      idempotencyKey:
-        input.idempotencyKey !== undefined
-          ? `${input.idempotencyKey}:configurations`
-          : `account:${input.providerAccountId}:connect_configurations`,
-    }
-  )
+  const account = await core.accounts.retrieve(input.providerAccountId, {
+    include: ["configuration.merchant", "configuration.customer", "defaults"],
+  })
+  assertSupportedConnectedAccount(account)
+  const configurations = readAppliedConfigurations(account)
 
   const link = await core.accountLinks.create(
     {
@@ -148,13 +169,17 @@ export async function createStripeConnectOnboardingLink(input: {
       use_case: {
         type: "account_onboarding",
         account_onboarding: {
-          configurations: ["merchant", "customer"],
+          collection_options: {
+            fields: "eventually_due",
+            future_requirements: "include",
+          },
+          configurations,
           refresh_url: input.refreshUrl,
           return_url: input.returnUrl,
         },
       },
     },
-    { idempotencyKey: input.idempotencyKey ?? `account:${input.providerAccountId}:onboarding` }
+    { idempotencyKey: input.idempotencyKey }
   )
 
   return { url: link.url }
@@ -163,9 +188,13 @@ export async function createStripeConnectOnboardingLink(input: {
 export async function createStripeConnectDashboardLink(input: {
   providerAccountId: string
 }): Promise<{ url: string }> {
-  const link = await getStripeServerClient().accounts.createLoginLink(input.providerAccountId)
+  const account = await getStripeV2Core().accounts.retrieve(input.providerAccountId, {
+    include: ["defaults"],
+  })
+  assertSupportedConnectedAccount(account)
 
-  return { url: link.url }
+  // Stripe authenticates Full Dashboard merchants directly; login links are Express-only.
+  return { url: "https://dashboard.stripe.com/" }
 }
 
 export async function refreshStripeConnectReadiness(input: { providerAccountId: string }): Promise<{
@@ -179,42 +208,42 @@ export async function refreshStripeConnectReadiness(input: { providerAccountId: 
 }> {
   const core = getStripeV2Core()
   const account = await core.accounts.retrieve(input.providerAccountId, {
-    include: ["configuration.merchant", "requirements"],
+    include: ["configuration.merchant", "defaults", "requirements"],
   })
+  assertSupportedConnectedAccount(account)
 
-  const topLevelDetailsSubmitted = readNestedBoolean(account, "details_submitted")
-  const topLevelPayoutsEnabled = readNestedBoolean(account, "payouts_enabled")
-  const topLevelChargesEnabled = readNestedBoolean(account, "charges_enabled")
   const configuration = account.configuration as Record<string, unknown> | undefined
   const merchant = readNestedRecord(configuration, "merchant")
   const capabilities = readNestedRecord(merchant, "capabilities")
   const cardPayments = readNestedRecord(capabilities, "card_payments")
   const stripeBalance = readNestedRecord(capabilities, "stripe_balance")
   const payouts = readNestedRecord(stripeBalance, "payouts")
-  const paymentStatus =
-    readNestedString(cardPayments, "status") ?? readNestedString(merchant, "status")
+  const paymentStatus = readNestedString(cardPayments, "status")
   const payoutStatus = readNestedString(payouts, "status")
   const requirements = readNestedRecord(account, "requirements")
-  const detailsSubmitted =
-    topLevelDetailsSubmitted === true || paymentStatus === "active" || paymentStatus === "enabled"
+  const chargesEnabled = paymentStatus === "active"
+  const payoutsEnabled = payoutStatus === "active"
+  const detailsSubmitted = chargesEnabled && payoutsEnabled
   const readiness: PayoutReadinessStatus =
-    paymentStatus === "restricted" || paymentStatus === "disabled"
+    paymentStatus === "restricted" || payoutStatus === "restricted"
       ? "restricted"
       : detailsSubmitted
         ? "ready"
         : "requires_action"
-  const payoutsEnabled =
-    topLevelPayoutsEnabled ??
-    (payoutStatus === "active" || payoutStatus === "enabled" || detailsSubmitted)
-  const chargesEnabled = topLevelChargesEnabled ?? detailsSubmitted
 
   return {
     readiness,
     chargesEnabled,
     payoutsEnabled,
     detailsSubmitted,
-    requirementsCurrentlyDue: readStringArray(requirements, "currently_due"),
-    requirementsEventuallyDue: readStringArray(requirements, "eventually_due"),
-    disabledReason: readNestedString(requirements, "disabled_reason") ?? null,
+    requirementsCurrentlyDue: readRequirementDescriptions(requirements, [
+      "currently_due",
+      "past_due",
+    ]),
+    requirementsEventuallyDue: readRequirementDescriptions(requirements, ["eventually_due"]),
+    disabledReason:
+      paymentStatus === "restricted" || payoutStatus === "restricted"
+        ? "stripe_requirements_restricted"
+        : null,
   }
 }

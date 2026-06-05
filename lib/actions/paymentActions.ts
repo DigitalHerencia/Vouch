@@ -6,11 +6,7 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 
 import { prisma } from "@/lib/db/prisma"
-import {
-  getCurrentUserConnectedAccount,
-  getCurrentUserPaymentCustomer,
-  requireActiveUser,
-} from "@/lib/fetchers/authFetchers"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import {
   createStripeConnectAccount,
   createStripeConnectDashboardLink,
@@ -19,7 +15,6 @@ import {
 } from "@/lib/integrations/stripe/connect"
 import { createStripeCustomer } from "@/lib/integrations/stripe/customers"
 import { createStripePaymentMethodSetupCheckout } from "@/lib/integrations/stripe/checkout-sessions"
-import { syncPaymentCustomerReadinessForUser } from "@/lib/payments/stripeReadinessSync"
 
 function getAppUrl(): string {
   return (
@@ -47,18 +42,36 @@ async function ensureStripeConnectedAccount(user: {
   email: string | null
   displayName: string | null
 }): Promise<string> {
-  const existing = await getCurrentUserConnectedAccount()
+  const existing = await prisma.connectedAccount.findUnique({
+    where: { userId: user.id },
+    select: { stripeAccountId: true },
+  })
 
-  if (existing?.stripeAccountId) return existing.stripeAccountId
+  if (existing?.stripeAccountId) {
+    try {
+      await refreshStripeConnectReadiness({ providerAccountId: existing.stripeAccountId })
+      return existing.stripeAccountId
+    } catch (error) {
+      if (
+        !(error instanceof Error) ||
+        error.message !== "STRIPE_CONNECTED_ACCOUNT_REPLACEMENT_REQUIRED"
+      ) {
+        throw error
+      }
+    }
+  }
 
   const created = await createStripeConnectAccount({
     userId: user.id,
     email: user.email,
     displayName: user.displayName,
-    idempotencyKey: `user:${user.id}:connect_account`,
+    // A legacy Express/application-liability account cannot be converted to the required model.
+    idempotencyKey: existing?.stripeAccountId
+      ? `user:${user.id}:connect_account:replacement:${randomUUID()}`
+      : `user:${user.id}:connect_account`,
   })
 
-  await prisma.connectedAccount.upsert({
+  const localAccount = await prisma.connectedAccount.upsert({
     where: { userId: user.id },
     create: {
       userId: user.id,
@@ -74,6 +87,21 @@ async function ensureStripeConnectedAccount(user: {
     },
   })
 
+  if (existing?.stripeAccountId) {
+    await prisma.auditEvent.create({
+      data: {
+        eventName: "stripe.connected_account.replaced",
+        actorType: "system",
+        entityType: "ConnectedAccount",
+        entityId: localAccount.id,
+        metadata: {
+          previous_stripe_account_id: existing.stripeAccountId,
+          replacement_stripe_account_id: created.providerAccountId,
+        },
+      },
+    })
+  }
+
   return created.providerAccountId
 }
 
@@ -82,7 +110,10 @@ async function ensureStripeCustomer(user: {
   email: string | null
   displayName: string | null
 }): Promise<string> {
-  const existing = await getCurrentUserPaymentCustomer()
+  const existing = await prisma.paymentCustomer.findUnique({
+    where: { userId: user.id },
+    select: { stripeCustomerId: true },
+  })
 
   if (existing?.stripeCustomerId) return existing.stripeCustomerId
 
@@ -137,6 +168,7 @@ export async function openStripeConnectDashboard(formData?: FormData): Promise<n
       providerAccountId: stripeAccountId,
       refreshUrl: `${appUrl}${returnPath}`,
       returnUrl: `${appUrl}${returnPath}?stripe_connect_return=1`,
+      idempotencyKey: `account:${stripeAccountId}:onboarding:${randomUUID()}`,
     })
     redirect(link.url)
   }
@@ -149,7 +181,6 @@ export async function openStripePaymentMethodSetup(formData?: FormData): Promise
   const user = await requireActiveUser()
   const returnPath = getReturnPath(formData, "/dashboard")
   const stripeCustomerId = await ensureStripeCustomer(user)
-  await syncPaymentCustomerReadinessForUser({ userId: user.id, stripeCustomerId })
 
   revalidatePaymentSurfaces()
   const appUrl = getAppUrl()

@@ -2,14 +2,16 @@ import "server-only"
 
 import { prisma } from "@/lib/db/prisma"
 import { refreshStripeConnectReadiness } from "@/lib/integrations/stripe/connect"
-import { getStripeCustomerpaymentMethodReady } from "@/lib/integrations/stripe/customers"
+import { getStripeCustomerPaymentMethodReady } from "@/lib/integrations/stripe/customers"
 
 export async function syncConnectedAccountReadinessForUser(input: {
   userId: string
   stripeAccountId: string
   stripeEventId?: string
 }): Promise<void> {
-  const readiness = await refreshStripeConnectReadiness({ providerAccountId: input.stripeAccountId })
+  const readiness = await refreshStripeConnectReadiness({
+    providerAccountId: input.stripeAccountId,
+  })
 
   await prisma.connectedAccount.updateMany({
     where: { userId: input.userId, stripeAccountId: input.stripeAccountId },
@@ -32,7 +34,7 @@ export async function syncPaymentCustomerReadinessForUser(input: {
   stripeEventId?: string
   setupIntentId?: string | null
 }): Promise<void> {
-  const readiness = await getStripeCustomerpaymentMethodReady(input.stripeCustomerId)
+  const readiness = await getStripeCustomerPaymentMethodReady(input.stripeCustomerId)
 
   await prisma.paymentCustomer.updateMany({
     where: { userId: input.userId, stripeCustomerId: input.stripeCustomerId },

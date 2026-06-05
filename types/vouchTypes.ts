@@ -170,15 +170,11 @@ export type ExpirationResolutionInput = ConfirmationStateInput & {
 
 export type VouchPricingInput = {
   protectedAmountCents: number
-  stripePercentBps?: number
-  stripeFixedCents?: number
 }
 
 export type VouchPricing = {
   protectedAmountCents: number
   merchantReceivesCents: number
   vouchServiceFeeCents: number
-  processingFeeOffsetCents: number
   customerTotalCents: number
-  applicationFeeAmountCents: number
 }

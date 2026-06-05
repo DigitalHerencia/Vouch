@@ -187,14 +187,12 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
   const parsed = event
   const providerEventId = svixId
 
-  const ledger = await prisma.$transaction((tx) =>
-    recordProviderWebhookReceivedTx(tx, {
-      provider: "clerk",
-      providerEventId,
-      eventType: parsed.type,
-      safeMetadata: safeClerkMetadata(parsed),
-    })
-  )
+  const ledger = await recordProviderWebhookReceivedTx(prisma, {
+    provider: "clerk",
+    providerEventId,
+    eventType: parsed.type,
+    safeMetadata: safeClerkMetadata(parsed),
+  })
 
   if (ledger.duplicate && ledger.event.processed) {
     return { ok: true as const, status: "duplicate" as const, ignored: true as const }
@@ -202,12 +200,10 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
 
   try {
     if (!isSupportedClerkEventType(parsed.type)) {
-      await prisma.$transaction((tx) =>
-        markProviderWebhookIgnoredTx(tx, {
-          id: ledger.event.id,
-          reason: "Unsupported Clerk event type.",
-        })
-      )
+      await markProviderWebhookIgnoredTx(prisma, {
+        id: ledger.event.id,
+        reason: "Unsupported Clerk event type.",
+      })
       return {
         ok: true as const,
         status: "ignored" as const,
@@ -217,13 +213,11 @@ export async function processClerkWebhookEvent(event: ClerkWebhookEvent, svixId:
     }
 
     await processSupportedClerkEvent(parsed)
-    await prisma.$transaction((tx) => markProviderWebhookProcessedTx(tx, { id: ledger.event.id }))
+    await markProviderWebhookProcessedTx(prisma, { id: ledger.event.id })
     return { ok: true as const, status: "processed" as const, ignored: false as const }
   } catch (error) {
     const message = error instanceof Error ? error.message : "Clerk webhook processing failed."
-    await prisma.$transaction((tx) =>
-      markProviderWebhookFailedTx(tx, { id: ledger.event.id, error: message })
-    )
+    await markProviderWebhookFailedTx(prisma, { id: ledger.event.id, error: message })
     return { ok: false as const, status: "failed" as const, message }
   }
 }

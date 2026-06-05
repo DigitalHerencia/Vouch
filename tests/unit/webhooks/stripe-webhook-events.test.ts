@@ -2,14 +2,15 @@ import { describe, expect, it } from "vitest"
 
 import {
   isStripeAccountEvent,
+  isStripeAccountEventNotification,
   isStripeCheckoutSessionEvent,
   isStripePaymentIntentEvent,
   isStripeRefundEvent,
   isStripeSetupIntentEvent,
 } from "@/lib/integrations/stripe/webhook-events"
 
-function event(type: string) {
-  return { type } as never
+function event(type: string, object = "event") {
+  return { object, type } as never
 }
 
 describe("Stripe webhook event classifiers", () => {
@@ -28,8 +29,8 @@ describe("Stripe webhook event classifiers", () => {
     expect(isStripeRefundEvent(event("refund.updated"))).toBe(true)
     expect(isStripeAccountEvent(event("account.updated"))).toBe(true)
     expect(
-      isStripeAccountEvent(
-        event("v2.core.account[configuration.recipient].capability_status_updated")
+      isStripeAccountEventNotification(
+        event("v2.core.account[requirements].updated", "v2.core.event")
       )
     ).toBe(true)
   })

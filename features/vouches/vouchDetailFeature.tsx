@@ -6,7 +6,10 @@ import { VouchCountdown } from "@/components/vouches/vouch-countdown"
 import { VouchStatusDocument } from "@/components/vouches/vouch-status-document"
 import { VouchStatusTimeline } from "@/components/vouches/vouch-status-timeline"
 import { vouchPageCopy } from "@/content/vouches"
-import { ConfirmPresenceInlineForm } from "@/features/vouches/vouchDetailFeature.client"
+import {
+  ConfirmPresenceInlineForm,
+  VouchDeadlineRefresh,
+} from "@/features/vouches/vouchDetailFeature.client"
 import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import {
@@ -36,6 +39,8 @@ type VouchDetailViewProps = {
   appointmentLabel: string
   windowLabel: string
   deadlineLabel: string
+  confirmationOpensAt: string | null
+  confirmationExpiresAt: string | null
   paymentStatusLabel: string
   settlementStatusLabel: string
   merchantReceivesLabel: string
@@ -86,53 +91,65 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
   const timeline = await getAuditTimeline(vouchId)
 
   return (
-    <VouchDetailView
-      title={vouch.publicId}
-      amountLabel={money(vouch.amountCents, vouch.currency)}
-      statusLabel={vouch.status}
-      currentUserRoleLabel={
-        confirmState.variant === "confirm_as_merchant"
-          ? "merchant"
-          : confirmState.variant === "confirm_as_customer"
-            ? "customer"
-            : "participant"
-      }
-      merchantLabel={participantName(vouch.merchant)}
-      customerLabel={participantName(vouch.customer)}
-      appointmentLabel={dateTime(vouch.appointmentAt)}
-      windowLabel={dateTime(vouch.confirmationOpensAt)}
-      deadlineLabel={dateTime(vouch.confirmationExpiresAt)}
-      paymentStatusLabel={vouch.paymentRecord?.status ?? "not_started"}
-      settlementStatusLabel={vouch.paymentRecord?.status ?? "pending"}
-      merchantReceivesLabel={money(vouch.amountCents, vouch.currency)}
-      customerTotalLabel={money(
-        vouch.paymentRecord?.amountCents ?? vouch.amountCents,
-        vouch.currency
-      )}
-      authorizationCheckoutUrl={
-        user.id === vouch.merchantId ? (vouch.paymentRecord?.checkoutUrl ?? null) : null
-      }
-      confirmation={{
-        merchantConfirmed:
-          vouch.aggregateConfirmationStatus === "merchant_confirmed" ||
-          vouch.aggregateConfirmationStatus === "both_confirmed",
-        customerConfirmed:
-          vouch.aggregateConfirmationStatus === "customer_confirmed" ||
-          vouch.aggregateConfirmationStatus === "both_confirmed",
-        canConfirm,
-        action: canConfirm ? (
-          <ConfirmPresenceInlineForm
-            action={confirmPresenceFormAction}
-            vouchId={vouchId}
-            {...(currentUserCode ? { currentUserCode } : {})}
-          />
-        ) : null,
-      }}
-      timeline={timeline.map((event) => ({
-        label: event.eventName,
-        timestampLabel: dateTime(event.createdAt),
-      }))}
-    />
+    <>
+      {vouch.confirmationOpensAt && vouch.confirmationExpiresAt ? (
+        <VouchDeadlineRefresh
+          confirmationOpensAt={vouch.confirmationOpensAt}
+          confirmationExpiresAt={vouch.confirmationExpiresAt}
+        />
+      ) : null}
+      <VouchDetailView
+        title={vouch.publicId}
+        amountLabel={money(vouch.amountCents, vouch.currency)}
+        statusLabel={vouch.status}
+        currentUserRoleLabel={
+          confirmState.variant === "confirm_as_merchant"
+            ? "merchant"
+            : confirmState.variant === "confirm_as_customer"
+              ? "customer"
+              : "participant"
+        }
+        merchantLabel={participantName(vouch.merchant)}
+        customerLabel={participantName(vouch.customer)}
+        appointmentLabel={dateTime(vouch.appointmentAt)}
+        windowLabel={dateTime(vouch.confirmationOpensAt)}
+        deadlineLabel={dateTime(vouch.confirmationExpiresAt)}
+        confirmationOpensAt={vouch.confirmationOpensAt}
+        confirmationExpiresAt={vouch.confirmationExpiresAt}
+        paymentStatusLabel={vouch.paymentRecord?.status ?? "not_started"}
+        settlementStatusLabel={vouch.paymentRecord?.status ?? "pending"}
+        merchantReceivesLabel={money(vouch.amountCents, vouch.currency)}
+        customerTotalLabel={money(
+          vouch.paymentRecord?.amountCents ?? vouch.amountCents,
+          vouch.currency
+        )}
+        authorizationCheckoutUrl={
+          user.id === vouch.merchantId ? (vouch.paymentRecord?.checkoutUrl ?? null) : null
+        }
+        confirmation={{
+          merchantConfirmed:
+            vouch.aggregateConfirmationStatus === "merchant_confirmed" ||
+            vouch.aggregateConfirmationStatus === "both_confirmed",
+          customerConfirmed:
+            vouch.aggregateConfirmationStatus === "customer_confirmed" ||
+            vouch.aggregateConfirmationStatus === "both_confirmed",
+          canConfirm,
+          action:
+            canConfirm && vouch.confirmationExpiresAt ? (
+              <ConfirmPresenceInlineForm
+                action={confirmPresenceFormAction}
+                vouchId={vouchId}
+                confirmationExpiresAt={vouch.confirmationExpiresAt}
+                {...(currentUserCode ? { currentUserCode } : {})}
+              />
+            ) : null,
+        }}
+        timeline={timeline.map((event) => ({
+          label: event.eventName,
+          timestampLabel: dateTime(event.createdAt),
+        }))}
+      />
+    </>
   )
 }
 
@@ -146,6 +163,8 @@ function VouchDetailView({
   appointmentLabel,
   windowLabel,
   deadlineLabel,
+  confirmationOpensAt,
+  confirmationExpiresAt,
   paymentStatusLabel,
   settlementStatusLabel,
   merchantReceivesLabel,
@@ -189,6 +208,8 @@ function VouchDetailView({
               label: "Confirmation window",
               expiresAtLabel: deadlineLabel,
               remainingLabel: deadlineLabel === "Not set" ? "Not set" : "Server timed",
+              ...(confirmationOpensAt ? { startsAt: confirmationOpensAt } : {}),
+              ...(confirmationExpiresAt ? { expiresAt: confirmationExpiresAt } : {}),
               percentRemaining: confirmationProgress(confirmation),
               tone:
                 confirmation.customerConfirmed && confirmation.merchantConfirmed
@@ -243,6 +264,8 @@ function VouchDetailView({
           label={copy.bottomCalloutTitle}
           expiresAtLabel={deadlineLabel}
           remainingLabel={copy.bottomCalloutBody}
+          {...(confirmationOpensAt ? { startsAt: confirmationOpensAt } : {})}
+          {...(confirmationExpiresAt ? { expiresAt: confirmationExpiresAt } : {})}
           percentRemaining={confirmationProgress(confirmation)}
           tone={
             confirmation.customerConfirmed && confirmation.merchantConfirmed ? "complete" : "active"
@@ -311,7 +334,7 @@ function buildStatusTimeline({
     }),
     withTime({
       id: "authorized",
-      title: "Destination PaymentIntent",
+      title: "Direct-charge PaymentIntent",
       description: "Customer authorizes the hosted payment method and provider-backed intent.",
       timeLabel: appointmentLabel,
       state: paymentStatusLabel === "not_started" ? "upcoming" : "completed",

@@ -45,13 +45,12 @@ describe("vouch transaction helpers", () => {
       expect.objectContaining({
         where: {
           id: "vouch_1",
-          status: { in: ["draft", "protocol_fee_paid"] },
+          status: { in: ["protocol_fee_paid", "authorized"] },
           customerId: null,
           merchantId: { not: "customer_1" },
         },
         data: {
           customerId: "customer_1",
-          status: "protocol_fee_paid",
         },
       })
     )

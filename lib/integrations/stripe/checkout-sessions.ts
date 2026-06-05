@@ -12,6 +12,7 @@ type CreateStripeMerchantCreationFeeCheckoutInput = {
   feeAmountCents: number
   protectedAmountCents: number
   currency: string
+  expiresAt: Date
   successUrl: string
   cancelUrl: string
   providerCustomerId?: string
@@ -32,7 +33,7 @@ type CreateStripeCheckoutAuthorizationInput = {
   pricing: VouchPricing
   currency: string
   connectedAccountId: string
-  providerCustomerId?: string
+  expiresAt: Date
   successUrl: string
   cancelUrl?: string
   idempotencyKey: string
@@ -44,6 +45,12 @@ function pricingMetadata(input: { vouchId: string; pricing: VouchPricing }) {
     payment_role: "customer_commitment",
     protected_amount_cents: String(input.pricing.protectedAmountCents),
   }
+}
+
+function toCheckoutExpiration(expiresAt: Date): number {
+  const earliestAllowed = Date.now() + 30 * 60 * 1000
+  const latestAllowed = Date.now() + 24 * 60 * 60 * 1000
+  return Math.floor(Math.max(earliestAllowed, Math.min(expiresAt.getTime(), latestAllowed)) / 1000)
 }
 
 export async function createStripeMerchantCreationFeeCheckout(
@@ -61,6 +68,7 @@ export async function createStripeMerchantCreationFeeCheckout(
     {
       success_url: input.successUrl,
       cancel_url: input.cancelUrl,
+      expires_at: toCheckoutExpiration(input.expiresAt),
       ...(input.providerCustomerId ? { customer: input.providerCustomerId } : {}),
       line_items: [
         {
@@ -114,7 +122,10 @@ export async function createStripeCheckoutAuthorization(
     {
       success_url: input.successUrl,
       ...(input.cancelUrl ? { cancel_url: input.cancelUrl } : {}),
-      ...(input.providerCustomerId ? { customer: input.providerCustomerId } : {}),
+      expires_at: toCheckoutExpiration(input.expiresAt),
+      // Customers are account-scoped. This direct-charge Checkout runs on the merchant
+      // account, so a platform Customer ID must never be supplied here.
+      customer_creation: "always",
       line_items: [
         {
           price_data: {
@@ -130,10 +141,22 @@ export async function createStripeCheckoutAuthorization(
       mode: "payment",
       payment_intent_data: {
         capture_method: "manual",
+        setup_future_usage: "off_session",
         metadata,
       },
       metadata,
     },
     { idempotencyKey: input.idempotencyKey, stripeAccount: input.connectedAccountId }
+  )
+}
+
+export async function retrieveStripeAuthorizationCheckout(input: {
+  checkoutSessionId: string
+  connectedAccountId: string
+}): Promise<Stripe.Checkout.Session> {
+  return getStripeServerClient().checkout.sessions.retrieve(
+    input.checkoutSessionId,
+    { expand: ["payment_intent"] },
+    { stripeAccount: input.connectedAccountId }
   )
 }

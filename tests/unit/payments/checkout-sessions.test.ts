@@ -34,13 +34,11 @@ describe("createStripeCheckoutAuthorization", () => {
         protectedAmountCents: 10_000,
         merchantReceivesCents: 10_000,
         vouchServiceFeeCents: 500,
-        processingFeeOffsetCents: 46,
-        applicationFeeAmountCents: 0,
         customerTotalCents: 10_546,
       },
       currency: "usd",
-      connectedAccountId: "acct_merchant_destination",
-      providerCustomerId: "cus_accepting_customer",
+      connectedAccountId: "acct_merchant",
+      expiresAt: new Date("2026-06-05T18:00:00.000Z"),
       successUrl: "https://vouch.test/success",
       cancelUrl: "https://vouch.test/cancel",
       idempotencyKey: "idem_checkout",
@@ -50,7 +48,8 @@ describe("createStripeCheckoutAuthorization", () => {
       {
         success_url: "https://vouch.test/success",
         cancel_url: "https://vouch.test/cancel",
-        customer: "cus_accepting_customer",
+        customer_creation: "always",
+        expires_at: expect.any(Number),
         line_items: [
           {
             price_data: {
@@ -66,6 +65,7 @@ describe("createStripeCheckoutAuthorization", () => {
         mode: "payment",
         payment_intent_data: {
           capture_method: "manual",
+          setup_future_usage: "off_session",
           metadata: {
             vouch_id: "vouch_123",
             payment_role: "customer_commitment",
@@ -78,7 +78,7 @@ describe("createStripeCheckoutAuthorization", () => {
           protected_amount_cents: "10000",
         },
       },
-      { idempotencyKey: "idem_checkout", stripeAccount: "acct_merchant_destination" }
+      { idempotencyKey: "idem_checkout", stripeAccount: "acct_merchant" }
     )
   })
 })

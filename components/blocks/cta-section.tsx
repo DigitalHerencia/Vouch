@@ -321,9 +321,9 @@ export function DashboardRequirementsNotice({
 }) {
   return (
     <RequirementNoticeSplit
-      eyebrow="Payment method required"
+      eyebrow="Payment method"
       title="Save a payment method with Stripe"
-      body="This link only saves a payment method with Stripe and returns you to Vouch. It does not make a payment."
+      body="Optionally save a payment method for faster protocol-fee Checkout. This does not make a payment."
       action={action}
       actionLabel="Save payment method"
       returnPath="/dashboard"

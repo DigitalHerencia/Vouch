@@ -96,9 +96,7 @@ export async function getCurrentUser() {
     const clerkUser = await getCurrentClerkUser()
 
     if (clerkUser) {
-      await prisma.$transaction((tx) =>
-        upsertUserFromClerkTx(tx, mapClerkUserToLocalInput(clerkUser))
-      )
+      await upsertUserFromClerkTx(prisma, mapClerkUserToLocalInput(clerkUser))
 
       user = await prisma.user.findUnique({
         where: { clerkUserId: session.userId },

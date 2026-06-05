@@ -4,7 +4,15 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
-export function CheckoutSuccessView() {
+export function CheckoutSuccessView({
+  message,
+  signInHref,
+  signUpHref,
+}: {
+  message?: string
+  signInHref?: string
+  signUpHref?: string
+}) {
   return (
     <main className="mx-auto grid min-h-[60vh] max-w-3xl place-items-center px-6 py-16">
       <Card className="w-full">
@@ -18,8 +26,8 @@ export function CheckoutSuccessView() {
         </CardHeader>
         <CardContent className="grid gap-4">
           <p className="text-base leading-7 font-bold text-neutral-400">
-            Vouch will use Stripe provider state, webhooks, and live provider retrieval to reconcile
-            payment authorization before any confirmation or settlement outcome is shown as final.
+            {message ??
+              "Vouch will use Stripe provider state, webhooks, and live provider retrieval to reconcile payment authorization before any confirmation or settlement outcome is shown as final."}
           </p>
           <Alert>
             <AlertDescription>
@@ -28,9 +36,16 @@ export function CheckoutSuccessView() {
             </AlertDescription>
           </Alert>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex flex-wrap gap-3">
+          {signUpHref ? (
+            <Button className="w-full justify-center sm:w-auto" variant="primary" asChild>
+              <Link href={signUpHref}>Create Vouch account</Link>
+            </Button>
+          ) : null}
           <Button className="w-full justify-center sm:w-auto" asChild>
-            <Link href="/dashboard">Return to dashboard</Link>
+            <Link href={signInHref ?? "/dashboard"}>
+              {signInHref ? "Sign in" : "Return to dashboard"}
+            </Link>
           </Button>
         </CardFooter>
       </Card>

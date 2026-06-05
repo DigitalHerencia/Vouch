@@ -20,7 +20,7 @@ export async function createStripeCustomer(input: {
   return { providerCustomerId: customer.id }
 }
 
-export async function getStripeCustomerpaymentMethodReady(providerCustomerId: string): Promise<{
+export async function getStripeCustomerPaymentMethodReady(providerCustomerId: string): Promise<{
   readiness: "requires_action" | "ready" | "failed"
   defaultPaymentMethodId: string | null
 }> {

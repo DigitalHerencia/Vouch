@@ -8,9 +8,7 @@ describe("calculateVouchPricing", () => {
       protectedAmountCents: 10_000,
       merchantReceivesCents: 10_000,
       vouchServiceFeeCents: 500,
-      processingFeeOffsetCents: 46,
       customerTotalCents: 10_000,
-      applicationFeeAmountCents: 0,
     })
   })
 
@@ -19,7 +17,6 @@ describe("calculateVouchPricing", () => {
 
     expect(pricing.vouchServiceFeeCents).toBe(2500)
     expect(pricing.merchantReceivesCents).toBe(50_000)
-    expect(pricing.applicationFeeAmountCents).toBe(0)
     expect(pricing.customerTotalCents).toBe(pricing.protectedAmountCents)
   })
 

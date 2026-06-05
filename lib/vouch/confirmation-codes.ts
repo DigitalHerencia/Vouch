@@ -17,13 +17,10 @@ type VerifyConfirmationCodeInput = ConfirmationCodeInput & {
 }
 
 function confirmationSecret(): string {
-  const secret =
-    process.env.CONFIRMATION_CODE_SECRET ??
-    process.env.CLERK_SECRET_KEY ??
-    process.env.STRIPE_SECRET_KEY
+  const secret = process.env.CONFIRMATION_CODE_SECRET
 
   if (!secret) {
-    throw new Error("Missing CONFIRMATION_CODE_SECRET, CLERK_SECRET_KEY, or STRIPE_SECRET_KEY.")
+    throw new Error("CONFIRMATION_CODE_SECRET is required.")
   }
 
   return secret

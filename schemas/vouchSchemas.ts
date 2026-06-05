@@ -95,14 +95,3 @@ export const vouchListSearchParamsSchema = z.object({
   page: z.coerce.number().int().min(1).default(1),
   sort: vouchListSortSchema.default("newest"),
 })
-
-/**
- * Backward-compatible schema aliases retained only to keep Pass 4 isolated.
- * Later passes should migrate call sites to the canonical schema names.
- */
-export const createVouchSchema = confirmCreateVouchSchema
-export const createVouchInputSchema = confirmCreateVouchSchema
-export const createVouchDraftInputSchema = createVouchDraftSchema
-export const confirmCreateVouchInputSchema = confirmCreateVouchSchema
-export const confirmPresenceInputSchema = confirmPresenceSchema
-export const vouchListQuerySchema = vouchListSearchParamsSchema

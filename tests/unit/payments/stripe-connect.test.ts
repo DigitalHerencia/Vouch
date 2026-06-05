@@ -5,7 +5,6 @@ vi.mock("server-only", () => ({}))
 const createAccount = vi.fn()
 const createAccountLink = vi.fn()
 const retrieveAccount = vi.fn()
-const updateAccount = vi.fn()
 
 vi.mock("@/lib/integrations/stripe/client", () => ({
   getStripeServerClient: () => ({
@@ -14,7 +13,6 @@ vi.mock("@/lib/integrations/stripe/client", () => ({
         accounts: {
           create: createAccount,
           retrieve: retrieveAccount,
-          update: updateAccount,
         },
         accountLinks: {
           create: createAccountLink,
@@ -29,22 +27,24 @@ describe("Stripe Connect Accounts v2", () => {
     createAccount.mockReset()
     createAccountLink.mockReset()
     retrieveAccount.mockReset()
-    updateAccount.mockReset()
     createAccount.mockResolvedValue({ id: "acct_connected" })
     createAccountLink.mockResolvedValue({ url: "https://connect.stripe.test/onboard" })
-    updateAccount.mockResolvedValue({})
     retrieveAccount.mockResolvedValue({
+      applied_configurations: ["merchant", "customer"],
+      dashboard: "full",
+      defaults: {
+        responsibilities: {
+          losses_collector: "stripe",
+          fees_collector: "stripe",
+        },
+      },
       configuration: {
         merchant: {
           capabilities: {
             card_payments: {
               status: "active",
             },
-            stripe_balance: {
-              payouts: {
-                status: "active",
-              },
-            },
+            stripe_balance: { payouts: { status: "active" } },
           },
         },
       },
@@ -71,11 +71,6 @@ describe("Stripe Connect Accounts v2", () => {
               card_payments: {
                 requested: true,
               },
-              stripe_balance: {
-                payouts: {
-                  requested: true,
-                },
-              },
             },
           },
         },
@@ -83,17 +78,12 @@ describe("Stripe Connect Accounts v2", () => {
         contact_email: "merchant@example.com",
         defaults: {
           responsibilities: {
-            losses_collector: "application",
-            fees_collector: "application",
+            losses_collector: "stripe",
+            fees_collector: "stripe",
           },
         },
-        dashboard: "express",
-        include: [
-          "configuration.merchant",
-          "identity",
-          "defaults",
-          "configuration.customer",
-        ],
+        dashboard: "full",
+        include: ["configuration.merchant", "identity", "defaults", "configuration.customer"],
         identity: {
           country: "US",
         },
@@ -112,28 +102,9 @@ describe("Stripe Connect Accounts v2", () => {
       idempotencyKey: "idem_link",
     })
 
-    expect(updateAccount).toHaveBeenCalledWith(
-      "acct_connected",
-      {
-        configuration: {
-          customer: {},
-          merchant: {
-            capabilities: {
-              card_payments: {
-                requested: true,
-              },
-              stripe_balance: {
-                payouts: {
-                  requested: true,
-                },
-              },
-            },
-          },
-        },
-        include: ["configuration.merchant", "configuration.customer"],
-      },
-      { idempotencyKey: "idem_link:configurations" }
-    )
+    expect(retrieveAccount).toHaveBeenCalledWith("acct_connected", {
+      include: ["configuration.merchant", "configuration.customer", "defaults"],
+    })
 
     expect(createAccountLink).toHaveBeenCalledWith(
       {
@@ -141,6 +112,10 @@ describe("Stripe Connect Accounts v2", () => {
         use_case: {
           type: "account_onboarding",
           account_onboarding: {
+            collection_options: {
+              fields: "eventually_due",
+              future_requirements: "include",
+            },
             configurations: ["merchant", "customer"],
             refresh_url: "https://vouch.test/settings/payout",
             return_url: "https://vouch.test/settings/payout/return",
@@ -167,7 +142,7 @@ describe("Stripe Connect Accounts v2", () => {
     })
 
     expect(retrieveAccount).toHaveBeenCalledWith("acct_connected", {
-      include: ["configuration.merchant", "requirements"],
+      include: ["configuration.merchant", "defaults", "requirements"],
     })
   })
 
@@ -175,6 +150,13 @@ describe("Stripe Connect Accounts v2", () => {
     const { refreshStripeConnectReadiness } = await import("@/lib/integrations/stripe/connect")
 
     retrieveAccount.mockResolvedValueOnce({
+      dashboard: "full",
+      defaults: {
+        responsibilities: {
+          losses_collector: "stripe",
+          fees_collector: "stripe",
+        },
+      },
       configuration: {
         merchant: {
           capabilities: {
