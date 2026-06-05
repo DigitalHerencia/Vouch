@@ -8,14 +8,14 @@
     "seed": "tsx prisma/seed.ts"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "powershell -NoProfile -ExecutionPolicy Bypass -Command \"$ngrok = Start-Process ngrok -ArgumentList 'http','--url=liberal-gull-quietly.ngrok-free.app','3000' -PassThru -WindowStyle Hidden; $stripe = Start-Process stripe -ArgumentList 'listen','--forward-to','localhost:3000/api/stripe/webhooks' -PassThru -WindowStyle Hidden; try { next dev } finally { foreach ($process in @($ngrok, $stripe)) { if ($process -and -not $process.HasExited) { Stop-Process -Id $process.Id } } }\"",
     "build": "next build",
     "start": "next start",
     "postinstall": "prisma generate",
     "typegen": "next typegen",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "typecheck": "pnpm typegen && tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",

@@ -36,6 +36,7 @@ export function MobileBottomNav({
 }: MobileBottomNavProps) {
   const pathname = usePathname()
   const [pendingAction, setPendingAction] = useState<MobileBottomNavItem | null>(null)
+  const returnPath = pathname === "/vouches/new" ? "/vouches/new" : "/dashboard"
 
   return (
     <>
@@ -129,6 +130,7 @@ export function MobileBottomNav({
           {pendingAction ? (
             <DrawerFooter className="px-5 pb-5">
               <form action={pendingAction.action}>
+                <input type="hidden" name="returnPath" value={returnPath} />
                 <Button type="submit" className="w-full">
                   {pendingAction.label === "Method" ? "Save payment method" : "Continue"}
                 </Button>

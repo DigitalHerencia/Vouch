@@ -49,12 +49,14 @@ function RequirementNoticeSplit({
   body,
   action,
   actionLabel,
+  returnPath,
 }: {
   eyebrow: string
   title: string
   body: string
-  action?: (() => void | Promise<void>) | undefined
+  action?: ((formData: FormData) => void | Promise<void>) | undefined
   actionLabel?: string | undefined
+  returnPath?: "/dashboard" | "/vouches/new" | undefined
 }) {
   return (
     <section className="px-4 py-8 md:px-8 lg:px-16">
@@ -70,6 +72,7 @@ function RequirementNoticeSplit({
             </p>
             {action ? (
               <form action={action} className="mt-5">
+                {returnPath ? <input type="hidden" name="returnPath" value={returnPath} /> : null}
                 <Button type="submit" size="lg" variant="outline">
                   {actionLabel ?? "Continue to Stripe"}
                 </Button>
@@ -298,7 +301,7 @@ export function CTABanner({
 export function OnboardingRequirementNotice({
   action,
 }: {
-  action?: (() => void | Promise<void>) | undefined
+  action?: ((formData: FormData) => void | Promise<void>) | undefined
 }) {
   return (
     <RequirementNoticeSplit
@@ -306,6 +309,7 @@ export function OnboardingRequirementNotice({
       title="Connect Stripe to start creating Vouches"
       body="Vouch uses Stripe to keep payments secure and easy to manage. Connect your Stripe account once, then you can create Vouches and manage payouts from Stripe."
       action={action}
+      returnPath="/vouches/new"
     />
   )
 }
@@ -313,7 +317,7 @@ export function OnboardingRequirementNotice({
 export function DashboardRequirementsNotice({
   action,
 }: {
-  action?: (() => void | Promise<void>) | undefined
+  action?: ((formData: FormData) => void | Promise<void>) | undefined
 }) {
   return (
     <RequirementNoticeSplit
@@ -322,6 +326,7 @@ export function DashboardRequirementsNotice({
       body="This link only saves a payment method with Stripe and returns you to Vouch. It does not make a payment."
       action={action}
       actionLabel="Save payment method"
+      returnPath="/dashboard"
     />
   )
 }

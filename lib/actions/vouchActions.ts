@@ -10,7 +10,11 @@ import {
   getAggregateConfirmationStatusTx,
 } from "@/lib/db/transactions/confirmationTransactions"
 import { createVouchTx, updateVouchArchiveStatusTx } from "@/lib/db/transactions/vouchTransactions"
-import { getCurrentUserPaymentCustomer, requireActiveUser } from "@/lib/fetchers/authFetchers"
+import {
+  getCurrentUserConnectedAccount,
+  getCurrentUserPaymentCustomer,
+  requireActiveUser,
+} from "@/lib/fetchers/authFetchers"
 import {
   assertCreateVouchReadinessReady,
   getCreateVouchReadinessGate,
@@ -20,6 +24,7 @@ import {
   createStripeCheckoutAuthorization,
   createStripeMerchantCreationFeeCheckout,
 } from "@/lib/integrations/stripe/checkout-sessions"
+import { syncConnectedAccountReadinessForUser } from "@/lib/payments/stripeReadinessSync"
 import { verifyConfirmationCode } from "@/lib/vouch/confirmation-codes"
 import { calculateVouchPricing } from "@/lib/vouch/fees"
 import {
@@ -152,10 +157,24 @@ export async function validateCreateVouchDraft(input: unknown): Promise<ActionRe
   return actionSuccess(toFeePreview(parsed.data.amountCents, parsed.data.currency))
 }
 
-export async function getCreateVouchFormReadiness(): Promise<
+export async function getCreateVouchFormReadiness(input?: {
+  syncStripeConnectReturn?: boolean
+}): Promise<
   ActionResult<{ onboardingRequired: boolean }>
 > {
   const user = await requireActiveUser()
+
+  if (input?.syncStripeConnectReturn) {
+    const connectedAccount = await getCurrentUserConnectedAccount()
+
+    if (connectedAccount?.stripeAccountId) {
+      await syncConnectedAccountReadinessForUser({
+        userId: user.id,
+        stripeAccountId: connectedAccount.stripeAccountId,
+      })
+    }
+  }
+
   const gate = await getCreateVouchReadinessGate(user.id)
 
   return actionSuccess({

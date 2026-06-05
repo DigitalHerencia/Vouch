@@ -2,6 +2,7 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { useState } from "react"
 
 import { LogoLockup } from "@/components/nav/logo-lockup"
@@ -28,9 +29,11 @@ export function TenantHeader({
   paymentAction,
   navItems = defaultTenantNavItems,
 }: TenantHeaderProps) {
+  const pathname = usePathname()
   const [pendingProvider, setPendingProvider] = useState<"connect" | "payment" | null>(null)
   const providerCopy = pendingProvider ? vouchPageCopy.providerRedirects[pendingProvider] : null
   const providerAction = pendingProvider === "connect" ? connectAction : paymentAction
+  const returnPath = pathname === "/vouches/new" ? "/vouches/new" : "/dashboard"
   const providerActionLabel =
     pendingProvider === "payment" ? "Save payment method" : "Continue to Stripe"
 
@@ -102,6 +105,7 @@ export function TenantHeader({
           </div>
           <DrawerFooter className="px-5 pb-5">
             <form action={providerAction}>
+              <input type="hidden" name="returnPath" value={returnPath} />
               <Button type="submit" className="w-full">
                 {providerActionLabel}
               </Button>

@@ -19,10 +19,11 @@ type WordmarkProps = {
 
 type AuthShellProps = { children: React.ReactNode }
 type PublicShellProps = { children: React.ReactNode; withMobileBottomNav?: boolean }
+type TenantStripeAction = ((formData: FormData) => void | Promise<void>) | undefined
 type TenantShellProps = {
   children: React.ReactNode
-  connectAction?: (() => void | Promise<void>) | undefined
-  paymentAction?: (() => void | Promise<void>) | undefined
+  connectAction?: TenantStripeAction
+  paymentAction?: TenantStripeAction
   withMobileBottomNav?: boolean
 }
 
@@ -39,14 +40,14 @@ type TenantHeaderNavItem = { label: string; href: string }
 type TenantHeaderProps = {
   navItems?: readonly TenantHeaderNavItem[]
   items?: readonly TenantHeaderNavItem[]
-  connectAction?: (() => void | Promise<void>) | undefined
-  paymentAction?: (() => void | Promise<void>) | undefined
+  connectAction?: TenantStripeAction
+  paymentAction?: TenantStripeAction
 }
 type TenantFooterLink = { label: string; href: string }
 type TenantFooterProps = {
   links?: readonly TenantFooterLink[]
-  connectAction?: (() => void | Promise<void>) | undefined
-  paymentAction?: (() => void | Promise<void>) | undefined
+  connectAction?: TenantStripeAction
+  paymentAction?: TenantStripeAction
 }
 type MobileBottomNavWarning = {
   title: string
@@ -57,7 +58,7 @@ type MobileBottomNavWarning = {
 type MobileBottomNavItem = {
   label: string
   href?: string | undefined
-  action?: (() => void | Promise<void>) | undefined
+  action?: TenantStripeAction
   icon?: React.ComponentType<{ className?: string }>
   kind?: "link" | "action" | "account"
   primary?: boolean
@@ -65,7 +66,7 @@ type MobileBottomNavItem = {
 }
 type ActionItem = {
   label: string
-  action?: (() => void | Promise<void>) | undefined
+  action?: TenantStripeAction
   icon?: React.ComponentType<{ className?: string }>
   primary?: boolean
   warning?: MobileBottomNavWarning
@@ -76,8 +77,8 @@ type MobileBottomNavProps = {
   "aria-label"?: string
 }
 type TenantMobileBottomNavProps = {
-  connectAction?: (() => void | Promise<void>) | undefined
-  paymentAction?: (() => void | Promise<void>) | undefined
+  connectAction?: TenantStripeAction
+  paymentAction?: TenantStripeAction
 }
 type UserMenuProps = { size?: "default" | "sm" | "compact" }
 

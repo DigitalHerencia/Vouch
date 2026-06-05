@@ -1,14 +1,13 @@
 "use client"
 
-import { useSignIn } from "@clerk/nextjs"
+import { useAuth, useSignIn } from "@clerk/nextjs"
 import { useRouter } from "next/navigation"
-import { useState, useTransition } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { useForm, useWatch } from "react-hook-form"
 
 import { LoginForm as LoginBlock } from "@/components/auth/login-form"
 import { OTPVerificationForm } from "@/components/auth/otp-verification-form"
 import { authVerificationContent } from "@/content/auth"
-import { ensureLocalUserForCurrentSession } from "@/lib/actions/authActions"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { loginSchema, verificationSchema } from "@/schemas/authSchemas"
 import { type LoginFormProps, type LoginFormValues } from "@/types/authTypes"
@@ -23,6 +22,7 @@ function getErrorMessage(error: unknown, fallback: string): string {
 }
 
 export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
+  const { isLoaded, isSignedIn } = useAuth()
   const { fetchStatus, signIn } = useSignIn()
   const router = useRouter()
   const [awaitingSecondFactor, setAwaitingSecondFactor] = useState(false)
@@ -52,21 +52,19 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
     form.formState.isSubmitting || isResending || isResetting || fetchStatus === "fetching"
   const rootError = form.formState.errors.root?.message
 
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      router.replace(nextUrl)
+      router.refresh()
+    }
+  }, [isLoaded, isSignedIn, nextUrl, router])
+
   async function finalizeAndRedirect(): Promise<boolean> {
     const finalizeResult = await signIn.finalize({
       navigate: async ({ session, decorateUrl }) => {
         if (session?.currentTask) {
           form.setError("root", {
             message: "Finish the required account step before continuing.",
-          })
-          return
-        }
-
-        const localUserResult = await ensureLocalUserForCurrentSession()
-
-        if (!localUserResult.ok) {
-          form.setError("root", {
-            message: "Unable to sync your Vouch account. Try again.",
           })
           return
         }

@@ -3,6 +3,7 @@
 import * as React from "react"
 import { CalendarClock, CircleDollarSign, FileCheck2, ShieldCheck } from "lucide-react"
 import Image from "next/image"
+import { useSearchParams } from "next/navigation"
 import { useForm, useWatch } from "react-hook-form"
 
 import { VouchAmountField } from "@/components/vouches/vouch-amount-field"
@@ -105,6 +106,7 @@ export function VouchFormSkeleton() {
 }
 
 export function VouchForm() {
+  const searchParams = useSearchParams()
   const form = useForm<CreateVouchDraft>({
     mode: "onBlur",
     defaultValues: defaultDraft,
@@ -131,12 +133,14 @@ export function VouchForm() {
   const rootError = form.formState.errors.root?.message
 
   React.useEffect(() => {
+    const syncStripeConnectReturn = searchParams.has("stripe_connect_return")
+
     startReadinessTransition(async () => {
-      const readiness = await getCreateVouchFormReadiness()
+      const readiness = await getCreateVouchFormReadiness({ syncStripeConnectReturn })
       setOnboardingRequired(!readiness.ok || readiness.data.onboardingRequired)
       setReadinessChecked(true)
     })
-  }, [])
+  }, [searchParams])
 
   const canContinueDisclaimer = !disabled && formValues.disclaimerAccepted
   const canContinueAppointment = !disabled && Boolean(appointmentIso) && amountCents > 0

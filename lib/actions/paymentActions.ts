@@ -28,6 +28,15 @@ function getAppUrl(): string {
   )
 }
 
+function getReturnPath(formData: FormData | undefined, fallback: "/dashboard" | "/vouches/new") {
+  const raw = formData?.get("returnPath")
+
+  if (typeof raw !== "string") return fallback
+  if (raw === "/dashboard" || raw === "/vouches/new") return raw
+
+  return fallback
+}
+
 function revalidatePaymentSurfaces(): void {
   revalidatePath("/dashboard")
   revalidatePath("/vouches/new")
@@ -101,8 +110,9 @@ async function ensureStripeCustomer(user: {
   return created.providerCustomerId
 }
 
-export async function openStripeConnectDashboard(): Promise<never> {
+export async function openStripeConnectDashboard(formData?: FormData): Promise<never> {
   const user = await requireActiveUser()
+  const returnPath = getReturnPath(formData, "/dashboard")
   const stripeAccountId = await ensureStripeConnectedAccount(user)
   const readiness = await refreshStripeConnectReadiness({ providerAccountId: stripeAccountId })
 
@@ -125,8 +135,8 @@ export async function openStripeConnectDashboard(): Promise<never> {
     const appUrl = getAppUrl()
     const link = await createStripeConnectOnboardingLink({
       providerAccountId: stripeAccountId,
-      refreshUrl: `${appUrl}/dashboard`,
-      returnUrl: `${appUrl}/dashboard?stripe_connect_return=1`,
+      refreshUrl: `${appUrl}${returnPath}`,
+      returnUrl: `${appUrl}${returnPath}?stripe_connect_return=1`,
     })
     redirect(link.url)
   }
@@ -135,8 +145,9 @@ export async function openStripeConnectDashboard(): Promise<never> {
   redirect(link.url)
 }
 
-export async function openStripePaymentMethodSetup(): Promise<never> {
+export async function openStripePaymentMethodSetup(formData?: FormData): Promise<never> {
   const user = await requireActiveUser()
+  const returnPath = getReturnPath(formData, "/dashboard")
   const stripeCustomerId = await ensureStripeCustomer(user)
   await syncPaymentCustomerReadinessForUser({ userId: user.id, stripeCustomerId })
 
@@ -147,8 +158,8 @@ export async function openStripePaymentMethodSetup(): Promise<never> {
     userId: user.id,
     providerCustomerId: stripeCustomerId,
     currency: "usd",
-    successUrl: `${appUrl}/dashboard?stripe_payment_return=1`,
-    cancelUrl: `${appUrl}/dashboard?stripe_payment_cancelled=1`,
+    successUrl: `${appUrl}${returnPath}?stripe_payment_return=1`,
+    cancelUrl: `${appUrl}${returnPath}?stripe_payment_cancelled=1`,
     idempotencyKey: `user:${user.id}:payment-method-setup-checkout:${randomUUID()}`,
   })
 
