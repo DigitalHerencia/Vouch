@@ -18,6 +18,9 @@ product:
   launch_region: US
   platform_customer: business
   connected_merchant: business
+  connected_merchant_user_owned: true
+  merchant_of_record: connected_business
+  negative_balance_liability: connected_business
   customer_deposit_owner: connected_business
   platform_handles_deposit_funds: false
   platform_mediates_service_disputes: false
@@ -41,7 +44,105 @@ stripe:
   separate_charges_and_transfers_for_deposit: forbidden
   payouts: automatic
   verification: upfront
+  bypass_required_verification: forbidden
   pricing: stripe_owned
+  platform_customer_payment_method_required: true
+  platform_customer_reusable_payment_method_types: stripe_supported
+  connect_onboarding_satisfies_platform_payment_method_readiness: false
+  sandbox_lifecycle_must_pass_before_live_configuration: true
+  live_mutation_requires_explicit_user_approval: true
+
+readiness:
+  dashboard:
+    requires:
+      - platform_customer_reusable_payment_method
+    blocked_behavior:
+      - show_payment_method_requirement
+      - disable_operational_interactivity
+  new_vouch_form:
+    requires:
+      - connected_account_onboarding_complete
+      - connected_account_charge_capability
+      - connected_account_payout_capability
+    blocked_behavior:
+      - show_connected_account_requirement
+      - disable_form_interactivity
+
+vouch_creation:
+  wizard_steps:
+    - per_vouch_disclaimer
+    - appointment_and_amount
+    - review_and_protocol_fee
+  disclaimer_scope: per_vouch
+  disclaimer_persisted: true
+  maximum_appointment_lead_time_hours: 24
+  appointment_must_be_future: true
+  confirmation_window_before_appointment_minutes: 60
+  confirmation_window_after_appointment_minutes: 60
+  protocol_fee_checkout_account: platform
+  protocol_fee_required_before_customer_authorization_link: true
+
+customer_authorization:
+  charge_account: connected_account
+  charge_type: direct_charge
+  capture_method: manual
+  link_associated_with_vouch_public_id: true
+  deadline: appointment_timestamp
+  authorization_after_appointment: forbidden
+  first_time_customer_saves_payment_method: true
+  completed_checkout_claim_associates_customer_to_vouch: true
+
+confirmation:
+  required_participants:
+    - merchant
+    - customer
+  server_received_inside_window_required: true
+  second_valid_confirmation_triggers_immediate_capture: true
+  normal_capture_depends_on_cron: false
+  codes_available_only_inside_window: true
+  controls_interactive_only_inside_window: true
+  offline_capture: forbidden
+  late_confirmation: forbidden
+  capture_without_bilateral_valid_confirmation: forbidden
+  capture_after_window_close: forbidden
+
+reconciliation:
+  role: recovery_and_stale_state_cleanup_only
+  mvp_schedule: once_daily
+  may_grant_capture_eligibility: false
+  normal_capture_dependency: forbidden
+  technical_capture_retry_requires_bilateral_in_window_confirmation: true
+  technical_recovery_cutoff: appointment_plus_24_hours
+  capture_after_technical_recovery_cutoff: forbidden
+  allowed_operations:
+    - retry_eligible_technical_capture_failure
+    - synchronize_provider_state
+    - expire_stale_vouch
+    - cancel_or_reconcile_stale_authorization
+
+environments:
+  development:
+    app_url: http://localhost:3000
+    stripe_account: vouch_sandbox
+    canonical_entrypoint: pnpm_dev
+    clerk_environment: development
+    clerk_webhook_ingress: ngrok
+    clerk_webhook_command: ngrok_http_named_domain_port_3000
+    stripe_webhook_ingress: stripe_cli_listener
+    stripe_webhook_command: stripe_listen_forward_to_localhost_3000_api_stripe_webhooks
+  production:
+    app_url: https://usevouch.vercel.app
+    stripe_account: vouch_live
+    clerk_environment: production
+    deployment_branch: main
+  preview:
+    enabled: false
+  stripe_testing:
+    runtime_environment: none
+    use_requires_explicit_user_approval: true
+  secrets_shared_between_development_and_production: forbidden
+  clerk_env_mutation_requires_explicit_user_approval: true
+  neon_development_branch_creation_requires_explicit_user_approval: true
 
 clerk:
   owns:
@@ -71,6 +172,9 @@ database:
     - confirmation_state
     - webhook_idempotency
     - idempotency_keys
+    - readiness_state
+    - recovery_snapshots
+    - operational_retries
   prisma_models_leak_to_ui: forbidden
 
 server_action_order:

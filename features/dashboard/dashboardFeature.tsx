@@ -187,19 +187,24 @@ export async function DashboardFeature({
         <DashboardRequirementsNotice action={openStripePaymentMethodSetup} />
       ) : null}
 
-      <StatsCards stats={metrics} />
+      <div
+        aria-disabled={showPaymentMethodNotice}
+        className={showPaymentMethodNotice ? "pointer-events-none opacity-50" : undefined}
+      >
+        <StatsCards stats={metrics} />
 
-      {state.variant === "empty" ? (
-        <DashboardEmptyState />
-      ) : (
-        invoices.map((invoice) => (
-          <InvoiceSummary
-            key={invoice.vouchId ?? invoice.invoiceNumber}
-            {...invoice}
-            disabled={false}
-          />
-        ))
-      )}
+        {state.variant === "empty" ? (
+          <DashboardEmptyState />
+        ) : (
+          invoices.map((invoice) => (
+            <InvoiceSummary
+              key={invoice.vouchId ?? invoice.invoiceNumber}
+              {...invoice}
+              disabled={showPaymentMethodNotice}
+            />
+          ))
+        )}
+      </div>
     </main>
   )
 }

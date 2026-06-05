@@ -181,20 +181,26 @@ export function VouchForm() {
     startTransition(async () => {
       form.clearErrors()
 
-      const result = await createVouch({
-        amountCents,
-        currency: "usd",
-        appointmentStartsAt: appointmentIso,
-        disclaimerAccepted: formValues.disclaimerAccepted,
-      })
+      try {
+        const result = await createVouch({
+          amountCents,
+          currency: "usd",
+          appointmentStartsAt: appointmentIso,
+          disclaimerAccepted: formValues.disclaimerAccepted,
+        })
 
-      if (!result.ok) {
-        form.setError("root", { message: result.formError ?? "Unable to create this Vouch." })
-        applyFieldErrors(result.fieldErrors)
-        return
+        if (!result.ok) {
+          form.setError("root", { message: result.formError ?? "Unable to create this Vouch." })
+          applyFieldErrors(result.fieldErrors)
+          return
+        }
+
+        window.location.assign(result.data.checkoutUrl ?? result.data.detailPath)
+      } catch {
+        form.setError("root", {
+          message: "Stripe Checkout could not be opened. Try again.",
+        })
       }
-
-      window.location.assign(result.data.checkoutUrl ?? result.data.detailPath)
     })
   })
 

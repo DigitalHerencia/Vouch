@@ -41,18 +41,16 @@ export async function getStripeCustomerPaymentMethodReady(providerCustomerId: st
     return { readiness: "ready", defaultPaymentMethodId }
   }
 
+  // Setup-mode Checkout can save reusable methods such as Link as well as cards.
+  // Any method attached to this platform Customer satisfies dashboard readiness.
   const paymentMethods = await stripe.paymentMethods.list({
     customer: providerCustomerId,
-    type: "card",
     limit: 1,
   })
 
   const fallbackPaymentMethodId = paymentMethods.data[0]?.id ?? null
 
   if (fallbackPaymentMethodId) {
-    await stripe.customers.update(providerCustomerId, {
-      invoice_settings: { default_payment_method: fallbackPaymentMethodId },
-    })
     return { readiness: "ready", defaultPaymentMethodId: fallbackPaymentMethodId }
   }
 

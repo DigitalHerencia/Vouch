@@ -397,7 +397,7 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
     feeAmountCents: merchantFeeCents,
     protectedAmountCents: pricing.protectedAmountCents,
     currency: parsed.data.currency,
-    expiresAt: confirmationExpiresAt,
+    expiresAt: parsed.data.appointmentStartsAt,
     successUrl: `${appUrl}/vouches/${vouch.id}?merchant_fee=paid`,
     cancelUrl: `${appUrl}/vouches/new?merchant_fee=cancelled`,
     idempotencyKey: `vouch:${vouch.id}:merchant-fee-checkout`,
@@ -425,6 +425,7 @@ export async function ensureCustomerAuthorizationCheckoutForVouch(
       merchantId: true,
       amountCents: true,
       currency: true,
+      appointmentAt: true,
       confirmationExpiresAt: true,
       protocolFeePaidAt: true,
       merchant: {
@@ -454,7 +455,7 @@ export async function ensureCustomerAuthorizationCheckoutForVouch(
   if (!vouch.protocolFeePaidAt) {
     return actionFailure("PROTOCOL_FEE_REQUIRED", "Protocol fee payment is required first.")
   }
-  if (vouch.confirmationExpiresAt <= new Date()) {
+  if (vouch.appointmentAt <= new Date()) {
     await prisma.vouch.updateMany({
       where: { id: vouch.id, capturedAt: null, expiredAt: null },
       data: { status: "expired", expiredAt: new Date() },
@@ -484,7 +485,7 @@ export async function ensureCustomerAuthorizationCheckoutForVouch(
     pricing,
     currency: vouch.currency,
     connectedAccountId: connectedAccount.stripeAccountId,
-    expiresAt: vouch.confirmationExpiresAt,
+    expiresAt: vouch.appointmentAt,
     successUrl: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
     cancelUrl: `${appUrl}/vouches/${vouchId}?deposit_authorization=cancelled`,
     idempotencyKey: `vouch:${vouchId}:customer-authorization-checkout`,
@@ -619,13 +620,13 @@ export async function markCustomerDepositAuthorized(input: {
 }): Promise<ActionResult<{ vouchId: string }>> {
   const vouch = await prisma.vouch.findUnique({
     where: { id: input.vouchId },
-    select: { confirmationExpiresAt: true },
+    select: { appointmentAt: true },
   })
   const now = new Date()
 
   if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
 
-  if (vouch.confirmationExpiresAt <= now && input.stripePaymentIntentId && input.stripeAccountId) {
+  if (vouch.appointmentAt <= now && input.stripePaymentIntentId && input.stripeAccountId) {
     await cancelStripeAuthorization({
       providerPaymentIntentId: input.stripePaymentIntentId,
       connectedAccountId: input.stripeAccountId,
@@ -730,7 +731,7 @@ export async function claimCustomerAuthorizationCheckout(input: {
         select: {
           customerId: true,
           merchantId: true,
-          confirmationExpiresAt: true,
+          appointmentAt: true,
         },
       },
     },
@@ -771,7 +772,7 @@ export async function claimCustomerAuthorizationCheckout(input: {
   ) {
     return actionFailure("CHECKOUT_NOT_COMPLETE", "Checkout authorization is not complete.")
   }
-  if (paymentRecord.vouch.confirmationExpiresAt <= new Date()) {
+  if (paymentRecord.vouch.appointmentAt <= new Date()) {
     await markCustomerDepositAuthorized({
       vouchId: paymentRecord.vouchId,
       stripeCheckoutSessionId: session.id,
@@ -781,7 +782,10 @@ export async function claimCustomerAuthorizationCheckout(input: {
       amountCents: session.amount_total ?? undefined,
       currency: session.currency ?? undefined,
     })
-    return actionFailure("CONFIRMATION_WINDOW_CLOSED", "The confirmation window has closed.")
+    return actionFailure(
+      "AUTHORIZATION_DEADLINE_PASSED",
+      "The customer authorization deadline has passed."
+    )
   }
 
   const now = new Date()

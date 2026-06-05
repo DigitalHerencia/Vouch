@@ -18,6 +18,7 @@ import {
   syncConnectedAccountReadinessForUser,
   syncPaymentCustomerReadinessForUser,
 } from "@/lib/payments/stripeReadinessSync"
+import { getAccountReadiness } from "@/lib/fetchers/readinessFetchers"
 
 const DEFAULT_TAKE = 10
 const ACTIVE_DB_STATUSES = [
@@ -44,6 +45,7 @@ async function parseDashboardSearchParams(
 
 async function syncStripeReturns(input: {
   userId: string
+  paymentMethodReady: boolean
   searchParams: Record<string, string | string[] | undefined>
 }): Promise<void> {
   const stripeConnectReturn = input.searchParams.stripe_connect_return
@@ -63,7 +65,7 @@ async function syncStripeReturns(input: {
     }
   }
 
-  if (stripePaymentReturn) {
+  if (stripePaymentReturn || !input.paymentMethodReady) {
     const paymentCustomer = await prisma.paymentCustomer.findUnique({
       where: { userId: input.userId },
       select: { stripeCustomerId: true },
@@ -114,11 +116,11 @@ async function getDashboardSummary(userId: string): Promise<DashboardSummaryDTO 
     )
     .slice(0, DEFAULT_TAKE)
   const active = current
-    .filter((vouch) => ACTIVE_DB_STATUSES.includes(vouch.status as (typeof ACTIVE_DB_STATUSES)[number]))
+    .filter((vouch) =>
+      ACTIVE_DB_STATUSES.includes(vouch.status as (typeof ACTIVE_DB_STATUSES)[number])
+    )
     .slice(0, DEFAULT_TAKE)
-  const completed = current
-    .filter((vouch) => vouch.status === "captured")
-    .slice(0, DEFAULT_TAKE)
+  const completed = current.filter((vouch) => vouch.status === "captured").slice(0, DEFAULT_TAKE)
   const expired = current.filter((vouch) => vouch.status === "expired").slice(0, DEFAULT_TAKE)
   const archived = vouches.filter((vouch) => vouch.archived).slice(0, DEFAULT_TAKE)
 
@@ -137,7 +139,12 @@ export async function getDashboardPageState(input?: {
   searchParams?: Record<string, string | string[] | undefined>
 }): Promise<DashboardPageStateDTO> {
   const current = await requireActiveUser()
-  await syncStripeReturns({ userId: current.id, searchParams: input?.searchParams ?? {} })
+  await syncStripeReturns({
+    userId: current.id,
+    paymentMethodReady: current.readiness.paymentMethodReady === "ready",
+    searchParams: input?.searchParams ?? {},
+  })
+  const readiness = await getAccountReadiness(current.id)
   const filters = await parseDashboardSearchParams(input?.searchParams ?? {})
   const summary = await getDashboardSummary(current.id)
 
@@ -146,7 +153,7 @@ export async function getDashboardPageState(input?: {
     filters,
     summary,
     warnings: {
-      paymentMethodRequired: current.readiness.paymentMethodReady !== "ready",
+      paymentMethodRequired: readiness?.paymentMethodReady !== "ready",
     },
   }
 }
