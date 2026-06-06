@@ -16,10 +16,8 @@ export type AuditEntityType =
   | "ProviderWebhookEvent"
   | "StripeWebhookEvent"
   | "AuditEvent"
-  | "VouchEvent"
   | "OperationalRetry"
   | "VouchRecoverySnapshot"
-  | "AnalyticsEvent"
 
 export type AuditEventName =
   | "user.created"

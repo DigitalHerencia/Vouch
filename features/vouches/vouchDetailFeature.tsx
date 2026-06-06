@@ -10,12 +10,7 @@ import {
   VouchDeadlineRefresh,
 } from "@/features/vouches/vouchDetailFeature.client"
 import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
-import { requireActiveUser } from "@/lib/fetchers/authFetchers"
-import {
-  getAuditTimeline,
-  getConfirmPresencePageState,
-  getVouchDetailForParticipant,
-} from "@/lib/fetchers/vouchFetchers"
+import { getVouchDetailPageState } from "@/lib/fetchers/vouchFetchers"
 
 type VouchDetailPageProps = {
   vouchId: string
@@ -84,17 +79,10 @@ function getAppUrl() {
 }
 
 export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
-  const user = await requireActiveUser()
-  const state = await getVouchDetailForParticipant({ vouchId })
-  if (!("vouch" in state) || !state.vouch) notFound()
+  const state = await getVouchDetailPageState({ vouchId })
+  if (!state) notFound()
 
-  const vouch = state.vouch
-  const confirmState = await getConfirmPresencePageState({ vouchId })
-  const canConfirm =
-    confirmState.variant === "confirm_as_merchant" || confirmState.variant === "confirm_as_customer"
-  const currentUserCode =
-    "currentUserCode" in confirmState ? confirmState.currentUserCode : undefined
-  const timeline = await getAuditTimeline(vouchId)
+  const { canConfirm, currentUserCode, role, timeline, userId, vouch } = state
 
   return (
     <>
@@ -108,13 +96,7 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
         title={vouch.publicId}
         amountLabel={money(vouch.amountCents, vouch.currency)}
         statusLabel={vouch.status}
-        currentUserRoleLabel={
-          confirmState.variant === "confirm_as_merchant"
-            ? "merchant"
-            : confirmState.variant === "confirm_as_customer"
-              ? "customer"
-              : "participant"
-        }
+        currentUserRoleLabel={role ?? "participant"}
         merchantLabel={participantName(vouch.merchant)}
         customerLabel={participantName(vouch.customer)}
         appointmentLabel={dateTime(vouch.appointmentAt)}
@@ -130,7 +112,7 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
           vouch.currency
         )}
         authorizationCheckoutUrl={
-          user.id === vouch.merchantId && vouch.status === "protocol_fee_paid"
+          userId === vouch.merchantId && vouch.status === "protocol_fee_paid"
             ? `${getAppUrl()}/checkout/success?vouch_id=${encodeURIComponent(vouch.publicId)}`
             : null
         }

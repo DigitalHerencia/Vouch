@@ -23,6 +23,7 @@ const nextConfig: NextConfig = {
   typedRoutes: true,
   poweredByHeader: false,
   compress: true,
+  allowedDevOrigins: ["127.0.0.1"],
 
   typescript: {
     ignoreBuildErrors: false,

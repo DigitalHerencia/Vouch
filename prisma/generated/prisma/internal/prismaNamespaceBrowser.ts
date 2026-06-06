@@ -64,10 +64,8 @@ export const ModelName = {
   ProviderWebhookEvent: 'ProviderWebhookEvent',
   StripeWebhookEvent: 'StripeWebhookEvent',
   AuditEvent: 'AuditEvent',
-  VouchEvent: 'VouchEvent',
   OperationalRetry: 'OperationalRetry',
-  VouchRecoverySnapshot: 'VouchRecoverySnapshot',
-  AnalyticsEvent: 'AnalyticsEvent'
+  VouchRecoverySnapshot: 'VouchRecoverySnapshot'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -180,9 +178,6 @@ export const PresenceConfirmationScalarFieldEnum = {
   customerCodeVerified: 'customerCodeVerified',
   resolutionSource: 'resolutionSource',
   failureReason: 'failureReason',
-  retryUntil: 'retryUntil',
-  lastRetryAt: 'lastRetryAt',
-  retryCount: 'retryCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -197,7 +192,6 @@ export const PresenceConfirmationAttemptScalarFieldEnum = {
   submittedAt: 'submittedAt',
   confirmedAt: 'confirmedAt',
   submissionMode: 'submissionMode',
-  payloadHash: 'payloadHash',
   nonce: 'nonce',
   accepted: 'accepted',
   rejectedReason: 'rejectedReason'
@@ -350,17 +344,6 @@ export const AuditEventScalarFieldEnum = {
 export type AuditEventScalarFieldEnum = (typeof AuditEventScalarFieldEnum)[keyof typeof AuditEventScalarFieldEnum]
 
 
-export const VouchEventScalarFieldEnum = {
-  id: 'id',
-  vouchId: 'vouchId',
-  type: 'type',
-  metadata: 'metadata',
-  createdAt: 'createdAt'
-} as const
-
-export type VouchEventScalarFieldEnum = (typeof VouchEventScalarFieldEnum)[keyof typeof VouchEventScalarFieldEnum]
-
-
 export const OperationalRetryScalarFieldEnum = {
   id: 'id',
   vouchId: 'vouchId',
@@ -420,18 +403,6 @@ export const VouchRecoverySnapshotScalarFieldEnum = {
 } as const
 
 export type VouchRecoverySnapshotScalarFieldEnum = (typeof VouchRecoverySnapshotScalarFieldEnum)[keyof typeof VouchRecoverySnapshotScalarFieldEnum]
-
-
-export const AnalyticsEventScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  eventName: 'eventName',
-  eventGroup: 'eventGroup',
-  properties: 'properties',
-  createdAt: 'createdAt'
-} as const
-
-export type AnalyticsEventScalarFieldEnum = (typeof AnalyticsEventScalarFieldEnum)[keyof typeof AnalyticsEventScalarFieldEnum]
 
 
 export const SortOrder = {

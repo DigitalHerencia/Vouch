@@ -24,7 +24,7 @@ export const AGGREGATE_CONFIRMATION_STATUS_VALUES = [
   "both_confirmed",
 ] as const
 
-export const CONFIRMATION_METHOD_VALUES = ["code_exchange", "offline_code_exchange"] as const
+export const CONFIRMATION_METHOD_VALUES = ["code_exchange"] as const
 
 export const PAYMENT_PROVIDER_VALUES = ["stripe"] as const
 export const WEBHOOK_PROVIDER_VALUES = ["clerk", "stripe"] as const

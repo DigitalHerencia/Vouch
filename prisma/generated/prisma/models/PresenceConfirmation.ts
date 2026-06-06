@@ -20,18 +20,8 @@ export type PresenceConfirmationModel = runtime.Types.Result.DefaultSelection<Pr
 
 export type AggregatePresenceConfirmation = {
   _count: PresenceConfirmationCountAggregateOutputType | null
-  _avg: PresenceConfirmationAvgAggregateOutputType | null
-  _sum: PresenceConfirmationSumAggregateOutputType | null
   _min: PresenceConfirmationMinAggregateOutputType | null
   _max: PresenceConfirmationMaxAggregateOutputType | null
-}
-
-export type PresenceConfirmationAvgAggregateOutputType = {
-  retryCount: number | null
-}
-
-export type PresenceConfirmationSumAggregateOutputType = {
-  retryCount: number | null
 }
 
 export type PresenceConfirmationMinAggregateOutputType = {
@@ -48,9 +38,6 @@ export type PresenceConfirmationMinAggregateOutputType = {
   customerCodeVerified: boolean | null
   resolutionSource: $Enums.PresenceResolutionSource | null
   failureReason: string | null
-  retryUntil: Date | null
-  lastRetryAt: Date | null
-  retryCount: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -69,9 +56,6 @@ export type PresenceConfirmationMaxAggregateOutputType = {
   customerCodeVerified: boolean | null
   resolutionSource: $Enums.PresenceResolutionSource | null
   failureReason: string | null
-  retryUntil: Date | null
-  lastRetryAt: Date | null
-  retryCount: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -90,22 +74,11 @@ export type PresenceConfirmationCountAggregateOutputType = {
   customerCodeVerified: number
   resolutionSource: number
   failureReason: number
-  retryUntil: number
-  lastRetryAt: number
-  retryCount: number
   createdAt: number
   updatedAt: number
   _all: number
 }
 
-
-export type PresenceConfirmationAvgAggregateInputType = {
-  retryCount?: true
-}
-
-export type PresenceConfirmationSumAggregateInputType = {
-  retryCount?: true
-}
 
 export type PresenceConfirmationMinAggregateInputType = {
   id?: true
@@ -121,9 +94,6 @@ export type PresenceConfirmationMinAggregateInputType = {
   customerCodeVerified?: true
   resolutionSource?: true
   failureReason?: true
-  retryUntil?: true
-  lastRetryAt?: true
-  retryCount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -142,9 +112,6 @@ export type PresenceConfirmationMaxAggregateInputType = {
   customerCodeVerified?: true
   resolutionSource?: true
   failureReason?: true
-  retryUntil?: true
-  lastRetryAt?: true
-  retryCount?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -163,9 +130,6 @@ export type PresenceConfirmationCountAggregateInputType = {
   customerCodeVerified?: true
   resolutionSource?: true
   failureReason?: true
-  retryUntil?: true
-  lastRetryAt?: true
-  retryCount?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -209,18 +173,6 @@ export type PresenceConfirmationAggregateArgs<ExtArgs extends runtime.Types.Exte
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
-   * Select which fields to average
-  **/
-  _avg?: PresenceConfirmationAvgAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
-   * Select which fields to sum
-  **/
-  _sum?: PresenceConfirmationSumAggregateInputType
-  /**
-   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-   * 
    * Select which fields to find the minimum value
   **/
   _min?: PresenceConfirmationMinAggregateInputType
@@ -251,8 +203,6 @@ export type PresenceConfirmationGroupByArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   _count?: PresenceConfirmationCountAggregateInputType | true
-  _avg?: PresenceConfirmationAvgAggregateInputType
-  _sum?: PresenceConfirmationSumAggregateInputType
   _min?: PresenceConfirmationMinAggregateInputType
   _max?: PresenceConfirmationMaxAggregateInputType
 }
@@ -271,14 +221,9 @@ export type PresenceConfirmationGroupByOutputType = {
   customerCodeVerified: boolean
   resolutionSource: $Enums.PresenceResolutionSource | null
   failureReason: string | null
-  retryUntil: Date | null
-  lastRetryAt: Date | null
-  retryCount: number
   createdAt: Date
   updatedAt: Date
   _count: PresenceConfirmationCountAggregateOutputType | null
-  _avg: PresenceConfirmationAvgAggregateOutputType | null
-  _sum: PresenceConfirmationSumAggregateOutputType | null
   _min: PresenceConfirmationMinAggregateOutputType | null
   _max: PresenceConfirmationMaxAggregateOutputType | null
 }
@@ -315,9 +260,6 @@ export type PresenceConfirmationWhereInput = {
   customerCodeVerified?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
   resolutionSource?: Prisma.EnumPresenceResolutionSourceNullableFilter<"PresenceConfirmation"> | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.StringNullableFilter<"PresenceConfirmation"> | string | null
-  retryUntil?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
-  lastRetryAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
-  retryCount?: Prisma.IntFilter<"PresenceConfirmation"> | number
   createdAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
@@ -338,9 +280,6 @@ export type PresenceConfirmationOrderByWithRelationInput = {
   customerCodeVerified?: Prisma.SortOrder
   resolutionSource?: Prisma.SortOrderInput | Prisma.SortOrder
   failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
-  retryUntil?: Prisma.SortOrderInput | Prisma.SortOrder
-  lastRetryAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  retryCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   vouch?: Prisma.VouchOrderByWithRelationInput
@@ -364,9 +303,6 @@ export type PresenceConfirmationWhereUniqueInput = Prisma.AtLeast<{
   customerCodeVerified?: Prisma.BoolFilter<"PresenceConfirmation"> | boolean
   resolutionSource?: Prisma.EnumPresenceResolutionSourceNullableFilter<"PresenceConfirmation"> | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.StringNullableFilter<"PresenceConfirmation"> | string | null
-  retryUntil?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
-  lastRetryAt?: Prisma.DateTimeNullableFilter<"PresenceConfirmation"> | Date | string | null
-  retryCount?: Prisma.IntFilter<"PresenceConfirmation"> | number
   createdAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"PresenceConfirmation"> | Date | string
   vouch?: Prisma.XOR<Prisma.VouchScalarRelationFilter, Prisma.VouchWhereInput>
@@ -387,16 +323,11 @@ export type PresenceConfirmationOrderByWithAggregationInput = {
   customerCodeVerified?: Prisma.SortOrder
   resolutionSource?: Prisma.SortOrderInput | Prisma.SortOrder
   failureReason?: Prisma.SortOrderInput | Prisma.SortOrder
-  retryUntil?: Prisma.SortOrderInput | Prisma.SortOrder
-  lastRetryAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  retryCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.PresenceConfirmationCountOrderByAggregateInput
-  _avg?: Prisma.PresenceConfirmationAvgOrderByAggregateInput
   _max?: Prisma.PresenceConfirmationMaxOrderByAggregateInput
   _min?: Prisma.PresenceConfirmationMinOrderByAggregateInput
-  _sum?: Prisma.PresenceConfirmationSumOrderByAggregateInput
 }
 
 export type PresenceConfirmationScalarWhereWithAggregatesInput = {
@@ -416,9 +347,6 @@ export type PresenceConfirmationScalarWhereWithAggregatesInput = {
   customerCodeVerified?: Prisma.BoolWithAggregatesFilter<"PresenceConfirmation"> | boolean
   resolutionSource?: Prisma.EnumPresenceResolutionSourceNullableWithAggregatesFilter<"PresenceConfirmation"> | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.StringNullableWithAggregatesFilter<"PresenceConfirmation"> | string | null
-  retryUntil?: Prisma.DateTimeNullableWithAggregatesFilter<"PresenceConfirmation"> | Date | string | null
-  lastRetryAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PresenceConfirmation"> | Date | string | null
-  retryCount?: Prisma.IntWithAggregatesFilter<"PresenceConfirmation"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmation"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmation"> | Date | string
 }
@@ -436,9 +364,6 @@ export type PresenceConfirmationCreateInput = {
   customerCodeVerified?: boolean
   resolutionSource?: $Enums.PresenceResolutionSource | null
   failureReason?: string | null
-  retryUntil?: Date | string | null
-  lastRetryAt?: Date | string | null
-  retryCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   vouch: Prisma.VouchCreateNestedOneWithoutPresenceConfirmationInput
@@ -459,9 +384,6 @@ export type PresenceConfirmationUncheckedCreateInput = {
   customerCodeVerified?: boolean
   resolutionSource?: $Enums.PresenceResolutionSource | null
   failureReason?: string | null
-  retryUntil?: Date | string | null
-  lastRetryAt?: Date | string | null
-  retryCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   attempts?: Prisma.PresenceConfirmationAttemptUncheckedCreateNestedManyWithoutPresenceConfirmationInput
@@ -480,9 +402,6 @@ export type PresenceConfirmationUpdateInput = {
   customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vouch?: Prisma.VouchUpdateOneRequiredWithoutPresenceConfirmationNestedInput
@@ -503,9 +422,6 @@ export type PresenceConfirmationUncheckedUpdateInput = {
   customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.PresenceConfirmationAttemptUncheckedUpdateManyWithoutPresenceConfirmationNestedInput
@@ -525,9 +441,6 @@ export type PresenceConfirmationCreateManyInput = {
   customerCodeVerified?: boolean
   resolutionSource?: $Enums.PresenceResolutionSource | null
   failureReason?: string | null
-  retryUntil?: Date | string | null
-  lastRetryAt?: Date | string | null
-  retryCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -545,9 +458,6 @@ export type PresenceConfirmationUpdateManyMutationInput = {
   customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -566,9 +476,6 @@ export type PresenceConfirmationUncheckedUpdateManyInput = {
   customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -592,15 +499,8 @@ export type PresenceConfirmationCountOrderByAggregateInput = {
   customerCodeVerified?: Prisma.SortOrder
   resolutionSource?: Prisma.SortOrder
   failureReason?: Prisma.SortOrder
-  retryUntil?: Prisma.SortOrder
-  lastRetryAt?: Prisma.SortOrder
-  retryCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type PresenceConfirmationAvgOrderByAggregateInput = {
-  retryCount?: Prisma.SortOrder
 }
 
 export type PresenceConfirmationMaxOrderByAggregateInput = {
@@ -617,9 +517,6 @@ export type PresenceConfirmationMaxOrderByAggregateInput = {
   customerCodeVerified?: Prisma.SortOrder
   resolutionSource?: Prisma.SortOrder
   failureReason?: Prisma.SortOrder
-  retryUntil?: Prisma.SortOrder
-  lastRetryAt?: Prisma.SortOrder
-  retryCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -638,15 +535,8 @@ export type PresenceConfirmationMinOrderByAggregateInput = {
   customerCodeVerified?: Prisma.SortOrder
   resolutionSource?: Prisma.SortOrder
   failureReason?: Prisma.SortOrder
-  retryUntil?: Prisma.SortOrder
-  lastRetryAt?: Prisma.SortOrder
-  retryCount?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-}
-
-export type PresenceConfirmationSumOrderByAggregateInput = {
-  retryCount?: Prisma.SortOrder
 }
 
 export type PresenceConfirmationScalarRelationFilter = {
@@ -721,9 +611,6 @@ export type PresenceConfirmationCreateWithoutVouchInput = {
   customerCodeVerified?: boolean
   resolutionSource?: $Enums.PresenceResolutionSource | null
   failureReason?: string | null
-  retryUntil?: Date | string | null
-  lastRetryAt?: Date | string | null
-  retryCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   attempts?: Prisma.PresenceConfirmationAttemptCreateNestedManyWithoutPresenceConfirmationInput
@@ -742,9 +629,6 @@ export type PresenceConfirmationUncheckedCreateWithoutVouchInput = {
   customerCodeVerified?: boolean
   resolutionSource?: $Enums.PresenceResolutionSource | null
   failureReason?: string | null
-  retryUntil?: Date | string | null
-  lastRetryAt?: Date | string | null
-  retryCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   attempts?: Prisma.PresenceConfirmationAttemptUncheckedCreateNestedManyWithoutPresenceConfirmationInput
@@ -779,9 +663,6 @@ export type PresenceConfirmationUpdateWithoutVouchInput = {
   customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.PresenceConfirmationAttemptUpdateManyWithoutPresenceConfirmationNestedInput
@@ -800,9 +681,6 @@ export type PresenceConfirmationUncheckedUpdateWithoutVouchInput = {
   customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.PresenceConfirmationAttemptUncheckedUpdateManyWithoutPresenceConfirmationNestedInput
@@ -821,9 +699,6 @@ export type PresenceConfirmationCreateWithoutAttemptsInput = {
   customerCodeVerified?: boolean
   resolutionSource?: $Enums.PresenceResolutionSource | null
   failureReason?: string | null
-  retryUntil?: Date | string | null
-  lastRetryAt?: Date | string | null
-  retryCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
   vouch: Prisma.VouchCreateNestedOneWithoutPresenceConfirmationInput
@@ -843,9 +718,6 @@ export type PresenceConfirmationUncheckedCreateWithoutAttemptsInput = {
   customerCodeVerified?: boolean
   resolutionSource?: $Enums.PresenceResolutionSource | null
   failureReason?: string | null
-  retryUntil?: Date | string | null
-  lastRetryAt?: Date | string | null
-  retryCount?: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -879,9 +751,6 @@ export type PresenceConfirmationUpdateWithoutAttemptsInput = {
   customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   vouch?: Prisma.VouchUpdateOneRequiredWithoutPresenceConfirmationNestedInput
@@ -901,9 +770,6 @@ export type PresenceConfirmationUncheckedUpdateWithoutAttemptsInput = {
   customerCodeVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   resolutionSource?: Prisma.NullableEnumPresenceResolutionSourceFieldUpdateOperationsInput | $Enums.PresenceResolutionSource | null
   failureReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  retryUntil?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  lastRetryAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  retryCount?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -953,9 +819,6 @@ export type PresenceConfirmationSelect<ExtArgs extends runtime.Types.Extensions.
   customerCodeVerified?: boolean
   resolutionSource?: boolean
   failureReason?: boolean
-  retryUntil?: boolean
-  lastRetryAt?: boolean
-  retryCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
@@ -977,9 +840,6 @@ export type PresenceConfirmationSelectCreateManyAndReturn<ExtArgs extends runtim
   customerCodeVerified?: boolean
   resolutionSource?: boolean
   failureReason?: boolean
-  retryUntil?: boolean
-  lastRetryAt?: boolean
-  retryCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
@@ -999,9 +859,6 @@ export type PresenceConfirmationSelectUpdateManyAndReturn<ExtArgs extends runtim
   customerCodeVerified?: boolean
   resolutionSource?: boolean
   failureReason?: boolean
-  retryUntil?: boolean
-  lastRetryAt?: boolean
-  retryCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
@@ -1021,14 +878,11 @@ export type PresenceConfirmationSelectScalar = {
   customerCodeVerified?: boolean
   resolutionSource?: boolean
   failureReason?: boolean
-  retryUntil?: boolean
-  lastRetryAt?: boolean
-  retryCount?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type PresenceConfirmationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "status" | "windowOpensAt" | "windowClosesAt" | "merchantConfirmedAt" | "customerConfirmedAt" | "canCaptureAt" | "voidedAt" | "merchantCodeVerified" | "customerCodeVerified" | "resolutionSource" | "failureReason" | "retryUntil" | "lastRetryAt" | "retryCount" | "createdAt" | "updatedAt", ExtArgs["result"]["presenceConfirmation"]>
+export type PresenceConfirmationOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "vouchId" | "status" | "windowOpensAt" | "windowClosesAt" | "merchantConfirmedAt" | "customerConfirmedAt" | "canCaptureAt" | "voidedAt" | "merchantCodeVerified" | "customerCodeVerified" | "resolutionSource" | "failureReason" | "createdAt" | "updatedAt", ExtArgs["result"]["presenceConfirmation"]>
 export type PresenceConfirmationInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   vouch?: boolean | Prisma.VouchDefaultArgs<ExtArgs>
   attempts?: boolean | Prisma.PresenceConfirmation$attemptsArgs<ExtArgs>
@@ -1061,9 +915,6 @@ export type $PresenceConfirmationPayload<ExtArgs extends runtime.Types.Extension
     customerCodeVerified: boolean
     resolutionSource: $Enums.PresenceResolutionSource | null
     failureReason: string | null
-    retryUntil: Date | null
-    lastRetryAt: Date | null
-    retryCount: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["presenceConfirmation"]>
@@ -1504,9 +1355,6 @@ export interface PresenceConfirmationFieldRefs {
   readonly customerCodeVerified: Prisma.FieldRef<"PresenceConfirmation", 'Boolean'>
   readonly resolutionSource: Prisma.FieldRef<"PresenceConfirmation", 'PresenceResolutionSource'>
   readonly failureReason: Prisma.FieldRef<"PresenceConfirmation", 'String'>
-  readonly retryUntil: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
-  readonly lastRetryAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
-  readonly retryCount: Prisma.FieldRef<"PresenceConfirmation", 'Int'>
   readonly createdAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"PresenceConfirmation", 'DateTime'>
 }

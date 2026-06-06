@@ -515,23 +515,6 @@ export type EnumAuditActorTypeWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumAuditActorTypeFilter<$PrismaModel>
 }
 
-export type EnumVouchTransitionTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.VouchTransitionType | Prisma.EnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.VouchTransitionType[] | Prisma.ListEnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.VouchTransitionType[] | Prisma.ListEnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumVouchTransitionTypeFilter<$PrismaModel> | $Enums.VouchTransitionType
-}
-
-export type EnumVouchTransitionTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.VouchTransitionType | Prisma.EnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.VouchTransitionType[] | Prisma.ListEnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.VouchTransitionType[] | Prisma.ListEnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumVouchTransitionTypeWithAggregatesFilter<$PrismaModel> | $Enums.VouchTransitionType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumVouchTransitionTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumVouchTransitionTypeFilter<$PrismaModel>
-}
-
 export type EnumOperationalRetryOperationFilter<$PrismaModel = never> = {
   equals?: $Enums.OperationalRetryOperation | Prisma.EnumOperationalRetryOperationFieldRefInput<$PrismaModel>
   in?: $Enums.OperationalRetryOperation[] | Prisma.ListEnumOperationalRetryOperationFieldRefInput<$PrismaModel>
@@ -598,23 +581,6 @@ export type EnumPresenceConfirmationStatusNullableWithAggregatesFilter<$PrismaMo
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPresenceConfirmationStatusNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPresenceConfirmationStatusNullableFilter<$PrismaModel>
-}
-
-export type EnumAnalyticsEventGroupFilter<$PrismaModel = never> = {
-  equals?: $Enums.AnalyticsEventGroup | Prisma.EnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  in?: $Enums.AnalyticsEventGroup[] | Prisma.ListEnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  notIn?: $Enums.AnalyticsEventGroup[] | Prisma.ListEnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumAnalyticsEventGroupFilter<$PrismaModel> | $Enums.AnalyticsEventGroup
-}
-
-export type EnumAnalyticsEventGroupWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.AnalyticsEventGroup | Prisma.EnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  in?: $Enums.AnalyticsEventGroup[] | Prisma.ListEnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  notIn?: $Enums.AnalyticsEventGroup[] | Prisma.ListEnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumAnalyticsEventGroupWithAggregatesFilter<$PrismaModel> | $Enums.AnalyticsEventGroup
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumAnalyticsEventGroupFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumAnalyticsEventGroupFilter<$PrismaModel>
 }
 
 export type NestedStringFilter<$PrismaModel = never> = {
@@ -1104,23 +1070,6 @@ export type NestedEnumAuditActorTypeWithAggregatesFilter<$PrismaModel = never> =
   _max?: Prisma.NestedEnumAuditActorTypeFilter<$PrismaModel>
 }
 
-export type NestedEnumVouchTransitionTypeFilter<$PrismaModel = never> = {
-  equals?: $Enums.VouchTransitionType | Prisma.EnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.VouchTransitionType[] | Prisma.ListEnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.VouchTransitionType[] | Prisma.ListEnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumVouchTransitionTypeFilter<$PrismaModel> | $Enums.VouchTransitionType
-}
-
-export type NestedEnumVouchTransitionTypeWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.VouchTransitionType | Prisma.EnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  in?: $Enums.VouchTransitionType[] | Prisma.ListEnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  notIn?: $Enums.VouchTransitionType[] | Prisma.ListEnumVouchTransitionTypeFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumVouchTransitionTypeWithAggregatesFilter<$PrismaModel> | $Enums.VouchTransitionType
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumVouchTransitionTypeFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumVouchTransitionTypeFilter<$PrismaModel>
-}
-
 export type NestedEnumOperationalRetryOperationFilter<$PrismaModel = never> = {
   equals?: $Enums.OperationalRetryOperation | Prisma.EnumOperationalRetryOperationFieldRefInput<$PrismaModel>
   in?: $Enums.OperationalRetryOperation[] | Prisma.ListEnumOperationalRetryOperationFieldRefInput<$PrismaModel>
@@ -1187,23 +1136,6 @@ export type NestedEnumPresenceConfirmationStatusNullableWithAggregatesFilter<$Pr
   _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
   _min?: Prisma.NestedEnumPresenceConfirmationStatusNullableFilter<$PrismaModel>
   _max?: Prisma.NestedEnumPresenceConfirmationStatusNullableFilter<$PrismaModel>
-}
-
-export type NestedEnumAnalyticsEventGroupFilter<$PrismaModel = never> = {
-  equals?: $Enums.AnalyticsEventGroup | Prisma.EnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  in?: $Enums.AnalyticsEventGroup[] | Prisma.ListEnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  notIn?: $Enums.AnalyticsEventGroup[] | Prisma.ListEnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumAnalyticsEventGroupFilter<$PrismaModel> | $Enums.AnalyticsEventGroup
-}
-
-export type NestedEnumAnalyticsEventGroupWithAggregatesFilter<$PrismaModel = never> = {
-  equals?: $Enums.AnalyticsEventGroup | Prisma.EnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  in?: $Enums.AnalyticsEventGroup[] | Prisma.ListEnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  notIn?: $Enums.AnalyticsEventGroup[] | Prisma.ListEnumAnalyticsEventGroupFieldRefInput<$PrismaModel>
-  not?: Prisma.NestedEnumAnalyticsEventGroupWithAggregatesFilter<$PrismaModel> | $Enums.AnalyticsEventGroup
-  _count?: Prisma.NestedIntFilter<$PrismaModel>
-  _min?: Prisma.NestedEnumAnalyticsEventGroupFilter<$PrismaModel>
-  _max?: Prisma.NestedEnumAnalyticsEventGroupFilter<$PrismaModel>
 }
 
 

@@ -127,6 +127,7 @@ const forbiddenRoutePrefixes = [
 
 const allowedApiRouteFiles = new Set([
   "app/api/clerk/webhooks/route.ts",
+  "app/api/cron/vouches/reconcile/route.ts",
   "app/api/stripe/webhooks/route.ts",
 ])
 

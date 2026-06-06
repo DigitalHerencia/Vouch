@@ -5,11 +5,6 @@ import type {
   VouchReadinessInput,
 } from "@/types/authTypes"
 
-type AdminAuthzUser = {
-  isAdmin: boolean
-  status: string
-}
-
 function isActive(input: VouchReadinessInput): boolean {
   return input.userStatus !== "disabled"
 }
@@ -27,9 +22,7 @@ export function canViewVouch(input: VouchAccessInput): boolean {
     return false
   }
 
-  return (
-    input.isAdmin === true || input.userId === input.merchantId || input.userId === input.customerId
-  )
+  return input.userId === input.merchantId || input.userId === input.customerId
 }
 
 export function canCreateVouch(input: VouchReadinessInput): boolean {
@@ -58,10 +51,6 @@ export function canConfirmPresence(input: ConfirmPresenceAuthzInput): boolean {
     input.windowOpen &&
     !input.alreadyConfirmed
   )
-}
-
-export function canViewAdmin(user: AdminAuthzUser | null): boolean {
-  return user?.status === "active" && user.isAdmin
 }
 
 export const canAccessVouch = canViewVouch

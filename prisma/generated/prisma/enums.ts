@@ -45,7 +45,6 @@ export const PresenceConfirmationStatus = {
   customer_confirmed: 'customer_confirmed',
   can_capture: 'can_capture',
   void: 'void',
-  sync_pending: 'sync_pending',
   auto_void: 'auto_void'
 } as const
 
@@ -53,8 +52,7 @@ export type PresenceConfirmationStatus = (typeof PresenceConfirmationStatus)[key
 
 
 export const ConfirmationSubmissionMode = {
-  online: 'online',
-  offline_sync: 'offline_sync'
+  online: 'online'
 } as const
 
 export type ConfirmationSubmissionMode = (typeof ConfirmationSubmissionMode)[keyof typeof ConfirmationSubmissionMode]
@@ -62,8 +60,6 @@ export type ConfirmationSubmissionMode = (typeof ConfirmationSubmissionMode)[key
 
 export const PresenceResolutionSource = {
   online: 'online',
-  offline_sync: 'offline_sync',
-  server_reconciliation: 'server_reconciliation',
   auto_void: 'auto_void'
 } as const
 
@@ -170,30 +166,8 @@ export const AuditActorType = {
 export type AuditActorType = (typeof AuditActorType)[keyof typeof AuditActorType]
 
 
-export const VouchTransitionType = {
-  protocol_fee_paid: 'protocol_fee_paid',
-  deposit_authorization_created: 'deposit_authorization_created',
-  deposit_authorization_requires_capture: 'deposit_authorization_requires_capture',
-  merchant_confirmed: 'merchant_confirmed',
-  customer_confirmed: 'customer_confirmed',
-  presence_can_capture: 'presence_can_capture',
-  presence_void: 'presence_void',
-  capture_succeeded: 'capture_succeeded',
-  authorization_released: 'authorization_released',
-  expired: 'expired',
-  archived: 'archived'
-} as const
-
-export type VouchTransitionType = (typeof VouchTransitionType)[keyof typeof VouchTransitionType]
-
-
 export const OperationalRetryOperation = {
-  sync_offline_confirmation: 'sync_offline_confirmation',
-  reconcile_payment_intent: 'reconcile_payment_intent',
-  reconcile_charge: 'reconcile_charge',
-  reconcile_payout: 'reconcile_payout',
-  auto_void_confirmation: 'auto_void_confirmation',
-  create_recovery_snapshot: 'create_recovery_snapshot'
+  reconcile_payment_intent: 'reconcile_payment_intent'
 } as const
 
 export type OperationalRetryOperation = (typeof OperationalRetryOperation)[keyof typeof OperationalRetryOperation]
@@ -213,22 +187,9 @@ export type OperationalRetryStatus = (typeof OperationalRetryStatus)[keyof typeo
 export const VouchRecoverySnapshotReason = {
   created: 'created',
   before_capture: 'before_capture',
-  offline_confirmation_synced: 'offline_confirmation_synced',
   presence_auto_void: 'presence_auto_void',
   webhook_reconciliation: 'webhook_reconciliation',
   provider_reconciliation: 'provider_reconciliation'
 } as const
 
 export type VouchRecoverySnapshotReason = (typeof VouchRecoverySnapshotReason)[keyof typeof VouchRecoverySnapshotReason]
-
-
-export const AnalyticsEventGroup = {
-  auth: 'auth',
-  onboarding: 'onboarding',
-  vouch: 'vouch',
-  payment: 'payment',
-  dashboard: 'dashboard',
-  system: 'system'
-} as const
-
-export type AnalyticsEventGroup = (typeof AnalyticsEventGroup)[keyof typeof AnalyticsEventGroup]

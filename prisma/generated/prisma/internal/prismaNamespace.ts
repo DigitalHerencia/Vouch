@@ -397,10 +397,8 @@ export const ModelName = {
   ProviderWebhookEvent: 'ProviderWebhookEvent',
   StripeWebhookEvent: 'StripeWebhookEvent',
   AuditEvent: 'AuditEvent',
-  VouchEvent: 'VouchEvent',
   OperationalRetry: 'OperationalRetry',
-  VouchRecoverySnapshot: 'VouchRecoverySnapshot',
-  AnalyticsEvent: 'AnalyticsEvent'
+  VouchRecoverySnapshot: 'VouchRecoverySnapshot'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -416,7 +414,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "paymentCustomer" | "connectedAccount" | "vouch" | "presenceConfirmation" | "presenceConfirmationAttempt" | "paymentIntentRecord" | "chargeRecord" | "refundRecord" | "payoutRecord" | "providerWebhookEvent" | "stripeWebhookEvent" | "auditEvent" | "vouchEvent" | "operationalRetry" | "vouchRecoverySnapshot" | "analyticsEvent"
+    modelProps: "user" | "paymentCustomer" | "connectedAccount" | "vouch" | "presenceConfirmation" | "presenceConfirmationAttempt" | "paymentIntentRecord" | "chargeRecord" | "refundRecord" | "payoutRecord" | "providerWebhookEvent" | "stripeWebhookEvent" | "auditEvent" | "operationalRetry" | "vouchRecoverySnapshot"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1382,80 +1380,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    VouchEvent: {
-      payload: Prisma.$VouchEventPayload<ExtArgs>
-      fields: Prisma.VouchEventFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.VouchEventFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.VouchEventFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload>
-        }
-        findFirst: {
-          args: Prisma.VouchEventFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.VouchEventFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload>
-        }
-        findMany: {
-          args: Prisma.VouchEventFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload>[]
-        }
-        create: {
-          args: Prisma.VouchEventCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload>
-        }
-        createMany: {
-          args: Prisma.VouchEventCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.VouchEventCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload>[]
-        }
-        delete: {
-          args: Prisma.VouchEventDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload>
-        }
-        update: {
-          args: Prisma.VouchEventUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload>
-        }
-        deleteMany: {
-          args: Prisma.VouchEventDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.VouchEventUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.VouchEventUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload>[]
-        }
-        upsert: {
-          args: Prisma.VouchEventUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$VouchEventPayload>
-        }
-        aggregate: {
-          args: Prisma.VouchEventAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateVouchEvent>
-        }
-        groupBy: {
-          args: Prisma.VouchEventGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.VouchEventGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.VouchEventCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.VouchEventCountAggregateOutputType> | number
-        }
-      }
-    }
     OperationalRetry: {
       payload: Prisma.$OperationalRetryPayload<ExtArgs>
       fields: Prisma.OperationalRetryFieldRefs
@@ -1604,80 +1528,6 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    AnalyticsEvent: {
-      payload: Prisma.$AnalyticsEventPayload<ExtArgs>
-      fields: Prisma.AnalyticsEventFieldRefs
-      operations: {
-        findUnique: {
-          args: Prisma.AnalyticsEventFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload> | null
-        }
-        findUniqueOrThrow: {
-          args: Prisma.AnalyticsEventFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload>
-        }
-        findFirst: {
-          args: Prisma.AnalyticsEventFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload> | null
-        }
-        findFirstOrThrow: {
-          args: Prisma.AnalyticsEventFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload>
-        }
-        findMany: {
-          args: Prisma.AnalyticsEventFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload>[]
-        }
-        create: {
-          args: Prisma.AnalyticsEventCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload>
-        }
-        createMany: {
-          args: Prisma.AnalyticsEventCreateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        createManyAndReturn: {
-          args: Prisma.AnalyticsEventCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload>[]
-        }
-        delete: {
-          args: Prisma.AnalyticsEventDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload>
-        }
-        update: {
-          args: Prisma.AnalyticsEventUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload>
-        }
-        deleteMany: {
-          args: Prisma.AnalyticsEventDeleteManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateMany: {
-          args: Prisma.AnalyticsEventUpdateManyArgs<ExtArgs>
-          result: BatchPayload
-        }
-        updateManyAndReturn: {
-          args: Prisma.AnalyticsEventUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload>[]
-        }
-        upsert: {
-          args: Prisma.AnalyticsEventUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$AnalyticsEventPayload>
-        }
-        aggregate: {
-          args: Prisma.AnalyticsEventAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateAnalyticsEvent>
-        }
-        groupBy: {
-          args: Prisma.AnalyticsEventGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AnalyticsEventGroupByOutputType>[]
-        }
-        count: {
-          args: Prisma.AnalyticsEventCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AnalyticsEventCountAggregateOutputType> | number
-        }
-      }
-    }
   }
 } & {
   other: {
@@ -1811,9 +1661,6 @@ export const PresenceConfirmationScalarFieldEnum = {
   customerCodeVerified: 'customerCodeVerified',
   resolutionSource: 'resolutionSource',
   failureReason: 'failureReason',
-  retryUntil: 'retryUntil',
-  lastRetryAt: 'lastRetryAt',
-  retryCount: 'retryCount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -1828,7 +1675,6 @@ export const PresenceConfirmationAttemptScalarFieldEnum = {
   submittedAt: 'submittedAt',
   confirmedAt: 'confirmedAt',
   submissionMode: 'submissionMode',
-  payloadHash: 'payloadHash',
   nonce: 'nonce',
   accepted: 'accepted',
   rejectedReason: 'rejectedReason'
@@ -1981,17 +1827,6 @@ export const AuditEventScalarFieldEnum = {
 export type AuditEventScalarFieldEnum = (typeof AuditEventScalarFieldEnum)[keyof typeof AuditEventScalarFieldEnum]
 
 
-export const VouchEventScalarFieldEnum = {
-  id: 'id',
-  vouchId: 'vouchId',
-  type: 'type',
-  metadata: 'metadata',
-  createdAt: 'createdAt'
-} as const
-
-export type VouchEventScalarFieldEnum = (typeof VouchEventScalarFieldEnum)[keyof typeof VouchEventScalarFieldEnum]
-
-
 export const OperationalRetryScalarFieldEnum = {
   id: 'id',
   vouchId: 'vouchId',
@@ -2051,18 +1886,6 @@ export const VouchRecoverySnapshotScalarFieldEnum = {
 } as const
 
 export type VouchRecoverySnapshotScalarFieldEnum = (typeof VouchRecoverySnapshotScalarFieldEnum)[keyof typeof VouchRecoverySnapshotScalarFieldEnum]
-
-
-export const AnalyticsEventScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  eventName: 'eventName',
-  eventGroup: 'eventGroup',
-  properties: 'properties',
-  createdAt: 'createdAt'
-} as const
-
-export type AnalyticsEventScalarFieldEnum = (typeof AnalyticsEventScalarFieldEnum)[keyof typeof AnalyticsEventScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -2400,20 +2223,6 @@ export type ListEnumAuditActorTypeFieldRefInput<$PrismaModel> = FieldRefInputTyp
 
 
 /**
- * Reference to a field of type 'VouchTransitionType'
- */
-export type EnumVouchTransitionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VouchTransitionType'>
-    
-
-
-/**
- * Reference to a field of type 'VouchTransitionType[]'
- */
-export type ListEnumVouchTransitionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VouchTransitionType[]'>
-    
-
-
-/**
  * Reference to a field of type 'OperationalRetryOperation'
  */
 export type EnumOperationalRetryOperationFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'OperationalRetryOperation'>
@@ -2452,20 +2261,6 @@ export type EnumVouchRecoverySnapshotReasonFieldRefInput<$PrismaModel> = FieldRe
  * Reference to a field of type 'VouchRecoverySnapshotReason[]'
  */
 export type ListEnumVouchRecoverySnapshotReasonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'VouchRecoverySnapshotReason[]'>
-    
-
-
-/**
- * Reference to a field of type 'AnalyticsEventGroup'
- */
-export type EnumAnalyticsEventGroupFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnalyticsEventGroup'>
-    
-
-
-/**
- * Reference to a field of type 'AnalyticsEventGroup[]'
- */
-export type ListEnumAnalyticsEventGroupFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AnalyticsEventGroup[]'>
     
 
 
@@ -2605,10 +2400,8 @@ export type GlobalOmitConfig = {
   providerWebhookEvent?: Prisma.ProviderWebhookEventOmit
   stripeWebhookEvent?: Prisma.StripeWebhookEventOmit
   auditEvent?: Prisma.AuditEventOmit
-  vouchEvent?: Prisma.VouchEventOmit
   operationalRetry?: Prisma.OperationalRetryOmit
   vouchRecoverySnapshot?: Prisma.VouchRecoverySnapshotOmit
-  analyticsEvent?: Prisma.AnalyticsEventOmit
 }
 
 /* Types for Logging */

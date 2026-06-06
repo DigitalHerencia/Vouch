@@ -31,7 +31,6 @@ export type PresenceConfirmationAttemptMinAggregateOutputType = {
   submittedAt: Date | null
   confirmedAt: Date | null
   submissionMode: $Enums.ConfirmationSubmissionMode | null
-  payloadHash: string | null
   nonce: string | null
   accepted: boolean | null
   rejectedReason: string | null
@@ -44,7 +43,6 @@ export type PresenceConfirmationAttemptMaxAggregateOutputType = {
   submittedAt: Date | null
   confirmedAt: Date | null
   submissionMode: $Enums.ConfirmationSubmissionMode | null
-  payloadHash: string | null
   nonce: string | null
   accepted: boolean | null
   rejectedReason: string | null
@@ -57,7 +55,6 @@ export type PresenceConfirmationAttemptCountAggregateOutputType = {
   submittedAt: number
   confirmedAt: number
   submissionMode: number
-  payloadHash: number
   nonce: number
   accepted: number
   rejectedReason: number
@@ -72,7 +69,6 @@ export type PresenceConfirmationAttemptMinAggregateInputType = {
   submittedAt?: true
   confirmedAt?: true
   submissionMode?: true
-  payloadHash?: true
   nonce?: true
   accepted?: true
   rejectedReason?: true
@@ -85,7 +81,6 @@ export type PresenceConfirmationAttemptMaxAggregateInputType = {
   submittedAt?: true
   confirmedAt?: true
   submissionMode?: true
-  payloadHash?: true
   nonce?: true
   accepted?: true
   rejectedReason?: true
@@ -98,7 +93,6 @@ export type PresenceConfirmationAttemptCountAggregateInputType = {
   submittedAt?: true
   confirmedAt?: true
   submissionMode?: true
-  payloadHash?: true
   nonce?: true
   accepted?: true
   rejectedReason?: true
@@ -184,7 +178,6 @@ export type PresenceConfirmationAttemptGroupByOutputType = {
   submittedAt: Date
   confirmedAt: Date
   submissionMode: $Enums.ConfirmationSubmissionMode
-  payloadHash: string | null
   nonce: string
   accepted: boolean
   rejectedReason: string | null
@@ -218,7 +211,6 @@ export type PresenceConfirmationAttemptWhereInput = {
   submittedAt?: Prisma.DateTimeFilter<"PresenceConfirmationAttempt"> | Date | string
   confirmedAt?: Prisma.DateTimeFilter<"PresenceConfirmationAttempt"> | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeFilter<"PresenceConfirmationAttempt"> | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.StringNullableFilter<"PresenceConfirmationAttempt"> | string | null
   nonce?: Prisma.StringFilter<"PresenceConfirmationAttempt"> | string
   accepted?: Prisma.BoolFilter<"PresenceConfirmationAttempt"> | boolean
   rejectedReason?: Prisma.StringNullableFilter<"PresenceConfirmationAttempt"> | string | null
@@ -232,7 +224,6 @@ export type PresenceConfirmationAttemptOrderByWithRelationInput = {
   submittedAt?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
   submissionMode?: Prisma.SortOrder
-  payloadHash?: Prisma.SortOrderInput | Prisma.SortOrder
   nonce?: Prisma.SortOrder
   accepted?: Prisma.SortOrder
   rejectedReason?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -250,7 +241,6 @@ export type PresenceConfirmationAttemptWhereUniqueInput = Prisma.AtLeast<{
   submittedAt?: Prisma.DateTimeFilter<"PresenceConfirmationAttempt"> | Date | string
   confirmedAt?: Prisma.DateTimeFilter<"PresenceConfirmationAttempt"> | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeFilter<"PresenceConfirmationAttempt"> | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.StringNullableFilter<"PresenceConfirmationAttempt"> | string | null
   nonce?: Prisma.StringFilter<"PresenceConfirmationAttempt"> | string
   accepted?: Prisma.BoolFilter<"PresenceConfirmationAttempt"> | boolean
   rejectedReason?: Prisma.StringNullableFilter<"PresenceConfirmationAttempt"> | string | null
@@ -264,7 +254,6 @@ export type PresenceConfirmationAttemptOrderByWithAggregationInput = {
   submittedAt?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
   submissionMode?: Prisma.SortOrder
-  payloadHash?: Prisma.SortOrderInput | Prisma.SortOrder
   nonce?: Prisma.SortOrder
   accepted?: Prisma.SortOrder
   rejectedReason?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -283,7 +272,6 @@ export type PresenceConfirmationAttemptScalarWhereWithAggregatesInput = {
   submittedAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmationAttempt"> | Date | string
   confirmedAt?: Prisma.DateTimeWithAggregatesFilter<"PresenceConfirmationAttempt"> | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeWithAggregatesFilter<"PresenceConfirmationAttempt"> | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.StringNullableWithAggregatesFilter<"PresenceConfirmationAttempt"> | string | null
   nonce?: Prisma.StringWithAggregatesFilter<"PresenceConfirmationAttempt"> | string
   accepted?: Prisma.BoolWithAggregatesFilter<"PresenceConfirmationAttempt"> | boolean
   rejectedReason?: Prisma.StringNullableWithAggregatesFilter<"PresenceConfirmationAttempt"> | string | null
@@ -295,7 +283,6 @@ export type PresenceConfirmationAttemptCreateInput = {
   submittedAt?: Date | string
   confirmedAt: Date | string
   submissionMode?: $Enums.ConfirmationSubmissionMode
-  payloadHash?: string | null
   nonce: string
   accepted?: boolean
   rejectedReason?: string | null
@@ -309,7 +296,6 @@ export type PresenceConfirmationAttemptUncheckedCreateInput = {
   submittedAt?: Date | string
   confirmedAt: Date | string
   submissionMode?: $Enums.ConfirmationSubmissionMode
-  payloadHash?: string | null
   nonce: string
   accepted?: boolean
   rejectedReason?: string | null
@@ -321,7 +307,6 @@ export type PresenceConfirmationAttemptUpdateInput = {
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeFieldUpdateOperationsInput | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nonce?: Prisma.StringFieldUpdateOperationsInput | string
   accepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -335,7 +320,6 @@ export type PresenceConfirmationAttemptUncheckedUpdateInput = {
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeFieldUpdateOperationsInput | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nonce?: Prisma.StringFieldUpdateOperationsInput | string
   accepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -348,7 +332,6 @@ export type PresenceConfirmationAttemptCreateManyInput = {
   submittedAt?: Date | string
   confirmedAt: Date | string
   submissionMode?: $Enums.ConfirmationSubmissionMode
-  payloadHash?: string | null
   nonce: string
   accepted?: boolean
   rejectedReason?: string | null
@@ -360,7 +343,6 @@ export type PresenceConfirmationAttemptUpdateManyMutationInput = {
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeFieldUpdateOperationsInput | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nonce?: Prisma.StringFieldUpdateOperationsInput | string
   accepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -373,7 +355,6 @@ export type PresenceConfirmationAttemptUncheckedUpdateManyInput = {
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeFieldUpdateOperationsInput | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nonce?: Prisma.StringFieldUpdateOperationsInput | string
   accepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -402,7 +383,6 @@ export type PresenceConfirmationAttemptCountOrderByAggregateInput = {
   submittedAt?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
   submissionMode?: Prisma.SortOrder
-  payloadHash?: Prisma.SortOrder
   nonce?: Prisma.SortOrder
   accepted?: Prisma.SortOrder
   rejectedReason?: Prisma.SortOrder
@@ -415,7 +395,6 @@ export type PresenceConfirmationAttemptMaxOrderByAggregateInput = {
   submittedAt?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
   submissionMode?: Prisma.SortOrder
-  payloadHash?: Prisma.SortOrder
   nonce?: Prisma.SortOrder
   accepted?: Prisma.SortOrder
   rejectedReason?: Prisma.SortOrder
@@ -428,7 +407,6 @@ export type PresenceConfirmationAttemptMinOrderByAggregateInput = {
   submittedAt?: Prisma.SortOrder
   confirmedAt?: Prisma.SortOrder
   submissionMode?: Prisma.SortOrder
-  payloadHash?: Prisma.SortOrder
   nonce?: Prisma.SortOrder
   accepted?: Prisma.SortOrder
   rejectedReason?: Prisma.SortOrder
@@ -490,7 +468,6 @@ export type PresenceConfirmationAttemptCreateWithoutPresenceConfirmationInput = 
   submittedAt?: Date | string
   confirmedAt: Date | string
   submissionMode?: $Enums.ConfirmationSubmissionMode
-  payloadHash?: string | null
   nonce: string
   accepted?: boolean
   rejectedReason?: string | null
@@ -502,7 +479,6 @@ export type PresenceConfirmationAttemptUncheckedCreateWithoutPresenceConfirmatio
   submittedAt?: Date | string
   confirmedAt: Date | string
   submissionMode?: $Enums.ConfirmationSubmissionMode
-  payloadHash?: string | null
   nonce: string
   accepted?: boolean
   rejectedReason?: string | null
@@ -544,7 +520,6 @@ export type PresenceConfirmationAttemptScalarWhereInput = {
   submittedAt?: Prisma.DateTimeFilter<"PresenceConfirmationAttempt"> | Date | string
   confirmedAt?: Prisma.DateTimeFilter<"PresenceConfirmationAttempt"> | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeFilter<"PresenceConfirmationAttempt"> | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.StringNullableFilter<"PresenceConfirmationAttempt"> | string | null
   nonce?: Prisma.StringFilter<"PresenceConfirmationAttempt"> | string
   accepted?: Prisma.BoolFilter<"PresenceConfirmationAttempt"> | boolean
   rejectedReason?: Prisma.StringNullableFilter<"PresenceConfirmationAttempt"> | string | null
@@ -556,7 +531,6 @@ export type PresenceConfirmationAttemptCreateManyPresenceConfirmationInput = {
   submittedAt?: Date | string
   confirmedAt: Date | string
   submissionMode?: $Enums.ConfirmationSubmissionMode
-  payloadHash?: string | null
   nonce: string
   accepted?: boolean
   rejectedReason?: string | null
@@ -568,7 +542,6 @@ export type PresenceConfirmationAttemptUpdateWithoutPresenceConfirmationInput = 
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeFieldUpdateOperationsInput | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nonce?: Prisma.StringFieldUpdateOperationsInput | string
   accepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -580,7 +553,6 @@ export type PresenceConfirmationAttemptUncheckedUpdateWithoutPresenceConfirmatio
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeFieldUpdateOperationsInput | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nonce?: Prisma.StringFieldUpdateOperationsInput | string
   accepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -592,7 +564,6 @@ export type PresenceConfirmationAttemptUncheckedUpdateManyWithoutPresenceConfirm
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   confirmedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   submissionMode?: Prisma.EnumConfirmationSubmissionModeFieldUpdateOperationsInput | $Enums.ConfirmationSubmissionMode
-  payloadHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   nonce?: Prisma.StringFieldUpdateOperationsInput | string
   accepted?: Prisma.BoolFieldUpdateOperationsInput | boolean
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -607,7 +578,6 @@ export type PresenceConfirmationAttemptSelect<ExtArgs extends runtime.Types.Exte
   submittedAt?: boolean
   confirmedAt?: boolean
   submissionMode?: boolean
-  payloadHash?: boolean
   nonce?: boolean
   accepted?: boolean
   rejectedReason?: boolean
@@ -621,7 +591,6 @@ export type PresenceConfirmationAttemptSelectCreateManyAndReturn<ExtArgs extends
   submittedAt?: boolean
   confirmedAt?: boolean
   submissionMode?: boolean
-  payloadHash?: boolean
   nonce?: boolean
   accepted?: boolean
   rejectedReason?: boolean
@@ -635,7 +604,6 @@ export type PresenceConfirmationAttemptSelectUpdateManyAndReturn<ExtArgs extends
   submittedAt?: boolean
   confirmedAt?: boolean
   submissionMode?: boolean
-  payloadHash?: boolean
   nonce?: boolean
   accepted?: boolean
   rejectedReason?: boolean
@@ -649,13 +617,12 @@ export type PresenceConfirmationAttemptSelectScalar = {
   submittedAt?: boolean
   confirmedAt?: boolean
   submissionMode?: boolean
-  payloadHash?: boolean
   nonce?: boolean
   accepted?: boolean
   rejectedReason?: boolean
 }
 
-export type PresenceConfirmationAttemptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "presenceConfirmationId" | "participantRole" | "submittedAt" | "confirmedAt" | "submissionMode" | "payloadHash" | "nonce" | "accepted" | "rejectedReason", ExtArgs["result"]["presenceConfirmationAttempt"]>
+export type PresenceConfirmationAttemptOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "presenceConfirmationId" | "participantRole" | "submittedAt" | "confirmedAt" | "submissionMode" | "nonce" | "accepted" | "rejectedReason", ExtArgs["result"]["presenceConfirmationAttempt"]>
 export type PresenceConfirmationAttemptInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   presenceConfirmation?: boolean | Prisma.PresenceConfirmationDefaultArgs<ExtArgs>
 }
@@ -678,7 +645,6 @@ export type $PresenceConfirmationAttemptPayload<ExtArgs extends runtime.Types.Ex
     submittedAt: Date
     confirmedAt: Date
     submissionMode: $Enums.ConfirmationSubmissionMode
-    payloadHash: string | null
     nonce: string
     accepted: boolean
     rejectedReason: string | null
@@ -1112,7 +1078,6 @@ export interface PresenceConfirmationAttemptFieldRefs {
   readonly submittedAt: Prisma.FieldRef<"PresenceConfirmationAttempt", 'DateTime'>
   readonly confirmedAt: Prisma.FieldRef<"PresenceConfirmationAttempt", 'DateTime'>
   readonly submissionMode: Prisma.FieldRef<"PresenceConfirmationAttempt", 'ConfirmationSubmissionMode'>
-  readonly payloadHash: Prisma.FieldRef<"PresenceConfirmationAttempt", 'String'>
   readonly nonce: Prisma.FieldRef<"PresenceConfirmationAttempt", 'String'>
   readonly accepted: Prisma.FieldRef<"PresenceConfirmationAttempt", 'Boolean'>
   readonly rejectedReason: Prisma.FieldRef<"PresenceConfirmationAttempt", 'String'>

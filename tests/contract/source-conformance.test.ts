@@ -76,7 +76,7 @@ const obsoleteVouchStatusValues = [
   '"refund_failed"',
 ]
 
-const forbiddenConfirmationMethods = ['"manual"', '"gps"', '"system"']
+const forbiddenConfirmationMethods = ['"manual"', '"gps"', '"system"', '"offline_code_exchange"']
 const forbiddenParticipantRoles = ['"payer"', '"payee"']
 
 function walk(directory: string): string[] {

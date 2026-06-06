@@ -22,10 +22,8 @@ export const auditEntityTypeSchema = z.enum([
   "ProviderWebhookEvent",
   "StripeWebhookEvent",
   "AuditEvent",
-  "VouchEvent",
   "OperationalRetry",
   "VouchRecoverySnapshot",
-  "AnalyticsEvent",
 ])
 
 export const auditEventNameSchema = z.enum([

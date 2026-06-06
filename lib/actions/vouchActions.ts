@@ -28,7 +28,10 @@ export async function createVouch(input: unknown) {
   return createVouchWorkflow(input)
 }
 
-export async function claimCustomerAuthorizationCheckout(input: { checkoutSessionId: string }) {
+export async function claimCustomerAuthorizationCheckout(input: {
+  checkoutSessionId: string
+  revalidate?: boolean
+}) {
   return claimCustomerAuthorizationCheckoutWorkflow(input)
 }
 

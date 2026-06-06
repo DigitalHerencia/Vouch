@@ -45,6 +45,7 @@ export function mapDashboardVouchCards(records: DashboardVouchRecord[]): VouchCa
 
 export function mapDashboardSummaryDTO(input: {
   userId: string
+  counts: DashboardSummaryDTO["counts"]
   drafts: DashboardVouchRecord[]
   actionRequired: DashboardVouchRecord[]
   active: DashboardVouchRecord[]
@@ -61,14 +62,7 @@ export function mapDashboardSummaryDTO(input: {
 
   return {
     userId: input.userId,
-    counts: {
-      drafts: drafts.length,
-      actionRequired: actionRequired.length,
-      active: active.length,
-      completed: completed.length,
-      expired: expired.length,
-      archived: archived.length,
-    },
+    counts: input.counts,
     sections: {
       drafts,
       actionRequired,

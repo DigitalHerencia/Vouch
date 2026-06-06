@@ -29,9 +29,9 @@ function normalizeReadiness(record: ReadinessRecord | null) {
   const connectedAccount = record?.connectedAccount ?? null
   const merchantAccountReady = Boolean(
     connectedAccount?.stripeAccountId &&
-      connectedAccount.chargesEnabled &&
-      connectedAccount.detailsSubmitted &&
-      connectedAccount.payoutsEnabled
+    connectedAccount.chargesEnabled &&
+    connectedAccount.detailsSubmitted &&
+    connectedAccount.payoutsEnabled
   )
 
   const state = {

@@ -4,7 +4,7 @@ import type { ParticipantRole, PrismaClient } from "@/prisma/generated/prisma/cl
 
 type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">
 
-type ConfirmationMethod = "code_exchange" | "offline_code_exchange"
+type ConfirmationMethod = "code_exchange"
 type AggregateConfirmationStatus =
   | "none_confirmed"
   | "merchant_confirmed"
@@ -26,7 +26,6 @@ type CreatePresenceConfirmationTxInput = AssertNoDuplicateConfirmationTxInput & 
   serverReceivedAt?: Date
   timeBucket?: number | null
   clockSkewAccepted?: boolean
-  offlinePayloadHash?: string | null
 }
 
 const PRESENCE_CONFIRMATION_SELECT = {
@@ -133,8 +132,7 @@ export async function createPresenceConfirmationTx(
       presenceConfirmationId: presence.id,
       participantRole: input.participantRole,
       confirmedAt,
-      submissionMode: input.method === "offline_code_exchange" ? "offline_sync" : "online",
-      payloadHash: input.offlinePayloadHash ?? null,
+      submissionMode: "online",
       nonce: `${input.participantRole}:${serverReceivedAt.getTime()}`,
       accepted: true,
     },

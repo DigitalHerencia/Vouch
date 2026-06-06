@@ -19,7 +19,6 @@ type CreateVouchTxInput = {
   appointmentStartsAt: Date
   disclaimerAcceptedAt?: Date
   createAsDraft?: boolean
-  createAsSent?: boolean
 }
 
 type BindCustomerToVouchTxInput = {

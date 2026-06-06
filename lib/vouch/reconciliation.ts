@@ -150,8 +150,9 @@ async function expireClosedConfirmationWindows(now: Date): Promise<number> {
           status: { in: ["pending", "merchant_confirmed", "customer_confirmed"] },
         },
         data: {
-          status: "sync_pending",
-          retryUntil: new Date(candidate.appointmentAt.getTime() + DAY_MS),
+          status: "void",
+          voidedAt: now,
+          resolutionSource: "auto_void",
         },
       })
       await tx.auditEvent.create({
@@ -183,7 +184,11 @@ async function retryPendingCaptures(now: Date): Promise<number> {
       vouch: {
         status: { in: ["can_capture", "expired"] },
         appointmentAt: { gt: cutoff },
-        presenceConfirmation: { status: "can_capture" },
+        presenceConfirmation: {
+          status: "can_capture",
+          merchantConfirmedAt: { not: null },
+          customerConfirmedAt: { not: null },
+        },
       },
     },
     orderBy: { nextAttemptAt: "asc" },
@@ -193,12 +198,47 @@ async function retryPendingCaptures(now: Date): Promise<number> {
       vouchId: true,
       entityId: true,
       attemptCount: true,
+      vouch: {
+        select: {
+          presenceConfirmation: {
+            select: {
+              windowOpensAt: true,
+              windowClosesAt: true,
+              merchantConfirmedAt: true,
+              customerConfirmedAt: true,
+            },
+          },
+        },
+      },
     },
   })
 
   let captured = 0
   for (const retry of retries) {
     if (!retry.vouchId) continue
+    const presence = retry.vouch?.presenceConfirmation
+    if (
+      !presence?.merchantConfirmedAt ||
+      !presence.customerConfirmedAt ||
+      presence.merchantConfirmedAt < presence.windowOpensAt ||
+      presence.merchantConfirmedAt > presence.windowClosesAt ||
+      presence.customerConfirmedAt < presence.windowOpensAt ||
+      presence.customerConfirmedAt > presence.windowClosesAt
+    ) {
+      continue
+    }
+
+    const claim = await prisma.operationalRetry.updateMany({
+      where: {
+        id: retry.id,
+        status: { in: ["pending", "failed"] },
+        attemptCount: { lt: MAX_CAPTURE_RETRIES },
+        OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+      },
+      data: { status: "processing", lockedAt: now },
+    })
+    if (claim.count === 0) continue
+
     const payment = await prisma.paymentIntentRecord.findFirst({
       where: {
         id: retry.entityId,
@@ -208,7 +248,13 @@ async function retryPendingCaptures(now: Date): Promise<number> {
       },
       select: { stripePaymentIntentId: true, stripeAccountId: true },
     })
-    if (!payment?.stripePaymentIntentId || !payment.stripeAccountId) continue
+    if (!payment?.stripePaymentIntentId || !payment.stripeAccountId) {
+      await prisma.operationalRetry.update({
+        where: { id: retry.id },
+        data: { status: "pending", lockedAt: null },
+      })
+      continue
+    }
 
     try {
       const result = await captureStripePayment({
@@ -235,6 +281,7 @@ async function retryPendingCaptures(now: Date): Promise<number> {
             lastAttemptAt: now,
             completedAt: now,
             failureReason: null,
+            lockedAt: null,
           },
         })
       })
@@ -248,6 +295,7 @@ async function retryPendingCaptures(now: Date): Promise<number> {
           lastAttemptAt: now,
           nextAttemptAt: new Date(now.getTime() + 5 * 60 * 1000),
           failureReason: error instanceof Error ? error.message : String(error),
+          lockedAt: null,
         },
       })
     }
@@ -359,7 +407,6 @@ async function autoVoidPastGracePeriod(now: Date): Promise<number> {
           windowOpensAt: candidate.confirmationOpensAt,
           windowClosesAt: candidate.confirmationExpiresAt,
           voidedAt: now,
-          retryUntil: new Date(candidate.appointmentAt.getTime() + DAY_MS),
           resolutionSource: "auto_void",
         },
         update: {

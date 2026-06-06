@@ -46,7 +46,6 @@ export type VouchAccessInput = {
   userId?: string | null
   merchantId: string
   customerId?: string | null
-  isAdmin?: boolean
 }
 
 export type VouchReadinessInput = {
@@ -78,7 +77,6 @@ export interface AuthzContext {
   contextualRoles: ContextualRole[]
   capabilities: AuthCapability[]
   isAuthenticated: boolean
-  isAdmin: boolean
   userStatus: UserStatus | null
 }
 
@@ -87,7 +85,6 @@ export interface SessionContext {
   isAuthenticated: boolean
   authz: AuthzContext
   role: AuthzContext["baseRole"]
-  isAdmin: boolean
 }
 
 export interface SessionUser {

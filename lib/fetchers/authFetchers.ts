@@ -7,14 +7,9 @@ import { unstable_noStore as noStore } from "next/cache"
 
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
-import {
-  getCurrentClerkAuth,
-  getCurrentClerkUser,
-  mapClerkUserToLocalInput,
-} from "@/lib/auth/clerk"
+import { getCurrentClerkAuth } from "@/lib/auth/clerk"
 import { prisma } from "@/lib/db/prisma"
 import { currentUserAuthSelect } from "@/lib/db/selects/auth.selects"
-import { upsertUserFromClerkTx } from "@/lib/db/transactions/authTransactions"
 
 type CurrentUserAuthRecord = Prisma.UserGetPayload<{ select: typeof currentUserAuthSelect }>
 
@@ -25,20 +20,6 @@ export type CurrentUser = {
   phone: string | null
   displayName: string | null
   status: "active" | "disabled"
-  isAdmin: boolean
-}
-
-function isAdminFromClaims(sessionClaims: unknown): boolean {
-  if (!sessionClaims || typeof sessionClaims !== "object") {
-    return false
-  }
-
-  const claims = sessionClaims as {
-    publicMetadata?: { role?: unknown; isAdmin?: unknown }
-    metadata?: { role?: unknown; isAdmin?: unknown }
-  }
-  const metadata = claims.publicMetadata ?? claims.metadata
-  return metadata?.role === "admin" || metadata?.isAdmin === true
 }
 
 function toIso(value: Date | null | undefined) {
@@ -68,7 +49,6 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
     phone: record.phone,
     displayName: record.displayName,
     status: record.status === "active" ? ("active" as const) : ("disabled" as const),
-    isAdmin: false,
     createdAt: toIso(record.createdAt),
     updatedAt: toIso(record.updatedAt),
     readiness: {
@@ -87,32 +67,12 @@ export async function getCurrentUser() {
   const session = await getCurrentClerkAuth()
   if (!session.userId) return null
 
-  let user = await prisma.user.findUnique({
+  const user = await prisma.user.findUnique({
     where: { clerkUserId: session.userId },
     select: currentUserAuthSelect,
   })
 
-  if (!user) {
-    const clerkUser = await getCurrentClerkUser()
-
-    if (clerkUser) {
-      await upsertUserFromClerkTx(prisma, mapClerkUserToLocalInput(clerkUser))
-
-      user = await prisma.user.findUnique({
-        where: { clerkUserId: session.userId },
-        select: currentUserAuthSelect,
-      })
-    }
-  }
-
-  const mapped = mapCurrentUser(user)
-
-  return mapped
-    ? {
-        ...mapped,
-        isAdmin: isAdminFromClaims(session.sessionClaims),
-      }
-    : null
+  return mapCurrentUser(user)
 }
 
 export async function requireUser() {

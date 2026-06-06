@@ -3,40 +3,12 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import {
-  getCurrentClerkUser,
-  mapClerkUserToLocalInput,
-  type LocalUserSyncInput,
-} from "@/lib/auth/clerk"
+import { getCurrentClerkAuth } from "@/lib/auth/clerk"
 import { prisma } from "@/lib/db/prisma"
-import {
-  createDefaultVerificationProfileTx,
-  recordTermsAcceptanceTx,
-  upsertUserFromClerkTx,
-} from "@/lib/db/transactions/authTransactions"
+import { recordTermsAcceptanceTx } from "@/lib/db/transactions/authTransactions"
 import { getClientIpHash, getRequestId, getUserAgentHash } from "@/lib/security/request"
 
 const CURRENT_TERMS_VERSION = "2026-05-22"
-
-async function syncClerkUser(input: LocalUserSyncInput) {
-  const user = await prisma.$transaction(async (tx) => {
-    const syncedUser = await upsertUserFromClerkTx(tx, input)
-    await createDefaultVerificationProfileTx(tx, { userId: syncedUser.id })
-    await tx.auditEvent.create({
-      data: {
-        eventName: "user.synced",
-        actorType: "clerk",
-        entityType: "User",
-        entityId: syncedUser.id,
-        metadata: { clerk_user_id: syncedUser.clerkUserId },
-      },
-    })
-    return syncedUser
-  })
-
-  revalidatePath("/dashboard")
-  return { ok: true as const, data: { userId: user.id } }
-}
 
 export async function completeSignUpWithTermsAcceptance(input: { acceptedUserAgreement: boolean }) {
   if (input.acceptedUserAgreement !== true) {
@@ -73,14 +45,20 @@ export async function completeSignUpWithTermsAcceptance(input: { acceptedUserAgr
 }
 
 async function ensureLocalUserForSession() {
-  const clerkUser = await getCurrentClerkUser()
-  if (!clerkUser) {
+  const auth = await getCurrentClerkAuth()
+  if (!auth.userId) {
     return { ok: false as const, code: "UNAUTHENTICATED" }
   }
 
-  return syncClerkUser(mapClerkUserToLocalInput(clerkUser))
-}
-
-export async function ensureLocalUserForCurrentSession() {
-  return ensureLocalUserForSession()
+  const user = await prisma.user.findUnique({
+    where: { clerkUserId: auth.userId },
+    select: { id: true },
+  })
+  return user
+    ? { ok: true as const, data: { userId: user.id } }
+    : {
+        ok: false as const,
+        code: "LOCAL_USER_SYNC_PENDING" as const,
+        message: "Account setup is still syncing. Try again shortly.",
+      }
 }

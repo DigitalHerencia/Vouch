@@ -9,7 +9,6 @@ describe("authz policies", () => {
         userId: "user_merchant",
         merchantId: "user_merchant",
         customerId: "user_customer",
-        isAdmin: false,
       })
     ).toBe(true)
   })
@@ -20,7 +19,6 @@ describe("authz policies", () => {
         userId: "unrelated",
         merchantId: "user_merchant",
         customerId: "user_customer",
-        isAdmin: false,
       })
     ).toBe(false)
   })
@@ -31,7 +29,6 @@ describe("authz policies", () => {
         userId: null,
         merchantId: "user_merchant",
         customerId: "user_customer",
-        isAdmin: false,
       })
     ).toBe(false)
   })
@@ -72,13 +69,5 @@ describe("authz policies", () => {
         alreadyConfirmed: false,
       })
     ).toBe(true)
-  })
-
-  it("requires admin capability for admin views", async () => {
-    const { canViewAdmin } = await import("@/lib/authz/policies")
-
-    expect(canViewAdmin({ status: "active", isAdmin: false })).toBe(false)
-    expect(canViewAdmin({ status: "disabled", isAdmin: true })).toBe(false)
-    expect(canViewAdmin({ status: "active", isAdmin: true })).toBe(true)
   })
 })

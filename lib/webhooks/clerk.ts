@@ -7,7 +7,6 @@ import {
 } from "@/lib/auth/clerk-webhook-helpers"
 import { prisma } from "@/lib/db/prisma"
 import {
-  createDefaultVerificationProfileTx,
   softDisableUserFromClerkDeletedTx,
   upsertUserFromClerkTx,
 } from "@/lib/db/transactions/authTransactions"
@@ -77,18 +76,14 @@ async function upsertLocalUserFromClerkData(eventType: string, data: ClerkWebhoo
   const phone = extractClerkUserPhone(data)
   const displayName = extractClerkDisplayName(data)
 
-  const user = await prisma.$transaction(async (tx) => {
-    const user = await upsertUserFromClerkTx(tx, {
+  const user = await prisma.$transaction((tx) =>
+    upsertUserFromClerkTx(tx, {
       clerkUserId: data.id,
       email: email ?? null,
       phone: phone ?? null,
       displayName: displayName ?? null,
     })
-
-    await createDefaultVerificationProfileTx(tx, { userId: user.id })
-
-    return user
-  })
+  )
 
   await recordClerkAuditEvent({
     eventName: eventType,

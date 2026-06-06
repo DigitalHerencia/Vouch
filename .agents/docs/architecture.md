@@ -18,6 +18,8 @@
 
 ## Source Of Truth
 
+Verified Clerk webhooks are the only path that creates or synchronizes local users. Authenticated reads and Server Actions wait for webhook synchronization.
+
 Follow this order:
 
 1. The user is the source of truth.

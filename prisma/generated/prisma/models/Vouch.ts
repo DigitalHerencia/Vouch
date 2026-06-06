@@ -359,7 +359,6 @@ export type VouchWhereInput = {
   charges?: Prisma.ChargeRecordListRelationFilter
   refunds?: Prisma.RefundRecordListRelationFilter
   recoverySnapshots?: Prisma.VouchRecoverySnapshotListRelationFilter
-  events?: Prisma.VouchEventListRelationFilter
   webhookEvents?: Prisma.StripeWebhookEventListRelationFilter
   retries?: Prisma.OperationalRetryListRelationFilter
 }
@@ -394,7 +393,6 @@ export type VouchOrderByWithRelationInput = {
   charges?: Prisma.ChargeRecordOrderByRelationAggregateInput
   refunds?: Prisma.RefundRecordOrderByRelationAggregateInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotOrderByRelationAggregateInput
-  events?: Prisma.VouchEventOrderByRelationAggregateInput
   webhookEvents?: Prisma.StripeWebhookEventOrderByRelationAggregateInput
   retries?: Prisma.OperationalRetryOrderByRelationAggregateInput
 }
@@ -432,7 +430,6 @@ export type VouchWhereUniqueInput = Prisma.AtLeast<{
   charges?: Prisma.ChargeRecordListRelationFilter
   refunds?: Prisma.RefundRecordListRelationFilter
   recoverySnapshots?: Prisma.VouchRecoverySnapshotListRelationFilter
-  events?: Prisma.VouchEventListRelationFilter
   webhookEvents?: Prisma.StripeWebhookEventListRelationFilter
   retries?: Prisma.OperationalRetryListRelationFilter
 }, "id" | "publicId">
@@ -523,7 +520,6 @@ export type VouchCreateInput = {
   charges?: Prisma.ChargeRecordCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryCreateNestedManyWithoutVouchInput
 }
@@ -556,7 +552,6 @@ export type VouchUncheckedCreateInput = {
   charges?: Prisma.ChargeRecordUncheckedCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventUncheckedCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutVouchInput
 }
@@ -589,7 +584,6 @@ export type VouchUpdateInput = {
   charges?: Prisma.ChargeRecordUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUpdateManyWithoutVouchNestedInput
 }
@@ -622,7 +616,6 @@ export type VouchUncheckedUpdateInput = {
   charges?: Prisma.ChargeRecordUncheckedUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUncheckedUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput
 }
@@ -977,20 +970,6 @@ export type VouchUpdateOneWithoutWebhookEventsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.VouchUpdateToOneWithWhereWithoutWebhookEventsInput, Prisma.VouchUpdateWithoutWebhookEventsInput>, Prisma.VouchUncheckedUpdateWithoutWebhookEventsInput>
 }
 
-export type VouchCreateNestedOneWithoutEventsInput = {
-  create?: Prisma.XOR<Prisma.VouchCreateWithoutEventsInput, Prisma.VouchUncheckedCreateWithoutEventsInput>
-  connectOrCreate?: Prisma.VouchCreateOrConnectWithoutEventsInput
-  connect?: Prisma.VouchWhereUniqueInput
-}
-
-export type VouchUpdateOneRequiredWithoutEventsNestedInput = {
-  create?: Prisma.XOR<Prisma.VouchCreateWithoutEventsInput, Prisma.VouchUncheckedCreateWithoutEventsInput>
-  connectOrCreate?: Prisma.VouchCreateOrConnectWithoutEventsInput
-  upsert?: Prisma.VouchUpsertWithoutEventsInput
-  connect?: Prisma.VouchWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.VouchUpdateToOneWithWhereWithoutEventsInput, Prisma.VouchUpdateWithoutEventsInput>, Prisma.VouchUncheckedUpdateWithoutEventsInput>
-}
-
 export type VouchCreateNestedOneWithoutRetriesInput = {
   create?: Prisma.XOR<Prisma.VouchCreateWithoutRetriesInput, Prisma.VouchUncheckedCreateWithoutRetriesInput>
   connectOrCreate?: Prisma.VouchCreateOrConnectWithoutRetriesInput
@@ -1048,7 +1027,6 @@ export type VouchCreateWithoutMerchantInput = {
   charges?: Prisma.ChargeRecordCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryCreateNestedManyWithoutVouchInput
 }
@@ -1080,7 +1058,6 @@ export type VouchUncheckedCreateWithoutMerchantInput = {
   charges?: Prisma.ChargeRecordUncheckedCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventUncheckedCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutVouchInput
 }
@@ -1122,7 +1099,6 @@ export type VouchCreateWithoutCustomerInput = {
   charges?: Prisma.ChargeRecordCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryCreateNestedManyWithoutVouchInput
 }
@@ -1154,7 +1130,6 @@ export type VouchUncheckedCreateWithoutCustomerInput = {
   charges?: Prisma.ChargeRecordUncheckedCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventUncheckedCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutVouchInput
 }
@@ -1256,7 +1231,6 @@ export type VouchCreateWithoutPresenceConfirmationInput = {
   charges?: Prisma.ChargeRecordCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryCreateNestedManyWithoutVouchInput
 }
@@ -1288,7 +1262,6 @@ export type VouchUncheckedCreateWithoutPresenceConfirmationInput = {
   charges?: Prisma.ChargeRecordUncheckedCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventUncheckedCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutVouchInput
 }
@@ -1336,7 +1309,6 @@ export type VouchUpdateWithoutPresenceConfirmationInput = {
   charges?: Prisma.ChargeRecordUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUpdateManyWithoutVouchNestedInput
 }
@@ -1368,7 +1340,6 @@ export type VouchUncheckedUpdateWithoutPresenceConfirmationInput = {
   charges?: Prisma.ChargeRecordUncheckedUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUncheckedUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput
 }
@@ -1400,7 +1371,6 @@ export type VouchCreateWithoutPaymentIntentsInput = {
   charges?: Prisma.ChargeRecordCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryCreateNestedManyWithoutVouchInput
 }
@@ -1432,7 +1402,6 @@ export type VouchUncheckedCreateWithoutPaymentIntentsInput = {
   charges?: Prisma.ChargeRecordUncheckedCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventUncheckedCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutVouchInput
 }
@@ -1480,7 +1449,6 @@ export type VouchUpdateWithoutPaymentIntentsInput = {
   charges?: Prisma.ChargeRecordUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUpdateManyWithoutVouchNestedInput
 }
@@ -1512,7 +1480,6 @@ export type VouchUncheckedUpdateWithoutPaymentIntentsInput = {
   charges?: Prisma.ChargeRecordUncheckedUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUncheckedUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput
 }
@@ -1544,7 +1511,6 @@ export type VouchCreateWithoutChargesInput = {
   paymentIntents?: Prisma.PaymentIntentRecordCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryCreateNestedManyWithoutVouchInput
 }
@@ -1576,7 +1542,6 @@ export type VouchUncheckedCreateWithoutChargesInput = {
   paymentIntents?: Prisma.PaymentIntentRecordUncheckedCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventUncheckedCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutVouchInput
 }
@@ -1624,7 +1589,6 @@ export type VouchUpdateWithoutChargesInput = {
   paymentIntents?: Prisma.PaymentIntentRecordUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUpdateManyWithoutVouchNestedInput
 }
@@ -1656,7 +1620,6 @@ export type VouchUncheckedUpdateWithoutChargesInput = {
   paymentIntents?: Prisma.PaymentIntentRecordUncheckedUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUncheckedUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput
 }
@@ -1688,7 +1651,6 @@ export type VouchCreateWithoutRefundsInput = {
   paymentIntents?: Prisma.PaymentIntentRecordCreateNestedManyWithoutVouchInput
   charges?: Prisma.ChargeRecordCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryCreateNestedManyWithoutVouchInput
 }
@@ -1720,7 +1682,6 @@ export type VouchUncheckedCreateWithoutRefundsInput = {
   paymentIntents?: Prisma.PaymentIntentRecordUncheckedCreateNestedManyWithoutVouchInput
   charges?: Prisma.ChargeRecordUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventUncheckedCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutVouchInput
 }
@@ -1768,7 +1729,6 @@ export type VouchUpdateWithoutRefundsInput = {
   paymentIntents?: Prisma.PaymentIntentRecordUpdateManyWithoutVouchNestedInput
   charges?: Prisma.ChargeRecordUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUpdateManyWithoutVouchNestedInput
 }
@@ -1800,7 +1760,6 @@ export type VouchUncheckedUpdateWithoutRefundsInput = {
   paymentIntents?: Prisma.PaymentIntentRecordUncheckedUpdateManyWithoutVouchNestedInput
   charges?: Prisma.ChargeRecordUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUncheckedUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput
 }
@@ -1833,7 +1792,6 @@ export type VouchCreateWithoutWebhookEventsInput = {
   charges?: Prisma.ChargeRecordCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryCreateNestedManyWithoutVouchInput
 }
 
@@ -1865,7 +1823,6 @@ export type VouchUncheckedCreateWithoutWebhookEventsInput = {
   charges?: Prisma.ChargeRecordUncheckedCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventUncheckedCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutVouchInput
 }
 
@@ -1913,7 +1870,6 @@ export type VouchUpdateWithoutWebhookEventsInput = {
   charges?: Prisma.ChargeRecordUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUpdateManyWithoutVouchNestedInput
 }
 
@@ -1945,151 +1901,6 @@ export type VouchUncheckedUpdateWithoutWebhookEventsInput = {
   charges?: Prisma.ChargeRecordUncheckedUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUncheckedUpdateManyWithoutVouchNestedInput
-  retries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput
-}
-
-export type VouchCreateWithoutEventsInput = {
-  id?: string
-  publicId: string
-  amountCents: number
-  currency?: string
-  appointmentAt: Date | string
-  confirmationOpensAt: Date | string
-  confirmationExpiresAt: Date | string
-  merchantCodeHash: string
-  customerCodeHash?: string | null
-  status?: $Enums.VouchStatus
-  disclaimerAcceptedAt?: Date | string | null
-  protocolFeePaidAt?: Date | string | null
-  authorizedAt?: Date | string | null
-  capturedAt?: Date | string | null
-  voidedAt?: Date | string | null
-  expiredAt?: Date | string | null
-  archived?: boolean
-  archivedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  merchant: Prisma.UserCreateNestedOneWithoutMerchantVouchesInput
-  customer?: Prisma.UserCreateNestedOneWithoutCustomerVouchesInput
-  presenceConfirmation?: Prisma.PresenceConfirmationCreateNestedOneWithoutVouchInput
-  paymentIntents?: Prisma.PaymentIntentRecordCreateNestedManyWithoutVouchInput
-  charges?: Prisma.ChargeRecordCreateNestedManyWithoutVouchInput
-  refunds?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
-  recoverySnapshots?: Prisma.VouchRecoverySnapshotCreateNestedManyWithoutVouchInput
-  webhookEvents?: Prisma.StripeWebhookEventCreateNestedManyWithoutVouchInput
-  retries?: Prisma.OperationalRetryCreateNestedManyWithoutVouchInput
-}
-
-export type VouchUncheckedCreateWithoutEventsInput = {
-  id?: string
-  publicId: string
-  merchantId: string
-  customerId?: string | null
-  amountCents: number
-  currency?: string
-  appointmentAt: Date | string
-  confirmationOpensAt: Date | string
-  confirmationExpiresAt: Date | string
-  merchantCodeHash: string
-  customerCodeHash?: string | null
-  status?: $Enums.VouchStatus
-  disclaimerAcceptedAt?: Date | string | null
-  protocolFeePaidAt?: Date | string | null
-  authorizedAt?: Date | string | null
-  capturedAt?: Date | string | null
-  voidedAt?: Date | string | null
-  expiredAt?: Date | string | null
-  archived?: boolean
-  archivedAt?: Date | string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  presenceConfirmation?: Prisma.PresenceConfirmationUncheckedCreateNestedOneWithoutVouchInput
-  paymentIntents?: Prisma.PaymentIntentRecordUncheckedCreateNestedManyWithoutVouchInput
-  charges?: Prisma.ChargeRecordUncheckedCreateNestedManyWithoutVouchInput
-  refunds?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
-  recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput
-  webhookEvents?: Prisma.StripeWebhookEventUncheckedCreateNestedManyWithoutVouchInput
-  retries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutVouchInput
-}
-
-export type VouchCreateOrConnectWithoutEventsInput = {
-  where: Prisma.VouchWhereUniqueInput
-  create: Prisma.XOR<Prisma.VouchCreateWithoutEventsInput, Prisma.VouchUncheckedCreateWithoutEventsInput>
-}
-
-export type VouchUpsertWithoutEventsInput = {
-  update: Prisma.XOR<Prisma.VouchUpdateWithoutEventsInput, Prisma.VouchUncheckedUpdateWithoutEventsInput>
-  create: Prisma.XOR<Prisma.VouchCreateWithoutEventsInput, Prisma.VouchUncheckedCreateWithoutEventsInput>
-  where?: Prisma.VouchWhereInput
-}
-
-export type VouchUpdateToOneWithWhereWithoutEventsInput = {
-  where?: Prisma.VouchWhereInput
-  data: Prisma.XOR<Prisma.VouchUpdateWithoutEventsInput, Prisma.VouchUncheckedUpdateWithoutEventsInput>
-}
-
-export type VouchUpdateWithoutEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  publicId?: Prisma.StringFieldUpdateOperationsInput | string
-  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
-  appointmentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  confirmationOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  confirmationExpiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
-  customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
-  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  merchant?: Prisma.UserUpdateOneRequiredWithoutMerchantVouchesNestedInput
-  customer?: Prisma.UserUpdateOneWithoutCustomerVouchesNestedInput
-  presenceConfirmation?: Prisma.PresenceConfirmationUpdateOneWithoutVouchNestedInput
-  paymentIntents?: Prisma.PaymentIntentRecordUpdateManyWithoutVouchNestedInput
-  charges?: Prisma.ChargeRecordUpdateManyWithoutVouchNestedInput
-  refunds?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
-  recoverySnapshots?: Prisma.VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput
-  webhookEvents?: Prisma.StripeWebhookEventUpdateManyWithoutVouchNestedInput
-  retries?: Prisma.OperationalRetryUpdateManyWithoutVouchNestedInput
-}
-
-export type VouchUncheckedUpdateWithoutEventsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  publicId?: Prisma.StringFieldUpdateOperationsInput | string
-  merchantId?: Prisma.StringFieldUpdateOperationsInput | string
-  customerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  amountCents?: Prisma.IntFieldUpdateOperationsInput | number
-  currency?: Prisma.StringFieldUpdateOperationsInput | string
-  appointmentAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  confirmationOpensAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  confirmationExpiresAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  merchantCodeHash?: Prisma.StringFieldUpdateOperationsInput | string
-  customerCodeHash?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  status?: Prisma.EnumVouchStatusFieldUpdateOperationsInput | $Enums.VouchStatus
-  disclaimerAcceptedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  protocolFeePaidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  authorizedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  capturedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  voidedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  expiredAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  archived?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  archivedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  presenceConfirmation?: Prisma.PresenceConfirmationUncheckedUpdateOneWithoutVouchNestedInput
-  paymentIntents?: Prisma.PaymentIntentRecordUncheckedUpdateManyWithoutVouchNestedInput
-  charges?: Prisma.ChargeRecordUncheckedUpdateManyWithoutVouchNestedInput
-  refunds?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
-  recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput
-  webhookEvents?: Prisma.StripeWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput
 }
 
@@ -2121,7 +1932,6 @@ export type VouchCreateWithoutRetriesInput = {
   charges?: Prisma.ChargeRecordCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventCreateNestedManyWithoutVouchInput
 }
 
@@ -2153,7 +1963,6 @@ export type VouchUncheckedCreateWithoutRetriesInput = {
   charges?: Prisma.ChargeRecordUncheckedCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventUncheckedCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedCreateNestedManyWithoutVouchInput
 }
 
@@ -2201,7 +2010,6 @@ export type VouchUpdateWithoutRetriesInput = {
   charges?: Prisma.ChargeRecordUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUpdateManyWithoutVouchNestedInput
 }
 
@@ -2233,7 +2041,6 @@ export type VouchUncheckedUpdateWithoutRetriesInput = {
   charges?: Prisma.ChargeRecordUncheckedUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUncheckedUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
 }
 
@@ -2264,7 +2071,6 @@ export type VouchCreateWithoutRecoverySnapshotsInput = {
   paymentIntents?: Prisma.PaymentIntentRecordCreateNestedManyWithoutVouchInput
   charges?: Prisma.ChargeRecordCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryCreateNestedManyWithoutVouchInput
 }
@@ -2296,7 +2102,6 @@ export type VouchUncheckedCreateWithoutRecoverySnapshotsInput = {
   paymentIntents?: Prisma.PaymentIntentRecordUncheckedCreateNestedManyWithoutVouchInput
   charges?: Prisma.ChargeRecordUncheckedCreateNestedManyWithoutVouchInput
   refunds?: Prisma.RefundRecordUncheckedCreateNestedManyWithoutVouchInput
-  events?: Prisma.VouchEventUncheckedCreateNestedManyWithoutVouchInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedCreateNestedManyWithoutVouchInput
   retries?: Prisma.OperationalRetryUncheckedCreateNestedManyWithoutVouchInput
 }
@@ -2344,7 +2149,6 @@ export type VouchUpdateWithoutRecoverySnapshotsInput = {
   paymentIntents?: Prisma.PaymentIntentRecordUpdateManyWithoutVouchNestedInput
   charges?: Prisma.ChargeRecordUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUpdateManyWithoutVouchNestedInput
 }
@@ -2376,7 +2180,6 @@ export type VouchUncheckedUpdateWithoutRecoverySnapshotsInput = {
   paymentIntents?: Prisma.PaymentIntentRecordUncheckedUpdateManyWithoutVouchNestedInput
   charges?: Prisma.ChargeRecordUncheckedUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUncheckedUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput
 }
@@ -2456,7 +2259,6 @@ export type VouchUpdateWithoutMerchantInput = {
   charges?: Prisma.ChargeRecordUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUpdateManyWithoutVouchNestedInput
 }
@@ -2488,7 +2290,6 @@ export type VouchUncheckedUpdateWithoutMerchantInput = {
   charges?: Prisma.ChargeRecordUncheckedUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUncheckedUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput
 }
@@ -2544,7 +2345,6 @@ export type VouchUpdateWithoutCustomerInput = {
   charges?: Prisma.ChargeRecordUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUpdateManyWithoutVouchNestedInput
 }
@@ -2576,7 +2376,6 @@ export type VouchUncheckedUpdateWithoutCustomerInput = {
   charges?: Prisma.ChargeRecordUncheckedUpdateManyWithoutVouchNestedInput
   refunds?: Prisma.RefundRecordUncheckedUpdateManyWithoutVouchNestedInput
   recoverySnapshots?: Prisma.VouchRecoverySnapshotUncheckedUpdateManyWithoutVouchNestedInput
-  events?: Prisma.VouchEventUncheckedUpdateManyWithoutVouchNestedInput
   webhookEvents?: Prisma.StripeWebhookEventUncheckedUpdateManyWithoutVouchNestedInput
   retries?: Prisma.OperationalRetryUncheckedUpdateManyWithoutVouchNestedInput
 }
@@ -2615,7 +2414,6 @@ export type VouchCountOutputType = {
   charges: number
   refunds: number
   recoverySnapshots: number
-  events: number
   webhookEvents: number
   retries: number
 }
@@ -2625,7 +2423,6 @@ export type VouchCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   charges?: boolean | VouchCountOutputTypeCountChargesArgs
   refunds?: boolean | VouchCountOutputTypeCountRefundsArgs
   recoverySnapshots?: boolean | VouchCountOutputTypeCountRecoverySnapshotsArgs
-  events?: boolean | VouchCountOutputTypeCountEventsArgs
   webhookEvents?: boolean | VouchCountOutputTypeCountWebhookEventsArgs
   retries?: boolean | VouchCountOutputTypeCountRetriesArgs
 }
@@ -2666,13 +2463,6 @@ export type VouchCountOutputTypeCountRefundsArgs<ExtArgs extends runtime.Types.E
  */
 export type VouchCountOutputTypeCountRecoverySnapshotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.VouchRecoverySnapshotWhereInput
-}
-
-/**
- * VouchCountOutputType without action
- */
-export type VouchCountOutputTypeCountEventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.VouchEventWhereInput
 }
 
 /**
@@ -2720,7 +2510,6 @@ export type VouchSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   charges?: boolean | Prisma.Vouch$chargesArgs<ExtArgs>
   refunds?: boolean | Prisma.Vouch$refundsArgs<ExtArgs>
   recoverySnapshots?: boolean | Prisma.Vouch$recoverySnapshotsArgs<ExtArgs>
-  events?: boolean | Prisma.Vouch$eventsArgs<ExtArgs>
   webhookEvents?: boolean | Prisma.Vouch$webhookEventsArgs<ExtArgs>
   retries?: boolean | Prisma.Vouch$retriesArgs<ExtArgs>
   _count?: boolean | Prisma.VouchCountOutputTypeDefaultArgs<ExtArgs>
@@ -2814,7 +2603,6 @@ export type VouchInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   charges?: boolean | Prisma.Vouch$chargesArgs<ExtArgs>
   refunds?: boolean | Prisma.Vouch$refundsArgs<ExtArgs>
   recoverySnapshots?: boolean | Prisma.Vouch$recoverySnapshotsArgs<ExtArgs>
-  events?: boolean | Prisma.Vouch$eventsArgs<ExtArgs>
   webhookEvents?: boolean | Prisma.Vouch$webhookEventsArgs<ExtArgs>
   retries?: boolean | Prisma.Vouch$retriesArgs<ExtArgs>
   _count?: boolean | Prisma.VouchCountOutputTypeDefaultArgs<ExtArgs>
@@ -2838,7 +2626,6 @@ export type $VouchPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     charges: Prisma.$ChargeRecordPayload<ExtArgs>[]
     refunds: Prisma.$RefundRecordPayload<ExtArgs>[]
     recoverySnapshots: Prisma.$VouchRecoverySnapshotPayload<ExtArgs>[]
-    events: Prisma.$VouchEventPayload<ExtArgs>[]
     webhookEvents: Prisma.$StripeWebhookEventPayload<ExtArgs>[]
     retries: Prisma.$OperationalRetryPayload<ExtArgs>[]
   }
@@ -3266,7 +3053,6 @@ export interface Prisma__VouchClient<T, Null = never, ExtArgs extends runtime.Ty
   charges<T extends Prisma.Vouch$chargesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$chargesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ChargeRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   refunds<T extends Prisma.Vouch$refundsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$refundsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefundRecordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   recoverySnapshots<T extends Prisma.Vouch$recoverySnapshotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$recoverySnapshotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VouchRecoverySnapshotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  events<T extends Prisma.Vouch$eventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$eventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$VouchEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   webhookEvents<T extends Prisma.Vouch$webhookEventsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$webhookEventsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$StripeWebhookEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   retries<T extends Prisma.Vouch$retriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Vouch$retriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OperationalRetryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -3852,30 +3638,6 @@ export type Vouch$recoverySnapshotsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.VouchRecoverySnapshotScalarFieldEnum | Prisma.VouchRecoverySnapshotScalarFieldEnum[]
-}
-
-/**
- * Vouch.events
- */
-export type Vouch$eventsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the VouchEvent
-   */
-  select?: Prisma.VouchEventSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the VouchEvent
-   */
-  omit?: Prisma.VouchEventOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.VouchEventInclude<ExtArgs> | null
-  where?: Prisma.VouchEventWhereInput
-  orderBy?: Prisma.VouchEventOrderByWithRelationInput | Prisma.VouchEventOrderByWithRelationInput[]
-  cursor?: Prisma.VouchEventWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.VouchEventScalarFieldEnum | Prisma.VouchEventScalarFieldEnum[]
 }
 
 /**

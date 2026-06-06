@@ -103,6 +103,9 @@ async function processCheckoutSessionCompleted(
   if (!vouchId) return
 
   const paymentRole = session.metadata?.payment_role
+  // Checkout completion is not proof of payment for delayed payment methods.
+  if (paymentRole === "merchant_creation_fee" && session.payment_status !== "paid") return
+
   const paymentIntentId = getStripeId(session.payment_intent)
   const customerId = getStripeId(session.customer)
 

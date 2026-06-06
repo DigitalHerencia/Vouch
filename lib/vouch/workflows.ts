@@ -182,8 +182,17 @@ export async function refreshCustomerDepositPaymentIntent(input: {
       data: { status: "authorized", authorizedAt: now },
     })
   } else if (status === "succeeded") {
+    // Provider success synchronizes payment truth only; it must never grant capture eligibility.
     await prisma.vouch.updateMany({
-      where: { id: input.vouchId, status: { in: ["authorized", "can_capture"] } },
+      where: {
+        id: input.vouchId,
+        status: "can_capture",
+        presenceConfirmation: {
+          status: "can_capture",
+          merchantConfirmedAt: { not: null },
+          customerConfirmedAt: { not: null },
+        },
+      },
       data: { status: "captured", capturedAt: now },
     })
   } else if (status === "canceled") {
@@ -195,17 +204,50 @@ export async function refreshCustomerDepositPaymentIntent(input: {
 }
 
 async function captureCustomerDepositForVouch(vouchId: string): Promise<void> {
-  const payment = await prisma.paymentIntentRecord.findFirst({
+  const vouch = await prisma.vouch.findFirst({
     where: {
-      vouchId,
-      purpose: "customer_deposit_authorization",
-      status: "requires_capture",
+      id: vouchId,
+      status: "can_capture",
+      presenceConfirmation: {
+        status: "can_capture",
+        merchantConfirmedAt: { not: null },
+        customerConfirmedAt: { not: null },
+      },
     },
-    select: { id: true, stripePaymentIntentId: true, stripeAccountId: true },
+    select: {
+      appointmentAt: true,
+      presenceConfirmation: {
+        select: {
+          windowOpensAt: true,
+          windowClosesAt: true,
+          merchantConfirmedAt: true,
+          customerConfirmedAt: true,
+        },
+      },
+      paymentIntents: {
+        where: { purpose: "customer_deposit_authorization", status: "requires_capture" },
+        take: 1,
+        select: { id: true, stripePaymentIntentId: true, stripeAccountId: true },
+      },
+    },
   })
+  const payment = vouch?.paymentIntents[0]
 
-  if (!payment?.stripePaymentIntentId || !payment.stripeAccountId) {
+  if (!vouch || !payment?.stripePaymentIntentId || !payment.stripeAccountId) {
     throw new Error("CUSTOMER_DEPOSIT_AUTHORIZATION_NOT_FOUND")
+  }
+  const presence = vouch.presenceConfirmation
+  const recoveryCutoff = new Date(vouch.appointmentAt.getTime() + 24 * 60 * 60 * 1000)
+  if (
+    !presence?.merchantConfirmedAt ||
+    !presence.customerConfirmedAt ||
+    presence.merchantConfirmedAt < presence.windowOpensAt ||
+    presence.merchantConfirmedAt > presence.windowClosesAt ||
+    presence.customerConfirmedAt < presence.windowOpensAt ||
+    presence.customerConfirmedAt > presence.windowClosesAt ||
+    new Date() > recoveryCutoff
+  ) {
+    throw new Error("CAPTURE_NOT_ELIGIBLE")
   }
 
   await createVouchRecoverySnapshot(vouchId, "before_capture")
@@ -548,10 +590,26 @@ export async function markProtocolFeePaidAndIssueAuthorizationCheckout(input: {
   amountCents?: number | undefined
   currency?: string | undefined
 }): Promise<ActionResult<CustomerAuthorizationCheckoutResult>> {
-  await prisma.$transaction(async (tx) => {
+  const transition = await prisma.$transaction(async (tx) => {
     const now = new Date()
+    const vouch = await tx.vouch.findUnique({
+      where: { id: input.vouchId },
+      select: {
+        id: true,
+        amountCents: true,
+        currency: true,
+        protocolFeePaidAt: true,
+        status: true,
+      },
+    })
+    if (!vouch) return "not_found" as const
 
-    await tx.vouch.updateMany({
+    const expectedFeeCents = calculatePricing(vouch.amountCents).vouchServiceFeeCents
+    if (input.amountCents !== expectedFeeCents || input.currency !== vouch.currency) {
+      return "payment_mismatch" as const
+    }
+
+    const updated = await tx.vouch.updateMany({
       where: {
         id: input.vouchId,
         protocolFeePaidAt: null,
@@ -562,6 +620,9 @@ export async function markProtocolFeePaidAndIssueAuthorizationCheckout(input: {
         status: "protocol_fee_paid",
       },
     })
+    if (updated.count === 0) {
+      return vouch.protocolFeePaidAt ? ("already_paid" as const) : ("invalid_state" as const)
+    }
 
     await tx.paymentIntentRecord.upsert({
       where: { stripeCheckoutSessionId: input.stripeCheckoutSessionId },
@@ -604,7 +665,16 @@ export async function markProtocolFeePaidAndIssueAuthorizationCheckout(input: {
         },
       },
     })
+    return "paid" as const
   })
+
+  if (transition === "not_found") return actionFailure("NOT_FOUND", "Vouch not found.")
+  if (transition === "payment_mismatch") {
+    return actionFailure("PAYMENT_MISMATCH", "Protocol fee payment did not match the Vouch.")
+  }
+  if (transition === "invalid_state") {
+    return actionFailure("INVALID_STATE", "Vouch cannot accept a protocol fee payment.")
+  }
 
   return ensureCustomerAuthorizationCheckoutForVouch(input.vouchId)
 }
@@ -620,11 +690,42 @@ export async function markCustomerDepositAuthorized(input: {
 }): Promise<ActionResult<{ vouchId: string }>> {
   const vouch = await prisma.vouch.findUnique({
     where: { id: input.vouchId },
-    select: { appointmentAt: true },
+    select: {
+      appointmentAt: true,
+      amountCents: true,
+      currency: true,
+      merchant: { select: { connectedAccount: { select: { stripeAccountId: true } } } },
+      paymentIntents: {
+        where: {
+          purpose: "customer_deposit_authorization",
+          stripeCheckoutSessionId: input.stripeCheckoutSessionId,
+        },
+        take: 1,
+        select: { id: true, stripePaymentIntentId: true, stripeAccountId: true },
+      },
+    },
   })
   const now = new Date()
 
   if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
+  const paymentRecord = vouch.paymentIntents[0]
+  const canonicalAccountId = vouch.merchant.connectedAccount?.stripeAccountId
+  if (
+    !input.stripePaymentIntentId ||
+    !input.stripeAccountId ||
+    input.amountCents !== vouch.amountCents ||
+    input.currency !== vouch.currency ||
+    !paymentRecord ||
+    paymentRecord.stripeAccountId !== input.stripeAccountId ||
+    canonicalAccountId !== input.stripeAccountId ||
+    (paymentRecord.stripePaymentIntentId &&
+      paymentRecord.stripePaymentIntentId !== input.stripePaymentIntentId)
+  ) {
+    return actionFailure(
+      "AUTHORIZATION_MISMATCH",
+      "Customer authorization did not match the canonical Vouch payment."
+    )
+  }
 
   if (vouch.appointmentAt <= now && input.stripePaymentIntentId && input.stripeAccountId) {
     await cancelStripeAuthorization({
@@ -657,20 +758,14 @@ export async function markCustomerDepositAuthorized(input: {
   }
 
   await prisma.$transaction(async (tx) => {
-    await tx.paymentIntentRecord.updateMany({
-      where: {
-        vouchId: input.vouchId,
-        purpose: "customer_deposit_authorization",
-        stripeCheckoutSessionId: input.stripeCheckoutSessionId,
-      },
+    await tx.paymentIntentRecord.update({
+      where: { id: paymentRecord.id },
       data: {
-        ...(input.stripePaymentIntentId
-          ? { stripePaymentIntentId: input.stripePaymentIntentId }
-          : {}),
+        stripePaymentIntentId: input.stripePaymentIntentId!,
         ...(input.stripeCustomerId ? { stripeCustomerId: input.stripeCustomerId } : {}),
-        ...(input.stripeAccountId ? { stripeAccountId: input.stripeAccountId } : {}),
-        ...(input.amountCents ? { amountCents: input.amountCents } : {}),
-        ...(input.currency ? { currency: input.currency } : {}),
+        stripeAccountId: input.stripeAccountId!,
+        amountCents: input.amountCents!,
+        currency: input.currency!,
         status: "requires_capture",
         captureMethod: "manual",
         authorizedAt: now,
@@ -712,6 +807,7 @@ export async function markCustomerDepositAuthorized(input: {
 
 export async function claimCustomerAuthorizationCheckout(input: {
   checkoutSessionId: string
+  revalidate?: boolean
 }): Promise<ActionResult<{ vouchId: string }>> {
   const user = await requireActiveUser()
   const checkoutSessionId = input.checkoutSessionId.trim()
@@ -726,6 +822,9 @@ export async function claimCustomerAuthorizationCheckout(input: {
       id: true,
       vouchId: true,
       stripeAccountId: true,
+      stripePaymentIntentId: true,
+      amountCents: true,
+      currency: true,
       purpose: true,
       vouch: {
         select: {
@@ -768,6 +867,10 @@ export async function claimCustomerAuthorizationCheckout(input: {
     session.metadata?.payment_role !== "customer_commitment" ||
     session.metadata.vouch_id !== paymentRecord.vouchId ||
     paymentIntent?.status !== "requires_capture" ||
+    (paymentRecord.stripePaymentIntentId &&
+      paymentRecord.stripePaymentIntentId !== paymentIntent.id) ||
+    session.amount_total !== paymentRecord.amountCents ||
+    session.currency !== paymentRecord.currency ||
     !stripeCustomerId
   ) {
     return actionFailure("CHECKOUT_NOT_COMPLETE", "Checkout authorization is not complete.")
@@ -833,7 +936,9 @@ export async function claimCustomerAuthorizationCheckout(input: {
     }
   })
 
-  revalidateVouchSurfaces(paymentRecord.vouchId)
+  if (input.revalidate !== false) {
+    revalidateVouchSurfaces(paymentRecord.vouchId)
+  }
   return actionSuccess({ vouchId: paymentRecord.vouchId })
 }
 
@@ -869,7 +974,10 @@ export async function getCustomerAuthorizationCheckoutForAuthenticatedUser(input
     return actionFailure("AUTHORIZATION_DEADLINE_PASSED", "The authorization deadline has passed.")
   }
   if (vouch.status !== "protocol_fee_paid") {
-    return actionFailure("VOUCH_NOT_ACCEPTABLE", "This Vouch is not awaiting customer authorization.")
+    return actionFailure(
+      "VOUCH_NOT_ACCEPTABLE",
+      "This Vouch is not awaiting customer authorization."
+    )
   }
 
   const checkoutUrl = vouch.paymentIntents[0]?.stripeCheckoutSessionUrl
@@ -913,7 +1021,7 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
     participantRole: counterpartyRole,
     participantUserId: counterpartyUserId,
     submittedCode: parsed.data.submittedCode,
-    allowedBucketSkew: parsed.data.method === "offline_code_exchange" ? 1 : 0,
+    allowedBucketSkew: 0,
   })
 
   if (!validCode) {
@@ -962,16 +1070,6 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
     if (error instanceof Error) {
       switch (error.message) {
         case "DUPLICATE_PRESENCE_CONFIRMATION":
-          if (
-            await prisma.vouch.findFirst({
-              where: { id: parsed.data.vouchId, status: "can_capture" },
-              select: { id: true },
-            })
-          ) {
-            await captureCustomerDepositForVouch(parsed.data.vouchId)
-            revalidateVouchSurfaces(parsed.data.vouchId)
-            return actionSuccess({ vouchId: parsed.data.vouchId })
-          }
           return actionFailure("DUPLICATE_CONFIRMATION", "This participant already confirmed.")
         case "CONFIRMATION_WINDOW_NOT_OPEN":
           return actionFailure("CONFIRMATION_WINDOW_NOT_OPEN", "Confirmation is not open yet.")

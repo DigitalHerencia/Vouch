@@ -81,6 +81,8 @@ export async function createStripeMerchantCreationFeeCheckout(
         },
       ],
       mode: "payment",
+      // Protocol fees must settle synchronously before Vouch activation.
+      payment_method_types: ["card"],
       payment_intent_data: { metadata },
       metadata,
     },

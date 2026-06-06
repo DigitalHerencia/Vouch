@@ -73,6 +73,8 @@ Use these instructions for implementation work in this repo.
 
 ## Clerk Rules
 
+- Do not create or synchronize local users from authenticated reads or Server Actions.
+
 - Clerk owns authentication and sessions.
 - Prisma owns product state.
 - Sync Clerk users into local users through verified webhooks.

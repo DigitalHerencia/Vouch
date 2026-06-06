@@ -44,7 +44,10 @@ export async function CheckoutSuccessPage({
     return <CheckoutSuccessView message="No Checkout Session was provided." />
   }
 
-  const result = await claimCustomerAuthorizationCheckout({ checkoutSessionId: sessionId })
+  const result = await claimCustomerAuthorizationCheckout({
+    checkoutSessionId: sessionId,
+    revalidate: false,
+  })
   if (!result.ok) {
     return (
       <CheckoutSuccessView

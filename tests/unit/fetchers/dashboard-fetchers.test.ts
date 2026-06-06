@@ -1,0 +1,63 @@
+import { beforeEach, describe, expect, it, vi } from "vitest"
+
+const { findMany, count } = vi.hoisted(() => ({
+  findMany: vi.fn(),
+  count: vi.fn(),
+}))
+
+vi.mock("server-only", () => ({}))
+vi.mock("next/cache", () => ({ unstable_noStore: vi.fn() }))
+vi.mock("@/lib/db/prisma", () => ({
+  prisma: {
+    vouch: { findMany, count },
+    connectedAccount: { findUnique: vi.fn() },
+    paymentCustomer: { findUnique: vi.fn() },
+  },
+}))
+vi.mock("@/lib/fetchers/authFetchers", () => ({
+  requireActiveUser: vi.fn().mockResolvedValue({
+    id: "user_1",
+    readiness: { paymentMethodReady: "ready" },
+  }),
+}))
+vi.mock("@/lib/fetchers/readinessFetchers", () => ({
+  getAccountReadiness: vi.fn().mockResolvedValue({ paymentMethodReady: "ready" }),
+}))
+vi.mock("@/lib/payments/stripeReadinessSync", () => ({
+  syncConnectedAccountReadinessForUser: vi.fn(),
+  syncPaymentCustomerReadinessForUser: vi.fn(),
+}))
+
+import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
+
+describe("dashboard fetchers", () => {
+  beforeEach(() => {
+    findMany.mockReset().mockResolvedValue([])
+    count.mockReset()
+  })
+
+  it("uses accurate database counts while keeping each section list bounded", async () => {
+    count
+      .mockResolvedValueOnce(21)
+      .mockResolvedValueOnce(4)
+      .mockResolvedValueOnce(18)
+      .mockResolvedValueOnce(35)
+      .mockResolvedValueOnce(7)
+      .mockResolvedValueOnce(12)
+
+    const state = await getDashboardPageState()
+
+    expect(state.summary?.counts).toEqual({
+      drafts: 21,
+      actionRequired: 4,
+      active: 18,
+      completed: 35,
+      expired: 7,
+      archived: 12,
+    })
+    expect(findMany).toHaveBeenCalledTimes(6)
+    expect(findMany.mock.calls.every(([query]) => query.take === 10)).toBe(true)
+    expect(count).toHaveBeenCalledTimes(6)
+    expect(state.variant).toBe("mixed_vouch_states")
+  })
+})

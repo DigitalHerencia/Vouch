@@ -146,7 +146,7 @@ export function SignUpForm({
               {submitLabel}
             </Button>
 
-            {footer ?? signInHref ? (
+            {(footer ?? signInHref) ? (
               <div className="text-center text-sm text-neutral-400">
                 {footer ?? (
                   <span>

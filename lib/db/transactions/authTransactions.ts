@@ -29,13 +29,6 @@ export async function upsertUserFromClerkTx(tx: Tx, input: LocalUserSyncInput) {
   })
 }
 
-export async function createDefaultVerificationProfileTx(tx: Tx, input: { userId: string }) {
-  return tx.user.findUniqueOrThrow({
-    where: { id: input.userId },
-    select: { id: true },
-  })
-}
-
 export async function softDisableUserFromClerkDeletedTx(tx: Tx, input: { clerkUserId: string }) {
   return tx.user.updateMany({
     where: { clerkUserId: input.clerkUserId },

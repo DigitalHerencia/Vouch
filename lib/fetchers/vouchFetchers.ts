@@ -73,6 +73,51 @@ export async function getVouchDetailForParticipant(input: {
   }
 }
 
+export async function getVouchDetailPageState(input: { vouchId: string }) {
+  noStore()
+
+  const user = await requireActiveUser()
+  const vouch = await prisma.vouch.findFirst({
+    where: {
+      id: input.vouchId,
+      OR: [{ merchantId: user.id }, { customerId: user.id }],
+    },
+    select: vouchDetailBaseSelect,
+  })
+  if (!vouch) return null
+
+  const timeline = await prisma.auditEvent.findMany({
+    where: { entityType: "Vouch", entityId: input.vouchId },
+    orderBy: { createdAt: "asc" },
+    select: auditTimelineItemSelect,
+  })
+  const detail = mapVouchDetailDTO(vouch as VouchDetailRecord)
+  const confirmation = mapVouchConfirmationStateDTO(vouch as VouchConfirmationRecord)
+  const currentUserConfirmed =
+    (vouch.merchantId === user.id && confirmation.merchantConfirmed) ||
+    (vouch.customerId === user.id && confirmation.customerConfirmed)
+  const role =
+    vouch.merchantId === user.id ? "merchant" : vouch.customerId === user.id ? "customer" : null
+  const canConfirm = role !== null && confirmation.windowState === "open" && !currentUserConfirmed
+
+  return {
+    userId: user.id,
+    vouch: detail,
+    canConfirm,
+    role,
+    currentUserCode:
+      canConfirm && role
+        ? deriveConfirmationCode({
+            vouchId: vouch.id,
+            publicId: vouch.publicId,
+            participantRole: role,
+            participantUserId: user.id,
+          })
+        : undefined,
+    timeline: mapAuditTimelineDTO(timeline),
+  }
+}
+
 function getVouchDetailUnauthorizedOrNotFoundState(vouchId: string) {
   return {
     variant: "unauthorized_or_not_found",

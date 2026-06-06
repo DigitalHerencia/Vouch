@@ -107,11 +107,6 @@ export type StripeWebhookEvent = Prisma.StripeWebhookEventModel
  */
 export type AuditEvent = Prisma.AuditEventModel
 /**
- * Model VouchEvent
- * 
- */
-export type VouchEvent = Prisma.VouchEventModel
-/**
  * Model OperationalRetry
  * 
  */
@@ -121,8 +116,3 @@ export type OperationalRetry = Prisma.OperationalRetryModel
  * 
  */
 export type VouchRecoverySnapshot = Prisma.VouchRecoverySnapshotModel
-/**
- * Model AnalyticsEvent
- * 
- */
-export type AnalyticsEvent = Prisma.AnalyticsEventModel

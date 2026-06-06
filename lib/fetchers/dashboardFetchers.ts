@@ -21,10 +21,8 @@ import {
 import { getAccountReadiness } from "@/lib/fetchers/readinessFetchers"
 
 const DEFAULT_TAKE = 10
-const ACTIVE_DB_STATUSES = [
-  "protocol_fee_paid",
-  "authorized",
-] as const satisfies readonly VouchStatus[]
+const READINESS_REFRESH_INTERVAL_MS = 5 * 60 * 1000
+const ACTIVE_DB_STATUSES: VouchStatus[] = ["protocol_fee_paid", "authorized"]
 
 type VouchCardRecord = Prisma.VouchGetPayload<{ select: typeof vouchCardSelect }>
 
@@ -68,10 +66,13 @@ async function syncStripeReturns(input: {
   if (stripePaymentReturn || !input.paymentMethodReady) {
     const paymentCustomer = await prisma.paymentCustomer.findUnique({
       where: { userId: input.userId },
-      select: { stripeCustomerId: true },
+      select: { stripeCustomerId: true, syncedAt: true },
     })
 
-    if (paymentCustomer?.stripeCustomerId) {
+    const stale =
+      !paymentCustomer?.syncedAt ||
+      Date.now() - paymentCustomer.syncedAt.getTime() >= READINESS_REFRESH_INTERVAL_MS
+    if (paymentCustomer?.stripeCustomerId && (stripePaymentReturn || stale)) {
       await syncPaymentCustomerReadinessForUser({
         userId: input.userId,
         stripeCustomerId: paymentCustomer.stripeCustomerId,
@@ -104,33 +105,64 @@ async function listForUser(
 
 async function getDashboardSummary(userId: string): Promise<DashboardSummaryDTO | null> {
   const now = new Date()
-  const vouches = await listForUser(userId, {}, DEFAULT_TAKE * 6)
-  const current = vouches.filter((vouch) => !vouch.archived)
-  const drafts = current.filter((vouch) => vouch.status === "draft").slice(0, DEFAULT_TAKE)
-  const actionRequired = current
-    .filter(
-      (vouch) =>
-        vouch.status === "can_capture" &&
-        vouch.confirmationOpensAt <= now &&
-        vouch.confirmationExpiresAt > now
-    )
-    .slice(0, DEFAULT_TAKE)
-  const active = current
-    .filter((vouch) =>
-      ACTIVE_DB_STATUSES.includes(vouch.status as (typeof ACTIVE_DB_STATUSES)[number])
-    )
-    .slice(0, DEFAULT_TAKE)
-  const completed = current.filter((vouch) => vouch.status === "captured").slice(0, DEFAULT_TAKE)
-  const expired = current.filter((vouch) => vouch.status === "expired").slice(0, DEFAULT_TAKE)
-  const archived = vouches.filter((vouch) => vouch.archived).slice(0, DEFAULT_TAKE)
+  const participantWhere = { OR: [{ merchantId: userId }, { customerId: userId }] }
+  const sectionWhere = {
+    drafts: { archived: false, status: "draft" },
+    actionRequired: {
+      archived: false,
+      status: "can_capture",
+      confirmationOpensAt: { lte: now },
+      confirmationExpiresAt: { gt: now },
+    },
+    active: { archived: false, status: { in: ACTIVE_DB_STATUSES } },
+    completed: { archived: false, status: "captured" },
+    expired: { archived: false, status: "expired", confirmationExpiresAt: { lte: now } },
+    archived: { archived: true },
+  } satisfies Record<keyof DashboardSummaryDTO["sections"], Prisma.VouchWhereInput>
+
+  const [sections, countValues] = await Promise.all([
+    Promise.all([
+      listForUser(userId, sectionWhere.drafts),
+      listForUser(userId, sectionWhere.actionRequired),
+      listForUser(userId, sectionWhere.active),
+      listForUser(userId, sectionWhere.completed),
+      listForUser(userId, sectionWhere.expired),
+      listForUser(userId, sectionWhere.archived),
+    ]),
+    Promise.all([
+      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.drafts] } }),
+      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.actionRequired] } }),
+      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.active] } }),
+      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.completed] } }),
+      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.expired] } }),
+      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.archived] } }),
+    ]),
+  ])
+  const [drafts, actionRequired, active, completed, expired, archived] = sections
+  const [
+    draftCount,
+    actionRequiredCount,
+    activeCount,
+    completedCount,
+    expiredCount,
+    archivedCount,
+  ] = countValues
 
   return mapDashboardSummaryDTO({
     userId,
+    counts: {
+      drafts: draftCount,
+      actionRequired: actionRequiredCount,
+      active: activeCount,
+      completed: completedCount,
+      expired: expiredCount,
+      archived: archivedCount,
+    },
     drafts,
     actionRequired,
     active,
     completed,
-    expired: expired.filter((vouch) => vouch.confirmationExpiresAt <= now),
+    expired,
     archived,
   })
 }

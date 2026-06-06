@@ -28,8 +28,7 @@ model User {
   merchantVouches Vouch[] @relation("VouchMerchant")
   customerVouches Vouch[] @relation("VouchCustomer")
 
-  auditEvents     AuditEvent[]
-  analyticsEvents AnalyticsEvent[]
+  auditEvents AuditEvent[]
 
   @@index([email])
   @@index([status])
@@ -127,7 +126,6 @@ model Vouch {
   charges              ChargeRecord[]
   refunds              RefundRecord[]
   recoverySnapshots    VouchRecoverySnapshot[]
-  events               VouchEvent[]
   webhookEvents        StripeWebhookEvent[]
   retries              OperationalRetry[]
 
@@ -158,10 +156,6 @@ model PresenceConfirmation {
   resolutionSource PresenceResolutionSource?
   failureReason    String?
 
-  retryUntil  DateTime?
-  lastRetryAt DateTime?
-  retryCount  Int       @default(0)
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -169,7 +163,6 @@ model PresenceConfirmation {
   attempts PresenceConfirmationAttempt[]
 
   @@index([status, windowClosesAt])
-  @@index([retryUntil, status])
 }
 
 model PresenceConfirmationAttempt {
@@ -183,7 +176,6 @@ model PresenceConfirmationAttempt {
 
   submissionMode ConfirmationSubmissionMode @default(online)
 
-  payloadHash String?
   nonce       String
 
   accepted       Boolean @default(false)
@@ -408,21 +400,6 @@ model AuditEvent {
   @@index([eventName, createdAt])
 }
 
-model VouchEvent {
-  id      String @id @default(cuid())
-  vouchId String
-
-  type     VouchTransitionType
-  metadata Json?
-
-  createdAt DateTime @default(now())
-
-  vouch Vouch @relation(fields: [vouchId], references: [id], onDelete: Restrict)
-
-  @@index([vouchId, createdAt])
-  @@index([type])
-}
-
 model OperationalRetry {
   id String @id @default(cuid())
 
@@ -509,23 +486,6 @@ model VouchRecoverySnapshot {
   @@index([createdAt])
 }
 
-model AnalyticsEvent {
-  id String @id @default(cuid())
-
-  userId String?
-
-  eventName  String
-  eventGroup AnalyticsEventGroup
-  properties Json?
-
-  createdAt DateTime @default(now())
-
-  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
-
-  @@index([userId, createdAt])
-  @@index([eventGroup, eventName, createdAt])
-}
-
 enum UserStatus {
   active
   suspended
@@ -553,19 +513,15 @@ enum PresenceConfirmationStatus {
   customer_confirmed
   can_capture
   void
-  sync_pending
   auto_void
 }
 
 enum ConfirmationSubmissionMode {
   online
-  offline_sync
 }
 
 enum PresenceResolutionSource {
   online
-  offline_sync
-  server_reconciliation
   auto_void
 }
 
@@ -639,27 +595,8 @@ enum AuditActorType {
   stripe
 }
 
-enum VouchTransitionType {
-  protocol_fee_paid
-  deposit_authorization_created
-  deposit_authorization_requires_capture
-  merchant_confirmed
-  customer_confirmed
-  presence_can_capture
-  presence_void
-  capture_succeeded
-  authorization_released
-  expired
-  archived
-}
-
 enum OperationalRetryOperation {
-  sync_offline_confirmation
   reconcile_payment_intent
-  reconcile_charge
-  reconcile_payout
-  auto_void_confirmation
-  create_recovery_snapshot
 }
 
 enum OperationalRetryStatus {
@@ -673,17 +610,7 @@ enum OperationalRetryStatus {
 enum VouchRecoverySnapshotReason {
   created
   before_capture
-  offline_confirmation_synced
   presence_auto_void
   webhook_reconciliation
   provider_reconciliation
-}
-
-enum AnalyticsEventGroup {
-  auth
-  onboarding
-  vouch
-  payment
-  dashboard
-  system
 }
