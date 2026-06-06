@@ -129,8 +129,24 @@ export function VouchForm() {
 
     startReadinessTransition(async () => {
       const readiness = await getCreateVouchFormReadiness({ syncStripeConnectReturn })
-      setOnboardingRequired(!readiness.ok || readiness.data.onboardingRequired)
+      const requiresOnboarding = !readiness.ok || readiness.data.onboardingRequired
+      setOnboardingRequired(requiresOnboarding)
       setReadinessChecked(true)
+
+      if (
+        syncStripeConnectReturn &&
+        requiresOnboarding &&
+        !window.sessionStorage.getItem("stripe-connect-auto-continued")
+      ) {
+        window.sessionStorage.setItem("stripe-connect-auto-continued", "1")
+        const formData = new FormData()
+        formData.set("returnPath", "/vouches/new")
+        await openStripeConnectDashboard(formData)
+      }
+
+      if (!requiresOnboarding) {
+        window.sessionStorage.removeItem("stripe-connect-auto-continued")
+      }
     })
   }, [searchParams])
 

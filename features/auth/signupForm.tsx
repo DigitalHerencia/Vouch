@@ -311,7 +311,15 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
             disabled={isBusy}
             isSubmitting={form.formState.isSubmitting}
             submitLabel="Create account"
-            captcha={<div id="clerk-captcha" className="min-h-0 w-full overflow-hidden" />}
+            captcha={
+              <div
+                id="clerk-captcha"
+                data-cl-language="auto"
+                data-cl-size="flexible"
+                data-cl-theme="dark"
+                className="min-h-[65px] w-full overflow-hidden"
+              />
+            }
           />
         )}
       </form>

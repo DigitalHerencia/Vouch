@@ -34,7 +34,7 @@ export function OTPVerificationForm({
   const inputRefs = React.useRef<Array<HTMLInputElement | null>>([])
 
   function commitDigits(nextDigits: string[]) {
-    onChange?.(nextDigits.join("").trim())
+    onChange?.(nextDigits.join(""))
   }
 
   function updateDigit(index: number, rawValue: string) {

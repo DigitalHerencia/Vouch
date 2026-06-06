@@ -837,6 +837,49 @@ export async function claimCustomerAuthorizationCheckout(input: {
   return actionSuccess({ vouchId: paymentRecord.vouchId })
 }
 
+export async function getCustomerAuthorizationCheckoutForAuthenticatedUser(input: {
+  publicId: string
+}): Promise<ActionResult<{ checkoutUrl: string }>> {
+  const user = await requireActiveUser()
+  const publicId = input.publicId.trim()
+
+  const vouch = await prisma.vouch.findUnique({
+    where: { publicId },
+    select: {
+      merchantId: true,
+      customerId: true,
+      appointmentAt: true,
+      status: true,
+      paymentIntents: {
+        where: { purpose: "customer_deposit_authorization" },
+        take: 1,
+        select: { stripeCheckoutSessionUrl: true },
+      },
+    },
+  })
+
+  if (!vouch) return actionFailure("NOT_FOUND", "Vouch not found.")
+  if (vouch.merchantId === user.id) {
+    return actionFailure("VOUCH_ACCEPTANCE_CONFLICT", "The merchant cannot accept this Vouch.")
+  }
+  if (vouch.customerId && vouch.customerId !== user.id) {
+    return actionFailure("VOUCH_ACCEPTANCE_CONFLICT", "This Vouch has already been claimed.")
+  }
+  if (vouch.appointmentAt <= new Date()) {
+    return actionFailure("AUTHORIZATION_DEADLINE_PASSED", "The authorization deadline has passed.")
+  }
+  if (vouch.status !== "protocol_fee_paid") {
+    return actionFailure("VOUCH_NOT_ACCEPTABLE", "This Vouch is not awaiting customer authorization.")
+  }
+
+  const checkoutUrl = vouch.paymentIntents[0]?.stripeCheckoutSessionUrl
+  if (!checkoutUrl) {
+    return actionFailure("CHECKOUT_NOT_FOUND", "Customer authorization Checkout is unavailable.")
+  }
+
+  return actionSuccess({ checkoutUrl })
+}
+
 export async function confirmPresence(input: unknown): Promise<ActionResult<{ vouchId: string }>> {
   const user = await requireActiveUser()
   const parsed = confirmPresenceSchema.safeParse(input)

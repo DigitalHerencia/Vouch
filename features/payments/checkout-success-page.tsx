@@ -1,25 +1,47 @@
 import { redirect } from "next/navigation"
 
 import { CheckoutSuccessView } from "@/components/shared/checkout-success-view"
-import { claimCustomerAuthorizationCheckout } from "@/lib/actions/vouchActions"
+import {
+  claimCustomerAuthorizationCheckout,
+  getCustomerAuthorizationCheckoutForAuthenticatedUser,
+} from "@/lib/actions/vouchActions"
 import { getCurrentUser } from "@/lib/fetchers/authFetchers"
 
-export async function CheckoutSuccessPage({ sessionId }: { sessionId?: string }) {
-  if (!sessionId) {
+export async function CheckoutSuccessPage({
+  sessionId,
+  publicId,
+}: {
+  sessionId?: string
+  publicId?: string
+}) {
+  if (!sessionId && !publicId) {
     return <CheckoutSuccessView message="No Checkout Session was provided." />
   }
 
-  const returnPath = `/checkout/success?session_id=${encodeURIComponent(sessionId)}`
+  const returnPath = sessionId
+    ? `/checkout/success?session_id=${encodeURIComponent(sessionId)}`
+    : `/checkout/success?vouch_id=${encodeURIComponent(publicId!)}`
   const user = await getCurrentUser()
 
   if (!user) {
-    return (
-      <CheckoutSuccessView
-        message="Create or sign in to your Vouch account to securely claim this authorized Vouch."
-        signInHref={`/sign-in?redirect_url=${encodeURIComponent(returnPath)}`}
-        signUpHref={`/sign-up?redirect_url=${encodeURIComponent(returnPath)}`}
-      />
-    )
+    redirect(`/sign-up?redirect_url=${encodeURIComponent(returnPath)}`)
+  }
+
+  if (publicId) {
+    const result = await getCustomerAuthorizationCheckoutForAuthenticatedUser({ publicId })
+    if (!result.ok) {
+      return (
+        <CheckoutSuccessView
+          message={result.formError ?? "Vouch could not open customer authorization Checkout."}
+        />
+      )
+    }
+
+    redirect(result.data.checkoutUrl)
+  }
+
+  if (!sessionId) {
+    return <CheckoutSuccessView message="No Checkout Session was provided." />
   }
 
   const result = await claimCustomerAuthorizationCheckout({ checkoutSessionId: sessionId })

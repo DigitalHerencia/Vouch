@@ -323,7 +323,7 @@ export function DashboardRequirementsNotice({
     <RequirementNoticeSplit
       eyebrow="Payment method"
       title="Save a payment method with Stripe"
-      body="Optionally save a payment method for faster protocol-fee Checkout. This does not make a payment."
+      body="Save a payment method to unlock dashboard operations and future protocol-fee Checkout. This does not make a payment."
       action={action}
       actionLabel="Save payment method"
       returnPath="/dashboard"

@@ -7,6 +7,7 @@ import {
   confirmPresence as confirmPresenceWorkflow,
   confirmPresenceFormAction as confirmPresenceFormWorkflow,
   createVouch as createVouchWorkflow,
+  getCustomerAuthorizationCheckoutForAuthenticatedUser as getCustomerAuthorizationCheckoutForAuthenticatedUserWorkflow,
   getCreateVouchFormReadiness as getCreateVouchFormReadinessWorkflow,
   validateCreateVouchDraft as validateCreateVouchDraftWorkflow,
 } from "@/lib/vouch/workflows"
@@ -29,6 +30,12 @@ export async function createVouch(input: unknown) {
 
 export async function claimCustomerAuthorizationCheckout(input: { checkoutSessionId: string }) {
   return claimCustomerAuthorizationCheckoutWorkflow(input)
+}
+
+export async function getCustomerAuthorizationCheckoutForAuthenticatedUser(input: {
+  publicId: string
+}) {
+  return getCustomerAuthorizationCheckoutForAuthenticatedUserWorkflow(input)
 }
 
 export async function confirmPresence(input: unknown) {

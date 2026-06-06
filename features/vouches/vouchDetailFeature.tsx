@@ -4,7 +4,6 @@ import type { ReactNode } from "react"
 import { AuthorizationCheckoutCard } from "@/components/vouches/authorization-checkout-card"
 import { VouchCountdown } from "@/components/vouches/vouch-countdown"
 import { VouchStatusDocument } from "@/components/vouches/vouch-status-document"
-import { VouchStatusTimeline } from "@/components/vouches/vouch-status-timeline"
 import { vouchPageCopy } from "@/content/vouches"
 import {
   ConfirmPresenceInlineForm,
@@ -77,6 +76,13 @@ const participantName = (
   participant: { displayName: string | null; email: string | null } | null
 ) => participant?.displayName ?? participant?.email ?? "Pending"
 
+function getAppUrl() {
+  return (
+    process.env.NEXT_PUBLIC_APP_URL ??
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
+  )
+}
+
 export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
   const user = await requireActiveUser()
   const state = await getVouchDetailForParticipant({ vouchId })
@@ -124,7 +130,9 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
           vouch.currency
         )}
         authorizationCheckoutUrl={
-          user.id === vouch.merchantId ? (vouch.paymentRecord?.checkoutUrl ?? null) : null
+          user.id === vouch.merchantId && vouch.status === "protocol_fee_paid"
+            ? `${getAppUrl()}/checkout/success?vouch_id=${encodeURIComponent(vouch.publicId)}`
+            : null
         }
         confirmation={{
           merchantConfirmed:
@@ -246,17 +254,6 @@ function VouchDetailView({
             ],
           }}
         />
-        <section className="border-3 border-neutral-400 bg-black p-4">
-          <div className="mb-4 border-b border-neutral-400 pb-3">
-            <h2 className="text-xl font-black tracking-wide uppercase">{copy.sections.timeline}</h2>
-            {timeline.length === 0 ? (
-              <p className="mt-2 text-sm font-semibold text-neutral-400">
-                {copy.states.noTimeline}
-              </p>
-            ) : null}
-          </div>
-          <VouchStatusTimeline items={statusTimeline} />
-        </section>
       </section>
 
       <section className="grid min-h-0 gap-4 sm:gap-6 md:grid-cols-2 md:gap-8">
