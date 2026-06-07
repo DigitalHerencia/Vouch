@@ -9,123 +9,18 @@ import { dashboardContent } from "@/content/dashboard"
 import { openStripePaymentMethodSetup } from "@/lib/actions/paymentActions"
 import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
-
-type InvoiceSummaryData = ComponentProps<typeof InvoiceSummary>
-type StatItem = ComponentProps<typeof StatsCards>["stats"][number]
-type VouchStatusTone = NonNullable<InvoiceSummaryData["tone"]>
-
-function formatDate(value: string | null | undefined) {
-  if (!value) return dashboardContent.fallbackDeadline
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  }).format(new Date(value))
-}
-
-function formatDateTime(value: string | null | undefined) {
-  if (!value) return dashboardContent.fallbackDeadline
-
-  return new Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  }).format(new Date(value))
-}
-
-function formatParticipantName(vouch: VouchCardDTO) {
-  return (
-    vouch.customer?.displayName ??
-    vouch.customer?.email ??
-    vouch.merchant?.displayName ??
-    vouch.merchant?.email ??
-    "Participant"
-  )
-}
-
-function formatCurrency(cents: number, currency: string) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: currency.toUpperCase(),
-  }).format(cents / 100)
-}
-
-function getStatusLabel(status: VouchCardDTO["status"]) {
-  return status.replace(/_/g, " ")
-}
-
-function mapStatusTone(status: VouchCardDTO["status"]): VouchStatusTone {
-  if (status === "captured") return "complete"
-  if (status === "expired") return "expired"
-  if (status === "protocol_fee_paid" || status === "authorized" || status === "can_capture") {
-    return "active"
-  }
-
-  return "pending"
-}
-
-function getRemainingLabel(value: string | null | undefined) {
-  if (!value) return "No deadline"
-
-  const remaining = new Date(value).getTime() - Date.now()
-
-  if (remaining <= 0) return "Due now"
-
-  const hours = Math.ceil(remaining / 3_600_000)
-
-  if (hours < 48) {
-    return new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(hours, "hour")
-  }
-
-  return new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(
-    Math.ceil(hours / 24),
-    "day"
-  )
-}
-
-function getPercentRemaining(vouch: VouchCardDTO) {
-  const expiresAt = vouch.confirmationExpiresAt ?? vouch.appointmentAt
-
-  if (!expiresAt) return 0
-
-  const now = Date.now()
-  const createdAt = vouch.createdAt ? new Date(vouch.createdAt).getTime() : now
-  const expiresAtMs = new Date(expiresAt).getTime()
-  const total = Math.max(expiresAtMs - createdAt, 1)
-  const remaining = expiresAtMs - now
-
-  return Math.max(0, Math.min(100, (remaining / total) * 100))
-}
-
-function mapVouchToInvoice(vouch: VouchCardDTO): InvoiceSummaryData {
-  const tone = mapStatusTone(vouch.status)
-  const deadline = vouch.confirmationExpiresAt ?? vouch.appointmentAt
-
-  return {
-    invoiceNumber: vouch.publicId,
-    clientName: formatParticipantName(vouch),
-    issueDate: formatDate(vouch.createdAt),
-    dueDate: formatDate(deadline),
-    amount: vouch.amountCents / 100,
-    amountLabel: formatCurrency(vouch.amountCents, vouch.currency),
-    status: getStatusLabel(vouch.status),
-    statusTone: tone,
-    href: `/vouches/${vouch.id}`,
-    vouchId: vouch.id,
-    appointmentLabel: formatDateTime(vouch.appointmentAt),
-    confirmationWindowLabel: `${formatDateTime(vouch.confirmationOpensAt)} to ${formatDateTime(
-      vouch.confirmationExpiresAt
-    )}`,
-    protectedAmountLabel: formatCurrency(vouch.amountCents, vouch.currency),
-    label: "Confirmation deadline",
-    expiresAtLabel: formatDateTime(deadline),
-    remainingLabel: getRemainingLabel(deadline),
-    percentRemaining: getPercentRemaining(vouch),
-    tone,
-  }
-}
+import {
+  formatCurrency,
+  formatDateTime,
+  formatParticipantName,
+  getPercentRemaining,
+  getRemainingLabel,
+  getStatusLabel,
+  mapStatusTone,
+} from "@/lib/utils/dashboardUtils"
+import { formatDate } from "date-fns"
+import { mapVouchToInvoice } from "@/lib/dto/dashboard.mappers"
+import type { InvoiceSummaryData } from "@/types/dashboardTypes"
 
 export async function DashboardFeature({
   searchParams,

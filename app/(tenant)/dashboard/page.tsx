@@ -1,3 +1,5 @@
+// app/(tenant)/dashboard/page.tsx
+
 import { Suspense } from "react"
 
 import { DashboardFeature } from "@/features/dashboard/dashboardFeature"

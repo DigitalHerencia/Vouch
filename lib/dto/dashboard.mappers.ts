@@ -1,6 +1,22 @@
+// lib/dto/dashboard.mappers.ts
+
 import "server-only"
 
 import { mapVouchCardDTO, type VouchCardDTO } from "./vouch.mappers"
+import type { StatsCards } from "@/components/shared/stats-cards"
+import type { InvoiceSummary } from "@/components/dashboard/invoice-summary"
+import { formatDate } from "date-fns"
+import type { ComponentProps } from "react"
+import {
+  formatCurrency,
+  formatDateTime,
+  formatParticipantName,
+  getPercentRemaining,
+  getRemainingLabel,
+  getStatusLabel,
+  mapStatusTone,
+} from "../utils/dashboardUtils"
+import type { InvoiceSummaryData } from "@/types/dashboardTypes"
 
 type DashboardVouchRecord = Parameters<typeof mapVouchCardDTO>[0]
 
@@ -79,4 +95,32 @@ export function getDashboardVariant(
 ): DashboardPageStateDTO["variant"] {
   if (!summary) return "empty"
   return Object.values(summary.counts).some((count) => count > 0) ? "mixed_vouch_states" : "empty"
+}
+
+export function mapVouchToInvoice(vouch: VouchCardDTO): InvoiceSummaryData {
+  const tone = mapStatusTone(vouch.status)
+  const deadline = vouch.confirmationExpiresAt ?? vouch.appointmentAt
+
+  return {
+    invoiceNumber: vouch.publicId,
+    clientName: formatParticipantName(vouch),
+    issueDate: formatDateTime(vouch.createdAt),
+    dueDate: formatDateTime(deadline),
+    amount: vouch.amountCents / 100,
+    amountLabel: formatCurrency(vouch.amountCents, vouch.currency),
+    status: getStatusLabel(vouch.status),
+    statusTone: tone,
+    href: `/vouches/${vouch.id}`,
+    vouchId: vouch.id,
+    appointmentLabel: formatDateTime(vouch.appointmentAt),
+    confirmationWindowLabel: `${formatDateTime(vouch.confirmationOpensAt)} to ${formatDateTime(
+      vouch.confirmationExpiresAt
+    )}`,
+    protectedAmountLabel: formatCurrency(vouch.amountCents, vouch.currency),
+    label: "Confirmation deadline",
+    expiresAtLabel: formatDateTime(deadline),
+    remainingLabel: getRemainingLabel(deadline),
+    percentRemaining: getPercentRemaining(vouch),
+    tone,
+  }
 }
