@@ -16,73 +16,67 @@ export function FeatureBentoGrid({
   align = "center",
 }: FeatureBentoGridProps) {
   return (
-    <main>
-      <section className="px-4 py-16 md:px-8 lg:px-16">
-        <div>
-          {(title || subtitle) && (
-            <div className={`mb-12 space-y-8 ${align === "left" ? "text-left" : "text-center"}`}>
-              {subtitle && (
-                <p
-                  className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
-                >
-                  {subtitle}
-                </p>
-              )}
-
-              {title && (
-                <h1
-                  className={`group flex flex-wrap gap-x-4 font-black uppercase ${
-                    align === "left" ? "justify-start" : "justify-center"
-                  }`}
-                >
-                  {title.split(" ").map((word, i) => (
-                    <span
-                      key={`${word}-${i}`}
-                      className={headingWordMotion}
-                      style={{ transitionDelay: `${i * 75}ms` }}
-                    >
-                      {word}
-                    </span>
-                  ))}
-                </h1>
-              )}
-            </div>
+    <section>
+      {(title || subtitle) && (
+        <div className={`mb-12 space-y-8 ${align === "left" ? "text-left" : "text-center"}`}>
+          {subtitle && (
+            <p
+              className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+            >
+              {subtitle}
+            </p>
           )}
 
-          <div className="grid auto-rows-auto gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature, index) => {
-              const spanClass = {
-                normal: "",
-                wide: "md:col-span-2",
-                tall: "md:row-span-2",
-              }[feature.span || "normal"]
-
-              return (
-                <Card
-                  key={feature.title}
-                  className={`${cardMotion} ${featureColors[index % 6]} ${spanClass}`}
+          {title && (
+            <h1
+              className={`group flex flex-wrap gap-x-4 font-black uppercase ${
+                align === "left" ? "justify-start" : "justify-center"
+              }`}
+            >
+              {title.split(" ").map((word, i) => (
+                <span
+                  key={`${word}-${i}`}
+                  className={headingWordMotion}
+                  style={{ transitionDelay: `${i * 75}ms` }}
                 >
-                  <CardHeader className="flex-1">
-                    <div className="mb-4 flex items-start gap-4">
-                      <div
-                        className={`flex h-12 w-12 shrink-0 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
-                          iconColors[index % 6]
-                        }`}
-                      >
-                        {feature.icon}
-                      </div>
-                      <CardTitle className="text-2xl leading-none uppercase">
-                        {feature.title}
-                      </CardTitle>
-                    </div>
-                    <CardDescription className="text-base">{feature.description}</CardDescription>
-                  </CardHeader>
-                </Card>
-              )
-            })}
-          </div>
+                  {word}
+                </span>
+              ))}
+            </h1>
+          )}
         </div>
-      </section>
-    </main>
+      )}
+
+      <div className="grid auto-rows-auto gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {features.map((feature, index) => {
+          const spanClass = {
+            normal: "",
+            wide: "md:col-span-2",
+            tall: "md:row-span-2",
+          }[feature.span || "normal"]
+
+          return (
+            <Card
+              key={feature.title}
+              className={`${cardMotion} ${featureColors[index % 6]} ${spanClass}`}
+            >
+              <CardHeader className="flex-1">
+                <div className="mb-4 flex items-start gap-4">
+                  <div
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
+                      iconColors[index % 6]
+                    }`}
+                  >
+                    {feature.icon}
+                  </div>
+                  <CardTitle className="text-2xl leading-none uppercase">{feature.title}</CardTitle>
+                </div>
+                <CardDescription className="text-base">{feature.description}</CardDescription>
+              </CardHeader>
+            </Card>
+          )
+        })}
+      </div>
+    </section>
   )
 }
