@@ -14,89 +14,19 @@ import { VouchDisclaimerAgreement } from "@/components/vouches/vouch-disclaimer-
 import { OnboardingRequirementNotice } from "@/components/vouches/onboarding-requirement-notice"
 import { openStripeConnectDashboard } from "@/lib/actions/paymentActions"
 import { createVouch, getCreateVouchFormReadiness } from "@/lib/actions/vouchActions"
-
-type CreateVouchDraft = {
-  disclaimerAccepted: boolean
-  appointmentStartsAt: string
-  amountDollars: string
-}
+import {
+  formatCurrency,
+  formatDateTime,
+  calculateProtocolFeeCents,
+  parseAmountCents,
+  toIsoFromLocalDateTime,
+} from "@/lib/utils/vouchUtils"
+import type { CreateVouchDraft } from "@/types/vouchTypes"
 
 const defaultDraft: CreateVouchDraft = {
   disclaimerAccepted: false,
   appointmentStartsAt: "",
   amountDollars: "",
-}
-
-function parseAmountCents(value: string | undefined) {
-  const amount = Number((value ?? "").trim().replace(/[$,\s]/g, ""))
-  if (!Number.isFinite(amount)) return 0
-
-  return Math.round(amount * 100)
-}
-
-function formatCurrency(cents: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-  }).format(cents / 100)
-}
-
-function calculateProtocolFeeCents(amountCents: number) {
-  if (amountCents <= 0) return 0
-
-  return Math.max(Math.ceil(amountCents * 0.05), 500)
-}
-
-function toIsoFromLocalDateTime(value: string | undefined) {
-  if (!value) return ""
-
-  const date = new Date(value)
-  return Number.isNaN(date.getTime()) ? "" : date.toISOString()
-}
-
-function formatDateTime(value: string | undefined) {
-  if (!value) return "Select an appointment"
-
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return "Select an appointment"
-
-  return new Intl.DateTimeFormat("en-US", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(date)
-}
-
-export function VouchFormSkeleton() {
-  return (
-    <main className="h-[calc(100dvh-8rem)] overflow-hidden p-4 md:p-8 lg:p-12">
-      <section className="grid h-full min-h-0 gap-8 overflow-hidden md:gap-16">
-        <div className="flex min-h-0 overflow-hidden border border-neutral-400 bg-black p-3 md:p-4">
-          <div className="grid min-h-0 w-full grid-rows-[auto_minmax(0,1fr)] gap-3 overflow-hidden">
-            <div className="border-b border-neutral-400 pb-3">
-              <div className="h-3 w-16 bg-blue-600" />
-              <div className="mt-3 h-6 w-44 bg-neutral-800" />
-            </div>
-            <div className="grid min-h-0 gap-4 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
-              <div className="border border-neutral-400 bg-black p-4">
-                <div className="h-12 border border-neutral-400 bg-neutral-900" />
-                <div className="mt-3 h-12 border border-neutral-400 bg-neutral-900" />
-                <div className="mt-3 h-12 border border-neutral-400 bg-neutral-900" />
-              </div>
-              <div className="border border-neutral-400 bg-black p-4">
-                <div className="h-10 w-60 bg-neutral-800" />
-                <div className="mt-6 h-14 border border-neutral-400 bg-neutral-900" />
-                <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                  <div className="h-20 border border-neutral-400 bg-neutral-900" />
-                  <div className="h-20 border border-neutral-400 bg-neutral-900" />
-                  <div className="h-20 border border-neutral-400 bg-neutral-900" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
-  )
 }
 
 export function VouchForm() {

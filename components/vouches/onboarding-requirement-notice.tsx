@@ -1,3 +1,5 @@
+// components/vouches/onboarding-requirement-notice.tsx
+
 import { RequirementNoticeSplit } from "@/components/shared/requirement-notice-split"
 
 export function OnboardingRequirementNotice({

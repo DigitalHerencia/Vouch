@@ -1,47 +1,40 @@
-import { z } from "zod"
-import { vouchListSortSchema } from "./vouchSchemas"
+// schemas/dashboardSchemas.ts
 
-export const dashboardSectionIdSchema = z.enum([
-  "action_required",
+import { z } from "zod"
+
+import { VOUCH_LIST_SORT_VALUES } from "@/lib/vouch/constants"
+import type { DashboardFiltersDTO } from "@/types/dashboardTypes"
+
+export const DASHBOARD_STATUS_FILTER_VALUES = [
+  "all",
+  "drafts",
+  "actionRequired",
   "active",
   "completed",
   "expired",
   "archived",
-])
+] as const
 
-export const dashboardVariantSchema = z.enum([
-  "empty",
-  "action_required",
-  "active_vouches",
-  "mixed_vouch_states",
-  "merchant_focused",
-  "customer_focused",
-  "loading",
-  "error",
-])
-
-export const sanitizedDashboardStatusParamSchema = dashboardSectionIdSchema
-  .or(z.literal("all"))
-  .optional()
-
-export const sanitizedDashboardSortParamSchema = vouchListSortSchema.optional()
-export const dashboardSortSchema = vouchListSortSchema
+export const dashboardStatusFilterSchema = z.enum(DASHBOARD_STATUS_FILTER_VALUES)
 
 export const dashboardSearchParamsSchema = z.object({
-  status: sanitizedDashboardStatusParamSchema,
-  page: z.coerce.number().int().min(1).optional(),
-  sort: sanitizedDashboardSortParamSchema,
+  status: dashboardStatusFilterSchema.catch("all").default("all"),
+  page: z.coerce.number().int().min(1).catch(1).default(1),
+  sort: z.enum(VOUCH_LIST_SORT_VALUES).catch("newest").default("newest"),
 })
 
-export const dashboardPreferencesSchema = z.object({
-  status: dashboardSectionIdSchema.optional(),
-  sort: vouchListSortSchema.optional(),
-  page: z.coerce.number().int().min(1).optional(),
-})
+export type DashboardSearchParamsInput = Record<string, string | string[] | undefined>
 
-export const dashboardSectionStateSchema = z.object({
-  id: dashboardSectionIdSchema,
-  title: z.string().min(1).max(120),
-  count: z.number().int().nonnegative(),
-  collapsed: z.boolean().optional(),
-})
+function firstSearchParamValue(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value
+}
+
+export function parseDashboardSearchParams(
+  searchParams: DashboardSearchParamsInput = {}
+): DashboardFiltersDTO {
+  return dashboardSearchParamsSchema.parse({
+    status: firstSearchParamValue(searchParams.status),
+    page: firstSearchParamValue(searchParams.page),
+    sort: firstSearchParamValue(searchParams.sort),
+  })
+}

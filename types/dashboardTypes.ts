@@ -1,35 +1,80 @@
 // types/dashboardTypes.ts
 
-import type { StatsCards } from "@/components/shared/stats-cards"
-import type { InvoiceSummary } from "@/components/dashboard/invoice-summary"
-import type { ComponentProps } from "react"
+import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
 import type { VouchListSort } from "./vouchTypes"
 
-export type InvoiceSummaryData = ComponentProps<typeof InvoiceSummary>
-export type StatItem = ComponentProps<typeof StatsCards>["stats"][number]
-export type VouchStatusTone = NonNullable<InvoiceSummaryData["tone"]>
+export type DashboardSectionKey =
+  | "drafts"
+  | "actionRequired"
+  | "active"
+  | "completed"
+  | "expired"
+  | "archived"
 
-export type DashboardSectionID = "action_required" | "active" | "completed" | "expired" | "archived"
+export type DashboardStatusFilter = "all" | DashboardSectionKey
 
-export type DashboardVariant =
-  | "empty"
-  | "action_required"
-  | "active_vouches"
-  | "mixed_vouch_states"
-  | "merchant_focused"
-  | "customer_focused"
-  | "loading"
-  | "error"
+export type DashboardVariant = "empty" | "mixed_vouch_states"
 
-export interface DashboardSearchParams {
-  status?: DashboardSectionID | "all"
+export type DashboardFiltersDTO = {
+  status: DashboardStatusFilter
+  page: number
+  sort: VouchListSort
+}
+
+export type DashboardCounts = Record<DashboardSectionKey, number>
+
+export type DashboardSections = Record<DashboardSectionKey, VouchCardDTO[]>
+
+export type DashboardSummaryDTO = {
+  userId: string
+  counts: DashboardCounts
+  sections: DashboardSections
+}
+
+export type DashboardPageStateDTO = {
+  variant: DashboardVariant
+  filters: DashboardFiltersDTO
+  summary: DashboardSummaryDTO | null
+  warnings: {
+    paymentMethodRequired: boolean
+  }
+}
+
+export type DashboardSearchParams = {
+  status?: DashboardStatusFilter
   page?: number
   sort?: VouchListSort
 }
 
-export interface DashboardSectionState {
-  id: DashboardSectionID
+export type DashboardSectionState = {
+  id: DashboardSectionKey
   title: string
   count: number
   collapsed?: boolean
+}
+
+export type VouchStatusTone = "active" | "pending" | "complete" | "failed" | "expired" | "offline"
+
+export type DashboardStatItem = {
+  label: string
+  value: string
+  trend?: "up" | "down" | "neutral"
+  trendValue?: string
+}
+
+export type InvoiceSummaryData = {
+  invoiceNumber: string
+  clientName: string
+  amount: number
+  amountLabel?: string
+  href: string
+  vouchId?: string
+  protectedAmountLabel?: string
+  label: string
+  expiresAtLabel: string
+  remainingLabel: string
+  windowLabel: string
+  percentRemaining: number
+  tone: VouchStatusTone
+  disabled?: boolean
 }

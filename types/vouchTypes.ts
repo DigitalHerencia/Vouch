@@ -178,3 +178,9 @@ export type VouchPricing = {
   vouchServiceFeeCents: number
   customerTotalCents: number
 }
+
+export type CreateVouchDraft = {
+  disclaimerAccepted: boolean
+  appointmentStartsAt: string
+  amountDollars: string
+}

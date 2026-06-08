@@ -1,5 +1,5 @@
 import * as React from "react"
-import { TrendingUp, TrendingDown, Minus, CheckSquare } from "lucide-react"
+import { CheckSquare } from "lucide-react"
 import { Card, CardContent } from "../ui/card"
 
 const subtitleMotion =

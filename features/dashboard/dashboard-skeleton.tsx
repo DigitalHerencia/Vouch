@@ -1,56 +1,71 @@
+// features/dashboard/dashboard-skeleton.tsx
+
 export function DashboardSkeleton() {
   const stats = Array.from({ length: 4 }, (_, index) => `dashboard-stat-${index}`)
   const invoices = Array.from({ length: 3 }, (_, index) => `dashboard-invoice-${index}`)
 
   return (
-    <main className="mb-16 animate-pulse">
-      <section className="px-4 py-16 md:px-8 lg:px-16">
-        <div className="flex flex-col items-start gap-8">
-          <div className="h-9 w-52 border-2 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]" />
-          <div className="h-16 w-full max-w-lg bg-neutral-900" />
+    <div className="grid gap-8 pb-12 md:gap-10">
+      <section className="px-4 py-8 md:px-8 lg:px-16">
+        <div className="flex max-w-5xl animate-pulse flex-col items-start gap-6">
+          <div className="h-6 w-44 border-2 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]" />
+          <div className="h-18 w-full max-w-2xl bg-neutral-900 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] md:h-22" />
+          <div className="h-5 w-full max-w-xl bg-neutral-900" />
         </div>
       </section>
 
-      <section className="px-4 py-16 md:px-8 lg:px-16">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
+      <section className="px-4 py-8 md:px-8 lg:px-16">
+        <div className="grid animate-pulse grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
           {stats.map((key) => (
             <div
               key={key}
-              className="h-36 border-3 border-neutral-400 bg-black p-6 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
+              className="flex min-h-26 flex-col justify-center border-3 border-neutral-400 bg-black p-5 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)] md:min-h-28 md:p-6"
             >
-              <div className="h-12 w-14 bg-neutral-900" />
-              <div className="mt-4 h-6 w-24 bg-neutral-900" />
+              <div className="h-8 w-10 bg-neutral-900" />
+              <div className="mt-3 h-4 w-28 bg-neutral-900" />
             </div>
           ))}
         </div>
       </section>
 
-      <div className="grid gap-8 px-4 md:px-8 lg:px-16">
+      <section className="grid gap-7 px-4 py-8 md:gap-8 md:px-8 lg:px-16">
         {invoices.map((key) => (
-          <section
+          <article
             key={key}
-            className="border-3 border-neutral-400 bg-black px-12 py-16 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
+            className="animate-pulse border-3 border-neutral-400 bg-black px-6 py-7 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:px-8 md:py-8"
           >
-            <div className="flex flex-wrap items-start justify-between gap-6 pb-4">
+            <div className="flex flex-wrap items-start justify-between gap-5 border-b-2 border-neutral-900 pb-5">
               <div className="grid gap-3">
-                <div className="h-5 w-36 bg-neutral-900" />
-                <div className="h-10 w-64 bg-neutral-900" />
-                <div className="h-5 w-40 bg-neutral-900" />
+                <div className="h-4 w-36 bg-neutral-900" />
+                <div className="h-10 w-64 max-w-full bg-neutral-900 md:w-80" />
+                <div className="h-4 w-48 bg-neutral-900" />
               </div>
-              <div className="grid justify-items-end gap-3">
-                <div className="h-7 w-24 bg-neutral-900" />
-                <div className="h-9 w-28 bg-neutral-900" />
+
+              <div className="grid justify-items-end gap-2">
+                <div className="h-6 w-24 bg-neutral-900" />
+                <div className="h-7 w-28 bg-neutral-900" />
               </div>
             </div>
-            <div className="grid gap-4 border-3 border-neutral-400 bg-black p-6">
-              <div className="h-4 w-44 bg-neutral-900" />
-              <div className="h-9 w-36 bg-neutral-900" />
-              <div className="h-4 w-full bg-neutral-900" />
-              <div className="h-4 w-48 bg-neutral-900" />
+
+            <div className="mt-5 grid gap-4 border-3 border-neutral-400 bg-black p-5 md:mt-6 md:p-6">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <div className="h-3 w-44 bg-neutral-900" />
+                  <div className="mt-2 h-8 w-40 bg-neutral-900" />
+                </div>
+
+                <div className="grid justify-items-end gap-2">
+                  <div className="h-3 w-20 bg-neutral-900" />
+                  <div className="h-4 w-32 bg-neutral-900" />
+                </div>
+              </div>
+
+              <div className="h-3 w-full bg-neutral-900" />
+              <div className="h-3 w-44 bg-neutral-900" />
             </div>
-          </section>
+          </article>
         ))}
-      </div>
-    </main>
+      </section>
+    </div>
   )
 }

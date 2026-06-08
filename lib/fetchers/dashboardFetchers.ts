@@ -6,13 +6,7 @@ import { unstable_noStore as noStore } from "next/cache"
 
 import type { Prisma, VouchStatus } from "@/prisma/generated/prisma/client"
 
-import {
-  getDashboardVariant,
-  mapDashboardSummaryDTO,
-  type DashboardFiltersDTO,
-  type DashboardPageStateDTO,
-  type DashboardSummaryDTO,
-} from "@/lib/dto/dashboard.mappers"
+import { getDashboardVariant, mapDashboardSummaryDTO } from "@/lib/dto/dashboard.mappers"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
 import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
@@ -20,36 +14,31 @@ import {
   syncConnectedAccountReadinessForUser,
   syncPaymentCustomerReadinessForUser,
 } from "@/lib/payments/stripeReadinessSync"
-import { getAccountReadiness } from "@/lib/fetchers/readinessFetchers"
+import { parseDashboardSearchParams } from "@/schemas/dashboardSchemas"
+import type {
+  DashboardPageStateDTO,
+  DashboardSectionKey,
+  DashboardSummaryDTO,
+} from "@/types/dashboardTypes"
 
 const DEFAULT_TAKE = 10
-const READINESS_REFRESH_INTERVAL_MS = 5 * 60 * 1000
 const ACTIVE_DB_STATUSES: VouchStatus[] = ["protocol_fee_paid", "authorized"]
 
 type VouchCardRecord = Prisma.VouchGetPayload<{ select: typeof vouchCardSelect }>
 
-async function parseDashboardSearchParams(
-  searchParams: Record<string, string | string[] | undefined>
-): Promise<DashboardFiltersDTO> {
-  const value = (key: string) => {
-    const raw = searchParams[key]
-    return Array.isArray(raw) ? raw[0] : raw
-  }
-
-  return {
-    status: value("status") ?? "all",
-    page: Math.max(Number(value("page") ?? 1), 1),
-    sort: value("sort") ?? "newest",
-  }
+function hasSearchParam(value: string | string[] | undefined): boolean {
+  if (Array.isArray(value)) return value.length > 0
+  return Boolean(value)
 }
 
 async function syncStripeReturns(input: {
   userId: string
-  paymentMethodReady: boolean
   searchParams: Record<string, string | string[] | undefined>
 }): Promise<void> {
-  const stripeConnectReturn = input.searchParams.stripe_connect_return
-  const stripePaymentReturn = input.searchParams.stripe_payment_return
+  const stripeConnectReturn = hasSearchParam(input.searchParams.stripe_connect_return)
+  const stripePaymentReturn = hasSearchParam(input.searchParams.stripe_payment_return)
+
+  if (!stripeConnectReturn && !stripePaymentReturn) return
 
   if (stripeConnectReturn) {
     const connectedAccount = await prisma.connectedAccount.findUnique({
@@ -65,16 +54,13 @@ async function syncStripeReturns(input: {
     }
   }
 
-  if (stripePaymentReturn || !input.paymentMethodReady) {
+  if (stripePaymentReturn) {
     const paymentCustomer = await prisma.paymentCustomer.findUnique({
       where: { userId: input.userId },
-      select: { stripeCustomerId: true, syncedAt: true },
+      select: { stripeCustomerId: true },
     })
 
-    const stale =
-      !paymentCustomer?.syncedAt ||
-      Date.now() - paymentCustomer.syncedAt.getTime() >= READINESS_REFRESH_INTERVAL_MS
-    if (paymentCustomer?.stripeCustomerId && (stripePaymentReturn || stale)) {
+    if (paymentCustomer?.stripeCustomerId) {
       await syncPaymentCustomerReadinessForUser({
         userId: input.userId,
         stripeCustomerId: paymentCustomer.stripeCustomerId,
@@ -83,72 +69,103 @@ async function syncStripeReturns(input: {
   }
 }
 
-async function listForUser(
-  userId: string,
-  where: Prisma.VouchWhereInput,
-  take = DEFAULT_TAKE
-): Promise<VouchCardRecord[]> {
-  noStore()
-
-  return prisma.vouch.findMany({
-    where: {
-      AND: [
-        {
-          OR: [{ merchantId: userId }, { customerId: userId }],
-        },
-        where,
-      ],
-    },
-    orderBy: { updatedAt: "desc" },
-    take,
-    select: vouchCardSelect,
-  })
+function getParticipantWhere(userId: string): Prisma.VouchWhereInput {
+  return {
+    OR: [{ merchantId: userId }, { customerId: userId }],
+  }
 }
 
-async function getDashboardSummary(userId: string): Promise<DashboardSummaryDTO | null> {
-  const now = new Date()
-  const participantWhere = { OR: [{ merchantId: userId }, { customerId: userId }] }
-  const sectionWhere = {
-    drafts: { archived: false, status: "draft" },
+function getDashboardSectionWhere(
+  now = new Date()
+): Record<DashboardSectionKey, Prisma.VouchWhereInput> {
+  return {
+    drafts: {
+      archived: false,
+      status: "draft",
+    },
     actionRequired: {
       archived: false,
       status: "can_capture",
       confirmationOpensAt: { lte: now },
       confirmationExpiresAt: { gt: now },
     },
-    active: { archived: false, status: { in: ACTIVE_DB_STATUSES } },
-    completed: { archived: false, status: "captured" },
-    expired: { archived: false, status: "expired", confirmationExpiresAt: { lte: now } },
-    archived: { archived: true },
-  } satisfies Record<keyof DashboardSummaryDTO["sections"], Prisma.VouchWhereInput>
+    active: {
+      archived: false,
+      status: { in: ACTIVE_DB_STATUSES },
+    },
+    completed: {
+      archived: false,
+      status: "captured",
+    },
+    expired: {
+      archived: false,
+      status: "expired",
+      confirmationExpiresAt: { lte: now },
+    },
+    archived: {
+      archived: true,
+    },
+  }
+}
 
-  const [sections, countValues] = await Promise.all([
-    Promise.all([
-      listForUser(userId, sectionWhere.drafts),
-      listForUser(userId, sectionWhere.actionRequired),
-      listForUser(userId, sectionWhere.active),
-      listForUser(userId, sectionWhere.completed),
-      listForUser(userId, sectionWhere.expired),
-      listForUser(userId, sectionWhere.archived),
-    ]),
-    Promise.all([
-      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.drafts] } }),
-      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.actionRequired] } }),
-      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.active] } }),
-      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.completed] } }),
-      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.expired] } }),
-      prisma.vouch.count({ where: { AND: [participantWhere, sectionWhere.archived] } }),
-    ]),
-  ])
-  const [drafts, actionRequired, active, completed, expired, archived] = sections
+function listVouchesForUser(input: {
+  participantWhere: Prisma.VouchWhereInput
+  sectionWhere: Prisma.VouchWhereInput
+  take?: number
+}): Prisma.PrismaPromise<VouchCardRecord[]> {
+  return prisma.vouch.findMany({
+    where: {
+      AND: [input.participantWhere, input.sectionWhere],
+    },
+    orderBy: { updatedAt: "desc" },
+    take: input.take ?? DEFAULT_TAKE,
+    select: vouchCardSelect,
+  })
+}
+
+function countVouchesForUser(input: {
+  participantWhere: Prisma.VouchWhereInput
+  sectionWhere: Prisma.VouchWhereInput
+}): Prisma.PrismaPromise<number> {
+  return prisma.vouch.count({
+    where: {
+      AND: [input.participantWhere, input.sectionWhere],
+    },
+  })
+}
+
+async function getDashboardSummary(userId: string): Promise<DashboardSummaryDTO> {
+  const participantWhere = getParticipantWhere(userId)
+  const sectionWhere = getDashboardSectionWhere()
+
   const [
+    drafts,
+    actionRequired,
+    active,
+    completed,
+    expired,
+    archived,
     draftCount,
     actionRequiredCount,
     activeCount,
     completedCount,
     expiredCount,
     archivedCount,
-  ] = countValues
+  ] = await prisma.$transaction([
+    listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.drafts }),
+    listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.actionRequired }),
+    listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.active }),
+    listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.completed }),
+    listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.expired }),
+    listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.archived }),
+
+    countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.drafts }),
+    countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.actionRequired }),
+    countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.active }),
+    countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.completed }),
+    countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.expired }),
+    countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.archived }),
+  ])
 
   return mapDashboardSummaryDTO({
     userId,
@@ -169,25 +186,40 @@ async function getDashboardSummary(userId: string): Promise<DashboardSummaryDTO 
   })
 }
 
+async function getPaymentMethodReady(userId: string): Promise<boolean> {
+  const paymentCustomer = await prisma.paymentCustomer.findUnique({
+    where: { userId },
+    select: { paymentMethodReady: true },
+  })
+
+  return paymentCustomer?.paymentMethodReady === true
+}
+
 export async function getDashboardPageState(input?: {
   searchParams?: Record<string, string | string[] | undefined>
 }): Promise<DashboardPageStateDTO> {
+  noStore()
+
+  const searchParams = input?.searchParams ?? {}
+  const filters = parseDashboardSearchParams(searchParams)
   const current = await requireActiveUser()
+
   await syncStripeReturns({
     userId: current.id,
-    paymentMethodReady: current.readiness.paymentMethodReady === "ready",
-    searchParams: input?.searchParams ?? {},
+    searchParams,
   })
-  const readiness = await getAccountReadiness(current.id)
-  const filters = await parseDashboardSearchParams(input?.searchParams ?? {})
-  const summary = await getDashboardSummary(current.id)
+
+  const [paymentMethodReady, summary] = await Promise.all([
+    getPaymentMethodReady(current.id),
+    getDashboardSummary(current.id),
+  ])
 
   return {
     variant: getDashboardVariant(summary),
     filters,
     summary,
     warnings: {
-      paymentMethodRequired: readiness?.paymentMethodReady !== "ready",
+      paymentMethodRequired: !paymentMethodReady,
     },
   }
 }

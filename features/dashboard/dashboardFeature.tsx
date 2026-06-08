@@ -1,26 +1,66 @@
-import type { ComponentProps } from "react"
+// features/dashboard/dashboardFeature.tsx
 
-import { HeroCentered } from "@/components/shared/hero-centered"
-import { StatsCards } from "@/components/shared/stats-cards"
 import { DashboardEmptyState } from "@/components/dashboard/dashboard-empty-state"
 import { DashboardRequirementsNotice } from "@/components/dashboard/dashboard-requirements-notice"
-import { InvoiceSummary } from "@/components/dashboard/invoice-summary"
+import { InvoiceSummaryList } from "@/components/dashboard/invoice-summary"
+import { HeroCentered } from "@/components/shared/hero-centered"
+import { StatsCards } from "@/components/shared/stats-cards"
 import { dashboardContent } from "@/content/dashboard"
 import { openStripePaymentMethodSetup } from "@/lib/actions/paymentActions"
-import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
-import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
-import {
-  formatCurrency,
-  formatDateTime,
-  formatParticipantName,
-  getPercentRemaining,
-  getRemainingLabel,
-  getStatusLabel,
-  mapStatusTone,
-} from "@/lib/utils/dashboardUtils"
-import { formatDate } from "date-fns"
 import { mapVouchToInvoice } from "@/lib/dto/dashboard.mappers"
-import type { InvoiceSummaryData } from "@/types/dashboardTypes"
+import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
+import type {
+  DashboardPageStateDTO,
+  DashboardSectionKey,
+  DashboardStatItem,
+  DashboardSummaryDTO,
+  InvoiceSummaryData,
+} from "@/types/dashboardTypes"
+
+const DEFAULT_SECTION_ORDER: DashboardSectionKey[] = [
+  "drafts",
+  "actionRequired",
+  "active",
+  "completed",
+  "expired",
+]
+
+function getDashboardMetrics(summary: DashboardSummaryDTO | null): DashboardStatItem[] {
+  const counts = summary?.counts
+
+  return [
+    {
+      label: "Drafts",
+      value: String(counts?.drafts ?? 0),
+    },
+    {
+      label: "Active",
+      value: String(counts?.active ?? 0),
+    },
+    {
+      label: "Action required",
+      value: String(counts?.actionRequired ?? 0),
+    },
+    {
+      label: "Completed",
+      value: String(counts?.completed ?? 0),
+    },
+  ]
+}
+
+function getVisibleSectionOrder(state: DashboardPageStateDTO): DashboardSectionKey[] {
+  if (state.filters.status === "all") return DEFAULT_SECTION_ORDER
+  return [state.filters.status]
+}
+
+function getVisibleInvoices(state: DashboardPageStateDTO): InvoiceSummaryData[] {
+  const sections = state.summary?.sections
+  if (!sections) return []
+
+  return getVisibleSectionOrder(state).flatMap((sectionKey) =>
+    sections[sectionKey].map(mapVouchToInvoice)
+  )
+}
 
 export async function DashboardFeature({
   searchParams,
@@ -28,78 +68,40 @@ export async function DashboardFeature({
   searchParams?: Record<string, string | string[] | undefined>
 }) {
   const state = await getDashboardPageState(searchParams ? { searchParams } : undefined)
-  const sections = state.summary?.sections
   const showPaymentMethodNotice = state.warnings.paymentMethodRequired
-
-  const drafts = sections?.drafts ?? []
-  const actionRequired = sections?.actionRequired ?? []
-  const active = sections?.active ?? []
-  const completed = sections?.completed ?? []
-  const expired = sections?.expired ?? []
-
-  const invoices: InvoiceSummaryData[] = [
-    ...drafts.map(mapVouchToInvoice),
-    ...actionRequired.map(mapVouchToInvoice),
-    ...active.map(mapVouchToInvoice),
-    ...completed.map(mapVouchToInvoice),
-    ...expired.map(mapVouchToInvoice),
-  ]
-
-  const counts = state.summary?.counts
-  const draftCount = counts?.drafts ?? drafts.length
-  const activeCount = counts?.active ?? active.length
-  const completedCount = counts?.completed ?? completed.length
-  const actionRequiredCount = counts?.actionRequired ?? actionRequired.length
-
-  const metrics: StatItem[] = [
-    {
-      label: "Drafts",
-      value: String(draftCount),
-    },
-    {
-      label: "Active",
-      value: String(activeCount),
-    },
-    {
-      label: "Action",
-      value: String(actionRequiredCount),
-    },
-    {
-      label: "Completed",
-      value: String(completedCount),
-    },
-  ]
+  const metrics = getDashboardMetrics(state.summary)
+  const invoices = getVisibleInvoices(state)
 
   return (
-    <main className="mb-16">
+    <div className="pb-12">
       <HeroCentered
         eyebrow={dashboardContent.hero.eyebrow}
         title={dashboardContent.hero.title}
-        description=""
+        description={dashboardContent.hero.body}
         align="left"
       />
+
       {showPaymentMethodNotice ? (
         <DashboardRequirementsNotice action={openStripePaymentMethodSetup} />
       ) : null}
 
       <div
         aria-disabled={showPaymentMethodNotice}
-        className={showPaymentMethodNotice ? "pointer-events-none opacity-50" : undefined}
+        className={[
+          "grid gap-4 md:gap-8",
+          showPaymentMethodNotice ? "pointer-events-none opacity-60" : "",
+        ]
+          .filter(Boolean)
+          .join(" ")}
       >
         <StatsCards stats={metrics} />
 
-        {state.variant === "empty" ? (
+        {invoices.length === 0 ? (
           <DashboardEmptyState />
         ) : (
-          invoices.map((invoice) => (
-            <InvoiceSummary
-              key={invoice.vouchId ?? invoice.invoiceNumber}
-              {...invoice}
-              disabled={showPaymentMethodNotice}
-            />
-          ))
+          <InvoiceSummaryList invoices={invoices} disabled={showPaymentMethodNotice} />
         )}
       </div>
-    </main>
+    </div>
   )
 }

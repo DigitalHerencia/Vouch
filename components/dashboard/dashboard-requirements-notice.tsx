@@ -1,6 +1,6 @@
-import Image from "next/image"
+// components/dashboard/dashboard-requirements-notice.tsx
+
 import { RequirementNoticeSplit } from "@/components/shared/requirement-notice-split"
-import { Button } from "@/components/ui/button"
 
 export function DashboardRequirementsNotice({
   action,

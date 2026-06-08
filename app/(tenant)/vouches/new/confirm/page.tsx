@@ -1,12 +1,11 @@
 import { Suspense } from "react"
 
 import { VouchForm } from "@/features/vouches/vouchForm"
-
-import Loading from "../loading"
+import { VouchFormSkeleton } from "@/features/vouches/vouchFormSkeleton"
 
 export default function ConfirmNewVouchRoute() {
   return (
-    <Suspense fallback={<Loading />}>
+    <Suspense fallback={<VouchFormSkeleton />}>
       <VouchForm />
     </Suspense>
   )

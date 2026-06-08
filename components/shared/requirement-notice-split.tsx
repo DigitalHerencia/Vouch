@@ -1,5 +1,17 @@
-import { Button } from "../ui/button"
+// components/shared/requirement-notice-split.tsx
+
 import Image from "next/image"
+
+import { Button } from "@/components/ui/button"
+
+export type RequirementNoticeSplitProps = {
+  eyebrow: string
+  title: string
+  body: string
+  action?: ((formData: FormData) => void | Promise<void>) | undefined
+  actionLabel?: string | undefined
+  returnPath?: "/dashboard" | "/vouches/new" | undefined
+}
 
 export function RequirementNoticeSplit({
   eyebrow,
@@ -8,14 +20,7 @@ export function RequirementNoticeSplit({
   action,
   actionLabel,
   returnPath,
-}: {
-  eyebrow: string
-  title: string
-  body: string
-  action?: ((formData: FormData) => void | Promise<void>) | undefined
-  actionLabel?: string | undefined
-  returnPath?: "/dashboard" | "/vouches/new" | undefined
-}) {
+}: RequirementNoticeSplitProps) {
   return (
     <section className="px-4 py-8 md:px-8 lg:px-16">
       <div className="overflow-hidden border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
@@ -28,6 +33,7 @@ export function RequirementNoticeSplit({
             <p className="mt-3 max-w-2xl text-sm leading-6 font-semibold text-neutral-300 md:text-[15px] md:leading-7">
               {body}
             </p>
+
             {action ? (
               <form action={action} className="mt-5">
                 {returnPath ? <input type="hidden" name="returnPath" value={returnPath} /> : null}
@@ -37,6 +43,7 @@ export function RequirementNoticeSplit({
               </form>
             ) : null}
           </div>
+
           <div className="grid place-items-center border-t-3 border-neutral-400 bg-white p-6 md:border-t-0 md:border-l-3 md:p-8">
             <span className="inline-flex w-full items-center justify-center bg-white px-6 py-5">
               <Image
