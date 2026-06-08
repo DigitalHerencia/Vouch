@@ -5,8 +5,8 @@ export function DashboardSkeleton() {
   const invoices = Array.from({ length: 3 }, (_, index) => `dashboard-invoice-${index}`)
 
   return (
-    <div className="grid gap-8 pb-12 md:gap-10">
-      <section className="px-4 py-8 md:px-8 lg:px-16">
+    <div className="grid gap-8 md:gap-10">
+      <section>
         <div className="flex max-w-5xl animate-pulse flex-col items-start gap-6">
           <div className="h-6 w-44 border-2 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]" />
           <div className="h-18 w-full max-w-2xl bg-neutral-900 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] md:h-22" />
@@ -14,7 +14,7 @@ export function DashboardSkeleton() {
         </div>
       </section>
 
-      <section className="px-4 py-8 md:px-8 lg:px-16">
+      <section>
         <div className="grid animate-pulse grid-cols-2 gap-4 md:grid-cols-4 md:gap-5">
           {stats.map((key) => (
             <div
@@ -28,7 +28,7 @@ export function DashboardSkeleton() {
         </div>
       </section>
 
-      <section className="grid gap-7 px-4 py-8 md:gap-8 md:px-8 lg:px-16">
+      <section className="grid gap-7 md:gap-8">
         {invoices.map((key) => (
           <article
             key={key}
