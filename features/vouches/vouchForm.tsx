@@ -8,8 +8,8 @@ import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import { useForm, useWatch } from "react-hook-form"
 
-import { PageTitle } from "@/components/vouches/page-title"
 import { OnboardingRequirementNotice } from "@/components/vouches/onboarding-requirement-notice"
+import { PageTitle } from "@/components/vouches/page-title"
 import { VouchAmountField } from "@/components/vouches/vouch-amount-field"
 import { VouchCreationCartRow } from "@/components/vouches/vouch-creation-cart-row"
 import { VouchCreationWizard } from "@/components/vouches/vouch-creation-wizard"
@@ -269,16 +269,14 @@ export function VouchForm() {
   ]
 
   return (
-    <div className="grid gap-8 pb-12 md:gap-10">
+    <div className="grid gap-8 md:gap-10">
       <PageTitle
         eyebrow="Create Vouch"
         title="New Vouch"
         description="Create the agreement, protect the appointment amount, and send the customer into the payment flow."
       />
 
-      {onboardingRequired ? (
-        <OnboardingRequirementNotice action={openStripeConnectDashboard} />
-      ) : null}
+      {onboardingRequired ? <OnboardingRequirementNotice action={openStripeConnectDashboard} /> : null}
 
       <VouchCreationWizard
         steps={steps}
@@ -288,7 +286,7 @@ export function VouchForm() {
         onComplete={submitVouch}
       />
 
-      <section className="px-4 py-8 md:px-8 lg:px-16">
+      <section>
         <div className="mx-auto flex w-full max-w-2xl items-center justify-center border border-neutral-700 bg-black/80 px-4 py-3">
           <Image
             src="/Powered by Stripe - white.svg"
