@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyRoute() {
   return (
-    <div className="grid gap-14 md:gap-18 lg:gap-24">
+    <div className="grid gap-14 md:gap-16 lg:gap-24">
       <FAQSimpleList
         subtitle="Legal"
         title="Privacy Policy"
