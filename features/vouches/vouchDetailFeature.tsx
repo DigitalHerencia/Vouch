@@ -2,7 +2,11 @@ import { notFound } from "next/navigation"
 
 import { PageTitle } from "@/components/vouches/page-title"
 import { VouchStatusDocument } from "@/components/vouches/vouch-status-document"
-import { VouchDeadlineRefresh } from "@/features/vouches/vouchDetailFeature.client"
+import {
+  ConfirmPresenceInlineForm,
+  VouchDeadlineRefresh,
+} from "@/features/vouches/vouchDetailFeature.client"
+import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
 import { mapVouchDetailDisplayDTO } from "@/lib/dto/vouch-detail-display.mappers"
 import { getVouchDetailPageState } from "@/lib/fetchers/vouchFetchers"
 
@@ -23,6 +27,7 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
     auditTimeline: timeline,
     ...(currentUserCode ? { currentUserCode } : {}),
   })
+  const confirmationAction = display.confirmationAction
 
   return (
     <section className="mx-auto grid w-full max-w-6xl gap-8 md:gap-10" aria-labelledby="vouch-title">
@@ -33,7 +38,25 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
         />
       ) : null}
       <PageTitle {...display.pageTitle} variant="page" />
-      <VouchStatusDocument data={display.document} />
+      <VouchStatusDocument
+        data={{
+          ...display.document,
+          confirmations: {
+            ...display.document.confirmations,
+            action:
+              confirmationAction.canConfirm && confirmationAction.confirmationExpiresAt ? (
+                <ConfirmPresenceInlineForm
+                  action={confirmPresenceFormAction}
+                  vouchId={vouchId}
+                  confirmationExpiresAt={confirmationAction.confirmationExpiresAt}
+                  {...(confirmationAction.currentUserCode
+                    ? { currentUserCode: confirmationAction.currentUserCode }
+                    : {})}
+                />
+              ) : null,
+          },
+        }}
+      />
     </section>
   )
 }
