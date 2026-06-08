@@ -33,6 +33,7 @@ export type VouchFormPageTitleProps = {
   eyebrow?: string
   title: string
   description?: string
+  variant?: "hero" | "page"
 }
 
 export type DateLike = Date | string | number
@@ -113,6 +114,84 @@ export interface VouchTimelineItemDTO {
   label: string
   body: string
   occurredAt: ISODateTime
+}
+
+export type VouchStatusTone = "active" | "pending" | "complete" | "failed" | "expired" | "offline"
+
+export type VouchStatusTimelineState = "completed" | "current" | "upcoming"
+
+export type VouchCountdownProps = {
+  label: string
+  expiresAtLabel: string
+  remainingLabel: string
+  startsAt?: ISODateTime
+  expiresAt?: ISODateTime
+  percentRemaining?: number
+  tone?: VouchStatusTone
+}
+
+export type VouchStatusTimelineItem = {
+  id: string
+  title: string
+  description: string
+  state: VouchStatusTimelineState
+  timeLabel?: string
+  meta?: string
+}
+
+export type VouchAuditDisplayItem = {
+  label: string
+  value: string
+}
+
+export type VouchStatusDocumentData = {
+  title: string
+  publicId: string
+  status: string
+  statusTone?: VouchStatusTone
+  amountLabel: string
+  merchantLabel: string
+  customerLabel: string
+  appointmentLabel: string
+  confirmationOpensLabel: string
+  confirmationExpiresLabel: string
+  paymentStatusLabel: string
+  settlementStatusLabel: string
+  merchantReceivesLabel: string
+  customerTotalLabel: string
+  countdown?: VouchCountdownProps
+  confirmations: {
+    merchantConfirmed: boolean
+    customerConfirmed: boolean
+    action?: ReactNode
+  }
+  timeline: VouchStatusTimelineItem[]
+  audit?: VouchAuditDisplayItem[]
+}
+
+export type VouchDetailPageTitle = {
+  eyebrow?: string
+  title: string
+  description?: string
+}
+
+export type VouchDetailRefreshWindow = {
+  confirmationOpensAt: ISODateTime
+  confirmationExpiresAt: ISODateTime
+} | null
+
+export type VouchDetailConfirmationAction = {
+  canConfirm: boolean
+  confirmationExpiresAt: ISODateTime | null
+  authorizationCheckoutUrl: string | null
+  currentUserCode?: string
+}
+
+export type VouchDetailDisplayDTO = {
+  pageTitle: VouchDetailPageTitle
+  document: VouchStatusDocumentData
+  refreshWindow: VouchDetailRefreshWindow
+  confirmationAction: VouchDetailConfirmationAction
 }
 
 export type CreateVouchInput = ConfirmCreateVouchInput
