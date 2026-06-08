@@ -1,12 +1,5 @@
 import * as React from "react"
-import Image from "next/image"
-import { CheckCircle2, LockKeyhole, ShieldCheck, type LucideIcon } from "lucide-react"
 import { CardHeader, Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
-import { Marquee, MarqueeItem, MarqueeSeparator } from "@/components/ui/marquee"
-import { MarqueeLogo } from "@/components/nav/logo-lockup"
-
-const panelMotion =
-  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
 
 export function ProcessPanel({ title, steps, footer, id }: ProcessPanelProps) {
   return (
@@ -95,45 +88,6 @@ export function ProcessPanelList({ title, items, eyebrow, body, id }: ProcessPan
   )
 }
 
-export function ProcessPanelRuleGrid({ title, items, footer, id }: ProcessPanelRuleGridProps) {
-  return (
-    <main>
-      <section className="px-4 py-16 md:px-8 lg:px-16">
-        <Card id={id} className={`w-full border-3 border-neutral-400 bg-black ${panelMotion}`}>
-          <CardHeader className="items-center border-b-3 border-neutral-400 px-6 py-6 text-center">
-            <CardTitle className="text-6xl font-black tracking-wide text-white">{title}</CardTitle>
-          </CardHeader>
-
-          <CardContent className="grid p-0 md:grid-cols-2">
-            {items.map((item, index) => (
-              <section
-                key={`${item.label}-${item.value}`}
-                className={[
-                  "min-h-35 border-b-3 border-neutral-400 px-6 py-6 md:px-8",
-                  index % 2 === 0 ? "md:border-r-3" : "",
-                  index >= items.length - 2 ? "md:border-b-0" : "",
-                  index === items.length - 1 ? "border-b-0" : "",
-                ].join(" ")}
-              >
-                <p className="text-sm font-semibold tracking-widest text-blue-600 uppercase">
-                  {item.label}
-                </p>
-                <h3 className="tracking-normal text-white">{item.value}</h3>
-              </section>
-            ))}
-          </CardContent>
-
-          {footer ? (
-            <CardFooter className="justify-center bg-blue-600 px-6 py-6 text-center">
-              <h3 className="font-black tracking-wide text-white">{footer}</h3>
-            </CardFooter>
-          ) : null}
-        </Card>
-      </section>
-    </main>
-  )
-}
-
 export function ProcessPanelCallout({
   title,
   body,
@@ -165,81 +119,7 @@ export function ProcessPanelCallout({
   )
 }
 
-function ProcessPanelMarqueeTrack({
-  logos,
-  direction,
-  className,
-  itemClassName,
-  separatorIcons,
-  logoOnly = true,
-}: {
-  logos: readonly ProcessPanelGridItem[]
-  direction: "left" | "right"
-  className?: string | undefined
-  itemClassName?: string | undefined
-  separatorIcons?: readonly LucideIcon[] | undefined
-  logoOnly?: boolean | undefined
-}) {
-  const icons = separatorIcons ?? [LockKeyhole, ShieldCheck, CheckCircle2]
-
-  return (
-    <Marquee
-      direction={direction}
-      speed="slow"
-      pauseOnHover={true}
-      repeat={3}
-      className={[
-        "relative z-0 border-x-0 border-y-3 border-neutral-400 bg-black select-none",
-        className,
-      ]
-        .filter(Boolean)
-        .join(" ")}
-    >
-      {logos.map((item, index) => {
-        const SeparatorIcon = icons[index % icons.length] ?? LockKeyhole
-
-        return (
-          <React.Fragment key={`${direction}-${item.name}`}>
-            <MarqueeItem
-              className={[
-                "h-24 min-w-35 bg-white px-6 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
-                logoOnly ? "gap-0" : "",
-                itemClassName,
-              ]
-                .filter(Boolean)
-                .join(" ")}
-            >
-              {logoOnly ? (
-                item.logo
-              ) : (
-                <>
-                  <span className="flex h-12 min-w-36 items-center justify-center">
-                    {item.logo}
-                  </span>
-                  <span className="font-(family-name:--font-display) text-sm leading-none font-black tracking-wide text-black uppercase">
-                    {item.name}
-                  </span>
-                  {item.detail ? (
-                    <span className="font-mono text-xs leading-none font-black text-blue-600 uppercase">
-                      {item.detail}
-                    </span>
-                  ) : null}
-                </>
-              )}
-            </MarqueeItem>
-            <MarqueeSeparator className="flex size-12 shrink-0 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
-              <SeparatorIcon className="size-7" strokeWidth={2.4} />
-            </MarqueeSeparator>
-          </React.Fragment>
-        )
-      })}
-    </Marquee>
-  )
-}
-
-export function ProcessPanelGrid({ title, subtitle, logos, footer }: ProcessPanelGridProps) {
-  const reversedLogos = [...logos].reverse()
-
+export function ProcessPanelGrid({ title, subtitle, footer }: ProcessPanelGridProps) {
   return (
     <main>
       <section className="px-4 py-16 md:px-8 lg:px-16">
@@ -261,11 +141,6 @@ export function ProcessPanelGrid({ title, subtitle, logos, footer }: ProcessPane
             </CardHeader>
           )}
 
-          <CardContent className="space-y-5 overflow-hidden p-0 py-5">
-            <ProcessPanelMarqueeTrack logos={logos} direction="left" />
-            <ProcessPanelMarqueeTrack logos={reversedLogos} direction="right" />
-          </CardContent>
-
           {footer ? (
             <CardFooter className="border-t-3 border-neutral-400 bg-blue-600 px-5 py-5 md:px-8">
               <h3 className="leading-none font-black tracking-wide text-white">{footer}</h3>
@@ -277,74 +152,12 @@ export function ProcessPanelGrid({ title, subtitle, logos, footer }: ProcessPane
   )
 }
 
-const authProcessLogos: readonly ProcessPanelGridItem[] = [
-  {
-    name: "Vouch",
-    logo: <MarqueeLogo />,
-  },
-  {
-    name: "Powered by Stripe",
-    logo: (
-      <Image
-        src="/Powered by Stripe - black.svg"
-        alt="Powered by Stripe"
-        width={208}
-        height={48}
-        className="h-12 w-52 scale-150 object-contain"
-      />
-    ),
-  },
-  {
-    name: "Stripe",
-    logo: (
-      <Image
-        src="/Stripe wordmark - Blurple.svg"
-        alt="Stripe"
-        width={160}
-        height={48}
-        className="h-12 w-40 scale-150 object-contain"
-      />
-    ),
-  },
-]
-
-export function AuthProcessPanelGrid() {
-  const reversedLogos = [...authProcessLogos].reverse()
-
-  return (
-    <div className="flex h-full w-full flex-col justify-center overflow-hidden py-10">
-      <ProcessPanelMarqueeTrack
-        logos={authProcessLogos}
-        direction="right"
-        className="-ml-10 w-[120%]"
-        itemClassName="h-20 min-w-96 items-center justify-center px-10"
-        logoOnly
-      />
-      <ProcessPanelMarqueeTrack
-        logos={reversedLogos}
-        direction="left"
-        className="-ml-16 w-[132%]"
-        itemClassName="h-32 min-w-120 items-center justify-center px-12"
-        logoOnly
-      />
-      <ProcessPanelMarqueeTrack
-        logos={authProcessLogos}
-        direction="right"
-        className="-ml-10 w-[120%]"
-        itemClassName="h-20 min-w-96 items-center justify-center px-10"
-        logoOnly
-      />
-    </div>
-  )
-}
-
 // ============================================================================
 // Export all variants
 // ============================================================================
 export const ProcessPanelVariants = {
   Table: ProcessPanel,
   List: ProcessPanelList,
-  RuleGrid: ProcessPanelRuleGrid,
   Callout: ProcessPanelCallout,
   Grid: ProcessPanelGrid,
 }

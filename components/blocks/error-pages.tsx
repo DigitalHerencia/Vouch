@@ -1,28 +1,12 @@
 import * as React from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import {
-  Home,
-  ArrowLeft,
-  Search,
-  RefreshCw,
-  AlertTriangle,
-  ServerCrash,
-  Construction,
-  FileQuestion,
-  Wifi,
-  Ban,
-  Clock,
-  Lock,
-} from "lucide-react"
+import { Home, Construction, Wifi, Ban, Clock, Lock, RefreshCw } from "lucide-react"
 import type {
   ComingSoonPageProps,
   ForbiddenPageProps,
-  GenericErrorPageProps,
   MaintenancePageProps,
-  NotFoundPageProps,
   OfflinePageProps,
-  ServerErrorPageProps,
 } from "@/types/commonTypes"
 function safeHref(href: string) {
   if (href.startsWith("/") || href.startsWith("#") || href.startsWith("mailto:")) return href
@@ -33,142 +17,6 @@ function safeHref(href: string) {
   } catch {
     return "#"
   }
-}
-
-export function NotFoundPage({
-  title = "404",
-  description = "Oops! The page you're looking for doesn't exist or has been moved.",
-  showSearch = false,
-  searchQuery = "",
-  onSearchQueryChange,
-  onSearch,
-  homeHref = "/",
-  backHref,
-}: NotFoundPageProps) {
-  return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="max-w-lg space-y-8 text-center">
-        {/* Large 404 */}
-        <div className="relative">
-          <h1 className="text-[150px] leading-none font-black text-neutral-400/20 md:text-[200px]">
-            {title}
-          </h1>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
-              <FileQuestion className="h-12 w-12 text-white" />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h2 className="font-black">Page Not Found</h2>
-          <p className="text-neutral-400">{description}</p>
-        </div>
-
-        {showSearch && (
-          <form
-            onSubmit={(event) => {
-              event.preventDefault()
-              onSearch?.(searchQuery)
-            }}
-            className="mx-auto flex max-w-sm gap-2"
-          >
-            <Input
-              type="search"
-              placeholder="Search for pages..."
-              value={searchQuery}
-              onChange={(event) => onSearchQueryChange?.(event.target.value)}
-              className="border-2 border-neutral-400"
-            />
-            <Button type="submit">
-              <Search className="h-4 w-4" />
-            </Button>
-          </form>
-        )}
-
-        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Button asChild>
-            <a href={safeHref(homeHref)}>
-              <Home className="mr-2 h-4 w-4" />
-              Back to Home
-            </a>
-          </Button>
-          {backHref && (
-            <Button variant="outline" asChild>
-              <a href={safeHref(backHref)}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Go Back
-              </a>
-            </Button>
-          )}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-export function ServerErrorPage({
-  title = "500",
-  description = "Something went wrong on our end. Our team has been notified and is working on a fix.",
-  errorId,
-  onRetry,
-  homeHref = "/",
-  supportEmail,
-}: ServerErrorPageProps) {
-  return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="max-w-lg space-y-8 text-center">
-        {/* Large 500 */}
-        <div className="relative">
-          <h1 className="text-[150px] leading-none font-black text-neutral-400/20 md:text-[200px]">
-            {title}
-          </h1>
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
-              <ServerCrash className="h-12 w-12 text-white" />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h2 className="font-black">Server Error</h2>
-          <p className="text-neutral-400">{description}</p>
-          {errorId && (
-            <p className="border-3 border-neutral-400 bg-black p-2 text-xs text-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] md:text-base">
-              Error ID: {errorId}
-            </p>
-          )}
-        </div>
-
-        <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-          {onRetry && (
-            <Button onClick={onRetry}>
-              <RefreshCw className="mr-2 h-4 w-4" />
-              Try Again
-            </Button>
-          )}
-          <Button variant="outline" asChild>
-            <a href={safeHref(homeHref)}>
-              <Home className="mr-2 h-4 w-4" />
-              Back to Home
-            </a>
-          </Button>
-        </div>
-
-        {supportEmail && (
-          <p className="text-sm text-neutral-400">
-            Still having issues?{" "}
-            <a
-              href={safeHref(`mailto:${supportEmail}`)}
-              className="font-bold text-white hover:text-blue-600 hover:underline hover:underline-offset-4"
-            >
-              Contact support
-            </a>
-          </p>
-        )}
-      </div>
-    </div>
-  )
 }
 
 export function MaintenancePage({
@@ -398,52 +246,12 @@ export function ComingSoonPage({
   )
 }
 
-export function GenericErrorPage({
-  icon,
-  title = "Something went wrong",
-  description = "An unexpected error occurred. Please try again later.",
-  actions,
-}: GenericErrorPageProps) {
-  return (
-    <div className="flex min-h-screen items-center justify-center p-4">
-      <div className="max-w-md space-y-8 text-center">
-        <div className="mx-auto flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-red-600 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
-          {icon || <AlertTriangle className="h-12 w-12 text-white" />}
-        </div>
-
-        <div className="space-y-4">
-          <h2 className="font-black">{title}</h2>
-          <p className="text-sm text-white md:text-base">{description}</p>
-        </div>
-
-        {actions && actions.length > 0 && (
-          <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
-            {actions.map((action) => (
-              <Button
-                key={action.label}
-                variant={action.variant || "default"}
-                onClick={action.onClick}
-                asChild={!!action.href}
-              >
-                {action.href ? <a href={safeHref(action.href)}>{action.label}</a> : action.label}
-              </Button>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  )
-}
-
 // ============================================================================
 // Export all variants
 // ============================================================================
 export const ErrorPages = {
-  NotFound: NotFoundPage,
-  ServerError: ServerErrorPage,
   Maintenance: MaintenancePage,
   Offline: OfflinePage,
   Forbidden: ForbiddenPage,
   ComingSoon: ComingSoonPage,
-  Generic: GenericErrorPage,
 }
