@@ -7,7 +7,7 @@ import { landingCalloutContent } from "@/content/marketing"
 
 export default function FaqRoute() {
   return (
-    <div className="grid gap-14 md:gap-18 lg:gap-24">
+    <div className="grid gap-14 md:gap-16 lg:gap-24">
       <FAQAccordion
         subtitle="FAQ"
         title="Frequently Asked Questions"
