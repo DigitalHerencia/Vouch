@@ -8,8 +8,8 @@ import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import { useForm, useWatch } from "react-hook-form"
 
-import { PageTitle } from "@/components/vouches/page-title"
 import { OnboardingRequirementNotice } from "@/components/vouches/onboarding-requirement-notice"
+import { PageTitle } from "@/components/vouches/page-title"
 import { VouchAmountField } from "@/components/vouches/vouch-amount-field"
 import { VouchCreationCartRow } from "@/components/vouches/vouch-creation-cart-row"
 import { VouchCreationWizard } from "@/components/vouches/vouch-creation-wizard"
@@ -184,12 +184,15 @@ export function VouchForm() {
     {
       id: "appointment",
       title: "Appointment",
-      description: "Choose the appointment and protected amount.",
       icon: <CalendarClock className="h-8 w-8 text-white" />,
       canContinue: canContinueAppointment,
       content: (
-        <div className="grid gap-6">
-          <div className="grid gap-5 sm:grid-cols-2">
+        <div className="mx-auto flex max-w-2xl flex-col items-center">
+          <label className="text-xl font-semibold text-white">
+            Create a Vouch up to 24 hours before the appointment. The confirmation window is set
+            from 1 hour before to 1 hour after the appointment.
+          </label>
+          <div className="mt-4 flex flex-col items-center gap-6 md:flex-row md:gap-16">
             <VouchDateTimeField
               value={formValues.appointmentStartsAt}
               disabled={disabled}
@@ -204,18 +207,12 @@ export function VouchForm() {
               onChange={(value) => updateDraft("amountDollars", value)}
             />
           </div>
-
-          <p className="max-w-prose text-sm leading-6 font-semibold text-neutral-300">
-            Create a Vouch up to 24 hours before the appointment. The confirmation window is set
-            from 1 hour before to 1 hour after the appointment.
-          </p>
         </div>
       ),
     },
     {
       id: "cart",
       title: "Review",
-      description: "Confirm the fee due now before opening Stripe Checkout.",
       icon: <CircleDollarSign className="h-8 w-8 text-white" />,
       canContinue: !disabled && !isPending,
       actionLabel: isPending ? "Opening Checkout" : "Pay protocol fee",
@@ -259,17 +256,17 @@ export function VouchForm() {
             </div>
           </div>
 
-          <p className="max-w-prose text-sm leading-6 font-semibold text-neutral-400">
+          <label className="mx-auto text-xl font-semibold text-white">
             After the protocol fee is paid, the customer authorization Checkout link becomes
             available on the Vouch detail page.
-          </p>
+          </label>
         </div>
       ),
     },
   ]
 
   return (
-    <div className="grid gap-8 pb-12 md:gap-10">
+    <div className="grid gap-8 md:gap-10">
       <PageTitle
         eyebrow="Create Vouch"
         title="New Vouch"
@@ -287,19 +284,6 @@ export function VouchForm() {
         onStepChange={setCurrentStep}
         onComplete={submitVouch}
       />
-
-      <section className="px-4 py-8 md:px-8 lg:px-16">
-        <div className="mx-auto flex w-full max-w-2xl items-center justify-center border border-neutral-700 bg-black/80 px-4 py-3">
-          <Image
-            src="/Powered by Stripe - white.svg"
-            alt="Powered by Stripe"
-            width={150}
-            height={34}
-            className="h-auto w-32 opacity-90"
-            priority={false}
-          />
-        </div>
-      </section>
     </div>
   )
 }

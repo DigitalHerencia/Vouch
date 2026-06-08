@@ -109,10 +109,7 @@ export function InvoiceSummary({
 
 export function InvoiceSummaryList({ invoices, disabled = false }: InvoiceSummaryListProps) {
   return (
-    <section
-      className="grid gap-7 px-4 py-8 md:gap-8 md:px-8 lg:px-16"
-      aria-label="Dashboard vouches"
-    >
+    <section className="grid gap-7 md:gap-8" aria-label="Dashboard vouches">
       {invoices.map((invoice) => (
         <InvoiceSummary
           key={invoice.vouchId ?? invoice.invoiceNumber}

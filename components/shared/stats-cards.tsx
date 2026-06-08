@@ -27,7 +27,7 @@ function getTrendValueClassName(trend: DashboardStatItem["trend"]): string {
 
 export function StatsCards({ title, subtitle, stats }: StatsCardsProps) {
   return (
-    <section className="px-4 py-8 md:px-8 lg:px-16" aria-label="Dashboard metrics">
+    <section aria-label="Dashboard metrics">
       {title || subtitle ? (
         <div className="mb-7 space-y-2 text-center md:mb-8">
           {subtitle ? (

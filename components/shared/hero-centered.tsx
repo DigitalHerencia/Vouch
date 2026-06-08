@@ -42,7 +42,7 @@ export function HeroCentered({
   const titleWords = title.split(" ")
 
   return (
-    <section className="px-4 py-8 md:px-8 lg:px-16">
+    <section>
       <div
         className={[
           "flex flex-col gap-6",

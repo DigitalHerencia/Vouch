@@ -2,7 +2,7 @@ import { EmptyStatePreset } from "@/components/ui/empty-state"
 
 export function DashboardEmptyState() {
   return (
-    <section className="px-4 py-8 md:px-8 lg:px-16">
+    <section>
       <EmptyStatePreset
         preset="no-data"
         variant="card"

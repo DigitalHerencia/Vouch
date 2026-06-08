@@ -2,8 +2,8 @@ export function VouchFormSkeleton() {
   const steps = Array.from({ length: 3 }, (_, index) => `vouch-form-step-${index}`)
 
   return (
-    <div className="grid gap-8 pb-12 md:gap-10">
-      <section className="px-4 py-8 md:px-8 lg:px-16">
+    <div className="grid gap-8 md:gap-10">
+      <section>
         <div className="flex max-w-5xl animate-pulse flex-col items-start gap-5">
           <div className="h-6 w-40 border-2 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]" />
           <div className="h-16 w-full max-w-xl bg-neutral-900 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] md:h-20" />
@@ -11,7 +11,7 @@ export function VouchFormSkeleton() {
         </div>
       </section>
 
-      <section className="px-4 py-8 md:px-8 lg:px-16">
+      <section>
         <div className="mx-auto grid w-full max-w-5xl animate-pulse gap-8">
           <div className="grid gap-4">
             <div className="flex items-center justify-between gap-4">

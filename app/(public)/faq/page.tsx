@@ -1,12 +1,13 @@
-import { CTAWithBackground } from "@/components/shared/cta-with-background"
-import { FAQAccordion } from "@/components/public/faq-accordion"
-import { faqSections } from "@/content/faq"
 import { Handshake } from "lucide-react"
+
+import { FAQAccordion } from "@/components/public/faq-accordion"
+import { CTAWithBackground } from "@/components/shared/cta-with-background"
+import { faqSections } from "@/content/faq"
 import { landingCalloutContent } from "@/content/marketing"
 
 export default function FaqRoute() {
   return (
-    <main>
+    <div className="grid gap-14 md:gap-16 lg:gap-24">
       <FAQAccordion
         subtitle="FAQ"
         title="Frequently Asked Questions"
@@ -25,6 +26,6 @@ export default function FaqRoute() {
         }}
         backgroundColor="primary"
       />
-    </main>
+    </div>
   )
 }

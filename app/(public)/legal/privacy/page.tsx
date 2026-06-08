@@ -1,10 +1,10 @@
+import { Handshake } from "lucide-react"
 import type { Metadata } from "next"
 
-import { CTAWithBackground } from "@/components/shared/cta-with-background"
 import { FAQSimpleList } from "@/components/public/faq-simple-list"
+import { CTAWithBackground } from "@/components/shared/cta-with-background"
 import { privacySections } from "@/content/legal"
 import { landingCalloutContent } from "@/content/marketing"
-import { Handshake } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Privacy | Vouch",
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyRoute() {
   return (
-    <main>
+    <div className="grid gap-14 md:gap-16 lg:gap-24">
       <FAQSimpleList
         subtitle="Legal"
         title="Privacy Policy"
@@ -32,6 +32,6 @@ export default function PrivacyRoute() {
         }}
         backgroundColor="primary"
       />
-    </main>
+    </div>
   )
 }

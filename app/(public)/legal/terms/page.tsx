@@ -1,12 +1,13 @@
-import { CTAWithBackground } from "@/components/shared/cta-with-background"
+import { Handshake } from "lucide-react"
+
 import { FAQSimpleList } from "@/components/public/faq-simple-list"
+import { CTAWithBackground } from "@/components/shared/cta-with-background"
 import { termsSections } from "@/content/legal"
 import { landingCalloutContent } from "@/content/marketing"
-import { Handshake } from "lucide-react"
 
 export default function TermsRoute() {
   return (
-    <main>
+    <div className="grid gap-14 md:gap-16 lg:gap-24">
       <FAQSimpleList
         subtitle="Legal"
         title="Terms of Service"
@@ -25,6 +26,6 @@ export default function TermsRoute() {
         }}
         backgroundColor="primary"
       />
-    </main>
+    </div>
   )
 }

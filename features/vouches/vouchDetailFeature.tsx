@@ -176,8 +176,8 @@ function VouchDetailView({
   })
 
   return (
-    <main>
-      <section className="px-4 py-16 md:px-8 lg:px-16">
+    <div className="grid gap-8 md:gap-10">
+      <section>
         <VouchStatusDocument
           data={{
             title: copy.termsTitle,
@@ -246,12 +246,10 @@ function VouchDetailView({
           {...(confirmationOpensAt ? { startsAt: confirmationOpensAt } : {})}
           {...(confirmationExpiresAt ? { expiresAt: confirmationExpiresAt } : {})}
           percentRemaining={confirmationProgress(confirmation)}
-          tone={
-            confirmation.customerConfirmed && confirmation.merchantConfirmed ? "complete" : "active"
-          }
+          tone={confirmation.customerConfirmed && confirmation.merchantConfirmed ? "complete" : "active"}
         />
       </section>
-    </main>
+    </div>
   )
 }
 

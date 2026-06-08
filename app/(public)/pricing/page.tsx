@@ -12,6 +12,7 @@ import { FeatureGridAlternating } from "@/components/public/feature-grid-alterna
 import { CTAWithBackground } from "@/components/shared/cta-with-background"
 import { HeroWithStats } from "@/components/shared/hero-with-stats"
 import { ProcessPanelRuleGrid } from "@/components/shared/process-panel-rule-grid"
+import { landingCalloutContent } from "@/content/marketing"
 import {
   PricingHeroContent,
   pricingComparisonRules,
@@ -19,7 +20,6 @@ import {
   pricingNotes,
   pricingStats,
 } from "@/content/pricing"
-import { landingCalloutContent } from "@/content/marketing"
 
 const pricingFeatureIcons = {
   fee: BadgeDollarSign,
@@ -32,7 +32,7 @@ const pricingFeatureIcons = {
 
 export default function PricingPage() {
   return (
-    <main>
+    <div className="grid gap-14 md:gap-16 lg:gap-24">
       <HeroWithStats
         subtitle="Trust the Process"
         title={PricingHeroContent.title}
@@ -78,6 +78,6 @@ export default function PricingPage() {
         }}
         backgroundColor="primary"
       />
-    </main>
+    </div>
   )
 }

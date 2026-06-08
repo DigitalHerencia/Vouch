@@ -2,6 +2,7 @@
 
 import { Fragment } from "react"
 import { Check } from "lucide-react"
+import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -124,21 +125,26 @@ export function VouchCreationWizard({
               Back
             </Button>
 
-            <div className="flex items-center gap-2">
-              {step.optional ? (
-                <Button type="button" variant="ghost" onClick={goNext} disabled={disabled}>
-                  Skip
-                </Button>
-              ) : null}
+            <section>
+              <div className="mx-auto flex w-full max-w-2xl items-center justify-center">
+                <Image
+                  src="/Powered by Stripe - white.svg"
+                  alt="Powered by Stripe"
+                  width={150}
+                  height={34}
+                  className="h-auto w-36"
+                  priority={false}
+                />
+              </div>
+            </section>
 
-              <Button
-                type="button"
-                onClick={goNext}
-                disabled={disabled || step.canContinue === false}
-              >
-                {currentStep === steps.length - 1 ? (step.actionLabel ?? "Complete") : "Continue"}
-              </Button>
-            </div>
+            <Button
+              type="button"
+              onClick={goNext}
+              disabled={disabled || step.canContinue === false}
+            >
+              {currentStep === steps.length - 1 ? (step.actionLabel ?? "Complete") : "Continue"}
+            </Button>
           </div>
         </CardContent>
       </Card>

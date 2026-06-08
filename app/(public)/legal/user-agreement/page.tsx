@@ -1,14 +1,15 @@
-import { CTAWithBackground } from "@/components/shared/cta-with-background"
+import { Handshake } from "lucide-react"
+
 import { FAQSimpleList } from "@/components/public/faq-simple-list"
+import { CTAWithBackground } from "@/components/shared/cta-with-background"
 import { userAgreementSections } from "@/content/legal"
 import { landingCalloutContent } from "@/content/marketing"
-import { Handshake } from "lucide-react"
 
 export default function UserAgreementRoute() {
   return (
-    <main>
+    <div className="grid gap-14 md:gap-16 lg:gap-24">
       <FAQSimpleList
-        subtitle="legal"
+        subtitle="Legal"
         title="User Agreement"
         items={userAgreementSections.map((section) => ({
           question: section.heading,
@@ -25,6 +26,6 @@ export default function UserAgreementRoute() {
         }}
         backgroundColor="primary"
       />
-    </main>
+    </div>
   )
 }
