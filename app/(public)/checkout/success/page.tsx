@@ -1,4 +1,11 @@
-import { CheckoutSuccessPage } from "@/features/payments/checkout-success-page"
+import { redirect } from "next/navigation"
+
+import { CheckoutSuccessView } from "@/components/shared/checkout-success-view"
+import {
+  claimCustomerAuthorizationCheckout,
+  getCustomerAuthorizationCheckoutForAuthenticatedUser,
+} from "@/lib/actions/vouchActions"
+import { getCurrentUser } from "@/lib/fetchers/authFetchers"
 
 export default async function CheckoutSuccessRoute({
   searchParams,
@@ -6,10 +13,50 @@ export default async function CheckoutSuccessRoute({
   searchParams: Promise<{ session_id?: string; vouch_id?: string }>
 }) {
   const { session_id: sessionId, vouch_id: publicId } = await searchParams
-  return (
-    <CheckoutSuccessPage
-      {...(sessionId ? { sessionId } : {})}
-      {...(publicId ? { publicId } : {})}
-    />
-  )
+
+  if (!sessionId && !publicId) {
+    return <CheckoutSuccessView message="No Checkout Session was provided." />
+  }
+
+  const returnPath = sessionId
+    ? `/checkout/success?session_id=${encodeURIComponent(sessionId)}`
+    : `/checkout/success?vouch_id=${encodeURIComponent(publicId!)}`
+  const user = await getCurrentUser()
+
+  if (!user) {
+    redirect(`/sign-up?redirect_url=${encodeURIComponent(returnPath)}`)
+  }
+
+  if (publicId) {
+    const result = await getCustomerAuthorizationCheckoutForAuthenticatedUser({ publicId })
+
+    if (!result.ok) {
+      return (
+        <CheckoutSuccessView
+          message={result.formError ?? "Vouch could not open customer authorization Checkout."}
+        />
+      )
+    }
+
+    redirect(result.data.checkoutUrl)
+  }
+
+  if (!sessionId) {
+    return <CheckoutSuccessView message="No Checkout Session was provided." />
+  }
+
+  const result = await claimCustomerAuthorizationCheckout({
+    checkoutSessionId: sessionId,
+    revalidate: false,
+  })
+
+  if (!result.ok) {
+    return (
+      <CheckoutSuccessView
+        message={result.formError ?? "Vouch could not verify this Checkout Session."}
+      />
+    )
+  }
+
+  redirect(`/dashboard?claimed_vouch=${encodeURIComponent(result.data.vouchId)}`)
 }
