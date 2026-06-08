@@ -1,4 +1,5 @@
 import { CheckSquare } from "lucide-react"
+
 import { Card, CardContent } from "@/components/ui/card"
 
 const subtitleMotion =
@@ -18,45 +19,43 @@ export function StatsSplit({
   contentPosition = "left",
 }: StatsSplitProps) {
   return (
-    <main>
-      <section className="px-4 py-16 md:px-8 lg:px-16">
-        {subtitle && (
-          <div
-            className={
-              contentPosition === "right"
-                ? "grid items-center gap-8 md:grid-cols-2 md:[&>*:first-child]:order-2"
-                : "grid items-center gap-8 md:grid-cols-2"
-            }
-          >
-            <div className="space-y-8">
-              <p
-                className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
-              >
-                {subtitle}
-              </p>
-              <div className={`text-7xl font-black uppercase ${headingMotion}`}>{title}</div>
-              <p className={`text-lg font-medium text-neutral-400 ${bodyTextMotion}`}>
-                {description}
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              {stats.map((stat) => (
-                <Card key={`stat-${stat.label}`} className={cardMotion}>
-                  <CardContent className="space-y-2">
-                    <div className="flex items-start gap-2 border-b-3 border-neutral-400 pb-3">
-                      <CheckSquare className="h-8 w-8" />
-
-                      <h3 className="text-blue-600 uppercase">{stat.label}</h3>
-                    </div>
-                    <p className="text-sm">{stat.value}</p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+    <section>
+      {subtitle && (
+        <div
+          className={
+            contentPosition === "right"
+              ? "grid items-center gap-8 md:grid-cols-2 md:[&>*:first-child]:order-2"
+              : "grid items-center gap-8 md:grid-cols-2"
+          }
+        >
+          <div className="space-y-8">
+            <p
+              className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+            >
+              {subtitle}
+            </p>
+            <div className={`text-7xl font-black uppercase ${headingMotion}`}>{title}</div>
+            <p className={`text-lg font-medium text-neutral-400 ${bodyTextMotion}`}>
+              {description}
+            </p>
           </div>
-        )}
-      </section>
-    </main>
+
+          <div className="grid grid-cols-2 gap-6">
+            {stats.map((stat) => (
+              <Card key={`stat-${stat.label}`} className={cardMotion}>
+                <CardContent className="space-y-2">
+                  <div className="flex items-start gap-2 border-b-3 border-neutral-400 pb-3">
+                    <CheckSquare className="h-8 w-8" />
+
+                    <h3 className="text-blue-600 uppercase">{stat.label}</h3>
+                  </div>
+                  <p className="text-sm">{stat.value}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+    </section>
   )
 }
