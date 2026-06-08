@@ -14,8 +14,8 @@ export function CheckoutSuccessView({
   signUpHref?: string
 }) {
   return (
-    <main className="mx-auto grid min-h-[60vh] max-w-3xl place-items-center px-6 py-16">
-      <Card className="w-full">
+    <section className="grid min-h-[60vh] place-items-center">
+      <Card className="w-full max-w-3xl">
         <CardHeader>
           <p className="font-(family-name:--font-display) text-sm leading-none tracking-[0.08em] text-blue-600 uppercase">
             Provider return
@@ -49,6 +49,6 @@ export function CheckoutSuccessView({
           </Button>
         </CardFooter>
       </Card>
-    </main>
+    </section>
   )
 }
