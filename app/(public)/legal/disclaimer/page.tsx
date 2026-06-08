@@ -1,14 +1,15 @@
-import { CTAWithBackground } from "@/components/shared/cta-with-background"
-import { FAQSimpleList } from "@/components/public/faq-simple-list"
-import { disclaimerSections } from "@/content/legal"
 import { Handshake } from "lucide-react"
+
+import { FAQSimpleList } from "@/components/public/faq-simple-list"
+import { CTAWithBackground } from "@/components/shared/cta-with-background"
+import { disclaimerSections } from "@/content/legal"
 import { landingCalloutContent } from "@/content/marketing"
 
 export default function DisclaimerRoute() {
   return (
-    <main>
+    <div className="grid gap-14 md:gap-16 lg:gap-24">
       <FAQSimpleList
-        subtitle="legal"
+        subtitle="Legal"
         title="Disclaimer"
         items={disclaimerSections.map((section) => ({
           question: section.heading,
@@ -25,6 +26,6 @@ export default function DisclaimerRoute() {
         }}
         backgroundColor="primary"
       />
-    </main>
+    </div>
   )
 }
