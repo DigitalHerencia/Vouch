@@ -1,7 +1,7 @@
 import "server-only"
 
 import { unstable_noStore as noStore } from "next/cache"
-
+import type { ParticipantRole } from "@/types/vouchTypes"
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
 import { mapAuditTimelineDTO, type AuditTimelineItemDTO } from "@/lib/dto/audit.mappers"
@@ -93,11 +93,14 @@ export async function getVouchDetailPageState(input: { vouchId: string }) {
   })
   const detail = mapVouchDetailDTO(vouch as VouchDetailRecord)
   const confirmation = mapVouchConfirmationStateDTO(vouch as VouchConfirmationRecord)
+
   const currentUserConfirmed =
     (vouch.merchantId === user.id && confirmation.merchantConfirmed) ||
     (vouch.customerId === user.id && confirmation.customerConfirmed)
-  const role =
+
+  const role: ParticipantRole | null =
     vouch.merchantId === user.id ? "merchant" : vouch.customerId === user.id ? "customer" : null
+
   const canConfirm = role !== null && confirmation.windowState === "open" && !currentUserConfirmed
 
   return {

@@ -4,7 +4,6 @@
 
 import * as React from "react"
 import { CalendarClock, CircleDollarSign, FileCheck2, ShieldCheck } from "lucide-react"
-import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import { useForm, useWatch } from "react-hook-form"
 

@@ -19,6 +19,7 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
   if (!state) notFound()
 
   const { canConfirm, currentUserCode, role, timeline, vouch } = state
+
   const display = mapVouchDetailDisplayDTO({
     vouch,
     role,
@@ -27,17 +28,23 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
     auditTimeline: timeline,
     ...(currentUserCode ? { currentUserCode } : {}),
   })
+
   const confirmationAction = display.confirmationAction
 
   return (
-    <section className="mx-auto grid w-full max-w-6xl gap-8 md:gap-10" aria-labelledby="vouch-title">
+    <section
+      className="mx-auto grid w-full max-w-6xl gap-8 md:gap-10"
+      aria-labelledby="vouch-title"
+    >
       {display.refreshWindow ? (
         <VouchDeadlineRefresh
           confirmationOpensAt={display.refreshWindow.confirmationOpensAt}
           confirmationExpiresAt={display.refreshWindow.confirmationExpiresAt}
         />
       ) : null}
+
       <PageTitle {...display.pageTitle} variant="page" />
+
       <VouchStatusDocument
         data={{
           ...display.document,
