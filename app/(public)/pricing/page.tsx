@@ -32,7 +32,7 @@ const pricingFeatureIcons = {
 
 export default function PricingPage() {
   return (
-    <div className="grid gap-14 md:gap-18 lg:gap-24">
+    <div className="grid gap-14 md:gap-16 lg:gap-24">
       <HeroWithStats
         subtitle="Trust the Process"
         title={PricingHeroContent.title}
