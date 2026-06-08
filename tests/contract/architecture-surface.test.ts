@@ -35,7 +35,6 @@ const requiredRouteShells = [
   "app/(auth)/sign-in/[[...sign-in]]/page.tsx",
   "app/(auth)/sign-up/[[...sign-up]]/page.tsx",
   "app/(tenant)/layout.tsx",
-  "app/(tenant)/loading.tsx",
   "app/(tenant)/error.tsx",
   "app/(tenant)/dashboard/page.tsx",
   "app/(tenant)/vouches/new/page.tsx",

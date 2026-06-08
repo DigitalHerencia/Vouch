@@ -7,9 +7,9 @@ import { unstable_noStore as noStore } from "next/cache"
 import type { Prisma, VouchStatus } from "@/prisma/generated/prisma/client"
 
 import { getDashboardVariant, mapDashboardSummaryDTO } from "@/lib/dto/dashboard.mappers"
-import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { prisma } from "@/lib/db/prisma"
 import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
+import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import {
   syncConnectedAccountReadinessForUser,
   syncPaymentCustomerReadinessForUser,
@@ -22,6 +22,7 @@ import type {
 } from "@/types/dashboardTypes"
 
 const DEFAULT_TAKE = 10
+
 const ACTIVE_DB_STATUSES: VouchStatus[] = ["protocol_fee_paid", "authorized"]
 
 type VouchCardRecord = Prisma.VouchGetPayload<{ select: typeof vouchCardSelect }>
@@ -112,7 +113,7 @@ function listVouchesForUser(input: {
   participantWhere: Prisma.VouchWhereInput
   sectionWhere: Prisma.VouchWhereInput
   take?: number
-}): Prisma.PrismaPromise<VouchCardRecord[]> {
+}): Promise<VouchCardRecord[]> {
   return prisma.vouch.findMany({
     where: {
       AND: [input.participantWhere, input.sectionWhere],
@@ -126,7 +127,7 @@ function listVouchesForUser(input: {
 function countVouchesForUser(input: {
   participantWhere: Prisma.VouchWhereInput
   sectionWhere: Prisma.VouchWhereInput
-}): Prisma.PrismaPromise<number> {
+}): Promise<number> {
   return prisma.vouch.count({
     where: {
       AND: [input.participantWhere, input.sectionWhere],
@@ -151,7 +152,7 @@ async function getDashboardSummary(userId: string): Promise<DashboardSummaryDTO>
     completedCount,
     expiredCount,
     archivedCount,
-  ] = await prisma.$transaction([
+  ] = await Promise.all([
     listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.drafts }),
     listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.actionRequired }),
     listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.active }),
