@@ -14,6 +14,26 @@ import type {
 } from "@/lib/vouch/constants"
 import type { CurrencyCode, ISODateTime, MoneyCents, VouchID } from "./commonTypes"
 import type { ResolutionPaymentStatus } from "./paymentTypes"
+import type { ReactNode } from "react"
+
+export type VouchFormStepId = "disclaimer" | "appointment" | "cart"
+
+export type VouchFormStep = {
+  id: VouchFormStepId
+  title: string
+  description?: string
+  icon?: ReactNode
+  content: ReactNode
+  canContinue?: boolean
+  optional?: boolean
+  actionLabel?: string
+}
+
+export type VouchFormPageTitleProps = {
+  eyebrow?: string
+  title: string
+  description?: string
+}
 
 export type DateLike = Date | string | number
 
@@ -180,6 +200,12 @@ export type VouchPricing = {
 }
 
 export type CreateVouchDraft = {
+  disclaimerAccepted: boolean
+  appointmentStartsAt: string
+  amountDollars: string
+}
+
+export type CreateVouchDraftFormValues = {
   disclaimerAccepted: boolean
   appointmentStartsAt: string
   amountDollars: string

@@ -1,3 +1,5 @@
+// features/vouches/vouchForm.tsx
+
 "use client"
 
 import * as React from "react"
@@ -6,48 +8,53 @@ import Image from "next/image"
 import { useSearchParams } from "next/navigation"
 import { useForm, useWatch } from "react-hook-form"
 
+import { PageTitle } from "@/components/vouches/page-title"
+import { OnboardingRequirementNotice } from "@/components/vouches/onboarding-requirement-notice"
 import { VouchAmountField } from "@/components/vouches/vouch-amount-field"
 import { VouchCreationCartRow } from "@/components/vouches/vouch-creation-cart-row"
 import { VouchCreationWizard } from "@/components/vouches/vouch-creation-wizard"
 import { VouchDateTimeField } from "@/components/vouches/vouch-date-time-field"
 import { VouchDisclaimerAgreement } from "@/components/vouches/vouch-disclaimer-agreement"
-import { OnboardingRequirementNotice } from "@/components/vouches/onboarding-requirement-notice"
 import { openStripeConnectDashboard } from "@/lib/actions/paymentActions"
 import { createVouch, getCreateVouchFormReadiness } from "@/lib/actions/vouchActions"
 import {
+  calculateProtocolFeeCents,
   formatCurrency,
   formatDateTime,
-  calculateProtocolFeeCents,
   parseAmountCents,
   toIsoFromLocalDateTime,
 } from "@/lib/utils/vouchUtils"
-import type { CreateVouchDraft } from "@/types/vouchTypes"
+import type { CreateVouchDraftFormValues, VouchFormStep } from "@/types/vouchTypes"
 
-const defaultDraft: CreateVouchDraft = {
+const defaultDraft: CreateVouchDraftFormValues = {
   disclaimerAccepted: false,
   appointmentStartsAt: "",
   amountDollars: "",
 }
 
+function normalizeDraft(input: Partial<CreateVouchDraftFormValues>): CreateVouchDraftFormValues {
+  return {
+    disclaimerAccepted: input.disclaimerAccepted ?? false,
+    appointmentStartsAt: input.appointmentStartsAt ?? "",
+    amountDollars: input.amountDollars ?? "",
+  }
+}
+
 export function VouchForm() {
   const searchParams = useSearchParams()
-  const form = useForm<CreateVouchDraft>({
+  const form = useForm<CreateVouchDraftFormValues>({
     mode: "onBlur",
     defaultValues: defaultDraft,
   })
+
   const draft = useWatch({ control: form.control })
   const [currentStep, setCurrentStep] = React.useState(0)
   const [readinessChecked, setReadinessChecked] = React.useState(false)
   const [onboardingRequired, setOnboardingRequired] = React.useState(false)
   const [isReadinessPending, startReadinessTransition] = React.useTransition()
-  const [isPending, startTransition] = React.useTransition()
+  const [isPending, startSubmitTransition] = React.useTransition()
 
-  const formValues: CreateVouchDraft = {
-    disclaimerAccepted: draft.disclaimerAccepted ?? false,
-    appointmentStartsAt: draft.appointmentStartsAt ?? "",
-    amountDollars: draft.amountDollars ?? "",
-  }
-
+  const formValues = normalizeDraft(draft)
   const amountCents = parseAmountCents(formValues.amountDollars)
   const protocolFeeCents = calculateProtocolFeeCents(amountCents)
   const appointmentIso = toIsoFromLocalDateTime(formValues.appointmentStartsAt)
@@ -57,26 +64,31 @@ export function VouchForm() {
   React.useEffect(() => {
     const syncStripeConnectReturn = searchParams.has("stripe_connect_return")
 
-    startReadinessTransition(async () => {
-      const readiness = await getCreateVouchFormReadiness({ syncStripeConnectReturn })
-      const requiresOnboarding = !readiness.ok || readiness.data.onboardingRequired
-      setOnboardingRequired(requiresOnboarding)
-      setReadinessChecked(true)
+    startReadinessTransition(() => {
+      void (async () => {
+        const readiness = await getCreateVouchFormReadiness({ syncStripeConnectReturn })
+        const requiresOnboarding = !readiness.ok || readiness.data.onboardingRequired
 
-      if (
-        syncStripeConnectReturn &&
-        requiresOnboarding &&
-        !window.sessionStorage.getItem("stripe-connect-auto-continued")
-      ) {
-        window.sessionStorage.setItem("stripe-connect-auto-continued", "1")
-        const formData = new FormData()
-        formData.set("returnPath", "/vouches/new")
-        await openStripeConnectDashboard(formData)
-      }
+        setOnboardingRequired(requiresOnboarding)
+        setReadinessChecked(true)
 
-      if (!requiresOnboarding) {
-        window.sessionStorage.removeItem("stripe-connect-auto-continued")
-      }
+        if (
+          syncStripeConnectReturn &&
+          requiresOnboarding &&
+          !window.sessionStorage.getItem("stripe-connect-auto-continued")
+        ) {
+          window.sessionStorage.setItem("stripe-connect-auto-continued", "1")
+
+          const formData = new FormData()
+          formData.set("returnPath", "/vouches/new")
+
+          await openStripeConnectDashboard(formData)
+        }
+
+        if (!requiresOnboarding) {
+          window.sessionStorage.removeItem("stripe-connect-auto-continued")
+        }
+      })()
     })
   }, [searchParams])
 
@@ -85,7 +97,7 @@ export function VouchForm() {
 
   function updateDraft(field: "disclaimerAccepted", value: boolean): void
   function updateDraft(field: "appointmentStartsAt" | "amountDollars", value: string): void
-  function updateDraft(field: keyof CreateVouchDraft, value: string | boolean) {
+  function updateDraft(field: keyof CreateVouchDraftFormValues, value: string | boolean): void {
     if (disabled) return
 
     const options = {
@@ -109,7 +121,7 @@ export function VouchForm() {
     form.clearErrors()
   }
 
-  function applyFieldErrors(fieldErrors?: Record<string, string[]>) {
+  function applyFieldErrors(fieldErrors?: Record<string, string[]>): void {
     if (!fieldErrors) return
 
     const amountError = fieldErrors.amountCents?.[0]
@@ -124,33 +136,37 @@ export function VouchForm() {
   const submitVouch = form.handleSubmit(() => {
     if (disabled) return
 
-    startTransition(async () => {
-      form.clearErrors()
+    startSubmitTransition(() => {
+      void (async () => {
+        form.clearErrors()
 
-      try {
-        const result = await createVouch({
-          amountCents,
-          currency: "usd",
-          appointmentStartsAt: appointmentIso,
-          disclaimerAccepted: formValues.disclaimerAccepted,
-        })
+        try {
+          const result = await createVouch({
+            amountCents,
+            currency: "usd",
+            appointmentStartsAt: appointmentIso,
+            disclaimerAccepted: formValues.disclaimerAccepted,
+          })
 
-        if (!result.ok) {
-          form.setError("root", { message: result.formError ?? "Unable to create this Vouch." })
-          applyFieldErrors(result.fieldErrors)
-          return
+          if (!result.ok) {
+            form.setError("root", {
+              message: result.formError ?? "Unable to create this Vouch.",
+            })
+            applyFieldErrors(result.fieldErrors)
+            return
+          }
+
+          window.location.assign(result.data.checkoutUrl ?? result.data.detailPath)
+        } catch {
+          form.setError("root", {
+            message: "Stripe Checkout could not be opened. Try again.",
+          })
         }
-
-        window.location.assign(result.data.checkoutUrl ?? result.data.detailPath)
-      } catch {
-        form.setError("root", {
-          message: "Stripe Checkout could not be opened. Try again.",
-        })
-      }
+      })()
     })
   })
 
-  const steps = [
+  const steps: VouchFormStep[] = [
     {
       id: "disclaimer",
       title: "Disclaimer",
@@ -180,6 +196,7 @@ export function VouchForm() {
               error={form.formState.errors.appointmentStartsAt?.message}
               onChange={(value) => updateDraft("appointmentStartsAt", value)}
             />
+
             <VouchAmountField
               value={formValues.amountDollars}
               disabled={disabled}
@@ -187,9 +204,10 @@ export function VouchForm() {
               onChange={(value) => updateDraft("amountDollars", value)}
             />
           </div>
+
           <p className="max-w-prose text-sm leading-6 font-semibold text-neutral-300">
-            Create a Vouch up to 24 hours before the appointment. The confirmation window is
-            automatically set from 1 hour before to 1 hour after the appointment time you choose.
+            Create a Vouch up to 24 hours before the appointment. The confirmation window is set
+            from 1 hour before to 1 hour after the appointment.
           </p>
         </div>
       ),
@@ -204,10 +222,11 @@ export function VouchForm() {
       content: (
         <div className="grid gap-5">
           {rootError ? (
-            <div className="border border-red-600 bg-red-600/10 p-3 text-sm leading-5 font-semibold text-white">
+            <div className="border-2 border-red-600 bg-red-600/10 p-3 text-sm leading-5 font-semibold text-white">
               {rootError}
             </div>
           ) : null}
+
           <div className="bg-black p-1">
             <div className="mb-4 flex items-center justify-between gap-3 border-b-2 border-neutral-400 pb-4">
               <div className="min-w-0">
@@ -218,8 +237,10 @@ export function VouchForm() {
                   Vouch details
                 </p>
               </div>
+
               <ShieldCheck className="size-6 shrink-0 text-white" />
             </div>
+
             <div className="grid gap-3">
               <VouchCreationCartRow
                 label="Appointment"
@@ -237,8 +258,9 @@ export function VouchForm() {
               />
             </div>
           </div>
+
           <p className="max-w-prose text-sm leading-6 font-semibold text-neutral-400">
-            After the protocol fee is paid, the customer authorization checkout link becomes
+            After the protocol fee is paid, the customer authorization Checkout link becomes
             available on the Vouch detail page.
           </p>
         </div>
@@ -247,18 +269,26 @@ export function VouchForm() {
   ]
 
   return (
-    <main className="mb-16 grid gap-8 p-4 md:p-8 lg:p-12">
+    <div className="grid gap-8 pb-12 md:gap-10">
+      <PageTitle
+        eyebrow="Create Vouch"
+        title="New Vouch"
+        description="Create the agreement, protect the appointment amount, and send the customer into the payment flow."
+      />
+
       {onboardingRequired ? (
         <OnboardingRequirementNotice action={openStripeConnectDashboard} />
       ) : null}
-      <div className="grid gap-5">
-        <VouchCreationWizard
-          steps={steps}
-          currentStep={currentStep}
-          disabled={disabled}
-          onStepChange={setCurrentStep}
-          onComplete={submitVouch}
-        />
+
+      <VouchCreationWizard
+        steps={steps}
+        currentStep={currentStep}
+        disabled={disabled}
+        onStepChange={setCurrentStep}
+        onComplete={submitVouch}
+      />
+
+      <section className="px-4 py-8 md:px-8 lg:px-16">
         <div className="mx-auto flex w-full max-w-2xl items-center justify-center border border-neutral-700 bg-black/80 px-4 py-3">
           <Image
             src="/Powered by Stripe - white.svg"
@@ -269,7 +299,7 @@ export function VouchForm() {
             priority={false}
           />
         </div>
-      </div>
-    </main>
+      </section>
+    </div>
   )
 }

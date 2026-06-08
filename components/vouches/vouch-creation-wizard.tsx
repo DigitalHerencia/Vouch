@@ -1,9 +1,21 @@
+// components/vouches/vouch-creation-wizard.tsx
+
 import { Fragment } from "react"
 import { Check } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import type { VouchFormStep } from "@/types/vouchTypes"
+
+export type VouchCreationWizardProps = {
+  steps: VouchFormStep[]
+  currentStep: number
+  onStepChange: (step: number) => void
+  onComplete?: () => void
+  showProgress?: boolean
+  disabled?: boolean
+}
 
 export function VouchCreationWizard({
   steps,
@@ -17,31 +29,39 @@ export function VouchCreationWizard({
   const progress = steps.length ? ((currentStep + 1) / steps.length) * 100 : 0
 
   if (!step) return null
-  const current = step
 
-  function goNext() {
+  function goNext(): void {
+    if (!step) return
     if (disabled) return
-    if (current.canContinue === false) return
-    if (currentStep < steps.length - 1) onStepChange(currentStep + 1)
-    else onComplete?.()
+    if (step.canContinue === false) return
+
+    if (currentStep < steps.length - 1) {
+      onStepChange(currentStep + 1)
+      return
+    }
+
+    onComplete?.()
   }
 
   return (
-    <div className="px-4 py-8 md:px-8 lg:px-16">
+    <section className="px-4 py-8 md:px-8 lg:px-16">
       {showProgress ? (
-        <div className="mb-8 space-y-4">
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-bold tracking-wide uppercase">
+        <div className="mx-auto mb-8 grid w-full max-w-5xl gap-4">
+          <div className="flex items-center justify-between gap-4 text-sm">
+            <span className="font-black tracking-widest text-white uppercase">
               Step {currentStep + 1} of {steps.length}
             </span>
-            <span className="text-neutral-400">{Math.round(progress)}% complete</span>
+            <span className="font-mono text-sm font-bold text-neutral-400">
+              {Math.round(progress)}% complete
+            </span>
           </div>
+
           <Progress value={progress} className="h-3" />
         </div>
       ) : null}
 
       <div
-        className="mb-8 flex items-center justify-center gap-2"
+        className="mx-auto mb-8 flex w-full max-w-5xl items-center justify-center gap-2"
         role="list"
         aria-label="Progress steps"
       >
@@ -56,12 +76,13 @@ export function VouchCreationWizard({
               disabled={disabled}
               className={
                 index <= currentStep
-                  ? "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-blue-600 font-bold text-white transition-all disabled:cursor-not-allowed disabled:opacity-50"
-                  : "flex h-10 w-10 items-center justify-center border-3 border-neutral-400 bg-neutral-900 font-bold text-neutral-400 transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                  ? "flex h-11 w-11 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-base font-black text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                  : "flex h-11 w-11 items-center justify-center border-3 border-neutral-400 bg-neutral-950 text-base font-black text-neutral-400 transition-all disabled:cursor-not-allowed disabled:opacity-50"
               }
             >
               {index < currentStep ? <Check className="h-5 w-5" /> : index + 1}
             </button>
+
             {index < steps.length - 1 ? (
               <div
                 className={index < currentStep ? "h-1 w-8 bg-blue-600" : "h-1 w-8 bg-neutral-900"}
@@ -71,23 +92,29 @@ export function VouchCreationWizard({
         ))}
       </div>
 
-      <Card>
-        <CardHeader className="space-y-4 text-center">
+      <Card className="mx-auto w-full max-w-5xl overflow-hidden border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+        <CardHeader className="border-b-3 border-neutral-400 px-6 py-8 text-center md:px-8 md:py-10">
           {step.icon ? (
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
               {step.icon}
             </div>
           ) : null}
-          <CardTitle className="text-6xl font-black uppercase">{step.title}</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-2">
+
+          <CardTitle className="text-4xl leading-none font-black tracking-tight text-white uppercase md:text-5xl lg:text-6xl">
+            {step.title}
+          </CardTitle>
+
           {step.description ? (
-            <CardDescription className="text-2xl font-black uppercase">
+            <CardDescription className="mx-auto max-w-2xl text-sm leading-6 font-semibold text-neutral-400 md:text-base">
               {step.description}
             </CardDescription>
           ) : null}
-          {step.content}
-          <div className="flex items-center justify-between pt-4">
+        </CardHeader>
+
+        <CardContent className="grid gap-8 px-6 py-8 md:px-8">
+          <div>{step.content}</div>
+
+          <div className="flex items-center justify-between gap-4">
             <Button
               type="button"
               variant="outline"
@@ -96,12 +123,14 @@ export function VouchCreationWizard({
             >
               Back
             </Button>
+
             <div className="flex items-center gap-2">
               {step.optional ? (
                 <Button type="button" variant="ghost" onClick={goNext} disabled={disabled}>
                   Skip
                 </Button>
               ) : null}
+
               <Button
                 type="button"
                 onClick={goNext}
@@ -113,6 +142,6 @@ export function VouchCreationWizard({
           </div>
         </CardContent>
       </Card>
-    </div>
+    </section>
   )
 }
