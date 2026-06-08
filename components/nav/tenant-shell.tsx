@@ -9,13 +9,11 @@ export function TenantShell({
   withMobileBottomNav = true,
 }: TenantShellProps) {
   return (
-    <div className="flex min-h-dvh flex-col">
+    <div className="min-h-dvh">
       <TenantHeader connectAction={connectAction} paymentAction={paymentAction} />
       <main
         className={
-          withMobileBottomNav
-            ? "mx-auto w-full max-w-7xl flex-1"
-            : "mx-auto w-full max-w-7xl flex-1 pb-0"
+          withMobileBottomNav ? "mx-auto w-full max-w-7xl" : "mx-auto w-full max-w-7xl pb-0"
         }
       >
         {children}

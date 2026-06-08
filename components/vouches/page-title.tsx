@@ -11,7 +11,7 @@ const titleMotion =
 export function PageTitle({ eyebrow, title, description }: VouchFormPageTitleProps) {
   return (
     <section className="px-4 py-8 md:px-8 lg:px-16">
-      <div className="flex max-w-5xl flex-col items-start gap-5">
+      <div className="flex flex-col items-start gap-5">
         {eyebrow ? (
           <p
             className={[

@@ -73,7 +73,7 @@ export async function DashboardFeature({
   const invoices = getVisibleInvoices(state)
 
   return (
-    <div className="pb-12">
+    <main>
       <HeroCentered
         eyebrow={dashboardContent.hero.eyebrow}
         title={dashboardContent.hero.title}
@@ -87,10 +87,7 @@ export async function DashboardFeature({
 
       <div
         aria-disabled={showPaymentMethodNotice}
-        className={[
-          "grid gap-4 md:gap-8",
-          showPaymentMethodNotice ? "pointer-events-none opacity-60" : "",
-        ]
+        className={[showPaymentMethodNotice ? "pointer-events-none opacity-60" : ""]
           .filter(Boolean)
           .join(" ")}
       >
@@ -102,6 +99,6 @@ export async function DashboardFeature({
           <InvoiceSummaryList invoices={invoices} disabled={showPaymentMethodNotice} />
         )}
       </div>
-    </div>
+    </main>
   )
 }

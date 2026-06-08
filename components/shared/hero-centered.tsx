@@ -45,7 +45,7 @@ export function HeroCentered({
     <section className="px-4 py-8 md:px-8 lg:px-16">
       <div
         className={[
-          "flex max-w-5xl flex-col gap-6",
+          "flex flex-col gap-6",
           isLeftAligned ? "items-start text-left" : "mx-auto items-center text-center",
         ].join(" ")}
       >
@@ -62,7 +62,7 @@ export function HeroCentered({
 
         <h1
           className={[
-            "group max-w-4xl text-5xl leading-[0.9] font-black tracking-tight text-white uppercase md:text-7xl lg:text-8xl",
+            "group text-5xl font-black tracking-tight text-white uppercase md:text-7xl lg:text-8xl",
             isLeftAligned ? "text-left" : "text-center",
           ].join(" ")}
         >
@@ -90,7 +90,7 @@ export function HeroCentered({
         {description ? (
           <p
             className={[
-              "max-w-2xl text-sm leading-6 font-semibold text-neutral-300 md:text-base md:leading-7",
+              "text-sm font-semibold text-neutral-300 md:text-base",
               isLeftAligned ? "text-left" : "mx-auto text-center",
               bodyTextMotion,
             ].join(" ")}
