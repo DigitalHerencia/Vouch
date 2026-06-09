@@ -1,12 +1,11 @@
 import { notFound } from "next/navigation"
 
-import { PageTitle } from "@/components/vouches/page-title"
 import { VouchStatusDocument } from "@/components/vouches/vouch-status-document"
 import {
   ConfirmPresenceInlineForm,
   VouchDeadlineRefresh,
 } from "@/features/vouches/vouchDetailFeature.client"
-import { confirmPresenceFormAction } from "@/lib/actions/vouchActions"
+import { confirmPresence } from "@/lib/actions/vouchActions"
 import { mapVouchDetailDisplayDTO } from "@/lib/dto/vouch-detail-display.mappers"
 import { getVouchDetailPageState } from "@/lib/fetchers/vouchFetchers"
 
@@ -24,7 +23,7 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
     vouch,
     role,
     canConfirm,
-    authorizationCheckoutUrl: null,
+    authorizationCheckoutUrl: vouch.paymentRecord?.checkoutUrl ?? null,
     auditTimeline: timeline,
     ...(currentUserCode ? { currentUserCode } : {}),
   })
@@ -43,22 +42,19 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
         />
       ) : null}
 
-      <PageTitle {...display.pageTitle} variant="page" />
-
       <VouchStatusDocument
         data={{
           ...display.document,
           confirmations: {
             ...display.document.confirmations,
             action:
-              confirmationAction.canConfirm && confirmationAction.confirmationExpiresAt ? (
+              confirmationAction.confirmationExpiresAt && confirmationAction.currentUserCode ? (
                 <ConfirmPresenceInlineForm
-                  action={confirmPresenceFormAction}
+                  action={confirmPresence}
+                  canConfirm={confirmationAction.canConfirm}
                   vouchId={vouchId}
                   confirmationExpiresAt={confirmationAction.confirmationExpiresAt}
-                  {...(confirmationAction.currentUserCode
-                    ? { currentUserCode: confirmationAction.currentUserCode }
-                    : {})}
+                  currentUserCode={confirmationAction.currentUserCode}
                 />
               ) : null,
           },

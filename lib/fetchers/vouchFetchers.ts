@@ -84,6 +84,7 @@ export async function getVouchDetailPageState(input: { vouchId: string }) {
     },
     select: vouchDetailBaseSelect,
   })
+
   if (!vouch) return null
 
   const timeline = await prisma.auditEvent.findMany({
@@ -91,6 +92,7 @@ export async function getVouchDetailPageState(input: { vouchId: string }) {
     orderBy: { createdAt: "asc" },
     select: auditTimelineItemSelect,
   })
+
   const detail = mapVouchDetailDTO(vouch as VouchDetailRecord)
   const confirmation = mapVouchConfirmationStateDTO(vouch as VouchConfirmationRecord)
 
@@ -103,13 +105,15 @@ export async function getVouchDetailPageState(input: { vouchId: string }) {
 
   const canConfirm = role !== null && confirmation.windowState === "open" && !currentUserConfirmed
 
+  const canShowCurrentUserCode = role !== null && confirmation.windowState === "open"
+
   return {
     userId: user.id,
     vouch: detail,
     canConfirm,
     role,
     currentUserCode:
-      canConfirm && role
+      canShowCurrentUserCode && role
         ? deriveConfirmationCode({
             vouchId: vouch.id,
             publicId: vouch.publicId,

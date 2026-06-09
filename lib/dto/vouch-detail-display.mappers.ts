@@ -30,6 +30,46 @@ function labelize(value: string | null | undefined): string {
   return value ? value.replaceAll("_", " ").toUpperCase() : "PENDING"
 }
 
+function paymentLabel(value: string | null | undefined): string {
+  switch (value) {
+    case "requires_payment_method":
+      return "CHECKOUT OPEN"
+    case "requires_confirmation":
+    case "requires_action":
+      return "ACTION NEEDED"
+    case "processing":
+      return "PROCESSING"
+    case "requires_capture":
+      return "AUTHORIZED"
+    case "succeeded":
+      return "CAPTURED"
+    case "canceled":
+      return "CANCELED"
+    case "not_started":
+    case undefined:
+    case null:
+      return "NOT STARTED"
+    default:
+      return labelize(value)
+  }
+}
+
+function settlementLabel(input: {
+  paymentStatus: string | null | undefined
+  capturedAt: string | null
+  voidedAt: string | null
+  expiredAt: string | null
+  bothConfirmed: boolean
+}): string {
+  if (input.capturedAt) return "RELEASED"
+  if (input.voidedAt || input.expiredAt || input.paymentStatus === "canceled") return "NOT RELEASED"
+  if (input.paymentStatus === "requires_capture" && input.bothConfirmed) return "READY"
+  if (input.paymentStatus === "requires_capture") return "PENDING CONFIRMATION"
+  if (input.paymentStatus === "requires_payment_method") return "WAITING ON CUSTOMER"
+
+  return "PENDING"
+}
+
 function participantName(participant: VouchDetailDTO["merchant"] | VouchDetailDTO["customer"]) {
   return participant?.displayName ?? participant?.email ?? "Pending"
 }
@@ -73,28 +113,36 @@ function buildTimeline(input: {
 }): VouchStatusTimelineItem[] {
   const bothConfirmed = input.merchantConfirmed && input.customerConfirmed
   const firstAuditAt = input.auditTimeline[0]?.createdAt ?? input.vouch.createdAt
+  const paymentStatus = input.vouch.paymentRecord?.status ?? "not_started"
+  const paymentAuthorized =
+    Boolean(input.vouch.authorizedAt) ||
+    paymentStatus === "requires_capture" ||
+    paymentStatus === "succeeded"
+
+  const paymentStarted =
+    Boolean(input.vouch.protocolFeePaidAt) || Boolean(input.vouch.paymentRecord?.checkoutUrl)
 
   return [
     {
       id: "created",
       title: "Created",
-      description: "The Vouch was created and the terms are now visible to both participants.",
+      description: "Vouch is visible to both participants.",
       timeLabel: formatDateTime(firstAuditAt),
       state: "completed",
-      meta: labelize(input.vouch.status),
+      meta: "VISIBLE",
     },
     {
       id: "payment",
-      title: "Payment authorization",
-      description: "The customer authorizes the payment through the hosted provider flow.",
+      title: "Payment",
+      description: "Send the Stripe Checkout link to the customer.",
       timeLabel: formatDateTime(input.vouch.authorizedAt ?? input.vouch.appointmentAt),
-      state: input.vouch.paymentRecord?.status === "not_started" ? "upcoming" : "completed",
-      meta: labelize(input.vouch.paymentRecord?.status ?? "not_started"),
+      state: paymentAuthorized ? "completed" : paymentStarted ? "current" : "upcoming",
+      meta: paymentLabel(paymentStatus),
     },
     {
       id: "confirmation",
-      title: "Presence confirmation",
-      description: "Merchant and customer both need to confirm before the window closes.",
+      title: "Confirmation",
+      description: "Both participants exchange confirmation codes inside the window.",
       timeLabel: formatDateTime(input.vouch.confirmationExpiresAt),
       state: bothConfirmed
         ? "completed"
@@ -106,12 +154,10 @@ function buildTimeline(input: {
     {
       id: "outcome",
       title: "Outcome",
-      description: bothConfirmed
-        ? "Both confirmations are present, so the Vouch can move to the final payment outcome."
-        : "If both confirmations are not present, funds are not released by Vouch.",
+      description: "Release happens only after authorization and confirmation are complete.",
       timeLabel: formatDateTime(input.vouch.confirmationExpiresAt),
       state: bothConfirmed ? "current" : "upcoming",
-      meta: labelize(input.vouch.paymentRecord?.status ?? "pending"),
+      meta: bothConfirmed ? "READY" : "PENDING",
     },
   ]
 }
@@ -132,6 +178,7 @@ export function mapVouchDetailDisplayDTO(input: {
     input.vouch.aggregateConfirmationStatus === "customer_confirmed" ||
     input.vouch.aggregateConfirmationStatus === "both_confirmed"
 
+  const bothConfirmed = merchantConfirmed && customerConfirmed
   const amountLabel = formatMoney(input.vouch.amountCents, input.vouch.currency)
   const customerTotalLabel = formatMoney(
     input.vouch.paymentRecord?.amountCents ?? input.vouch.amountCents,
@@ -140,18 +187,28 @@ export function mapVouchDetailDisplayDTO(input: {
   const appointmentLabel = formatDateTime(input.vouch.appointmentAt)
   const opensLabel = formatDateTime(input.vouch.confirmationOpensAt)
   const expiresLabel = formatDateTime(input.vouch.confirmationExpiresAt)
-  const paymentStatusLabel = labelize(input.vouch.paymentRecord?.status ?? "not_started")
-  const settlementStatusLabel = labelize(input.vouch.paymentRecord?.status ?? "pending")
+  const rawPaymentStatus = input.vouch.paymentRecord?.status ?? "not_started"
+  const paymentStatusLabel = paymentLabel(rawPaymentStatus)
+  const settlementStatusLabel = settlementLabel({
+    paymentStatus: rawPaymentStatus,
+    capturedAt: input.vouch.capturedAt,
+    voidedAt: input.vouch.voidedAt,
+    expiredAt: input.vouch.expiredAt,
+    bothConfirmed,
+  })
   const currentRoleLabel = roleLabel(input.role)
+  const authorizationCheckoutUrl =
+    input.authorizationCheckoutUrl ?? input.vouch.paymentRecord?.checkoutUrl ?? null
 
   const document: VouchStatusDocumentData = {
-    title: "Vouch summary",
+    title: "Live Vouch",
     publicId: input.vouch.publicId,
     status: labelize(input.vouch.status),
     statusTone: statusTone(input.vouch.status),
     amountLabel,
     merchantReceivesLabel: amountLabel,
     customerTotalLabel,
+    authorizationCheckoutUrl,
     merchantLabel: participantName(input.vouch.merchant),
     customerLabel: participantName(input.vouch.customer),
     appointmentLabel,
@@ -193,7 +250,7 @@ export function mapVouchDetailDisplayDTO(input: {
   return {
     pageTitle: {
       eyebrow: "Vouch detail",
-      title: "Vouch details",
+      title: "Live Vouch",
       description: `${input.vouch.publicId} · ${currentRoleLabel} · ${appointmentLabel}`,
     },
     document,
@@ -207,7 +264,7 @@ export function mapVouchDetailDisplayDTO(input: {
     confirmationAction: {
       canConfirm: input.canConfirm,
       confirmationExpiresAt: input.vouch.confirmationExpiresAt,
-      authorizationCheckoutUrl: input.authorizationCheckoutUrl,
+      authorizationCheckoutUrl,
       ...(input.currentUserCode ? { currentUserCode: input.currentUserCode } : {}),
     },
   }

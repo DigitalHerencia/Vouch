@@ -159,6 +159,7 @@ export type VouchStatusDocumentData = {
   settlementStatusLabel: string
   merchantReceivesLabel: string
   customerTotalLabel: string
+  authorizationCheckoutUrl?: string | null
   countdown?: VouchCountdownProps
   confirmations: {
     merchantConfirmed: boolean

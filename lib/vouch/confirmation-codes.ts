@@ -1,6 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto"
 
-import { CONFIRMATION_CODE_BUCKET_SECONDS } from "@/lib/vouch/constants"
 import type { ParticipantRole } from "@/types/vouchTypes"
 
 type ConfirmationCodeInput = {
@@ -26,22 +25,21 @@ function confirmationSecret(): string {
   return secret
 }
 
-export function confirmationTimeBucket(at: Date = new Date()): number {
-  return Math.floor(at.getTime() / 1000 / CONFIRMATION_CODE_BUCKET_SECONDS)
+function normalizeCode(value: string): string {
+  return value.replace(/\s+/g, "").trim()
 }
 
-function codeForBucket(input: ConfirmationCodeInput & { bucket: number }): string {
-  const payload = [
-    input.vouchId,
-    input.publicId,
-    input.participantRole,
-    input.participantUserId,
-    input.bucket,
-  ].join(":")
+function codePayload(input: ConfirmationCodeInput): string {
+  return [input.vouchId, input.publicId, input.participantRole, input.participantUserId].join(":")
+}
 
-  const digest = createHmac("sha256", confirmationSecret()).update(payload).digest()
+function codeForParticipant(input: ConfirmationCodeInput): string {
+  const digest = createHmac("sha256", confirmationSecret()).update(codePayload(input)).digest()
   const lastByte = digest.at(-1)
-  if (lastByte === undefined) throw new Error("CONFIRMATION_CODE_DIGEST_EMPTY")
+
+  if (lastByte === undefined) {
+    throw new Error("CONFIRMATION_CODE_DIGEST_EMPTY")
+  }
 
   const offset = lastByte & 0x0f
   const byte0 = digest[offset]
@@ -59,24 +57,45 @@ function codeForBucket(input: ConfirmationCodeInput & { bucket: number }): strin
   return String(binary % 1_000_000).padStart(6, "0")
 }
 
-export function deriveConfirmationCode(input: ConfirmationCodeInput): string {
-  return codeForBucket({ ...input, bucket: confirmationTimeBucket(input.at) })
+/**
+ * Backward-compatible export retained so existing imports do not break.
+ *
+ * Confirmation codes are now intentionally stable for the lifetime of a Vouch
+ * participant relationship. Do not use this value for current confirmation-code
+ * generation or verification.
+ */
+export function confirmationTimeBucket(at: Date = new Date()): number {
+  return Math.floor(at.getTime() / 1000)
 }
 
+/**
+ * Returns the stable 6-digit code for the participant.
+ *
+ * The code is deterministic from:
+ * - Vouch database ID
+ * - Vouch public ID
+ * - Participant role
+ * - Participant user ID
+ * - CONFIRMATION_CODE_SECRET
+ *
+ * It does not rotate on refresh.
+ */
+export function deriveConfirmationCode(input: ConfirmationCodeInput): string {
+  return codeForParticipant(input)
+}
+
+/**
+ * Verifies the submitted counterparty confirmation code.
+ *
+ * The allowedBucketSkew input is accepted for compatibility with older call sites,
+ * but time buckets are no longer part of the confirmation-code algorithm.
+ */
 export function verifyConfirmationCode(input: VerifyConfirmationCodeInput): boolean {
-  const submittedCode = input.submittedCode.replace(/\s+/g, "")
-  const currentBucket = confirmationTimeBucket(input.at)
-  const skew = input.allowedBucketSkew ?? 0
+  const submittedCode = normalizeCode(input.submittedCode)
+  const expectedCode = codeForParticipant(input)
 
-  for (let bucket = currentBucket - skew; bucket <= currentBucket + skew; bucket += 1) {
-    const expected = codeForBucket({ ...input, bucket })
-    const submitted = Buffer.from(submittedCode)
-    const candidate = Buffer.from(expected)
+  const submitted = Buffer.from(submittedCode)
+  const expected = Buffer.from(expectedCode)
 
-    if (submitted.length === candidate.length && timingSafeEqual(submitted, candidate)) {
-      return true
-    }
-  }
-
-  return false
+  return submitted.length === expected.length && timingSafeEqual(submitted, expected)
 }
