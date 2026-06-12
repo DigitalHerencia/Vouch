@@ -32,8 +32,18 @@ describe("Vouch Server Actions", () => {
   })
 
   it.each([
-    ["calculatePlatformFee", calculatePlatformFee, workflows.calculatePlatformFee, { amountCents: 500 }],
-    ["validateCreateVouchDraft", validateCreateVouchDraft, workflows.validateCreateVouchDraft, { amountCents: 500 }],
+    [
+      "calculatePlatformFee",
+      calculatePlatformFee,
+      workflows.calculatePlatformFee,
+      { amountCents: 500 },
+    ],
+    [
+      "validateCreateVouchDraft",
+      validateCreateVouchDraft,
+      workflows.validateCreateVouchDraft,
+      { amountCents: 500 },
+    ],
     ["createVouch", createVouch, workflows.createVouch, { amountCents: 500 }],
     ["confirmPresence", confirmPresence, workflows.confirmPresence, { vouchId: "vouch_1" }],
     ["archiveVouch", archiveVouch, workflows.archiveVouch, { vouchId: "vouch_1" }],

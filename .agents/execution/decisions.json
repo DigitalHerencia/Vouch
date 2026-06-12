@@ -60,9 +60,7 @@
       "title": "Add design-system governance",
       "decision": "Add a durable design-system document and deterministic design contract to govern CSS variables, tokens, component inventory, styling boundaries, and UI consistency.",
       "reason": "The existing governance is strong for product and payments but under-specifies visual consistency and token usage for agent-generated UI changes.",
-      "supersedes": [
-        "System audit as permanent design governance substitute"
-      ],
+      "supersedes": ["System audit as permanent design governance substitute"],
       "affected_paths": [
         "context/docs/design-system.md",
         ".agents/contracts/design.yaml",

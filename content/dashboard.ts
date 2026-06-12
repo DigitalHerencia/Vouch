@@ -61,7 +61,8 @@ export const dashboardContent = {
   },
   emptyState: {
     title: "No Vouches yet",
-    description: "Create a Vouch when you are ready to protect an appointment deposit. Your drafts, active Vouches, and completed purchases will appear here.",
+    description:
+      "Create a Vouch when you are ready to protect an appointment deposit. Your drafts, active Vouches, and completed purchases will appear here.",
   },
   timeline: {
     emptyTitle: "No status events",

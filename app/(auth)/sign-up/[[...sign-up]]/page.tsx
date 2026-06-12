@@ -1,4 +1,3 @@
-
 import { SignUpForm } from "@/features/auth/signupForm"
 import { type SignupPageProps } from "@/types/authTypes"
 
