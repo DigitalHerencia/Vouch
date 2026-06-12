@@ -10,12 +10,13 @@ import Link from "next/link"
 
 import { LogoLockup } from "@/components/nav/logo-lockup"
 import { Button } from "@/components/ui/button"
+import { publicNavigationContent } from "@/content/navigation"
 
 export const defaultPublicNavItems = [
-  { label: "Pricing", href: "/pricing" },
-  { label: "FAQ", href: "/faq" },
-  { label: "Terms", href: "/legal/terms" },
-  { label: "Privacy", href: "/legal/privacy" },
+  { label: publicNavigationContent.links.pricing, href: "/pricing" },
+  { label: publicNavigationContent.links.faq, href: "/faq" },
+  { label: publicNavigationContent.links.terms, href: "/legal/terms" },
+  { label: publicNavigationContent.links.privacy, href: "/legal/privacy" },
 ] satisfies readonly PublicHeaderNavItem[]
 
 export function PublicHeader({
@@ -25,7 +26,11 @@ export function PublicHeader({
   return (
     <header className="sticky top-0 z-50 h-21 w-full border-b border-neutral-400 bg-black">
       <div className="mx-auto hidden h-full w-full max-w-7xl items-center justify-between px-6 sm:px-10 md:flex lg:px-12">
-        <Link href="/" aria-label="Vouch home" className="flex shrink-0 items-center">
+        <Link
+          href="/"
+          aria-label={publicNavigationContent.labels.home}
+          className="flex shrink-0 items-center"
+        >
           {logo}
         </Link>
 
@@ -39,17 +44,23 @@ export function PublicHeader({
 
         <div className="flex items-center gap-4 lg:gap-5">
           <Button variant="outline" size="lg" asChild>
-            <Link href="/sign-in">Sign in</Link>
+            <Link href="/sign-in">{publicNavigationContent.links.signIn}</Link>
           </Button>
 
           <Button variant="outline" size="lg" className="min-w-40 sm:min-w-44 lg:min-w-48" asChild>
-            <Link href="/sign-up?return_to=/vouches/new">Get started</Link>
+            <Link href="/sign-up?return_to=/vouches/new">
+              {publicNavigationContent.links.getStarted}
+            </Link>
           </Button>
         </div>
       </div>
 
       <div className="flex h-full items-center justify-center px-6 md:hidden">
-        <Link href="/" aria-label="Vouch home" className="inline-flex items-center">
+        <Link
+          href="/"
+          aria-label={publicNavigationContent.labels.home}
+          className="inline-flex items-center"
+        >
           <LogoLockup />
         </Link>
       </div>

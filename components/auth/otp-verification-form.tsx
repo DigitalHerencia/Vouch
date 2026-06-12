@@ -30,10 +30,11 @@ import { LogoLockup } from "@/components/nav/logo-lockup"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { authFormContent } from "@/content/auth"
 
 export function OTPVerificationForm({
   logo,
-  title = "Verify your email",
+  title = authFormContent.verification.title,
   description,
   email,
   length = 6,
@@ -42,9 +43,9 @@ export function OTPVerificationForm({
   error,
   rootError,
   disabled = false,
-  submitLabel = "Verify",
-  resendLabel = "Resend code",
-  backLabel = "Start over",
+  submitLabel = authFormContent.verification.submitLabel,
+  resendLabel = authFormContent.verification.resendLabel,
+  backLabel = authFormContent.verification.backLabel,
   onChange,
   onSubmit,
   onResend,
@@ -87,7 +88,7 @@ export function OTPVerificationForm({
         <CardHeader className="space-y-4 px-5 py-6 text-center sm:px-6">
           <div className="mx-auto">
             {logo ?? (
-              <Link href="/" aria-label="Go to Vouch home" className="inline-flex">
+              <Link href="/" aria-label={authFormContent.homeAriaLabel} className="inline-flex">
                 <LogoLockup
                   className="justify-center"
                   iconClassName="size-10 sm:size-12"
@@ -102,7 +103,7 @@ export function OTPVerificationForm({
             </CardTitle>
             <CardDescription className="mt-2">
               {description ||
-                `We sent a ${length}-digit code to ${email || "your email"}. Enter it below.`}
+                `We sent a ${length}-digit code to ${email || authFormContent.verification.emailFallback}. Enter it below.`}
             </CardDescription>
           </div>
         </CardHeader>
@@ -127,7 +128,9 @@ export function OTPVerificationForm({
                 type="text"
                 inputMode="numeric"
                 maxLength={1}
-                aria-label={`Digit ${index + 1} of ${length}`}
+                aria-label={authFormContent.verification.digitLabel
+                  .replace("{index}", String(index + 1))
+                  .replace("{length}", String(length))}
                 value={digit}
                 onChange={(event) => {
                   updateDigit(index, event.target.value)

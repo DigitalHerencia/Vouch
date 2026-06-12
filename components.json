@@ -17,7 +17,6 @@
     "utils": "@/lib/utils/utils",
     "ui": "@/components/ui",
     "types": "@/types",
-    "blocks": "@/components/blocks",
     "lib": "@/lib",
     "hooks": "@/hooks"
   },

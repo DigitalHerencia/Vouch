@@ -49,15 +49,16 @@ import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { authFormContent } from "@/content/auth"
 
 export function SignUpForm({
-  description = "create an account to use Vouch",
+  description = authFormContent.signUp.description,
   notice,
   error,
   footer,
   signInHref,
-  signInPrompt = "Already have an account?",
-  signInLabel = "Login",
+  signInPrompt = authFormContent.signUp.signInPrompt,
+  signInLabel = authFormContent.signUp.signInLabel,
   firstNameInputProps,
   lastNameInputProps,
   emailInputProps,
@@ -72,7 +73,7 @@ export function SignUpForm({
   onAgreementChange,
   disabled = false,
   isSubmitting = false,
-  submitLabel = "Create account",
+  submitLabel = authFormContent.signUp.submitLabel,
   captcha,
 }: SignUpFormProps) {
   const inputClassName =
@@ -83,7 +84,7 @@ export function SignUpForm({
       <Card>
         <CardHeader className="space-y-8 text-center">
           <div>
-            <Link href="/" aria-label="Go to Vouch home" className="inline-flex">
+            <Link href="/" aria-label={authFormContent.homeAriaLabel} className="inline-flex">
               <LogoLockup className="mt-12 scale-200" />
             </Link>
             <CardDescription className="mt-6 mb-6 text-lg uppercase">{description}</CardDescription>
@@ -105,13 +106,13 @@ export function SignUpForm({
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-4">
                 <Label htmlFor="firstName" className="text-sm uppercase">
-                  First name
+                  {authFormContent.signUp.firstNameLabel}
                 </Label>
                 <Input
                   id="firstName"
                   type="text"
                   autoComplete="given-name"
-                  placeholder="John"
+                  placeholder={authFormContent.signUp.firstNamePlaceholder}
                   disabled={disabled}
                   {...firstNameInputProps}
                   className={inputClassName}
@@ -121,13 +122,13 @@ export function SignUpForm({
 
               <div className="space-y-4">
                 <Label htmlFor="lastName" className="text-sm uppercase">
-                  Last name
+                  {authFormContent.signUp.lastNameLabel}
                 </Label>
                 <Input
                   id="lastName"
                   type="text"
                   autoComplete="family-name"
-                  placeholder="Doe"
+                  placeholder={authFormContent.signUp.lastNamePlaceholder}
                   disabled={disabled}
                   {...lastNameInputProps}
                   className={inputClassName}
@@ -138,13 +139,13 @@ export function SignUpForm({
 
             <div className="space-y-4">
               <Label htmlFor="signup-email" className="text-sm uppercase">
-                Email
+                {authFormContent.signUp.emailLabel}
               </Label>
               <Input
                 id="signup-email"
                 type="email"
                 autoComplete="email"
-                placeholder="m@example.com"
+                placeholder={authFormContent.signUp.emailPlaceholder}
                 disabled={disabled}
                 {...emailInputProps}
                 className={inputClassName}
@@ -154,13 +155,13 @@ export function SignUpForm({
 
             <div className="space-y-4">
               <Label htmlFor="signup-password" className="text-sm uppercase">
-                Password
+                {authFormContent.signUp.passwordLabel}
               </Label>
               <Input
                 id="signup-password"
                 type="password"
                 autoComplete="new-password"
-                placeholder="At least 8 characters"
+                placeholder={authFormContent.signUp.passwordPlaceholder}
                 disabled={disabled}
                 {...passwordInputProps}
                 className={inputClassName}

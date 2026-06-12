@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { authFormContent } from "@/content/auth"
 
 type LoginFormProps = ComponentPropsWithoutRef<"form"> & {
   description?: string
@@ -26,27 +27,27 @@ type LoginFormProps = ComponentPropsWithoutRef<"form"> & {
 }
 
 export function LoginForm({
-  description = "sign in to manage your account",
+  description = authFormContent.login.description,
   notice,
   error,
   footer,
   signUpHref,
-  signUpPrompt = "Need an account?",
-  signUpLabel = "Sign Up",
+  signUpPrompt = authFormContent.login.signUpPrompt,
+  signUpLabel = authFormContent.login.signUpLabel,
   emailInputProps,
   passwordInputProps,
   emailError,
   passwordError,
   disabled = false,
   isSubmitting = false,
-  submitLabel = "Sign in",
+  submitLabel = authFormContent.login.submitLabel,
 }: LoginFormProps) {
   return (
     <div className="mx-auto w-full max-w-md">
       <Card>
         <CardHeader className="space-y-8 text-center">
           <div>
-            <Link href="/" aria-label="Go to Vouch home" className="inline-flex">
+            <Link href="/" aria-label={authFormContent.homeAriaLabel} className="inline-flex">
               <LogoLockup className="mt-12 scale-200" />
             </Link>
             <CardDescription className="mt-6 mb-6 text-lg uppercase">{description}</CardDescription>
@@ -67,13 +68,13 @@ export function LoginForm({
 
             <div className="space-y-4">
               <Label htmlFor="email" className="text-sm uppercase">
-                Email
+                {authFormContent.login.emailLabel}
               </Label>
               <Input
                 id="email"
                 type="email"
                 autoComplete="email"
-                placeholder="m@example.com"
+                placeholder={authFormContent.login.emailPlaceholder}
                 disabled={disabled}
                 {...emailInputProps}
                 className="h-12 border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] placeholder:text-neutral-400"
@@ -83,13 +84,13 @@ export function LoginForm({
 
             <div className="space-y-4">
               <Label htmlFor="password" className="text-sm uppercase">
-                Password
+                {authFormContent.login.passwordLabel}
               </Label>
               <Input
                 id="password"
                 type="password"
                 autoComplete="current-password"
-                placeholder="Enter your password"
+                placeholder={authFormContent.login.passwordPlaceholder}
                 disabled={disabled}
                 {...passwordInputProps}
                 className="h-12 rounded-none border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"

@@ -1,18 +1,7 @@
 "use client"
 
 import * as React from "react"
-import {
-  ArrowRight,
-  Check,
-  Clipboard,
-  Copy,
-  Lock,
-  Mail,
-  MessageSquare,
-  Send,
-  Share2,
-  ShieldCheck,
-} from "lucide-react"
+import { ArrowRight, Check, Copy, Lock, ShieldCheck } from "lucide-react"
 import { useRouter } from "next/navigation"
 
 import { vouchPageCopy } from "@/content/vouches"
@@ -38,6 +27,7 @@ export function ConfirmPresenceInlineForm({
   confirmationExpiresAt: string
 }) {
   const copy = vouchPageCopy.detail
+  const formCopy = copy.confirmationForm
   const router = useRouter()
   const [closed, setClosed] = React.useState(false)
   const [submittedCode, setSubmittedCode] = React.useState("")
@@ -72,17 +62,17 @@ export function ConfirmPresenceInlineForm({
     const normalizedCode = submittedCode.replace(/\s+/g, "").trim()
 
     if (!canConfirm || closed) {
-      setErrorMessage("This participant is already confirmed or the confirmation window is closed.")
+      setErrorMessage(formCopy.errors.unavailable)
       return
     }
 
     if (!/^\d{6}$/.test(normalizedCode)) {
-      setErrorMessage("Enter the other participant's 6-digit code.")
+      setErrorMessage(formCopy.errors.invalid)
       return
     }
 
     if (normalizedCode === currentUserCode) {
-      setErrorMessage("That is your code. Enter the other participant's code.")
+      setErrorMessage(formCopy.errors.ownCode)
       return
     }
 
@@ -94,12 +84,12 @@ export function ConfirmPresenceInlineForm({
       })
 
       if (!result.ok) {
-        setErrorMessage(result.formError ?? "Confirmation failed. Check the code and try again.")
+        setErrorMessage(result.formError ?? formCopy.errors.failed)
         return
       }
 
       setSubmittedCode("")
-      setStatusMessage("Confirmed. This code stays visible until the window expires.")
+      setStatusMessage(formCopy.success)
       router.refresh()
     })
   }
@@ -109,14 +99,12 @@ export function ConfirmPresenceInlineForm({
       <div className="grid gap-3 border border-neutral-600 bg-neutral-950 p-4">
         <div className="flex items-center justify-between gap-3">
           <p className="text-sm font-black tracking-wide text-white uppercase">
-            Confirmation closed
+            {formCopy.closedTitle}
           </p>
           <Lock className="size-5 text-neutral-500" />
         </div>
 
-        <p className="text-xs leading-5 font-semibold text-neutral-400">
-          The confirmation window is closed. Codes and confirmation controls are no longer valid.
-        </p>
+        <p className="text-xs leading-5 font-semibold text-neutral-400">{formCopy.closedBody}</p>
       </div>
     )
   }
@@ -133,20 +121,17 @@ export function ConfirmPresenceInlineForm({
 
           <span className="inline-flex items-center gap-2 border border-blue-600 bg-blue-600/10 px-2 py-1 text-[10px] font-black tracking-wide text-blue-500 uppercase">
             <ShieldCheck className="size-3.5" />
-            Code exchange
+            {formCopy.codeExchange}
           </span>
         </div>
 
-        <p className="text-xs leading-5 font-semibold text-neutral-400">
-          Keep your code visible until the window closes. The other participant needs it even after
-          you confirm.
-        </p>
+        <p className="text-xs leading-5 font-semibold text-neutral-400">{formCopy.codeHelp}</p>
       </div>
 
       <div className="grid gap-3 border border-neutral-700 bg-neutral-950 p-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
         <div>
           <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
-            Your code
+            {formCopy.yourCode}
           </p>
           <p className="mt-2 font-mono text-4xl leading-none font-black tracking-wider text-white">
             {currentUserCode}
@@ -159,7 +144,7 @@ export function ConfirmPresenceInlineForm({
           onClick={copyCode}
         >
           {copied ? <Check className="size-4" /> : <Copy className="size-4" />}
-          {copied ? "Copied" : "Copy"}
+          {copied ? formCopy.copied : formCopy.copy}
         </button>
       </div>
 
@@ -169,7 +154,7 @@ export function ConfirmPresenceInlineForm({
             className="text-xs font-black tracking-wide text-neutral-400 uppercase"
             htmlFor="submittedCode"
           >
-            Other participant code
+            {formCopy.otherCode}
           </label>
 
           <input
@@ -179,7 +164,7 @@ export function ConfirmPresenceInlineForm({
             maxLength={6}
             minLength={6}
             name="submittedCode"
-            placeholder="000000"
+            placeholder={formCopy.codePlaceholder}
             required
             value={submittedCode}
             onChange={(event) => setSubmittedCode(event.target.value.replace(/\D/g, ""))}
@@ -190,15 +175,14 @@ export function ConfirmPresenceInlineForm({
             disabled={pending}
             type="submit"
           >
-            {pending ? "Confirming..." : "Confirm my presence"}
+            {pending ? formCopy.confirming : formCopy.confirm}
             <ArrowRight className="ml-auto size-5" />
           </button>
         </>
       ) : (
         <div className="border border-blue-600 bg-blue-600/10 p-3">
           <p className="text-xs leading-5 font-black text-blue-500 uppercase">
-            Your side is confirmed. Keep this code available for the other participant until the
-            window expires.
+            {formCopy.confirmedHelp}
           </p>
         </div>
       )}
@@ -216,187 +200,4 @@ export function ConfirmPresenceInlineForm({
       ) : null}
     </form>
   )
-}
-
-export function CheckoutSharePanel({
-  checkoutUrl,
-  publicId,
-  amountLabel,
-  appointmentLabel,
-}: {
-  checkoutUrl: string
-  publicId: string
-  amountLabel: string
-  appointmentLabel: string
-}) {
-  const [copiedAction, setCopiedAction] = React.useState<string | null>(null)
-
-  const checkoutHost = React.useMemo(() => {
-    try {
-      return new URL(checkoutUrl).hostname
-    } catch {
-      return "Stripe Checkout"
-    }
-  }, [checkoutUrl])
-
-  const shareSubject = `Vouch payment authorization: ${amountLabel}`
-  const shareMessage = React.useMemo(
-    () =>
-      [
-        `Please authorize your Vouch payment through Stripe:`,
-        checkoutUrl,
-        ``,
-        `Vouch: ${publicId}`,
-        `Amount: ${amountLabel}`,
-        `Appointment: ${appointmentLabel}`,
-        ``,
-        `The payment is authorized through Stripe. Funds are released only after both participants complete the required Vouch confirmation step.`,
-      ].join("\n"),
-    [amountLabel, appointmentLabel, checkoutUrl, publicId]
-  )
-
-  const mailtoHref = `mailto:?subject=${encodeURIComponent(shareSubject)}&body=${encodeURIComponent(
-    shareMessage
-  )}`
-
-  const smsHref = `sms:?&body=${encodeURIComponent(shareMessage)}`
-  const whatsappHref = `https://wa.me/?text=${encodeURIComponent(shareMessage)}`
-
-  async function copyToClipboard(value: string, actionName: string) {
-    try {
-      await navigator.clipboard.writeText(value)
-      setCopiedAction(actionName)
-      window.setTimeout(() => setCopiedAction(null), 1800)
-    } catch {
-      setCopiedAction(null)
-    }
-  }
-
-  async function shareCheckout() {
-    if (typeof navigator.share === "function") {
-      try {
-        await navigator.share({
-          title: shareSubject,
-          text: shareMessage,
-          url: checkoutUrl,
-        })
-        return
-      } catch {
-        return
-      }
-    }
-
-    await copyToClipboard(shareMessage, "share")
-  }
-
-  return (
-    <div className="grid gap-3 border border-neutral-700 bg-black p-3">
-      <div className="grid gap-1">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
-            Customer checkout
-          </p>
-
-          <span className="w-fit border border-neutral-700 bg-neutral-950 px-2 py-1 font-mono text-[10px] font-black text-neutral-300 uppercase">
-            Stripe hosted
-          </span>
-        </div>
-
-        <p className="font-mono text-xs leading-5 font-bold break-all text-neutral-400">
-          {checkoutHost}
-        </p>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-        <button
-          aria-label="Copy checkout link"
-          className="inline-flex h-11 items-center justify-center gap-2 border border-neutral-500 bg-neutral-950 px-3 text-xs font-black text-white uppercase transition hover:border-blue-600 hover:text-blue-500"
-          type="button"
-          onClick={() => copyToClipboard(checkoutUrl, "link")}
-        >
-          {copiedAction === "link" ? <Check className="size-4" /> : <Copy className="size-4" />}
-          Link
-        </button>
-
-        <button
-          aria-label="Copy checkout message"
-          className="inline-flex h-11 items-center justify-center gap-2 border border-neutral-500 bg-neutral-950 px-3 text-xs font-black text-white uppercase transition hover:border-blue-600 hover:text-blue-500"
-          type="button"
-          onClick={() => copyToClipboard(shareMessage, "message")}
-        >
-          {copiedAction === "message" ? (
-            <Check className="size-4" />
-          ) : (
-            <Clipboard className="size-4" />
-          )}
-          Copy
-        </button>
-
-        <a
-          aria-label="Email checkout message"
-          className="inline-flex h-11 items-center justify-center gap-2 border border-neutral-500 bg-neutral-950 px-3 text-xs font-black text-white uppercase transition hover:border-blue-600 hover:text-blue-500"
-          href={mailtoHref}
-        >
-          <Mail className="size-4" />
-          Email
-        </a>
-
-        <a
-          aria-label="Text checkout message"
-          className="inline-flex h-11 items-center justify-center gap-2 border border-neutral-500 bg-neutral-950 px-3 text-xs font-black text-white uppercase transition hover:border-blue-600 hover:text-blue-500"
-          href={smsHref}
-        >
-          <MessageSquare className="size-4" />
-          Text
-        </a>
-
-        <button
-          aria-label="Share checkout message"
-          className="inline-flex h-11 items-center justify-center gap-2 border border-neutral-500 bg-neutral-950 px-3 text-xs font-black text-white uppercase transition hover:border-blue-600 hover:text-blue-500"
-          type="button"
-          onClick={shareCheckout}
-        >
-          <Share2 className="size-4" />
-          Share
-        </button>
-      </div>
-
-      <a
-        className="inline-flex h-10 items-center justify-center gap-2 border border-neutral-700 bg-neutral-950 px-3 text-xs font-black text-neutral-300 uppercase transition hover:border-blue-600 hover:text-white"
-        href={whatsappHref}
-        rel="noreferrer"
-        target="_blank"
-      >
-        <Send className="size-4" />
-        Send with WhatsApp
-      </a>
-
-      {copiedAction ? (
-        <p className="border border-blue-600 bg-blue-600/10 px-3 py-2 text-xs font-black text-blue-500 uppercase">
-          Copied to clipboard.
-        </p>
-      ) : null}
-    </div>
-  )
-}
-
-export function VouchDeadlineRefresh({
-  confirmationOpensAt,
-  confirmationExpiresAt,
-}: {
-  confirmationOpensAt: string
-  confirmationExpiresAt: string
-}) {
-  const router = useRouter()
-
-  React.useEffect(() => {
-    const timers = [confirmationOpensAt, confirmationExpiresAt]
-      .map((value) => new Date(value).getTime() - Date.now() + 1000)
-      .filter((delay) => delay > 0 && delay <= 2_147_483_647)
-      .map((delay) => window.setTimeout(() => router.refresh(), delay))
-
-    return () => timers.forEach((timer) => window.clearTimeout(timer))
-  }, [confirmationExpiresAt, confirmationOpensAt, router])
-
-  return null
 }

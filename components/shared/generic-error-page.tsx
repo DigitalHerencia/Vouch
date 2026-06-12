@@ -2,11 +2,12 @@ import type { GenericErrorPageProps } from "@/types/commonTypes"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle } from "lucide-react"
 import { safeHref } from "@/lib/utils/utils"
+import { errorPageContent } from "@/content/common"
 
 export function GenericErrorPage({
   icon,
-  title = "Something went wrong",
-  description = "An unexpected error occurred. Please try again later.",
+  title = errorPageContent.generic.title,
+  description = errorPageContent.generic.description,
   actions,
 }: GenericErrorPageProps) {
   return (
@@ -20,7 +21,9 @@ export function GenericErrorPage({
         </div>
 
         <div>
-          <p className="text-xs font-black tracking-[0.22em] text-red-500 uppercase">Error</p>
+          <p className="text-xs font-black tracking-[0.22em] text-red-500 uppercase">
+            {errorPageContent.generic.eyebrow}
+          </p>
           <h1 className="mt-2 text-3xl leading-none font-black tracking-tight text-white uppercase md:text-5xl">
             {title}
           </h1>

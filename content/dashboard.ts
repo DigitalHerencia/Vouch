@@ -48,6 +48,11 @@ export const dashboardContent = {
     open: "Open",
   },
   labels: {
+    metrics: "Dashboard metrics",
+    vouches: "Dashboard vouches",
+    summary: "Vouch Summary",
+    window: "Window",
+    expires: "Expires",
     vouchIndex: "Vouch index",
     noRecords: "No records",
     role: "Role",

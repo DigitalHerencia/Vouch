@@ -9,7 +9,7 @@ type TenantShellProps = {
 
 import { TenantHeader } from "@/components/nav/tenant-header"
 import { TenantFooter } from "@/components/nav/tenant-footer"
-import { TenantMobileBottomNav } from "@/components/nav/mobile-bottom-nav"
+import { TenantMobileBottomNav } from "@/components/nav/tenant-mobile-bottom-nav"
 
 export function TenantShell({
   children,

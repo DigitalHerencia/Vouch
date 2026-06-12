@@ -3,14 +3,17 @@
 import { Calendar, CreditCard, ReceiptText, ShieldCheck } from "lucide-react"
 
 import { VouchStatusBadge } from "@/components/shared/vouch-status-badge"
+import { CheckoutSharePanel } from "@/components/vouches/checkout-share-panel"
 import { StatusRow } from "@/components/vouches/status-row"
 import { StatusTile } from "@/components/vouches/status-tile"
 import { VouchStatusTimeline } from "@/components/vouches/vouch-status-timeline"
-import { CheckoutSharePanel } from "@/features/vouches/vouchDetailFeature.client"
+import { vouchPageCopy } from "@/content/vouches"
 import type { VouchStatusDocumentData } from "@/types/vouchTypes"
 
 export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData }) {
   const tone = data.statusTone ?? "pending"
+  const copy = vouchPageCopy.detail
+  const documentCopy = copy.document
   const windowPercent = Math.max(0, Math.min(100, data.countdown?.percentRemaining ?? 0))
 
   return (
@@ -19,7 +22,7 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
         <header className="flex flex-wrap items-start justify-between gap-5 border-b-2 border-neutral-900 pb-5">
           <div className="min-w-0">
             <p className="w-fit border border-neutral-700 bg-neutral-950 px-3 py-1 text-[11px] leading-none font-black tracking-[0.2em] text-blue-600 uppercase">
-              Vouch detail
+              {documentCopy.eyebrow}
             </p>
 
             <h1
@@ -44,12 +47,12 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
 
         <section
           className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
-          aria-label="Critical Vouch status"
+          aria-label={documentCopy.criticalStatusLabel}
         >
-          <StatusTile label="Merchant" value={data.merchantLabel} />
-          <StatusTile label="Customer" value={data.customerLabel} />
-          <StatusTile label="Payment" value={data.paymentStatusLabel} />
-          <StatusTile label="Window closes" value={data.confirmationExpiresLabel} />
+          <StatusTile label={copy.labels.merchant} value={data.merchantLabel} />
+          <StatusTile label={copy.labels.customer} value={data.customerLabel} />
+          <StatusTile label={documentCopy.paymentEyebrow} value={data.paymentStatusLabel} />
+          <StatusTile label={copy.labels.expires} value={data.confirmationExpiresLabel} />
         </section>
 
         <div className="grid gap-4 lg:grid-cols-2">
@@ -57,19 +60,21 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
-                  Payment
+                  {documentCopy.paymentEyebrow}
                 </p>
-                <h2 className="mt-1 text-lg leading-none font-black uppercase">Authorization</h2>
+                <h2 className="mt-1 text-lg leading-none font-black uppercase">
+                  {documentCopy.paymentTitle}
+                </h2>
               </div>
 
               <CreditCard className="size-5 shrink-0 text-blue-600" />
             </div>
 
             <div className="grid gap-3 text-sm">
-              <StatusRow label="Customer authorizes" value={data.customerTotalLabel} />
-              <StatusRow label="Merchant receives" value={data.merchantReceivesLabel} />
-              <StatusRow label="Status" value={data.paymentStatusLabel} />
-              <StatusRow label="Settlement" value={data.settlementStatusLabel} />
+              <StatusRow label={copy.labels.customerAuthorizes} value={data.customerTotalLabel} />
+              <StatusRow label={copy.labels.merchantReceives} value={data.merchantReceivesLabel} />
+              <StatusRow label={copy.labels.status} value={data.paymentStatusLabel} />
+              <StatusRow label={documentCopy.settlement} value={data.settlementStatusLabel} />
             </div>
           </section>
 
@@ -77,27 +82,29 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
-                  Schedule
+                  {documentCopy.scheduleEyebrow}
                 </p>
-                <h2 className="mt-1 text-lg leading-none font-black uppercase">Window</h2>
+                <h2 className="mt-1 text-lg leading-none font-black uppercase">
+                  {documentCopy.scheduleTitle}
+                </h2>
               </div>
 
               <Calendar className="size-5 shrink-0 text-blue-600" />
             </div>
 
             <div className="grid gap-3 text-sm">
-              <StatusRow label="Appointment" value={data.appointmentLabel} />
-              <StatusRow label="Opens" value={data.confirmationOpensLabel} />
-              <StatusRow label="Expires" value={data.confirmationExpiresLabel} />
+              <StatusRow label={copy.labels.appointment} value={data.appointmentLabel} />
+              <StatusRow label={copy.labels.opens} value={data.confirmationOpensLabel} />
+              <StatusRow label={copy.labels.expires} value={data.confirmationExpiresLabel} />
             </div>
 
             <div className="mt-6 border-t border-neutral-700 pt-4">
               <div className="flex items-center justify-between gap-3">
                 <p className="text-[11px] font-black tracking-widest text-neutral-400 uppercase">
-                  Window status
+                  {documentCopy.windowStatus}
                 </p>
                 <p className="font-mono text-xs font-black text-white uppercase">
-                  {data.countdown?.remainingLabel ?? "Pending"}
+                  {data.countdown?.remainingLabel ?? documentCopy.pending}
                 </p>
               </div>
 
@@ -106,7 +113,7 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
               </div>
 
               <p className="mt-3 text-xs leading-5 font-semibold text-neutral-500">
-                Confirmation is only valid inside the scheduled window.
+                {documentCopy.windowRule}
               </p>
             </div>
           </section>
@@ -127,9 +134,11 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
           <div className="mb-4 flex items-center justify-between gap-4 border-b border-neutral-700 pb-3">
             <div>
               <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
-                Timeline
+                {documentCopy.timelineEyebrow}
               </p>
-              <h2 className="mt-1 text-lg leading-none font-black uppercase">Next action</h2>
+              <h2 className="mt-1 text-lg leading-none font-black uppercase">
+                {documentCopy.timelineTitle}
+              </h2>
             </div>
 
             <ReceiptText className="size-5 shrink-0 text-blue-600" />
@@ -142,17 +151,25 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
           <div className="mb-4 flex items-center justify-between gap-3">
             <div>
               <p className="text-[11px] font-black tracking-widest text-blue-600 uppercase">
-                Presence
+                {documentCopy.presenceEyebrow}
               </p>
-              <h2 className="mt-1 text-lg leading-none font-black uppercase">Confirmation</h2>
+              <h2 className="mt-1 text-lg leading-none font-black uppercase">
+                {documentCopy.presenceTitle}
+              </h2>
             </div>
 
             <ShieldCheck className="size-5 shrink-0 text-blue-600" />
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <ConfirmationPill label="Merchant" confirmed={data.confirmations.merchantConfirmed} />
-            <ConfirmationPill label="Customer" confirmed={data.confirmations.customerConfirmed} />
+            <ConfirmationPill
+              label={copy.labels.merchant}
+              confirmed={data.confirmations.merchantConfirmed}
+            />
+            <ConfirmationPill
+              label={copy.labels.customer}
+              confirmed={data.confirmations.customerConfirmed}
+            />
           </div>
 
           {data.confirmations.action ? (
@@ -169,7 +186,7 @@ function ConfirmationPill({ label, confirmed }: { label: string; confirmed: bool
     <div className="border border-neutral-600 bg-black p-3">
       <p className="text-[11px] font-black tracking-widest text-neutral-400 uppercase">{label}</p>
       <p className="mt-2 font-mono text-sm font-black text-white uppercase">
-        {confirmed ? "Confirmed" : "Waiting"}
+        {confirmed ? vouchPageCopy.detail.states.confirmed : vouchPageCopy.detail.states.waiting}
       </p>
     </div>
   )

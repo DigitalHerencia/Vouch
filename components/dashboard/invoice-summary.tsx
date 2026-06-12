@@ -5,13 +5,9 @@ import Link from "next/link"
 import { VouchStatusBadge } from "@/components/shared/vouch-status-badge"
 import { Progress } from "@/components/ui/progress"
 import type { InvoiceSummaryData } from "@/types/dashboardTypes"
+import { dashboardContent } from "@/content/dashboard"
 
 export type InvoiceSummaryProps = InvoiceSummaryData
-
-export type InvoiceSummaryListProps = {
-  invoices: InvoiceSummaryData[]
-  disabled?: boolean
-}
 
 const cardMotion =
   "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
@@ -45,7 +41,7 @@ export function InvoiceSummary({
       <div className="flex flex-wrap items-start justify-between gap-5 border-b-2 border-neutral-900 pb-5">
         <div className="min-w-0">
           <p className="text-sm font-black tracking-[0.22em] text-blue-600 uppercase">
-            Vouch Summary
+            {dashboardContent.labels.summary}
           </p>
 
           <h2 className="mt-2 max-w-3xl text-3xl leading-[0.95] font-black tracking-[0.04em] text-white uppercase md:text-4xl lg:text-5xl">
@@ -81,7 +77,7 @@ export function InvoiceSummary({
 
           <div className="max-w-60 text-left sm:text-right">
             <p className="text-[10px] font-black tracking-[0.22em] text-blue-600 uppercase">
-              Window
+              {dashboardContent.labels.window}
             </p>
             <p className="mt-1 text-xs leading-5 font-black tracking-wide text-neutral-300 uppercase">
               {windowLabel}
@@ -92,7 +88,7 @@ export function InvoiceSummary({
         <Progress value={clampedProgress} className="h-3 shadow-none md:h-3.5" />
 
         <p className="text-[11px] leading-5 font-bold tracking-wide text-neutral-400 uppercase">
-          Expires {expiresAtLabel}
+          {dashboardContent.labels.expires} {expiresAtLabel}
         </p>
       </div>
     </article>
@@ -104,19 +100,5 @@ export function InvoiceSummary({
     <Link href={href} className="block">
       {content}
     </Link>
-  )
-}
-
-export function InvoiceSummaryList({ invoices, disabled = false }: InvoiceSummaryListProps) {
-  return (
-    <section className="grid gap-7 md:gap-8" aria-label="Dashboard vouches">
-      {invoices.map((invoice) => (
-        <InvoiceSummary
-          key={invoice.vouchId ?? invoice.invoiceNumber}
-          {...invoice}
-          disabled={disabled || invoice.disabled === true}
-        />
-      ))}
-    </section>
   )
 }

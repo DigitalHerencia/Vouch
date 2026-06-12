@@ -1,4 +1,5 @@
 export const vouchPageCopy = {
+  loadingDetailsLabel: "Loading Vouch details",
   create: {
     eyebrow: "Merchant action",
     title: "Create a Vouch",
@@ -18,6 +19,8 @@ export const vouchPageCopy = {
       "Vouch does not host card, bank, identity, payout, or payment authorization forms. Stripe owns those hosted surfaces.",
     disclaimerLabel:
       "I understand this Vouch becomes immutable after commitment and the merchant Vouch fee is paid through Stripe at creation.",
+    amountPlaceholder: "250.00",
+    progressLabel: "Progress steps",
     commitAction: "Create Vouch and pay fee",
     ruleTitle: "Outcome follows confirmation state.",
     ruleBody:
@@ -71,6 +74,67 @@ export const vouchPageCopy = {
     confirmDrawerBody:
       "Submit the other participant's current code only if you were present inside the confirmation window.",
     confirmDrawerTrigger: "Open confirmation",
+    document: {
+      eyebrow: "Vouch detail",
+      criticalStatusLabel: "Critical Vouch status",
+      paymentEyebrow: "Payment",
+      paymentTitle: "Authorization",
+      scheduleEyebrow: "Schedule",
+      scheduleTitle: "Window",
+      windowStatus: "Window status",
+      pending: "Pending",
+      windowRule: "Confirmation is only valid inside the scheduled window.",
+      timelineEyebrow: "Timeline",
+      timelineTitle: "Next action",
+      presenceEyebrow: "Presence",
+      presenceTitle: "Confirmation",
+      settlement: "Settlement",
+    },
+    confirmationForm: {
+      codePlaceholder: "000000",
+      closedTitle: "Confirmation closed",
+      closedBody:
+        "The confirmation window is closed. Codes and confirmation controls are no longer valid.",
+      codeExchange: "Code exchange",
+      codeHelp:
+        "Keep your code visible until the window closes. The other participant needs it even after you confirm.",
+      yourCode: "Your code",
+      copied: "Copied",
+      copy: "Copy",
+      otherCode: "Other participant code",
+      confirming: "Confirming...",
+      confirm: "Confirm my presence",
+      confirmedHelp:
+        "Your side is confirmed. Keep this code available for the other participant until the window expires.",
+      errors: {
+        unavailable: "This participant is already confirmed or the confirmation window is closed.",
+        invalid: "Enter the other participant's 6-digit code.",
+        ownCode: "That is your code. Enter the other participant's code.",
+        failed: "Confirmation failed. Check the code and try again.",
+      },
+      success: "Confirmed. This code stays visible until the window expires.",
+    },
+    checkoutShare: {
+      subject: "Vouch payment authorization",
+      request: "Please authorize your Vouch payment through Stripe:",
+      authorizationRule:
+        "The payment is authorized through Stripe. Funds are released only after both participants complete the required Vouch confirmation step.",
+      fallbackHost: "Stripe Checkout",
+      eyebrow: "Customer checkout",
+      hostedLabel: "Stripe hosted",
+      copyLinkAriaLabel: "Copy checkout link",
+      copyMessageAriaLabel: "Copy checkout message",
+      emailAriaLabel: "Email checkout message",
+      textAriaLabel: "Text checkout message",
+      shareAriaLabel: "Share checkout message",
+      link: "Link",
+      copy: "Copy",
+      email: "Email",
+      text: "Text",
+      share: "Share",
+      whatsapp: "Send with WhatsApp",
+      copied: "Copied to clipboard.",
+    },
   },
   providerRedirects: {
     connect: {

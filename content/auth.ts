@@ -19,6 +19,46 @@ export const authHeaderContent = {
   homeAriaLabel: "Go to Vouch home",
 } as const
 
+export const authFormContent = {
+  homeAriaLabel: "Go to Vouch home",
+  login: {
+    description: "sign in to manage your account",
+    signUpPrompt: "Need an account?",
+    signUpLabel: "Sign Up",
+    submitLabel: "Sign in",
+    emailLabel: "Email",
+    emailPlaceholder: "m@example.com",
+    passwordLabel: "Password",
+    passwordPlaceholder: "Enter your password",
+  },
+  signUp: {
+    description: "create an account to use Vouch",
+    signInPrompt: "Already have an account?",
+    signInLabel: "Login",
+    submitLabel: "Create account",
+    firstNameLabel: "First name",
+    firstNamePlaceholder: "John",
+    lastNameLabel: "Last name",
+    lastNamePlaceholder: "Doe",
+    emailLabel: "Email",
+    emailPlaceholder: "m@example.com",
+    passwordLabel: "Password",
+    passwordPlaceholder: "At least 8 characters",
+  },
+  verification: {
+    title: "Verify your email",
+    submitLabel: "Verify",
+    resendLabel: "Resend code",
+    backLabel: "Start over",
+    emailFallback: "your email",
+    digitLabel: "Digit {index} of {length}",
+  },
+  footer: {
+    brand: "Vouch",
+    rights: "All rights reserved.",
+  },
+} as const
+
 export const authCalloutGridContent = {
   eyebrow: "Authenticated protocol",
   principles: [

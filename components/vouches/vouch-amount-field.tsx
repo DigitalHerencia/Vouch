@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input"
 import { VouchCreationField } from "@/components/vouches/vouch-creation-field"
+import { vouchPageCopy } from "@/content/vouches"
 
 type VouchAmountFieldProps = {
   value: string
@@ -18,7 +19,7 @@ export function VouchAmountField({ value, disabled, error, onChange }: VouchAmou
         inputMode="decimal"
         min="0"
         step="0.01"
-        placeholder="250.00"
+        placeholder={vouchPageCopy.create.amountPlaceholder}
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}

@@ -1,7 +1,9 @@
+import { vouchPageCopy } from "@/content/vouches"
+
 export function VouchDetailSkeleton() {
   return (
     <article
-      aria-label="Loading Vouch details"
+      aria-label={vouchPageCopy.loadingDetailsLabel}
       className="w-full animate-pulse border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
     >
       <div className="grid gap-6 p-5 md:p-8">

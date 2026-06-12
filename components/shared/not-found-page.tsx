@@ -3,10 +3,11 @@ import { Button } from "@/components/ui/button"
 import { safeHref } from "@/lib/utils/utils"
 import { type NotFoundPageProps } from "@/types/commonTypes"
 import { Input } from "@/components/ui/input"
+import { errorPageContent } from "@/content/common"
 
 export function NotFoundPage({
-  title = "404",
-  description = "Oops! The page you're looking for doesn't exist or has been moved.",
+  title = errorPageContent.notFound.title,
+  description = errorPageContent.notFound.description,
   showSearch = false,
   searchQuery = "",
   onSearchQueryChange,
@@ -30,7 +31,7 @@ export function NotFoundPage({
         </div>
 
         <div className="space-y-4">
-          <h2 className="font-black">Page Not Found</h2>
+          <h2 className="font-black">{errorPageContent.notFound.heading}</h2>
           <p className="text-neutral-400">{description}</p>
         </div>
 
@@ -44,7 +45,7 @@ export function NotFoundPage({
           >
             <Input
               type="search"
-              placeholder="Search for pages..."
+              placeholder={errorPageContent.notFound.searchPlaceholder}
               value={searchQuery}
               onChange={(event) => onSearchQueryChange?.(event.target.value)}
               className="border-2 border-neutral-400"
@@ -59,14 +60,14 @@ export function NotFoundPage({
           <Button asChild>
             <a href={safeHref(homeHref)}>
               <Home className="mr-2 h-4 w-4" />
-              Back to Home
+              {errorPageContent.notFound.home}
             </a>
           </Button>
           {backHref && (
             <Button variant="outline" asChild>
               <a href={safeHref(backHref)}>
                 <ArrowLeft className="mr-2 h-4 w-4" />
-                Go Back
+                {errorPageContent.notFound.back}
               </a>
             </Button>
           )}

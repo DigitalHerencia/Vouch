@@ -7,6 +7,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { vouchPageCopy } from "@/content/vouches"
 import type { VouchFormStep } from "@/types/vouchTypes"
 
 export type VouchCreationWizardProps = {
@@ -64,7 +65,7 @@ export function VouchCreationWizard({
       <div
         className="mx-auto mb-8 flex w-full max-w-5xl items-center justify-center gap-2"
         role="list"
-        aria-label="Progress steps"
+        aria-label={vouchPageCopy.create.progressLabel}
       >
         {steps.map((item, index) => (
           <Fragment key={item.id}>

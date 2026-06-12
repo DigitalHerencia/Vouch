@@ -1,7 +1,7 @@
 // features/dashboard/dashboardFeature.tsx
 
 import { DashboardEmptyState } from "@/components/dashboard/dashboard-empty-state"
-import { InvoiceSummaryList } from "@/components/dashboard/invoice-summary"
+import { InvoiceSummaryList } from "@/components/dashboard/invoice-summary-list"
 import { HeroCentered } from "@/components/shared/hero-centered"
 import { StatsCards } from "@/components/shared/stats-cards"
 import { dashboardContent } from "@/content/dashboard"

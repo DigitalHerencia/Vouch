@@ -2,10 +2,11 @@ import { safeHref } from "@/lib/utils/utils"
 import type { ServerErrorPageProps } from "@/types/commonTypes"
 import { Button } from "@/components/ui/button"
 import { Home, RefreshCw, ServerCrash } from "lucide-react"
+import { errorPageContent } from "@/content/common"
 
 export function ServerErrorPage({
-  title = "Vouch is unavailable",
-  description = "The application could not finish this request. Try again, or return home.",
+  title = errorPageContent.server.title,
+  description = errorPageContent.server.description,
   errorId,
   onRetry,
   homeHref = "/",
@@ -23,7 +24,7 @@ export function ServerErrorPage({
           </div>
           <div>
             <p className="text-xs font-black tracking-[0.22em] text-red-500 uppercase">
-              Application error
+              {errorPageContent.server.eyebrow}
             </p>
             <h1 className="mt-2 text-3xl leading-none font-black tracking-tight text-white uppercase md:text-5xl">
               {title}
@@ -36,7 +37,7 @@ export function ServerErrorPage({
 
         {errorId ? (
           <p className="font-mono text-xs font-bold break-all text-neutral-500">
-            Reference: {errorId}
+            {errorPageContent.server.reference}: {errorId}
           </p>
         ) : null}
 
@@ -44,25 +45,25 @@ export function ServerErrorPage({
           {onRetry && (
             <Button onClick={onRetry}>
               <RefreshCw className="mr-2 h-4 w-4" />
-              Try again
+              {errorPageContent.server.retry}
             </Button>
           )}
           <Button variant="outline" asChild>
             <a href={safeHref(homeHref)}>
               <Home className="mr-2 h-4 w-4" />
-              Back to home
+              {errorPageContent.server.home}
             </a>
           </Button>
         </div>
 
         {supportEmail ? (
           <p className="text-sm text-neutral-400">
-            Still having issues?{" "}
+            {errorPageContent.server.supportPrompt}{" "}
             <a
               href={safeHref(`mailto:${supportEmail}`)}
               className="font-bold text-white hover:text-blue-600 hover:underline hover:underline-offset-4"
             >
-              Contact support
+              {errorPageContent.server.supportAction}
             </a>
           </p>
         ) : null}

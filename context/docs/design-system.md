@@ -158,20 +158,20 @@ Feature orchestration. May compose fetcher/action handoff, forms, stateful clien
 
 Reusable components must be tracked here when added or materially changed.
 
-| Component | Path | Layer | Purpose | Status | Token Dependencies | Notes |
-| --- | --- | --- | --- | --- | --- | --- |
-| Button | `components/ui/button.tsx` | Primitive | Base interactive action | Active | color, radius, focus, spacing | Variants should remain semantic. |
-| Card | `components/ui/card.tsx` | Primitive | Surface container | Active | surface, border, radius, shadow, spacing | Use for dashboard and content grouping. |
-| Badge | `components/ui/badge.tsx` | Primitive | Compact status/label | Active | color, radius, typography | Should align with status semantics. |
-| Alert | `components/ui/alert.tsx` | Primitive | Inline feedback | Active | color, border, spacing | Use for warnings/errors/info. |
-| EmptyState | `components/ui/empty-state.tsx` | Primitive | Empty state presentation | Active | typography, spacing, muted, icon | Prefer over ad hoc empty states. |
-| StatCard | `components/ui/statcard.tsx` | Primitive | Metric card presentation | Active | surface, typography, progress, spacing | Keep dashboard stats visually consistent. |
-| VouchStatusBadge | `components/shared/vouch-status-badge.tsx` | Shared | Vouch workflow status | Active | badge/status colors | Must reflect canonical workflow state. |
-| RequirementNoticeSplit | `components/shared/requirement-notice-split.tsx` | Shared | Requirement or CTA notice | Active | surface, warning/info, spacing | Blocking use only for product-required gates. |
-| InvoiceSummary | `components/dashboard/invoice-summary.tsx` | Domain | Dashboard Vouch summary row/card | Active | surface, typography, status | Should not be disabled by optional account setup. |
-| VouchCreationWizard | `components/vouches/vouch-creation-wizard.tsx` | Domain | Merchant new-Vouch wizard | Active | progress, card, spacing | Connect readiness may block this flow. |
-| AuthorizationCheckoutCard | `components/vouches/authorization-checkout-card.tsx` | Domain | Customer authorization CTA | Active | card, button, status | Must preserve Vouch-specific authorization flow. |
-| VouchStatusDocument | `components/vouches/vouch-status-document.tsx` | Domain | Vouch detail/status view | Active | status, timeline, card | Canonical participant view. |
+| Component              | Path                                             | Layer     | Purpose                                | Status | Token Dependencies                       | Notes                                                           |
+| ---------------------- | ------------------------------------------------ | --------- | -------------------------------------- | ------ | ---------------------------------------- | --------------------------------------------------------------- |
+| Button                 | `components/ui/button.tsx`                       | Primitive | Base interactive action                | Active | color, radius, focus, spacing            | Variants should remain semantic.                                |
+| Card                   | `components/ui/card.tsx`                         | Primitive | Surface container                      | Active | surface, border, radius, shadow, spacing | Use for dashboard and content grouping.                         |
+| Badge                  | `components/ui/badge.tsx`                        | Primitive | Compact status/label                   | Active | color, radius, typography                | Should align with status semantics.                             |
+| Alert                  | `components/ui/alert.tsx`                        | Primitive | Inline feedback                        | Active | color, border, spacing                   | Use for warnings/errors/info.                                   |
+| EmptyState             | `components/ui/empty-state.tsx`                  | Primitive | Empty state presentation               | Active | typography, spacing, muted, icon         | Prefer over ad hoc empty states.                                |
+| StatCard               | `components/ui/statcard.tsx`                     | Primitive | Metric card presentation               | Active | surface, typography, progress, spacing   | Keep dashboard stats visually consistent.                       |
+| VouchStatusBadge       | `components/shared/vouch-status-badge.tsx`       | Shared    | Vouch workflow status                  | Active | badge/status colors                      | Must reflect canonical workflow state.                          |
+| RequirementNoticeSplit | `components/shared/requirement-notice-split.tsx` | Shared    | Requirement or CTA notice              | Active | surface, warning/info, spacing           | Blocking use only for product-required gates.                   |
+| InvoiceSummary         | `components/dashboard/invoice-summary.tsx`       | Domain    | Dashboard Vouch summary row/card       | Active | surface, typography, status              | Should not be disabled by optional account setup.               |
+| VouchCreationWizard    | `components/vouches/vouch-creation-wizard.tsx`   | Domain    | Merchant new-Vouch wizard              | Active | progress, card, spacing                  | Connect readiness may block this flow.                          |
+| CheckoutSharePanel     | `components/vouches/checkout-share-panel.tsx`    | Domain    | Customer authorization-link sharing UI | Active | border, typography, action hierarchy     | Receives mapped Vouch detail data and uses centralized content. |
+| VouchStatusDocument    | `components/vouches/vouch-status-document.tsx`   | Domain    | Vouch detail/status view               | Active | status, timeline, card                   | Canonical participant view.                                     |
 
 When adding a reusable component, update this table or explain why the component is intentionally local and non-reusable.
 
@@ -201,7 +201,6 @@ Warnings must distinguish between required blockers and optional guidance.
 
 Locked states are allowed only when the product workflow truly requires readiness or authorization.
 
-
 ## Dashboard Pattern
 
 Dashboard UI should maintain:
@@ -229,7 +228,6 @@ Forms should include:
 Each region should have one primary action.
 
 Secondary actions must be visually subordinate.
-
 
 ## Accessibility Baseline
 

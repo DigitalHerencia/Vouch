@@ -3,15 +3,8 @@
   "file": ".agents/execution/progress.json",
   "product": "Vouch",
   "purpose": "Machine-readable implementation tracker and active work queue.",
-  "updated_at": "2026-06-10T00:00:00.000Z",
-  "status_values": [
-    "not_started",
-    "planned",
-    "in_progress",
-    "blocked",
-    "complete",
-    "deferred"
-  ],
+  "updated_at": "2026-06-12T00:00:00.000Z",
+  "status_values": ["not_started", "planned", "in_progress", "blocked", "complete", "deferred"],
   "domains": [
     {
       "id": "governance",
@@ -86,7 +79,7 @@
     },
     {
       "id": "design_system",
-      "status": "planned",
+      "status": "in_progress",
       "summary": "Add durable design-system governance and prepare token migration.",
       "tasks": [
         {
@@ -103,13 +96,24 @@
         {
           "id": "DESIGN-002",
           "priority": "P1",
-          "status": "not_started",
+          "status": "in_progress",
           "title": "Plan CSS variable and component token migration",
           "acceptance": [
             "globals.css is inspected.",
             "components.json CSS variable setting is inspected.",
             "Inline styles and arbitrary literals are inventoried where relevant.",
             "Token migration is scoped separately from readiness gate removal."
+          ]
+        },
+        {
+          "id": "DESIGN-003",
+          "priority": "P1",
+          "status": "complete",
+          "title": "Audit component ownership and centralized content",
+          "acceptance": [
+            "Active components do not import feature orchestration.",
+            "User-facing component copy is mapped from content modules.",
+            "Duplicate and multi-responsibility component bundles are removed."
           ]
         }
       ]

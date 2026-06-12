@@ -3,6 +3,7 @@
 import { Minus, TrendingDown, TrendingUp } from "lucide-react"
 
 import type { DashboardStatItem } from "@/types/dashboardTypes"
+import { dashboardContent } from "@/content/dashboard"
 
 export type StatsCardsProps = {
   title?: string
@@ -27,7 +28,7 @@ function getTrendValueClassName(trend: DashboardStatItem["trend"]): string {
 
 export function StatsCards({ title, subtitle, stats }: StatsCardsProps) {
   return (
-    <section aria-label="Dashboard metrics">
+    <section aria-label={dashboardContent.labels.metrics}>
       {title || subtitle ? (
         <div className="mb-7 space-y-2 text-center md:mb-8">
           {subtitle ? (

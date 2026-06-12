@@ -2,7 +2,7 @@ type PublicShellProps = { children: React.ReactNode; withMobileBottomNav?: boole
 
 import { PublicHeader } from "@/components/nav/public-header"
 import { PublicFooter } from "@/components/nav/public-footer"
-import { PublicMobileBottomNav } from "@/components/nav/mobile-bottom-nav"
+import { PublicMobileBottomNav } from "@/components/nav/public-mobile-bottom-nav"
 
 export function PublicShell({ children, withMobileBottomNav = true }: PublicShellProps) {
   return (

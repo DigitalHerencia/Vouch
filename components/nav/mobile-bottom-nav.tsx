@@ -1,8 +1,8 @@
 "use client"
 
-type TenantStripeAction = ((formData: FormData) => void | Promise<void>) | undefined
+export type TenantStripeAction = ((formData: FormData) => void | Promise<void>) | undefined
 
-type MobileBottomNavWarning = {
+export type MobileBottomNavWarning = {
   title: string
   consequence: string
   context: string
@@ -10,7 +10,7 @@ type MobileBottomNavWarning = {
   actionLabel?: string
 }
 
-type MobileBottomNavItem = {
+export type MobileBottomNavItem = {
   label: string
   href?: string | undefined
   action?: TenantStripeAction
@@ -34,12 +34,6 @@ type MobileBottomNavProps = {
   "aria-label"?: string
 }
 
-type TenantMobileBottomNavProps = {
-  connectAction?: TenantStripeAction
-  connectReady: boolean
-}
-
-import { FileText, Handshake, HelpCircle, Home, Shield, ShieldCheck, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -54,7 +48,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { vouchPageCopy } from "@/content/vouches"
+import { publicNavigationContent } from "@/content/navigation"
 
 function isActivePath(pathname: string, href: string) {
   return pathname === href || pathname.startsWith(`${href}/`)
@@ -62,7 +56,7 @@ function isActivePath(pathname: string, href: string) {
 
 export function MobileBottomNav({
   items,
-  "aria-label": ariaLabel = "Mobile navigation",
+  "aria-label": ariaLabel = publicNavigationContent.labels.mobileDefault,
 }: MobileBottomNavProps) {
   const pathname = usePathname()
   const [pendingAction, setPendingAction] = useState<MobileBottomNavItem | null>(null)
@@ -138,7 +132,7 @@ export function MobileBottomNav({
         <DrawerContent>
           <DrawerHeader className="gap-3 border-b border-neutral-400 px-5 pt-8 pb-5 text-left">
             <p className="text-xs leading-none font-black tracking-widest text-blue-600 uppercase">
-              Secure Stripe step
+              {publicNavigationContent.labels.secureStripeStep}
             </p>
             <DrawerTitle className="text-2xl leading-tight tracking-normal normal-case">
               {pendingAction?.warning?.title}
@@ -160,7 +154,8 @@ export function MobileBottomNav({
               <form action={pendingAction.action}>
                 <input type="hidden" name="returnPath" value={returnPath} />
                 <Button type="submit" className="w-full">
-                  {pendingAction.warning?.actionLabel ?? "Continue to Stripe"}
+                  {pendingAction.warning?.actionLabel ??
+                    publicNavigationContent.labels.continueToStripe}
                 </Button>
               </form>
             </DrawerFooter>
@@ -169,37 +164,4 @@ export function MobileBottomNav({
       </Drawer>
     </>
   )
-}
-
-const publicItems = [
-  { kind: "link", href: "/", label: "Home", icon: Home },
-  { kind: "link", href: "/pricing", label: "Pricing", icon: FileText },
-  { kind: "link", href: "/faq", label: "FAQ", icon: HelpCircle },
-  { kind: "link", href: "/sign-in", label: "Sign in", icon: ShieldCheck },
-] satisfies readonly MobileBottomNavItem[]
-
-export function PublicMobileBottomNav() {
-  return <MobileBottomNav items={publicItems} aria-label="Public mobile navigation" />
-}
-
-export function TenantMobileBottomNav({ connectAction, connectReady }: TenantMobileBottomNavProps) {
-  const tenantItems = [
-    { kind: "link", href: "/dashboard", label: "Dashboard", icon: Home },
-    {
-      kind: "link",
-      href: "/vouches/new",
-      label: "New Vouch",
-      icon: Handshake,
-    },
-    {
-      kind: "action",
-      label: "Stripe",
-      icon: Shield,
-      action: connectAction,
-      warning: vouchPageCopy.providerRedirects[connectReady ? "connectDashboard" : "connect"],
-    },
-    { kind: "account", label: "Account", icon: User },
-  ] satisfies readonly MobileBottomNavItem[]
-
-  return <MobileBottomNav items={tenantItems} aria-label="Tenant mobile navigation" />
 }
