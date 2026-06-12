@@ -21,7 +21,6 @@ vi.mock("@/lib/fetchers/authFetchers", () => ({
 }))
 
 function readinessRecord(input: {
-  paymentMethodReady?: "not_started" | "requires_action" | "ready"
   payoutReadiness?: "not_started" | "requires_action" | "ready"
   stripeAccountId?: string | null
 }) {
@@ -30,9 +29,6 @@ function readinessRecord(input: {
   return {
     id: "user_1",
     status: "active",
-    paymentCustomer: {
-      paymentMethodReady: input.paymentMethodReady === "ready",
-    },
     connectedAccount: {
       stripeAccountId: input.stripeAccountId === null ? null : "acct_123",
       chargesEnabled: merchantReady,
@@ -56,7 +52,6 @@ describe("readiness capability gates", () => {
 
     queueReadiness(
       readinessRecord({
-        paymentMethodReady: "not_started",
         payoutReadiness: "ready",
         stripeAccountId: null,
       })
@@ -73,7 +68,6 @@ describe("readiness capability gates", () => {
 
     queueReadiness(
       readinessRecord({
-        paymentMethodReady: "not_started",
         payoutReadiness: "ready",
       })
     )
@@ -84,19 +78,18 @@ describe("readiness capability gates", () => {
     })
   })
 
-  it("blocks Vouch acceptance until the accepting user is customer-capable", async () => {
+  it("allows Vouch acceptance for a new active customer", async () => {
     const { getAcceptVouchReadinessGate } = await import("@/lib/fetchers/readinessFetchers")
 
     queueReadiness(
       readinessRecord({
-        paymentMethodReady: "not_started",
         payoutReadiness: "ready",
       })
     )
 
     await expect(getAcceptVouchReadinessGate({ userId: "user_1" })).resolves.toMatchObject({
-      allowed: false,
-      blockers: ["payment_method_required"],
+      allowed: true,
+      blockers: [],
     })
   })
 
@@ -105,7 +98,6 @@ describe("readiness capability gates", () => {
 
     queueReadiness(
       readinessRecord({
-        paymentMethodReady: "ready",
         payoutReadiness: "not_started",
       })
     )

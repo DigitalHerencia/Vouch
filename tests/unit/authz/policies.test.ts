@@ -40,7 +40,6 @@ describe("authz policies", () => {
         merchantId: "user_merchant",
         existingCustomerId: null,
         status: "protocol_fee_paid",
-        paymentMethodReady: "ready",
       })
     ).toBe(false)
   })
@@ -52,7 +51,6 @@ describe("authz policies", () => {
         merchantId: "user_merchant",
         existingCustomerId: null,
         status: "protocol_fee_paid",
-        paymentMethodReady: "ready",
         userStatus: "disabled",
       })
     ).toBe(false)

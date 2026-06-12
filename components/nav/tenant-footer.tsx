@@ -24,16 +24,13 @@ export const defaultTenantFooterLinks = [
 
 export function TenantFooter({
   connectAction,
-  paymentAction,
   links = defaultTenantFooterLinks,
 }: TenantFooterProps) {
   const pathname = usePathname()
-  const [pendingProvider, setPendingProvider] = useState<"connect" | "payment" | null>(null)
+  const [pendingProvider, setPendingProvider] = useState<"connect" | null>(null)
   const providerCopy = pendingProvider ? vouchPageCopy.providerRedirects[pendingProvider] : null
-  const providerAction = pendingProvider === "connect" ? connectAction : paymentAction
+  const providerAction = connectAction
   const returnPath = pathname === "/vouches/new" ? "/vouches/new" : "/dashboard"
-  const providerActionLabel =
-    pendingProvider === "payment" ? "Save payment method" : "Continue to Stripe"
 
   return (
     <>
@@ -54,9 +51,6 @@ export function TenantFooter({
             ))}
             <Button variant="link" size="nav" onClick={() => setPendingProvider("connect")}>
               {tenantNavigationContent.links.connect}
-            </Button>
-            <Button variant="link" size="nav" onClick={() => setPendingProvider("payment")}>
-              {tenantNavigationContent.links.payment}
             </Button>
           </nav>
         </div>
@@ -87,7 +81,7 @@ export function TenantFooter({
             <form action={providerAction}>
               <input type="hidden" name="returnPath" value={returnPath} />
               <Button type="submit" className="w-full">
-                {providerActionLabel}
+                Continue to Stripe
               </Button>
             </form>
           </DrawerFooter>

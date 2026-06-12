@@ -1,7 +1,6 @@
 "use client"
 
 import {
-  CreditCard,
   FileText,
   HelpCircle,
   Home,
@@ -154,10 +153,7 @@ export function PublicMobileBottomNav() {
   return <MobileBottomNav items={publicItems} aria-label="Public mobile navigation" />
 }
 
-export function TenantMobileBottomNav({
-  connectAction,
-  paymentAction,
-}: TenantMobileBottomNavProps) {
+export function TenantMobileBottomNav({ connectAction }: TenantMobileBottomNavProps) {
   const tenantItems = [
     { kind: "link", href: "/dashboard", label: "Dash", icon: Home },
     {
@@ -173,13 +169,6 @@ export function TenantMobileBottomNav({
       icon: Shield,
       action: connectAction,
       warning: vouchPageCopy.providerRedirects.connect,
-    },
-    {
-      kind: "action",
-      label: "Method",
-      icon: CreditCard,
-      action: paymentAction,
-      warning: vouchPageCopy.providerRedirects.payment,
     },
     { kind: "account", label: "Me", icon: User },
   ] satisfies readonly MobileBottomNavItem[]

@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0.0",
+  "file": ".agents/execution/progress.json",
+  "product": "Vouch",
+  "purpose": "Machine-readable implementation tracker and active work queue.",
+  "updated_at": "2026-06-10T00:00:00.000Z",
+  "status_values": [
+    "not_started",
+    "planned",
+    "in_progress",
+    "blocked",
+    "complete",
+    "deferred"
+  ],
+  "domains": [
+    {
+      "id": "governance",
+      "status": "planned",
+      "summary": "Restructure governance into root context docs plus .agents contracts and execution JSON.",
+      "tasks": [
+        {
+          "id": "GOV-001",
+          "priority": "P0",
+          "status": "planned",
+          "title": "Replace root AGENTS.md with compact manifest",
+          "acceptance": [
+            "Root AGENTS.md lists governance map.",
+            "Root AGENTS.md defines source-of-truth order.",
+            "Root AGENTS.md avoids duplicating full implementation rules."
+          ]
+        },
+        {
+          "id": "GOV-002",
+          "priority": "P0",
+          "status": "planned",
+          "title": "Move durable Markdown governance into context directory",
+          "acceptance": [
+            "context/docs contains architecture, PRD, and design-system docs.",
+            "context/instructions contains Codex implementation instructions.",
+            "Old .agents/docs and .agents/instructions references are removed or replaced."
+          ]
+        },
+        {
+          "id": "GOV-003",
+          "priority": "P0",
+          "status": "planned",
+          "title": "Create three-contract YAML set",
+          "acceptance": [
+            ".agents/contracts/product.yaml exists.",
+            ".agents/contracts/design.yaml exists.",
+            ".agents/contracts/validation.yaml exists.",
+            "The contracts parse as YAML."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "product_readiness",
+      "status": "complete",
+      "summary": "Removed platform payment-method setup, readiness state, CTA, and dashboard/customer blockers.",
+      "tasks": [
+        {
+          "id": "READY-001",
+          "priority": "P0",
+          "status": "complete",
+          "title": "Update governance to remove platform payment-method setup",
+          "acceptance": [
+            "PRD omits platform payment-method setup.",
+            "Architecture limits platform Customers to protocol-fee Checkout.",
+            "Product contract forbids platform payment-method setup."
+          ]
+        },
+        {
+          "id": "READY-002",
+          "priority": "P1",
+          "status": "complete",
+          "title": "Update code to remove readiness gate",
+          "acceptance": [
+            "Dashboard has no platform payment-method blocker or CTA.",
+            "Customer accept/claim flow has no platform payment-method readiness state.",
+            "Merchant Connect readiness still gates new-Vouch creation.",
+            "Tests are updated for the new readiness rule."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "design_system",
+      "status": "planned",
+      "summary": "Add durable design-system governance and prepare token migration.",
+      "tasks": [
+        {
+          "id": "DESIGN-001",
+          "priority": "P0",
+          "status": "planned",
+          "title": "Add design-system governance doc and contract",
+          "acceptance": [
+            "context/docs/design-system.md defines token strategy and component inventory.",
+            ".agents/contracts/design.yaml defines token, component, CSS, and accessibility constraints.",
+            "Inline style policy is explicit."
+          ]
+        },
+        {
+          "id": "DESIGN-002",
+          "priority": "P1",
+          "status": "not_started",
+          "title": "Plan CSS variable and component token migration",
+          "acceptance": [
+            "globals.css is inspected.",
+            "components.json CSS variable setting is inspected.",
+            "Inline styles and arbitrary literals are inventoried where relevant.",
+            "Token migration is scoped separately from readiness gate removal."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "validation",
+      "status": "planned",
+      "summary": "Define validation gates and later run narrow validation when implementation begins.",
+      "tasks": [
+        {
+          "id": "VAL-001",
+          "priority": "P0",
+          "status": "planned",
+          "title": "Add validation contract",
+          "acceptance": [
+            ".agents/contracts/validation.yaml defines command policy.",
+            "Validation scopes are mapped to task types.",
+            "Execution JSON update rules are defined."
+          ]
+        },
+        {
+          "id": "VAL-002",
+          "priority": "P1",
+          "status": "not_started",
+          "title": "Run narrow governance validation after files are applied",
+          "acceptance": [
+            "JSON files parse.",
+            "YAML files parse.",
+            "Manifest paths exist.",
+            "Stale governance paths are removed or intentionally retained with explanation."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -11,14 +11,6 @@ export const currentUserAuthSelect = {
   status: true,
   createdAt: true,
   updatedAt: true,
-  paymentCustomer: {
-    select: {
-      id: true,
-      paymentMethodReady: true,
-      defaultPaymentMethodId: true,
-      syncedAt: true,
-    },
-  },
   connectedAccount: {
     select: {
       id: true,

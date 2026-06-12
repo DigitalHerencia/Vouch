@@ -47,7 +47,7 @@ describe("vouch actions", () => {
     const { createVouch } = await import("@/lib/actions/vouchActions")
 
     vi.mocked(assertCreateVouchReadinessReady).mockRejectedValueOnce(
-      new Error("READINESS_BLOCKED: payment_ready")
+      new Error("READINESS_BLOCKED: payout_method_required")
     )
 
     const result = await createVouch({

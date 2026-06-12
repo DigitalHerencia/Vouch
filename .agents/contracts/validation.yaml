@@ -1,0 +1,136 @@
+schema_version: 1.0.0
+file: .agents/contracts/validation.yaml
+product: Vouch
+status: active
+purpose: Deterministic validation, quality-gate, success-gate, and reporting policy for implementation agents.
+
+package_manager: pnpm
+validation_default: narrowest_relevant
+run_dev_server_by_default: false
+run_migrations_by_default: false
+run_deployments_by_default: false
+run_provider_mutations_by_default: false
+run_broad_tests_by_default: false
+
+command_policy:
+  allowed_without_explicit_user_approval:
+    - read_files
+    - search_files
+    - inspect_package_scripts
+    - run_static_file_checks_when_narrow_and_safe
+  requires_explicit_user_approval:
+    - pnpm_dev
+    - database_migration
+    - prisma_migrate
+    - deployment
+    - stripe_live_mutation
+    - clerk_environment_mutation
+    - neon_branch_creation
+    - destructive_data_change
+    - broad_build_or_full_test_suite
+  stop_processes_after_turn: true
+
+validation_scopes:
+  governance_docs:
+    preferred_checks:
+      - json_parse_execution_files
+      - yaml_parse_contract_files
+      - markdown_link_or_path_sanity_when_available
+    success_gates:
+      - manifest_paths_match_repo_structure
+      - source_of_truth_order_is_consistent
+      - no_stale_old_governance_paths
+  product_contract:
+    preferred_checks:
+      - yaml_parse_contract_files
+      - grep_for_contradicted_rules
+    success_gates:
+      - platform_payment_method_setup_is_absent
+      - connect_readiness_still_gates_new_vouch_creation
+      - customer_authorization_still_gates_vouch_participation
+      - forbidden_surfaces_remain_forbidden
+  design_contract:
+    preferred_checks:
+      - yaml_parse_contract_files
+      - inspect_globals_css
+      - inspect_components_json
+      - search_inline_styles_when_relevant
+    success_gates:
+      - css_variables_enabled_or_migration_task_recorded
+      - design_system_doc_has_component_inventory
+      - token_policy_defined
+      - inline_style_policy_defined
+  code_change:
+    preferred_checks:
+      - relevant_typecheck_or_test_only
+      - targeted_unit_tests_when_available
+      - lint_target_when_available
+    success_gates:
+      - compiles_for_touched_surface_when_checked
+      - no_layer_boundary_violation
+      - no_prisma_model_leak_to_ui
+      - no_provider_sdk_in_app_feature_component_layers
+  payment_change:
+    preferred_checks:
+      - targeted_payment_unit_tests
+      - webhook_idempotency_tests_when_relevant
+      - inspect_connected_account_scope
+    success_gates:
+      - direct_charge_scope_preserved
+      - manual_capture_preserved
+      - no_application_fee_on_deposit
+      - no_transfer_data_destination_on_deposit
+      - idempotency_keys_preserved
+  auth_change:
+    preferred_checks:
+      - targeted_authz_tests
+      - route_protection_inspection
+    success_gates:
+      - clerk_owns_auth_only
+      - prisma_owns_product_state
+      - protected_reads_are_authenticated_and_authorized
+      - local_user_sync_remains_webhook_backed
+  ui_change:
+    preferred_checks:
+      - targeted_component_tests_when_available
+      - inspect_responsive_classes
+      - inspect_accessibility_labels
+    success_gates:
+      - token_aligned
+      - component_inventory_updated_when_reusable
+      - loading_empty_error_states_preserved_when_relevant
+
+reporting:
+  final_response_must_include:
+    - files_changed
+    - behavior_changed
+    - validation_run
+    - validation_not_run
+    - risks_or_followups
+  do_not_claim_validation_if_not_run: true
+  distinguish_static_review_from_executed_validation: true
+
+execution_updates:
+  decisions_json_update_required_when:
+    - durable_product_rule_changes
+    - durable_architecture_rule_changes
+    - durable_design_rule_changes
+    - validation_policy_changes
+  handoff_json_update_required_when:
+    - current_state_changes
+    - blockers_change
+    - next_agent_needs_new_context
+  progress_json_update_required_when:
+    - task_status_changes
+    - new_task_added
+    - implementation_completed
+    - validation_status_changes
+
+stop_conditions:
+  - context_docs_conflict_with_contracts
+  - contracts_conflict_with_user_request
+  - requested_change_requires_forbidden_surface
+  - requested_change_requires_live_provider_mutation_without_approval
+  - migration_may_destroy_data_without_approval
+  - validation_failure_outside_scope
+  - provider_identity_uncertain_before_mutation

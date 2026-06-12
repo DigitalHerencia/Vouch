@@ -81,13 +81,6 @@ export const vouchPageCopy = {
         "Stripe will guide you through the details it needs for verification, banking, and payout access.",
       finePrint: "You'll return to Vouch when you're done.",
     },
-    payment: {
-      title: "Add your payment method",
-      consequence: "Save a secure payment method with Stripe, then return to Vouch.",
-      context:
-        "Stripe collects and stores the payment method details. Vouch does not charge anything from this link.",
-      finePrint: "You'll return to Vouch when your payment method is saved.",
-    },
   },
   confirm: {
     eyebrow: "Presence confirmation",

@@ -35,9 +35,6 @@ export type DashboardPageStateDTO = {
   variant: DashboardVariant
   filters: DashboardFiltersDTO
   summary: DashboardSummaryDTO | null
-  warnings: {
-    paymentMethodRequired: boolean
-  }
 }
 
 export type DashboardSearchParams = {

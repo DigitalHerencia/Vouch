@@ -4,14 +4,13 @@ import { unstable_noStore as noStore } from "next/cache"
 
 import type { Prisma } from "@/prisma/generated/prisma/client"
 
-import { canCreateVouch, canAcceptVouch } from "@/lib/authz/policies"
+import { canCreateVouch } from "@/lib/authz/policies"
 import { prisma } from "@/lib/db/prisma"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 
 const readinessSelect = {
   id: true,
   status: true,
-  paymentCustomer: { select: { paymentMethodReady: true } },
   connectedAccount: {
     select: {
       stripeAccountId: true,
@@ -25,7 +24,6 @@ const readinessSelect = {
 type ReadinessRecord = Prisma.UserGetPayload<{ select: typeof readinessSelect }>
 
 function normalizeReadiness(record: ReadinessRecord | null) {
-  const paymentCustomer = record?.paymentCustomer ?? null
   const connectedAccount = record?.connectedAccount ?? null
   const merchantAccountReady = Boolean(
     connectedAccount?.stripeAccountId &&
@@ -37,22 +35,14 @@ function normalizeReadiness(record: ReadinessRecord | null) {
   const state = {
     userId: record?.id ?? null,
     userStatus: record?.status === "active" ? ("active" as const) : ("disabled" as const),
-    paymentMethodReady: paymentCustomer?.paymentMethodReady ? "ready" : "not_started",
     payoutReadiness: merchantAccountReady ? "ready" : "not_started",
-    hasPaymentCustomer: Boolean(paymentCustomer),
     hasConnectedAccount: Boolean(connectedAccount?.stripeAccountId),
   }
 
   return {
     ...state,
     createReady: canCreateVouch(state),
-    acceptReady: canAcceptVouch({
-      ...state,
-      userId: state.userId,
-      merchantId: "",
-      existingCustomerId: null,
-      status: "protocol_fee_paid",
-    }),
+    acceptReady: state.userStatus === "active",
     confirmReady: state.userStatus === "active",
   }
 }
@@ -74,10 +64,6 @@ function blockersFor(
   if (kind === "create" && readiness.payoutReadiness !== "ready") {
     blockers.push("payout_method_required")
   }
-  if (kind === "accept" && readiness.paymentMethodReady !== "ready") {
-    blockers.push("payment_method_required")
-  }
-
   return blockers
 }
 

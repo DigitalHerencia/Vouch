@@ -3,7 +3,6 @@ export const tenantNavigationContent = {
     dashboard: "Dashboard",
     vouches: "Vouches",
     connect: "Connect",
-    payment: "Payment method",
   },
   labels: {
     dashboard: "Vouch dashboard",

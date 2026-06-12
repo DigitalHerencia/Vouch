@@ -38,11 +38,7 @@ model PaymentCustomer {
   id     String @id @default(cuid())
   userId String @unique
 
-  stripeCustomerId       String  @unique
-  defaultPaymentMethodId String?
-  paymentMethodReady     Boolean @default(false)
-
-  lastSetupIntentId         String?
+  stripeCustomerId          String @unique
   lastCustomerPortalSession String?
   lastStripeEventId         String?
   syncedAt                  DateTime?
@@ -52,8 +48,6 @@ model PaymentCustomer {
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
-  @@index([paymentMethodReady])
-  @@index([defaultPaymentMethodId])
 }
 
 model ConnectedAccount {

@@ -3,7 +3,6 @@ import { z } from "zod"
 import {
   PAYMENT_FAILURE_STAGE_VALUES,
   PAYMENT_PROVIDER_VALUES,
-  PAYMENT_READINESS_STATUS_VALUES,
   PAYMENT_STATUS_VALUES,
   PAYOUT_READINESS_STATUS_VALUES,
   REFUND_REASON_VALUES,
@@ -19,7 +18,6 @@ import {
 } from "./commonSchemas"
 
 export const paymentProviderSchema = z.enum(PAYMENT_PROVIDER_VALUES)
-export const paymentMethodReadyStatusSchema = z.enum(PAYMENT_READINESS_STATUS_VALUES)
 export const payoutReadinessStatusSchema = z.enum(PAYOUT_READINESS_STATUS_VALUES)
 export const paymentStatusSchema = z.enum(PAYMENT_STATUS_VALUES)
 export const settlementStatusSchema = z.enum(SETTLEMENT_STATUS_VALUES)
@@ -87,15 +85,10 @@ export const paymentWebhookProcessInputSchema = z.object({
   idempotencyKey: idempotencyKeySchema.optional(),
 })
 
-export const paymentMethodReadyInputSchema = z.object({
-  userId: z.string().trim().min(1).optional(),
-})
-
 /**
  * Backward-compatible aliases retained only to keep Pass 4 isolated.
  * Later passes should migrate action names away from setup/release/void wording.
  */
-export const startPaymentMethodSetupInputSchema = startStripePaymentManagementInputSchema
 export const startPayoutOnboardingInputSchema = startStripeConnectInputSchema
 export const captureOrReleaseVouchPaymentInputSchema = captureConfirmedVouchPaymentInputSchema
 export const refundOrVoidVouchPaymentInputSchema = cancelUnconfirmedVouchPaymentInputSchema

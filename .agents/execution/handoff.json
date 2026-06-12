@@ -1,0 +1,121 @@
+{
+  "schema_version": "1.0.0",
+  "file": ".agents/execution/handoff.json",
+  "product": "Vouch",
+  "purpose": "Current project handoff state for the next coding agent.",
+  "updated_at": "2026-06-10T00:00:00.000Z",
+  "current_state": {
+    "phase": "governance_restructure_planned",
+    "implementation_started": false,
+    "docs_restructure_planned": true,
+    "contracts_restructure_planned": true,
+    "execution_json_reintroduced": true,
+    "design_governance_added": true,
+    "payment_method_gate_change_defined": true,
+    "payment_method_setup_removed": true,
+    "validation_run": false
+  },
+  "source_of_truth_order": [
+    "current user instruction",
+    "context/docs/*.md",
+    ".agents/contracts/*.yaml",
+    "context/instructions/*.md",
+    "existing code",
+    "implementation judgment"
+  ],
+  "critical_context": [
+    "Vouch is a B2B SaaS protocol for appointment deposit authorization.",
+    "Connected businesses are the merchant of record for customer deposits.",
+    "Vouch does not custody, route, escrow, or settle customer deposit funds.",
+    "Merchant protocol fees and customer deposit authorizations are separate Stripe flows.",
+    "Customer deposits are Stripe Connect direct charges on the connected account with manual capture.",
+    "Platform payment-method setup, readiness state, and related CTAs are removed.",
+    "Connected-account onboarding and charge/payout capability still gate merchant new-Vouch creation.",
+    "Customer participation is established through Vouch-specific authorization Checkout and authenticated claim.",
+    "Confirmation capture requires bilateral in-window server-received confirmation.",
+    "Cron reconciliation is recovery and stale-state cleanup only."
+  ],
+  "target_structure": {
+    "root_manifest": "AGENTS.md",
+    "context_docs": [
+      "context/docs/architecture.md",
+      "context/docs/prd.md",
+      "context/docs/design-system.md"
+    ],
+    "context_instructions": [
+      "context/instructions/codex.instructions.md"
+    ],
+    "contracts": [
+      ".agents/contracts/product.yaml",
+      ".agents/contracts/design.yaml",
+      ".agents/contracts/validation.yaml"
+    ],
+    "execution": [
+      ".agents/execution/decisions.json",
+      ".agents/execution/handoff.json",
+      ".agents/execution/progress.json"
+    ]
+  },
+  "next_actions": [
+    {
+      "id": "NEXT-001",
+      "priority": "P0",
+      "title": "Replace repo governance structure",
+      "details": "Create context/docs, context/instructions, .agents/contracts, and .agents/execution using the new file layout. Update root AGENTS.md to act as the manifest."
+    },
+    {
+      "id": "NEXT-002",
+      "priority": "P0",
+      "title": "Remove stale payment-method readiness gate from governance",
+      "details": "Completed: governance forbids platform payment-method setup and readiness state."
+    },
+    {
+      "id": "NEXT-003",
+      "priority": "P0",
+      "title": "Add design-system governance",
+      "details": "Add design-system docs and design contract covering tokens, CSS variables, component inventory, styling policy, and accessibility gates."
+    },
+    {
+      "id": "NEXT-004",
+      "priority": "P1",
+      "title": "Implement code changes for readiness gate removal",
+      "details": "Completed: dashboard blockers, CTA, setup flow, readiness fields, and tests were removed."
+    },
+    {
+      "id": "NEXT-005",
+      "priority": "P1",
+      "title": "Plan token migration",
+      "details": "Inspect globals.css, components.json, Tailwind config, and inline styles. Plan a token-backed CSS variable migration without bundling it into payment readiness changes."
+    }
+  ],
+  "known_blockers": [
+    {
+      "id": "BLOCK-001",
+      "severity": "medium",
+      "title": "Generated governance needs review before repo mutation",
+      "impact": "The governance restructure should be reviewed before replacing existing repo files."
+    },
+    {
+      "id": "BLOCK-002",
+      "severity": "medium",
+      "title": "Design tokens require implementation inventory",
+      "impact": "The design-system document defines target policy but code-level token migration requires inspection and a separate implementation pass."
+    }
+  ],
+  "stop_conditions": [
+    "Requested work creates marketplace behavior.",
+    "Requested work creates arbitration or dispute-resolution behavior.",
+    "Requested work routes customer deposit funds through the platform account.",
+    "Requested work restores platform payment-method setup as a dashboard/customer participation gate.",
+    "Code conflicts with YAML contracts.",
+    "Contracts conflict with context docs.",
+    "Migration may destroy data without explicit approval.",
+    "Provider mutation may affect live systems without explicit approval.",
+    "Validation failure cannot be safely resolved in scope."
+  ],
+  "last_validation": {
+    "status": "not_run",
+    "commands": [],
+    "reason": "Governance artifacts generated for review only. No repository validation has been executed."
+  }
+}

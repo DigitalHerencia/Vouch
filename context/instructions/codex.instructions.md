@@ -4,14 +4,35 @@ Use these instructions for implementation work in this repo.
 
 ## Operating Rules
 
-- Treat `.agents` as the active governance directory. Do not use old `.codex` assumptions.
+- Treat root `AGENTS.md` as the repo manifest.
+- Treat `context/docs` as durable human-readable context.
+- Treat `.agents/contracts` as deterministic constraints.
+- Treat `context/instructions` as implementation guidance.
+- Treat `.agents/execution` as operational state tracking.
 - Make the smallest correct change.
 - Preserve route, feature, component, lib, schema, and type boundaries.
 - Do not invent business rules, routes, product surfaces, database fields, or legal copy.
 - Use pnpm.
-- Do not run dev servers, migrations, deployments, broad tests, or builds unless explicitly requested.
+- Do not run dev servers, migrations, deployments, broad tests, provider mutations, or builds unless explicitly requested.
 - If validation is allowed, run the narrowest relevant command before finishing.
 - If validation is explicitly disallowed, report that it was not run.
+
+## Governance Workflow
+
+Before changing product, architecture, auth, payment, database, route, workflow, or UI behavior:
+
+1. Read `AGENTS.md`.
+2. Read relevant files in `context/docs`.
+3. Read relevant files in `.agents/contracts`.
+4. Read relevant files in `context/instructions`.
+5. Check `.agents/execution/handoff.json` and `.agents/execution/progress.json`.
+6. Stop if governance conflicts with the request or with existing code.
+
+After meaningful work:
+
+- Update `.agents/execution/decisions.json` when a durable decision is made.
+- Update `.agents/execution/progress.json` when task state changes.
+- Update `.agents/execution/handoff.json` when current state or next-agent context changes.
 
 ## Stripe Rules
 
@@ -25,8 +46,6 @@ Use these instructions for implementation work in this repo.
 - Charge the merchant protocol fee separately on the platform account.
 - Require successful platform protocol-fee payment before issuing the customer authorization link.
 - Require customer authorization before the appointment timestamp.
-- Never confuse Connect onboarding with saving a reusable payment method to the user's platform Customer.
-- Accept any reusable Stripe-supported payment method attached to the platform Customer as payment-method readiness.
 - Do not bypass or weaken Stripe-required identity or business verification.
 - Use idempotency keys for Stripe mutation calls.
 - Store enough IDs to re-query direct-charge objects with connected-account scope.
@@ -34,6 +53,12 @@ Use these instructions for implementation work in this repo.
 - The second valid bilateral confirmation must trigger immediate capture in the request path.
 - Cron is recovery-only. Never make normal capture depend on cron.
 - Never capture from offline, late, one-sided, or out-of-window confirmation.
+
+## Readiness Rules
+
+- Do not add platform payment-method setup, payment-method readiness state, or related CTAs.
+- Connect onboarding, charge capability, and payout capability are mandatory to unlock the merchant new-Vouch form.
+- Re-sync provider readiness when returning from Stripe and when a locked merchant surface is loaded.
 
 ## Vouch Lifecycle Rules
 
@@ -48,19 +73,13 @@ Use these instructions for implementation work in this repo.
 - Never capture after the technical recovery cutoff 24 hours after the appointment.
 - Derive dashboard and detail state from canonical Prisma state synchronized with Stripe.
 
-## Readiness Rules
-
-- Payment-method readiness is mandatory to unlock dashboard operational interactivity.
-- Connect onboarding, charge capability, and payout capability are mandatory to unlock the new-Vouch form.
-- Keep dashboard payment-method readiness and new-Vouch Connect readiness as separate gates.
-- Requirement notices remain visible and operational components remain disabled until canonical Prisma readiness is synchronized.
-- Re-sync provider readiness when returning from Stripe and when a locked surface is loaded.
-
 ## Environment And Provider Operations
 
 - Development uses Vouch Stripe sandbox; production uses Vouch Stripe live.
 - Use `pnpm dev` as the canonical local entrypoint; it owns the local server, Clerk ngrok tunnel, and Stripe sandbox listener lifecycle.
-- Use ngrok only for Clerk development webhook ingress. Use the Stripe CLI listener for Stripe development webhooks.
+- Do not run `pnpm dev` unless explicitly requested.
+- Use ngrok only for Clerk development webhook ingress.
+- Use the Stripe CLI listener for Stripe development webhooks.
 - Do not use or mutate the separate Vouch Stripe testing context until the user explicitly assigns it a purpose.
 - Keep development and production secrets distinct.
 - Do not edit Clerk environment variables or webhook configuration without explicit user approval.
@@ -69,17 +88,16 @@ Use these instructions for implementation work in this repo.
 - Preview deployments are disabled; only `main` automatically deploys.
 - Keep Vercel Hobby reconciliation once daily until the user explicitly approves an infrastructure upgrade.
 - Do not add QStash, another scheduler, or a Neon development branch unless explicitly requested.
-- Provider MCP or CLI operations must respect these environment boundaries. If provider identity is uncertain, stop before mutation.
+- Provider MCP or CLI operations must respect environment boundaries. If provider identity is uncertain, stop before mutation.
 
 ## Clerk Rules
 
-- Do not create or synchronize local users from authenticated reads or Server Actions.
-
 - Clerk owns authentication and sessions.
 - Prisma owns product state.
-- Sync Clerk users into local users through verified webhooks.
+- Verified Clerk webhooks own local-user synchronization.
+- Do not create or synchronize local users from authenticated reads or Server Actions.
 - Do not create local users in middleware.
-- Do not use Clerk metadata as canonical payment, product, role, deposit, or confirmation state.
+- Do not use Clerk metadata as canonical payment, product, role, deposit, authorization, or confirmation state.
 - Use `auth()` for server-side auth checks.
 - Use `currentUser()` only when full Clerk profile data is required.
 - Keep Clerk and Stripe webhook routes public at middleware level and signature-verified in handlers.
@@ -88,24 +106,31 @@ Use these instructions for implementation work in this repo.
 
 - Prisma does not appear in `app`, `features`, or `components`.
 - Fetchers enforce tenant/user boundaries and return DTOs.
-- Server actions follow `auth -> authz -> Zod parse -> transaction/write -> audit/log -> revalidate`.
+- Server Actions follow `auth -> authz -> Zod parse -> transaction/provider write -> audit/log -> revalidate/redirect`.
 - Prisma models must not leak directly to UI.
-- Store Stripe IDs, platform fee state, deposit state, confirmation state, webhook event IDs, and operation idempotency keys in the database.
+- Store Stripe IDs, platform fee state, deposit state, confirmation state, webhook event IDs, operation idempotency keys, and recovery state in the database.
 
-## UI And Route Rules
+## UI And Design Rules
 
 - Public pages stay direct in route files unless the task requires flow orchestration.
 - Authenticated flow assembly belongs in `features`.
 - Reusable presentation belongs in `components`.
-- shadcn primitives belong only in `components/ui`.
-- Do not add forbidden surfaces or routes from `.agents/contracts/vouch-governance.yaml`.
+- shadcn/Base UI primitives belong only in `components/ui`.
+- Design-system rules live in `context/docs/design-system.md` and `.agents/contracts/design.yaml`.
+- Prefer existing primitives and shared components before creating new UI.
+- Use token-backed styling.
+- Do not add arbitrary brand colors, repeated arbitrary spacing values, or one-off visual systems.
+- Do not use inline styles except for narrow dynamic runtime values that cannot reasonably be represented by classes or CSS variables.
+- Reusable component additions or material changes require component inventory updates.
+- Do not add forbidden surfaces or routes from `.agents/contracts/product.yaml`.
 
 ## Conflict Handling
 
 Stop and report before editing when:
 
-- `.agents/docs` conflicts with `.agents/contracts`.
+- `context/docs` conflicts with `.agents/contracts`.
 - Existing code enforces a business rule contradicted by active governance.
 - Stripe or Clerk API constraints make the documented architecture impossible.
 - A requested change requires a forbidden product surface.
-- A requested provider mutation could affect Stripe live, Clerk configuration, or an unidentified environment.
+- A requested provider mutation could affect Stripe live, Clerk configuration, Neon branches, Vercel production, or an unidentified environment.
+- A requested migration may destroy or rewrite data without explicit approval.

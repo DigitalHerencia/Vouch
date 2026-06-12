@@ -5,25 +5,24 @@ import { TenantMobileBottomNav } from "@/components/nav/mobile-bottom-nav"
 export function TenantShell({
   children,
   connectAction,
-  paymentAction,
   withMobileBottomNav = true,
 }: TenantShellProps) {
   return (
     <div className="flex min-h-dvh flex-col">
-      <TenantHeader connectAction={connectAction} paymentAction={paymentAction} />
+      <TenantHeader connectAction={connectAction} />
       <main
         className={[
-          "mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 sm:py-10 lg:px-8 lg:py-12",
-          withMobileBottomNav ? "pb-28 sm:pb-10 lg:pb-12" : "",
+          "mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16",
+          withMobileBottomNav ? "pb-28 sm:pb-12 lg:pb-16" : "",
         ]
           .filter(Boolean)
           .join(" ")}
       >
         {children}
       </main>
-      <TenantFooter connectAction={connectAction} paymentAction={paymentAction} />
+      <TenantFooter connectAction={connectAction} />
       {withMobileBottomNav ? (
-        <TenantMobileBottomNav connectAction={connectAction} paymentAction={paymentAction} />
+        <TenantMobileBottomNav connectAction={connectAction} />
       ) : null}
     </div>
   )

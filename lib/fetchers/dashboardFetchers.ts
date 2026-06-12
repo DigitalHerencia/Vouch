@@ -10,10 +10,7 @@ import { getDashboardVariant, mapDashboardSummaryDTO } from "@/lib/dto/dashboard
 import { prisma } from "@/lib/db/prisma"
 import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
-import {
-  syncConnectedAccountReadinessForUser,
-  syncPaymentCustomerReadinessForUser,
-} from "@/lib/payments/stripeReadinessSync"
+import { syncConnectedAccountReadinessForUser } from "@/lib/payments/stripeReadinessSync"
 import { parseDashboardSearchParams } from "@/schemas/dashboardSchemas"
 import type {
   DashboardPageStateDTO,
@@ -37,9 +34,7 @@ async function syncStripeReturns(input: {
   searchParams: Record<string, string | string[] | undefined>
 }): Promise<void> {
   const stripeConnectReturn = hasSearchParam(input.searchParams.stripe_connect_return)
-  const stripePaymentReturn = hasSearchParam(input.searchParams.stripe_payment_return)
-
-  if (!stripeConnectReturn && !stripePaymentReturn) return
+  if (!stripeConnectReturn) return
 
   if (stripeConnectReturn) {
     const connectedAccount = await prisma.connectedAccount.findUnique({
@@ -55,19 +50,6 @@ async function syncStripeReturns(input: {
     }
   }
 
-  if (stripePaymentReturn) {
-    const paymentCustomer = await prisma.paymentCustomer.findUnique({
-      where: { userId: input.userId },
-      select: { stripeCustomerId: true },
-    })
-
-    if (paymentCustomer?.stripeCustomerId) {
-      await syncPaymentCustomerReadinessForUser({
-        userId: input.userId,
-        stripeCustomerId: paymentCustomer.stripeCustomerId,
-      })
-    }
-  }
 }
 
 function getParticipantWhere(userId: string): Prisma.VouchWhereInput {
@@ -187,15 +169,6 @@ async function getDashboardSummary(userId: string): Promise<DashboardSummaryDTO>
   })
 }
 
-async function getPaymentMethodReady(userId: string): Promise<boolean> {
-  const paymentCustomer = await prisma.paymentCustomer.findUnique({
-    where: { userId },
-    select: { paymentMethodReady: true },
-  })
-
-  return paymentCustomer?.paymentMethodReady === true
-}
-
 export async function getDashboardPageState(input?: {
   searchParams?: Record<string, string | string[] | undefined>
 }): Promise<DashboardPageStateDTO> {
@@ -210,17 +183,11 @@ export async function getDashboardPageState(input?: {
     searchParams,
   })
 
-  const [paymentMethodReady, summary] = await Promise.all([
-    getPaymentMethodReady(current.id),
-    getDashboardSummary(current.id),
-  ])
+  const summary = await getDashboardSummary(current.id)
 
   return {
     variant: getDashboardVariant(summary),
     filters,
     summary,
-    warnings: {
-      paymentMethodRequired: !paymentMethodReady,
-    },
   }
 }

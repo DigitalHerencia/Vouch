@@ -13,8 +13,6 @@ import {
   createStripeConnectOnboardingLink,
   refreshStripeConnectReadiness,
 } from "@/lib/integrations/stripe/connect"
-import { createStripeCustomer } from "@/lib/integrations/stripe/customers"
-import { createStripePaymentMethodSetupCheckout } from "@/lib/integrations/stripe/checkout-sessions"
 
 function getAppUrl(): string {
   return (
@@ -105,42 +103,6 @@ async function ensureStripeConnectedAccount(user: {
   return created.providerAccountId
 }
 
-async function ensureStripeCustomer(user: {
-  id: string
-  email: string | null
-  displayName: string | null
-}): Promise<string> {
-  const existing = await prisma.paymentCustomer.findUnique({
-    where: { userId: user.id },
-    select: { stripeCustomerId: true },
-  })
-
-  if (existing?.stripeCustomerId) return existing.stripeCustomerId
-
-  const created = await createStripeCustomer({
-    userId: user.id,
-    email: user.email,
-    displayName: user.displayName,
-    idempotencyKey: `user:${user.id}:stripe_customer`,
-  })
-
-  await prisma.paymentCustomer.upsert({
-    where: { userId: user.id },
-    create: {
-      userId: user.id,
-      stripeCustomerId: created.providerCustomerId,
-      paymentMethodReady: false,
-      syncedAt: new Date(),
-    },
-    update: {
-      stripeCustomerId: created.providerCustomerId,
-      syncedAt: new Date(),
-    },
-  })
-
-  return created.providerCustomerId
-}
-
 export async function openStripeConnectDashboard(formData?: FormData): Promise<never> {
   const user = await requireActiveUser()
   const returnPath = getReturnPath(formData, "/dashboard")
@@ -175,24 +137,4 @@ export async function openStripeConnectDashboard(formData?: FormData): Promise<n
 
   const link = await createStripeConnectDashboardLink({ providerAccountId: stripeAccountId })
   redirect(link.url)
-}
-
-export async function openStripePaymentMethodSetup(formData?: FormData): Promise<never> {
-  const user = await requireActiveUser()
-  const returnPath = getReturnPath(formData, "/dashboard")
-  const stripeCustomerId = await ensureStripeCustomer(user)
-
-  revalidatePaymentSurfaces()
-  const appUrl = getAppUrl()
-
-  const checkout = await createStripePaymentMethodSetupCheckout({
-    userId: user.id,
-    providerCustomerId: stripeCustomerId,
-    currency: "usd",
-    successUrl: `${appUrl}${returnPath}?stripe_payment_return=1`,
-    cancelUrl: `${appUrl}${returnPath}?stripe_payment_cancelled=1`,
-    idempotencyKey: `user:${user.id}:payment-method-setup-checkout:${randomUUID()}`,
-  })
-
-  redirect(checkout.url ?? "/dashboard")
 }

@@ -35,7 +35,6 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
       createdAt: string | null
       updatedAt: string | null
       readiness: {
-        paymentMethodReady: string
         payoutReadiness: string
       }
     })
@@ -52,7 +51,6 @@ function mapCurrentUser(record: CurrentUserAuthRecord | null):
     createdAt: toIso(record.createdAt),
     updatedAt: toIso(record.updatedAt),
     readiness: {
-      paymentMethodReady: record.paymentCustomer?.paymentMethodReady ? "ready" : "not_started",
       payoutReadiness:
         record.connectedAccount?.detailsSubmitted && record.connectedAccount?.payoutsEnabled
           ? "ready"

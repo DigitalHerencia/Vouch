@@ -11,21 +11,15 @@ vi.mock("@/lib/db/prisma", () => ({
   prisma: {
     vouch: { findMany, count },
     connectedAccount: { findUnique: vi.fn() },
-    paymentCustomer: { findUnique: vi.fn() },
   },
 }))
 vi.mock("@/lib/fetchers/authFetchers", () => ({
   requireActiveUser: vi.fn().mockResolvedValue({
     id: "user_1",
-    readiness: { paymentMethodReady: "ready" },
   }),
-}))
-vi.mock("@/lib/fetchers/readinessFetchers", () => ({
-  getAccountReadiness: vi.fn().mockResolvedValue({ paymentMethodReady: "ready" }),
 }))
 vi.mock("@/lib/payments/stripeReadinessSync", () => ({
   syncConnectedAccountReadinessForUser: vi.fn(),
-  syncPaymentCustomerReadinessForUser: vi.fn(),
 }))
 
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"

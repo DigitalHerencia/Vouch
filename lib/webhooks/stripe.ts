@@ -28,7 +28,6 @@ import {
 } from "@/lib/vouch/workflows"
 import {
   syncConnectedAccountReadinessForUser,
-  syncPaymentCustomerReadinessForUser,
 } from "@/lib/payments/stripeReadinessSync"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-resultTypes"
 
@@ -79,26 +78,6 @@ async function processCheckoutSessionCompleted(
   eventId: string,
   accountId?: string
 ): Promise<void> {
-  if (
-    session.mode === "setup" &&
-    session.metadata?.payment_role === "customer_payment_method_setup"
-  ) {
-    const userId = session.metadata.vouch_user_id
-    const customerId = getStripeId(session.customer)
-    const setupIntentId = getStripeId(session.setup_intent)
-
-    if (userId && customerId) {
-      await syncPaymentCustomerReadinessForUser({
-        userId,
-        stripeCustomerId: customerId,
-        stripeEventId: eventId,
-        ...(setupIntentId ? { setupIntentId } : {}),
-      })
-    }
-
-    return
-  }
-
   const vouchId = session.metadata?.vouch_id
   if (!vouchId) return
 

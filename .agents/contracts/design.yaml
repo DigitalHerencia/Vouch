@@ -1,0 +1,183 @@
+schema_version: 1.0.0
+file: .agents/contracts/design.yaml
+product: Vouch
+status: active
+purpose: Deterministic design-system, token, component, CSS, accessibility, and UI consistency constraints for implementation agents.
+
+truth_order:
+  - current_user_instruction
+  - context/docs/design-system.md
+  - .agents/contracts/design.yaml
+  - context/instructions/*.md
+  - existing_code
+  - implementation_judgment
+
+design_system:
+  source_doc: context/docs/design-system.md
+  objective: consistent_modern_b2b_saas_protocol_ui
+  brand_attributes:
+    - calm
+    - precise
+    - trustworthy
+    - premium
+    - operational
+    - human
+  ui_density: information_dense_but_readable
+  default_theme: dark_capable_neutral_system
+  visual_drift: forbidden
+
+tokens:
+  strategy: css_variables_first
+  tailwind_usage: token_backed_utilities
+  components_json_css_variables_required: true
+  token_categories_required:
+    - color
+    - typography
+    - spacing
+    - radius
+    - shadow
+    - border
+    - focus
+    - motion
+    - z_index
+  token_prefix: --vouch
+  semantic_token_roles_required:
+    color:
+      - background
+      - foreground
+      - surface
+      - surface_muted
+      - surface_elevated
+      - border
+      - border_strong
+      - primary
+      - primary_foreground
+      - secondary
+      - secondary_foreground
+      - success
+      - warning
+      - danger
+      - info
+      - muted
+      - accent
+      - focus_ring
+    spacing:
+      - page_x
+      - section_y
+      - card_padding
+      - stack_gap
+      - inline_gap
+    typography:
+      - display
+      - heading
+      - subheading
+      - body
+      - body_small
+      - caption
+    radius:
+      - sm
+      - md
+      - lg
+      - xl
+      - full
+  arbitrary_color_literals_in_components: forbidden
+  arbitrary_spacing_literals_in_reusable_components: discouraged
+  inline_styles:
+    default: forbidden
+    allowed_only_for:
+      - dynamic_runtime_values_not_representable_as_class_or_token
+      - css_variable_assignment_from_computed_value
+    requires_comment_when_non_obvious: true
+
+css:
+  globals_file: app/globals.css
+  globals_allowed:
+    - token_definitions
+    - base_element_defaults
+    - accessibility_defaults
+    - selection_styles
+    - focus_visible_defaults
+    - motion_keyframes
+    - document_level_backgrounds
+  globals_forbidden:
+    - page_specific_layout
+    - component_specific_one_off_styles
+    - business_logic_state_styling
+  component_styles:
+    preferred_order:
+      - existing_ui_primitive_variant
+      - existing_shared_component
+      - token_backed_tailwind_classes
+      - new_presentational_component
+      - local_dynamic_style_exception
+
+components:
+  inventory_source: context/docs/design-system.md
+  primitive_directory: components/ui
+  primitive_policy: shadcn_or_base_ui_primitives_only
+  shared_components_directory: components/shared
+  feature_components_directory: components
+  rules:
+    - prefer_existing_components_before_creating_new_components
+    - new_reusable_component_requires_design_system_inventory_update
+    - new_variant_requires_token_or_semantic_role_alignment
+    - feature_specific_ui_must_not_pollute_components_ui
+    - primitives_must_not_import_domain_content_or_fetchers
+    - presentational_components_must_not_own_domain_truth
+  component_inventory_fields_required:
+    - name
+    - path
+    - layer
+    - purpose
+    - status
+    - allowed_variants
+    - token_dependencies
+    - accessibility_notes
+  statuses:
+    - active
+    - experimental
+    - deprecated
+    - internal_only
+
+patterns:
+  required_state_patterns:
+    - loading
+    - empty
+    - error
+    - success
+    - warning
+    - locked
+    - optional_tip
+  dashboard:
+    cards_use_consistent_padding: true
+    stats_use_consistent_visual_hierarchy: true
+    operational_locks_must_be_product_required: true
+    optional_tips_must_not_disable_interactivity: true
+  forms:
+    labels_required: true
+    errors_must_be_field_associated_when_possible: true
+    primary_action_hierarchy_required: true
+    destructive_actions_require_distinct_treatment: true
+  ctas:
+    one_primary_action_per_region: true
+
+accessibility:
+  keyboard_access_required: true
+  visible_focus_required: true
+  semantic_html_required: true
+  color_contrast_target: WCAG_AA
+  icons_need_text_or_accessible_label: true
+  motion_respects_reduced_motion: true
+  disabled_controls_must_have_explanation_when_blocking: true
+
+review_gates:
+  ui_change_requires:
+    - token_alignment_check
+    - component_reuse_check
+    - responsive_layout_check
+    - keyboard_focus_check
+    - empty_loading_error_state_check_when_relevant
+  stop_before_editing_when:
+    - requested_ui_creates_uninventoried_design_language
+    - requested_ui_requires_new_brand_direction_without_design_doc_update
+    - requested_component_variant_conflicts_with_existing_tokens

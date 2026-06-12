@@ -28,9 +28,6 @@ export type PaymentCustomerMinAggregateOutputType = {
   id: string | null
   userId: string | null
   stripeCustomerId: string | null
-  defaultPaymentMethodId: string | null
-  paymentMethodReady: boolean | null
-  lastSetupIntentId: string | null
   lastCustomerPortalSession: string | null
   lastStripeEventId: string | null
   syncedAt: Date | null
@@ -42,9 +39,6 @@ export type PaymentCustomerMaxAggregateOutputType = {
   id: string | null
   userId: string | null
   stripeCustomerId: string | null
-  defaultPaymentMethodId: string | null
-  paymentMethodReady: boolean | null
-  lastSetupIntentId: string | null
   lastCustomerPortalSession: string | null
   lastStripeEventId: string | null
   syncedAt: Date | null
@@ -56,9 +50,6 @@ export type PaymentCustomerCountAggregateOutputType = {
   id: number
   userId: number
   stripeCustomerId: number
-  defaultPaymentMethodId: number
-  paymentMethodReady: number
-  lastSetupIntentId: number
   lastCustomerPortalSession: number
   lastStripeEventId: number
   syncedAt: number
@@ -72,9 +63,6 @@ export type PaymentCustomerMinAggregateInputType = {
   id?: true
   userId?: true
   stripeCustomerId?: true
-  defaultPaymentMethodId?: true
-  paymentMethodReady?: true
-  lastSetupIntentId?: true
   lastCustomerPortalSession?: true
   lastStripeEventId?: true
   syncedAt?: true
@@ -86,9 +74,6 @@ export type PaymentCustomerMaxAggregateInputType = {
   id?: true
   userId?: true
   stripeCustomerId?: true
-  defaultPaymentMethodId?: true
-  paymentMethodReady?: true
-  lastSetupIntentId?: true
   lastCustomerPortalSession?: true
   lastStripeEventId?: true
   syncedAt?: true
@@ -100,9 +85,6 @@ export type PaymentCustomerCountAggregateInputType = {
   id?: true
   userId?: true
   stripeCustomerId?: true
-  defaultPaymentMethodId?: true
-  paymentMethodReady?: true
-  lastSetupIntentId?: true
   lastCustomerPortalSession?: true
   lastStripeEventId?: true
   syncedAt?: true
@@ -187,9 +169,6 @@ export type PaymentCustomerGroupByOutputType = {
   id: string
   userId: string
   stripeCustomerId: string
-  defaultPaymentMethodId: string | null
-  paymentMethodReady: boolean
-  lastSetupIntentId: string | null
   lastCustomerPortalSession: string | null
   lastStripeEventId: string | null
   syncedAt: Date | null
@@ -222,9 +201,6 @@ export type PaymentCustomerWhereInput = {
   id?: Prisma.StringFilter<"PaymentCustomer"> | string
   userId?: Prisma.StringFilter<"PaymentCustomer"> | string
   stripeCustomerId?: Prisma.StringFilter<"PaymentCustomer"> | string
-  defaultPaymentMethodId?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
-  paymentMethodReady?: Prisma.BoolFilter<"PaymentCustomer"> | boolean
-  lastSetupIntentId?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
   lastCustomerPortalSession?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
   lastStripeEventId?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
   syncedAt?: Prisma.DateTimeNullableFilter<"PaymentCustomer"> | Date | string | null
@@ -237,9 +213,6 @@ export type PaymentCustomerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
-  defaultPaymentMethodId?: Prisma.SortOrderInput | Prisma.SortOrder
-  paymentMethodReady?: Prisma.SortOrder
-  lastSetupIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   lastCustomerPortalSession?: Prisma.SortOrderInput | Prisma.SortOrder
   lastStripeEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   syncedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -255,9 +228,6 @@ export type PaymentCustomerWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.PaymentCustomerWhereInput | Prisma.PaymentCustomerWhereInput[]
   OR?: Prisma.PaymentCustomerWhereInput[]
   NOT?: Prisma.PaymentCustomerWhereInput | Prisma.PaymentCustomerWhereInput[]
-  defaultPaymentMethodId?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
-  paymentMethodReady?: Prisma.BoolFilter<"PaymentCustomer"> | boolean
-  lastSetupIntentId?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
   lastCustomerPortalSession?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
   lastStripeEventId?: Prisma.StringNullableFilter<"PaymentCustomer"> | string | null
   syncedAt?: Prisma.DateTimeNullableFilter<"PaymentCustomer"> | Date | string | null
@@ -270,9 +240,6 @@ export type PaymentCustomerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
-  defaultPaymentMethodId?: Prisma.SortOrderInput | Prisma.SortOrder
-  paymentMethodReady?: Prisma.SortOrder
-  lastSetupIntentId?: Prisma.SortOrderInput | Prisma.SortOrder
   lastCustomerPortalSession?: Prisma.SortOrderInput | Prisma.SortOrder
   lastStripeEventId?: Prisma.SortOrderInput | Prisma.SortOrder
   syncedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -290,9 +257,6 @@ export type PaymentCustomerScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"PaymentCustomer"> | string
   userId?: Prisma.StringWithAggregatesFilter<"PaymentCustomer"> | string
   stripeCustomerId?: Prisma.StringWithAggregatesFilter<"PaymentCustomer"> | string
-  defaultPaymentMethodId?: Prisma.StringNullableWithAggregatesFilter<"PaymentCustomer"> | string | null
-  paymentMethodReady?: Prisma.BoolWithAggregatesFilter<"PaymentCustomer"> | boolean
-  lastSetupIntentId?: Prisma.StringNullableWithAggregatesFilter<"PaymentCustomer"> | string | null
   lastCustomerPortalSession?: Prisma.StringNullableWithAggregatesFilter<"PaymentCustomer"> | string | null
   lastStripeEventId?: Prisma.StringNullableWithAggregatesFilter<"PaymentCustomer"> | string | null
   syncedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"PaymentCustomer"> | Date | string | null
@@ -303,9 +267,6 @@ export type PaymentCustomerScalarWhereWithAggregatesInput = {
 export type PaymentCustomerCreateInput = {
   id?: string
   stripeCustomerId: string
-  defaultPaymentMethodId?: string | null
-  paymentMethodReady?: boolean
-  lastSetupIntentId?: string | null
   lastCustomerPortalSession?: string | null
   lastStripeEventId?: string | null
   syncedAt?: Date | string | null
@@ -318,9 +279,6 @@ export type PaymentCustomerUncheckedCreateInput = {
   id?: string
   userId: string
   stripeCustomerId: string
-  defaultPaymentMethodId?: string | null
-  paymentMethodReady?: boolean
-  lastSetupIntentId?: string | null
   lastCustomerPortalSession?: string | null
   lastStripeEventId?: string | null
   syncedAt?: Date | string | null
@@ -331,9 +289,6 @@ export type PaymentCustomerUncheckedCreateInput = {
 export type PaymentCustomerUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  defaultPaymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  paymentMethodReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastSetupIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastCustomerPortalSession?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -346,9 +301,6 @@ export type PaymentCustomerUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  defaultPaymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  paymentMethodReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastSetupIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastCustomerPortalSession?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -360,9 +312,6 @@ export type PaymentCustomerCreateManyInput = {
   id?: string
   userId: string
   stripeCustomerId: string
-  defaultPaymentMethodId?: string | null
-  paymentMethodReady?: boolean
-  lastSetupIntentId?: string | null
   lastCustomerPortalSession?: string | null
   lastStripeEventId?: string | null
   syncedAt?: Date | string | null
@@ -373,9 +322,6 @@ export type PaymentCustomerCreateManyInput = {
 export type PaymentCustomerUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  defaultPaymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  paymentMethodReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastSetupIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastCustomerPortalSession?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -387,9 +333,6 @@ export type PaymentCustomerUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  defaultPaymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  paymentMethodReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastSetupIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastCustomerPortalSession?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -406,9 +349,6 @@ export type PaymentCustomerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
-  defaultPaymentMethodId?: Prisma.SortOrder
-  paymentMethodReady?: Prisma.SortOrder
-  lastSetupIntentId?: Prisma.SortOrder
   lastCustomerPortalSession?: Prisma.SortOrder
   lastStripeEventId?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
@@ -420,9 +360,6 @@ export type PaymentCustomerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
-  defaultPaymentMethodId?: Prisma.SortOrder
-  paymentMethodReady?: Prisma.SortOrder
-  lastSetupIntentId?: Prisma.SortOrder
   lastCustomerPortalSession?: Prisma.SortOrder
   lastStripeEventId?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
@@ -434,9 +371,6 @@ export type PaymentCustomerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   stripeCustomerId?: Prisma.SortOrder
-  defaultPaymentMethodId?: Prisma.SortOrder
-  paymentMethodReady?: Prisma.SortOrder
-  lastSetupIntentId?: Prisma.SortOrder
   lastCustomerPortalSession?: Prisma.SortOrder
   lastStripeEventId?: Prisma.SortOrder
   syncedAt?: Prisma.SortOrder
@@ -476,10 +410,6 @@ export type PaymentCustomerUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.PaymentCustomerUpdateToOneWithWhereWithoutUserInput, Prisma.PaymentCustomerUpdateWithoutUserInput>, Prisma.PaymentCustomerUncheckedUpdateWithoutUserInput>
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type NullableDateTimeFieldUpdateOperationsInput = {
   set?: Date | string | null
 }
@@ -487,9 +417,6 @@ export type NullableDateTimeFieldUpdateOperationsInput = {
 export type PaymentCustomerCreateWithoutUserInput = {
   id?: string
   stripeCustomerId: string
-  defaultPaymentMethodId?: string | null
-  paymentMethodReady?: boolean
-  lastSetupIntentId?: string | null
   lastCustomerPortalSession?: string | null
   lastStripeEventId?: string | null
   syncedAt?: Date | string | null
@@ -500,9 +427,6 @@ export type PaymentCustomerCreateWithoutUserInput = {
 export type PaymentCustomerUncheckedCreateWithoutUserInput = {
   id?: string
   stripeCustomerId: string
-  defaultPaymentMethodId?: string | null
-  paymentMethodReady?: boolean
-  lastSetupIntentId?: string | null
   lastCustomerPortalSession?: string | null
   lastStripeEventId?: string | null
   syncedAt?: Date | string | null
@@ -529,9 +453,6 @@ export type PaymentCustomerUpdateToOneWithWhereWithoutUserInput = {
 export type PaymentCustomerUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  defaultPaymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  paymentMethodReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastSetupIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastCustomerPortalSession?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -542,9 +463,6 @@ export type PaymentCustomerUpdateWithoutUserInput = {
 export type PaymentCustomerUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   stripeCustomerId?: Prisma.StringFieldUpdateOperationsInput | string
-  defaultPaymentMethodId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  paymentMethodReady?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  lastSetupIntentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastCustomerPortalSession?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   lastStripeEventId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   syncedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -558,9 +476,6 @@ export type PaymentCustomerSelect<ExtArgs extends runtime.Types.Extensions.Inter
   id?: boolean
   userId?: boolean
   stripeCustomerId?: boolean
-  defaultPaymentMethodId?: boolean
-  paymentMethodReady?: boolean
-  lastSetupIntentId?: boolean
   lastCustomerPortalSession?: boolean
   lastStripeEventId?: boolean
   syncedAt?: boolean
@@ -573,9 +488,6 @@ export type PaymentCustomerSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   id?: boolean
   userId?: boolean
   stripeCustomerId?: boolean
-  defaultPaymentMethodId?: boolean
-  paymentMethodReady?: boolean
-  lastSetupIntentId?: boolean
   lastCustomerPortalSession?: boolean
   lastStripeEventId?: boolean
   syncedAt?: boolean
@@ -588,9 +500,6 @@ export type PaymentCustomerSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   id?: boolean
   userId?: boolean
   stripeCustomerId?: boolean
-  defaultPaymentMethodId?: boolean
-  paymentMethodReady?: boolean
-  lastSetupIntentId?: boolean
   lastCustomerPortalSession?: boolean
   lastStripeEventId?: boolean
   syncedAt?: boolean
@@ -603,9 +512,6 @@ export type PaymentCustomerSelectScalar = {
   id?: boolean
   userId?: boolean
   stripeCustomerId?: boolean
-  defaultPaymentMethodId?: boolean
-  paymentMethodReady?: boolean
-  lastSetupIntentId?: boolean
   lastCustomerPortalSession?: boolean
   lastStripeEventId?: boolean
   syncedAt?: boolean
@@ -613,7 +519,7 @@ export type PaymentCustomerSelectScalar = {
   updatedAt?: boolean
 }
 
-export type PaymentCustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "stripeCustomerId" | "defaultPaymentMethodId" | "paymentMethodReady" | "lastSetupIntentId" | "lastCustomerPortalSession" | "lastStripeEventId" | "syncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentCustomer"]>
+export type PaymentCustomerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "stripeCustomerId" | "lastCustomerPortalSession" | "lastStripeEventId" | "syncedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["paymentCustomer"]>
 export type PaymentCustomerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }
@@ -633,9 +539,6 @@ export type $PaymentCustomerPayload<ExtArgs extends runtime.Types.Extensions.Int
     id: string
     userId: string
     stripeCustomerId: string
-    defaultPaymentMethodId: string | null
-    paymentMethodReady: boolean
-    lastSetupIntentId: string | null
     lastCustomerPortalSession: string | null
     lastStripeEventId: string | null
     syncedAt: Date | null
@@ -1068,9 +971,6 @@ export interface PaymentCustomerFieldRefs {
   readonly id: Prisma.FieldRef<"PaymentCustomer", 'String'>
   readonly userId: Prisma.FieldRef<"PaymentCustomer", 'String'>
   readonly stripeCustomerId: Prisma.FieldRef<"PaymentCustomer", 'String'>
-  readonly defaultPaymentMethodId: Prisma.FieldRef<"PaymentCustomer", 'String'>
-  readonly paymentMethodReady: Prisma.FieldRef<"PaymentCustomer", 'Boolean'>
-  readonly lastSetupIntentId: Prisma.FieldRef<"PaymentCustomer", 'String'>
   readonly lastCustomerPortalSession: Prisma.FieldRef<"PaymentCustomer", 'String'>
   readonly lastStripeEventId: Prisma.FieldRef<"PaymentCustomer", 'String'>
   readonly syncedAt: Prisma.FieldRef<"PaymentCustomer", 'DateTime'>

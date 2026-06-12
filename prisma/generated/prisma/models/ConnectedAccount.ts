@@ -559,6 +559,10 @@ export type ConnectedAccountUncheckedUpdateOneWithoutUserNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ConnectedAccountUpdateToOneWithWhereWithoutUserInput, Prisma.ConnectedAccountUpdateWithoutUserInput>, Prisma.ConnectedAccountUncheckedUpdateWithoutUserInput>
 }
 
+export type BoolFieldUpdateOperationsInput = {
+  set?: boolean
+}
+
 export type ConnectedAccountCreateNestedOneWithoutPayoutsInput = {
   create?: Prisma.XOR<Prisma.ConnectedAccountCreateWithoutPayoutsInput, Prisma.ConnectedAccountUncheckedCreateWithoutPayoutsInput>
   connectOrCreate?: Prisma.ConnectedAccountCreateOrConnectWithoutPayoutsInput

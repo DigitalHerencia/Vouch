@@ -1,7 +1,6 @@
 import type {
   PAYMENT_FAILURE_STAGE_VALUES,
   PAYMENT_PROVIDER_VALUES,
-  PAYMENT_READINESS_STATUS_VALUES,
   PAYMENT_STATUS_VALUES,
   PAYOUT_READINESS_STATUS_VALUES,
   REFUND_REASON_VALUES,
@@ -12,7 +11,6 @@ import type { ID, VouchID } from "./commonTypes"
 import type { ConfirmationStateInput, DateLike, VouchStatus } from "./vouchTypes"
 
 export type PaymentProvider = (typeof PAYMENT_PROVIDER_VALUES)[number]
-export type paymentMethodReadyStatus = (typeof PAYMENT_READINESS_STATUS_VALUES)[number]
 export type PayoutReadinessStatus = (typeof PAYOUT_READINESS_STATUS_VALUES)[number]
 export type PaymentStatus = (typeof PAYMENT_STATUS_VALUES)[number]
 export type SettlementStatus = (typeof SETTLEMENT_STATUS_VALUES)[number]
@@ -58,7 +56,6 @@ export interface VouchPaymentSummaryDTO {
   consequenceText: string
 }
 
-export type StartPaymentMethodSetupInput = StartStripePaymentManagementInput
 export type StartPayoutOnboardingInput = StartStripeConnectInput
 
 export type ResolutionPaymentStatus =

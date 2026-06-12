@@ -8,15 +8,25 @@ import YAML from "yaml"
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..")
 
-const yamlContractFiles = [".agents/contracts/vouch-governance.yaml"]
-
-const markdownContractFiles = [
-  ".agents/docs/product-redesign.md",
-  ".agents/docs/architecture.md",
-  ".agents/instructions/codex.instructions.md",
+const yamlContractFiles = [
+  ".agents/contracts/product.yaml",
+  ".agents/contracts/design.yaml",
+  ".agents/contracts/validation.yaml",
 ]
 
-const executionFiles = []
+const markdownContractFiles = [
+  "AGENTS.md",
+  "context/docs/architecture.md",
+  "context/docs/prd.md",
+  "context/docs/design-system.md",
+  "context/instructions/codex.instructions.md",
+]
+
+const executionFiles = [
+  ".agents/execution/decisions.json",
+  ".agents/execution/handoff.json",
+  ".agents/execution/progress.json",
+]
 
 const errors = []
 
@@ -36,7 +46,7 @@ function validateYaml(relativePath) {
   if (content === null) return
 
   try {
-    const parsed = YAML.parse(extractYaml(content))
+    const parsed = YAML.parse(extractYaml(content), { uniqueKeys: false })
     if (!parsed || typeof parsed !== "object") {
       errors.push(`Contract must parse to an object: ${relativePath}`)
     }

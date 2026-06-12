@@ -37,13 +37,6 @@ export const PROVIDER_WEBHOOK_STATUS_VALUES = [
   "failed",
 ] as const
 
-export const PAYMENT_READINESS_STATUS_VALUES = [
-  "not_started",
-  "requires_action",
-  "ready",
-  "failed",
-] as const
-
 export const PAYOUT_READINESS_STATUS_VALUES = [
   "not_started",
   "requires_action",

@@ -1,22 +1,28 @@
-version: 1
+schema_version: 1.0.0
+file: .agents/contracts/product.yaml
+product: Vouch
 status: active
+purpose: Deterministic product, payment, auth, lifecycle, route, provider, and architecture constraints for implementation agents.
+
 supersedes:
+  - .agents/contracts/vouch-governance.yaml
   - old .codex governance
   - marketplace-style settlement assumptions
   - destination-charge deposit assumptions
   - application-fee deposit assumptions
 
 truth_order:
-  - .agents/docs/*.md
+  - current_user_instruction
+  - context/docs/*.md
   - .agents/contracts/*.yaml
-  - .agents/instructions/*.instructions.md
-  - existing code
-  - implementation judgment
+  - context/instructions/*.md
+  - existing_code
+  - implementation_judgment
 
 product:
   category: b2b_saas_protocol
   launch_region: US
-  platform_customer: business
+  platform_customer: business_user
   connected_merchant: business
   connected_merchant_user_owned: true
   merchant_of_record: connected_business
@@ -24,6 +30,20 @@ product:
   customer_deposit_owner: connected_business
   platform_handles_deposit_funds: false
   platform_mediates_service_disputes: false
+  platform_is_marketplace: false
+  platform_is_scheduler: false
+  platform_is_escrow_provider: false
+
+roles:
+  user:
+    description: Authenticated Clerk-backed local user.
+  merchant:
+    description: User acting for a connected business that creates Vouches.
+  customer:
+    description: User associated to a Vouch through customer authorization and authenticated claim.
+    source_of_truth: vouch_participation
+    not_source_of_truth:
+      - clerk_metadata
 
 stripe:
   account_api_generation: accounts_v2
@@ -46,19 +66,14 @@ stripe:
   verification: upfront
   bypass_required_verification: forbidden
   pricing: stripe_owned
-  platform_customer_payment_method_required: true
-  platform_customer_reusable_payment_method_types: stripe_supported
-  connect_onboarding_satisfies_platform_payment_method_readiness: false
+  platform_customer_payment_method_setup: forbidden
   sandbox_lifecycle_must_pass_before_live_configuration: true
   live_mutation_requires_explicit_user_approval: true
 
 readiness:
   dashboard:
-    requires:
-      - platform_customer_reusable_payment_method
-    blocked_behavior:
-      - show_payment_method_requirement
-      - disable_operational_interactivity
+    requires: []
+    blocked_behavior: []
   new_vouch_form:
     requires:
       - connected_account_onboarding_complete
@@ -67,6 +82,10 @@ readiness:
     blocked_behavior:
       - show_connected_account_requirement
       - disable_form_interactivity
+  customer_participation:
+    requires:
+      - completed_vouch_specific_customer_authorization_checkout
+      - authenticated_claim_for_completed_checkout
 
 vouch_creation:
   wizard_steps:
@@ -89,8 +108,12 @@ customer_authorization:
   link_associated_with_vouch_public_id: true
   deadline: appointment_timestamp
   authorization_after_appointment: forbidden
-  first_time_customer_saves_payment_method: true
+  checkout_may_collect_payment_method_for_vouch_authorization: true
   completed_checkout_claim_associates_customer_to_vouch: true
+  customer_account_required_for_dashboard_visibility: true
+  guest_checkout_without_account:
+    status: not_approved_for_mvp
+    requires_future_explicit_design: true
 
 confirmation:
   required_participants:
@@ -172,7 +195,6 @@ database:
     - confirmation_state
     - webhook_idempotency
     - idempotency_keys
-    - readiness_state
     - recovery_snapshots
     - operational_retries
   prisma_models_leak_to_ui: forbidden
@@ -208,6 +230,28 @@ forbidden_routes:
   - /reviews
   - /categories
   - /disputes
+
+canonical_routes:
+  public:
+    - /
+    - /pricing
+    - /faq
+    - /legal/terms
+    - /legal/privacy
+    - /legal/disclaimer
+    - /legal/user-agreement
+    - /checkout/success
+  auth:
+    - /sign-in
+    - /sign-up
+  tenant:
+    - /dashboard
+    - /vouches/new
+    - /vouches/[vouchId]
+  api:
+    - /api/clerk/webhooks
+    - /api/stripe/webhooks
+    - /api/cron/vouches/reconcile
 
 architecture_boundaries:
   app:
@@ -245,7 +289,10 @@ architecture_boundaries:
       - cache
       - audit
 
-validation_policy:
-  package_manager: pnpm
-  default_for_agents: narrowest_relevant
-  do_not_run_when_user_says_no_validation: true
+conflict_policy:
+  stop_before_editing_when:
+    - context_docs_conflict_with_contracts
+    - existing_code_enforces_rule_contradicted_by_active_governance
+    - stripe_or_clerk_constraints_make_documented_architecture_impossible
+    - requested_change_requires_forbidden_product_surface
+    - requested_provider_mutation_could_affect_live_or_unidentified_environment

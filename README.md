@@ -144,10 +144,6 @@ Customer readiness is required for accepting and authorizing a Vouch:
 - active Vouch account
 - required identity/adult readiness
 - accepted terms
-- Stripe customer/payment method setup
-- provider-backed payment readiness stored in Vouch DB
-
-Merchant payout readiness and customer payment readiness are separate tracks.
 
 ---
 

@@ -1,0 +1,80 @@
+{
+  "schema_version": "1.0.0",
+  "file": ".agents/execution/decisions.json",
+  "product": "Vouch",
+  "purpose": "Durable decision log for product, architecture, design, validation, and implementation governance decisions.",
+  "updated_at": "2026-06-10T00:00:00.000Z",
+  "decisions": [
+    {
+      "id": "DEC-20260610-001",
+      "date": "2026-06-10",
+      "status": "accepted",
+      "title": "Use root context directory for human-readable governance docs",
+      "decision": "Move durable Markdown governance from .agents/docs into root-level context/docs and context/instructions.",
+      "reason": "Markdown files are human-readable project context and implementation guidance, while .agents should remain machine-oriented for contracts and execution state.",
+      "supersedes": [
+        ".agents/docs/*.md as the primary docs location",
+        ".agents/instructions/*.md as the primary instruction location"
+      ],
+      "affected_paths": [
+        "AGENTS.md",
+        "context/docs/*",
+        "context/instructions/*",
+        ".agents/contracts/*",
+        ".agents/execution/*"
+      ],
+      "consequences": [
+        "Root AGENTS.md becomes a manifest instead of a long manual.",
+        "Contracts remain under .agents/contracts.",
+        "Execution JSON remains under .agents/execution."
+      ]
+    },
+    {
+      "id": "DEC-20260610-002",
+      "date": "2026-06-10",
+      "status": "accepted",
+      "title": "Remove platform payment-method setup",
+      "decision": "Vouch does not provide a standalone platform Customer payment-method setup flow, readiness state, or CTA.",
+      "reason": "A new customer has no account readiness gates. Customer participation is established through Vouch-specific authorization Checkout and authenticated claim.",
+      "supersedes": [
+        "Mandatory dashboard platform payment-method readiness",
+        "Payment-method readiness as customer acceptance gate",
+        "Optional platform payment-method setup"
+      ],
+      "affected_paths": [
+        "context/docs/prd.md",
+        "context/docs/architecture.md",
+        "context/instructions/codex.instructions.md",
+        ".agents/contracts/product.yaml"
+      ],
+      "consequences": [
+        "Merchant Connect readiness still gates new Vouch creation.",
+        "Customer authorization Checkout still gates participation in a specific Vouch.",
+        "Platform Customers remain only for platform protocol-fee Checkout."
+      ]
+    },
+    {
+      "id": "DEC-20260610-003",
+      "date": "2026-06-10",
+      "status": "accepted",
+      "title": "Add design-system governance",
+      "decision": "Add a durable design-system document and deterministic design contract to govern CSS variables, tokens, component inventory, styling boundaries, and UI consistency.",
+      "reason": "The existing governance is strong for product and payments but under-specifies visual consistency and token usage for agent-generated UI changes.",
+      "supersedes": [
+        "System audit as permanent design governance substitute"
+      ],
+      "affected_paths": [
+        "context/docs/design-system.md",
+        ".agents/contracts/design.yaml",
+        "app/globals.css",
+        "components.json",
+        "components/**/*"
+      ],
+      "consequences": [
+        "Reusable UI additions require component inventory updates.",
+        "CSS variables become the preferred token strategy.",
+        "Inline styles are forbidden except for narrow dynamic runtime exceptions."
+      ]
+    }
+  ]
+}

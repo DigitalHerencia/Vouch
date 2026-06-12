@@ -23,7 +23,6 @@ type TenantStripeAction = ((formData: FormData) => void | Promise<void>) | undef
 type TenantShellProps = {
   children: React.ReactNode
   connectAction?: TenantStripeAction
-  paymentAction?: TenantStripeAction
   withMobileBottomNav?: boolean
 }
 
@@ -41,13 +40,11 @@ type TenantHeaderProps = {
   navItems?: readonly TenantHeaderNavItem[]
   items?: readonly TenantHeaderNavItem[]
   connectAction?: TenantStripeAction
-  paymentAction?: TenantStripeAction
 }
 type TenantFooterLink = { label: string; href: string }
 type TenantFooterProps = {
   links?: readonly TenantFooterLink[]
   connectAction?: TenantStripeAction
-  paymentAction?: TenantStripeAction
 }
 type MobileBottomNavWarning = {
   title: string
@@ -78,7 +75,6 @@ type MobileBottomNavProps = {
 }
 type TenantMobileBottomNavProps = {
   connectAction?: TenantStripeAction
-  paymentAction?: TenantStripeAction
 }
 type UserMenuProps = { size?: "default" | "sm" | "compact" }
 

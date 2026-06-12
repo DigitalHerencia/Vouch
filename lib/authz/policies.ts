@@ -13,10 +13,6 @@ function hasCreateReadiness(input: VouchReadinessInput): boolean {
   return isActive(input) && input.payoutReadiness === "ready"
 }
 
-function hasAcceptReadiness(input: VouchReadinessInput): boolean {
-  return isActive(input) && input.paymentMethodReady === "ready"
-}
-
 export function canViewVouch(input: VouchAccessInput): boolean {
   if (!input.userId) {
     return false
@@ -35,8 +31,7 @@ export function canAcceptVouch(input: AcceptVouchAuthzInput): boolean {
     isActive(input) &&
     input.status === "protocol_fee_paid" &&
     !input.existingCustomerId &&
-    input.userId !== input.merchantId &&
-    hasAcceptReadiness(input)
+    input.userId !== input.merchantId
   )
 }
 
