@@ -9,10 +9,14 @@ export function CheckoutSuccessView({
   message,
   signInHref,
   signUpHref,
+  primaryAction,
+  secondaryAction,
 }: {
   message?: string
   signInHref?: string
   signUpHref?: string
+  primaryAction?: { label: string; href: string }
+  secondaryAction?: { label: string; href: string }
 }) {
   return (
     <section className="grid min-h-[60vh] place-items-center">
@@ -34,16 +38,27 @@ export function CheckoutSuccessView({
           </Alert>
         </CardContent>
         <CardFooter className="flex flex-wrap gap-3">
+          {primaryAction ? (
+            <Button className="w-full justify-center sm:w-auto" variant="primary" asChild>
+              <Link href={primaryAction.href}>{primaryAction.label}</Link>
+            </Button>
+          ) : null}
           {signUpHref ? (
             <Button className="w-full justify-center sm:w-auto" variant="primary" asChild>
               <Link href={signUpHref}>{checkoutSuccessContent.createAccount}</Link>
             </Button>
           ) : null}
-          <Button className="w-full justify-center sm:w-auto" asChild>
-            <Link href={signInHref ?? "/dashboard"}>
-              {signInHref ? checkoutSuccessContent.signIn : checkoutSuccessContent.dashboard}
-            </Link>
-          </Button>
+          {secondaryAction ? (
+            <Button className="w-full justify-center sm:w-auto" asChild>
+              <Link href={secondaryAction.href}>{secondaryAction.label}</Link>
+            </Button>
+          ) : (
+            <Button className="w-full justify-center sm:w-auto" asChild>
+              <Link href={signInHref ?? "/dashboard"}>
+                {signInHref ? checkoutSuccessContent.signIn : checkoutSuccessContent.dashboard}
+              </Link>
+            </Button>
+          )}
         </CardFooter>
       </Card>
     </section>

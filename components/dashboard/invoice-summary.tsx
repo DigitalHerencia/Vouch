@@ -10,7 +10,7 @@ import { dashboardContent } from "@/content/dashboard"
 export type InvoiceSummaryProps = InvoiceSummaryData
 
 const cardMotion =
-  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-vouch-xl"
+  "transition-all duration-200 motion-safe:hover:-translate-x-1 motion-safe:hover:-translate-y-1 motion-safe:hover:shadow-vouch-xl"
 
 export function InvoiceSummary({
   invoiceNumber,

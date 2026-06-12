@@ -56,12 +56,18 @@ export function LoginForm({
         <CardContent>
           <div className="space-y-6">
             {notice ? (
-              <div className="border-3 border-blue-600 bg-blue-600/10 px-4 py-3 text-sm text-white">
+              <div
+                className="border-3 border-blue-600 bg-blue-600/10 px-4 py-3 text-sm text-white"
+                role="status"
+              >
                 {notice}
               </div>
             ) : null}
             {error ? (
-              <div className="border-3 border-red-600 bg-red-600/10 px-4 py-3 text-sm text-white">
+              <div
+                className="border-3 border-red-600 bg-red-600/10 px-4 py-3 text-sm text-white"
+                role="alert"
+              >
                 {error}
               </div>
             ) : null}
@@ -76,10 +82,16 @@ export function LoginForm({
                 autoComplete="email"
                 placeholder={authFormContent.login.emailPlaceholder}
                 disabled={disabled}
+                aria-invalid={Boolean(emailError)}
+                aria-describedby={emailError ? "email-error" : undefined}
                 {...emailInputProps}
                 className="h-12 border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-vouch-sm placeholder:text-neutral-400"
               />
-              {emailError ? <p className="text-sm text-red-600">{emailError}</p> : null}
+              {emailError ? (
+                <p id="email-error" className="text-sm text-red-600">
+                  {emailError}
+                </p>
+              ) : null}
             </div>
 
             <div className="space-y-4">
@@ -92,10 +104,16 @@ export function LoginForm({
                 autoComplete="current-password"
                 placeholder={authFormContent.login.passwordPlaceholder}
                 disabled={disabled}
+                aria-invalid={Boolean(passwordError)}
+                aria-describedby={passwordError ? "password-error" : undefined}
                 {...passwordInputProps}
                 className="h-12 rounded-none border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-vouch-sm"
               />
-              {passwordError ? <p className="text-sm text-red-600">{passwordError}</p> : null}
+              {passwordError ? (
+                <p id="password-error" className="text-sm text-red-600">
+                  {passwordError}
+                </p>
+              ) : null}
             </div>
 
             <Button type="submit" disabled={disabled} className="mt-4 w-full" size="lg">

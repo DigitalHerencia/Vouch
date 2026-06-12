@@ -64,7 +64,16 @@ describe("Vouch reconciliation recovery", () => {
       expect.objectContaining({
         where: expect.objectContaining({
           id: retry.id,
-          status: { in: ["pending", "failed"] },
+          OR: [
+            {
+              status: { in: ["pending", "failed"] },
+              OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+            },
+            {
+              status: "processing",
+              lockedAt: { lte: new Date("2026-06-06T11:45:00.000Z") },
+            },
+          ],
         }),
         data: { status: "processing", lockedAt: now },
       })
@@ -72,6 +81,33 @@ describe("Vouch reconciliation recovery", () => {
     expect(findPayment).not.toHaveBeenCalled()
     expect(captureStripePayment).not.toHaveBeenCalled()
     expect(result.capturesRetried).toBe(0)
+  })
+
+  it("reclaims a stale processing retry lease", async () => {
+    findRetries.mockResolvedValue([
+      {
+        ...retry,
+        status: "processing",
+        lockedAt: new Date("2026-06-06T11:30:00.000Z"),
+      },
+    ])
+    claimRetry.mockResolvedValue({ count: 0 })
+
+    const { reconcileVouchDeadlines } = await import("@/lib/vouch/reconciliation")
+    await reconcileVouchDeadlines(now)
+
+    expect(claimRetry).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({
+          OR: expect.arrayContaining([
+            {
+              status: "processing",
+              lockedAt: { lte: new Date("2026-06-06T11:45:00.000Z") },
+            },
+          ]),
+        }),
+      })
+    )
   })
 
   it("releases a claimed retry after capture failure", async () => {

@@ -65,13 +65,18 @@ function getDashboardSectionWhere(
     },
     actionRequired: {
       archived: false,
-      status: "can_capture",
+      status: "authorized",
       confirmationOpensAt: { lte: now },
       confirmationExpiresAt: { gt: now },
     },
     active: {
       archived: false,
       status: { in: ACTIVE_DB_STATUSES },
+      OR: [
+        { status: "protocol_fee_paid" },
+        { confirmationOpensAt: { gt: now } },
+        { confirmationExpiresAt: { lte: now } },
+      ],
     },
     completed: {
       archived: false,

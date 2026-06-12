@@ -77,20 +77,25 @@ export function ConfirmPresenceInlineForm({
     }
 
     startTransition(async () => {
-      const result = await action({
-        vouchId,
-        submittedCode: normalizedCode,
-        method: "code_exchange",
-      })
+      try {
+        const result = await action({
+          vouchId,
+          submittedCode: normalizedCode,
+          method: "code_exchange",
+        })
 
-      if (!result.ok) {
-        setErrorMessage(result.formError ?? formCopy.errors.failed)
-        return
+        if (!result.ok) {
+          setErrorMessage(result.formError ?? formCopy.errors.failed)
+          return
+        }
+
+        setSubmittedCode("")
+        setStatusMessage(formCopy.success)
+        router.refresh()
+      } catch {
+        setErrorMessage(formCopy.errors.failed)
+        router.refresh()
       }
-
-      setSubmittedCode("")
-      setStatusMessage(formCopy.success)
-      router.refresh()
     })
   }
 

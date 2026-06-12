@@ -50,7 +50,8 @@ export async function getVouchDetailPageState(input: { vouchId: string }) {
 
   const timeline = await prisma.auditEvent.findMany({
     where: { entityType: "Vouch", entityId: input.vouchId },
-    orderBy: { createdAt: "asc" },
+    orderBy: { createdAt: "desc" },
+    take: 100,
     select: auditTimelineItemSelect,
   })
 
@@ -64,9 +65,18 @@ export async function getVouchDetailPageState(input: { vouchId: string }) {
   const role: ParticipantRole | null =
     vouch.merchantId === user.id ? "merchant" : vouch.customerId === user.id ? "customer" : null
 
-  const canConfirm = role !== null && confirmation.windowState === "open" && !currentUserConfirmed
+  const canConfirm =
+    role !== null &&
+    vouch.customerId !== null &&
+    (vouch.status === "authorized" || vouch.status === "can_capture") &&
+    confirmation.windowState === "open" &&
+    !currentUserConfirmed
 
-  const canShowCurrentUserCode = role !== null && confirmation.windowState === "open"
+  const canShowCurrentUserCode =
+    role !== null &&
+    vouch.customerId !== null &&
+    (vouch.status === "authorized" || vouch.status === "can_capture") &&
+    confirmation.windowState === "open"
 
   return {
     userId: user.id,
@@ -82,7 +92,7 @@ export async function getVouchDetailPageState(input: { vouchId: string }) {
             participantUserId: user.id,
           })
         : undefined,
-    timeline: mapAuditTimelineDTO(timeline),
+    timeline: mapAuditTimelineDTO(timeline.reverse()),
   }
 }
 

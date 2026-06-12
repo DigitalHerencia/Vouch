@@ -6,6 +6,7 @@ import {
   claimCustomerAuthorizationCheckout,
   getCustomerAuthorizationCheckoutForAuthenticatedUser,
 } from "@/lib/actions/vouchActions"
+import { getCurrentClerkAuth } from "@/lib/auth/clerk"
 import { getCurrentUser } from "@/lib/fetchers/authFetchers"
 
 export default async function CheckoutSuccessRoute({
@@ -25,6 +26,16 @@ export default async function CheckoutSuccessRoute({
   const user = await getCurrentUser()
 
   if (!user) {
+    const clerkAuth = await getCurrentClerkAuth()
+    if (clerkAuth.userId) {
+      return (
+        <CheckoutSuccessView
+          message="Your account is verified. Vouch is waiting for secure account synchronization before claiming this authorization."
+          primaryAction={{ label: "Check again", href: returnPath }}
+        />
+      )
+    }
+
     redirect(`/sign-up?redirect_url=${encodeURIComponent(returnPath)}`)
   }
 
@@ -35,6 +46,7 @@ export default async function CheckoutSuccessRoute({
       return (
         <CheckoutSuccessView
           message={result.formError ?? checkoutSuccessContent.errors.authorizationCheckout}
+          primaryAction={{ label: "Try authorization again", href: returnPath }}
         />
       )
     }
@@ -55,6 +67,7 @@ export default async function CheckoutSuccessRoute({
     return (
       <CheckoutSuccessView
         message={result.formError ?? checkoutSuccessContent.errors.verifySession}
+        primaryAction={{ label: "Verify checkout again", href: returnPath }}
       />
     )
   }

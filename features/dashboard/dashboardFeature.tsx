@@ -51,13 +51,18 @@ function getVisibleSectionOrder(state: DashboardPageStateDTO): DashboardSectionK
   return [state.filters.status]
 }
 
-function getVisibleInvoices(state: DashboardPageStateDTO): InvoiceSummaryData[] {
+function getVisibleSections(
+  state: DashboardPageStateDTO
+): Array<{ key: DashboardSectionKey; invoices: InvoiceSummaryData[] }> {
   const sections = state.summary?.sections
   if (!sections) return []
 
-  return getVisibleSectionOrder(state).flatMap((sectionKey) =>
-    sections[sectionKey].map(mapVouchToInvoice)
-  )
+  return getVisibleSectionOrder(state)
+    .map((sectionKey) => ({
+      key: sectionKey,
+      invoices: sections[sectionKey].map(mapVouchToInvoice),
+    }))
+    .filter((section) => section.invoices.length > 0)
 }
 
 export async function DashboardFeature({
@@ -67,7 +72,7 @@ export async function DashboardFeature({
 }) {
   const state = await getDashboardPageState(searchParams ? { searchParams } : undefined)
   const metrics = getDashboardMetrics(state.summary)
-  const invoices = getVisibleInvoices(state)
+  const visibleSections = getVisibleSections(state)
 
   return (
     <div className="grid gap-(--vouch-section-gap)">
@@ -81,10 +86,19 @@ export async function DashboardFeature({
       <div className="grid gap-(--vouch-section-gap)">
         <StatsCards stats={metrics} />
 
-        {invoices.length === 0 ? (
+        {visibleSections.length === 0 ? (
           <DashboardEmptyState />
         ) : (
-          <InvoiceSummaryList invoices={invoices} />
+          <div className="grid gap-[var(--vouch-section-gap)]">
+            {visibleSections.map((section) => (
+              <section key={section.key} className="grid gap-5">
+                <div className="border-b-2 border-neutral-700 pb-3">
+                  <h2 className="text-2xl">{dashboardContent.sectionLabels[section.key]}</h2>
+                </div>
+                <InvoiceSummaryList invoices={section.invoices} />
+              </section>
+            ))}
+          </div>
         )}
       </div>
     </div>

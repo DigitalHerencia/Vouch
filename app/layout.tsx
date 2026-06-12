@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     template: "%s - Vouch",
   },
   description:
-    "Deterministic payment coordination for appointments and in-person agreements. Both parties confirm presence inside the confirmation window before funds release.",
+    "Appointment deposit authorization through Stripe. A deposit can be captured only after both participants confirm during the appointment window.",
   keywords: [
     "Vouch",
     "payment coordination",
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     siteName: "Vouch",
     title: "Vouch - A Protocol for Commitment",
     description:
-      "Outcome follows system state. Both parties confirm presence inside the confirmation window before funds release.",
+      "Customers authorize appointment deposits directly to businesses through Stripe. Capture requires both participants to confirm during the appointment window.",
     images: [
       {
         url: "/VOUCHdark.png",
@@ -77,7 +77,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Vouch - A Protocol for Commitment",
-    description: "Deterministic payment coordination for real-world commitments.",
+    description: "Appointment deposit authorization with bilateral confirmation through Stripe.",
     images: ["/VOUCHdark.png"],
   },
   robots: {

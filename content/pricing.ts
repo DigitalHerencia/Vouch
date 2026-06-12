@@ -1,9 +1,9 @@
 export const PricingHeroContent = {
   eyebrow: "Product and pricing",
-  title: "A focused product for",
+  title: "One clear fee for",
   titleHighlight: "protected appointments.",
-  body: "Vouch gives businesses a simple way to create commitment-backed appointments. Pricing is shown before creation, and the customer authorizes only the protected amount.",
-  primaryLabel: "Create a Vouch",
+  body: "The business pays a one-time, non-refundable protocol fee of 5% of the protected amount, with a $5 minimum. The customer separately authorizes only the protected amount directly to the business through Stripe.",
+  primaryLabel: "Create business account",
 } as const
 
 export const pricingPageContent = {
@@ -40,24 +40,24 @@ export const pricingFlowSteps = [
 
 export const pricingStats = [
   {
-    label: "Set amount",
-    value: "1",
-    body: "Choose the protected amount before either side commits.",
+    label: "Protocol fee",
+    value: "5%",
+    body: "Paid once by the business before the customer authorization link is issued.",
   },
   {
-    label: "Merchant pays Vouch fee",
+    label: "Minimum fee",
+    value: "$5",
+    body: "The exact non-refundable fee is shown before the business opens Stripe Checkout.",
+  },
+  {
+    label: "Customer pays Vouch",
+    value: "$0",
+    body: "The customer authorizes the protected amount directly to the connected business.",
+  },
+  {
+    label: "Required confirmations",
     value: "2",
-    body: "The fee is shown up front and paid through hosted Stripe checkout.",
-  },
-  {
-    label: "Customer authorizes",
-    value: "3",
-    body: "The customer authorizes the protected amount through Stripe manual capture.",
-  },
-  {
-    label: "Release requires confirmation",
-    value: "4",
-    body: "Both people confirm inside the window before capture can proceed.",
+    body: "Both participants must confirm inside the window before capture can proceed.",
   },
 ] as const
 

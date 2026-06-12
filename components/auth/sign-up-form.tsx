@@ -93,12 +93,18 @@ export function SignUpForm({
         <CardContent>
           <div className="space-y-4">
             {notice ? (
-              <div className="border-3 border-blue-600 bg-blue-600/10 px-4 py-3 text-sm text-white">
+              <div
+                className="border-3 border-blue-600 bg-blue-600/10 px-4 py-3 text-sm text-white"
+                role="status"
+              >
                 {notice}
               </div>
             ) : null}
             {error ? (
-              <div className="border-3 border-red-600 bg-red-600/10 px-4 py-3 text-sm text-white">
+              <div
+                className="border-3 border-red-600 bg-red-600/10 px-4 py-3 text-sm text-white"
+                role="alert"
+              >
                 {error}
               </div>
             ) : null}
@@ -114,10 +120,16 @@ export function SignUpForm({
                   autoComplete="given-name"
                   placeholder={authFormContent.signUp.firstNamePlaceholder}
                   disabled={disabled}
+                  aria-invalid={Boolean(firstNameError)}
+                  aria-describedby={firstNameError ? "first-name-error" : undefined}
                   {...firstNameInputProps}
                   className={inputClassName}
                 />
-                {firstNameError ? <p className="text-sm text-red-600">{firstNameError}</p> : null}
+                {firstNameError ? (
+                  <p id="first-name-error" className="text-sm text-red-600">
+                    {firstNameError}
+                  </p>
+                ) : null}
               </div>
 
               <div className="space-y-4">
@@ -130,10 +142,16 @@ export function SignUpForm({
                   autoComplete="family-name"
                   placeholder={authFormContent.signUp.lastNamePlaceholder}
                   disabled={disabled}
+                  aria-invalid={Boolean(lastNameError)}
+                  aria-describedby={lastNameError ? "last-name-error" : undefined}
                   {...lastNameInputProps}
                   className={inputClassName}
                 />
-                {lastNameError ? <p className="text-sm text-red-600">{lastNameError}</p> : null}
+                {lastNameError ? (
+                  <p id="last-name-error" className="text-sm text-red-600">
+                    {lastNameError}
+                  </p>
+                ) : null}
               </div>
             </div>
 
@@ -147,10 +165,16 @@ export function SignUpForm({
                 autoComplete="email"
                 placeholder={authFormContent.signUp.emailPlaceholder}
                 disabled={disabled}
+                aria-invalid={Boolean(emailError)}
+                aria-describedby={emailError ? "signup-email-error" : undefined}
                 {...emailInputProps}
                 className={inputClassName}
               />
-              {emailError ? <p className="text-sm text-red-600">{emailError}</p> : null}
+              {emailError ? (
+                <p id="signup-email-error" className="text-sm text-red-600">
+                  {emailError}
+                </p>
+              ) : null}
             </div>
 
             <div className="space-y-4">
@@ -163,23 +187,40 @@ export function SignUpForm({
                 autoComplete="new-password"
                 placeholder={authFormContent.signUp.passwordPlaceholder}
                 disabled={disabled}
+                aria-invalid={Boolean(passwordError)}
+                aria-describedby={passwordError ? "signup-password-error" : undefined}
                 {...passwordInputProps}
                 className={inputClassName}
               />
-              {passwordError ? <p className="text-sm text-red-600">{passwordError}</p> : null}
+              {passwordError ? (
+                <p id="signup-password-error" className="text-sm text-red-600">
+                  {passwordError}
+                </p>
+              ) : null}
             </div>
 
             <div className="mt-6 space-y-4">
               <div className="flex items-center gap-4">
                 <Checkbox
+                  id="user-agreement-accepted"
                   checked={agreementChecked ?? false}
                   aria-invalid={Boolean(agreementError)}
+                  aria-describedby={agreementError ? "user-agreement-error" : undefined}
                   disabled={disabled}
                   onCheckedChange={(checked) => onAgreementChange?.(checked === true)}
                 />
-                <span className="text-sm font-semibold text-neutral-400">{agreementLabel}</span>
+                <label
+                  htmlFor="user-agreement-accepted"
+                  className="text-sm font-semibold text-neutral-400"
+                >
+                  {agreementLabel}
+                </label>
               </div>
-              {agreementError ? <p className="text-base text-red-600">{agreementError}</p> : null}
+              {agreementError ? (
+                <p id="user-agreement-error" className="text-base text-red-600">
+                  {agreementError}
+                </p>
+              ) : null}
             </div>
 
             {captcha}

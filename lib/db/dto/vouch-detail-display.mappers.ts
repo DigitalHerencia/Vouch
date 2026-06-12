@@ -55,6 +55,7 @@ function paymentLabel(value: string | null | undefined): string {
 }
 
 function settlementLabel(input: {
+  vouchStatus: string
   paymentStatus: string | null | undefined
   capturedAt: string | null
   voidedAt: string | null
@@ -63,15 +64,24 @@ function settlementLabel(input: {
 }): string {
   if (input.capturedAt) return "RELEASED"
   if (input.voidedAt || input.expiredAt || input.paymentStatus === "canceled") return "NOT RELEASED"
-  if (input.paymentStatus === "requires_capture" && input.bothConfirmed) return "READY"
+  if (
+    input.vouchStatus === "can_capture" &&
+    input.paymentStatus === "requires_capture" &&
+    input.bothConfirmed
+  ) {
+    return "CAPTURE PENDING"
+  }
   if (input.paymentStatus === "requires_capture") return "PENDING CONFIRMATION"
   if (input.paymentStatus === "requires_payment_method") return "WAITING ON CUSTOMER"
 
   return "PENDING"
 }
 
-function participantName(participant: VouchDetailDTO["merchant"] | VouchDetailDTO["customer"]) {
-  return participant?.displayName ?? participant?.email ?? "Pending"
+function participantName(
+  participant: VouchDetailDTO["merchant"] | VouchDetailDTO["customer"],
+  fallback: string
+) {
+  return participant?.displayName ?? fallback
 }
 
 function roleLabel(role: ParticipantRole | null): string {
@@ -107,6 +117,7 @@ function windowProgress(opens: string | null, expires: string | null): number {
 
 function buildTimeline(input: {
   vouch: VouchDetailDTO
+  role: ParticipantRole | null
   merchantConfirmed: boolean
   customerConfirmed: boolean
   auditTimeline: AuditTimelineItemDTO[]
@@ -121,6 +132,14 @@ function buildTimeline(input: {
 
   const paymentStarted =
     Boolean(input.vouch.protocolFeePaidAt) || Boolean(input.vouch.paymentRecord?.checkoutUrl)
+  const paymentDescription =
+    input.role === "merchant"
+      ? "Send the Stripe authorization link to the customer."
+      : input.role === "customer"
+        ? "Authorize the protected amount through Stripe before the appointment."
+        : "Customer authorization must complete before the appointment."
+  const capturePending =
+    input.vouch.status === "can_capture" && paymentStatus === "requires_capture" && bothConfirmed
 
   return [
     {
@@ -134,7 +153,7 @@ function buildTimeline(input: {
     {
       id: "payment",
       title: "Payment",
-      description: "Send the Stripe Checkout link to the customer.",
+      description: paymentDescription,
       timeLabel: formatDateTime(input.vouch.authorizedAt ?? input.vouch.appointmentAt),
       state: paymentAuthorized ? "completed" : paymentStarted ? "current" : "upcoming",
       meta: paymentLabel(paymentStatus),
@@ -156,8 +175,8 @@ function buildTimeline(input: {
       title: "Outcome",
       description: "Release happens only after authorization and confirmation are complete.",
       timeLabel: formatDateTime(input.vouch.confirmationExpiresAt),
-      state: bothConfirmed ? "current" : "upcoming",
-      meta: bothConfirmed ? "READY" : "PENDING",
+      state: input.vouch.capturedAt ? "completed" : bothConfirmed ? "current" : "upcoming",
+      meta: input.vouch.capturedAt ? "RELEASED" : capturePending ? "CAPTURE PENDING" : "PENDING",
     },
   ]
 }
@@ -190,6 +209,7 @@ export function mapVouchDetailDisplayDTO(input: {
   const rawPaymentStatus = input.vouch.paymentRecord?.status ?? "not_started"
   const paymentStatusLabel = paymentLabel(rawPaymentStatus)
   const settlementStatusLabel = settlementLabel({
+    vouchStatus: input.vouch.status,
     paymentStatus: rawPaymentStatus,
     capturedAt: input.vouch.capturedAt,
     voidedAt: input.vouch.voidedAt,
@@ -198,7 +218,9 @@ export function mapVouchDetailDisplayDTO(input: {
   })
   const currentRoleLabel = roleLabel(input.role)
   const authorizationCheckoutUrl =
-    input.authorizationCheckoutUrl ?? input.vouch.paymentRecord?.checkoutUrl ?? null
+    input.role === "merchant"
+      ? (input.authorizationCheckoutUrl ?? input.vouch.paymentRecord?.checkoutUrl ?? null)
+      : null
 
   const document: VouchStatusDocumentData = {
     title: "Live Vouch",
@@ -209,8 +231,8 @@ export function mapVouchDetailDisplayDTO(input: {
     merchantReceivesLabel: amountLabel,
     customerTotalLabel,
     authorizationCheckoutUrl,
-    merchantLabel: participantName(input.vouch.merchant),
-    customerLabel: participantName(input.vouch.customer),
+    merchantLabel: participantName(input.vouch.merchant, "Merchant"),
+    customerLabel: participantName(input.vouch.customer, "Awaiting customer"),
     appointmentLabel,
     confirmationOpensLabel: opensLabel,
     confirmationExpiresLabel: expiresLabel,
@@ -241,6 +263,7 @@ export function mapVouchDetailDisplayDTO(input: {
     },
     timeline: buildTimeline({
       vouch: input.vouch,
+      role: input.role,
       merchantConfirmed,
       customerConfirmed,
       auditTimeline: input.auditTimeline,

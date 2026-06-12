@@ -180,7 +180,7 @@ export async function refreshCustomerDepositPaymentIntent(input: {
     await prisma.vouch.updateMany({
       where: {
         id: input.vouchId,
-        status: "can_capture",
+        status: { in: ["can_capture", "expired"] },
         presenceConfirmation: {
           status: "can_capture",
           merchantConfirmedAt: { not: null },
@@ -246,10 +246,18 @@ async function captureCustomerDepositForVouch(vouchId: string): Promise<void> {
 
   await createVouchRecoverySnapshot(vouchId, "before_capture")
   try {
-    await captureStripePayment({
+    const captured = await captureStripePayment({
       providerPaymentIntentId: payment.stripePaymentIntentId,
       connectedAccountId: payment.stripeAccountId,
       idempotencyKey: `vouch:${vouchId}:capture`,
+    })
+    if (captured.status !== "succeeded") {
+      throw new Error(`CAPTURE_STATUS_${captured.status}`)
+    }
+    await refreshCustomerDepositPaymentIntent({
+      vouchId,
+      stripePaymentIntentId: payment.stripePaymentIntentId,
+      stripeAccountId: payment.stripeAccountId,
     })
   } catch (error) {
     const existingRetry = await prisma.operationalRetry.findFirst({
@@ -286,11 +294,28 @@ async function captureCustomerDepositForVouch(vouchId: string): Promise<void> {
     }
     throw error
   }
-  await refreshCustomerDepositPaymentIntent({
-    vouchId,
-    stripePaymentIntentId: payment.stripePaymentIntentId,
-    stripeAccountId: payment.stripeAccountId,
-  })
+}
+
+function isTransactionWriteConflict(error: unknown): boolean {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: unknown }).code === "P2034"
+  )
+}
+
+async function runSerializableConfirmationTransaction(
+  operation: Parameters<typeof prisma.$transaction>[0]
+): Promise<void> {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try {
+      await prisma.$transaction(operation, { isolationLevel: "Serializable" })
+      return
+    } catch (error) {
+      if (!isTransactionWriteConflict(error) || attempt === 2) throw error
+    }
+  }
 }
 
 async function mapReadinessFailure(
@@ -458,6 +483,7 @@ async function ensureCustomerAuthorizationCheckoutForVouch(
     where: { id: vouchId },
     select: {
       id: true,
+      publicId: true,
       merchantId: true,
       amountCents: true,
       currency: true,
@@ -523,7 +549,7 @@ async function ensureCustomerAuthorizationCheckoutForVouch(
     connectedAccountId: connectedAccount.stripeAccountId,
     expiresAt: vouch.appointmentAt,
     successUrl: `${appUrl}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
-    cancelUrl: `${appUrl}/vouches/${vouchId}?deposit_authorization=cancelled`,
+    cancelUrl: `${appUrl}/checkout/success?vouch_id=${encodeURIComponent(vouch.publicId)}`,
     idempotencyKey: `vouch:${vouchId}:customer-authorization-checkout`,
   })
 
@@ -727,7 +753,7 @@ export async function markCustomerDepositAuthorized(input: {
       connectedAccountId: input.stripeAccountId,
       idempotencyKey: `vouch:${input.vouchId}:late-authorization-cancel`,
     })
-    await prisma.$transaction(async (tx) => {
+    await runSerializableConfirmationTransaction(async (tx) => {
       await tx.paymentIntentRecord.updateMany({
         where: {
           vouchId: input.vouchId,
@@ -1078,7 +1104,15 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
   }
 
   if (shouldCapture) {
-    await captureCustomerDepositForVouch(parsed.data.vouchId)
+    try {
+      await captureCustomerDepositForVouch(parsed.data.vouchId)
+    } catch {
+      revalidateVouchSurfaces(parsed.data.vouchId)
+      return actionFailure(
+        "CAPTURE_RECOVERY_PENDING",
+        "Both confirmations were recorded, but capture needs an automatic recovery attempt."
+      )
+    }
   }
 
   revalidateVouchSurfaces(parsed.data.vouchId)

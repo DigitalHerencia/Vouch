@@ -51,6 +51,21 @@ describe("dashboard fetchers", () => {
     })
     expect(findMany).toHaveBeenCalledTimes(6)
     expect(findMany.mock.calls.every(([query]) => query.take === 10)).toBe(true)
+    expect(findMany.mock.calls[1]?.[0].where.AND[1]).toEqual({
+      archived: false,
+      status: "authorized",
+      confirmationOpensAt: { lte: expect.any(Date) },
+      confirmationExpiresAt: { gt: expect.any(Date) },
+    })
+    expect(findMany.mock.calls[2]?.[0].where.AND[1]).toEqual({
+      archived: false,
+      status: { in: ["protocol_fee_paid", "authorized"] },
+      OR: [
+        { status: "protocol_fee_paid" },
+        { confirmationOpensAt: { gt: expect.any(Date) } },
+        { confirmationExpiresAt: { lte: expect.any(Date) } },
+      ],
+    })
     expect(count).toHaveBeenCalledTimes(6)
     expect(state.variant).toBe("mixed_vouch_states")
   })

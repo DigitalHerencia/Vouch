@@ -26,7 +26,7 @@ export const authFormContent = {
   login: {
     description: "Sign in to view your Vouches and complete your next action.",
     signUpPrompt: "Need an account?",
-    signUpLabel: "Sign Up",
+    signUpLabel: "Create account",
     submitLabel: "Sign in",
     emailLabel: "Email",
     emailPlaceholder: "m@example.com",
@@ -36,7 +36,7 @@ export const authFormContent = {
   signUp: {
     description: "Create an account to create or join a Vouch.",
     signInPrompt: "Already have an account?",
-    signInLabel: "Login",
+    signInLabel: "Sign in",
     submitLabel: "Create account",
     firstNameLabel: "First name",
     firstNamePlaceholder: "John",

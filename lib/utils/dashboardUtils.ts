@@ -26,13 +26,10 @@ export function formatDateTime(value: string | null | undefined): string {
 }
 
 export function formatParticipantName(vouch: VouchCardDTO): string {
-  return (
-    vouch.customer?.displayName ??
-    vouch.customer?.email ??
-    vouch.merchant?.displayName ??
-    vouch.merchant?.email ??
-    FALLBACK_PARTICIPANT_LABEL
-  )
+  if (vouch.customer?.displayName) return vouch.customer.displayName
+  if (vouch.customerId) return "Customer"
+  if (vouch.merchant?.displayName) return vouch.merchant.displayName
+  return FALLBACK_PARTICIPANT_LABEL
 }
 
 export function formatCurrency(cents: number, currency: string): string {

@@ -23,7 +23,37 @@ export const faqSections = [
   {
     heading: "What is Vouch?",
     body: [
-      "Vouch is a commitment-backed payment tool for appointments and in-person agreements. Funds release only when both parties confirm presence during the defined window.",
+      "Vouch is an appointment deposit authorization protocol. A customer authorizes a deposit directly to the connected business through Stripe. Capture is allowed only after both participants confirm during the defined window.",
+    ],
+  },
+  {
+    heading: "What does Vouch cost?",
+    body: [
+      "The business pays a separate one-time, non-refundable protocol fee equal to 5% of the protected amount, with a $5 minimum. The exact fee is shown before Stripe Checkout opens.",
+    ],
+  },
+  {
+    heading: "Does the customer pay Vouch?",
+    body: [
+      "No. The customer authorizes only the protected appointment amount directly to the connected business through Stripe.",
+    ],
+  },
+  {
+    heading: "Is the customer charged immediately?",
+    body: [
+      "No. Stripe authorizes the protected amount using manual capture. The authorization can be captured only when both participants confirm inside the confirmation window.",
+    ],
+  },
+  {
+    heading: "Does the customer need an account?",
+    body: [
+      "Yes. After completing Stripe authorization, the customer signs in or creates an account so the completed authorization can be securely claimed and shown on their dashboard.",
+    ],
+  },
+  {
+    heading: "When can a business create a Vouch?",
+    body: [
+      "A Vouch can be created only during the 24 hours immediately before a future appointment. Stripe Connect onboarding, charge capability, and payout capability must be ready first.",
     ],
   },
   {
@@ -40,7 +70,7 @@ export const faqSections = [
   },
   {
     heading: "What happens if only one person confirms?",
-    body: ["Funds do not release. Both parties must confirm within the window."],
+    body: ["The deposit is not captured. Both participants must confirm within the window."],
   },
   {
     heading: "What happens if nobody confirms?",

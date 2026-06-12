@@ -149,7 +149,6 @@ export async function updateVouchArchiveStatusTx(
   const data = {
     archived,
     archivedAt: archived ? new Date() : null,
-    ...(archived ? { status: "archived" as const } : {}),
   }
 
   return tx.vouch.update({

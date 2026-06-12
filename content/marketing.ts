@@ -1,12 +1,12 @@
 export const landingHeroContent = {
-  eyebrow: "Commitment for important appointments",
-  title: "Create Share Meet Confirm",
-  titleHighlight: "Confirm",
-  body: "Create a Vouch, share it with your customer, and make the payment outcome clear before the appointment.",
+  eyebrow: "Appointment deposit authorization",
+  title: "Protect valuable appointments",
+  titleHighlight: "without chasing deposits.",
+  body: "The customer authorizes a deposit directly to your business through Stripe. The deposit can be captured only after both of you confirm during the appointment window. Vouch charges your business a separate one-time protocol fee.",
 } as const
 
 export const landingHeroActionsContent = {
-  primaryLabel: "Create a Vouch",
+  primaryLabel: "Create business account",
   secondaryLabel: "See how it works",
 } as const
 

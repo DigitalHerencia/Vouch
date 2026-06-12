@@ -43,6 +43,14 @@ export const dashboardContent = {
       emptyText: "No completed Vouches yet.",
     },
   },
+  sectionLabels: {
+    drafts: "Drafts",
+    actionRequired: "Action required",
+    active: "Active",
+    completed: "Completed",
+    expired: "Expired",
+    archived: "Archived",
+  },
   actions: {
     create: "Create",
     open: "Open",

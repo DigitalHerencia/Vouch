@@ -16,7 +16,6 @@ import {
 type SafeUserRecord = {
   id: string
   displayName: string | null
-  email: string | null
   status: string
 }
 
@@ -137,7 +136,6 @@ function mapSafeUserDTO(record: SafeUserRecord | null | undefined): SafeUserDTO 
   return {
     id: record.id,
     displayName: record.displayName,
-    email: record.email,
     status: record.status,
   }
 }

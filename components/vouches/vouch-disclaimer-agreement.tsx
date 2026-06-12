@@ -26,22 +26,29 @@ export function VouchDisclaimerAgreement({
       </p>
       <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4">
         <Checkbox
+          id="vouch-disclaimer-accepted"
           checked={checked}
           disabled={disabled}
+          aria-invalid={Boolean(error)}
+          aria-describedby={error ? "vouch-disclaimer-error" : undefined}
           onCheckedChange={(nextChecked) => onCheckedChange(nextChecked === true)}
           className="mt-1 border-neutral-400"
         />
-        <span className="uppercase">
+        <label htmlFor="vouch-disclaimer-accepted" className="uppercase">
           {vouchPageCopy.create.disclaimerAgreement}
           <Button asChild variant="nav" size="nav" className="ml-2">
             <Link href="/legal/disclaimer" target="_blank" rel="noreferrer">
               {vouchPageCopy.create.disclaimerLinkLabel}
             </Link>
           </Button>
-        </span>
+        </label>
       </div>
 
-      {error ? <p className="text-sm leading-5 font-semibold text-red-600">{error}</p> : null}
+      {error ? (
+        <p id="vouch-disclaimer-error" className="text-sm leading-5 font-semibold text-red-600">
+          {error}
+        </p>
+      ) : null}
     </div>
   )
 }

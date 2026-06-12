@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest"
 
-import { bindCustomerToVouchTx } from "@/lib/db/transactions/vouchTransactions"
+import {
+  bindCustomerToVouchTx,
+  updateVouchArchiveStatusTx,
+} from "@/lib/db/transactions/vouchTransactions"
 
 const vouchRecord = {
   id: "vouch_1",
@@ -69,5 +72,24 @@ describe("vouch transaction helpers", () => {
     ).rejects.toThrow("VOUCH_ACCEPTANCE_CONFLICT")
 
     expect(tx.vouch.findUniqueOrThrow).not.toHaveBeenCalled()
+  })
+
+  it("archives presentation state without replacing workflow status", async () => {
+    const update = vi.fn().mockResolvedValue({ ...vouchRecord, archived: true })
+    const tx = { vouch: { update } }
+
+    await updateVouchArchiveStatusTx(tx as never, {
+      vouchId: "vouch_1",
+      archiveStatus: "archived",
+    })
+
+    expect(update).toHaveBeenCalledWith({
+      where: { id: "vouch_1" },
+      data: {
+        archived: true,
+        archivedAt: expect.any(Date),
+      },
+      select: expect.any(Object),
+    })
   })
 })

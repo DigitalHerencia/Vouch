@@ -9,6 +9,7 @@ import {
 } from "@/lib/integrations/stripe/payment-intents"
 
 const DAY_MS = 24 * 60 * 60 * 1000
+const RETRY_LEASE_MS = 15 * 60 * 1000
 const BATCH_SIZE = 50
 const MAX_CAPTURE_RETRIES = 288
 
@@ -175,12 +176,21 @@ async function expireClosedConfirmationWindows(now: Date): Promise<number> {
 
 async function retryPendingCaptures(now: Date): Promise<number> {
   const cutoff = new Date(now.getTime() - DAY_MS)
+  const staleLockCutoff = new Date(now.getTime() - RETRY_LEASE_MS)
   const retries = await prisma.operationalRetry.findMany({
     where: {
       operation: "reconcile_payment_intent",
-      status: { in: ["pending", "failed"] },
       attemptCount: { lt: MAX_CAPTURE_RETRIES },
-      OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+      OR: [
+        {
+          status: { in: ["pending", "failed"] },
+          OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+        },
+        {
+          status: "processing",
+          lockedAt: { lte: staleLockCutoff },
+        },
+      ],
       vouch: {
         status: { in: ["can_capture", "expired"] },
         appointmentAt: { gt: cutoff },
@@ -231,9 +241,17 @@ async function retryPendingCaptures(now: Date): Promise<number> {
     const claim = await prisma.operationalRetry.updateMany({
       where: {
         id: retry.id,
-        status: { in: ["pending", "failed"] },
         attemptCount: { lt: MAX_CAPTURE_RETRIES },
-        OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+        OR: [
+          {
+            status: { in: ["pending", "failed"] },
+            OR: [{ nextAttemptAt: null }, { nextAttemptAt: { lte: now } }],
+          },
+          {
+            status: "processing",
+            lockedAt: { lte: staleLockCutoff },
+          },
+        ],
       },
       data: { status: "processing", lockedAt: now },
     })
