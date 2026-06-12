@@ -1,20 +1,26 @@
 "use client"
 
+import { useEffect } from "react"
+
+import { ServerErrorPage } from "@/components/shared/server-error-page"
+
 type GlobalErrorProps = {
   error: Error & { digest?: string }
   reset: () => void
 }
 
-import { useEffect } from "react"
-
-import { ServerErrorPage } from "@/components/shared/server-error-page"
-
 export default function GlobalError({ error, reset }: GlobalErrorProps) {
+  const errorId = error.digest ?? "not provided"
+
   useEffect(() => {
-    console.error("global application error", {
-      message: error.message,
-      digest: error.digest,
-    })
+    if (process.env.NODE_ENV !== "development") {
+      return
+    }
+
+    console.groupCollapsed("Global application error")
+    console.info("Message:", error.message || "No message provided")
+    console.info("Digest:", error.digest ?? "No digest provided")
+    console.groupEnd()
   }, [error])
 
   return (
@@ -22,7 +28,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
       <body className="min-h-dvh overflow-x-hidden bg-black text-white antialiased">
         <ServerErrorPage
           description="Vouch could not finish this request. Try again or return home."
-          errorId={error.digest ?? "not provided"}
+          errorId={errorId}
           onRetry={reset}
           homeHref="/"
         />

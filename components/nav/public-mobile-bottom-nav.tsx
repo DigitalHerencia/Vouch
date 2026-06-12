@@ -1,3 +1,5 @@
+"use client"
+
 import { FileText, HelpCircle, Home, ShieldCheck } from "lucide-react"
 
 import { MobileBottomNav, type MobileBottomNavItem } from "@/components/nav/mobile-bottom-nav"
