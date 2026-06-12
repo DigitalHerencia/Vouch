@@ -317,7 +317,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
                 data-cl-language="auto"
                 data-cl-size="flexible"
                 data-cl-theme="dark"
-                className="min-h-[65px] w-full overflow-hidden"
+                className="min-h-16.25 w-full overflow-hidden"
               />
             }
           />
