@@ -14,6 +14,7 @@ import { VouchCreationCartRow } from "@/components/vouches/vouch-creation-cart-r
 import { VouchCreationWizard } from "@/components/vouches/vouch-creation-wizard"
 import { VouchDateTimeField } from "@/components/vouches/vouch-date-time-field"
 import { VouchDisclaimerAgreement } from "@/components/vouches/vouch-disclaimer-agreement"
+import { vouchPageCopy } from "@/content/vouches"
 import { openStripeConnectDashboard } from "@/lib/actions/paymentActions"
 import { createVouch, getCreateVouchFormReadiness } from "@/lib/actions/vouchActions"
 import {
@@ -40,6 +41,7 @@ function normalizeDraft(input: Partial<CreateVouchDraftFormValues>): CreateVouch
 }
 
 export function VouchForm() {
+  const copy = vouchPageCopy.create
   const searchParams = useSearchParams()
   const form = useForm<CreateVouchDraftFormValues>({
     mode: "onBlur",
@@ -149,7 +151,7 @@ export function VouchForm() {
 
           if (!result.ok) {
             form.setError("root", {
-              message: result.formError ?? "Unable to create this Vouch.",
+              message: result.formError ?? copy.errors.create,
             })
             applyFieldErrors(result.fieldErrors)
             return
@@ -158,7 +160,7 @@ export function VouchForm() {
           window.location.assign(result.data.checkoutUrl ?? result.data.detailPath)
         } catch {
           form.setError("root", {
-            message: "Stripe Checkout could not be opened. Try again.",
+            message: copy.errors.checkout,
           })
         }
       })()
@@ -168,7 +170,7 @@ export function VouchForm() {
   const steps: VouchFormStep[] = [
     {
       id: "disclaimer",
-      title: "Disclaimer",
+      title: copy.steps.disclaimer,
       icon: <FileCheck2 className="h-8 w-8 text-white" />,
       canContinue: canContinueDisclaimer,
       content: (
@@ -182,16 +184,15 @@ export function VouchForm() {
     },
     {
       id: "appointment",
-      title: "Appointment",
+      title: copy.steps.appointment,
       icon: <CalendarClock className="h-8 w-8 text-white" />,
       canContinue: canContinueAppointment,
       content: (
-        <div className="mx-auto flex max-w-2xl flex-col items-center">
-          <label className="text-xl font-semibold text-white">
-            Create a Vouch up to 24 hours before the appointment. The confirmation window is set
-            from 1 hour before to 1 hour after the appointment.
-          </label>
-          <div className="mt-4 flex flex-col items-center gap-6 md:flex-row md:gap-16">
+        <div className="grid max-w-2xl gap-6">
+          <p className="max-w-xl text-left text-base leading-7 font-semibold text-neutral-200">
+            {copy.appointmentHelp}
+          </p>
+          <div className="grid gap-6 md:grid-cols-2 md:gap-10">
             <VouchDateTimeField
               value={formValues.appointmentStartsAt}
               disabled={disabled}
@@ -211,10 +212,10 @@ export function VouchForm() {
     },
     {
       id: "cart",
-      title: "Review",
+      title: copy.steps.review,
       icon: <CircleDollarSign className="h-8 w-8 text-white" />,
       canContinue: !disabled && !isPending,
-      actionLabel: isPending ? "Opening Checkout" : "Pay protocol fee",
+      actionLabel: isPending ? copy.openingCheckoutAction : copy.commitAction,
       content: (
         <div className="grid gap-5">
           {rootError ? (
@@ -227,10 +228,10 @@ export function VouchForm() {
             <div className="mb-4 flex items-center justify-between gap-3 border-b-2 border-neutral-400 pb-4">
               <div className="min-w-0">
                 <p className="text-xs font-black tracking-widest text-blue-600 uppercase">
-                  Review your
+                  {copy.reviewEyebrow}
                 </p>
                 <p className="mt-1 text-xl leading-none font-black tracking-wide text-white uppercase">
-                  Vouch details
+                  {copy.reviewDetailsTitle}
                 </p>
               </div>
 
@@ -239,26 +240,28 @@ export function VouchForm() {
 
             <div className="grid gap-3">
               <VouchCreationCartRow
-                label="Appointment"
+                label={copy.appointmentLabel}
                 value={formatDateTime(formValues.appointmentStartsAt)}
               />
-              <VouchCreationCartRow label="Protected amount" value={formatCurrency(amountCents)} />
               <VouchCreationCartRow
-                label="Protocol fee"
-                value={`${formatCurrency(protocolFeeCents)} (5% min $5)`}
+                label={copy.amountFieldLabel}
+                value={formatCurrency(amountCents)}
               />
               <VouchCreationCartRow
-                label="Due now"
+                label={copy.protocolFeeLabel}
+                value={`${formatCurrency(protocolFeeCents)} (${copy.protocolFeeRate})`}
+              />
+              <VouchCreationCartRow
+                label={copy.dueNowLabel}
                 value={formatCurrency(protocolFeeCents)}
                 strong
               />
             </div>
           </div>
 
-          <label className="mx-auto text-xl font-semibold text-white">
-            After the protocol fee is paid, the customer authorization Checkout link becomes
-            available on the Vouch detail page.
-          </label>
+          <p className="max-w-2xl text-left text-base leading-7 font-semibold text-neutral-200">
+            {copy.afterPayment}
+          </p>
         </div>
       ),
     },
@@ -266,11 +269,7 @@ export function VouchForm() {
 
   return (
     <div className="grid gap-[var(--vouch-section-gap)]">
-      <PageTitle
-        eyebrow="Create Vouch"
-        title="New Vouch"
-        description="Create the agreement, protect the appointment amount, and send the customer into the payment flow."
-      />
+      <PageTitle eyebrow={copy.eyebrow} title={copy.pageTitle} description={copy.pageBody} />
 
       {onboardingRequired ? (
         <OnboardingRequirementNotice action={openStripeConnectDashboard} />

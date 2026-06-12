@@ -44,9 +44,11 @@ export function CTAWithBackground({
       >
         <div className="space-y-6 text-center">
           <div>{icon ?? <CheckCircle className="mx-auto h-12 w-12" />}</div>
-          <h1 className="font-black">{title}</h1>
+          <h2 className="font-black">{title}</h2>
           {description ? (
-            <p className="mx-auto text-base font-medium text-white md:text-lg">{description}</p>
+            <p className="mx-auto max-w-3xl text-base leading-7 font-medium text-white md:text-lg">
+              {description}
+            </p>
           ) : null}
           {primaryAction ? (
             <div>

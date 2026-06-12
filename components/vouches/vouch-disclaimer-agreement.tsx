@@ -4,6 +4,7 @@ import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
+import { vouchPageCopy } from "@/content/vouches"
 
 type VouchDisclaimerAgreementProps = {
   checked: boolean
@@ -19,12 +20,11 @@ export function VouchDisclaimerAgreement({
   onCheckedChange,
 }: VouchDisclaimerAgreementProps) {
   return (
-    <main className="mx-auto flex max-w-2xl flex-col items-center">
-      <label className="text-xl font-semibold text-white">
-        Vouch coordinates payment state through third-party providers. Vouch does not directly
-        custody funds, hold card data, store bank data, or act as a funds custodian.
-      </label>
-      <div className="mt-4 grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4">
+    <div className="grid max-w-2xl gap-5">
+      <p className="max-w-xl text-left text-base leading-7 font-semibold text-neutral-200">
+        {vouchPageCopy.create.disclaimerBody}
+      </p>
+      <div className="grid grid-cols-[auto_minmax(0,1fr)] items-start gap-4">
         <Checkbox
           checked={checked}
           disabled={disabled}
@@ -32,16 +32,16 @@ export function VouchDisclaimerAgreement({
           className="mt-1 border-neutral-400"
         />
         <span className="uppercase">
-          I agree to the
+          {vouchPageCopy.create.disclaimerAgreement}
           <Button asChild variant="nav" size="nav" className="ml-2">
             <Link href="/legal/disclaimer" target="_blank" rel="noreferrer">
-              Disclaimer
+              {vouchPageCopy.create.disclaimerLinkLabel}
             </Link>
           </Button>
         </span>
       </div>
 
       {error ? <p className="text-sm leading-5 font-semibold text-red-600">{error}</p> : null}
-    </main>
+    </div>
   )
 }

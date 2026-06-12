@@ -2,6 +2,7 @@
 
 import { Input } from "@/components/ui/input"
 import { VouchCreationField } from "@/components/vouches/vouch-creation-field"
+import { vouchPageCopy } from "@/content/vouches"
 
 type VouchDateTimeFieldProps = {
   value: string
@@ -12,7 +13,7 @@ type VouchDateTimeFieldProps = {
 
 export function VouchDateTimeField({ value, disabled, error, onChange }: VouchDateTimeFieldProps) {
   return (
-    <VouchCreationField label="Appointment date and time" error={error}>
+    <VouchCreationField label={vouchPageCopy.create.appointmentFieldLabel} error={error}>
       <Input
         type="datetime-local"
         value={value}

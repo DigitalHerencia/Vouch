@@ -8,7 +8,7 @@ import { useForm, useWatch } from "react-hook-form"
 import { AuthNavLink } from "@/components/auth/auth-nav-link"
 import { OTPVerificationForm } from "@/components/auth/otp-verification-form"
 import { SignUpForm as SignUpBlock } from "@/components/auth/sign-up-form"
-import { authVerificationContent } from "@/content/auth"
+import { authFormContent, authVerificationContent } from "@/content/auth"
 import { completeSignUpWithTermsAcceptance } from "@/lib/actions/authActions"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { signupSchema, verificationSchema } from "@/schemas/authSchemas"
@@ -270,7 +270,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
           />
         ) : (
           <SignUpBlock
-            description="create an account to use Vouch"
+            description={authFormContent.signUp.description}
             notice={notice}
             error={rootError}
             signInHref={
@@ -295,9 +295,9 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
             agreementChecked={acceptedUserAgreement}
             agreementLabel={
               <>
-                I agree to the
+                {authFormContent.signUp.agreementPrefix}
                 <AuthNavLink href="/legal/user-agreement" className="ml-3">
-                  User Agreement
+                  {authFormContent.signUp.agreementLabel}
                 </AuthNavLink>
                 .
               </>
@@ -310,7 +310,7 @@ export function SignUpForm({ redirectUrl, ...props }: SignupFormProps) {
             }}
             disabled={isBusy}
             isSubmitting={form.formState.isSubmitting}
-            submitLabel="Create account"
+            submitLabel={authFormContent.signUp.submitLabel}
             captcha={
               <div
                 id="clerk-captcha"

@@ -24,7 +24,9 @@ export function ProcessPanelRuleGrid({ title, items, footer, id }: ProcessPanelR
     <section>
       <Card id={id} className={`w-full border-3 border-neutral-400 bg-black ${panelMotion}`}>
         <CardHeader className="items-center border-b-3 border-neutral-400 px-6 py-6 text-center">
-          <CardTitle className="text-6xl font-black tracking-wide text-white">{title}</CardTitle>
+          <CardTitle className="text-3xl leading-tight font-black tracking-wide text-white md:text-5xl">
+            {title}
+          </CardTitle>
         </CardHeader>
 
         <CardContent className="grid p-0 md:grid-cols-2">

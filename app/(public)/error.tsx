@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 
 import { GenericErrorPage } from "@/components/shared/generic-error-page"
+import { errorPageContent } from "@/content/common"
 
 export default function PublicError({
   error,
@@ -17,8 +18,8 @@ export default function PublicError({
 
   return (
     <GenericErrorPage
-      title="Page unavailable"
-      description="This page could not load. Try again or return home."
+      title={errorPageContent.public.title}
+      description={errorPageContent.public.description}
       actions={[
         { label: "Try again", onClick: reset },
         { label: "Home", href: "/", variant: "outline" },

@@ -1,9 +1,10 @@
 import { NotFoundPage } from "@/components/shared/not-found-page"
+import { errorPageContent } from "@/content/common"
 
 export default function NotFound() {
   return (
     <NotFoundPage
-      description="The requested Vouch surface could not be found. Protected records may also return not found when the active user is not an authorized participant."
+      description={errorPageContent.notFound.description}
       homeHref="/dashboard"
       backHref="/"
     />

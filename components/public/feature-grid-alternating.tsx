@@ -31,10 +31,16 @@ export function FeatureGridAlternating({ features }: FeatureGridAlternatingProps
                   : "grid items-center gap-8 md:grid-cols-2 md:gap-12"
               }
             >
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <h2 className={`font-black uppercase ${headingMotion}`}>{feature.title}</h2>
-                  <p className={`text-lg font-medium text-neutral-400 ${bodyTextMotion}`}>
+              <div className="space-y-3">
+                <div className="space-y-3">
+                  <h2
+                    className={`max-w-xl text-3xl leading-[1.05] font-black uppercase md:text-5xl ${headingMotion}`}
+                  >
+                    {feature.title}
+                  </h2>
+                  <p
+                    className={`max-w-xl text-base leading-7 font-medium text-neutral-300 md:text-lg ${bodyTextMotion}`}
+                  >
                     {feature.description}
                   </p>
                 </div>
@@ -44,7 +50,7 @@ export function FeatureGridAlternating({ features }: FeatureGridAlternatingProps
                 <div className="overflow-hidden border-3 border-neutral-400 shadow-vouch-lg transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-vouch-xl">
                   <div
                     aria-label={feature.title}
-                    className={`flex min-h-80 items-center justify-center bg-black text-white [&_svg]:size-32 md:[&_svg]:size-40 ${
+                    className={`flex min-h-64 items-center justify-center bg-black text-white md:min-h-72 [&_svg]:size-24 md:[&_svg]:size-32 ${
                       iconColors[index % 6]
                     }`}
                   >

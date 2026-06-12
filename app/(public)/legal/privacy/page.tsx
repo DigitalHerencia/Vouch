@@ -3,8 +3,7 @@ import type { Metadata } from "next"
 
 import { FAQSimpleList } from "@/components/public/faq-simple-list"
 import { CTAWithBackground } from "@/components/shared/cta-with-background"
-import { privacySections } from "@/content/legal"
-import { landingCalloutContent } from "@/content/marketing"
+import { legalPageContent, privacyCalloutContent, privacySections } from "@/content/legal"
 
 export const metadata: Metadata = {
   title: "Privacy | Vouch",
@@ -15,8 +14,8 @@ export default function PrivacyRoute() {
   return (
     <div className="grid gap-14 md:gap-16 lg:gap-24">
       <FAQSimpleList
-        subtitle="Legal"
-        title="Privacy Policy"
+        subtitle={legalPageContent.eyebrow}
+        title={legalPageContent.privacyTitle}
         items={privacySections.map((section) => ({
           question: section.heading,
           answer: section.body.join(" "),
@@ -24,11 +23,11 @@ export default function PrivacyRoute() {
       />
       <CTAWithBackground
         icon={<Handshake className="mx-auto size-12 text-white" strokeWidth={1.8} />}
-        title={landingCalloutContent.title}
-        description={landingCalloutContent.body}
+        title={privacyCalloutContent.title}
+        description={privacyCalloutContent.body}
         primaryAction={{
-          label: landingCalloutContent.label,
-          href: landingCalloutContent.action,
+          label: privacyCalloutContent.label,
+          href: privacyCalloutContent.action,
         }}
         backgroundColor="primary"
       />

@@ -93,7 +93,7 @@ export function HeroSplitPanel({
             </h1>
 
             <p
-              className={`max-w-xl text-lg font-medium text-neutral-400 md:text-xl ${bodyTextMotion}`}
+              className={`max-w-2xl text-base leading-7 font-medium text-neutral-300 md:text-lg ${bodyTextMotion}`}
             >
               {description}
             </p>
@@ -152,7 +152,7 @@ export function HeroSplitPanel({
                         <h3 className="text-xl tracking-normal text-white md:text-2xl">
                           {step.title}
                         </h3>
-                        <p className="text-sm leading-tight font-semibold text-neutral-400 md:text-base">
+                        <p className="mt-1 text-sm leading-6 font-semibold text-neutral-300 md:text-base">
                           {step.body}
                         </p>
                       </div>

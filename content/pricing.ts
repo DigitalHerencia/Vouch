@@ -1,8 +1,14 @@
 export const PricingHeroContent = {
-  title: "Transparent pricing for",
+  eyebrow: "Product and pricing",
+  title: "A focused product for",
   titleHighlight: "protected appointments.",
-  body: "The merchant pays the Vouch protocol fee before commitment. The customer authorizes only the protected amount. Payment is captured only when both participants confirm in the appointment window.",
+  body: "Vouch gives businesses a simple way to create commitment-backed appointments. Pricing is shown before creation, and the customer authorizes only the protected amount.",
   primaryLabel: "Create a Vouch",
+} as const
+
+export const pricingPageContent = {
+  responsibilityTitle: "Built around one clear agreement",
+  responsibilityFooter: "Simple for the business. Clear for the customer.",
 } as const
 
 export const pricingFlowSteps = [
@@ -90,22 +96,19 @@ export const pricingFeatureCards = [
 
 export const pricingNotes = [
   {
-    eyebrow: "Transparent by default",
     icon: "fee",
-    title: "Fees are visible before commitment.",
-    body: "The merchant sees the Vouch amount, Vouch fee, provider fee, and total before committed creation. Pricing is part of the commitment, not a surprise after it.",
+    title: "Know the price before you create",
+    body: "The business reviews the protected amount and Vouch fee before paying. Once paid, the customer authorization link is ready to share.",
   },
   {
-    eyebrow: "Payment coordination, not custody",
     icon: "stripe",
-    title: "Providers handle money rails. Vouch handles workflow logic.",
-    body: "Stripe handles payment infrastructure, customer payment method collection, merchant identity, payout onboarding, and hosted payment authorization. Vouch stores participant-safe references, statuses, and lifecycle events.",
+    title: "Keep the appointment in one place",
+    body: "Amount, appointment time, authorization status, confirmation window, and next action stay together on the Vouch detail page.",
   },
   {
-    eyebrow: "Deterministic outcome",
     icon: "rules",
-    title: "Vouch doesn't ask who's right. Vouch asks what happened.",
-    body: "No stories. No screenshots. No appeals. No mediation. No subjective judgment. If conditions are met, funds move. If conditions fail, they don't.",
+    title: "Give both people the same rule",
+    body: "Both people confirm during the appointment window before the protected amount can be captured. If confirmation is incomplete, it is not captured.",
   },
 ] as const
 
@@ -140,8 +143,8 @@ export const pricingTrustContent = {
 } as const
 
 export const pricingCalloutContent = {
-  title: "Clear rules. Automatic outcomes.",
-  body: "Merchant pays to issue the Vouch. Customer authorizes the protected amount. Both confirm in-window, or no capture happens. Stripe owns payment truth. Vouch owns workflow truth.",
+  title: "Protect your next appointment.",
+  body: "Create a Vouch, send the customer link, and keep the commitment clear from authorization through confirmation.",
   label: "Create a Vouch",
   action: "/sign-up?return_to=/vouches/new",
 } as const

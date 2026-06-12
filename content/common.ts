@@ -34,7 +34,7 @@ export const errorPageContent = {
   notFound: {
     title: "404",
     heading: "Page Not Found",
-    description: "Oops! The page you're looking for doesn't exist or has been moved.",
+    description: "This page does not exist, has moved, or is not available to your account.",
     searchPlaceholder: "Search for pages...",
     home: "Back to Home",
     back: "Go Back",
@@ -42,12 +42,16 @@ export const errorPageContent = {
 } as const
 
 export const checkoutSuccessContent = {
-  eyebrow: "Provider return",
-  title: "Stripe returned you to Vouch.",
-  description:
-    "Vouch will use Stripe provider state, webhooks, and live provider retrieval to reconcile payment authorization before any confirmation or settlement outcome is shown as final.",
+  eyebrow: "Checkout return",
+  title: "Checking your Stripe payment status",
+  description: "Vouch is checking Stripe before showing the current Vouch status.",
   notice:
-    "This return page does not finalize payment truth. Use the dashboard or Vouch detail page to review the current provider-backed state.",
+    "Returning from Stripe does not by itself confirm payment or authorization. Open the dashboard or Vouch detail page to see the current status and next action.",
+  errors: {
+    missingSession: "This checkout return is missing the information Vouch needs to continue.",
+    authorizationCheckout: "Vouch could not open the customer authorization checkout.",
+    verifySession: "Vouch could not verify this Stripe checkout. Try opening the Vouch again.",
+  },
   createAccount: "Create Vouch account",
   signIn: "Sign in",
   dashboard: "Return to dashboard",

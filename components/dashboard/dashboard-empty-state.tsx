@@ -1,4 +1,5 @@
 import { EmptyStatePreset } from "@/components/ui/empty-state"
+import { dashboardContent } from "@/content/dashboard"
 
 export function DashboardEmptyState() {
   return (
@@ -7,8 +8,8 @@ export function DashboardEmptyState() {
         preset="no-data"
         variant="card"
         size="lg"
-        customTitle="No Vouches yet"
-        customDescription="Create a Vouch when you are ready to protect an appointment deposit. Your drafts, active Vouches, and completed purchases will appear here."
+        customTitle={dashboardContent.emptyState.title}
+        customDescription={dashboardContent.emptyState.description}
       />
     </section>
   )

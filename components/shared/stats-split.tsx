@@ -52,8 +52,14 @@ export function StatsSplit({
             >
               {subtitle}
             </p>
-            <div className={`text-7xl font-black uppercase ${headingMotion}`}>{title}</div>
-            <p className={`text-lg font-medium text-neutral-400 ${bodyTextMotion}`}>
+            <h2
+              className={`max-w-2xl text-4xl leading-[1.05] font-black uppercase md:text-6xl ${headingMotion}`}
+            >
+              {title}
+            </h2>
+            <p
+              className={`max-w-xl text-base leading-7 font-medium text-neutral-300 md:text-lg ${bodyTextMotion}`}
+            >
               {description}
             </p>
           </div>

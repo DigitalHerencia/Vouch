@@ -21,6 +21,7 @@ import {
   landingFeatureCards,
   landingHeroActionsContent,
   landingHeroContent,
+  landingPageSections,
   landingProcessPanelContent,
   landingProcessSteps,
   landingProofStats,
@@ -69,8 +70,8 @@ export default function HomePage() {
 
         <FeatureBentoGrid
           align="left"
-          subtitle="Clear Rules"
-          title="Fair for Everyone"
+          subtitle={landingPageSections.rules.eyebrow}
+          title={landingPageSections.rules.title}
           features={landingFeatureCards.map((feature) => ({
             title: feature.title,
             description: feature.body,
@@ -83,9 +84,9 @@ export default function HomePage() {
         />
 
         <StatsSplit
-          subtitle="Built for Real Commitment"
-          title="No-shows cost everyone"
-          description="A missed appointment wastes money, preparation, travel, and opportunity. Vouch puts something behind the promise before either side gives up time."
+          subtitle={landingPageSections.impact.eyebrow}
+          title={landingPageSections.impact.title}
+          description={landingPageSections.impact.body}
           stats={landingProofStats.map((stat) => ({
             value: stat.value,
             label: stat.label,

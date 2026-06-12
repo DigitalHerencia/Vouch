@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 
 import { GenericErrorPage } from "@/components/shared/generic-error-page"
+import { errorPageContent } from "@/content/common"
 
 export default function AuthError({
   error,
@@ -17,8 +18,8 @@ export default function AuthError({
 
   return (
     <GenericErrorPage
-      title="Authentication view failed"
-      description="Sign-in or sign-up could not load. Try again or return home."
+      title={errorPageContent.auth.title}
+      description={errorPageContent.auth.description}
       actions={[
         { label: "Try again", onClick: reset },
         { label: "Home", href: "/", variant: "outline" },

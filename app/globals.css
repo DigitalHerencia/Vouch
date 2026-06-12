@@ -30,6 +30,11 @@
     --vouch-card-padding: 1.5rem;
     --vouch-stack-gap: 1.5rem;
     --vouch-inline-gap: 1rem;
+    --vouch-text-body: clamp(0.9375rem, 1.2vw, 1rem);
+    --vouch-text-small: 0.8125rem;
+    --vouch-text-caption: 0.75rem;
+    --vouch-leading-body: 1.65;
+    --vouch-leading-compact: 1.4;
     --vouch-border-width: 3px;
     --vouch-shadow-sm: 4px 4px 0 oklch(54.6% 0.245 262.881);
     --vouch-shadow-md: 6px 6px 0 oklch(54.6% 0.245 262.881);
@@ -183,13 +188,13 @@
 
   p {
     color: white;
-    font-size: clamp(0.875rem, 1.35vw, 1rem);
-    line-height: 1.65;
+    font-size: var(--vouch-text-body);
+    line-height: var(--vouch-leading-body);
   }
 
   small {
     color: var(--color-neutral-400);
-    font-size: 0.75rem;
+    font-size: var(--vouch-text-caption);
     line-height: 1.55;
   }
 

@@ -24,7 +24,7 @@ export const authFormContent = {
   signIn: "Sign in",
   homeAriaLabel: "Go to Vouch home",
   login: {
-    description: "sign in to manage your account",
+    description: "Sign in to view your Vouches and complete your next action.",
     signUpPrompt: "Need an account?",
     signUpLabel: "Sign Up",
     submitLabel: "Sign in",
@@ -34,7 +34,7 @@ export const authFormContent = {
     passwordPlaceholder: "Enter your password",
   },
   signUp: {
-    description: "create an account to use Vouch",
+    description: "Create an account to create or join a Vouch.",
     signInPrompt: "Already have an account?",
     signInLabel: "Login",
     submitLabel: "Create account",
@@ -46,6 +46,8 @@ export const authFormContent = {
     emailPlaceholder: "m@example.com",
     passwordLabel: "Password",
     passwordPlaceholder: "At least 8 characters",
+    agreementPrefix: "I agree to the",
+    agreementLabel: "User Agreement",
   },
   verification: {
     title: "Verify your email",

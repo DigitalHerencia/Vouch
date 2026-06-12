@@ -1,6 +1,7 @@
 // components/vouches/onboarding-requirement-notice.tsx
 
 import { RequirementNoticeSplit } from "@/components/shared/requirement-notice-split"
+import { vouchPageCopy } from "@/content/vouches"
 
 export function OnboardingRequirementNotice({
   action,
@@ -9,9 +10,9 @@ export function OnboardingRequirementNotice({
 }) {
   return (
     <RequirementNoticeSplit
-      eyebrow="Onboarding required"
-      title="Connect Stripe to start creating Vouches"
-      body="Vouch uses Stripe to keep payments secure and easy to manage. Connect your Stripe account once, then you can create Vouches and manage payouts from Stripe."
+      eyebrow={vouchPageCopy.create.onboardingEyebrow}
+      title={vouchPageCopy.create.onboardingTitle}
+      body={vouchPageCopy.create.onboardingBody}
       action={action}
       returnPath="/vouches/new"
     />

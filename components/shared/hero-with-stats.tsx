@@ -67,7 +67,7 @@ export function HeroWithStats({
         </h2>
 
         <p
-          className={`max-w-4xl text-lg font-medium text-neutral-400 md:text-xl ${bodyTextMotion} ${isLeftAligned ? "" : "mx-auto"}`}
+          className={`max-w-3xl text-base leading-7 font-medium text-neutral-300 md:text-lg ${bodyTextMotion} ${isLeftAligned ? "" : "mx-auto"}`}
         >
           {description}
         </p>

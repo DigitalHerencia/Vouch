@@ -1,15 +1,29 @@
 export const vouchPageCopy = {
   loadingDetailsLabel: "Loading Vouch details",
   create: {
-    eyebrow: "Merchant action",
+    eyebrow: "For business owners",
     title: "Create a Vouch",
+    pageTitle: "New Vouch",
+    pageBody:
+      "Set the appointment and protected amount, review the terms, then pay the protocol fee to create the customer authorization link.",
     blockedTitle: "Finish setup to continue",
     blockedActionLabel: "Return to dashboard",
+    onboardingEyebrow: "Stripe setup required",
+    onboardingTitle: "Finish Stripe setup to create Vouches",
+    onboardingBody:
+      "Your business must finish Stripe onboarding and be ready to accept charges and payouts before you can create a Vouch.",
     detailsHeader: "Vouch details",
     readyBody:
       "Start with the amount, appointment time, and confirmation window. These terms become the basis for the Vouch protocol before commitment.",
     appointmentFieldLabel: "Appointment date and time",
     amountFieldLabel: "Protected amount",
+    steps: {
+      disclaimer: "Disclaimer",
+      appointment: "Appointment",
+      review: "Review",
+    },
+    appointmentHelp:
+      "Create the Vouch within 24 hours of the appointment. Both people can confirm from one hour before until one hour after the appointment.",
     reviewTitle: "Review your Vouch",
     reviewBody:
       "Review immutable terms before creation. The Vouch fee is paid by the merchant through hosted Stripe checkout at committed creation.",
@@ -23,7 +37,24 @@ export const vouchPageCopy = {
       "I understand this Vouch becomes immutable after commitment and the merchant Vouch fee is paid through Stripe at creation.",
     amountPlaceholder: "250.00",
     progressLabel: "Progress steps",
-    commitAction: "Create Vouch and pay fee",
+    openingCheckoutAction: "Opening Checkout",
+    commitAction: "Pay protocol fee",
+    reviewEyebrow: "Review",
+    reviewDetailsTitle: "Vouch details",
+    appointmentLabel: "Appointment",
+    protocolFeeLabel: "Protocol fee",
+    protocolFeeRate: "5% minimum $5",
+    dueNowLabel: "Business pays now",
+    afterPayment:
+      "After the business pays the protocol fee, the Vouch detail page will show a Stripe link for the customer to authorize the protected amount.",
+    disclaimerBody:
+      "Vouch coordinates the confirmation workflow. Stripe handles the business payment, customer authorization, and payment processing. Vouch does not hold customer funds.",
+    disclaimerAgreement: "I agree to the",
+    disclaimerLinkLabel: "Disclaimer",
+    errors: {
+      create: "Unable to create this Vouch.",
+      checkout: "Stripe Checkout could not be opened. Try again.",
+    },
     ruleTitle: "Outcome follows confirmation state.",
     ruleBody:
       "Both participants confirm presence inside the configured window for release. Anything else resolves through provider-backed non-capture, void, refund, cancel, or expiration state.",

@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 
 import { CheckoutSuccessView } from "@/components/shared/checkout-success-view"
+import { checkoutSuccessContent } from "@/content/common"
 import {
   claimCustomerAuthorizationCheckout,
   getCustomerAuthorizationCheckoutForAuthenticatedUser,
@@ -15,7 +16,7 @@ export default async function CheckoutSuccessRoute({
   const { session_id: sessionId, vouch_id: publicId } = await searchParams
 
   if (!sessionId && !publicId) {
-    return <CheckoutSuccessView message="No Checkout Session was provided." />
+    return <CheckoutSuccessView message={checkoutSuccessContent.errors.missingSession} />
   }
 
   const returnPath = sessionId
@@ -33,7 +34,7 @@ export default async function CheckoutSuccessRoute({
     if (!result.ok) {
       return (
         <CheckoutSuccessView
-          message={result.formError ?? "Vouch could not open customer authorization Checkout."}
+          message={result.formError ?? checkoutSuccessContent.errors.authorizationCheckout}
         />
       )
     }
@@ -42,7 +43,7 @@ export default async function CheckoutSuccessRoute({
   }
 
   if (!sessionId) {
-    return <CheckoutSuccessView message="No Checkout Session was provided." />
+    return <CheckoutSuccessView message={checkoutSuccessContent.errors.missingSession} />
   }
 
   const result = await claimCustomerAuthorizationCheckout({
@@ -53,7 +54,7 @@ export default async function CheckoutSuccessRoute({
   if (!result.ok) {
     return (
       <CheckoutSuccessView
-        message={result.formError ?? "Vouch could not verify this Checkout Session."}
+        message={result.formError ?? checkoutSuccessContent.errors.verifySession}
       />
     )
   }

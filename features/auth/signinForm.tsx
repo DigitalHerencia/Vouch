@@ -7,7 +7,7 @@ import { useForm, useWatch } from "react-hook-form"
 
 import { LoginForm as LoginBlock } from "@/components/auth/login-form"
 import { OTPVerificationForm } from "@/components/auth/otp-verification-form"
-import { authVerificationContent } from "@/content/auth"
+import { authFormContent, authVerificationContent } from "@/content/auth"
 import { sanitizePostAuthRedirect } from "@/lib/auth/redirects"
 import { loginSchema, verificationSchema } from "@/schemas/authSchemas"
 import { type LoginFormProps, type LoginFormValues } from "@/types/authTypes"
@@ -284,7 +284,7 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
       ) : (
         <div className="relative z-10 flex min-h-dvh items-center justify-center px-12 py-24">
           <LoginBlock
-            description="sign in to manage your account"
+            description={authFormContent.login.description}
             notice={notice}
             error={rootError}
             signUpHref={
@@ -299,7 +299,7 @@ export function SignInForm({ redirectUrl, ...props }: LoginFormProps) {
             passwordError={form.formState.errors.password?.message}
             disabled={isBusy}
             isSubmitting={form.formState.isSubmitting}
-            submitLabel="Sign in"
+            submitLabel={authFormContent.login.submitLabel}
           />
         </div>
       )}

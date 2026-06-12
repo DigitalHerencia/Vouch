@@ -3,6 +3,7 @@
 import { useEffect } from "react"
 
 import { GenericErrorPage } from "@/components/shared/generic-error-page"
+import { errorPageContent } from "@/content/common"
 
 export default function TenantError({
   error,
@@ -17,8 +18,8 @@ export default function TenantError({
 
   return (
     <GenericErrorPage
-      title="Vouch page unavailable"
-      description="This page could not load. Try again or return to the dashboard."
+      title={errorPageContent.tenant.title}
+      description={errorPageContent.tenant.description}
       actions={[
         { label: "Try again", onClick: reset },
         { label: "Dashboard", href: "/dashboard", variant: "outline" },

@@ -1,8 +1,8 @@
 export const landingHeroContent = {
-  eyebrow: "Put something behind the promise",
+  eyebrow: "Commitment for important appointments",
   title: "Create Share Meet Confirm",
   titleHighlight: "Confirm",
-  body: "Vouch turns a verbal commitment into a financial commitment using clear rules both people accept before the appointment happens.",
+  body: "Create a Vouch, share it with your customer, and make the payment outcome clear before the appointment.",
 } as const
 
 export const landingHeroActionsContent = {
@@ -44,8 +44,20 @@ export const landingProcessSteps = [
 ] as const
 
 export const landingProcessPanelContent = {
-  title: "A Protocol for Trust",
-  footer: "Let the process handle the rest",
+  title: "How Vouch works",
+  footer: "Clear from the start",
+} as const
+
+export const landingPageSections = {
+  rules: {
+    eyebrow: "Simple by design",
+    title: "One agreement. One window. Two confirmations.",
+  },
+  impact: {
+    eyebrow: "Built for valuable time",
+    title: "Make the commitment clear before the appointment",
+    body: "Vouch gives businesses and customers a shared payment rule without adding scheduling, messaging, or dispute management.",
+  },
 } as const
 
 export const landingSolutionSteps = [
@@ -225,6 +237,6 @@ export const landingPhilosophyContent = {
 export const landingCalloutContent = {
   action: "/sign-up?return_to=/vouches/new",
   label: "Create a Vouch",
-  title: "Put money behind the promise.",
-  body: "Create agreements where payment is released only when both people confirm they met as planned. No chasing payments. No awkward conversations. No guessing what happened.",
+  title: "Make the next appointment count.",
+  body: "Create the Vouch, share the link, and give both people a clear commitment before the appointment.",
 } as const

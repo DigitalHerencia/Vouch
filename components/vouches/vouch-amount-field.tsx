@@ -13,7 +13,7 @@ type VouchAmountFieldProps = {
 
 export function VouchAmountField({ value, disabled, error, onChange }: VouchAmountFieldProps) {
   return (
-    <VouchCreationField label="Protected amount" error={error}>
+    <VouchCreationField label={vouchPageCopy.create.amountFieldLabel} error={error}>
       <Input
         type="number"
         inputMode="decimal"

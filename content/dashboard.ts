@@ -5,9 +5,9 @@ export const dashboardContent = {
     body: "Here's what's happening with your Vouches. Amount, status, deadline, and consequence stay visible.",
   },
   readiness: {
-    title: "Complete Onboarding .",
-    body: "Stripe Connect Account onboarding is required before creating or sending Vouches.",
-    cta: "Stripe Connect Onboarding",
+    title: "Finish Stripe setup",
+    body: "Your business must finish Stripe onboarding before you can create Vouches.",
+    cta: "Continue Stripe setup",
   },
   metrics: {
     activeVouches: {
@@ -70,7 +70,7 @@ export const dashboardContent = {
   },
   cta: {
     title: "Create a Vouch",
-    body: "Create the agreement, share the invite, and keep the next action tied to one Vouch object.",
+    body: "Set the appointment and protected amount, pay the protocol fee, then share the customer authorization link.",
     label: "Create Vouch",
   },
   fallbackDeadline: "No deadline",

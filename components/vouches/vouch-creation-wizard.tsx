@@ -114,7 +114,7 @@ export function VouchCreationWizard({
         </CardHeader>
 
         <CardContent className="grid gap-8 px-6 py-8 md:px-8">
-          <div>{step.content}</div>
+          <div className="mx-auto w-full max-w-2xl">{step.content}</div>
 
           <div className="flex items-center justify-between gap-4">
             <Button

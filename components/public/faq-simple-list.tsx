@@ -30,12 +30,14 @@ export function FAQSimpleList({ title, subtitle, items }: FAQSimpleListProps) {
             className="border-b-3 border-neutral-400 px-6 py-8 last:border-b-0 md:px-12"
           >
             <div className="flex items-center gap-10">
-              <div className="flex size-14 shrink-0 items-center justify-center border-3 border-neutral-400 bg-black text-2xl font-black text-white md:size-24 md:text-6xl">
+              <div className="flex size-14 shrink-0 items-center justify-center border-3 border-neutral-400 bg-black text-2xl font-black text-white md:size-20 md:text-4xl">
                 {index + 1}
               </div>
               <div className="max-w-3xl space-y-2">
                 <h3 className="font-bold tracking-wide">{item.question}</h3>
-                <p className="text-sm font-medium text-white md:text-base">{item.answer}</p>
+                <p className="text-sm leading-6 font-medium text-neutral-200 md:text-base">
+                  {item.answer}
+                </p>
               </div>
             </div>
           </div>

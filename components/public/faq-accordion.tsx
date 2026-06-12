@@ -24,9 +24,11 @@ export function FAQAccordion({ title, subtitle, description, items }: FAQAccordi
               {subtitle}
             </p>
           ) : null}
-          {title ? <h1 className="font-black">{title}</h1> : null}
+          {title ? <h1 className="max-w-4xl font-black">{title}</h1> : null}
           {description ? (
-            <p className="text-base font-medium text-white md:text-lg">{description}</p>
+            <p className="max-w-3xl text-base leading-7 font-medium text-neutral-300 md:text-lg">
+              {description}
+            </p>
           ) : null}
         </div>
       )}
@@ -42,7 +44,9 @@ export function FAQAccordion({ title, subtitle, description, items }: FAQAccordi
               <h3 className="font-bold tracking-wide">{item.question}</h3>
             </AccordionTrigger>
             <AccordionContent className="px-6 pb-4">
-              <p className="text-sm font-medium text-white md:text-base">{item.answer}</p>
+              <p className="max-w-3xl text-sm leading-6 font-medium text-neutral-200 md:text-base">
+                {item.answer}
+              </p>
             </AccordionContent>
           </AccordionItem>
         ))}

@@ -12,12 +12,13 @@ import { FeatureGridAlternating } from "@/components/public/feature-grid-alterna
 import { CTAWithBackground } from "@/components/shared/cta-with-background"
 import { HeroWithStats } from "@/components/shared/hero-with-stats"
 import { ProcessPanelRuleGrid } from "@/components/shared/process-panel-rule-grid"
-import { landingCalloutContent } from "@/content/marketing"
 import {
   PricingHeroContent,
   pricingComparisonRules,
   pricingFeatureCards,
+  pricingCalloutContent,
   pricingNotes,
+  pricingPageContent,
   pricingStats,
 } from "@/content/pricing"
 
@@ -34,7 +35,7 @@ export default function PricingPage() {
   return (
     <div className="grid gap-[calc(var(--vouch-section-gap)*1.75)]">
       <HeroWithStats
-        subtitle="Trust the Process"
+        subtitle={PricingHeroContent.eyebrow}
         title={PricingHeroContent.title}
         titleHighlight={PricingHeroContent.titleHighlight}
         description={PricingHeroContent.body}
@@ -63,18 +64,18 @@ export default function PricingPage() {
       />
 
       <ProcessPanelRuleGrid
-        title="Payment responsibility"
+        title={pricingPageContent.responsibilityTitle}
         items={pricingComparisonRules}
-        footer="Customer authorizes only the protected amount"
+        footer={pricingPageContent.responsibilityFooter}
       />
 
       <CTAWithBackground
         icon={<Handshake className="mx-auto size-12 text-white" strokeWidth={1.8} />}
-        title={landingCalloutContent.title}
-        description={landingCalloutContent.body}
+        title={pricingCalloutContent.title}
+        description={pricingCalloutContent.body}
         primaryAction={{
-          label: landingCalloutContent.label,
-          href: landingCalloutContent.action,
+          label: pricingCalloutContent.label,
+          href: pricingCalloutContent.action,
         }}
         backgroundColor="primary"
       />
