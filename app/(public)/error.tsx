@@ -17,8 +17,8 @@ export default function PublicError({
 
   return (
     <GenericErrorPage
-      title="Public view failed"
-      description="This public Vouch surface could not render. Try again or return home."
+      title="Page unavailable"
+      description="This page could not load. Try again or return home."
       actions={[
         { label: "Try again", onClick: reset },
         { label: "Home", href: "/", variant: "outline" },

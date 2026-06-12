@@ -1,15 +1,8 @@
 import "server-only"
 
-import type { ParticipantRole, PrismaClient } from "@/prisma/generated/prisma/client"
-
-type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">
-
-type ConfirmationMethod = "code_exchange"
-type AggregateConfirmationStatus =
-  | "none_confirmed"
-  | "merchant_confirmed"
-  | "customer_confirmed"
-  | "both_confirmed"
+import type { ParticipantRole } from "@/prisma/generated/prisma/client"
+import type { PrismaTransactionClient as Tx } from "@/types/commonTypes"
+import type { AggregateConfirmationStatus, ConfirmationMethod } from "@/types/vouchTypes"
 
 type VouchIdTxInput = {
   vouchId: string
@@ -48,7 +41,7 @@ function assertNonEmptyString(value: string, fieldName: string): string {
   return trimmed
 }
 
-export async function assertNoDuplicateConfirmationTx(
+async function assertNoDuplicateConfirmationTx(
   tx: Tx,
   input: AssertNoDuplicateConfirmationTxInput
 ): Promise<void> {

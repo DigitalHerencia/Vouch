@@ -1,15 +1,7 @@
 import "server-only"
 
-import type { PrismaClient } from "@/prisma/generated/prisma/client"
-
-type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">
-
-type LocalUserSyncInput = {
-  clerkUserId: string
-  email?: string | null
-  phone?: string | null
-  displayName?: string | null
-}
+import type { LocalUserSyncInput } from "@/types/authTypes"
+import type { PrismaTransactionClient as Tx } from "@/types/commonTypes"
 
 export async function upsertUserFromClerkTx(tx: Tx, input: LocalUserSyncInput) {
   return tx.user.upsert({

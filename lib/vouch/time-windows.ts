@@ -1,6 +1,6 @@
 import type { ConfirmationWindowInput, DateLike } from "@/types/vouchTypes"
 
-export function toDate(value: DateLike): Date {
+function toDate(value: DateLike): Date {
   const date = value instanceof Date ? value : new Date(value)
 
   if (Number.isNaN(date.getTime())) {

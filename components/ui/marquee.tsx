@@ -1,5 +1,17 @@
+type MarqueeProps = React.ComponentPropsWithoutRef<"div"> & {
+  speed?: "slow" | "normal" | "fast"
+  direction?: "left" | "right"
+  pauseOnHover?: boolean
+  bordered?: boolean
+  repeat?: number
+}
+
+type MarqueeItemProps = React.ComponentPropsWithoutRef<"div">
+
+type MarqueeSeparatorProps = React.ComponentPropsWithoutRef<"div">
+
 import * as React from "react"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/utils"
 
 const speedClasses = {
   slow: "animate-marquee-slow",

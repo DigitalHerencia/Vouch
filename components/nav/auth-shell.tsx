@@ -1,3 +1,5 @@
+type AuthShellProps = { children: React.ReactNode }
+
 import { AuthFooter } from "@/components/nav/auth-footer"
 import { AuthProcessPanelGrid } from "@/components/shared/auth-process-panel-grid"
 

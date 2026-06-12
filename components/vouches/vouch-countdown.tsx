@@ -3,7 +3,8 @@
 import * as React from "react"
 
 import { Progress } from "@/components/ui/progress"
-import { VouchStatusBadge, type VouchStatusTone } from "@/components/shared/vouch-status-badge"
+import { VouchStatusBadge } from "@/components/shared/vouch-status-badge"
+import type { VouchStatusTone } from "@/types/vouchTypes"
 
 export type VouchCountdownProps = {
   label: string

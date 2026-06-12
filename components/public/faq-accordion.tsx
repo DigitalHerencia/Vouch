@@ -1,3 +1,12 @@
+type FAQItem = { question: string; answer: string; category?: string }
+
+type FAQAccordionProps = {
+  title?: string
+  subtitle?: string
+  description?: string
+  items: readonly FAQItem[]
+}
+
 import {
   Accordion,
   AccordionContent,

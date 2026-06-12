@@ -2,12 +2,10 @@ import "server-only"
 
 import type {
   Prisma,
-  PrismaClient,
   WebhookProcessingStatus,
   WebhookProvider,
 } from "@/prisma/generated/prisma/client"
-
-type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">
+import type { PrismaTransactionClient as Tx } from "@/types/commonTypes"
 
 const unsafeMetadataKeyPattern = /payload|signature|secret|token|card|bank|identity/i
 

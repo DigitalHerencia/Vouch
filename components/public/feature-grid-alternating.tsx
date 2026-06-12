@@ -1,3 +1,14 @@
+type FeatureGridItem = {
+  title: string
+  description?: string
+  icon?: React.ReactNode
+  image?: string
+  size?: "normal" | "wide" | "tall"
+  span?: string
+}
+
+type FeatureGridAlternatingProps = { features: readonly FeatureGridItem[] }
+
 const iconColors = ["bg-black", "bg-black", "bg-black", "bg-black", "bg-black"]
 const headingMotion =
   "transition-all duration-300 text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"

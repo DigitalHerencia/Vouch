@@ -1,10 +1,45 @@
+type AuthAction = { label: string; href?: string; onClick?: () => void }
+
+type CTAAction = AuthAction
+
+type CTASimpleProps = {
+  title: string
+  description?: string
+  primaryAction?: CTAAction | undefined
+  secondaryAction?: CTAAction | undefined
+}
+
+type CTANewsletterProps = CTASimpleProps & {
+  placeholder?: string
+  buttonLabel?: string
+  email?: string
+  onEmailChange?: (value: string) => void
+  onSubmit?: () => void
+}
+
+type CTASplitProps = CTASimpleProps & {
+  image?: React.ReactNode
+  imageSrc?: string
+  imageAlt?: string
+  imagePosition?: "left" | "right"
+}
+
+type CTABannerProps = CTASimpleProps & {
+  variant?: "primary" | "secondary" | "accent" | "warning"
+  text?: string
+  action?: CTAAction
+  dismissible?: boolean
+  isVisible?: boolean
+  onDismiss?: () => void
+}
+
 import * as React from "react"
 import { Mail } from "lucide-react"
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { safeHref } from "@/lib/utils"
+import { safeHref } from "@/lib/utils/utils"
 
 function CTAButton({
   action,

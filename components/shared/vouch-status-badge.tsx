@@ -2,8 +2,7 @@ import type { ComponentProps, ElementType } from "react"
 import { AlertCircle, Check, Clock, WifiOff } from "lucide-react"
 
 import { Badge } from "@/components/ui/badge"
-
-export type VouchStatusTone = "active" | "pending" | "complete" | "failed" | "expired" | "offline"
+import type { VouchStatusTone } from "@/types/vouchTypes"
 
 const statusToneConfig: Record<
   VouchStatusTone,

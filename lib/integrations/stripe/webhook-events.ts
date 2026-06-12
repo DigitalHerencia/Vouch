@@ -54,18 +54,6 @@ export function isStripePaymentIntentEvent(event: StripeWebhookEvent): boolean {
   return event.type.startsWith("payment_intent.")
 }
 
-export function isStripeCheckoutSessionEvent(event: StripeWebhookEvent): boolean {
-  return event.type.startsWith("checkout.session.")
-}
-
-export function isStripeRefundEvent(event: StripeWebhookEvent): boolean {
-  return event.type.startsWith("charge.refund") || event.type.startsWith("refund.")
-}
-
-export function isStripeSetupIntentEvent(event: StripeWebhookEvent): boolean {
-  return event.type.startsWith("setup_intent.")
-}
-
 export function isStripeAccountEvent(event: StripeWebhookEvent): boolean {
   return event.type.startsWith("account.")
 }

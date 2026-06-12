@@ -1,3 +1,11 @@
+type PublicHeaderNavItem = { label: string; href: string }
+
+type PublicHeaderProps = {
+  logo?: React.ReactNode
+  navItems?: readonly PublicHeaderNavItem[]
+  items?: readonly PublicHeaderNavItem[]
+}
+
 import Link from "next/link"
 
 import { LogoLockup } from "@/components/nav/logo-lockup"

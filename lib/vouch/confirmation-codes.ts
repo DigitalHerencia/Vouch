@@ -7,12 +7,10 @@ type ConfirmationCodeInput = {
   publicId: string
   participantRole: ParticipantRole
   participantUserId: string
-  at?: Date
 }
 
 type VerifyConfirmationCodeInput = ConfirmationCodeInput & {
   submittedCode: string
-  allowedBucketSkew?: number
 }
 
 function confirmationSecret(): string {
@@ -58,17 +56,6 @@ function codeForParticipant(input: ConfirmationCodeInput): string {
 }
 
 /**
- * Backward-compatible export retained so existing imports do not break.
- *
- * Confirmation codes are now intentionally stable for the lifetime of a Vouch
- * participant relationship. Do not use this value for current confirmation-code
- * generation or verification.
- */
-export function confirmationTimeBucket(at: Date = new Date()): number {
-  return Math.floor(at.getTime() / 1000)
-}
-
-/**
  * Returns the stable 6-digit code for the participant.
  *
  * The code is deterministic from:
@@ -84,12 +71,7 @@ export function deriveConfirmationCode(input: ConfirmationCodeInput): string {
   return codeForParticipant(input)
 }
 
-/**
- * Verifies the submitted counterparty confirmation code.
- *
- * The allowedBucketSkew input is accepted for compatibility with older call sites,
- * but time buckets are no longer part of the confirmation-code algorithm.
- */
+/** Verifies the submitted counterparty confirmation code. */
 export function verifyConfirmationCode(input: VerifyConfirmationCodeInput): boolean {
   const submittedCode = normalizeCode(input.submittedCode)
   const expectedCode = codeForParticipant(input)

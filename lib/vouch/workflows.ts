@@ -3,7 +3,7 @@ import "server-only"
 import { revalidatePath } from "next/cache"
 
 import { getParticipantRoleForVouch } from "@/lib/authz/participants"
-import { VOUCH_LIMITS } from "@/lib/constants/limits"
+import { VOUCH_LIMITS } from "@/lib/vouch/constants"
 import { prisma } from "@/lib/db/prisma"
 import {
   createPresenceConfirmationTx,
@@ -457,7 +457,7 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
   })
 }
 
-export async function ensureCustomerAuthorizationCheckoutForVouch(
+async function ensureCustomerAuthorizationCheckoutForVouch(
   vouchId: string
 ): Promise<ActionResult<CustomerAuthorizationCheckoutResult>> {
   const vouch = await prisma.vouch.findUnique({
@@ -1021,7 +1021,6 @@ export async function confirmPresence(input: unknown): Promise<ActionResult<{ vo
     participantRole: counterpartyRole,
     participantUserId: counterpartyUserId,
     submittedCode: parsed.data.submittedCode,
-    allowedBucketSkew: 0,
   })
 
   if (!validCode) {

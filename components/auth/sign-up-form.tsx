@@ -1,3 +1,45 @@
+type LoginFormProps = React.ComponentPropsWithoutRef<"form"> & {
+  logo?: React.ReactNode
+  title?: string
+  description?: string
+  notice?: string | null
+  error?: string | null | undefined
+  children?: React.ReactNode
+  footer?: React.ReactNode
+  signUpHref?: string
+  signUpPrompt?: string
+  signUpLabel?: string
+  onForgotPassword?: () => void
+  onSignUp?: () => void
+  socialProviders?: string[]
+  emailInputProps?: React.ComponentPropsWithoutRef<"input">
+  passwordInputProps?: React.ComponentPropsWithoutRef<"input">
+  emailError?: string | undefined
+  passwordError?: string | undefined
+  passwordDescription?: string
+  disabled?: boolean
+  isSubmitting?: boolean
+  submitLabel?: string
+}
+
+type SignUpFormProps = LoginFormProps & {
+  signInHref?: string
+  signInPrompt?: string
+  signInLabel?: string
+  onSignIn?: () => void
+  termsUrl?: string
+  privacyUrl?: string
+  firstNameInputProps?: React.ComponentPropsWithoutRef<"input">
+  lastNameInputProps?: React.ComponentPropsWithoutRef<"input">
+  firstNameError?: string | undefined
+  lastNameError?: string | undefined
+  agreementError?: string | undefined
+  agreementChecked?: boolean | undefined
+  agreementLabel?: React.ReactNode
+  onAgreementChange?: (checked: boolean) => void
+  captcha?: React.ReactNode
+}
+
 import Link from "next/link"
 import { LoaderCircle } from "lucide-react"
 

@@ -1,3 +1,22 @@
+type AuthAction = { label: string; href?: string; onClick?: () => void }
+
+type HeroAction = AuthAction
+
+type HeroCenteredProps = {
+  eyebrow?: string
+  title: string
+  titleHighlight?: string
+  description?: string
+  primaryAction?: HeroAction
+  secondaryAction?: HeroAction
+  align?: "left" | "center"
+}
+
+type HeroWithStatsProps = HeroCenteredProps & {
+  subtitle?: string
+  stats: Array<{ label: string; value: string; body?: string }>
+}
+
 const subtitleMotion =
   "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
 const headingWordMotion =

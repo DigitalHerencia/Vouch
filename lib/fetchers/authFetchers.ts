@@ -13,7 +13,7 @@ import { currentUserAuthSelect } from "@/lib/db/selects/auth.selects"
 
 type CurrentUserAuthRecord = Prisma.UserGetPayload<{ select: typeof currentUserAuthSelect }>
 
-export type CurrentUser = {
+type CurrentUser = {
   id: string
   clerkUserId: string
   email: string | null
@@ -73,7 +73,7 @@ export async function getCurrentUser() {
   return mapCurrentUser(user)
 }
 
-export async function requireUser() {
+async function requireUser() {
   const user = await getCurrentUser()
   if (!user) redirect("/sign-in")
   return user

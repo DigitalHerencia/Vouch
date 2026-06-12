@@ -47,6 +47,3 @@ export function canConfirmPresence(input: ConfirmPresenceAuthzInput): boolean {
     !input.alreadyConfirmed
   )
 }
-
-export const canAccessVouch = canViewVouch
-export const canConfirmVouch = canConfirmPresence

@@ -1,3 +1,20 @@
+type AuthAction = { label: string; href?: string; onClick?: () => void }
+
+type CTAAction = AuthAction
+
+type CTASimpleProps = {
+  title: string
+  description?: string
+  primaryAction?: CTAAction | undefined
+  secondaryAction?: CTAAction | undefined
+}
+
+type CTAWithBackgroundProps = CTASimpleProps & {
+  variant?: "primary" | "secondary" | "accent" | "muted"
+  icon?: React.ReactNode
+  backgroundColor?: "primary" | "secondary" | "accent" | "muted"
+}
+
 import { CheckCircle } from "lucide-react"
 import Link from "next/link"
 

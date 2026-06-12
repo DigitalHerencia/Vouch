@@ -1,3 +1,5 @@
+type ProcessPanelGridItem = { name: string; logo: React.ReactNode; detail?: string }
+
 import { MarqueeLogo } from "../nav/logo-lockup"
 import Image from "next/image"
 import { Marquee, MarqueeItem, MarqueeSeparator } from "../ui/marquee"

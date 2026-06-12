@@ -1,7 +1,7 @@
 // lib/utils/dashboardUtils.ts
 
-import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
-import type { VouchStatusTone } from "@/types/dashboardTypes"
+import type { VouchCardDTO } from "@/lib/db/dto/vouch.mappers"
+import type { VouchStatusTone } from "@/types/vouchTypes"
 
 const FALLBACK_DEADLINE_LABEL = "No deadline"
 const FALLBACK_PARTICIPANT_LABEL = "Participant"
@@ -51,10 +51,6 @@ export function formatCurrency(cents: number, currency: string): string {
   }
 }
 
-export function getStatusLabel(status: VouchCardDTO["status"]): string {
-  return status.replace(/_/g, " ")
-}
-
 export function mapStatusTone(status: VouchCardDTO["status"]): VouchStatusTone {
   if (status === "captured") return "complete"
   if (status === "expired") return "expired"
@@ -65,25 +61,6 @@ export function mapStatusTone(status: VouchCardDTO["status"]): VouchStatusTone {
   }
 
   return "pending"
-}
-
-export function getRemainingLabel(value: string | null | undefined): string {
-  const deadline = toValidDate(value)
-  if (!deadline) return FALLBACK_DEADLINE_LABEL
-
-  const remainingMs = deadline.getTime() - Date.now()
-  if (remainingMs <= 0) return "Due now"
-
-  const hours = Math.ceil(remainingMs / 3_600_000)
-
-  if (hours < 48) {
-    return new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(hours, "hour")
-  }
-
-  return new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(
-    Math.ceil(hours / 24),
-    "day"
-  )
 }
 
 export function getPercentRemaining(vouch: VouchCardDTO): number {

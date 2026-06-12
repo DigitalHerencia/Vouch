@@ -1,3 +1,5 @@
+type FAQItem = { question: string; answer: string; category?: string }
+
 export function FAQCard({ item, index }: { item: FAQItem; index: number }) {
   return (
     <div className="border-3 border-neutral-400 bg-black px-6 py-8 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:px-8">

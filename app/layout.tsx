@@ -1,3 +1,7 @@
+type RootLayoutProps = {
+  children: React.ReactNode
+}
+
 // app/layout.tsx
 
 import type { Metadata, Viewport } from "next"

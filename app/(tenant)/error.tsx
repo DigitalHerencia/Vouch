@@ -17,8 +17,8 @@ export default function TenantError({
 
   return (
     <GenericErrorPage
-      title="Dashboard view failed"
-      description="This participant-scoped Vouch surface could not render. Try again or return to the dashboard."
+      title="Vouch page unavailable"
+      description="This page could not load. Try again or return to the dashboard."
       actions={[
         { label: "Try again", onClick: reset },
         { label: "Dashboard", href: "/dashboard", variant: "outline" },

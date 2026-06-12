@@ -1,5 +1,16 @@
-// components/nav/tenant-footer.tsx
 "use client"
+
+type TenantFooterLink = { label: string; href: string }
+
+type TenantStripeAction = ((formData: FormData) => void | Promise<void>) | undefined
+
+type TenantFooterProps = {
+  links?: readonly TenantFooterLink[]
+  connectAction?: TenantStripeAction
+  connectReady: boolean
+}
+
+// components/nav/tenant-footer.tsx
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -24,11 +35,14 @@ export const defaultTenantFooterLinks = [
 
 export function TenantFooter({
   connectAction,
+  connectReady,
   links = defaultTenantFooterLinks,
 }: TenantFooterProps) {
   const pathname = usePathname()
   const [pendingProvider, setPendingProvider] = useState<"connect" | null>(null)
-  const providerCopy = pendingProvider ? vouchPageCopy.providerRedirects[pendingProvider] : null
+  const providerCopy = pendingProvider
+    ? vouchPageCopy.providerRedirects[connectReady ? "connectDashboard" : pendingProvider]
+    : null
   const providerAction = connectAction
   const returnPath = pathname === "/vouches/new" ? "/vouches/new" : "/dashboard"
 
@@ -81,7 +95,7 @@ export function TenantFooter({
             <form action={providerAction}>
               <input type="hidden" name="returnPath" value={returnPath} />
               <Button type="submit" className="w-full">
-                Continue to Stripe
+                {connectReady ? "Open Stripe dashboard" : "Continue to Stripe"}
               </Button>
             </form>
           </DrawerFooter>

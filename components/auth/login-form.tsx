@@ -1,11 +1,29 @@
 import Link from "next/link"
 import { LoaderCircle } from "lucide-react"
+import type { ComponentPropsWithoutRef, ReactNode } from "react"
 
 import { LogoLockup } from "@/components/nav/logo-lockup"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+
+type LoginFormProps = ComponentPropsWithoutRef<"form"> & {
+  description?: string
+  notice?: string | null
+  error?: string | null | undefined
+  footer?: ReactNode
+  signUpHref?: string
+  signUpPrompt?: string
+  signUpLabel?: string
+  emailInputProps?: ComponentPropsWithoutRef<"input">
+  passwordInputProps?: ComponentPropsWithoutRef<"input">
+  emailError?: string | undefined
+  passwordError?: string | undefined
+  disabled?: boolean
+  isSubmitting?: boolean
+  submitLabel?: string
+}
 
 export function LoginForm({
   description = "sign in to manage your account",

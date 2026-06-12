@@ -1,6 +1,21 @@
+type StatCardProps = React.ComponentPropsWithoutRef<"div"> & {
+  label?: string
+  title?: string
+  value?: string
+  description?: string
+  variant?: "default" | "compact" | "large"
+  color?: "primary" | "secondary" | "accent" | "success" | "warning" | "info" | "destructive"
+  colorScheme?: "primary" | "secondary" | "accent" | "success" | "warning" | "info" | "destructive"
+  change?: string
+  trend?: "up" | "down" | "neutral"
+  icon?: React.ReactNode
+  progress?: { label?: string; value: number }
+  comparison?: string
+}
+
 import * as React from "react"
 import { cva } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/utils"
 import { Card, CardContent } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { TrendingUp, TrendingDown, Minus } from "lucide-react"

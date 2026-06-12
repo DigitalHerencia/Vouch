@@ -1,3 +1,44 @@
+type ProcessPanelStep = {
+  number?: string
+  label?: string
+  value?: string
+  title?: string
+  body?: string
+  icon?: React.ComponentType<{ className?: string; strokeWidth?: number }>
+}
+
+type ProcessPanelProps = {
+  title?: string
+  steps: readonly ProcessPanelStep[]
+  footer?: string | React.ReactNode
+  id?: string
+}
+
+type ProcessPanelListProps = {
+  title?: string
+  items: readonly ProcessPanelStep[]
+  eyebrow?: string
+  body?: string
+  id?: string
+}
+
+type ProcessPanelCalloutProps = {
+  title?: string
+  body?: string
+  action?: React.ReactNode
+  icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+  id?: string
+}
+
+type ProcessPanelGridItem = { name: string; logo: React.ReactNode; detail?: string }
+
+type ProcessPanelGridProps = {
+  title?: string
+  subtitle?: string
+  logos: readonly ProcessPanelGridItem[]
+  footer?: string
+}
+
 import * as React from "react"
 import { CardHeader, Card, CardContent, CardFooter, CardTitle } from "@/components/ui/card"
 

@@ -1,46 +1,29 @@
 import type { ComponentProps } from "react"
 
+type SessionUser = {
+  id: string
+  clerkUserId: string
+  email: string | null
+  displayName: string | null
+  status: UserStatus
+}
+
+type AuthRedirectSearchParams = {
+  redirect_url?: string
+  redirectUrl?: string
+  return_to?: string
+  returnTo?: string
+}
+
+type ClerkWebhookEventType = (typeof SUPPORTED_CLERK_WEBHOOK_EVENT_TYPES)[number] | (string & {})
+type ClerkWebhookData = ClerkWebhookUserData & { user?: ClerkWebhookUserData | null }
+
 export const BASE_ROLE_VALUES = ["anonymous", "authenticated_user", "admin", "system"] as const
 export const CONTEXTUAL_ROLE_VALUES = ["merchant", "customer"] as const
 export const USER_STATUS_VALUES = ["active", "suspended", "disabled"] as const
 export const SETUP_REQUIREMENT_VALUES = ["payout_ready"] as const
 
-export type BaseRole = (typeof BASE_ROLE_VALUES)[number]
-export type ContextualRole = (typeof CONTEXTUAL_ROLE_VALUES)[number]
-export type UserStatus = (typeof USER_STATUS_VALUES)[number]
-export type SetupRequirement = (typeof SETUP_REQUIREMENT_VALUES)[number]
-
-export type AuthCapability =
-  | "view_public_marketing"
-  | "view_public_legal"
-  | "start_auth_flow"
-  | "view_dashboard"
-  | "view_own_account"
-  | "create_vouch"
-  | "confirm_presence"
-  | "view_vouches_where_participant"
-  | "view_admin_dashboard"
-  | "view_users_operational"
-  | "view_vouches_operational"
-  | "view_payment_records_operational"
-  | "view_audit_events_operational"
-  | "view_webhook_events_operational"
-  | "retry_safe_technical_operation"
-  | "disable_user_account"
-  | "suspend_user_account"
-
-export type AdminCapability = Extract<
-  AuthCapability,
-  | "view_admin_dashboard"
-  | "view_users_operational"
-  | "view_vouches_operational"
-  | "view_payment_records_operational"
-  | "view_audit_events_operational"
-  | "view_webhook_events_operational"
-  | "retry_safe_technical_operation"
-  | "disable_user_account"
-  | "suspend_user_account"
->
+type UserStatus = (typeof USER_STATUS_VALUES)[number]
 
 export type VouchAccessInput = {
   userId?: string | null
@@ -70,47 +53,10 @@ export type ConfirmPresenceAuthzInput = {
   userStatus?: UserStatus
 }
 
-export interface AuthzContext {
-  userId: string | null
-  baseRole: BaseRole
-  contextualRoles: ContextualRole[]
-  capabilities: AuthCapability[]
-  isAuthenticated: boolean
-  userStatus: UserStatus | null
-}
-
-export interface SessionContext {
-  userId: string | null
-  isAuthenticated: boolean
-  authz: AuthzContext
-  role: AuthzContext["baseRole"]
-}
-
-export interface SessionUser {
-  id: string
-  clerkUserId: string
-  email: string | null
-  displayName: string | null
-  status: UserStatus
-}
-
 export interface Session {
   user: SessionUser | null
   isAuthenticated: boolean
   userId: string | null
-}
-
-export interface SetupStatus {
-  accountActive: boolean
-  payoutReady: boolean
-  missingRequirements: SetupRequirement[]
-}
-
-export interface AuthRedirectSearchParams {
-  redirect_url?: string
-  redirectUrl?: string
-  return_to?: string
-  returnTo?: string
 }
 
 export interface LoginPageProps {
@@ -156,9 +102,6 @@ export const SUPPORTED_CLERK_WEBHOOK_EVENT_TYPES = [
   "user.updated",
 ] as const
 
-export type SupportedClerkWebhookEventType = (typeof SUPPORTED_CLERK_WEBHOOK_EVENT_TYPES)[number]
-export type ClerkWebhookEventType = SupportedClerkWebhookEventType | (string & {})
-
 export type ClerkWebhookUserData = {
   id: string
   email_addresses?: Array<{ email_address?: string; id?: string }>
@@ -176,18 +119,15 @@ export type ClerkWebhookUserData = {
   phone_number_id?: string | null
 }
 
-export type ClerkWebhookData = ClerkWebhookUserData & {
-  user?: ClerkWebhookUserData | null
-}
-
 export type ClerkWebhookEvent = {
   id?: string
   type: ClerkWebhookEventType
   data: ClerkWebhookData
 }
 
-export type ClerkWebhookProcessingStatus = "processed" | "ignored" | "duplicate"
-
-export type ClerkWebhookProcessingResult =
-  | { ok: true; status: ClerkWebhookProcessingStatus; ignored?: boolean; reason?: string }
-  | { ok: false; status: "failed"; message: string }
+export type LocalUserSyncInput = {
+  clerkUserId: string
+  email?: string | null
+  phone?: string | null
+  displayName?: string | null
+}

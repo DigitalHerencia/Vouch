@@ -92,9 +92,3 @@ export async function getAcceptVouchReadinessGate(input: { userId: string }) {
   const blockers = blockersFor("accept", readiness)
   return { allowed: blockers.length === 0, blockers, readiness }
 }
-
-export async function assertAcceptVouchReadinessReady(userId: string) {
-  const gate = await getAcceptVouchReadinessGate({ userId })
-  if (!gate.allowed) throw new Error(`READINESS_BLOCKED: ${gate.blockers.join(",")}`)
-  return { ok: true as const, blockers: [] as string[] }
-}

@@ -5,7 +5,7 @@ import { InvoiceSummaryList } from "@/components/dashboard/invoice-summary"
 import { HeroCentered } from "@/components/shared/hero-centered"
 import { StatsCards } from "@/components/shared/stats-cards"
 import { dashboardContent } from "@/content/dashboard"
-import { mapVouchToInvoice } from "@/lib/dto/dashboard.mappers"
+import { mapVouchToInvoice } from "@/lib/db/dto/dashboard.mappers"
 import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
 import type {
   DashboardPageStateDTO,

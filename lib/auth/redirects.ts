@@ -2,12 +2,12 @@
 
 const DEFAULT_AUTHENTICATED_REDIRECT = "/dashboard"
 
-export function isInternalPath(value: string | null | undefined): value is string {
+function isInternalPath(value: string | null | undefined): value is string {
   if (!value) return false
   return value.startsWith("/") && !value.startsWith("//") && !value.includes("://")
 }
 
-export function normalizeReturnTo(
+function normalizeReturnTo(
   value: string | null | undefined,
   fallback = DEFAULT_AUTHENTICATED_REDIRECT
 ): string {

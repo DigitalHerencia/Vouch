@@ -1,3 +1,27 @@
+type OTPVerificationFormProps = {
+  logo?: React.ReactNode
+  title?: string
+  description?: string
+  email?: string
+  length?: number
+  value?: string
+  notice?: string | null
+  error?: string | undefined
+  rootError?: string | undefined
+  disabled?: boolean
+  submitLabel?: string
+  resendLabel?: string
+  backLabel?: string
+  onChange?: (value: string) => void
+  onSubmit?: (value: string) => void
+  onResend?: () => void
+  onBackToLogin?: () => void
+  isSubmitting?: boolean
+  isResending?: boolean
+  isResetting?: boolean
+  actions?: React.ReactNode
+}
+
 import * as React from "react"
 import Link from "next/link"
 import { LoaderCircle } from "lucide-react"

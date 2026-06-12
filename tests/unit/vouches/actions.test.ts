@@ -1,80 +1,82 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-vi.mock("next/cache", () => ({
-  revalidatePath: vi.fn(),
+const workflows = vi.hoisted(() => ({
+  archiveVouch: vi.fn(),
+  calculatePlatformFee: vi.fn(),
+  claimCustomerAuthorizationCheckout: vi.fn(),
+  confirmPresence: vi.fn(),
+  confirmPresenceFormAction: vi.fn(),
+  createVouch: vi.fn(),
+  getCustomerAuthorizationCheckoutForAuthenticatedUser: vi.fn(),
+  getCreateVouchFormReadiness: vi.fn(),
+  validateCreateVouchDraft: vi.fn(),
 }))
 
-vi.mock("@/lib/fetchers/authFetchers", () => ({
-  requireActiveUser: vi.fn().mockResolvedValue({ id: "user_1", status: "active" }),
-  getCurrentUserPaymentCustomer: vi.fn().mockResolvedValue(null),
-}))
+vi.mock("@/lib/vouch/workflows", () => workflows)
 
-vi.mock("@/lib/fetchers/readinessFetchers", () => ({
-  assertCreateVouchReadinessReady: vi.fn(),
-}))
+import {
+  archiveVouch,
+  calculatePlatformFee,
+  claimCustomerAuthorizationCheckout,
+  confirmPresence,
+  confirmPresenceFormAction,
+  createVouch,
+  getCustomerAuthorizationCheckoutForAuthenticatedUser,
+  getCreateVouchFormReadiness,
+  validateCreateVouchDraft,
+} from "@/lib/actions/vouchActions"
 
-vi.mock("@/lib/db/prisma", () => ({
-  prisma: {
-    invitation: {
-      findUnique: vi.fn(),
-    },
-    $transaction: vi.fn(),
-  },
-}))
-
-vi.mock("@/lib/actions/paymentActions", () => ({
-  initializeStripeCheckoutSessionForVouch: vi.fn(),
-  initializeStripePaymentForVouch: vi.fn(),
-  refundOrVoidStripePaymentForVouch: vi.fn(),
-  releaseStripePaymentForCompletedVouch: vi.fn(),
-}))
-
-vi.mock("@/lib/actions/transactions/vouchTransactions", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/db/transactions/vouchTransactions")>()
-  return {
-    ...actual,
-    bindPayeeToVouchTx: vi.fn(),
-  }
-})
-
-describe("vouch actions", () => {
+describe("Vouch Server Actions", () => {
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it("returns an ActionResult when create readiness is blocked", async () => {
-    const { assertCreateVouchReadinessReady } = await import("@/lib/fetchers/readinessFetchers")
-    const { createVouch } = await import("@/lib/actions/vouchActions")
+  it.each([
+    ["calculatePlatformFee", calculatePlatformFee, workflows.calculatePlatformFee, { amountCents: 500 }],
+    ["validateCreateVouchDraft", validateCreateVouchDraft, workflows.validateCreateVouchDraft, { amountCents: 500 }],
+    ["createVouch", createVouch, workflows.createVouch, { amountCents: 500 }],
+    ["confirmPresence", confirmPresence, workflows.confirmPresence, { vouchId: "vouch_1" }],
+    ["archiveVouch", archiveVouch, workflows.archiveVouch, { vouchId: "vouch_1" }],
+  ])("%s delegates input and returns the workflow result", async (_, action, workflow, input) => {
+    const expected = { ok: true, data: { value: "result" } }
+    workflow.mockResolvedValueOnce(expected)
 
-    vi.mocked(assertCreateVouchReadinessReady).mockRejectedValueOnce(
-      new Error("READINESS_BLOCKED: payout_method_required")
-    )
-
-    const result = await createVouch({
-      amountCents: 10_000,
-      currency: "usd",
-      appointmentStartsAt: new Date("2026-05-01T16:00:00.000Z"),
-      disclaimerAccepted: true,
-    })
-
-    expect(result).toEqual({
-      ok: false,
-      code: "READINESS_BLOCKED",
-      formError: "Required account readiness is incomplete.",
-    })
+    await expect(action(input)).resolves.toBe(expected)
+    expect(workflow).toHaveBeenCalledWith(input)
   })
 
-  it("returns an ActionResult when create input is invalid", async () => {
-    const { assertCreateVouchReadinessReady } = await import("@/lib/fetchers/readinessFetchers")
-    const { createVouch } = await import("@/lib/actions/vouchActions")
+  it("delegates readiness options", async () => {
+    const input = { syncStripeConnectReturn: true }
+    const expected = { ok: true, data: { onboardingRequired: false } }
+    workflows.getCreateVouchFormReadiness.mockResolvedValueOnce(expected)
 
-    vi.mocked(assertCreateVouchReadinessReady).mockResolvedValueOnce({ ok: true, blockers: [] })
+    await expect(getCreateVouchFormReadiness(input)).resolves.toBe(expected)
+    expect(workflows.getCreateVouchFormReadiness).toHaveBeenCalledWith(input)
+  })
 
-    const result = await createVouch({ amountCents: 0 })
-
-    expect(result).toMatchObject({
-      ok: false,
-      code: "VALIDATION_FAILED",
+  it("delegates customer authorization checkout operations", async () => {
+    const claimInput = { checkoutSessionId: "cs_1", revalidate: true }
+    const lookupInput = { publicId: "VCH-1" }
+    workflows.claimCustomerAuthorizationCheckout.mockResolvedValueOnce({ ok: true })
+    workflows.getCustomerAuthorizationCheckoutForAuthenticatedUser.mockResolvedValueOnce({
+      ok: true,
     })
+
+    await claimCustomerAuthorizationCheckout(claimInput)
+    await getCustomerAuthorizationCheckoutForAuthenticatedUser(lookupInput)
+
+    expect(workflows.claimCustomerAuthorizationCheckout).toHaveBeenCalledWith(claimInput)
+    expect(workflows.getCustomerAuthorizationCheckoutForAuthenticatedUser).toHaveBeenCalledWith(
+      lookupInput
+    )
+  })
+
+  it("delegates FormData confirmation actions", async () => {
+    const formData = new FormData()
+    formData.set("vouchId", "vouch_1")
+
+    await confirmPresenceFormAction(formData)
+
+    expect(workflows.confirmPresenceFormAction).toHaveBeenCalledWith(formData)
   })
 })

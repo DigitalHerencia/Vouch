@@ -1,3 +1,9 @@
+type LogoLockupProps = {
+  className?: string
+  iconClassName?: string
+  textClassName?: string
+}
+
 // components/nav/logo-lockup.tsx
 
 import { Handshake } from "lucide-react"

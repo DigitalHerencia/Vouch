@@ -1,6 +1,6 @@
 import { ArrowLeft, FileQuestion, Home, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { safeHref } from "@/lib/utils"
+import { safeHref } from "@/lib/utils/utils"
 import { type NotFoundPageProps } from "@/types/commonTypes"
 import { Input } from "@/components/ui/input"
 

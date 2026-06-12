@@ -1,8 +1,25 @@
 "use client"
 
+type TimelineContextValue = { orientation: "vertical" | "horizontal" }
+
+type TimelineProps = React.ComponentPropsWithoutRef<"div"> & {
+  orientation?: TimelineContextValue["orientation"]
+}
+
+type TimelineStatus = "completed" | "current" | "upcoming"
+
+type TimelineItemProps = React.ComponentPropsWithoutRef<"div"> & { status?: TimelineStatus }
+
+type TimelineDotProps = React.ComponentPropsWithoutRef<"div"> & {
+  status?: TimelineStatus
+  size?: "sm" | "md" | "lg"
+}
+
+type TimelineConnectorProps = React.ComponentPropsWithoutRef<"div"> & { status?: TimelineStatus }
+
 import * as React from "react"
 import { cva } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/utils"
 
 const TimelineContext = React.createContext<TimelineContextValue>({
   orientation: "vertical",

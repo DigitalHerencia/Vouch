@@ -1,3 +1,19 @@
+type FeatureGridItem = {
+  title: string
+  description?: string
+  icon?: React.ReactNode
+  image?: string
+  size?: "normal" | "wide" | "tall"
+  span?: string
+}
+
+type FeatureBentoGridProps = {
+  title?: string
+  subtitle?: string
+  align?: "left" | "center"
+  features: readonly FeatureGridItem[]
+}
+
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const featureColors = ["bg-black"]

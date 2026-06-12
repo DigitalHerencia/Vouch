@@ -1,3 +1,27 @@
+type AuthAction = { label: string; href?: string; onClick?: () => void }
+
+type HeroAction = AuthAction
+
+type HeroCenteredProps = {
+  eyebrow?: string
+  title: string
+  titleHighlight?: string
+  description?: string
+  primaryAction?: HeroAction
+  secondaryAction?: HeroAction
+  align?: "left" | "center"
+}
+
+type HeroSplitProps = HeroCenteredProps & {
+  imageSrc: string
+  imageAlt?: string
+  imagePosition?: "left" | "right"
+}
+
+type HeroMinimalProps = { title: string; description?: string; primaryAction?: HeroAction }
+
+type HeroWithVideoProps = HeroCenteredProps & { videoThumbnail: string; onPlayClick?: () => void }
+
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 

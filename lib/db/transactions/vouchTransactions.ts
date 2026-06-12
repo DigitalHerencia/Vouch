@@ -2,9 +2,8 @@ import "server-only"
 
 import { createHash, randomUUID } from "node:crypto"
 
-import type { Prisma, PrismaClient, VouchStatus } from "@/prisma/generated/prisma/client"
-
-type Tx = Omit<PrismaClient, "$connect" | "$disconnect" | "$on" | "$transaction" | "$extends">
+import type { Prisma, VouchStatus } from "@/prisma/generated/prisma/client"
+import type { PrismaTransactionClient as Tx } from "@/types/commonTypes"
 
 type CreateVouchTxInput = {
   merchantId: string

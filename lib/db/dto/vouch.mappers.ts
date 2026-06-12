@@ -1,7 +1,8 @@
 import "server-only"
 
 import type { VouchStatus } from "@/prisma/generated/prisma/client"
-import type { ISODateTime } from "@/types/commonTypes"
+import type { ISODateTime, NullableDateLike as DateLike } from "@/types/commonTypes"
+import type { AggregateConfirmationStatus } from "@/types/vouchTypes"
 
 import {
   mapPaymentRecordParticipantDTO,
@@ -12,8 +13,6 @@ import {
   toMoneyDTO,
 } from "./payment.mappers"
 
-type DateLike = Date | string | null | undefined
-
 type SafeUserRecord = {
   id: string
   displayName: string | null
@@ -21,7 +20,7 @@ type SafeUserRecord = {
   status: string
 }
 
-export type SafeUserDTO = SafeUserRecord
+type SafeUserDTO = SafeUserRecord
 
 type PresenceConfirmationRecord = {
   id: string
@@ -37,7 +36,7 @@ type PresenceConfirmationRecord = {
   updatedAt?: DateLike
 }
 
-export type PresenceConfirmationDTO = {
+type PresenceConfirmationDTO = {
   id: string
   vouchId: string
   status: string
@@ -50,12 +49,6 @@ export type PresenceConfirmationDTO = {
   createdAt: ISODateTime | null
   updatedAt: ISODateTime | null
 }
-
-export type AggregateConfirmationStatus =
-  | "none_confirmed"
-  | "merchant_confirmed"
-  | "customer_confirmed"
-  | "both_confirmed"
 
 type VouchBaseRecord = {
   id: string
@@ -119,16 +112,7 @@ export type VouchDetailDTO = VouchCardDTO & {
   windowState: "before_window" | "open" | "closed"
 }
 
-export type VouchWindowSummaryDTO = {
-  id: string
-  status: string
-  appointmentAt: ISODateTime | null
-  confirmationOpensAt: ISODateTime | null
-  confirmationExpiresAt: ISODateTime | null
-  windowState: "before_window" | "open" | "closed"
-}
-
-export type VouchConfirmationStateDTO = {
+type VouchConfirmationStateDTO = {
   id: string
   merchantId: string
   customerId: string | null
@@ -178,7 +162,7 @@ function mapPresenceConfirmationDTO(
   }
 }
 
-export function getAggregateConfirmationStatus(
+function getAggregateConfirmationStatus(
   confirmation: PresenceConfirmationDTO | PresenceConfirmationDTO[] | null | undefined
 ): AggregateConfirmationStatus {
   const confirmations = Array.isArray(confirmation)
@@ -195,7 +179,7 @@ export function getAggregateConfirmationStatus(
   return "none_confirmed"
 }
 
-export function getWindowState(input: {
+function getWindowState(input: {
   confirmationOpensAt: DateLike
   confirmationExpiresAt: DateLike
   now?: Date
@@ -253,20 +237,6 @@ export function mapVouchDetailDTO(record: VouchBaseRecord): VouchDetailDTO {
     expiredAt: toIso(record.expiredAt),
     archivedAt: toIso(record.archivedAt),
     refundRecords: mapRefundRecordParticipantDTOs(record.refunds),
-    windowState: getWindowState({
-      confirmationOpensAt: record.confirmationOpensAt,
-      confirmationExpiresAt: record.confirmationExpiresAt,
-    }),
-  }
-}
-
-export function mapVouchWindowSummaryDTO(record: VouchBaseRecord): VouchWindowSummaryDTO {
-  return {
-    id: record.id,
-    status: record.status,
-    appointmentAt: toIso(record.appointmentAt),
-    confirmationOpensAt: toIso(record.confirmationOpensAt),
-    confirmationExpiresAt: toIso(record.confirmationExpiresAt),
     windowState: getWindowState({
       confirmationOpensAt: record.confirmationOpensAt,
       confirmationExpiresAt: record.confirmationExpiresAt,

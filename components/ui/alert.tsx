@@ -1,6 +1,8 @@
+type AlertActionProps = React.ComponentPropsWithoutRef<"button"> & { loading?: boolean }
+
 import * as React from "react"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/utils"
 
 const alertVariants = cva(
   "relative w-full animate-in border-3 border-neutral-400 p-4 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all duration-300 fade-in-0 slide-in-from-top-2 [&>svg]:absolute [&>svg]:top-4 [&>svg]:left-4 [&>svg]:text-white [&>svg+div]:translate-y-[-3px] [&>svg~*:not([data-alert-action])]:pl-8 [&>svg~[data-alert-action]]:ml-8",

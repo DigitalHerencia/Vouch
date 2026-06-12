@@ -1,6 +1,73 @@
+type EmptyStatePresetType =
+  | "no-results"
+  | "no-data"
+  | "empty-inbox"
+  | "empty-folder"
+  | "no-users"
+  | "empty-cart"
+  | "no-notifications"
+  | "no-images"
+  | "error"
+  | "offline"
+  | "permission-denied"
+  | "coming-soon"
+  | "maintenance"
+  | "upload"
+
+type EmptyStateIconProps = React.ComponentPropsWithoutRef<"div"> & {
+  size?: "xs" | "sm" | "md" | "lg" | "xl"
+  iconColor?:
+    | "default"
+    | "primary"
+    | "secondary"
+    | "accent"
+    | "muted"
+    | "destructive"
+    | "warning"
+    | "success"
+  iconSize?: "xs" | "sm" | "md" | "lg" | "xl"
+}
+
+type PresetConfig = {
+  title: string
+  description: string
+  icon?: React.ReactNode
+  iconColor?: EmptyStateIconProps["iconColor"]
+}
+
+type EmptyStateProps = React.ComponentPropsWithoutRef<"div"> & {
+  title?: string
+  description?: string
+  icon?: React.ReactNode
+  actions?: React.ReactNode
+  variant?: "default" | "filled" | "card" | undefined
+  size?: "compact" | "sm" | "md" | "lg" | undefined
+  layout?: "vertical" | "horizontal" | undefined
+  animation?: "none" | "fadeIn" | "bounce" | "scale" | undefined
+}
+
+type EmptyStateIllustrationProps = React.ComponentPropsWithoutRef<"div"> & { maxWidth?: string }
+
+type EmptyStateTitleProps = React.ComponentPropsWithoutRef<"h2">
+
+type EmptyStateDescriptionProps = React.ComponentPropsWithoutRef<"p">
+
+type EmptyStateActionsProps = React.ComponentPropsWithoutRef<"div">
+
+type EmptyStatePresetProps = EmptyStateProps & {
+  preset: EmptyStatePresetType
+  customTitle?: string
+  customDescription?: string
+  customIcon?: React.ReactNode
+  illustration?: React.ReactNode
+  action?: React.ReactNode
+  iconColor?: EmptyStateIconProps["iconColor"]
+  iconSize?: EmptyStateIconProps["size"]
+}
+
 import * as React from "react"
 import { cva } from "class-variance-authority"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/utils"
 import {
   FileQuestion,
   Search,

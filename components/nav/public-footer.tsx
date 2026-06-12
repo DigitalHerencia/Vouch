@@ -1,3 +1,7 @@
+type PublicFooterLink = { label: string; href: string }
+
+type PublicFooterProps = { links?: readonly PublicFooterLink[] }
+
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"

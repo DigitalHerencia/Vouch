@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest"
 
-import { canAccessVouch, canAcceptVouch, canConfirmVouch } from "@/lib/authz/policies"
+import { canAcceptVouch, canConfirmPresence, canViewVouch } from "@/lib/authz/policies"
 
 describe("authz policies", () => {
   it("allows merchant to access own Vouch", () => {
     expect(
-      canAccessVouch({
+      canViewVouch({
         userId: "user_merchant",
         merchantId: "user_merchant",
         customerId: "user_customer",
@@ -15,7 +15,7 @@ describe("authz policies", () => {
 
   it("blocks unrelated users", () => {
     expect(
-      canAccessVouch({
+      canViewVouch({
         userId: "unrelated",
         merchantId: "user_merchant",
         customerId: "user_customer",
@@ -25,7 +25,7 @@ describe("authz policies", () => {
 
   it("denies unauthenticated users", () => {
     expect(
-      canAccessVouch({
+      canViewVouch({
         userId: null,
         merchantId: "user_merchant",
         customerId: "user_customer",
@@ -58,7 +58,7 @@ describe("authz policies", () => {
 
   it("requires active participant for confirmation", () => {
     expect(
-      canConfirmVouch({
+      canConfirmPresence({
         userId: "user_customer",
         merchantId: "user_merchant",
         customerId: "user_customer",

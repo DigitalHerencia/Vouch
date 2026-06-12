@@ -1,3 +1,7 @@
+type FAQItem = { question: string; answer: string; category?: string }
+
+type FAQSimpleListProps = { title?: string; subtitle?: string; items: readonly FAQItem[] }
+
 const subtitleMotion =
   "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
 const headingMotion =

@@ -1,3 +1,30 @@
+type AuthAction = { label: string; href?: string; onClick?: () => void }
+
+type HeroAction = AuthAction
+
+type HeroCenteredProps = {
+  eyebrow?: string
+  title: string
+  titleHighlight?: string
+  description?: string
+  primaryAction?: HeroAction
+  secondaryAction?: HeroAction
+  align?: "left" | "center"
+}
+
+type HeroSplitPanelProps = HeroCenteredProps & {
+  panelTitle: string
+  panelSteps: Array<{
+    number: string
+    title: string
+    body: string
+    icon: React.ComponentType<{ className?: string; strokeWidth?: number }>
+  }>
+  panelFooter?: string
+  panelId?: string
+  panelPosition?: "left" | "right"
+}
+
 import Link from "next/link"
 
 import { Button } from "@/components/ui/button"
@@ -65,7 +92,9 @@ export function HeroSplitPanel({
               })}
             </h1>
 
-            <p className={`max-w-xl text-lg font-medium text-neutral-400 md:text-xl ${bodyTextMotion}`}>
+            <p
+              className={`max-w-xl text-lg font-medium text-neutral-400 md:text-xl ${bodyTextMotion}`}
+            >
               {description}
             </p>
             {(primaryAction || secondaryAction) && (
@@ -109,7 +138,10 @@ export function HeroSplitPanel({
               const Icon = step.icon
 
               return (
-                <section key={`${step.number}-${step.title}`} className="border-b-3 border-neutral-400 last:border-b-0">
+                <section
+                  key={`${step.number}-${step.title}`}
+                  className="border-b-3 border-neutral-400 last:border-b-0"
+                >
                   <div className="grid min-h-24 min-w-0 grid-cols-[minmax(0,1fr)_5.5rem] md:min-h-27 md:grid-cols-[minmax(0,1fr)_112px]">
                     <div className="flex min-w-0 items-center gap-3 px-4 py-3 md:gap-4 md:px-6">
                       <div className="flex size-14 shrink-0 items-center justify-center border-3 border-neutral-400 md:size-16">
@@ -117,7 +149,9 @@ export function HeroSplitPanel({
                       </div>
 
                       <div>
-                        <h3 className="text-xl tracking-normal text-white md:text-2xl">{step.title}</h3>
+                        <h3 className="text-xl tracking-normal text-white md:text-2xl">
+                          {step.title}
+                        </h3>
                         <p className="text-sm leading-tight font-semibold text-neutral-400 md:text-base">
                           {step.body}
                         </p>
@@ -135,7 +169,9 @@ export function HeroSplitPanel({
 
           {panelFooter ? (
             <CardFooter className="justify-center bg-blue-600 px-5 py-4 text-center">
-              <h3 className="text-xl font-black tracking-wide text-white md:text-2xl">{panelFooter}</h3>
+              <h3 className="text-xl font-black tracking-wide text-white md:text-2xl">
+                {panelFooter}
+              </h3>
             </CardFooter>
           ) : null}
         </Card>

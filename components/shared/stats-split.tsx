@@ -1,3 +1,21 @@
+type StatItem = {
+  label: string
+  value: string
+  description?: string
+  trend?: "up" | "down" | "neutral"
+  trendValue?: string
+  icon?: React.ReactNode
+  body?: string
+}
+
+type StatsSplitProps = {
+  subtitle?: string
+  title: string
+  description?: string
+  stats: StatItem[]
+  contentPosition?: "left" | "right"
+}
+
 import { CheckSquare } from "lucide-react"
 
 import { Card, CardContent } from "@/components/ui/card"

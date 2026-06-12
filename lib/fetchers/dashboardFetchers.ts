@@ -6,7 +6,7 @@ import { unstable_noStore as noStore } from "next/cache"
 
 import type { Prisma, VouchStatus } from "@/prisma/generated/prisma/client"
 
-import { getDashboardVariant, mapDashboardSummaryDTO } from "@/lib/dto/dashboard.mappers"
+import { getDashboardVariant, mapDashboardSummaryDTO } from "@/lib/db/dto/dashboard.mappers"
 import { prisma } from "@/lib/db/prisma"
 import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
@@ -49,7 +49,6 @@ async function syncStripeReturns(input: {
       })
     }
   }
-
 }
 
 function getParticipantWhere(userId: string): Prisma.VouchWhereInput {

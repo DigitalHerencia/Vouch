@@ -1,3 +1,5 @@
+type PublicShellProps = { children: React.ReactNode; withMobileBottomNav?: boolean }
+
 import { PublicHeader } from "@/components/nav/public-header"
 import { PublicFooter } from "@/components/nav/public-footer"
 import { PublicMobileBottomNav } from "@/components/nav/mobile-bottom-nav"

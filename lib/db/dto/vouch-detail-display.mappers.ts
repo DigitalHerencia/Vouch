@@ -1,7 +1,7 @@
 import "server-only"
 
-import type { AuditTimelineItemDTO } from "@/lib/dto/audit.mappers"
-import type { VouchDetailDTO } from "@/lib/dto/vouch.mappers"
+import type { AuditTimelineItemDTO } from "@/lib/db/dto/audit.mappers"
+import type { VouchDetailDTO } from "@/lib/db/dto/vouch.mappers"
 import type {
   ParticipantRole,
   VouchDetailDisplayDTO,

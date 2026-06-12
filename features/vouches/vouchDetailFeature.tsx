@@ -6,7 +6,7 @@ import {
   VouchDeadlineRefresh,
 } from "@/features/vouches/vouchDetailFeature.client"
 import { confirmPresence } from "@/lib/actions/vouchActions"
-import { mapVouchDetailDisplayDTO } from "@/lib/dto/vouch-detail-display.mappers"
+import { mapVouchDetailDisplayDTO } from "@/lib/db/dto/vouch-detail-display.mappers"
 import { getVouchDetailPageState } from "@/lib/fetchers/vouchFetchers"
 
 type VouchDetailPageProps = {

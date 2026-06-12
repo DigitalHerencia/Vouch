@@ -2,7 +2,7 @@
 
 import "server-only"
 
-import { mapVouchCardDTO, type VouchCardDTO } from "@/lib/dto/vouch.mappers"
+import { mapVouchCardDTO, type VouchCardDTO } from "@/lib/db/dto/vouch.mappers"
 import {
   formatCurrency,
   formatDateTime,
@@ -82,7 +82,7 @@ function formatWindowLabel(input: { opensAt: string | null; expiresAt: string | 
   return `${startTime} – ${endTime}`
 }
 
-export function mapDashboardVouchCards(records: DashboardVouchRecord[]): VouchCardDTO[] {
+function mapDashboardVouchCards(records: DashboardVouchRecord[]): VouchCardDTO[] {
   return records.map(mapVouchCardDTO)
 }
 

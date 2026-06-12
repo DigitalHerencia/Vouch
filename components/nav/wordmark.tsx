@@ -1,3 +1,7 @@
+type WordmarkProps = {
+  asImage?: boolean
+}
+
 // components/nav/wordmark.tsx
 
 import Image from "next/image"

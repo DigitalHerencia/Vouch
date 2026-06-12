@@ -1,5 +1,3 @@
-export type FieldErrors = Record<string, string[]>
-
 export type ActionResult<TData = void> =
   | {
       ok: true
@@ -28,3 +26,4 @@ export function actionFailure<TCode extends string>(
     ...(fieldErrors ? { fieldErrors } : {}),
   }
 }
+type FieldErrors = Record<string, string[]>

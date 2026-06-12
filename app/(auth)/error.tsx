@@ -18,7 +18,7 @@ export default function AuthError({
   return (
     <GenericErrorPage
       title="Authentication view failed"
-      description="The authentication surface could not render. Try again or return home."
+      description="Sign-in or sign-up could not load. Try again or return home."
       actions={[
         { label: "Try again", onClick: reset },
         { label: "Home", href: "/", variant: "outline" },

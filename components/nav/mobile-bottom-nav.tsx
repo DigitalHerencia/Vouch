@@ -1,14 +1,45 @@
 "use client"
 
-import {
-  FileText,
-  HelpCircle,
-  Home,
-  Plus,
-  Shield,
-  ShieldCheck,
-  User,
-} from "lucide-react"
+type TenantStripeAction = ((formData: FormData) => void | Promise<void>) | undefined
+
+type MobileBottomNavWarning = {
+  title: string
+  consequence: string
+  context: string
+  finePrint: string
+  actionLabel?: string
+}
+
+type MobileBottomNavItem = {
+  label: string
+  href?: string | undefined
+  action?: TenantStripeAction
+  icon?: React.ComponentType<{ className?: string }>
+  kind?: "link" | "action" | "account"
+  primary?: boolean
+  warning?: MobileBottomNavWarning
+}
+
+type ActionItem = {
+  label: string
+  action?: TenantStripeAction
+  icon?: React.ComponentType<{ className?: string }>
+  primary?: boolean
+  warning?: MobileBottomNavWarning
+}
+
+type MobileBottomNavProps = {
+  items: readonly MobileBottomNavItem[]
+  actions?: readonly ActionItem[]
+  "aria-label"?: string
+}
+
+type TenantMobileBottomNavProps = {
+  connectAction?: TenantStripeAction
+  connectReady: boolean
+}
+
+import { FileText, Handshake, HelpCircle, Home, Shield, ShieldCheck, User } from "lucide-react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -53,17 +84,15 @@ export function MobileBottomNav({
             ? "flex h-full min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] leading-none font-semibold text-white uppercase"
             : "flex h-full min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 text-[9px] leading-none font-semibold text-neutral-400 uppercase"
 
-          const iconClassName = item.primary
-            ? "grid size-5 shrink-0 place-items-center text-blue-600"
-            : "grid size-5 shrink-0 place-items-center text-white"
+          const iconClassName = "grid size-5 shrink-0 place-items-center text-white"
 
           const content = (
             <>
               <span className={iconClassName}>
                 {item.kind === "account" ? (
-                  <UserMenu size="compact" />
+                  <UserMenu size="nav" />
                 ) : Icon ? (
-                  <Icon className="size-4" />
+                  <Icon aria-hidden="true" className="size-5" />
                 ) : null}
               </span>
               <span className="max-w-full truncate">{item.label}</span>
@@ -131,7 +160,7 @@ export function MobileBottomNav({
               <form action={pendingAction.action}>
                 <input type="hidden" name="returnPath" value={returnPath} />
                 <Button type="submit" className="w-full">
-                  {pendingAction.label === "Method" ? "Save payment method" : "Continue"}
+                  {pendingAction.warning?.actionLabel ?? "Continue to Stripe"}
                 </Button>
               </form>
             </DrawerFooter>
@@ -144,33 +173,32 @@ export function MobileBottomNav({
 
 const publicItems = [
   { kind: "link", href: "/", label: "Home", icon: Home },
-  { kind: "link", href: "/pricing", label: "Price", icon: FileText },
+  { kind: "link", href: "/pricing", label: "Pricing", icon: FileText },
   { kind: "link", href: "/faq", label: "FAQ", icon: HelpCircle },
-  { kind: "link", href: "/sign-in", label: "Sign", icon: ShieldCheck },
+  { kind: "link", href: "/sign-in", label: "Sign in", icon: ShieldCheck },
 ] satisfies readonly MobileBottomNavItem[]
 
 export function PublicMobileBottomNav() {
   return <MobileBottomNav items={publicItems} aria-label="Public mobile navigation" />
 }
 
-export function TenantMobileBottomNav({ connectAction }: TenantMobileBottomNavProps) {
+export function TenantMobileBottomNav({ connectAction, connectReady }: TenantMobileBottomNavProps) {
   const tenantItems = [
-    { kind: "link", href: "/dashboard", label: "Dash", icon: Home },
+    { kind: "link", href: "/dashboard", label: "Dashboard", icon: Home },
     {
       kind: "link",
       href: "/vouches/new",
-      label: "New",
-      icon: Plus,
-      primary: true,
+      label: "New Vouch",
+      icon: Handshake,
     },
     {
       kind: "action",
       label: "Stripe",
       icon: Shield,
       action: connectAction,
-      warning: vouchPageCopy.providerRedirects.connect,
+      warning: vouchPageCopy.providerRedirects[connectReady ? "connectDashboard" : "connect"],
     },
-    { kind: "account", label: "Me", icon: User },
+    { kind: "account", label: "Account", icon: User },
   ] satisfies readonly MobileBottomNavItem[]
 
   return <MobileBottomNav items={tenantItems} aria-label="Tenant mobile navigation" />

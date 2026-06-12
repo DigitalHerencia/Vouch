@@ -1,5 +1,17 @@
-// components/nav/tenant-header.tsx
 "use client"
+
+type TenantHeaderNavItem = { label: string; href: string }
+
+type TenantStripeAction = ((formData: FormData) => void | Promise<void>) | undefined
+
+type TenantHeaderProps = {
+  navItems?: readonly TenantHeaderNavItem[]
+  items?: readonly TenantHeaderNavItem[]
+  connectAction?: TenantStripeAction
+  connectReady: boolean
+}
+
+// components/nav/tenant-header.tsx
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
@@ -26,11 +38,14 @@ export const defaultTenantNavItems = [
 
 export function TenantHeader({
   connectAction,
+  connectReady,
   navItems = defaultTenantNavItems,
 }: TenantHeaderProps) {
   const pathname = usePathname()
   const [pendingProvider, setPendingProvider] = useState<"connect" | null>(null)
-  const providerCopy = pendingProvider ? vouchPageCopy.providerRedirects[pendingProvider] : null
+  const providerCopy = pendingProvider
+    ? vouchPageCopy.providerRedirects[connectReady ? "connectDashboard" : pendingProvider]
+    : null
   const providerAction = connectAction
   const returnPath = pathname === "/vouches/new" ? "/vouches/new" : "/dashboard"
 
@@ -101,7 +116,7 @@ export function TenantHeader({
             <form action={providerAction}>
               <input type="hidden" name="returnPath" value={returnPath} />
               <Button type="submit" className="w-full">
-                Continue to Stripe
+                {connectReady ? "Open Stripe dashboard" : "Continue to Stripe"}
               </Button>
             </form>
           </DrawerFooter>

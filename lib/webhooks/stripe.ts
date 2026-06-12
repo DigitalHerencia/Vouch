@@ -26,9 +26,7 @@ import {
   markProtocolFeePaidAndIssueAuthorizationCheckout,
   refreshCustomerDepositPaymentIntent,
 } from "@/lib/vouch/workflows"
-import {
-  syncConnectedAccountReadinessForUser,
-} from "@/lib/payments/stripeReadinessSync"
+import { syncConnectedAccountReadinessForUser } from "@/lib/payments/stripeReadinessSync"
 import { actionFailure, actionSuccess, type ActionResult } from "@/types/action-resultTypes"
 
 type WebhookProcessResult = {

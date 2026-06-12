@@ -1,3 +1,17 @@
+type StatItem = {
+  label: string
+  value: string
+  description?: string
+  trend?: "up" | "down" | "neutral"
+  trendValue?: string
+  icon?: React.ReactNode
+  body?: string
+}
+
+type StatsInlineProps = { stats: StatItem[] }
+
+type StatsWithIconsProps = { stats: StatItem[] }
+
 import * as React from "react"
 
 export function StatsInline({ stats }: StatsInlineProps) {

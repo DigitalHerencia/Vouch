@@ -44,20 +44,17 @@ describe("confirmation helpers", () => {
   it("derives role-specific confirmation codes and validates only matching submissions", () => {
     process.env.CONFIRMATION_CODE_SECRET = "test-confirmation-secret"
 
-    const at = new Date("2026-01-01T10:15:00.000Z")
     const merchantCode = deriveConfirmationCode({
       vouchId: "vouch_1",
       publicId: "vch_public",
       participantRole: "merchant",
       participantUserId: "merchant_1",
-      at,
     })
     const customerCode = deriveConfirmationCode({
       vouchId: "vouch_1",
       publicId: "vch_public",
       participantRole: "customer",
       participantUserId: "customer_1",
-      at,
     })
 
     expect(merchantCode).toMatch(/^\d{6}$/)
@@ -70,7 +67,6 @@ describe("confirmation helpers", () => {
         participantRole: "customer",
         participantUserId: "customer_1",
         submittedCode: customerCode,
-        at,
       })
     ).toBe(true)
     expect(
@@ -80,7 +76,6 @@ describe("confirmation helpers", () => {
         participantRole: "customer",
         participantUserId: "customer_1",
         submittedCode: merchantCode,
-        at,
       })
     ).toBe(false)
   })

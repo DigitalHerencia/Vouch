@@ -1,7 +1,12 @@
 // types/dashboardTypes.ts
 
-import type { VouchCardDTO } from "@/lib/dto/vouch.mappers"
-import type { VouchListSort } from "./vouchTypes"
+import type { VouchCardDTO } from "@/lib/db/dto/vouch.mappers"
+import type { VouchListSort, VouchStatusTone } from "./vouchTypes"
+
+type DashboardStatusFilter = "all" | DashboardSectionKey
+type DashboardVariant = "empty" | "mixed_vouch_states"
+type DashboardCounts = Record<DashboardSectionKey, number>
+type DashboardSections = Record<DashboardSectionKey, VouchCardDTO[]>
 
 export type DashboardSectionKey =
   | "drafts"
@@ -11,19 +16,11 @@ export type DashboardSectionKey =
   | "expired"
   | "archived"
 
-export type DashboardStatusFilter = "all" | DashboardSectionKey
-
-export type DashboardVariant = "empty" | "mixed_vouch_states"
-
 export type DashboardFiltersDTO = {
   status: DashboardStatusFilter
   page: number
   sort: VouchListSort
 }
-
-export type DashboardCounts = Record<DashboardSectionKey, number>
-
-export type DashboardSections = Record<DashboardSectionKey, VouchCardDTO[]>
 
 export type DashboardSummaryDTO = {
   userId: string
@@ -36,21 +33,6 @@ export type DashboardPageStateDTO = {
   filters: DashboardFiltersDTO
   summary: DashboardSummaryDTO | null
 }
-
-export type DashboardSearchParams = {
-  status?: DashboardStatusFilter
-  page?: number
-  sort?: VouchListSort
-}
-
-export type DashboardSectionState = {
-  id: DashboardSectionKey
-  title: string
-  count: number
-  collapsed?: boolean
-}
-
-export type VouchStatusTone = "active" | "pending" | "complete" | "failed" | "expired" | "offline"
 
 export type DashboardStatItem = {
   label: string

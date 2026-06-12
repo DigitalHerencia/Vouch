@@ -1,8 +1,6 @@
 import "server-only"
 
-import type { ISODateTime } from "@/types/commonTypes"
-
-type DateLike = Date | string | null | undefined
+import type { ISODateTime, NullableDateLike as DateLike } from "@/types/commonTypes"
 
 export type MoneyDTO = {
   cents: number
@@ -125,7 +123,7 @@ export function mapPaymentRecordParticipantDTO(
   }
 }
 
-export function mapRefundRecordParticipantDTO(
+function mapRefundRecordParticipantDTO(
   record: RefundRecordRecord | null | undefined
 ): RefundRecordParticipantDTO | null {
   if (!record) return null

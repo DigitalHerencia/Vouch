@@ -1,8 +1,6 @@
 import "server-only"
 
-import type { ISODateTime } from "@/types/commonTypes"
-
-type DateLike = Date | string | null | undefined
+import type { ISODateTime, NullableDateLike as DateLike } from "@/types/commonTypes"
 
 export type AuditTimelineItemDTO = {
   id: string
@@ -45,7 +43,7 @@ function toAuditTimelineMetadata(value: unknown): Record<string, unknown> | null
   )
 }
 
-export function mapAuditTimelineItemDTO(record: AuditTimelineItemRecord): AuditTimelineItemDTO {
+function mapAuditTimelineItemDTO(record: AuditTimelineItemRecord): AuditTimelineItemDTO {
   return {
     id: record.id,
     eventName: record.eventName,

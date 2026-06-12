@@ -37,6 +37,12 @@ export const PROVIDER_WEBHOOK_STATUS_VALUES = [
   "failed",
 ] as const
 
+export const VOUCH_LIMITS = {
+  minAmountCents: 500,
+  maxAmountCents: 250000,
+  inviteTokenBytes: 32,
+} as const
+
 export const PAYOUT_READINESS_STATUS_VALUES = [
   "not_started",
   "requires_action",

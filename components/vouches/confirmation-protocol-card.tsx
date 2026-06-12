@@ -1,6 +1,7 @@
 import { ShieldCheck } from "lucide-react"
 
 import { ConfirmStateTile } from "@/components/vouches/confirm-state-tile"
+import type { VouchStatusDocumentData } from "@/types/vouchTypes"
 
 export function ConfirmationProtocolCard({
   merchantConfirmed,

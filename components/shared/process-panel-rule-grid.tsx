@@ -1,3 +1,19 @@
+type ProcessPanelStep = {
+  number?: string
+  label?: string
+  value?: string
+  title?: string
+  body?: string
+  icon?: React.ComponentType<{ className?: string; strokeWidth?: number }>
+}
+
+type ProcessPanelRuleGridProps = {
+  title?: string
+  items: readonly ProcessPanelStep[]
+  footer?: string | React.ReactNode
+  id?: string
+}
+
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 const panelMotion =

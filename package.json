@@ -19,6 +19,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
+    "test:target": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:e2e": "playwright test",
@@ -32,8 +33,8 @@
     "prisma:generate": "prisma generate",
     "prisma:validate": "prisma validate",
     "validate:contracts": "node scripts/validate-contracts.mjs",
-    "validate": "pnpm lint && pnpm typecheck && pnpm prisma:validate && pnpm validate:contracts && pnpm test",
-    "validate:all": "pnpm validate && pnpm test:e2e",
+    "validate": "corepack pnpm lint && corepack pnpm typecheck && corepack pnpm prisma:validate && corepack pnpm validate:contracts && corepack pnpm test",
+    "validate:all": "corepack pnpm validate && corepack pnpm test:e2e",
     "clean": "rimraf .next coverage test-results playwright-report"
   },
   "dependencies": {

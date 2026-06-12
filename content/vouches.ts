@@ -81,6 +81,15 @@ export const vouchPageCopy = {
         "Stripe will guide you through the details it needs for verification, banking, and payout access.",
       finePrint: "You'll return to Vouch when you're done.",
     },
+    connectDashboard: {
+      title: "Open your Stripe dashboard",
+      consequence:
+        "Manage your connected Stripe account, review payments, and access payout details.",
+      context:
+        "Stripe hosts your connected account dashboard and keeps payment and payout controls secure.",
+      finePrint: "You'll leave Vouch and continue in your Stripe dashboard.",
+      actionLabel: "Open Stripe dashboard",
+    },
   },
   confirm: {
     eyebrow: "Presence confirmation",
