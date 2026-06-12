@@ -5,11 +5,11 @@ export function DashboardSkeleton() {
   const invoices = Array.from({ length: 3 }, (_, index) => `dashboard-invoice-${index}`)
 
   return (
-    <div className="grid gap-8 md:gap-10">
+    <div className="grid gap-[var(--vouch-section-gap)]">
       <section>
         <div className="flex max-w-5xl animate-pulse flex-col items-start gap-6">
-          <div className="h-6 w-44 border-2 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]" />
-          <div className="h-18 w-full max-w-2xl bg-neutral-900 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] md:h-22" />
+          <div className="h-6 w-44 border-2 border-neutral-400 bg-black shadow-vouch-sm" />
+          <div className="h-18 w-full max-w-2xl bg-neutral-900 shadow-vouch-sm md:h-22" />
           <div className="h-5 w-full max-w-xl bg-neutral-900" />
         </div>
       </section>
@@ -19,7 +19,7 @@ export function DashboardSkeleton() {
           {stats.map((key) => (
             <div
               key={key}
-              className="flex min-h-26 flex-col justify-center border-3 border-neutral-400 bg-black p-5 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)] md:min-h-28 md:p-6"
+              className="flex min-h-26 flex-col justify-center border-3 border-neutral-400 bg-black p-5 shadow-vouch-md md:min-h-28 md:p-6"
             >
               <div className="h-8 w-10 bg-neutral-900" />
               <div className="mt-3 h-4 w-28 bg-neutral-900" />
@@ -32,7 +32,7 @@ export function DashboardSkeleton() {
         {invoices.map((key) => (
           <article
             key={key}
-            className="animate-pulse border-3 border-neutral-400 bg-black px-6 py-7 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:px-8 md:py-8"
+            className="animate-pulse border-3 border-neutral-400 bg-black px-6 py-7 shadow-vouch-lg md:px-8 md:py-8"
           >
             <div className="flex flex-wrap items-start justify-between gap-5 border-b-2 border-neutral-900 pb-5">
               <div className="grid gap-3">

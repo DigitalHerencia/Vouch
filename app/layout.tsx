@@ -107,7 +107,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
-      <body>
+      <body className="antialiased">
         <ClerkProvider>{children}</ClerkProvider>
       </body>
     </html>

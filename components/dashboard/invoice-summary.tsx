@@ -10,7 +10,7 @@ import { dashboardContent } from "@/content/dashboard"
 export type InvoiceSummaryProps = InvoiceSummaryData
 
 const cardMotion =
-  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
+  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-vouch-xl"
 
 export function InvoiceSummary({
   invoiceNumber,
@@ -34,7 +34,7 @@ export function InvoiceSummary({
   const content = (
     <article
       className={[
-        "border-3 border-neutral-400 bg-black px-6 py-7 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:px-8 md:py-8",
+        "border-3 border-neutral-400 bg-black px-6 py-7 shadow-vouch-lg md:px-8 md:py-8",
         disabled ? "pointer-events-none opacity-50" : cardMotion,
       ].join(" ")}
     >

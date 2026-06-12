@@ -24,7 +24,7 @@ export function NotFoundPage({
             {title}
           </h1>
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+            <div className="flex h-24 w-24 items-center justify-center border-3 border-neutral-400 bg-black shadow-vouch-sm">
               <FileQuestion className="h-12 w-12 text-white" />
             </div>
           </div>

@@ -3,9 +3,9 @@ type FAQItem = { question: string; answer: string; category?: string }
 type FAQSimpleListProps = { title?: string; subtitle?: string; items: readonly FAQItem[] }
 
 const subtitleMotion =
-  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-vouch-md"
 const headingMotion =
-  "transition-all duration-300 text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+  "transition-all duration-300 text-shadow-vouch-sm hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-vouch-md"
 
 export function FAQSimpleList({ title, subtitle, items }: FAQSimpleListProps) {
   return (
@@ -14,7 +14,7 @@ export function FAQSimpleList({ title, subtitle, items }: FAQSimpleListProps) {
         <div className="mb-12 space-y-8 text-left">
           {subtitle ? (
             <p
-              className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+              className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-vouch-sm ${subtitleMotion}`}
             >
               {subtitle}
             </p>
@@ -23,7 +23,7 @@ export function FAQSimpleList({ title, subtitle, items }: FAQSimpleListProps) {
         </div>
       )}
 
-      <div className="border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]">
+      <div className="border-3 border-neutral-400 bg-black shadow-vouch-lg transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-vouch-xl">
         {items.map((item, index) => (
           <div
             key={item.question}

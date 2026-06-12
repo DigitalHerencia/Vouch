@@ -17,7 +17,7 @@ type ProcessPanelRuleGridProps = {
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 const panelMotion =
-  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
+  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-vouch-xl"
 
 export function ProcessPanelRuleGrid({ title, items, footer, id }: ProcessPanelRuleGridProps) {
   return (

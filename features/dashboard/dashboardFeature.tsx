@@ -70,7 +70,7 @@ export async function DashboardFeature({
   const invoices = getVisibleInvoices(state)
 
   return (
-    <div className="grid gap-8 md:gap-10">
+    <div className="grid gap-[var(--vouch-section-gap)]">
       <HeroCentered
         eyebrow={dashboardContent.hero.eyebrow}
         title={dashboardContent.hero.title}
@@ -78,7 +78,7 @@ export async function DashboardFeature({
         align="left"
       />
 
-      <div className="grid gap-8 md:gap-10">
+      <div className="grid gap-[var(--vouch-section-gap)]">
         <StatsCards stats={metrics} />
 
         {invoices.length === 0 ? (

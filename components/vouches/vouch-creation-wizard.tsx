@@ -78,7 +78,7 @@ export function VouchCreationWizard({
               disabled={disabled}
               className={
                 index <= currentStep
-                  ? "flex h-11 w-11 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-base font-black text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                  ? "flex h-11 w-11 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-base font-black text-white shadow-vouch-sm transition-all disabled:cursor-not-allowed disabled:opacity-50"
                   : "flex h-11 w-11 items-center justify-center border-3 border-neutral-400 bg-neutral-950 text-base font-black text-neutral-400 transition-all disabled:cursor-not-allowed disabled:opacity-50"
               }
             >
@@ -94,10 +94,10 @@ export function VouchCreationWizard({
         ))}
       </div>
 
-      <Card className="mx-auto w-full max-w-5xl overflow-hidden border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+      <Card className="mx-auto w-full max-w-5xl overflow-hidden border-3 border-neutral-400 bg-black shadow-vouch-lg">
         <CardHeader className="border-b-3 border-neutral-400 px-6 py-8 text-center md:px-8 md:py-10">
           {step.icon ? (
-            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center border-3 border-neutral-400 bg-black shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+            <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center border-3 border-neutral-400 bg-black shadow-vouch-sm">
               {step.icon}
             </div>
           ) : null}

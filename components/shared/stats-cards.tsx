@@ -12,7 +12,7 @@ export type StatsCardsProps = {
 }
 
 const cardMotion =
-  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
+  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-vouch-xl"
 
 function TrendIcon({ trend }: { trend: NonNullable<DashboardStatItem["trend"]> }) {
   if (trend === "up") return <TrendingUp className="h-4 w-4 text-blue-600" />
@@ -50,7 +50,7 @@ export function StatsCards({ title, subtitle, stats }: StatsCardsProps) {
           <article
             key={`stat-${stat.label}`}
             className={[
-              "flex min-h-26 flex-col justify-center border-3 border-neutral-400 bg-black p-5 shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)] md:min-h-28 md:p-6",
+              "flex min-h-26 flex-col justify-center border-3 border-neutral-400 bg-black p-5 shadow-vouch-md md:min-h-28 md:p-6",
               cardMotion,
             ].join(" ")}
           >

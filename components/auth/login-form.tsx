@@ -77,7 +77,7 @@ export function LoginForm({
                 placeholder={authFormContent.login.emailPlaceholder}
                 disabled={disabled}
                 {...emailInputProps}
-                className="h-12 border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] placeholder:text-neutral-400"
+                className="h-12 border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-vouch-sm placeholder:text-neutral-400"
               />
               {emailError ? <p className="text-sm text-red-600">{emailError}</p> : null}
             </div>
@@ -93,7 +93,7 @@ export function LoginForm({
                 placeholder={authFormContent.login.passwordPlaceholder}
                 disabled={disabled}
                 {...passwordInputProps}
-                className="h-12 rounded-none border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]"
+                className="h-12 rounded-none border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-vouch-sm"
               />
               {passwordError ? <p className="text-sm text-red-600">{passwordError}</p> : null}
             </div>

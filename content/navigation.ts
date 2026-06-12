@@ -15,6 +15,10 @@ export const publicNavigationContent = {
     mobileDefault: "Mobile navigation",
     secureStripeStep: "Secure Stripe step",
     continueToStripe: "Continue to Stripe",
+    footerNavigation: "Public footer navigation",
+  },
+  footer: {
+    legalLine: "Vouch. Payment coordination, not escrow.",
   },
 } as const
 
@@ -33,6 +37,7 @@ export const tenantNavigationContent = {
     footerNavigation: "Tenant footer navigation",
     notifications: "Notifications",
     mobileNavigation: "Tenant mobile navigation",
+    continueToStripe: "Continue to Stripe",
   },
   footer: {
     legalLine: "Vouch. Payment coordination, not escrow.",

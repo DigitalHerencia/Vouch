@@ -23,7 +23,7 @@ export function RequirementNoticeSplit({
 }: RequirementNoticeSplitProps) {
   return (
     <section>
-      <div className="overflow-hidden border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+      <div className="overflow-hidden border-3 border-neutral-400 bg-black shadow-vouch-lg">
         <div className="grid md:grid-cols-[minmax(0,1fr)_minmax(14rem,0.42fr)]">
           <div className="flex flex-col justify-center p-5 md:p-6">
             <p className="text-xs font-black tracking-widest text-blue-600 uppercase">{eyebrow}</p>

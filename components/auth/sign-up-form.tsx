@@ -77,7 +77,7 @@ export function SignUpForm({
   captcha,
 }: SignUpFormProps) {
   const inputClassName =
-    "h-12 rounded-none border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] placeholder:text-neutral-400"
+    "h-12 rounded-none border-3 border-neutral-400 bg-black px-4 text-base font-semibold text-white shadow-vouch-sm placeholder:text-neutral-400"
 
   return (
     <div className="mx-auto w-full max-w-md">

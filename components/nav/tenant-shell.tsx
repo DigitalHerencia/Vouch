@@ -22,8 +22,8 @@ export function TenantShell({
       <TenantHeader connectAction={connectAction} connectReady={connectReady} />
       <main
         className={[
-          "mx-auto w-full max-w-7xl flex-1 px-4 py-10 sm:px-6 sm:py-12 lg:px-8 lg:py-16",
-          withMobileBottomNav ? "pb-28 sm:pb-12 lg:pb-16" : "",
+          "mx-auto w-full max-w-[var(--vouch-page-max-width)] flex-1 px-[var(--vouch-page-x)] py-[var(--vouch-page-y)]",
+          withMobileBottomNav ? "pb-28 md:pb-[var(--vouch-page-y)]" : "",
         ]
           .filter(Boolean)
           .join(" ")}

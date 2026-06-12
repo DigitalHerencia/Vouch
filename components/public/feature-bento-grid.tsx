@@ -19,11 +19,11 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 const featureColors = ["bg-black"]
 const iconColors = ["bg-black", "bg-black", "bg-black", "bg-black", "bg-black"]
 const subtitleMotion =
-  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-vouch-md"
 const headingWordMotion =
-  "inline-block text-white transition-all duration-300 text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+  "inline-block text-white transition-all duration-300 text-shadow-vouch-sm group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-vouch-md"
 const cardMotion =
-  "group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
+  "group flex flex-col overflow-hidden transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-vouch-xl"
 
 export function FeatureBentoGrid({
   title,
@@ -37,7 +37,7 @@ export function FeatureBentoGrid({
         <div className={`mb-12 space-y-8 ${align === "left" ? "text-left" : "text-center"}`}>
           {subtitle && (
             <p
-              className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+              className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-vouch-sm ${subtitleMotion}`}
             >
               {subtitle}
             </p>
@@ -79,7 +79,7 @@ export function FeatureBentoGrid({
               <CardHeader className="flex-1">
                 <div className="mb-4 flex items-start gap-4">
                   <div
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center border-3 border-neutral-400 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center border-3 border-neutral-400 shadow-vouch-sm ${
                       iconColors[index % 6]
                     }`}
                   >

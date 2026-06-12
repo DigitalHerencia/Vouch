@@ -4,7 +4,7 @@ export function VouchDetailSkeleton() {
   return (
     <article
       aria-label={vouchPageCopy.loadingDetailsLabel}
-      className="w-full animate-pulse border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]"
+      className="w-full animate-pulse border-3 border-neutral-400 bg-black shadow-vouch-lg"
     >
       <div className="grid gap-6 p-5 md:p-8">
         <header className="flex flex-wrap items-start justify-between gap-5 border-b-2 border-neutral-900 pb-5">

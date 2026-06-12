@@ -21,10 +21,10 @@ export type HeroCenteredProps = {
 }
 
 const eyebrowMotion =
-  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-vouch-md"
 
 const headingWordMotion =
-  "inline-block transition-all duration-300 text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-[7px_7px_0px_oklch(54.6%_0.245_262.881)]"
+  "inline-block transition-all duration-300 text-shadow-vouch-sm group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-[7px_7px_0px_oklch(54.6%_0.245_262.881)]"
 
 const bodyTextMotion =
   "transition-all duration-200 text-shadow-[2px_2px_5px_oklch(54.6%_0.245_262.881)] hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[4px_4px_4px_oklch(54.6%_0.245_262.881)]"
@@ -52,7 +52,7 @@ export function HeroCentered({
         {eyebrow ? (
           <p
             className={[
-              "w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-[11px] leading-none font-black tracking-[0.22em] text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] md:text-xs",
+              "w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-[11px] leading-none font-black tracking-[0.22em] text-white uppercase shadow-vouch-sm md:text-xs",
               eyebrowMotion,
             ].join(" ")}
           >
@@ -80,7 +80,7 @@ export function HeroCentered({
           {titleHighlight ? (
             <>
               {" "}
-              <span className="inline-block border-3 border-neutral-200 bg-blue-600 px-2 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] transition-all duration-300 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[10px_10px_0px_oklch(54.6%_0.245_262.881)]">
+              <span className="inline-block border-3 border-neutral-200 bg-blue-600 px-2 text-white shadow-vouch-lg transition-all duration-300 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:shadow-[10px_10px_0px_oklch(54.6%_0.245_262.881)]">
                 {titleHighlight}
               </span>
             </>

@@ -96,7 +96,7 @@
         {
           "id": "DESIGN-002",
           "priority": "P1",
-          "status": "in_progress",
+          "status": "complete",
           "title": "Plan CSS variable and component token migration",
           "acceptance": [
             "globals.css is inspected.",

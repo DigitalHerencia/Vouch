@@ -15,7 +15,8 @@
     "payment_method_setup_removed": true,
     "validation_run": true,
     "component_boundary_audit_started": true,
-    "component_boundary_audit_completed": true
+    "component_boundary_audit_completed": true,
+    "visual_consistency_audit_completed": true
   },
   "source_of_truth_order": [
     "current user instruction",

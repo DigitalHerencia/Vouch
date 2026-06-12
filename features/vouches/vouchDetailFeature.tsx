@@ -30,7 +30,7 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
 
   return (
     <section
-      className="mx-auto grid w-full max-w-6xl gap-8 md:gap-10"
+      className="mx-auto grid w-full max-w-6xl gap-[var(--vouch-section-gap)]"
       aria-labelledby="vouch-title"
     >
       {display.refreshWindow ? (

@@ -28,7 +28,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { tenantNavigationContent } from "@/content/navigation"
+import { publicNavigationContent, tenantNavigationContent } from "@/content/navigation"
 import { vouchPageCopy } from "@/content/vouches"
 
 export const defaultTenantNavItems = [
@@ -52,7 +52,7 @@ export function TenantHeader({
   return (
     <>
       <header className="sticky top-0 z-50 h-18 w-full border-b-3 border-neutral-400 bg-black">
-        <div className="mx-auto hidden h-full w-full max-w-7xl items-center justify-between px-4 md:flex md:px-6 lg:px-8">
+        <div className="mx-auto hidden h-full w-full max-w-[var(--vouch-page-max-width)] items-center justify-between px-[var(--vouch-page-x)] md:flex">
           <Link
             href="/dashboard"
             aria-label={tenantNavigationContent.labels.dashboard}
@@ -80,7 +80,7 @@ export function TenantHeader({
           </div>
         </div>
 
-        <div className="flex h-full items-center justify-center px-6 md:hidden">
+        <div className="flex h-full items-center justify-center px-[var(--vouch-page-x)] md:hidden">
           <Link
             href="/dashboard"
             aria-label={tenantNavigationContent.labels.dashboard}
@@ -95,7 +95,7 @@ export function TenantHeader({
         <DrawerContent>
           <DrawerHeader className="gap-3 border-b border-neutral-400 px-5 pt-8 pb-5 text-left">
             <p className="text-xs leading-none font-black tracking-widest text-blue-600 uppercase">
-              Secure Stripe step
+              {publicNavigationContent.labels.secureStripeStep}
             </p>
             <DrawerTitle className="text-2xl leading-tight tracking-normal normal-case md:text-3xl">
               {providerCopy?.title}
@@ -116,7 +116,9 @@ export function TenantHeader({
             <form action={providerAction}>
               <input type="hidden" name="returnPath" value={returnPath} />
               <Button type="submit" className="w-full">
-                {connectReady ? "Open Stripe dashboard" : "Continue to Stripe"}
+                {connectReady
+                  ? vouchPageCopy.providerRedirects.connectDashboard.actionLabel
+                  : tenantNavigationContent.labels.continueToStripe}
               </Button>
             </form>
           </DrawerFooter>

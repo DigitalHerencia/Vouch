@@ -24,8 +24,8 @@ export function PublicHeader({
   navItems = defaultPublicNavItems,
 }: PublicHeaderProps) {
   return (
-    <header className="sticky top-0 z-50 h-21 w-full border-b border-neutral-400 bg-black">
-      <div className="mx-auto hidden h-full w-full max-w-7xl items-center justify-between px-6 sm:px-10 md:flex lg:px-12">
+    <header className="sticky top-0 z-50 h-18 w-full border-b-3 border-neutral-400 bg-black">
+      <div className="mx-auto hidden h-full w-full max-w-[var(--vouch-page-max-width)] items-center justify-between px-[var(--vouch-page-x)] md:flex">
         <Link
           href="/"
           aria-label={publicNavigationContent.labels.home}
@@ -55,7 +55,7 @@ export function PublicHeader({
         </div>
       </div>
 
-      <div className="flex h-full items-center justify-center px-6 md:hidden">
+      <div className="flex h-full items-center justify-center px-[var(--vouch-page-x)] md:hidden">
         <Link
           href="/"
           aria-label={publicNavigationContent.labels.home}

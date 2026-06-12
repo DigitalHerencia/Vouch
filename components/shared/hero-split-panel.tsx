@@ -31,13 +31,13 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 
 const subtitleMotion =
-  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+  "transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-vouch-md"
 const headingWordMotion =
-  "block w-fit text-shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] transition-all duration-300 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-[6px_6px_0px_oklch(54.6%_0.245_262.881)]"
+  "block w-fit text-shadow-vouch-sm transition-all duration-300 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-shadow-vouch-md"
 const bodyTextMotion =
   "text-shadow-[2px_2px_5px_oklch(54.6%_0.245_262.881)] transition-all duration-200 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:text-shadow-[4px_4px_4px_oklch(54.6%_0.245_262.881)]"
 const panelMotion =
-  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_oklch(54.6%_0.245_262.881)]"
+  "transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-vouch-xl"
 
 export function HeroSplitPanel({
   eyebrow,
@@ -63,7 +63,7 @@ export function HeroSplitPanel({
           <div className="space-y-8">
             {eyebrow ? (
               <p
-                className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)] ${subtitleMotion}`}
+                className={`w-fit border-2 border-neutral-400 bg-black px-3 py-1 text-sm font-bold tracking-widest text-white uppercase shadow-vouch-sm ${subtitleMotion}`}
               >
                 {eyebrow}
               </p>
@@ -79,7 +79,7 @@ export function HeroSplitPanel({
                     className={[
                       headingWordMotion,
                       isHighlighted
-                        ? "border-3 border-neutral-200 bg-blue-600 px-2 text-white shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] group-hover:shadow-[10px_10px_0px_oklch(54.6%_0.245_262.881)]"
+                        ? "border-3 border-neutral-200 bg-blue-600 px-2 text-white shadow-vouch-lg group-hover:shadow-[10px_10px_0px_oklch(54.6%_0.245_262.881)]"
                         : "",
                     ]
                       .filter(Boolean)

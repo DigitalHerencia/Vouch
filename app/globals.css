@@ -6,6 +6,53 @@
   margin: 0.75in;
 }
 
+@theme inline {
+  --shadow-vouch-sm: var(--vouch-shadow-sm);
+  --shadow-vouch-md: var(--vouch-shadow-md);
+  --shadow-vouch-lg: var(--vouch-shadow-lg);
+  --shadow-vouch-xl: var(--vouch-shadow-xl);
+}
+
+@layer theme {
+  :root {
+    --vouch-background: black;
+    --vouch-foreground: white;
+    --vouch-surface: black;
+    --vouch-surface-muted: var(--color-neutral-950);
+    --vouch-border: var(--color-neutral-400);
+    --vouch-border-muted: var(--color-neutral-700);
+    --vouch-primary: var(--color-blue-600);
+    --vouch-muted: var(--color-neutral-400);
+    --vouch-page-max-width: 80rem;
+    --vouch-page-x: 1rem;
+    --vouch-page-y: 2.5rem;
+    --vouch-section-gap: 2.5rem;
+    --vouch-card-padding: 1.5rem;
+    --vouch-stack-gap: 1.5rem;
+    --vouch-inline-gap: 1rem;
+    --vouch-border-width: 3px;
+    --vouch-shadow-sm: 4px 4px 0 oklch(54.6% 0.245 262.881);
+    --vouch-shadow-md: 6px 6px 0 oklch(54.6% 0.245 262.881);
+    --vouch-shadow-lg: 8px 8px 0 oklch(54.6% 0.245 262.881);
+    --vouch-shadow-xl: 12px 12px 0 oklch(54.6% 0.245 262.881);
+  }
+
+  @media (min-width: 40rem) {
+    :root {
+      --vouch-page-x: 1.5rem;
+      --vouch-page-y: 3rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    :root {
+      --vouch-page-x: 2rem;
+      --vouch-page-y: 4rem;
+      --vouch-section-gap: 3rem;
+    }
+  }
+}
+
 @layer base {
   *,
   *::before,
@@ -15,7 +62,7 @@
 
   html {
     min-height: 100%;
-    background: black;
+    background: var(--vouch-background);
     scroll-behavior: smooth;
     text-rendering: geometricprecision;
   }
@@ -24,7 +71,7 @@
     min-height: 100dvh;
     min-width: 320px;
     margin: 0;
-    color: white;
+    color: var(--vouch-foreground);
     font-family: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     font-synthesis-weight: none;
     overflow-x: clip;

@@ -74,7 +74,7 @@ function ProcessPanelMarqueeTrack({
           <React.Fragment key={`${direction}-${item.name}`}>
             <MarqueeItem
               className={[
-                "h-24 min-w-35 bg-white px-6 shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]",
+                "h-24 min-w-35 bg-white px-6 shadow-vouch-sm",
                 logoOnly ? "gap-0" : "",
                 itemClassName,
               ]
@@ -99,7 +99,7 @@ function ProcessPanelMarqueeTrack({
                 </>
               )}
             </MarqueeItem>
-            <MarqueeSeparator className="flex size-12 shrink-0 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-white shadow-[4px_4px_0px_oklch(54.6%_0.245_262.881)]">
+            <MarqueeSeparator className="flex size-12 shrink-0 items-center justify-center border-3 border-neutral-400 bg-blue-600 text-white shadow-vouch-sm">
               <SeparatorIcon className="size-7" strokeWidth={2.4} />
             </MarqueeSeparator>
           </React.Fragment>

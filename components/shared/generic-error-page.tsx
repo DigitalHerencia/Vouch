@@ -13,7 +13,7 @@ export function GenericErrorPage({
   return (
     <section
       role="alert"
-      className="mx-auto grid w-full max-w-3xl gap-6 border-3 border-neutral-400 bg-black p-6 shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)] md:p-8"
+      className="mx-auto grid w-full max-w-3xl gap-6 border-3 border-neutral-400 bg-black p-6 shadow-vouch-lg md:p-8"
     >
       <div className="flex items-start gap-4 border-b-2 border-neutral-900 pb-6">
         <div className="grid size-12 shrink-0 place-items-center border-2 border-neutral-400 bg-red-600">

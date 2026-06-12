@@ -5,7 +5,7 @@ import { openStripeConnectDashboard } from "@/lib/actions/paymentActions"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
 import { getAccountReadiness } from "@/lib/fetchers/readinessFetchers"
 
-export default async function AppLayout({
+export default async function TenantLayout({
   children,
 }: Readonly<{
   children: React.ReactNode

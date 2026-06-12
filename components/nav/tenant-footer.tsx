@@ -25,7 +25,7 @@ import {
   DrawerHeader,
   DrawerTitle,
 } from "@/components/ui/drawer"
-import { tenantNavigationContent } from "@/content/navigation"
+import { publicNavigationContent, tenantNavigationContent } from "@/content/navigation"
 import { vouchPageCopy } from "@/content/vouches"
 
 export const defaultTenantFooterLinks = [
@@ -49,7 +49,7 @@ export function TenantFooter({
   return (
     <>
       <footer className="w-full border-t-3 border-neutral-400 bg-black">
-        <div className="mx-auto flex w-full max-w-7xl flex-col gap-4 px-4 py-5 pb-22 md:px-6 md:pb-5 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <div className="mx-auto flex w-full max-w-[var(--vouch-page-max-width)] flex-col gap-4 px-[var(--vouch-page-x)] py-5 pb-22 md:pb-5 lg:flex-row lg:items-center lg:justify-between">
           <p className="text-sm leading-none text-neutral-400 md:text-base">
             © {new Date().getFullYear()} {tenantNavigationContent.footer.legalLine}
           </p>
@@ -74,7 +74,7 @@ export function TenantFooter({
         <DrawerContent>
           <DrawerHeader className="gap-3 border-b border-neutral-400 px-5 pt-8 pb-5 text-left">
             <p className="text-xs leading-none font-black tracking-widest text-blue-600 uppercase">
-              Secure Stripe step
+              {publicNavigationContent.labels.secureStripeStep}
             </p>
             <DrawerTitle className="text-2xl leading-tight tracking-normal normal-case md:text-3xl">
               {providerCopy?.title}
@@ -95,7 +95,9 @@ export function TenantFooter({
             <form action={providerAction}>
               <input type="hidden" name="returnPath" value={returnPath} />
               <Button type="submit" className="w-full">
-                {connectReady ? "Open Stripe dashboard" : "Continue to Stripe"}
+                {connectReady
+                  ? vouchPageCopy.providerRedirects.connectDashboard.actionLabel
+                  : tenantNavigationContent.labels.continueToStripe}
               </Button>
             </form>
           </DrawerFooter>

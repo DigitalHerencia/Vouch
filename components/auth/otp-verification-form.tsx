@@ -84,7 +84,7 @@ export function OTPVerificationForm({
 
   return (
     <div className="mx-auto w-full max-w-md">
-      <Card className="rounded-none border-3 border-neutral-400 bg-black shadow-[8px_8px_0px_oklch(54.6%_0.245_262.881)]">
+      <Card className="rounded-none border-3 border-neutral-400 bg-black shadow-vouch-lg">
         <CardHeader className="space-y-4 px-5 py-6 text-center sm:px-6">
           <div className="mx-auto">
             {logo ?? (
