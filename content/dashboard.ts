@@ -66,7 +66,7 @@ export const dashboardContent = {
   timeline: {
     emptyTitle: "No status events",
     emptyDescription: "Vouch events will appear here when they are recorded.",
-  }
+  },
   cta: {
     title: "Create a Vouch",
     body: "Create the agreement, share the invite, and keep the next action tied to one Vouch object.",
