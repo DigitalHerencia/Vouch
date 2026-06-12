@@ -29,12 +29,13 @@ import {
   createStripeMerchantCreationFeeCheckout,
   retrieveStripeAuthorizationCheckout,
 } from "@/lib/integrations/stripe/checkout-sessions"
+import { getAppUrl } from "@/lib/integrations/stripe/config"
 import {
   cancelStripeAuthorization,
   captureStripePayment,
   retrieveStripePaymentIntent,
 } from "@/lib/integrations/stripe/payment-intents"
-import { syncConnectedAccountReadinessForUser } from "@/lib/payments/stripeReadinessSync"
+import { syncConnectedAccountReadinessForUser } from "@/lib/integrations/stripe/connected-account-sync"
 import { verifyConfirmationCode } from "@/lib/vouch/confirmation-codes"
 import { calculateVouchPricing } from "@/lib/vouch/fees"
 import { createVouchRecoverySnapshot } from "@/lib/vouch/reconciliation"
@@ -74,13 +75,6 @@ type CustomerAuthorizationCheckoutResult = {
 }
 
 const CURRENT_VOUCH_DISCLAIMER_VERSION = "2026-06-05"
-
-function getAppUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
-  )
-}
 
 function getFieldErrors(error: FieldErrorsSource) {
   return error.flatten().fieldErrors

@@ -4,7 +4,7 @@ import type Stripe from "stripe"
 
 import type { VouchPricing } from "@/lib/vouch/fees"
 
-import { getStripeServerClient } from "./client"
+import { getStripeClient } from "./client"
 
 type CreateStripeMerchantCreationFeeCheckoutInput = {
   vouchId: string
@@ -55,7 +55,7 @@ export async function createStripeMerchantCreationFeeCheckout(
     merchant_fee_cents: String(input.feeAmountCents),
   }
 
-  return getStripeServerClient().checkout.sessions.create(
+  return getStripeClient().checkout.sessions.create(
     {
       success_url: input.successUrl,
       cancel_url: input.cancelUrl,
@@ -86,7 +86,7 @@ export async function createStripeCheckoutAuthorization(
 ): Promise<Stripe.Checkout.Session> {
   const metadata = pricingMetadata({ vouchId: input.vouchId, pricing: input.pricing })
 
-  return getStripeServerClient().checkout.sessions.create(
+  return getStripeClient().checkout.sessions.create(
     {
       success_url: input.successUrl,
       ...(input.cancelUrl ? { cancel_url: input.cancelUrl } : {}),
@@ -122,7 +122,7 @@ export async function retrieveStripeAuthorizationCheckout(input: {
   checkoutSessionId: string
   connectedAccountId: string
 }): Promise<Stripe.Checkout.Session> {
-  return getStripeServerClient().checkout.sessions.retrieve(
+  return getStripeClient().checkout.sessions.retrieve(
     input.checkoutSessionId,
     { expand: ["payment_intent"] },
     { stripeAccount: input.connectedAccountId }

@@ -7,7 +7,7 @@ const createAccountLink = vi.fn()
 const retrieveAccount = vi.fn()
 
 vi.mock("@/lib/integrations/stripe/client", () => ({
-  getStripeServerClient: () => ({
+  getStripeClient: () => ({
     v2: {
       core: {
         accounts: {

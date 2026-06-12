@@ -2,7 +2,7 @@ import "server-only"
 
 import type { PayoutReadinessStatus } from "@/types/paymentTypes"
 
-import { getStripeServerClient } from "./client"
+import { getStripeClient } from "./client"
 
 type StripeV2Core = {
   accounts: {
@@ -104,7 +104,7 @@ function readRequirementDescriptions(
 }
 
 function getStripeV2Core() {
-  const stripe = getStripeServerClient() as unknown as StripeV2Client
+  const stripe = getStripeClient() as unknown as StripeV2Client
   const core = stripe.v2?.core
 
   if (!core?.accounts?.create || !core.accounts.retrieve || !core.accountLinks?.create) {

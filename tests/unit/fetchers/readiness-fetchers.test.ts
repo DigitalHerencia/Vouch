@@ -59,7 +59,7 @@ describe("readiness capability gates", () => {
 
     await expect(getCreateVouchReadinessGate("user_1")).resolves.toMatchObject({
       allowed: false,
-      blockers: ["payout_method_required"],
+      blockers: ["connected_account_required"],
     })
   })
 

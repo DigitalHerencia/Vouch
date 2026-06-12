@@ -10,6 +10,16 @@ type StripeWebhookSecrets = {
   thinSecrets: string[]
 }
 
+export function getAppUrl(): string {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL
+
+  if (!appUrl) {
+    throw new Error("NEXT_PUBLIC_APP_URL is required")
+  }
+
+  return appUrl
+}
+
 export function getStripeRuntimeConfig(): StripeRuntimeConfig {
   const secretKey = process.env.STRIPE_SECRET_KEY
   const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY

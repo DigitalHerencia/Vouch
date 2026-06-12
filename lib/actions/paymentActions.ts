@@ -13,13 +13,7 @@ import {
   createStripeConnectOnboardingLink,
   refreshStripeConnectReadiness,
 } from "@/lib/integrations/stripe/connect"
-
-function getAppUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_APP_URL ??
-    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : "http://localhost:3000")
-  )
-}
+import { getAppUrl } from "@/lib/integrations/stripe/config"
 
 function getReturnPath(formData: FormData | undefined, fallback: "/dashboard" | "/vouches/new") {
   const raw = formData?.get("returnPath")

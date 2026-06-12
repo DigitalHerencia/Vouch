@@ -8,7 +8,7 @@ const cancelPaymentIntent = vi.fn()
 const createRefund = vi.fn()
 
 vi.mock("@/lib/integrations/stripe/client", () => ({
-  getStripeServerClient: () => ({
+  getStripeClient: () => ({
     paymentIntents: {
       retrieve: retrievePaymentIntent,
       capture: capturePaymentIntent,

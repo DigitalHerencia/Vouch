@@ -62,7 +62,7 @@ function blockersFor(
 
   if (readiness.userStatus !== "active") blockers.push("account_inactive")
   if (kind === "create" && readiness.payoutReadiness !== "ready") {
-    blockers.push("payout_method_required")
+    blockers.push("connected_account_required")
   }
   return blockers
 }

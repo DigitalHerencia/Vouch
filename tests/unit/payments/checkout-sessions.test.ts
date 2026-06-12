@@ -5,7 +5,7 @@ vi.mock("server-only", () => ({}))
 const createCheckoutSession = vi.fn()
 
 vi.mock("@/lib/integrations/stripe/client", () => ({
-  getStripeServerClient: () => ({
+  getStripeClient: () => ({
     checkout: {
       sessions: {
         create: createCheckoutSession,

@@ -2,13 +2,13 @@ import "server-only"
 
 import type Stripe from "stripe"
 
-import { getStripeServerClient } from "./client"
+import { getStripeClient } from "./client"
 
 export async function retrieveStripePaymentIntent(input: {
   providerPaymentIntentId: string
   connectedAccountId: string
 }): Promise<Stripe.PaymentIntent> {
-  return getStripeServerClient().paymentIntents.retrieve(
+  return getStripeClient().paymentIntents.retrieve(
     input.providerPaymentIntentId,
     { expand: ["latest_charge"] },
     { stripeAccount: input.connectedAccountId }
@@ -20,7 +20,7 @@ export async function captureStripePayment(input: {
   connectedAccountId: string
   idempotencyKey: string
 }): Promise<Stripe.PaymentIntent> {
-  const stripe = getStripeServerClient()
+  const stripe = getStripeClient()
   const current = await retrieveStripePaymentIntent({
     providerPaymentIntentId: input.providerPaymentIntentId,
     connectedAccountId: input.connectedAccountId,
@@ -41,7 +41,7 @@ export async function cancelStripeAuthorization(input: {
   connectedAccountId: string
   idempotencyKey: string
 }): Promise<Stripe.PaymentIntent> {
-  const stripe = getStripeServerClient()
+  const stripe = getStripeClient()
   const current = await retrieveStripePaymentIntent({
     providerPaymentIntentId: input.providerPaymentIntentId,
     connectedAccountId: input.connectedAccountId,
@@ -72,7 +72,7 @@ export async function refundStripePayment(input: {
     throw new Error("PAYMENT_INTENT_NOT_CAPTURED")
   }
 
-  return getStripeServerClient().refunds.create(
+  return getStripeClient().refunds.create(
     { payment_intent: input.providerPaymentIntentId },
     { idempotencyKey: input.idempotencyKey, stripeAccount: input.connectedAccountId }
   )

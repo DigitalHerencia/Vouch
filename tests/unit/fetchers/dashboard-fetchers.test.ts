@@ -18,7 +18,7 @@ vi.mock("@/lib/fetchers/authFetchers", () => ({
     id: "user_1",
   }),
 }))
-vi.mock("@/lib/payments/stripeReadinessSync", () => ({
+vi.mock("@/lib/integrations/stripe/connected-account-sync", () => ({
   syncConnectedAccountReadinessForUser: vi.fn(),
 }))
 

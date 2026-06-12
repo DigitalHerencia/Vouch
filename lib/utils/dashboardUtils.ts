@@ -36,19 +36,10 @@ export function formatParticipantName(vouch: VouchCardDTO): string {
 }
 
 export function formatCurrency(cents: number, currency: string): string {
-  const normalizedCurrency = currency.trim().toUpperCase() || "USD"
-
-  try {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: normalizedCurrency,
-    }).format(cents / 100)
-  } catch {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: "USD",
-    }).format(cents / 100)
-  }
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: currency.trim().toUpperCase(),
+  }).format(cents / 100)
 }
 
 export function mapStatusTone(status: VouchCardDTO["status"]): VouchStatusTone {

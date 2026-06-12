@@ -23,7 +23,3 @@ export function getStripeClient(): Stripe {
 
   return cachedStripe
 }
-
-export function getStripeServerClient() {
-  return getStripeClient()
-}

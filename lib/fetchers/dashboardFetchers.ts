@@ -10,7 +10,7 @@ import { getDashboardVariant, mapDashboardSummaryDTO } from "@/lib/db/dto/dashbo
 import { prisma } from "@/lib/db/prisma"
 import { vouchCardSelect } from "@/lib/db/selects/vouch.selects"
 import { requireActiveUser } from "@/lib/fetchers/authFetchers"
-import { syncConnectedAccountReadinessForUser } from "@/lib/payments/stripeReadinessSync"
+import { syncConnectedAccountReadinessForUser } from "@/lib/integrations/stripe/connected-account-sync"
 import { parseDashboardSearchParams } from "@/schemas/dashboardSchemas"
 import type {
   DashboardPageStateDTO,
@@ -36,18 +36,16 @@ async function syncStripeReturns(input: {
   const stripeConnectReturn = hasSearchParam(input.searchParams.stripe_connect_return)
   if (!stripeConnectReturn) return
 
-  if (stripeConnectReturn) {
-    const connectedAccount = await prisma.connectedAccount.findUnique({
-      where: { userId: input.userId },
-      select: { stripeAccountId: true },
-    })
+  const connectedAccount = await prisma.connectedAccount.findUnique({
+    where: { userId: input.userId },
+    select: { stripeAccountId: true },
+  })
 
-    if (connectedAccount?.stripeAccountId) {
-      await syncConnectedAccountReadinessForUser({
-        userId: input.userId,
-        stripeAccountId: connectedAccount.stripeAccountId,
-      })
-    }
+  if (connectedAccount?.stripeAccountId) {
+    await syncConnectedAccountReadinessForUser({
+      userId: input.userId,
+      stripeAccountId: connectedAccount.stripeAccountId,
+    })
   }
 }
 
