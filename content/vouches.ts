@@ -8,6 +8,8 @@ export const vouchPageCopy = {
     detailsHeader: "Vouch details",
     readyBody:
       "Start with the amount, appointment time, and confirmation window. These terms become the basis for the Vouch protocol before commitment.",
+    appointmentFieldLabel: "Appointment date and time",
+    amountFieldLabel: "Protected amount",
     reviewTitle: "Review your Vouch",
     reviewBody:
       "Review immutable terms before creation. The Vouch fee is paid by the merchant through hosted Stripe checkout at committed creation.",

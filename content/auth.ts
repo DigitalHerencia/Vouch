@@ -20,6 +20,8 @@ export const authHeaderContent = {
 } as const
 
 export const authFormContent = {
+  createAccount: "Create account",
+  signIn: "Sign in",
   homeAriaLabel: "Go to Vouch home",
   login: {
     description: "sign in to manage your account",

@@ -59,6 +59,14 @@ export const dashboardContent = {
     amount: "Amount",
     deadline: "Deadline",
   },
+  emptyState: {
+    title: "No Vouches yet",
+    description: "Create a Vouch when you are ready to protect an appointment deposit. Your drafts, active Vouches, and completed purchases will appear here.",
+  },
+  timeline: {
+    emptyTitle: "No status events",
+    emptyDescription: "Vouch events will appear here when they are recorded.",
+  }
   cta: {
     title: "Create a Vouch",
     body: "Create the agreement, share the invite, and keep the next action tied to one Vouch object.",

@@ -1,4 +1,21 @@
 export const errorPageContent = {
+  global: {
+    eyebrow: "Server Error",
+    title: "Service Unavailable",
+    description: "Vouch could not finish this request. Try again or return home.",
+  },
+  public: {
+    title: "Page unavailable",
+    description: "This page could not load. Try again or return home.",
+  },
+  auth: {
+    title: "Authentication view failed",
+    description: "Sign-in or sign-up could not load. Try again or return home.",
+  },
+  tenant: {
+    title: "Vouch page unavailable",
+    description: "This page could not load. Try again or return to the dashboard.",
+  },
   generic: {
     eyebrow: "Error",
     title: "Something went wrong",
