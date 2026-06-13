@@ -452,28 +452,54 @@ export async function createVouch(input: unknown): Promise<ActionResult<CreatedV
   })
 
   const appUrl = getAppUrl()
-  const checkout = await createStripeMerchantCreationFeeCheckout({
-    vouchId: vouch.id,
-    merchantUserId: user.id,
-    feeAmountCents: merchantFeeCents,
-    protectedAmountCents: pricing.protectedAmountCents,
-    currency: parsed.data.currency,
-    expiresAt: parsed.data.appointmentStartsAt,
-    successUrl: `${appUrl}/vouches/${vouch.id}?merchant_fee=paid`,
-    cancelUrl: `${appUrl}/vouches/new?merchant_fee=cancelled`,
-    idempotencyKey: `vouch:${vouch.id}:merchant-fee-checkout`,
-    ...(paymentCustomer?.stripeCustomerId
-      ? { providerCustomerId: paymentCustomer.stripeCustomerId }
-      : {}),
-  })
 
-  revalidateVouchSurfaces(vouch.id)
+  try {
+    const checkout = await createStripeMerchantCreationFeeCheckout({
+      vouchId: vouch.id,
+      merchantUserId: user.id,
+      feeAmountCents: merchantFeeCents,
+      protectedAmountCents: pricing.protectedAmountCents,
+      currency: parsed.data.currency,
+      expiresAt: parsed.data.appointmentStartsAt,
+      successUrl: `${appUrl}/vouches/${vouch.id}?merchant_fee=paid`,
+      cancelUrl: `${appUrl}/vouches/new?merchant_fee=cancelled`,
+      idempotencyKey: `vouch:${vouch.id}:merchant-fee-checkout`,
+      ...(paymentCustomer?.stripeCustomerId
+        ? { providerCustomerId: paymentCustomer.stripeCustomerId }
+        : {}),
+    })
 
-  return actionSuccess({
-    vouchId: vouch.id,
-    detailPath: `/vouches/${vouch.id}`,
-    ...(checkout.url ? { checkoutUrl: checkout.url } : {}),
-  })
+    revalidateVouchSurfaces(vouch.id)
+
+    return actionSuccess({
+      vouchId: vouch.id,
+      detailPath: `/vouches/${vouch.id}`,
+      ...(checkout.url ? { checkoutUrl: checkout.url } : {}),
+    })
+  } catch (error) {
+    await prisma.auditEvent.create({
+      data: {
+        eventName: "vouch.creation_fee_checkout_failed",
+        actorType: "system",
+        entityType: "Vouch",
+        entityId: vouch.id,
+        metadata: {
+          merchant_user_id: user.id,
+          protected_amount_cents: pricing.protectedAmountCents,
+          vouch_service_fee_cents: merchantFeeCents,
+          appointment_starts_at: parsed.data.appointmentStartsAt.toISOString(),
+          failure_reason: error instanceof Error ? error.message : String(error),
+        },
+      },
+    })
+
+    revalidateVouchSurfaces(vouch.id)
+
+    return actionFailure(
+      "CHECKOUT_CREATION_FAILED",
+      "The Vouch was saved, but payment checkout could not be opened. Please try again from your dashboard."
+    )
+  }
 }
 
 async function ensureCustomerAuthorizationCheckoutForVouch(

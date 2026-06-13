@@ -99,7 +99,7 @@ export function VouchForm() {
   function updateDraft(field: "disclaimerAccepted", value: boolean): void
   function updateDraft(field: "appointmentStartsAt" | "amountDollars", value: string): void
   function updateDraft(field: keyof CreateVouchDraftFormValues, value: string | boolean): void {
-    if (disabled) return
+    if (disabled || isPending) return
 
     const options = {
       shouldDirty: true,
@@ -135,7 +135,7 @@ export function VouchForm() {
   }
 
   const submitVouch = form.handleSubmit(() => {
-    if (disabled) return
+    if (disabled || isPending) return
 
     startSubmitTransition(() => {
       void (async () => {
@@ -176,7 +176,7 @@ export function VouchForm() {
       content: (
         <VouchDisclaimerAgreement
           checked={formValues.disclaimerAccepted}
-          disabled={disabled}
+          disabled={disabled || isPending}
           error={form.formState.errors.disclaimerAccepted?.message}
           onCheckedChange={(checked) => updateDraft("disclaimerAccepted", checked)}
         />
@@ -195,14 +195,14 @@ export function VouchForm() {
           <div className="grid gap-6 md:grid-cols-2 md:gap-10">
             <VouchDateTimeField
               value={formValues.appointmentStartsAt}
-              disabled={disabled}
+              disabled={disabled || isPending}
               error={form.formState.errors.appointmentStartsAt?.message}
               onChange={(value) => updateDraft("appointmentStartsAt", value)}
             />
 
             <VouchAmountField
               value={formValues.amountDollars}
-              disabled={disabled}
+              disabled={disabled || isPending}
               error={form.formState.errors.amountDollars?.message}
               onChange={(value) => updateDraft("amountDollars", value)}
             />
@@ -268,7 +268,7 @@ export function VouchForm() {
   ]
 
   return (
-    <div className="grid gap-[var(--vouch-section-gap)]">
+    <div className="grid gap-(--vouch-section-gap)">
       <PageTitle eyebrow={copy.eyebrow} title={copy.pageTitle} description={copy.pageBody} />
 
       {onboardingRequired ? (
@@ -278,7 +278,7 @@ export function VouchForm() {
       <VouchCreationWizard
         steps={steps}
         currentStep={currentStep}
-        disabled={disabled}
+        disabled={disabled || isPending}
         onStepChange={setCurrentStep}
         onComplete={submitVouch}
       />
