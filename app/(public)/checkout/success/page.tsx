@@ -2,31 +2,27 @@ import { redirect } from "next/navigation"
 
 import { CheckoutSuccessView } from "@/components/shared/checkout-success-view"
 import { checkoutSuccessContent } from "@/content/common"
-import {
-  claimCustomerAuthorizationCheckout,
-  getCustomerAuthorizationCheckoutForAuthenticatedUser,
-} from "@/lib/actions/vouchActions"
+import { claimCustomerAuthorizationCheckout } from "@/lib/actions/vouchActions"
 import { getCurrentClerkAuth } from "@/lib/auth/clerk"
 import { getCurrentUser } from "@/lib/fetchers/authFetchers"
 
 export default async function CheckoutSuccessRoute({
   searchParams,
 }: {
-  searchParams: Promise<{ session_id?: string; vouch_id?: string }>
+  searchParams: Promise<{ session_id?: string }>
 }) {
-  const { session_id: sessionId, vouch_id: publicId } = await searchParams
+  const { session_id: sessionId } = await searchParams
 
-  if (!sessionId && !publicId) {
+  if (!sessionId) {
     return <CheckoutSuccessView message={checkoutSuccessContent.errors.missingSession} />
   }
 
-  const returnPath = sessionId
-    ? `/checkout/success?session_id=${encodeURIComponent(sessionId)}`
-    : `/checkout/success?vouch_id=${encodeURIComponent(publicId!)}`
+  const returnPath = `/checkout/success?session_id=${encodeURIComponent(sessionId)}`
   const user = await getCurrentUser()
 
   if (!user) {
     const clerkAuth = await getCurrentClerkAuth()
+
     if (clerkAuth.userId) {
       return (
         <CheckoutSuccessView
@@ -37,25 +33,6 @@ export default async function CheckoutSuccessRoute({
     }
 
     redirect(`/sign-up?redirect_url=${encodeURIComponent(returnPath)}`)
-  }
-
-  if (publicId) {
-    const result = await getCustomerAuthorizationCheckoutForAuthenticatedUser({ publicId })
-
-    if (!result.ok) {
-      return (
-        <CheckoutSuccessView
-          message={result.formError ?? checkoutSuccessContent.errors.authorizationCheckout}
-          primaryAction={{ label: "Try authorization again", href: returnPath }}
-        />
-      )
-    }
-
-    redirect(result.data.checkoutUrl)
-  }
-
-  if (!sessionId) {
-    return <CheckoutSuccessView message={checkoutSuccessContent.errors.missingSession} />
   }
 
   const result = await claimCustomerAuthorizationCheckout({

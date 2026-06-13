@@ -102,5 +102,6 @@ export async function getVouchParticipantActionState(vouchId: string) {
     publicId: true,
     merchantId: true,
     customerId: true,
+    status: true,
   })
 }

@@ -57,3 +57,14 @@ export type InvoiceSummaryData = {
   tone: VouchStatusTone
   disabled?: boolean
 }
+
+export type VouchArchiveListItem = {
+  id: string
+  publicId: string
+  participantName: string
+  appointmentLabel: string
+  amountLabel: string
+  statusLabel: string
+  tone: VouchStatusTone
+  href: string
+}

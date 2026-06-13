@@ -9,7 +9,7 @@
     {
       "id": "vouch_archive",
       "status": "complete",
-      "summary": "Added visibility-only Vouch archive page, participant archive action, navigation, and dedicated archived query.",
+      "summary": "Added a visibility-only Vouch archive table, terminal-state archive eligibility, participant archive action, navigation, and dedicated archived query.",
       "tasks": [
         {
           "id": "ARCHIVE-001",
@@ -20,6 +20,7 @@
             "Main dashboard queries unarchived Vouches only.",
             "Archive page lists archived participant Vouches.",
             "Archive action changes visibility fields only.",
+            "Only captured or expired Vouches can be archived.",
             "Archived Vouch detail URLs remain accessible."
           ]
         }

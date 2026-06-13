@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest"
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ refresh: vi.fn() }) }))
 
-import { VouchArchiveAction } from "@/features/vouches/vouchArchiveAction"
+import { VouchArchiveAction } from "@/features/archive/vouchArchiveAction"
 
 describe("VouchArchiveAction", () => {
   it("archives the Vouch and refreshes the current detail page", async () => {

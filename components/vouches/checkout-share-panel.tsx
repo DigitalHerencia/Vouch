@@ -12,8 +12,18 @@ type CheckoutSharePanelProps = {
   appointmentLabel: string
 }
 
+function getCustomerAuthorizationUrl(publicId: string): string {
+  const authorizationPath = `/checkout/${encodeURIComponent(publicId)}`
+
+  if (typeof window === "undefined") {
+    return authorizationPath
+  }
+
+  return new URL(authorizationPath, window.location.origin).toString()
+}
+
 export function CheckoutSharePanel({
-  checkoutUrl,
+  checkoutUrl: _checkoutUrl,
   publicId,
   amountLabel,
   appointmentLabel,
@@ -21,20 +31,22 @@ export function CheckoutSharePanel({
   const copy = vouchPageCopy.detail.checkoutShare
   const [copiedAction, setCopiedAction] = React.useState<string | null>(null)
 
-  const checkoutHost = React.useMemo(() => {
+  const authorizationUrl = React.useMemo(() => getCustomerAuthorizationUrl(publicId), [publicId])
+
+  const authorizationHost = React.useMemo(() => {
     try {
-      return new URL(checkoutUrl).hostname
+      return new URL(authorizationUrl).hostname
     } catch {
       return copy.fallbackHost
     }
-  }, [checkoutUrl, copy.fallbackHost])
+  }, [authorizationUrl, copy.fallbackHost])
 
   const shareSubject = `${copy.subject}: ${amountLabel}`
   const shareMessage = React.useMemo(
     () =>
       [
         copy.request,
-        checkoutUrl,
+        authorizationUrl,
         "",
         `Vouch: ${publicId}`,
         `Amount: ${amountLabel}`,
@@ -42,7 +54,14 @@ export function CheckoutSharePanel({
         "",
         copy.authorizationRule,
       ].join("\n"),
-    [amountLabel, appointmentLabel, checkoutUrl, copy.authorizationRule, copy.request, publicId]
+    [
+      amountLabel,
+      appointmentLabel,
+      authorizationUrl,
+      copy.authorizationRule,
+      copy.request,
+      publicId,
+    ]
   )
 
   const mailtoHref = `mailto:?subject=${encodeURIComponent(shareSubject)}&body=${encodeURIComponent(shareMessage)}`
@@ -62,7 +81,11 @@ export function CheckoutSharePanel({
   async function shareCheckout() {
     if (typeof navigator.share === "function") {
       try {
-        await navigator.share({ title: shareSubject, text: shareMessage, url: checkoutUrl })
+        await navigator.share({
+          title: shareSubject,
+          text: shareMessage,
+          url: authorizationUrl,
+        })
         return
       } catch {
         return
@@ -84,7 +107,7 @@ export function CheckoutSharePanel({
           </span>
         </div>
         <p className="font-mono text-xs leading-5 font-bold break-all text-neutral-400">
-          {checkoutHost}
+          {authorizationHost}
         </p>
       </div>
 
@@ -93,7 +116,7 @@ export function CheckoutSharePanel({
           aria-label={copy.copyLinkAriaLabel}
           className="inline-flex h-11 items-center justify-center gap-2 border border-neutral-500 bg-neutral-950 px-3 text-xs font-black text-white uppercase transition hover:border-blue-600 hover:text-blue-500"
           type="button"
-          onClick={() => copyToClipboard(checkoutUrl, "link")}
+          onClick={() => copyToClipboard(authorizationUrl, "link")}
         >
           {copiedAction === "link" ? <Check className="size-4" /> : <Copy className="size-4" />}
           {copy.link}

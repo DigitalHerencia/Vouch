@@ -1,13 +1,13 @@
 import { HeroCentered } from "@/components/shared/hero-centered"
 import { EmptyStatePreset } from "@/components/ui/empty-state"
-import { VouchArchiveList } from "@/features/vouches/vouchArchiveList"
+import { VouchArchiveTable } from "@/components/archive/vouch-archive-table"
 import { mapVouchCardDTO } from "@/lib/db/dto/vouch.mappers"
-import { mapVouchToInvoice } from "@/lib/db/dto/dashboard.mappers"
+import { mapVouchToArchiveListItem } from "@/lib/db/dto/dashboard.mappers"
 import { getArchivePageState } from "@/lib/fetchers/dashboardFetchers"
 
 export async function VouchArchiveFeature() {
   const state = await getArchivePageState()
-  const vouches = state.vouches.map(mapVouchCardDTO).map(mapVouchToInvoice)
+  const vouches = state.vouches.map(mapVouchCardDTO).map(mapVouchToArchiveListItem)
 
   return (
     <div className="grid gap-(--vouch-section-gap)">
@@ -18,7 +18,7 @@ export async function VouchArchiveFeature() {
         align="left"
       />
       {vouches.length > 0 ? (
-        <VouchArchiveList vouches={vouches} />
+        <VouchArchiveTable vouches={vouches} />
       ) : (
         <EmptyStatePreset
           preset="no-data"

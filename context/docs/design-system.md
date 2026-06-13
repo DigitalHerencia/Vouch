@@ -172,6 +172,7 @@ Reusable components must be tracked here when added or materially changed.
 | VouchCreationWizard    | `components/vouches/vouch-creation-wizard.tsx`   | Domain    | Merchant new-Vouch wizard              | Active | progress, card, spacing                  | Connect readiness may block this flow.                          |
 | CheckoutSharePanel     | `components/vouches/checkout-share-panel.tsx`    | Domain    | Customer authorization-link sharing UI | Active | border, typography, action hierarchy     | Receives mapped Vouch detail data and uses centralized content. |
 | VouchStatusDocument    | `components/vouches/vouch-status-document.tsx`   | Domain    | Vouch detail/status view               | Active | status, timeline, card                   | Canonical participant view.                                     |
+| VouchArchiveTable      | `components/archive/vouch-archive-table.tsx`     | Domain    | Archived participant Vouch table       | Active | surface, border, typography, status      | Responsive semantic table with detail links.                    |
 
 When adding a reusable component, update this table or explain why the component is intentionally local and non-reusable.
 

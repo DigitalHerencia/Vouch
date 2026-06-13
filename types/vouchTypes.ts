@@ -103,6 +103,7 @@ export type VouchStatusDocumentData = {
   }
   timeline: VouchStatusTimelineItem[]
   audit?: VouchAuditDisplayItem[]
+  action?: ReactNode
 }
 
 export type VouchDetailDisplayDTO = {

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 
 import { VouchStatusDocument } from "@/components/vouches/vouch-status-document"
 import { ConfirmPresenceInlineForm } from "@/features/vouches/vouchDetailFeature.client"
-import { VouchArchiveAction } from "@/features/vouches/vouchArchiveAction"
+import { VouchArchiveAction } from "@/features/archive/vouchArchiveAction"
 import { VouchDeadlineRefresh } from "@/features/vouches/vouch-deadline-refresh"
 import { archiveVouch, confirmPresence } from "@/lib/actions/vouchActions"
 import { mapVouchDetailDisplayDTO } from "@/lib/db/dto/vouch-detail-display.mappers"
@@ -28,6 +28,7 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
   })
 
   const confirmationAction = display.confirmationAction
+  const canArchive = !vouch.archived && (vouch.status === "captured" || vouch.status === "expired")
 
   return (
     <section
@@ -44,6 +45,9 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
       <VouchStatusDocument
         data={{
           ...display.document,
+          action: canArchive ? (
+            <VouchArchiveAction action={archiveVouch} vouchId={vouchId} />
+          ) : null,
           confirmations: {
             ...display.document.confirmations,
             action:
@@ -59,7 +63,6 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
           },
         }}
       />
-      {!vouch.archived ? <VouchArchiveAction action={archiveVouch} vouchId={vouchId} /> : null}
     </section>
   )
 }

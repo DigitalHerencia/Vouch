@@ -1174,6 +1174,10 @@ export async function archiveVouch(input: unknown): Promise<ActionResult<{ vouch
 
   if (!participantRole) return actionFailure("AUTHZ_DENIED", "Participant access required.")
 
+  if (vouch.status !== "captured" && vouch.status !== "expired") {
+    return actionFailure("VALIDATION_FAILED", "Only completed or expired Vouches can be archived.")
+  }
+
   await prisma.$transaction(async (tx) => {
     await updateVouchArchiveStatusTx(tx, {
       vouchId: parsed.data.vouchId,

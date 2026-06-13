@@ -42,6 +42,7 @@ export function VouchStatusDocument({ data }: { data: VouchStatusDocumentData })
             <p className="font-mono text-3xl leading-none font-black text-white md:text-4xl">
               {data.amountLabel}
             </p>
+            {data.action}
           </div>
         </header>
 

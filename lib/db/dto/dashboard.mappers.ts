@@ -14,6 +14,7 @@ import type {
   DashboardPageStateDTO,
   DashboardSummaryDTO,
   InvoiceSummaryData,
+  VouchArchiveListItem,
 } from "@/types/dashboardTypes"
 
 type DashboardVouchRecord = Parameters<typeof mapVouchCardDTO>[0]
@@ -147,5 +148,18 @@ export function mapVouchToInvoice(vouch: VouchCardDTO): InvoiceSummaryData {
     }),
     percentRemaining: getPercentRemaining(vouch),
     tone,
+  }
+}
+
+export function mapVouchToArchiveListItem(vouch: VouchCardDTO): VouchArchiveListItem {
+  return {
+    id: vouch.id,
+    publicId: vouch.publicId,
+    participantName: formatParticipantName(vouch),
+    appointmentLabel: formatDateTime(vouch.appointmentAt),
+    amountLabel: formatCurrency(vouch.amountCents, vouch.currency),
+    statusLabel: vouch.status.replaceAll("_", " "),
+    tone: mapStatusTone(vouch.status),
+    href: `/vouches/${vouch.id}`,
   }
 }
