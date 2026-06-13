@@ -337,6 +337,7 @@ function revalidateVouchSurfaces(vouchId: string): void {
   revalidatePath("/dashboard")
   revalidatePath("/vouches/new")
   revalidatePath(`/vouches/${vouchId}`)
+  revalidatePath("/vouches/archive")
 }
 
 export async function calculatePlatformFee(input: unknown): Promise<ActionResult<FeePreview>> {
@@ -1177,16 +1178,6 @@ export async function archiveVouch(input: unknown): Promise<ActionResult<{ vouch
     await updateVouchArchiveStatusTx(tx, {
       vouchId: parsed.data.vouchId,
       archiveStatus: "archived",
-    })
-
-    await tx.auditEvent.create({
-      data: {
-        eventName: "vouch.archived",
-        actorType: "user",
-        actorUserId: user.id,
-        entityType: "Vouch",
-        entityId: parsed.data.vouchId,
-      },
     })
   })
 

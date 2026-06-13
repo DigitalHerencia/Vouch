@@ -31,6 +31,7 @@ import { vouchPageCopy } from "@/content/vouches"
 export const defaultTenantFooterLinks = [
   { label: tenantNavigationContent.links.dashboard, href: "/dashboard" },
   { label: tenantNavigationContent.links.vouches, href: "/vouches/new" },
+  { label: tenantNavigationContent.links.archive, href: "/vouches/archive" },
 ] satisfies readonly TenantFooterLink[]
 
 export function TenantFooter({

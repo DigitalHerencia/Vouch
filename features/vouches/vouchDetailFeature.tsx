@@ -2,8 +2,9 @@ import { notFound } from "next/navigation"
 
 import { VouchStatusDocument } from "@/components/vouches/vouch-status-document"
 import { ConfirmPresenceInlineForm } from "@/features/vouches/vouchDetailFeature.client"
+import { VouchArchiveAction } from "@/features/vouches/vouchArchiveAction"
 import { VouchDeadlineRefresh } from "@/features/vouches/vouch-deadline-refresh"
-import { confirmPresence } from "@/lib/actions/vouchActions"
+import { archiveVouch, confirmPresence } from "@/lib/actions/vouchActions"
 import { mapVouchDetailDisplayDTO } from "@/lib/db/dto/vouch-detail-display.mappers"
 import { getVouchDetailPageState } from "@/lib/fetchers/vouchFetchers"
 
@@ -58,6 +59,7 @@ export async function VouchDetailPage({ vouchId }: VouchDetailPageProps) {
           },
         }}
       />
+      {!vouch.archived ? <VouchArchiveAction action={archiveVouch} vouchId={vouchId} /> : null}
     </section>
   )
 }

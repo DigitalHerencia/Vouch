@@ -30,6 +30,7 @@ export const tenantNavigationContent = {
     newVouch: "New Vouch",
     stripe: "Stripe",
     account: "Account",
+    archive: "Archive",
   },
   labels: {
     dashboard: "Vouch dashboard",

@@ -34,6 +34,7 @@ import { vouchPageCopy } from "@/content/vouches"
 export const defaultTenantNavItems = [
   { href: "/dashboard", label: tenantNavigationContent.links.dashboard },
   { href: "/vouches/new", label: tenantNavigationContent.links.vouches },
+  { href: "/vouches/archive", label: tenantNavigationContent.links.archive },
 ] satisfies readonly TenantHeaderNavItem[]
 
 export function TenantHeader({

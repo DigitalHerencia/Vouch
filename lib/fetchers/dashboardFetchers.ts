@@ -96,14 +96,14 @@ function getDashboardSectionWhere(
 function listVouchesForUser(input: {
   participantWhere: Prisma.VouchWhereInput
   sectionWhere: Prisma.VouchWhereInput
-  take?: number
+  bounded?: boolean
 }): Promise<VouchCardRecord[]> {
   return prisma.vouch.findMany({
     where: {
       AND: [input.participantWhere, input.sectionWhere],
     },
     orderBy: { updatedAt: "desc" },
-    take: input.take ?? DEFAULT_TAKE,
+    ...(input.bounded === false ? {} : { take: DEFAULT_TAKE }),
     select: vouchCardSelect,
   })
 }
@@ -129,27 +129,22 @@ async function getDashboardSummary(userId: string): Promise<DashboardSummaryDTO>
     active,
     completed,
     expired,
-    archived,
     draftCount,
     actionRequiredCount,
     activeCount,
     completedCount,
     expiredCount,
-    archivedCount,
   ] = await Promise.all([
     listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.drafts }),
     listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.actionRequired }),
     listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.active }),
     listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.completed }),
     listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.expired }),
-    listVouchesForUser({ participantWhere, sectionWhere: sectionWhere.archived }),
-
     countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.drafts }),
     countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.actionRequired }),
     countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.active }),
     countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.completed }),
     countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.expired }),
-    countVouchesForUser({ participantWhere, sectionWhere: sectionWhere.archived }),
   ])
 
   return mapDashboardSummaryDTO({
@@ -160,15 +155,32 @@ async function getDashboardSummary(userId: string): Promise<DashboardSummaryDTO>
       active: activeCount,
       completed: completedCount,
       expired: expiredCount,
-      archived: archivedCount,
+      archived: 0,
     },
     drafts,
     actionRequired,
     active,
     completed,
     expired,
-    archived,
+    archived: [],
   })
+}
+
+export async function getArchivePageState(): Promise<{
+  count: number
+  vouches: VouchCardRecord[]
+}> {
+  noStore()
+
+  const current = await requireActiveUser()
+  const participantWhere = getParticipantWhere(current.id)
+  const archivedWhere = getDashboardSectionWhere().archived
+  const [vouches, count] = await Promise.all([
+    listVouchesForUser({ participantWhere, sectionWhere: archivedWhere, bounded: false }),
+    countVouchesForUser({ participantWhere, sectionWhere: archivedWhere }),
+  ])
+
+  return { count, vouches }
 }
 
 export async function getDashboardPageState(input?: {

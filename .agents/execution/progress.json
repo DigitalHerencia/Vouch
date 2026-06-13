@@ -3,9 +3,28 @@
   "file": ".agents/execution/progress.json",
   "product": "Vouch",
   "purpose": "Machine-readable implementation tracker and active work queue.",
-  "updated_at": "2026-06-12T00:00:00.000Z",
+  "updated_at": "2026-06-13T01:30:00.000Z",
   "status_values": ["not_started", "planned", "in_progress", "blocked", "complete", "deferred"],
   "domains": [
+    {
+      "id": "vouch_archive",
+      "status": "complete",
+      "summary": "Added visibility-only Vouch archive page, participant archive action, navigation, and dedicated archived query.",
+      "tasks": [
+        {
+          "id": "ARCHIVE-001",
+          "priority": "P1",
+          "status": "complete",
+          "title": "Implement Vouch Archive",
+          "acceptance": [
+            "Main dashboard queries unarchived Vouches only.",
+            "Archive page lists archived participant Vouches.",
+            "Archive action changes visibility fields only.",
+            "Archived Vouch detail URLs remain accessible."
+          ]
+        }
+      ]
+    },
     {
       "id": "governance",
       "status": "planned",

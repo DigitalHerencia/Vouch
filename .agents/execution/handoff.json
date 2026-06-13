@@ -3,7 +3,7 @@
   "file": ".agents/execution/handoff.json",
   "product": "Vouch",
   "purpose": "Current project handoff state for the next coding agent.",
-  "updated_at": "2026-06-12T00:00:00.000Z",
+  "updated_at": "2026-06-13T01:30:00.000Z",
   "current_state": {
     "phase": "governance_restructure_planned",
     "implementation_started": false,
@@ -16,7 +16,8 @@
     "validation_run": true,
     "component_boundary_audit_started": true,
     "component_boundary_audit_completed": true,
-    "visual_consistency_audit_completed": true
+    "visual_consistency_audit_completed": true,
+    "vouch_archive_implemented": true
   },
   "source_of_truth_order": [
     "current user instruction",
@@ -37,6 +38,7 @@
     "Customer participation is established through Vouch-specific authorization Checkout and authenticated claim.",
     "Confirmation capture requires bilateral in-window server-received confirmation.",
     "Cron reconciliation is recovery and stale-state cleanup only."
+    ,"Vouch archive is a visibility-only participant view; archived Vouches remain detail-accessible and retain canonical workflow and payment state."
   ],
   "target_structure": {
     "root_manifest": "AGENTS.md",

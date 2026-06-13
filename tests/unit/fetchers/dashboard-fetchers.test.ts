@@ -22,7 +22,7 @@ vi.mock("@/lib/integrations/stripe/connected-account-sync", () => ({
   syncConnectedAccountReadinessForUser: vi.fn(),
 }))
 
-import { getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
+import { getArchivePageState, getDashboardPageState } from "@/lib/fetchers/dashboardFetchers"
 
 describe("dashboard fetchers", () => {
   beforeEach(() => {
@@ -37,7 +37,6 @@ describe("dashboard fetchers", () => {
       .mockResolvedValueOnce(18)
       .mockResolvedValueOnce(35)
       .mockResolvedValueOnce(7)
-      .mockResolvedValueOnce(12)
 
     const state = await getDashboardPageState()
 
@@ -47,9 +46,9 @@ describe("dashboard fetchers", () => {
       active: 18,
       completed: 35,
       expired: 7,
-      archived: 12,
+      archived: 0,
     })
-    expect(findMany).toHaveBeenCalledTimes(6)
+    expect(findMany).toHaveBeenCalledTimes(5)
     expect(findMany.mock.calls.every(([query]) => query.take === 10)).toBe(true)
     expect(findMany.mock.calls[1]?.[0].where.AND[1]).toEqual({
       archived: false,
@@ -66,7 +65,25 @@ describe("dashboard fetchers", () => {
         { confirmationExpiresAt: { lte: expect.any(Date) } },
       ],
     })
-    expect(count).toHaveBeenCalledTimes(6)
+    expect(count).toHaveBeenCalledTimes(5)
     expect(state.variant).toBe("mixed_vouch_states")
+  })
+
+  it("loads archived participant Vouches only for the archive page", async () => {
+    count.mockResolvedValueOnce(12)
+
+    const state = await getArchivePageState()
+
+    expect(findMany).toHaveBeenCalledTimes(1)
+    expect(findMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          AND: [{ OR: [{ merchantId: "user_1" }, { customerId: "user_1" }] }, { archived: true }],
+        },
+      })
+    )
+    expect(findMany.mock.calls[0]?.[0]).not.toHaveProperty("take")
+    expect(count).toHaveBeenCalledTimes(1)
+    expect(state.count).toBe(12)
   })
 })

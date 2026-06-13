@@ -1,6 +1,6 @@
 "use client"
 
-import { Handshake, Home, Shield, User } from "lucide-react"
+import { Archive, Handshake, Home, Shield } from "lucide-react"
 
 import {
   MobileBottomNav,
@@ -37,9 +37,10 @@ export function TenantMobileBottomNav({ connectAction, connectReady }: TenantMob
       warning: vouchPageCopy.providerRedirects[connectReady ? "connectDashboard" : "connect"],
     },
     {
-      kind: "account",
-      label: tenantNavigationContent.links.account,
-      icon: User,
+      kind: "link",
+      href: "/vouches/archive",
+      label: tenantNavigationContent.links.archive,
+      icon: Archive,
     },
   ] satisfies readonly MobileBottomNavItem[]
 
