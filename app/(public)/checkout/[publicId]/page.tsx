@@ -13,7 +13,7 @@ export default async function AuthorizeVouchRoute({
 }) {
   const { publicId } = await params
   const normalizedPublicId = publicId.trim()
-  const returnPath = `/vouches/authorize/${encodeURIComponent(normalizedPublicId)}`
+  const returnPath = `/checkout/${encodeURIComponent(normalizedPublicId)}`
 
   if (!normalizedPublicId) {
     return <CheckoutSuccessView message={checkoutSuccessContent.errors.authorizationCheckout} />
